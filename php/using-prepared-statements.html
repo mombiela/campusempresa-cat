@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ús de Sentències Preparades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/php/using-prepared-statements" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/php/using-prepared-statements" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/php/using-prepared-statements" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/php/using-prepared-statements" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/php/using-prepared-statements" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='performing-crud-operations'>&#x25C4;Realització d'Operacions CRUD</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Ús de Sentències Preparades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='object-oriented-programming'>Programació Orientada a Objectes (OOP) &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Les sentències preparades són una característica poderosa en PHP que ajuda a prevenir atacs d'injecció SQL i millorar l'eficiència de les operacions de base de dades. Aquest tema et guiarà a través dels conceptes bàsics de l'ús de sentències preparades en PHP, des de nivell principiant fins a avançat.</p>
+</div><h1>Què són les Sentències Preparades?</h1>
+<div class='content'><p>Les sentències preparades són una manera d'executar consultes SQL de manera segura i eficient. Consten de dues etapes principals:</p>
+<ol>
+<li><strong>Preparació</strong>: La plantilla de la consulta SQL s'envia a la base de dades amb espais reservats per als paràmetres.</li>
+<li><strong>Execució</strong>: Els valors reals s'envien a la base de dades, substituint els espais reservats.</li>
+</ol>
+</div><h2>Beneficis Clau</h2>
+<div class='content'><ul>
+<li><strong>Seguretat</strong>: Prevé atacs d'injecció SQL separant la lògica SQL de les dades.</li>
+<li><strong>Eficiència</strong>: La base de dades pot optimitzar el pla d'execució de la consulta.</li>
+</ul>
+</div><h1>Ús Bàsic de les Sentències Preparades</h1>
+<div class='content'></div><h2>Connexió a la Base de Dades</h2>
+<div class='content'><p>Abans d'utilitzar sentències preparades, necessites establir una connexió amb la base de dades. Aquí tens un exemple senzill utilitzant PDO (PHP Data Objects):</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKJGRzbiA9ICdteXNxbDpob3N0PWxvY2FsaG9zdDtkYm5hbWU9dGVzdGRiJzsKJHVzZXJuYW1lID0gJ3Jvb3QnOwokcGFzc3dvcmQgPSAnJzsKCnRyeSB7CiAgICAkcGRvID0gbmV3IFBETygkZHNuLCAkdXNlcm5hbWUsICRwYXNzd29yZCk7CiAgICAkcGRvLT5zZXRBdHRyaWJ1dGUoUERPOjpBVFRSX0VSUk1PREUsIFBETzo6RVJSTU9ERV9FWENFUFRJT04pOwogICAgZWNobyAiQ29ubmV4acOzIGVzdGFibGVydGEgY29ycmVjdGFtZW50IjsKfSBjYXRjaCAoUERPRXhjZXB0aW9uICRlKSB7CiAgICBlY2hvICJDb25uZXhpw7MgZmFsbGlkYTogIiAuICRlLT5nZXRNZXNzYWdlKCk7Cn0KPz4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+$dsn = 'mysql:host=localhost;dbname=testdb';
+$username = 'root';
+$password = '';
+
+try {
+    $pdo = new PDO($dsn, $username, $password);
+    $pdo-&gt;setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    echo &quot;Connexi&oacute; establerta correctament&quot;;
+} catch (PDOException $e) {
+    echo &quot;Connexi&oacute; fallida: &quot; . $e-&gt;getMessage();
+}
+?&gt;</pre></div><div class='content'></div><h2>Preparació i Execució d'una Sentència</h2>
+<div class='content'><p>Aquí tens com pots preparar i executar una consulta SQL senzilla utilitzant espais reservats:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKJHNxbCA9ICJTRUxFQ1QgKiBGUk9NIHVzZXJzIFdIRVJFIGVtYWlsID0gOmVtYWlsIjsKJHN0bXQgPSAkcGRvLT5wcmVwYXJlKCRzcWwpOwokZW1haWwgPSAnZXhhbXBsZUBleGFtcGxlLmNvbSc7CiRzdG10LT5iaW5kUGFyYW0oJzplbWFpbCcsICRlbWFpbCk7CiRzdG10LT5leGVjdXRlKCk7CiRyZXN1bHQgPSAkc3RtdC0+ZmV0Y2hBbGwoUERPOjpGRVRDSF9BU1NPQyk7Cgpmb3JlYWNoICgkcmVzdWx0IGFzICRyb3cpIHsKICAgIGVjaG8gJHJvd1snbmFtZSddIC4gIjxicj4iOwp9Cj8+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+$sql = &quot;SELECT * FROM users WHERE email = :email&quot;;
+$stmt = $pdo-&gt;prepare($sql);
+$email = 'example@example.com';
+$stmt-&gt;bindParam(':email', $email);
+$stmt-&gt;execute();
+$result = $stmt-&gt;fetchAll(PDO::FETCH_ASSOC);
+
+foreach ($result as $row) {
+    echo $row['name'] . &quot;&lt;br&gt;&quot;;
+}
+?&gt;</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Preparació</strong>: La consulta SQL amb un espai reservat (<code>:email</code>) es prepara.</li>
+<li><strong>Assignació</strong>: El valor real s'assigna a l'espai reservat.</li>
+<li><strong>Execució</strong>: La consulta s'executa amb el valor assignat.</li>
+</ul>
+</div><h1>Ús Avançat de les Sentències Preparades</h1>
+<div class='content'></div><h2>Ús de Múltiples Espais Reservats</h2>
+<div class='content'><p>Pots utilitzar múltiples espais reservats en una sola consulta:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKJHNxbCA9ICJTRUxFQ1QgKiBGUk9NIHVzZXJzIFdIRVJFIGVtYWlsID0gOmVtYWlsIEFORCBzdGF0dXMgPSA6c3RhdHVzIjsKJHN0bXQgPSAkcGRvLT5wcmVwYXJlKCRzcWwpOwokZW1haWwgPSAnZXhhbXBsZUBleGFtcGxlLmNvbSc7CiRzdGF0dXMgPSAnYWN0aXZlJzsKJHN0bXQtPmJpbmRQYXJhbSgnOmVtYWlsJywgJGVtYWlsKTsKJHN0bXQtPmJpbmRQYXJhbSgnOnN0YXR1cycsICRzdGF0dXMpOwokc3RtdC0+ZXhlY3V0ZSgpOwokcmVzdWx0ID0gJHN0bXQtPmZldGNoQWxsKFBETzo6RkVUQ0hfQVNTT0MpOwoKZm9yZWFjaCAoJHJlc3VsdCBhcyAkcm93KSB7CiAgICBlY2hvICRyb3dbJ25hbWUnXSAuICI8YnI+IjsKfQo/Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+$sql = &quot;SELECT * FROM users WHERE email = :email AND status = :status&quot;;
+$stmt = $pdo-&gt;prepare($sql);
+$email = 'example@example.com';
+$status = 'active';
+$stmt-&gt;bindParam(':email', $email);
+$stmt-&gt;bindParam(':status', $status);
+$stmt-&gt;execute();
+$result = $stmt-&gt;fetchAll(PDO::FETCH_ASSOC);
+
+foreach ($result as $row) {
+    echo $row['name'] . &quot;&lt;br&gt;&quot;;
+}
+?&gt;</pre></div><div class='content'></div><h2>Ús d'Espais Reservats Nominals vs. Posicionals</h2>
+<div class='content'><ul>
+<li><strong>Espais Reservats Nominals</strong>: Utilitza espais reservats nominals com <code>:email</code>.</li>
+<li><strong>Espais Reservats Posicionals</strong>: Utilitza signes d'interrogació (<code>?</code>) com espais reservats.</li>
+</ul>
+<p>Exemple amb espais reservats posicionals:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKJHNxbCA9ICJTRUxFQ1QgKiBGUk9NIHVzZXJzIFdIRVJFIGVtYWlsID0gPyBBTkQgc3RhdHVzID0gPyI7CiRzdG10ID0gJHBkby0+cHJlcGFyZSgkc3FsKTsKJGVtYWlsID0gJ2V4YW1wbGVAZXhhbXBsZS5jb20nOwpzdGF0dXMgPSAnYWN0aXZlJzsKJHN0bXQtPmV4ZWN1dGUoWyRlbWFpbCwgJHN0YXR1c10pOwokcmVzdWx0ID0gJHN0bXQtPmZldGNoQWxsKFBETzo6RkVUQ0hfQVNTT0MpOwoKZm9yZWFjaCAoJHJlc3VsdCBhcyAkcm93KSB7CiAgICBlY2hvICRyb3dbJ25hbWUnXSAuICI8YnI+IjsKfQo/Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+$sql = &quot;SELECT * FROM users WHERE email = ? AND status = ?&quot;;
+$stmt = $pdo-&gt;prepare($sql);
+$email = 'example@example.com';
+status = 'active';
+$stmt-&gt;execute([$email, $status]);
+$result = $stmt-&gt;fetchAll(PDO::FETCH_ASSOC);
+
+foreach ($result as $row) {
+    echo $row['name'] . &quot;&lt;br&gt;&quot;;
+}
+?&gt;</pre></div><div class='content'></div><h2>Gestió d'Errors</h2>
+<div class='content'><p>Sempre gestiona els possibles errors quan treballis amb bases de dades:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKdHJ5IHsKICAgICRzcWwgPSAiU0VMRUNUICogRlJPTSB1c2VycyBXSEVSRSBlbWFpbCA9IDplbWFpbCI7CiAgICAkc3RtdCA9ICRwZG8tPnByZXBhcmUoJHNxbCk7CiAgICAkZW1haWwgPSAnZXhhbXBsZUBleGFtcGxlLmNvbSc7CiAgICAkc3RtdC0+YmluZFBhcmFtKCc6ZW1haWwnLCAkZW1haWwpOwogICAgJHN0bXQtPmV4ZWN1dGUoKTsKICAgICRyZXN1bHQgPSAkc3RtdC0+ZmV0Y2hBbGwoUERPOjpGRVRDSF9BU1NPQyk7CgogICAgZm9yZWFjaCAoJHJlc3VsdCBhcyAkcm93KSB7CiAgICAgICAgZWNobyAkcm93WyduYW1lJ10gLiAiPGJyPiI7CiAgICB9Cn0gY2F0Y2ggKFBET0V4Y2VwdGlvbiAkZSkgewogICAgZWNobyAiRXJyb3I6ICIgLiAkZS0+Z2V0TWVzc2FnZSgpOwp9Cj8+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+try {
+    $sql = &quot;SELECT * FROM users WHERE email = :email&quot;;
+    $stmt = $pdo-&gt;prepare($sql);
+    $email = 'example@example.com';
+    $stmt-&gt;bindParam(':email', $email);
+    $stmt-&gt;execute();
+    $result = $stmt-&gt;fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($result as $row) {
+        echo $row['name'] . &quot;&lt;br&gt;&quot;;
+    }
+} catch (PDOException $e) {
+    echo &quot;Error: &quot; . $e-&gt;getMessage();
+}
+?&gt;</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>Les sentències preparades en PHP ofereixen una manera segura i eficient d'executar consultes SQL. Separant la lògica SQL de les dades, ajuden a prevenir atacs d'injecció SQL i permeten que la base de dades optimitzi l'execució de les consultes. Tant si utilitzes espais reservats nominals com posicionals, els passos clau impliquen preparar la sentència, assignar els paràmetres i executar la consulta. Recorda sempre gestionar els possibles errors per assegurar que la teva aplicació funcioni sense problemes.</p>
+<p>Dominant les sentències preparades, pots millorar significativament la seguretat i el rendiment de les teves aplicacions PHP.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='performing-crud-operations'>&#x25C4;Realització d'Operacions CRUD</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Ús de Sentències Preparades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='object-oriented-programming'>Programació Orientada a Objectes (OOP) &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

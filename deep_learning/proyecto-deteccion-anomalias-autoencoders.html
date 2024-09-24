@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projecte 3: Detecció d'Anomalies amb Autoencoders</title>
+
+    <link rel="alternate" href="https://campusempresa.com/deep_learning/proyecto-deteccion-anomalias-autoencoders" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/deep_learning/proyecto-deteccion-anomalias-autoencoders" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/deep_learning/proyecto-deteccion-anomalias-autoencoders" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/deep_learning/proyecto-deteccion-anomalias-autoencoders" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/deep_learning/proyecto-deteccion-anomalias-autoencoders" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='proyecto-generacion-texto-rnn'>&#x25C4;Projecte 2: Generació de Text amb RNN</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Projecte 3: Detecció d'Anomalies amb Autoencoders</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='proyecto-creacion-imagenes-gan'>Projecte 4: Creació d'Imatges amb GAN &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest projecte, explorarem com utilitzar autoencoders, una classe de xarxes neuronals, per a la detecció d'anomalies en dades. Els autoencoders són especialment útils per a aquesta tasca a causa de la seva capacitat per aprendre representacions comprimides de les dades i reconstruir-les. Les anomalies poden ser identificades com aquelles dades que l'autoencoder no pot reconstruir adequadament.</p>
+</div><h1>Objectius del Projecte</h1>
+<div class='content'><ul>
+<li>Comprendre el concepte d'autoencoders i la seva arquitectura.</li>
+<li>Implementar un autoencoder utilitzant una biblioteca de deep learning (TensorFlow/Keras).</li>
+<li>Aplicar l'autoencoder per detectar anomalies en un conjunt de dades.</li>
+<li>Avaluar el rendiment del model de detecció d'anomalies.</li>
+</ul>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Autoencoders</strong>: Xarxes neuronals dissenyades per aprendre una representació (codificació) eficient d'un conjunt de dades, típicament per reducció de dimensionalitat o detecció d'anomalies.</li>
+<li><strong>Codificador (Encoder)</strong>: Part de l'autoencoder que redueix la dimensionalitat de les dades d'entrada.</li>
+<li><strong>Decodificador (Decoder)</strong>: Part de l'autoencoder que reconstrueix les dades a partir de la representació comprimida.</li>
+<li><strong>Pèrdua de Reconstrucció</strong>: Mètrica que mesura la diferència entre les dades originals i les dades reconstruïdes per l'autoencoder.</li>
+</ul>
+</div><h1>Arquitectura d'un Autoencoder</h1>
+<div class='content'><p>Un autoencoder típic consta de dues parts principals:</p>
+<ol>
+<li>
+<p><strong>Codificador (Encoder)</strong>:</p>
+<ul>
+<li>Redueix la dimensionalitat de les dades d'entrada.</li>
+<li>Compost per capes denses (fully connected) o convolucionals.</li>
+</ul>
+</li>
+<li>
+<p><strong>Decodificador (Decoder)</strong>:</p>
+<ul>
+<li>Reconstrueix les dades a partir de la representació comprimida.</li>
+<li>Compost per capes denses o convolucionals que &quot;desfan&quot; la compressió realitzada pel codificador.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Exemple d'Arquitectura</h2>
+<div class='content'><p>| Part        | Tipus de Capa       | Dimensions d'Entrada | Dimensions de Sortida |
+|-------------|---------------------|----------------------|-----------------------|
+| Codificador | Dense               | 784                  | 128                   |
+| Codificador | Dense               | 128                  | 64                    |
+| Codificador | Dense               | 64                   | 32                    |
+| Decodificador| Dense              | 32                   | 64                    |
+| Decodificador| Dense              | 64                   | 128                   |
+| Decodificador| Dense              | 128                  | 784                   |</p>
+</div><h1>Implementació de l'Autoencoder</h1>
+<div class='content'></div><h2>Pas 1: Importar Biblioteques Necessàries</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG51bXB5IGFzIG5wCmltcG9ydCB0ZW5zb3JmbG93IGFzIHRmCmZyb20gdGVuc29yZmxvdy5rZXJhcy5tb2RlbHMgaW1wb3J0IE1vZGVsCmZyb20gdGVuc29yZmxvdy5rZXJhcy5sYXllcnMgaW1wb3J0IElucHV0LCBEZW5zZQpmcm9tIHRlbnNvcmZsb3cua2VyYXMuZGF0YXNldHMgaW1wb3J0IG1uaXN0"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, Dense
+from tensorflow.keras.datasets import mnist</pre></div><div class='content'></div><h2>Pas 2: Preparar les Dades</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDYXJyZWdhciBlbCBjb25qdW50IGRlIGRhZGVzIE1OSVNUCih4X3RyYWluLCBfKSwgKHhfdGVzdCwgXykgPSBtbmlzdC5sb2FkX2RhdGEoKQoKIyBOb3JtYWxpdHphciBsZXMgZGFkZXMKeF90cmFpbiA9IHhfdHJhaW4uYXN0eXBlKCdmbG9hdDMyJykgLyAyNTUuCnhfdGVzdCA9IHhfdGVzdC5hc3R5cGUoJ2Zsb2F0MzInKSAvIDI1NS4KCiMgQXBsYW5hciBsZXMgaW1hdGdlcyAoMjh4MjgpIGEgdmVjdG9ycyBkZSA3ODQgZWxlbWVudHMKeF90cmFpbiA9IHhfdHJhaW4ucmVzaGFwZSgobGVuKHhfdHJhaW4pLCBucC5wcm9kKHhfdHJhaW4uc2hhcGVbMTpdKSkpCnhfdGVzdCA9IHhfdGVzdC5yZXNoYXBlKChsZW4oeF90ZXN0KSwgbnAucHJvZCh4X3Rlc3Quc2hhcGVbMTpdKSkp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Carregar el conjunt de dades MNIST
+(x_train, _), (x_test, _) = mnist.load_data()
+
+# Normalitzar les dades
+x_train = x_train.astype('float32') / 255.
+x_test = x_test.astype('float32') / 255.
+
+# Aplanar les imatges (28x28) a vectors de 784 elements
+x_train = x_train.reshape((len(x_train), np.prod(x_train.shape[1:])))
+x_test = x_test.reshape((len(x_test), np.prod(x_test.shape[1:])))</pre></div><div class='content'></div><h2>Pas 3: Definir l'Arquitectura de l'Autoencoder</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBEZWZpbmlyIGxhIG1pZGEgZGUgbCdlbnRyYWRhCmlucHV0X2RpbSA9IHhfdHJhaW4uc2hhcGVbMV0KCiMgRGVmaW5pciBlbCBjb2RpZmljYWRvcgppbnB1dF9sYXllciA9IElucHV0KHNoYXBlPShpbnB1dF9kaW0sKSkKZW5jb2RlciA9IERlbnNlKDEyOCwgYWN0aXZhdGlvbj0ncmVsdScpKGlucHV0X2xheWVyKQplbmNvZGVyID0gRGVuc2UoNjQsIGFjdGl2YXRpb249J3JlbHUnKShlbmNvZGVyKQplbmNvZGVyID0gRGVuc2UoMzIsIGFjdGl2YXRpb249J3JlbHUnKShlbmNvZGVyKQoKIyBEZWZpbmlyIGVsIGRlY29kaWZpY2Fkb3IKZGVjb2RlciA9IERlbnNlKDY0LCBhY3RpdmF0aW9uPSdyZWx1JykoZW5jb2RlcikKZGVjb2RlciA9IERlbnNlKDEyOCwgYWN0aXZhdGlvbj0ncmVsdScpKGRlY29kZXIpCmRlY29kZXIgPSBEZW5zZShpbnB1dF9kaW0sIGFjdGl2YXRpb249J3NpZ21vaWQnKShkZWNvZGVyKQoKIyBDcmVhciBlbCBtb2RlbCBhdXRvZW5jb2RlcgphdXRvZW5jb2RlciA9IE1vZGVsKGlucHV0cz1pbnB1dF9sYXllciwgb3V0cHV0cz1kZWNvZGVyKQphdXRvZW5jb2Rlci5jb21waWxlKG9wdGltaXplcj0nYWRhbScsIGxvc3M9J2JpbmFyeV9jcm9zc2VudHJvcHknKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Definir la mida de l'entrada
+input_dim = x_train.shape[1]
+
+# Definir el codificador
+input_layer = Input(shape=(input_dim,))
+encoder = Dense(128, activation='relu')(input_layer)
+encoder = Dense(64, activation='relu')(encoder)
+encoder = Dense(32, activation='relu')(encoder)
+
+# Definir el decodificador
+decoder = Dense(64, activation='relu')(encoder)
+decoder = Dense(128, activation='relu')(decoder)
+decoder = Dense(input_dim, activation='sigmoid')(decoder)
+
+# Crear el model autoencoder
+autoencoder = Model(inputs=input_layer, outputs=decoder)
+autoencoder.compile(optimizer='adam', loss='binary_crossentropy')</pre></div><div class='content'></div><h2>Pas 4: Entrenar l'Autoencoder</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXV0b2VuY29kZXIuZml0KHhfdHJhaW4sIHhfdHJhaW4sCiAgICAgICAgICAgICAgICBlcG9jaHM9NTAsCiAgICAgICAgICAgICAgICBiYXRjaF9zaXplPTI1NiwKICAgICAgICAgICAgICAgIHNodWZmbGU9VHJ1ZSwKICAgICAgICAgICAgICAgIHZhbGlkYXRpb25fZGF0YT0oeF90ZXN0LCB4X3Rlc3QpKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>autoencoder.fit(x_train, x_train,
+                epochs=50,
+                batch_size=256,
+                shuffle=True,
+                validation_data=(x_test, x_test))</pre></div><div class='content'></div><h2>Pas 5: Avaluar el Model i Detectar Anomalies</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBPYnRlbmlyIGxlcyByZWNvbnN0cnVjY2lvbnMgZGVsIGNvbmp1bnQgZGUgcHJvdmEKcmVjb25zdHJ1Y3Rpb25zID0gYXV0b2VuY29kZXIucHJlZGljdCh4X3Rlc3QpCgojIENhbGN1bGFyIGxhIHDDqHJkdWEgZGUgcmVjb25zdHJ1Y2Npw7MKcmVjb25zdHJ1Y3Rpb25fbG9zcyA9IG5wLm1lYW4obnAuc3F1YXJlKHhfdGVzdCAtIHJlY29uc3RydWN0aW9ucyksIGF4aXM9MSkKCiMgRGVmaW5pciB1biBsbGluZGFyIHBlciBhIGxhIGRldGVjY2nDsyBkJ2Fub21hbGllcwp0aHJlc2hvbGQgPSBucC5wZXJjZW50aWxlKHJlY29uc3RydWN0aW9uX2xvc3MsIDk1KQoKIyBJZGVudGlmaWNhciBsZXMgYW5vbWFsaWVzCmFub21hbGllcyA9IHJlY29uc3RydWN0aW9uX2xvc3MgPiB0aHJlc2hvbGQKCnByaW50KGYnTm9tYnJlIGQnYW5vbWFsaWVzIGRldGVjdGFkZXM6IHtucC5zdW0oYW5vbWFsaWVzKX0nKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Obtenir les reconstruccions del conjunt de prova
+reconstructions = autoencoder.predict(x_test)
+
+# Calcular la p&egrave;rdua de reconstrucci&oacute;
+reconstruction_loss = np.mean(np.square(x_test - reconstructions), axis=1)
+
+# Definir un llindar per a la detecci&oacute; d'anomalies
+threshold = np.percentile(reconstruction_loss, 95)
+
+# Identificar les anomalies
+anomalies = reconstruction_loss &gt; threshold
+
+print(f'Nombre d'anomalies detectades: {np.sum(anomalies)}')</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest projecte, hem après a utilitzar autoencoders per a la detecció d'anomalies. Hem cobert des de la definició de l'arquitectura de l'autoencoder fins a la seva implementació i avaluació. Els autoencoders són una eina poderosa en el camp del deep learning, especialment per a tasques de detecció d'anomalies, on poden identificar dades que no s'ajusten als patrons apresos durant l'entrenament.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='proyecto-generacion-texto-rnn'>&#x25C4;Projecte 2: Generació de Text amb RNN</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Projecte 3: Detecció d'Anomalies amb Autoencoders</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='proyecto-creacion-imagenes-gan'>Projecte 4: Creació d'Imatges amb GAN &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integrar Jenkins amb Git</title>
+
+    <link rel="alternate" href="https://campusempresa.com/jenkins/integrating-jenkins-with-git" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/jenkins/integrating-jenkins-with-git" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/jenkins/integrating-jenkins-with-git" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/jenkins/integrating-jenkins-with-git" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/jenkins/integrating-jenkins-with-git" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='scaling-jenkins'>&#x25C4;Escalabilitat de Jenkins</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Integrar Jenkins amb Git</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='jenkins-and-docker'>Jenkins i Docker &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Integrar Jenkins amb Git és un pas crucial en la configuració d'una pipeline d'integració contínua/desplegament continu (CI/CD). Aquesta secció et guiarà a través del procés de connectar Jenkins amb un repositori Git, permetent construccions i desplegaments automatitzats.</p>
+</div><h1>Prerequisits</h1>
+<div class='content'><p>Abans de començar, assegura't de tenir el següent:</p>
+<ul>
+<li>Jenkins instal·lat i en funcionament.</li>
+<li>Un repositori Git (GitHub, GitLab, Bitbucket, etc.).</li>
+<li>Coneixements bàsics de Jenkins i Git.</li>
+</ul>
+</div><h1>Configurar Jenkins amb Git</h1>
+<div class='content'></div><h2>Instal·lar el Plugin de Git a Jenkins</h2>
+<div class='content'><p>Per integrar Jenkins amb Git, necessites instal·lar el plugin de Git.</p>
+<ol>
+<li>Obre Jenkins i navega a <strong>Manage Jenkins</strong>.</li>
+<li>Fes clic a <strong>Manage Plugins</strong>.</li>
+<li>Ves a la pestanya <strong>Available</strong> i cerca <strong>Git Plugin</strong>.</li>
+<li>Selecciona el plugin i fes clic a <strong>Install without restart</strong>.</li>
+</ol>
+</div><h2>Configurar Git a Jenkins</h2>
+<div class='content'><p>Després d'instal·lar el plugin de Git, has de configurar Jenkins per utilitzar Git.</p>
+<ol>
+<li>Ves a <strong>Manage Jenkins</strong> &gt; <strong>Global Tool Configuration</strong>.</li>
+<li>Desplaça't cap avall fins a <strong>Git</strong> i fes clic a <strong>Add Git</strong>.</li>
+<li>Proporciona un nom (per exemple, <code>Default Git</code>) i especifica el camí a l'executable de Git si és necessari.</li>
+<li>Fes clic a <strong>Save</strong>.</li>
+</ol>
+</div><h2>Crear una Feina de Jenkins per a un Projecte Git</h2>
+<div class='content'><p>Ara, creem una feina de Jenkins que extregui codi d'un repositori Git i el construeixi.</p>
+<ol>
+<li>Des del tauler de control de Jenkins, fes clic a <strong>New Item</strong>.</li>
+<li>Introdueix un nom per a la teva feina i selecciona <strong>Freestyle project</strong>.</li>
+<li>Fes clic a <strong>OK</strong>.</li>
+</ol>
+</div><h2>Configurar la Gestió del Codi Font</h2>
+<div class='content'><ol>
+<li>A la pàgina de configuració de la feina, desplaça't cap avall fins a <strong>Source Code Management</strong>.</li>
+<li>Selecciona <strong>Git</strong>.</li>
+<li>Introdueix l'URL del repositori (per exemple, <code>https://github.com/username/repository.git</code>).</li>
+<li>Si el repositori és privat, proporciona les credencials necessàries fent clic a <strong>Add</strong> i introduint les teves credencials de Git.</li>
+<li>Especifica la branca a construir (per exemple, <code>main</code>).</li>
+</ol>
+</div><h2>Afegir Triggers de Construcció</h2>
+<div class='content'><p>Per automatitzar el procés de construcció, pots configurar triggers de construcció.</p>
+<ol>
+<li>Desplaça't cap avall fins a <strong>Build Triggers</strong>.</li>
+<li>Selecciona <strong>Poll SCM</strong> i introdueix un horari (per exemple, <code>H/5 * * * *</code> per fer polling cada 5 minuts).</li>
+<li>Alternativament, pots utilitzar <strong>GitHub hook trigger for GITScm polling</strong> si has configurat webhooks al teu repositori de GitHub.</li>
+</ol>
+</div><h2>Definir Passos de Construcció</h2>
+<div class='content'><ol>
+<li>Desplaça't cap avall fins a <strong>Build</strong>.</li>
+<li>Fes clic a <strong>Add build step</strong> i selecciona <strong>Execute shell</strong>.</li>
+<li>Introdueix les comandes de construcció (per exemple, <code>./build.sh</code>).</li>
+</ol>
+</div><h2>Accions Post-construcció</h2>
+<div class='content'><ol>
+<li>Desplaça't cap avall fins a <strong>Post-build Actions</strong>.</li>
+<li>Afegeix qualsevol pas post-construcció necessari, com ara arxivar artefactes o enviar notificacions.</li>
+</ol>
+</div><h2>Configuració Exemple</h2>
+<div class='content'><p>Aquí tens un exemple d'un script shell senzill que es podria utilitzar en el pas de construcció:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyEvYmluL2Jhc2gKZWNobyAiQ29uc3RydWludCBlbCBwcm9qZWN0ZS4uLiIKIyBDb21hbmRhIGRlIGNvbnN0cnVjY2nDsyBleGVtcGxlCm1ha2UKZWNobyAiQ29uc3RydWNjacOzIGNvbXBsZXRhZGEgYW1iIMOoeGl0LiI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#!/bin/bash
+echo &quot;Construint el projecte...&quot;
+# Comanda de construcci&oacute; exemple
+make
+echo &quot;Construcci&oacute; completada amb &egrave;xit.&quot;</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Integrar Jenkins amb Git és un pas fonamental per automatitzar el teu flux de treball de desenvolupament. Seguint els passos descrits anteriorment, pots configurar Jenkins per extreure codi d'un repositori Git, construir-lo i activar construccions automàticament basades en canvis al repositori. Aquesta integració no només estalvia temps, sinó que també assegura que el teu codi estigui sempre en un estat desplegable.</p>
+<p>A les següents seccions, explorarem temes més avançats com configurar pipelines, gestionar processos de construcció complexos i integrar amb altres eines i serveis.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='scaling-jenkins'>&#x25C4;Escalabilitat de Jenkins</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Integrar Jenkins amb Git</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='jenkins-and-docker'>Jenkins i Docker &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

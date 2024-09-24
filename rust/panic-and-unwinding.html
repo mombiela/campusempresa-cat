@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pànic i Desenrotllament</title>
+
+    <link rel="alternate" href="https://campusempresa.com/rust/panic-and-unwinding" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/rust/panic-and-unwinding" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/rust/panic-and-unwinding" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/rust/panic-and-unwinding" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/rust/panic-and-unwinding" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='error-handling-with-option'>&#x25C4;Gestió d'Errors amb Option</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Pànic i Desenrotllament</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='modules'>Mòduls &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquesta secció, explorarem els conceptes de pànic i desenrotllament en Rust. Entendre aquests conceptes és crucial per escriure programes en Rust robustos i resistents als errors.</p>
+</div><h1>Què és el Pànic?</h1>
+<div class='content'><p>El pànic és la manera de Rust de gestionar errors irrecuperables. Quan un programa troba una situació on no pot continuar l'execució de manera segura, entrarà en pànic. Això és similar a les excepcions en altres llenguatges de programació però amb algunes diferències clau.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Pànic</strong>: Un error irrecuperable que fa que el programa aturi l'execució.</li>
+<li><strong>Desenrotllament</strong>: El procés de netejar la pila quan es produeix un pànic.</li>
+<li><strong>Abortar</strong>: Una alternativa al desenrotllament on el programa es termina immediatament sense netejar.</li>
+</ul>
+</div><h2>Quan es produeix el Pànic?</h2>
+<div class='content'><p>El pànic pot ocórrer en diverses situacions, com ara:</p>
+<ul>
+<li>Indexar fora dels límits en una matriu.</li>
+<li>Cridar <code>unwrap</code> en una <code>Option</code> que és <code>None</code>.</li>
+<li>Cridar explícitament la macro <code>panic!</code>.</li>
+</ul>
+</div><h2>Exemple de Pànic</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zm4gbWFpbigpIHsKICAgIGxldCB2ID0gdmVjIVsxLCAyLCAzXTsKICAgIHByaW50bG4hKCJ7fSIsIHZbOTldKTsgLy8gQWl4w7IgY2F1c2Fyw6AgdW4gcMOgbmljIHBlcnF1w6ggbCfDrW5kZXggZXN0w6AgZm9yYSBkZWxzIGzDrW1pdHMuCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>fn main() {
+    let v = vec![1, 2, 3];
+    println!(&quot;{}&quot;, v[99]); // Aix&ograve; causar&agrave; un p&agrave;nic perqu&egrave; l'&iacute;ndex est&agrave; fora dels l&iacute;mits.
+}</pre></div><div class='content'><p>En aquest exemple, intentar accedir al 99è element d'un vector amb només 3 elements causarà un pànic.</p>
+</div><h1>Desenrotllament</h1>
+<div class='content'><p>Quan es produeix un pànic, Rust comença el procés de desenrotllament. Això significa que anirà enrere a través de la pila, netejant a mesura que avança. Això inclou executar els destructors per a qualsevol variable que surti de l'abast.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Desenrotllament de la Pila</strong>: El procés de netejar la pila quan es produeix un pànic.</li>
+<li><strong>Destructors</strong>: Funcions que es criden quan un objecte surt de l'abast, típicament utilitzades per alliberar recursos.</li>
+</ul>
+</div><h2>Exemple de Desenrotllament</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RydWN0IFJlc291cmNlOwoKaW1wbCBEcm9wIGZvciBSZXNvdXJjZSB7CiAgICBmbiBkcm9wKCZtdXQgc2VsZikgewogICAgICAgIHByaW50bG4hKCJFbCByZWN1cnMgcydlc3TDoCBuZXRlamFudC4iKTsKICAgIH0KfQoKZm4gbWFpbigpIHsKICAgIGxldCBfciA9IFJlc291cmNlOwogICAgcGFuaWMhKCJBaXjDsiDDqXMgdW4gcMOgbmljISIpOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>struct Resource;
+
+impl Drop for Resource {
+    fn drop(&amp;mut self) {
+        println!(&quot;El recurs s'est&agrave; netejant.&quot;);
+    }
+}
+
+fn main() {
+    let _r = Resource;
+    panic!(&quot;Aix&ograve; &eacute;s un p&agrave;nic!&quot;);
+}</pre></div><div class='content'><p>En aquest exemple, encara que es produeixi un pànic, la implementació de <code>Drop</code> per a <code>Resource</code> encara es cridarà, demostrant el procés de desenrotllament.</p>
+</div><h1>Abortar</h1>
+<div class='content'><p>En alguns casos, potser voldreu evitar la sobrecàrrega del desenrotllament i, en canvi, terminar el programa immediatament. Això es pot fer configurant l'estratègia de pànic per abortar.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Abortar</strong>: Terminar el programa immediatament sense desenrotllament.</li>
+<li><strong>Estratègia de Pànic</strong>: Comportament configurable per gestionar els pànics.</li>
+</ul>
+</div><h2>Configurar l'Estratègia de Pànic per Abortar</h2>
+<div class='content'><p>Podeu configurar l'estratègia de pànic per abortar en el vostre fitxer <code>Cargo.toml</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("W3Byb2ZpbGUucmVsZWFzZV0KcGFuaWMgPSAnYWJvcnQn"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>[profile.release]
+panic = 'abort'</pre></div><div class='content'><p>Aquesta configuració s'utilitza sovint en aplicacions crítiques per al rendiment on la sobrecàrrega del desenrotllament és indesitjable.</p>
+</div><h1>Gestionar els Pànics</h1>
+<div class='content'><p>Tot i que els pànics estan pensats per a errors irrecuperables, Rust proporciona maneres de gestionar-los de manera elegant en algunes situacions.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong><code>std::panic::catch_unwind</code></strong>: Una funció que permet capturar un pànic i gestionar-lo.</li>
+<li><strong>Degradació Elegant</strong>: La pràctica de gestionar errors de manera que permeti al programa continuar executant-se.</li>
+</ul>
+</div><h2>Exemple de Captura d'un Pànic</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIHN0ZDo6cGFuaWM7CgpmbiBtYWluKCkgewogICAgbGV0IHJlc3VsdCA9IHBhbmljOjpjYXRjaF91bndpbmQofHwgewogICAgICAgIHByaW50bG4hKCJBIHB1bnQgZGUgZmVyIHDDoG5pYyEiKTsKICAgICAgICBwYW5pYyEoIkFpeMOyIMOpcyB1biBww6BuaWMhIik7CiAgICB9KTsKCiAgICBtYXRjaCByZXN1bHQgewogICAgICAgIE9rKF8pID0+IHByaW50bG4hKCJObyBzJ2hhIHByb2R1w690IGNhcCBww6BuaWMuIiksCiAgICAgICAgRXJyKF8pID0+IHByaW50bG4hKCJTJ2hhIGNhcHR1cmF0IHVuIHDDoG5pYy4iKSwKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use std::panic;
+
+fn main() {
+    let result = panic::catch_unwind(|| {
+        println!(&quot;A punt de fer p&agrave;nic!&quot;);
+        panic!(&quot;Aix&ograve; &eacute;s un p&agrave;nic!&quot;);
+    });
+
+    match result {
+        Ok(_) =&gt; println!(&quot;No s'ha produ&iuml;t cap p&agrave;nic.&quot;),
+        Err(_) =&gt; println!(&quot;S'ha capturat un p&agrave;nic.&quot;),
+    }
+}</pre></div><div class='content'><p>En aquest exemple, el pànic és capturat per <code>catch_unwind</code>, permetent al programa gestionar-lo de manera elegant.</p>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Entendre el pànic i el desenrotllament és essencial per escriure programes en Rust robustos. Tot i que els pànics indiquen errors irrecuperables, Rust proporciona mecanismes per gestionar-los de manera elegant quan sigui necessari. Utilitzant estratègies de desenrotllament i abortament de manera adequada, podeu assegurar-vos que els vostres programes siguin tant eficients com resilients.</p>
+</div><h2>Resum</h2>
+<div class='content'><ul>
+<li><strong>Pànic</strong>: Utilitzat per a errors irrecuperables.</li>
+<li><strong>Desenrotllament</strong>: Neteja la pila quan es produeix un pànic.</li>
+<li><strong>Abortar</strong>: Termina el programa immediatament sense desenrotllament.</li>
+<li><strong>Gestionar els Pànics</strong>: Utilitzeu <code>std::panic::catch_unwind</code> per capturar i gestionar els pànics de manera elegant.</li>
+</ul>
+<p>En dominar aquests conceptes, estareu millor preparats per gestionar errors en els vostres programes en Rust de manera efectiva.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='error-handling-with-option'>&#x25C4;Gestió d'Errors amb Option</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Pànic i Desenrotllament</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='modules'>Mòduls &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

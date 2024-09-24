@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creació de Gràfics de Pastís</title>
+
+    <link rel="alternate" href="https://campusempresa.com/d3_js/creating-pie-charts" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/d3_js/creating-pie-charts" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/d3_js/creating-pie-charts" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/d3_js/creating-pie-charts" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/d3_js/creating-pie-charts" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='creating-line-charts'>&#x25C4;Creació de gràfics de línies</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Creació de Gràfics de Pastís</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='creating-scatter-plots'>Creació de diagrames de dispersió &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquesta secció, explorarem com crear gràfics de pastís utilitzant D3.js, una potent biblioteca de JavaScript per produir visualitzacions de dades dinàmiques i interactives en navegadors web. Començarem amb els conceptes bàsics i gradualment avançarem cap a temes més avançats.</p>
+</div><h1>Introducció als Gràfics de Pastís</h1>
+<div class='content'><p>Els gràfics de pastís són gràfics circulars dividits en sectors, cadascun representant una proporció del total. Són útils per mostrar dades que formen part d'un tot, com ara percentatges.</p>
+</div><h2>Conceptes Clau:</h2>
+<div class='content'><ul>
+<li><strong>Generador d'Arcs</strong>: Una funció en D3.js que crea les dades del camí SVG per als arcs.</li>
+<li><strong>Generador de Pastís</strong>: Una funció en D3.js que calcula els angles d'inici i final per a cada porció del gràfic de pastís.</li>
+<li><strong>Elements SVG</strong>: Elements de Gràfics Vectorials Escalables utilitzats per dibuixar el gràfic de pastís.</li>
+</ul>
+</div><h1>Configuració del Teu Entorn</h1>
+<div class='content'><p>Abans de començar a crear gràfics de pastís, assegura't de tenir el següent:</p>
+<ul>
+<li>Un coneixement bàsic d'HTML, CSS i JavaScript.</li>
+<li>La biblioteca D3.js inclosa en el teu projecte.</li>
+</ul>
+</div><h2>Incloent D3.js</h2>
+<div class='content'><p>Pots incloure D3.js en el teu fitxer HTML afegint la següent etiqueta de script:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PHNjcmlwdCBzcmM9Imh0dHBzOi8vZDNqcy5vcmcvZDMudjcubWluLmpzIj48L3NjcmlwdD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;script src=&quot;https://d3js.org/d3.v7.min.js&quot;&gt;&lt;/script&gt;</pre></div><div class='content'></div><h1>Creació d'un Gràfic de Pastís Bàsic</h1>
+<div class='content'></div><h2>Pas 1: Preparar les Dades</h2>
+<div class='content'><p>Primer, necessitem preparar les dades que visualitzarem. Creem un conjunt de dades senzill:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZGF0YSA9IFsxMCwgMjAsIDMwLCA0MCwgNTBdOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const data = [10, 20, 30, 40, 50];</pre></div><div class='content'></div><h2>Pas 2: Configurar el Contenidor SVG</h2>
+<div class='content'><p>A continuació, configurem un contenidor SVG on es dibuixarà el gràfic de pastís:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3Qgd2lkdGggPSA0MDA7CmNvbnN0IGhlaWdodCA9IDQwMDsKY29uc3QgcmFkaXVzID0gTWF0aC5taW4od2lkdGgsIGhlaWdodCkgLyAyOwoKY29uc3Qgc3ZnID0gZDMuc2VsZWN0KCJib2R5IikKICAuYXBwZW5kKCJzdmciKQogIC5hdHRyKCJ3aWR0aCIsIHdpZHRoKQogIC5hdHRyKCJoZWlnaHQiLCBoZWlnaHQpCiAgLmFwcGVuZCgiZyIpCiAgLmF0dHIoInRyYW5zZm9ybSIsIGB0cmFuc2xhdGUoJHt3aWR0aCAvIDJ9LCAke2hlaWdodCAvIDJ9KWApOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const width = 400;
+const height = 400;
+const radius = Math.min(width, height) / 2;
+
+const svg = d3.select(&quot;body&quot;)
+  .append(&quot;svg&quot;)
+  .attr(&quot;width&quot;, width)
+  .attr(&quot;height&quot;, height)
+  .append(&quot;g&quot;)
+  .attr(&quot;transform&quot;, `translate(${width / 2}, ${height / 2})`);</pre></div><div class='content'></div><h2>Pas 3: Crear els Generadors de Pastís i Arc</h2>
+<div class='content'><p>Necessitem crear els generadors de pastís i arc:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgcGllID0gZDMucGllKCk7Cgpjb25zdCBhcmMgPSBkMy5hcmMoKQogIC5pbm5lclJhZGl1cygwKQogIC5vdXRlclJhZGl1cyhyYWRpdXMpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const pie = d3.pie();
+
+const arc = d3.arc()
+  .innerRadius(0)
+  .outerRadius(radius);</pre></div><div class='content'></div><h2>Pas 4: Dibuixar el Gràfic de Pastís</h2>
+<div class='content'><p>Ara, utilitzem els generadors de pastís i arc per dibuixar el gràfic de pastís:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgYXJjcyA9IHN2Zy5zZWxlY3RBbGwoImFyYyIpCiAgLmRhdGEocGllKGRhdGEpKQogIC5lbnRlcigpCiAgLmFwcGVuZCgiZyIpCiAgLmF0dHIoImNsYXNzIiwgImFyYyIpOwoKYXJjcy5hcHBlbmQoInBhdGgiKQogIC5hdHRyKCJkIiwgYXJjKQogIC5hdHRyKCJmaWxsIiwgKGQsIGkpID0+IGQzLnNjaGVtZUNhdGVnb3J5MTBbaV0pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const arcs = svg.selectAll(&quot;arc&quot;)
+  .data(pie(data))
+  .enter()
+  .append(&quot;g&quot;)
+  .attr(&quot;class&quot;, &quot;arc&quot;);
+
+arcs.append(&quot;path&quot;)
+  .attr(&quot;d&quot;, arc)
+  .attr(&quot;fill&quot;, (d, i) =&gt; d3.schemeCategory10[i]);</pre></div><div class='content'></div><h1>Afegint Etiquetes al Gràfic de Pastís</h1>
+<div class='content'><p>Per fer el gràfic de pastís més informatiu, podem afegir etiquetes a cada porció:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXJjcy5hcHBlbmQoInRleHQiKQogIC5hdHRyKCJ0cmFuc2Zvcm0iLCBkID0+IGB0cmFuc2xhdGUoJHthcmMuY2VudHJvaWQoZCl9KWApCiAgLmF0dHIoInRleHQtYW5jaG9yIiwgIm1pZGRsZSIpCiAgLnRleHQoZCA9PiBkLmRhdGEpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>arcs.append(&quot;text&quot;)
+  .attr(&quot;transform&quot;, d =&gt; `translate(${arc.centroid(d)})`)
+  .attr(&quot;text-anchor&quot;, &quot;middle&quot;)
+  .text(d =&gt; d.data);</pre></div><div class='content'></div><h1>Personalitzacions Avançades</h1>
+<div class='content'></div><h2>Afegint Interactivitat</h2>
+<div class='content'><p>Podem afegir interactivitat al gràfic de pastís, com ara ressaltar una porció en passar-hi el ratolí per sobre:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXJjcy5vbigibW91c2VvdmVyIiwgZnVuY3Rpb24oZXZlbnQsIGQpIHsKICBkMy5zZWxlY3QodGhpcykuc2VsZWN0KCJwYXRoIikudHJhbnNpdGlvbigpCiAgICAuZHVyYXRpb24oMjAwKQogICAgLmF0dHIoImQiLCBkMy5hcmMoKS5pbm5lclJhZGl1cygwKS5vdXRlclJhZGl1cyhyYWRpdXMgKyAxMCkpOwp9KQoub24oIm1vdXNlb3V0IiwgZnVuY3Rpb24oZXZlbnQsIGQpIHsKICBkMy5zZWxlY3QodGhpcykuc2VsZWN0KCJwYXRoIikudHJhbnNpdGlvbigpCiAgICAuZHVyYXRpb24oMjAwKQogICAgLmF0dHIoImQiLCBhcmMpOwp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>arcs.on(&quot;mouseover&quot;, function(event, d) {
+  d3.select(this).select(&quot;path&quot;).transition()
+    .duration(200)
+    .attr(&quot;d&quot;, d3.arc().innerRadius(0).outerRadius(radius + 10));
+})
+.on(&quot;mouseout&quot;, function(event, d) {
+  d3.select(this).select(&quot;path&quot;).transition()
+    .duration(200)
+    .attr(&quot;d&quot;, arc);
+});</pre></div><div class='content'></div><h2>Utilitzant un Gràfic de Donut</h2>
+<div class='content'><p>Un gràfic de donut és una variació d'un gràfic de pastís amb un forat al centre. Podem crear un gràfic de donut establint el <code>innerRadius</code> del generador d'arc:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgYXJjID0gZDMuYXJjKCkKICAuaW5uZXJSYWRpdXMocmFkaXVzIC8gMikKICAub3V0ZXJSYWRpdXMocmFkaXVzKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const arc = d3.arc()
+  .innerRadius(radius / 2)
+  .outerRadius(radius);</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem cobert els conceptes bàsics de la creació de gràfics de pastís utilitzant D3.js, des de la configuració de l'entorn fins al dibuix del gràfic i l'afegiment d'etiquetes. També hem explorat personalitzacions avançades com la interactivitat i la creació de gràfics de donut. Els gràfics de pastís són una manera poderosa de visualitzar relacions part-tot en les teves dades, i amb D3.js, pots crear gràfics altament personalitzables i interactius.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='creating-line-charts'>&#x25C4;Creació de gràfics de línies</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Creació de Gràfics de Pastís</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='creating-scatter-plots'>Creació de diagrames de dispersió &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

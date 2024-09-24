@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuració d'un Proxy Invers</title>
+
+    <link rel="alternate" href="https://campusempresa.com/nginx/setting-up-reverse-proxy" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/nginx/setting-up-reverse-proxy" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/nginx/setting-up-reverse-proxy" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/nginx/setting-up-reverse-proxy" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/nginx/setting-up-reverse-proxy" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='http-in-nginx'>&#x25C4;Introducció a HTTP en NGINX</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Configuració d'un Proxy Invers</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='load-balancing-with-nginx'>Balanceig de Càrrega amb NGINX &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció al Proxy Invers</h1>
+<div class='content'><p>Un proxy invers és un servidor que es troba entre els dispositius clients i els servidors de backend, reenviant les sol·licituds dels clients al servidor de backend adequat i retornant la resposta del servidor al client. NGINX és una opció popular per configurar un proxy invers a causa del seu alt rendiment i flexibilitat.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Proxy Invers</strong>: Actua com a intermediari per a les sol·licituds dels clients que busquen recursos dels servidors.</li>
+<li><strong>Servidor de Backend</strong>: El servidor que processa les sol·licituds dels clients reenviades pel proxy invers.</li>
+<li><strong>Balanceig de Càrrega</strong>: Distribuir les sol·licituds dels clients entre diversos servidors de backend per assegurar que cap servidor es sobrecarregui.</li>
+<li><strong>Terminació SSL</strong>: Desxifrar el tràfic xifrat SSL al servidor proxy abans de passar-lo al servidor de backend.</li>
+</ul>
+</div><h1>Configuració Bàsica d'un Proxy Invers</h1>
+<div class='content'><p>Per configurar un proxy invers bàsic amb NGINX, segueix aquests passos:</p>
+<ol>
+<li>
+<p><strong>Instal·la NGINX</strong>:</p>
+<pre><code class="language-bash">sudo apt update
+sudo apt install nginx
+</code></pre>
+</li>
+<li>
+<p><strong>Edita el Fitxer de Configuració de NGINX</strong>:
+Obre el fitxer de configuració per defecte situat a <code>/etc/nginx/sites-available/default</code>:</p>
+<pre><code class="language-bash">sudo nano /etc/nginx/sites-available/default
+</code></pre>
+</li>
+<li>
+<p><strong>Configura el Proxy Invers</strong>:
+Afegeix la següent configuració al bloc del servidor:</p>
+<pre><code class="language-nginx">server {
+    listen 80;
+
+    server_name your_domain.com;
+
+    location / {
+        proxy_pass http://backend_server_ip:backend_server_port;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Reinicia NGINX</strong>:</p>
+<pre><code class="language-bash">sudo systemctl restart nginx
+</code></pre>
+</li>
+</ol>
+</div><h2>Explicació de la Configuració</h2>
+<div class='content'><ul>
+<li><code>listen 80;</code>: NGINX escolta al port 80 per a sol·licituds HTTP entrants.</li>
+<li><code>server_name your_domain.com;</code>: Especifica el nom de domini per al servidor.</li>
+<li><code>location / { ... }</code>: Defineix el bloc de localització per gestionar les sol·licituds.
+<ul>
+<li><code>proxy_pass http://backend_server_ip:backend_server_port;</code>: Reenvia les sol·licituds al servidor de backend especificat.</li>
+<li><code>proxy_set_header</code>: Configura diverses capçaleres per passar juntament amb la sol·licitud al servidor de backend.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Opcions de Configuració Avançades</h1>
+<h2>Balanceig de Càrrega</h2>
+<div class='content'><p>Per distribuir el tràfic entre diversos servidors de backend, utilitza la següent configuració:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aHR0cCB7CiAgICB1cHN0cmVhbSBiYWNrZW5kIHsKICAgICAgICBzZXJ2ZXIgYmFja2VuZDEuZXhhbXBsZS5jb207CiAgICAgICAgc2VydmVyIGJhY2tlbmQyLmV4YW1wbGUuY29tOwogICAgICAgIHNlcnZlciBiYWNrZW5kMy5leGFtcGxlLmNvbTsKICAgIH0KCiAgICBzZXJ2ZXIgewogICAgICAgIGxpc3RlbiA4MDsKICAgICAgICBzZXJ2ZXJfbmFtZSB5b3VyX2RvbWFpbi5jb207CgogICAgICAgIGxvY2F0aW9uIC8gewogICAgICAgICAgICBwcm94eV9wYXNzIGh0dHA6Ly9iYWNrZW5kOwogICAgICAgICAgICBwcm94eV9zZXRfaGVhZGVyIEhvc3QgJGhvc3Q7CiAgICAgICAgICAgIHByb3h5X3NldF9oZWFkZXIgWC1SZWFsLUlQICRyZW1vdGVfYWRkcjsKICAgICAgICAgICAgcHJveHlfc2V0X2hlYWRlciBYLUZvcndhcmRlZC1Gb3IgJHByb3h5X2FkZF94X2ZvcndhcmRlZF9mb3I7CiAgICAgICAgICAgIHByb3h5X3NldF9oZWFkZXIgWC1Gb3J3YXJkZWQtUHJvdG8gJHNjaGVtZTsKICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>http {
+    upstream backend {
+        server backend1.example.com;
+        server backend2.example.com;
+        server backend3.example.com;
+    }
+
+    server {
+        listen 80;
+        server_name your_domain.com;
+
+        location / {
+            proxy_pass http://backend;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+    }
+}</pre></div><div class='content'></div><h2>Terminació SSL</h2>
+<div class='content'><p>Per gestionar la terminació SSL al servidor NGINX, utilitza la següent configuració:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmVyIHsKICAgIGxpc3RlbiA0NDMgc3NsOwogICAgc2VydmVyX25hbWUgeW91cl9kb21haW4uY29tOwoKICAgIHNzbF9jZXJ0aWZpY2F0ZSAvZXRjL25naW54L3NzbC95b3VyX2RvbWFpbi5jb20uY3J0OwogICAgc3NsX2NlcnRpZmljYXRlX2tleSAvZXRjL25naW54L3NzbC95b3VyX2RvbWFpbi5jb20ua2V5OwoKICAgIGxvY2F0aW9uIC8gewogICAgICAgIHByb3h5X3Bhc3MgaHR0cDovL2JhY2tlbmRfc2VydmVyX2lwOmJhY2tlbmRfc2VydmVyX3BvcnQ7CiAgICAgICAgcHJveHlfc2V0X2hlYWRlciBIb3N0ICRob3N0OwogICAgICAgIHByb3h5X3NldF9oZWFkZXIgWC1SZWFsLUlQICRyZW1vdGVfYWRkcjsKICAgICAgICBwcm94eV9zZXRfaGVhZGVyIFgtRm9yd2FyZGVkLUZvciAkcHJveHlfYWRkX3hfZm9yd2FyZGVkX2ZvcjsKICAgICAgICBwcm94eV9zZXRfaGVhZGVyIFgtRm9yd2FyZGVkLVByb3RvICRzY2hlbWU7CiAgICB9Cn0KCnNlcnZlciB7CiAgICBsaXN0ZW4gODA7CiAgICBzZXJ2ZXJfbmFtZSB5b3VyX2RvbWFpbi5jb207CgogICAgcmV0dXJuIDMwMSBodHRwczovLyRob3N0JHJlcXVlc3RfdXJpOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>server {
+    listen 443 ssl;
+    server_name your_domain.com;
+
+    ssl_certificate /etc/nginx/ssl/your_domain.com.crt;
+    ssl_certificate_key /etc/nginx/ssl/your_domain.com.key;
+
+    location / {
+        proxy_pass http://backend_server_ip:backend_server_port;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    listen 80;
+    server_name your_domain.com;
+
+    return 301 https://$host$request_uri;
+}</pre></div><div class='content'></div><h2>Explicació de la Configuració SSL</h2>
+<div class='content'><ul>
+<li><code>listen 443 ssl;</code>: NGINX escolta al port 443 per a sol·licituds HTTPS.</li>
+<li><code>ssl_certificate</code> i <code>ssl_certificate_key</code>: Rutes als fitxers del certificat SSL i la clau.</li>
+<li>El segon bloc del servidor escolta al port 80 i redirigeix el tràfic HTTP a HTTPS.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Configurar un proxy invers amb NGINX implica configurar NGINX per reenviar les sol·licituds dels clients als servidors de backend. Aquesta configuració es pot millorar amb balanceig de càrrega i terminació SSL per millorar el rendiment i la seguretat. Comprenent i aplicant aquestes configuracions, pots gestionar efectivament el tràfic i assegurar un entorn robust de servidor web.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='http-in-nginx'>&#x25C4;Introducció a HTTP en NGINX</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Configuració d'un Proxy Invers</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='load-balancing-with-nginx'>Balanceig de Càrrega amb NGINX &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

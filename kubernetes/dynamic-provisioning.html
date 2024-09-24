@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provisió Dinàmica a Kubernetes</title>
+
+    <link rel="alternate" href="https://campusempresa.com/kubernetes/dynamic-provisioning" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/kubernetes/dynamic-provisioning" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/kubernetes/dynamic-provisioning" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/kubernetes/dynamic-provisioning" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/kubernetes/dynamic-provisioning" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='storage-classes'>&#x25C4;Classes d'Emmagatzematge</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Provisió Dinàmica a Kubernetes</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='statefulsets'>StatefulSets &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La provisió dinàmica a Kubernetes permet la creació automàtica de recursos d'emmagatzematge quan les aplicacions els necessiten. Aquesta característica simplifica la gestió de l'emmagatzematge i millora la flexibilitat i escalabilitat dels clústers de Kubernetes.</p>
+</div><h1>Introducció a la Provisió Dinàmica</h1>
+<div class='content'><p>La provisió dinàmica automatitza el procés de creació i gestió de volums d'emmagatzematge, que és essencial per a aplicacions amb estat. Aquesta secció cobreix els conceptes bàsics i la importància de la provisió dinàmica a Kubernetes.</p>
+<ul>
+<li><strong>Definició</strong>: La provisió dinàmica és el procés pel qual Kubernetes provisiona automàticament recursos d'emmagatzematge quan es crea un PersistentVolumeClaim (PVC).</li>
+<li><strong>Importància</strong>:
+<ul>
+<li>Simplifica la gestió de l'emmagatzematge.</li>
+<li>Millora l'escalabilitat i la flexibilitat.</li>
+<li>Redueix la intervenció manual i els possibles errors.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><p>Entendre els conceptes clau és crucial per dominar la provisió dinàmica a Kubernetes.</p>
+<ul>
+<li><strong>PersistentVolume (PV)</strong>: Una peça d'emmagatzematge al clúster que ha estat provisionada per un administrador o provisionada dinàmicament utilitzant StorageClasses.</li>
+<li><strong>PersistentVolumeClaim (PVC)</strong>: Una sol·licitud d'emmagatzematge per part d'un usuari. És similar a un pod en el sentit que els pods consumeixen recursos de nodes i els PVC consumeixen recursos de PV.</li>
+<li><strong>StorageClass</strong>: Defineix el tipus d'emmagatzematge i la configuració per a la provisió dinàmica. S'utilitza per especificar el provisioner, els paràmetres i la política de recuperació.</li>
+</ul>
+</div><h1>Com Funciona la Provisió Dinàmica</h1>
+<div class='content'><p>La provisió dinàmica implica diversos components i passos. Aquesta secció explica el flux de treball i els components implicats.</p>
+<ol>
+<li><strong>Crear un StorageClass</strong>: Definir el tipus d'emmagatzematge i la configuració.</li>
+<li><strong>Crear un PersistentVolumeClaim (PVC)</strong>: Sol·licitar emmagatzematge utilitzant el StorageClass.</li>
+<li><strong>Provisió</strong>: Kubernetes provisiona automàticament un PersistentVolume (PV) que coincideix amb la sol·licitud del PVC.</li>
+<li><strong>Enllaç</strong>: El PVC s'enllaça amb el PV recentment creat.</li>
+</ol>
+</div><h2>Exemple de Flux de Treball</h2>
+<div class='content'><p>Vegem un exemple per il·lustrar el procés de provisió dinàmica.</p>
+<ol>
+<li>
+<p><strong>Crear un StorageClass</strong>:</p>
+<pre><code class="language-yaml">apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+</code></pre>
+</li>
+<li>
+<p><strong>Crear un PersistentVolumeClaim (PVC)</strong>:</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mypvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: fast
+</code></pre>
+</li>
+<li>
+<p><strong>Provisió i Enllaç</strong>:</p>
+<ul>
+<li>Kubernetes detecta el PVC i utilitza el StorageClass especificat per provisionar un nou PV.</li>
+<li>El PV es crea i s'enllaça automàticament amb el PVC.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Configuració Avançada</h1>
+<div class='content'><p>Per a usuaris avançats, la provisió dinàmica es pot personalitzar encara més.</p>
+<ul>
+<li><strong>Paràmetres Personalitzats</strong>: Els StorageClasses poden incloure paràmetres personalitzats específics per al backend d'emmagatzematge.</li>
+<li><strong>Política de Recuperació</strong>: Defineix què passa amb el PV quan el PVC es suprimeix. Les polítiques comunes són <code>Retain</code>, <code>Recycle</code> i <code>Delete</code>.</li>
+<li><strong>Mode d'Enllaç</strong>: Controla quan hauria de produir-se l'enllaç de volums i la provisió dinàmica. Les opcions inclouen <code>Immediate</code> i <code>WaitForFirstConsumer</code>.</li>
+</ul>
+</div><h2>Exemple amb Paràmetres Personalitzats</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogc3RvcmFnZS5rOHMuaW8vdjEKa2luZDogU3RvcmFnZUNsYXNzCm1ldGFkYXRhOgogIG5hbWU6IGN1c3RvbS1mYXN0CnByb3Zpc2lvbmVyOiBrdWJlcm5ldGVzLmlvL2F3cy1lYnMKcGFyYW1ldGVyczoKICB0eXBlOiBpbzEKICBpb3BzUGVyR0I6ICIxMCIKcmVjbGFpbVBvbGljeTogUmV0YWluCnZvbHVtZUJpbmRpbmdNb2RlOiBXYWl0Rm9yRmlyc3RDb25zdW1lcg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: custom-fast
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: io1
+  iopsPerGB: &quot;10&quot;
+reclaimPolicy: Retain
+volumeBindingMode: WaitForFirstConsumer</pre></div><div class='content'></div><h1>Resolució de Problemes</h1>
+<div class='content'><p>Problemes comuns i passos per a la resolució de problemes de la provisió dinàmica.</p>
+<ul>
+<li><strong>PVC Pendent</strong>: Assegureu-vos que el StorageClass existeix i està configurat correctament.</li>
+<li><strong>PV No Enllaçat</strong>: Comproveu si el backend d'emmagatzematge té recursos suficients.</li>
+<li><strong>Errors de Provisió</strong>: Reviseu els esdeveniments i registres de Kubernetes per a errors relacionats amb el provisioner d'emmagatzematge.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La provisió dinàmica a Kubernetes automatitza la creació i gestió de recursos d'emmagatzematge, facilitant el desplegament i escalabilitat d'aplicacions amb estat. Entenent els conceptes clau, el flux de treball i les configuracions avançades, podeu gestionar eficaçment l'emmagatzematge als vostres clústers de Kubernetes.</p>
+<ul>
+<li><strong>Punts Clau</strong>:
+<ul>
+<li>La provisió dinàmica simplifica la gestió de l'emmagatzematge.</li>
+<li>Els StorageClasses juguen un paper crucial en la definició de les configuracions d'emmagatzematge.</li>
+<li>Les configuracions avançades i la resolució de problemes són essencials per optimitzar i mantenir la provisió dinàmica.</li>
+</ul>
+</li>
+</ul>
+<p>Dominant la provisió dinàmica, podeu assegurar-vos que les vostres aplicacions de Kubernetes tinguin els recursos d'emmagatzematge necessaris per operar de manera eficient i fiable.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='storage-classes'>&#x25C4;Classes d'Emmagatzematge</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Provisió Dinàmica a Kubernetes</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='statefulsets'>StatefulSets &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

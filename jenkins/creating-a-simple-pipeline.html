@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creació d'un Pipeline Simple</title>
+
+    <link rel="alternate" href="https://campusempresa.com/jenkins/creating-a-simple-pipeline" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/jenkins/creating-a-simple-pipeline" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/jenkins/creating-a-simple-pipeline" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/jenkins/creating-a-simple-pipeline" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/jenkins/creating-a-simple-pipeline" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='declarative-vs-scripted-pipelines'>&#x25C4;Pipelines declaratives vs. pipelines escrites</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Creació d'un Pipeline Simple</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='pipeline-syntax-and-structure'>Sintaxi i estructura de la pipeline &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquesta secció, cobrirem els conceptes bàsics de la creació d'un pipeline simple a Jenkins. Un pipeline automatitza el procés de construir, provar i desplegar codi, fent-lo una eina essencial per a la integració contínua i el lliurament continu (CI/CD).</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Pipeline</strong>: Una sèrie de passos automatitzats per construir, provar i desplegar codi.</li>
+<li><strong>Jenkinsfile</strong>: Un fitxer de text que conté la definició d'un Pipeline de Jenkins i es guarda en el control de versions.</li>
+<li><strong>Etapes</strong>: Diferents fases del pipeline, com ara construir, provar i desplegar.</li>
+<li><strong>Passos</strong>: Tasques individuals dins d'una etapa.</li>
+</ul>
+</div><h1>Configuració de Jenkins</h1>
+<div class='content'><p>Abans de crear un pipeline, assegura't de tenir Jenkins instal·lat i en funcionament. Pots descarregar Jenkins des del <a href="https://www.jenkins.io/download/">lloc web oficial</a>.</p>
+</div><h1>Creació del Teu Primer Pipeline</h1>
+<h2>Pas 1: Crear una Nova Feina de Pipeline</h2>
+<div class='content'><ol>
+<li>Obre Jenkins al teu navegador web.</li>
+<li>Fes clic a <code>New Item</code> al menú de l'esquerra.</li>
+<li>Introdueix un nom per al teu pipeline i selecciona <code>Pipeline</code> com a tipus de projecte.</li>
+<li>Fes clic a <code>OK</code>.</li>
+</ol>
+</div><h2>Pas 2: Definir el Pipeline en un Jenkinsfile</h2>
+<div class='content'><ol>
+<li>A la pàgina de configuració del pipeline, desplaça't cap avall fins a la secció <code>Pipeline</code>.</li>
+<li>Selecciona <code>Pipeline script</code> del desplegable <code>Definition</code>.</li>
+<li>Introdueix el següent script a l'àrea de script:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwZWxpbmUgewogICAgYWdlbnQgYW55CgogICAgc3RhZ2VzIHsKICAgICAgICBzdGFnZSgnQnVpbGQnKSB7CiAgICAgICAgICAgIHN0ZXBzIHsKICAgICAgICAgICAgICAgIGVjaG8gJ0J1aWxkaW5nLi4uJwogICAgICAgICAgICAgICAgLy8gQWZlZ2VpeCBwYXNzb3MgZGUgY29uc3RydWNjacOzIGFxdcOtCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICAgICAgc3RhZ2UoJ1Rlc3QnKSB7CiAgICAgICAgICAgIHN0ZXBzIHsKICAgICAgICAgICAgICAgIGVjaG8gJ1Rlc3RpbmcuLi4nCiAgICAgICAgICAgICAgICAvLyBBZmVnZWl4IHBhc3NvcyBkZSBwcm92YSBhcXXDrQogICAgICAgICAgICB9CiAgICAgICAgfQogICAgICAgIHN0YWdlKCdEZXBsb3knKSB7CiAgICAgICAgICAgIHN0ZXBzIHsKICAgICAgICAgICAgICAgIGVjaG8gJ0RlcGxveWluZy4uLicKICAgICAgICAgICAgICAgIC8vIEFmZWdlaXggcGFzc29zIGRlIGRlc3BsZWdhbWVudCBhcXXDrQogICAgICAgICAgICB9CiAgICAgICAgfQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                // Afegeix passos de construcci&oacute; aqu&iacute;
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                // Afegeix passos de prova aqu&iacute;
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+                // Afegeix passos de desplegament aqu&iacute;
+            }
+        }
+    }
+}</pre></div><div class='content'></div><h2>Explicació de l'Script</h2>
+<div class='content'><ul>
+<li><code>pipeline { ... }</code>: Defineix l'inici i el final del pipeline.</li>
+<li><code>agent any</code>: Especifica que el pipeline pot executar-se en qualsevol agent disponible.</li>
+<li><code>stages { ... }</code>: Conté totes les etapes del pipeline.</li>
+<li><code>stage('Nom de l'Etapa') { ... }</code>: Defineix una etapa amb un nom específic.</li>
+<li><code>steps { ... }</code>: Conté els passos a executar dins d'una etapa.</li>
+<li><code>echo 'Missatge'</code>: Imprimeix un missatge a la sortida de la consola.</li>
+</ul>
+</div><h2>Pas 3: Desar i Executar el Pipeline</h2>
+<div class='content'><ol>
+<li>Fes clic a <code>Save</code> per desar la configuració del teu pipeline.</li>
+<li>Fes clic a <code>Build Now</code> al menú de l'esquerra per executar el pipeline.</li>
+<li>Monitoritza el progrés a <code>Build History</code> i <code>Console Output</code>.</li>
+</ol>
+</div><h1>Afegint Més Funcionalitat</h1>
+<h2>Utilitzant el Control de Versions</h2>
+<div class='content'><p>Per fer el teu pipeline més robust, guarda el teu Jenkinsfile en el control de versions (per exemple, GitHub). Modifica la configuració del pipeline per utilitzar l'opció <code>Pipeline script from SCM</code> i especifica l'URL del repositori i la branca.</p>
+</div><h2>Exemple de Jenkinsfile des de GitHub</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwZWxpbmUgewogICAgYWdlbnQgYW55CgogICAgc3RhZ2VzIHsKICAgICAgICBzdGFnZSgnQ2hlY2tvdXQnKSB7CiAgICAgICAgICAgIHN0ZXBzIHsKICAgICAgICAgICAgICAgIGdpdCAnaHR0cHM6Ly9naXRodWIuY29tL3lvdXItcmVwby95b3VyLXByb2plY3QuZ2l0JwogICAgICAgICAgICB9CiAgICAgICAgfQogICAgICAgIHN0YWdlKCdCdWlsZCcpIHsKICAgICAgICAgICAgc3RlcHMgewogICAgICAgICAgICAgICAgZWNobyAnQnVpbGRpbmcuLi4nCiAgICAgICAgICAgICAgICAvLyBBZmVnZWl4IHBhc3NvcyBkZSBjb25zdHJ1Y2Npw7MgYXF1w60KICAgICAgICAgICAgfQogICAgICAgIH0KICAgICAgICBzdGFnZSgnVGVzdCcpIHsKICAgICAgICAgICAgc3RlcHMgewogICAgICAgICAgICAgICAgZWNobyAnVGVzdGluZy4uLicKICAgICAgICAgICAgICAgIC8vIEFmZWdlaXggcGFzc29zIGRlIHByb3ZhIGFxdcOtCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICAgICAgc3RhZ2UoJ0RlcGxveScpIHsKICAgICAgICAgICAgc3RlcHMgewogICAgICAgICAgICAgICAgZWNobyAnRGVwbG95aW5nLi4uJwogICAgICAgICAgICAgICAgLy8gQWZlZ2VpeCBwYXNzb3MgZGUgZGVzcGxlZ2FtZW50IGFxdcOtCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/your-repo/your-project.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                // Afegeix passos de construcci&oacute; aqu&iacute;
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                // Afegeix passos de prova aqu&iacute;
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+                // Afegeix passos de desplegament aqu&iacute;
+            }
+        }
+    }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Crear un pipeline simple a Jenkins implica definir etapes i passos en un Jenkinsfile. Aquest fitxer es pot guardar en el control de versions per a una millor gestió i versionat. Seguint els passos descrits en aquesta secció, pots automatitzar els teus processos de construcció, prova i desplegament, fent el teu flux de treball de desenvolupament més eficient i fiable.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='declarative-vs-scripted-pipelines'>&#x25C4;Pipelines declaratives vs. pipelines escrites</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Creació d'un Pipeline Simple</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='pipeline-syntax-and-structure'>Sintaxi i estructura de la pipeline &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

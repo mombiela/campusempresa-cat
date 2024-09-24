@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprendre el Rendiment de Spark</title>
+
+    <link rel="alternate" href="https://campusempresa.com/apachespark/understanding-spark-performance" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/apachespark/understanding-spark-performance" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/apachespark/understanding-spark-performance" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/apachespark/understanding-spark-performance" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/apachespark/understanding-spark-performance" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='use-cases-of-graphx'>&#x25C4;Casos d'Ús de GraphX</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Comprendre el Rendiment de Spark</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='memory-management'>Gestió de Memòria &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Apache Spark és un potent sistema de computació distribuïda de codi obert que proporciona una interfície per programar clústers sencers amb paral·lelisme de dades implícit i tolerància a fallades. Comprendre el rendiment de Spark és crucial per optimitzar les teves aplicacions i treure el màxim profit dels teus recursos.</p>
+</div><h1>Conceptes Clau en el Rendiment de Spark</h1>
+<div class='content'><ul>
+<li><strong>Gestor de Clúster</strong>: El component que gestiona els recursos a través del clúster. Els gestors de clúster comuns inclouen YARN, Mesos i Kubernetes.</li>
+<li><strong>Executor</strong>: Un agent distribuït responsable d'executar tasques. Cada executor s'executa en un node de treball.</li>
+<li><strong>Tasca</strong>: La unitat de treball més petita en Spark, executada per un executor.</li>
+<li><strong>Treball</strong>: Un conjunt de tasques que es desencadenen per una acció (per exemple, <code>count()</code>, <code>collect()</code>).</li>
+<li><strong>Etapa</strong>: Un conjunt de tasques que es poden executar en paral·lel, separades per límits de shuffle.</li>
+<li><strong>Shuffle</strong>: El procés de redistribuir dades a través del clúster, que pot ser un coll d'ampolla de rendiment.</li>
+</ul>
+</div><h1>Optimitzant el Rendiment de Spark</h1>
+<div class='content'></div><h2>Serialització de Dades</h2>
+<div class='content'><p>La serialització és el procés de convertir un objecte en un format que es pugui emmagatzemar o transmetre fàcilment. Spark admet dues biblioteques de serialització:</p>
+<ul>
+<li><strong>Serialització Java</strong>: Per defecte, però lenta i ineficient.</li>
+<li><strong>Serialització Kryo</strong>: Més ràpida i eficient, però requereix el registre explícit de classes.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5hcGFjaGUuc3BhcmsuU3BhcmtDb25mCmltcG9ydCBvcmcuYXBhY2hlLnNwYXJrLnNlcmlhbGl6ZXIuS3J5b1NlcmlhbGl6ZXIKCnZhbCBjb25mID0gbmV3IFNwYXJrQ29uZigpCmNvbmYuc2V0KCJzcGFyay5zZXJpYWxpemVyIiwgY2xhc3NPZltLcnlvU2VyaWFsaXplcl0uZ2V0TmFtZSkKY29uZi5yZWdpc3RlcktyeW9DbGFzc2VzKEFycmF5KGNsYXNzT2ZbWW91ckNsYXNzXSkp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.apache.spark.SparkConf
+import org.apache.spark.serializer.KryoSerializer
+
+val conf = new SparkConf()
+conf.set(&quot;spark.serializer&quot;, classOf[KryoSerializer].getName)
+conf.registerKryoClasses(Array(classOf[YourClass]))</pre></div><div class='content'></div><h2>Gestió de Memòria</h2>
+<div class='content'><p>Una gestió eficient de la memòria és clau per al rendiment de Spark. Spark divideix la memòria en dues regions principals:</p>
+<ul>
+<li><strong>Memòria d'Execució</strong>: Utilitzada per a càlculs en shuffles, joins, sorts i agregacions.</li>
+<li><strong>Memòria d'Emmagatzematge</strong>: Utilitzada per a la memòria cau i la propagació de dades internes a través del clúster.</li>
+</ul>
+<h4>Ajustant els Paràmetres de Memòria</h4>
+<ul>
+<li><code>spark.executor.memory</code>: Memòria total disponible per a l'executor.</li>
+<li><code>spark.memory.fraction</code>: Fracció de l'espai heap utilitzat per a l'execució i l'emmagatzematge.</li>
+<li><code>spark.memory.storageFraction</code>: Fracció de <code>spark.memory.fraction</code> utilitzada per a l'emmagatzematge.</li>
+</ul>
+</div><h2>Memòria Cau i Persistència</h2>
+<div class='content'><p>Emmagatzemar resultats intermedis en memòria cau pot accelerar significativament els algorismes iteratius. Spark proporciona diversos nivells d'emmagatzematge:</p>
+<ul>
+<li><code>MEMORY_ONLY</code>: Emmagatzema RDD com a objectes Java deserialitzats en memòria.</li>
+<li><code>MEMORY_AND_DISK</code>: Emmagatzema RDD com a objectes Java deserialitzats en memòria i es desborda a disc quan la memòria està plena.</li>
+<li><code>DISK_ONLY</code>: Emmagatzema RDD només en disc.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIHJkZCA9IHNjLnRleHRGaWxlKCJoZGZzOi8vcGF0aC90by9maWxlIikKdmFsIGNhY2hlZFJkZCA9IHJkZC5jYWNoZSgp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val rdd = sc.textFile(&quot;hdfs://path/to/file&quot;)
+val cachedRdd = rdd.cache()</pre></div><div class='content'></div><h2>Particionament de Dades</h2>
+<div class='content'><p>Un particionament adequat de les dades pot reduir el shuffle i millorar el rendiment. Utilitza <code>repartition</code> i <code>coalesce</code> per controlar el nombre de particions.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIHJkZCA9IHNjLnRleHRGaWxlKCJoZGZzOi8vcGF0aC90by9maWxlIikKdmFsIHJlcGFydGl0aW9uZWRSZGQgPSByZGQucmVwYXJ0aXRpb24oMTAp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val rdd = sc.textFile(&quot;hdfs://path/to/file&quot;)
+val repartitionedRdd = rdd.repartition(10)</pre></div><div class='content'></div><h2>Variables de Difusió</h2>
+<div class='content'><p>Les variables de difusió et permeten emmagatzemar una variable de només lectura en cada màquina en lloc d'enviar-ne una còpia amb les tasques.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIGJyb2FkY2FzdFZhciA9IHNjLmJyb2FkY2FzdChBcnJheSgxLCAyLCAzKSkKdmFsIHJkZCA9IHNjLnBhcmFsbGVsaXplKDEgdG8gMTApCnZhbCByZXN1bHQgPSByZGQubWFwKHggPT4geCAqIGJyb2FkY2FzdFZhci52YWx1ZSgwKSkuY29sbGVjdCgp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val broadcastVar = sc.broadcast(Array(1, 2, 3))
+val rdd = sc.parallelize(1 to 10)
+val result = rdd.map(x =&gt; x * broadcastVar.value(0)).collect()</pre></div><div class='content'></div><h1>Monitorització i Depuració</h1>
+<div class='content'></div><h2>Interfície d'Usuari de Spark</h2>
+<div class='content'><p>La interfície d'usuari de Spark proporciona una interfície web per monitoritzar i inspeccionar l'execució de les teves aplicacions Spark. Les pestanyes clau inclouen:</p>
+<ul>
+<li><strong>Treballs</strong>: Mostra una llista de treballs i les seves etapes.</li>
+<li><strong>Etapes</strong>: Mostra detalls sobre cada etapa, incloent-hi tasques i mètriques de lectura/escriptura de shuffle.</li>
+<li><strong>Emmagatzematge</strong>: Mostra informació sobre els RDD que estan en memòria cau.</li>
+<li><strong>Entorn</strong>: Mostra variables d'entorn, propietats de Spark i entrades del classpath.</li>
+<li><strong>Executors</strong>: Proporciona informació sobre l'ús de memòria i CPU dels executors.</li>
+</ul>
+</div><h2>Registres i Mètriques</h2>
+<div class='content'><ul>
+<li><strong>Registres del Driver</strong>: Contenen informació sobre el procés del driver.</li>
+<li><strong>Registres dels Executors</strong>: Contenen informació sobre els processos dels executors.</li>
+<li><strong>Mètriques</strong>: Spark proporciona un sistema de mètriques per monitoritzar diversos aspectes del clúster.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Comprendre el rendiment de Spark implica una combinació d'optimització de la serialització de dades, gestió de memòria, estratègies de memòria cau, particionament de dades i ús de variables de difusió. Les eines de monitorització com la interfície d'usuari de Spark i els registres són inavaluables per diagnosticar problemes de rendiment. Dominant aquests conceptes, pots millorar significativament l'eficiència i la velocitat de les teves aplicacions Spark.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='use-cases-of-graphx'>&#x25C4;Casos d'Ús de GraphX</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Comprendre el Rendiment de Spark</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='memory-management'>Gestió de Memòria &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

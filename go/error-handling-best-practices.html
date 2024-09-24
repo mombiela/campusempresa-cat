@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Millors Pràctiques per al Maneig d'Errors</title>
+
+    <link rel="alternate" href="https://campusempresa.com/go/error-handling-best-practices" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/go/error-handling-best-practices" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/go/error-handling-best-practices" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/go/error-handling-best-practices" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/go/error-handling-best-practices" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='code-organization'>&#x25C4;Organització del Codi</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Millors Pràctiques per al Maneig d'Errors</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='common-design-patterns'>Patrons de Disseny Comuns &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>El maneig d'errors és un aspecte crític de la programació, i Go proporciona mecanismes robustos per manejar errors de manera efectiva. Aquest tema cobrirà les millors pràctiques per al maneig d'errors en Go, des de nivells principiants fins a avançats.</p>
+</div><h1>Introducció al Maneig d'Errors en Go</h1>
+<div class='content'><ul>
+<li><strong>Errors com a Valors</strong>: En Go, els errors es tracten com a valors. El tipus <code>error</code> és una interfície que representa una condició d'error, amb el mètode <code>Error() string</code>.</li>
+<li><strong>Retornant Errors</strong>: Les funcions en Go sovint retornen un error com a últim valor de retorn.</li>
+</ul>
+</div><h2>Maneig Bàsic d'Errors</h2>
+<div class='content'><p>Comencem amb un exemple senzill de maneig d'errors en Go:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImVycm9ycyIKICAgICJmbXQiCikKCmZ1bmMgZGl2aWRlKGEsIGIgZmxvYXQ2NCkgKGZsb2F0NjQsIGVycm9yKSB7CiAgICBpZiBiID09IDAgewogICAgICAgIHJldHVybiAwLCBlcnJvcnMuTmV3KCJjYW5ub3QgZGl2aWRlIGJ5IHplcm8iKQogICAgfQogICAgcmV0dXJuIGEgLyBiLCBuaWwKfQoKZnVuYyBtYWluKCkgewogICAgcmVzdWx0LCBlcnIgOj0gZGl2aWRlKDQsIDApCiAgICBpZiBlcnIgIT0gbmlsIHsKICAgICAgICBmbXQuUHJpbnRsbigiRXJyb3I6IiwgZXJyKQogICAgfSBlbHNlIHsKICAgICAgICBmbXQuUHJpbnRsbigiUmVzdWx0OiIsIHJlc3VsdCkKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;errors&quot;
+    &quot;fmt&quot;
+)
+
+func divide(a, b float64) (float64, error) {
+    if b == 0 {
+        return 0, errors.New(&quot;cannot divide by zero&quot;)
+    }
+    return a / b, nil
+}
+
+func main() {
+    result, err := divide(4, 0)
+    if err != nil {
+        fmt.Println(&quot;Error:&quot;, err)
+    } else {
+        fmt.Println(&quot;Result:&quot;, result)
+    }
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li>La funció <code>divide</code> comprova si el divisor <code>b</code> és zero i retorna un error si és cert.</li>
+<li>En la funció <code>main</code>, l'error es comprova i es maneja adequadament.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Millors Pràctiques per al Maneig d'Errors</h1>
+<div class='content'></div><h2>1. Comprova els Errors Immediatament</h2>
+<div class='content'><ul>
+<li>Sempre comprova i maneja els errors immediatament després de la crida a la funció que els retorna.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZmlsZSwgZXJyIDo9IG9zLk9wZW4oImZpbGUudHh0IikKaWYgZXJyICE9IG5pbCB7CiAgICBsb2cuRmF0YWwoZXJyKQp9CmRlZmVyIGZpbGUuQ2xvc2UoKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>file, err := os.Open(&quot;file.txt&quot;)
+if err != nil {
+    log.Fatal(err)
+}
+defer file.Close()</pre></div><div class='content'></div><h2>2. Utilitza Tipus d'Errors Personalitzats</h2>
+<div class='content'><ul>
+<li>Crea tipus d'errors personalitzats per proporcionar més context sobre l'error.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImZtdCIKKQoKdHlwZSBEaXZpZGVFcnJvciBzdHJ1Y3QgewogICAgRGl2aWRlbmQgZmxvYXQ2NAogICAgRGl2aXNvciAgZmxvYXQ2NAp9CgpmdW5jIChlICpEaXZpZGVFcnJvcikgRXJyb3IoKSBzdHJpbmcgewogICAgcmV0dXJuIGZtdC5TcHJpbnRmKCJjYW5ub3QgZGl2aWRlICV2IGJ5ICV2IiwgZS5EaXZpZGVuZCwgZS5EaXZpc29yKQp9CgpmdW5jIGRpdmlkZShhLCBiIGZsb2F0NjQpIChmbG9hdDY0LCBlcnJvcikgewogICAgaWYgYiA9PSAwIHsKICAgICAgICByZXR1cm4gMCwgJkRpdmlkZUVycm9ye2EsIGJ9CiAgICB9CiAgICByZXR1cm4gYSAvIGIsIG5pbAp9CgpmdW5jIG1haW4oKSB7CiAgICByZXN1bHQsIGVyciA6PSBkaXZpZGUoNCwgMCkKICAgIGlmIGVyciAhPSBuaWwgewogICAgICAgIGZtdC5QcmludGxuKCJFcnJvcjoiLCBlcnIpCiAgICB9IGVsc2UgewogICAgICAgIGZtdC5QcmludGxuKCJSZXN1bHQ6IiwgcmVzdWx0KQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;fmt&quot;
+)
+
+type DivideError struct {
+    Dividend float64
+    Divisor  float64
+}
+
+func (e *DivideError) Error() string {
+    return fmt.Sprintf(&quot;cannot divide %v by %v&quot;, e.Dividend, e.Divisor)
+}
+
+func divide(a, b float64) (float64, error) {
+    if b == 0 {
+        return 0, &amp;DivideError{a, b}
+    }
+    return a / b, nil
+}
+
+func main() {
+    result, err := divide(4, 0)
+    if err != nil {
+        fmt.Println(&quot;Error:&quot;, err)
+    } else {
+        fmt.Println(&quot;Result:&quot;, result)
+    }
+}</pre></div><div class='content'></div><h2>3. Envolta Errors amb Context Addicional</h2>
+<div class='content'><ul>
+<li>Utilitza la funció <code>fmt.Errorf</code> per envoltar errors amb context addicional.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImZtdCIKICAgICJvcyIKKQoKZnVuYyByZWFkRmlsZShmaWxlbmFtZSBzdHJpbmcpIChbXWJ5dGUsIGVycm9yKSB7CiAgICBmaWxlLCBlcnIgOj0gb3MuT3BlbihmaWxlbmFtZSkKICAgIGlmIGVyciAhPSBuaWwgewogICAgICAgIHJldHVybiBuaWwsIGZtdC5FcnJvcmYoImZhaWxlZCB0byBvcGVuIGZpbGUgJXM6ICV3IiwgZmlsZW5hbWUsIGVycikKICAgIH0KICAgIGRlZmVyIGZpbGUuQ2xvc2UoKQoKICAgIGRhdGEgOj0gbWFrZShbXWJ5dGUsIDEwMCkKICAgIF8sIGVyciA9IGZpbGUuUmVhZChkYXRhKQogICAgaWYgZXJyICE9IG5pbCB7CiAgICAgICAgcmV0dXJuIG5pbCwgZm10LkVycm9yZigiZmFpbGVkIHRvIHJlYWQgZmlsZSAlczogJXciLCBmaWxlbmFtZSwgZXJyKQogICAgfQoKICAgIHJldHVybiBkYXRhLCBuaWwKfQoKZnVuYyBtYWluKCkgewogICAgXywgZXJyIDo9IHJlYWRGaWxlKCJub25leGlzdGVudC50eHQiKQogICAgaWYgZXJyICE9IG5pbCB7CiAgICAgICAgZm10LlByaW50bG4oIkVycm9yOiIsIGVycikKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;fmt&quot;
+    &quot;os&quot;
+)
+
+func readFile(filename string) ([]byte, error) {
+    file, err := os.Open(filename)
+    if err != nil {
+        return nil, fmt.Errorf(&quot;failed to open file %s: %w&quot;, filename, err)
+    }
+    defer file.Close()
+
+    data := make([]byte, 100)
+    _, err = file.Read(data)
+    if err != nil {
+        return nil, fmt.Errorf(&quot;failed to read file %s: %w&quot;, filename, err)
+    }
+
+    return data, nil
+}
+
+func main() {
+    _, err := readFile(&quot;nonexistent.txt&quot;)
+    if err != nil {
+        fmt.Println(&quot;Error:&quot;, err)
+    }
+}</pre></div><div class='content'></div><h2>4. Utilitza Errors Sentinel</h2>
+<div class='content'><ul>
+<li>Defineix i utilitza errors sentinel per a condicions d'error comunes.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImVycm9ycyIKICAgICJmbXQiCikKCnZhciBFcnJEaXZpZGVCeVplcm8gPSBlcnJvcnMuTmV3KCJjYW5ub3QgZGl2aWRlIGJ5IHplcm8iKQoKZnVuYyBkaXZpZGUoYSwgYiBmbG9hdDY0KSAoZmxvYXQ2NCwgZXJyb3IpIHsKICAgIGlmIGIgPT0gMCB7CiAgICAgICAgcmV0dXJuIDAsIEVyckRpdmlkZUJ5WmVybwogICAgfQogICAgcmV0dXJuIGEgLyBiLCBuaWwKfQoKZnVuYyBtYWluKCkgewogICAgcmVzdWx0LCBlcnIgOj0gZGl2aWRlKDQsIDApCiAgICBpZiBlcnJvcnMuSXMoZXJyLCBFcnJEaXZpZGVCeVplcm8pIHsKICAgICAgICBmbXQuUHJpbnRsbigiRXJyb3I6IiwgZXJyKQogICAgfSBlbHNlIHsKICAgICAgICBmbXQuUHJpbnRsbigiUmVzdWx0OiIsIHJlc3VsdCkKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;errors&quot;
+    &quot;fmt&quot;
+)
+
+var ErrDivideByZero = errors.New(&quot;cannot divide by zero&quot;)
+
+func divide(a, b float64) (float64, error) {
+    if b == 0 {
+        return 0, ErrDivideByZero
+    }
+    return a / b, nil
+}
+
+func main() {
+    result, err := divide(4, 0)
+    if errors.Is(err, ErrDivideByZero) {
+        fmt.Println(&quot;Error:&quot;, err)
+    } else {
+        fmt.Println(&quot;Result:&quot;, result)
+    }
+}</pre></div><div class='content'></div><h2>5. Utilitza `errors.Is` i `errors.As`</h2>
+<div class='content'><ul>
+<li>Utilitza <code>errors.Is</code> per comprovar errors específics.</li>
+<li>Utilitza <code>errors.As</code> per comprovar i extreure tipus d'errors específics.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImVycm9ycyIKICAgICJmbXQiCikKCnR5cGUgRGl2aWRlRXJyb3Igc3RydWN0IHsKICAgIERpdmlkZW5kIGZsb2F0NjQKICAgIERpdmlzb3IgIGZsb2F0NjQKfQoKZnVuYyAoZSAqRGl2aWRlRXJyb3IpIEVycm9yKCkgc3RyaW5nIHsKICAgIHJldHVybiBmbXQuU3ByaW50ZigiY2Fubm90IGRpdmlkZSAldiBieSAldiIsIGUuRGl2aWRlbmQsIGUuRGl2aXNvcikKfQoKZnVuYyBkaXZpZGUoYSwgYiBmbG9hdDY0KSAoZmxvYXQ2NCwgZXJyb3IpIHsKICAgIGlmIGIgPT0gMCB7CiAgICAgICAgcmV0dXJuIDAsICZEaXZpZGVFcnJvcnthLCBifQogICAgfQogICAgcmV0dXJuIGEgLyBiLCBuaWwKfQoKZnVuYyBtYWluKCkgewogICAgXywgZXJyIDo9IGRpdmlkZSg0LCAwKQogICAgdmFyIGRpdkVyciAqRGl2aWRlRXJyb3IKICAgIGlmIGVycm9ycy5BcyhlcnIsICZkaXZFcnIpIHsKICAgICAgICBmbXQuUHJpbnRsbigiRGl2aWRlIGVycm9yOiIsIGRpdkVycikKICAgIH0gZWxzZSBpZiBlcnIgIT0gbmlsIHsKICAgICAgICBmbXQuUHJpbnRsbigiRXJyb3I6IiwgZXJyKQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;errors&quot;
+    &quot;fmt&quot;
+)
+
+type DivideError struct {
+    Dividend float64
+    Divisor  float64
+}
+
+func (e *DivideError) Error() string {
+    return fmt.Sprintf(&quot;cannot divide %v by %v&quot;, e.Dividend, e.Divisor)
+}
+
+func divide(a, b float64) (float64, error) {
+    if b == 0 {
+        return 0, &amp;DivideError{a, b}
+    }
+    return a / b, nil
+}
+
+func main() {
+    _, err := divide(4, 0)
+    var divErr *DivideError
+    if errors.As(err, &amp;divErr) {
+        fmt.Println(&quot;Divide error:&quot;, divErr)
+    } else if err != nil {
+        fmt.Println(&quot;Error:&quot;, err)
+    }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>El maneig d'errors és una part essencial d'escriure programes robustos en Go. Seguint aquestes millors pràctiques, pots assegurar-te que el teu codi maneja errors de manera elegant i proporciona retroalimentació significativa als usuaris i desenvolupadors. Recorda:</p>
+<ul>
+<li>Comprova els errors immediatament.</li>
+<li>Utilitza tipus d'errors personalitzats per a més context.</li>
+<li>Envolta errors amb context addicional.</li>
+<li>Utilitza errors sentinel per a condicions comunes.</li>
+<li>Utilitza <code>errors.Is</code> i <code>errors.As</code> per a la inspecció i extracció d'errors.</li>
+</ul>
+<p>Dominant aquestes tècniques, estaràs ben equipat per manejar errors de manera efectiva en les teves aplicacions Go.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='code-organization'>&#x25C4;Organització del Codi</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Millors Pràctiques per al Maneig d'Errors</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='common-design-patterns'>Patrons de Disseny Comuns &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

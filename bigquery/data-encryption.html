@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xifrat de Dades a BigQuery</title>
+
+    <link rel="alternate" href="https://campusempresa.com/bigquery/data-encryption" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/bigquery/data-encryption" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/bigquery/data-encryption" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/bigquery/data-encryption" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/bigquery/data-encryption" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='managing-access-control'>&#x25C4;Gestió del control d'accés</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Xifrat de Dades a BigQuery</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='auditing-and-monitoring'>Auditoria i monitoratge &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció al Xifrat de Dades</h1>
+<div class='content'><p>El xifrat de dades és un aspecte fonamental de la seguretat de dades, assegurant que la informació sensible estigui protegida contra l'accés no autoritzat. A BigQuery, el xifrat s'utilitza per protegir les dades en repòs i en trànsit.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Xifrat</strong>: El procés de convertir dades en un format codificat que només pot ser llegit per algú que tingui la clau de desxifrat.</li>
+<li><strong>Desxifrat</strong>: El procés de convertir dades xifrades de nou al seu format original.</li>
+<li><strong>Xifrat en Repòs</strong>: Protegir les dades emmagatzemades en disc.</li>
+<li><strong>Xifrat en Trànsit</strong>: Protegir les dades mentre es mouen a través de xarxes.</li>
+<li><strong>Claus de Xifrat Gestionades pel Client (CMEK)</strong>: Claus gestionades pel client per xifrar dades.</li>
+<li><strong>Claus de Xifrat Gestionades per Google (GMEK)</strong>: Claus gestionades per Google per xifrar dades.</li>
+</ul>
+</div><h1>Xifrat en Repòs</h1>
+<div class='content'><p>BigQuery xifra automàticament totes les dades en repòs utilitzant claus de xifrat gestionades per Google. No obstant això, per a un control addicional, podeu utilitzar Claus de Xifrat Gestionades pel Client (CMEK).</p>
+</div><h2>Utilitzant Claus de Xifrat Gestionades per Google (GMEK)</h2>
+<div class='content'><p>Per defecte, BigQuery utilitza GMEK per xifrar dades en repòs. Aquest procés és transparent per a l'usuari i no requereix configuració addicional.</p>
+</div><h2>Utilitzant Claus de Xifrat Gestionades pel Client (CMEK)</h2>
+<div class='content'><p>CMEK us permet utilitzar les vostres pròpies claus de xifrat emmagatzemades a Google Cloud Key Management Service (KMS).</p>
+<h4>Passos per Utilitzar CMEK a BigQuery</h4>
+<ol>
+<li>
+<p><strong>Creeu un Anell de Claus i una Clau a Google Cloud KMS</strong>:</p>
+<pre><code class="language-bash">gcloud kms keyrings create my-key-ring --location=global
+gcloud kms keys create my-key --location=global --keyring=my-key-ring --purpose=encryption
+</code></pre>
+</li>
+<li>
+<p><strong>Concediu Accés al Compte de Servei de BigQuery a la Clau</strong>:</p>
+<pre><code class="language-bash">gcloud kms keys add-iam-policy-binding my-key <br>        --location=global <br>        --keyring=my-key-ring <br>        --member=serviceAccount:your-bigquery-service-account <br>        --role=roles/cloudkms.cryptoKeyEncrypterDecrypter
+</code></pre>
+</li>
+<li>
+<p><strong>Creeu un Dataset de BigQuery amb CMEK</strong>:</p>
+<pre><code class="language-sql">CREATE SCHEMA my_dataset
+OPTIONS(
+    kms_key_name=&quot;projects/my-project/locations/global/keyRings/my-key-ring/cryptoKeys/my-key&quot;
+);
+</code></pre>
+</li>
+</ol>
+</div><h1>Xifrat en Trànsit</h1>
+<div class='content'><p>BigQuery xifra les dades en trànsit utilitzant TLS (Transport Layer Security) per assegurar la integritat i privacitat de les dades mentre es mouen entre els vostres dispositius i els servidors de Google.</p>
+</div><h2>Assegurant Connexions Segures</h2>
+<div class='content'><ul>
+<li>Utilitzeu sempre HTTPS per interactuar amb BigQuery.</li>
+<li>Utilitzeu API segures i biblioteques de clients proporcionades per Google Cloud.</li>
+</ul>
+</div><h1>Tècniques Avançades de Xifrat</h1>
+<div class='content'><p>Per a usuaris avançats, BigQuery admet funcions de xifrat addicionals com:</p>
+<ul>
+<li><strong>Xifrat a Nivell de Columna</strong>: Xifrant columnes específiques dins d'un dataset.</li>
+<li><strong>Xifrat Híbrid</strong>: Combinant xifrat simètric i asimètric per a una seguretat millorada.</li>
+</ul>
+</div><h2>Exemple: Xifrat a Nivell de Columna</h2>
+<div class='content'><p>Per xifrar columnes específiques, podeu utilitzar funcions com <code>AEAD.ENCRYPT</code> i <code>AEAD.DECRYPT</code>.</p>
+<h4>Xifrant una Columna</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("REVDTEFSRSBrZXkgQllURVMgPSBGUk9NX0hFWCgneW91ci1oZXgtZW5jb2RlZC1rZXknKTsKREVDTEFSRSBwbGFpbnRleHQgU1RSSU5HID0gJ0RhZGVzIFNlbnNpYmxlcyc7CgpTRVQgZW5jcnlwdGVkX2RhdGEgPSBBRUFELkVOQ1JZUFQoa2V5LCBwbGFpbnRleHQsICcnKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>DECLARE key BYTES = FROM_HEX('your-hex-encoded-key');
+DECLARE plaintext STRING = 'Dades Sensibles';
+
+SET encrypted_data = AEAD.ENCRYPT(key, plaintext, '');</pre></div><div class='content'><h4>Desxifrant una Columna</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("REVDTEFSRSBrZXkgQllURVMgPSBGUk9NX0hFWCgneW91ci1oZXgtZW5jb2RlZC1rZXknKTsKREVDTEFSRSBjaXBoZXJ0ZXh0IEJZVEVTID0gJ3lvdXItZW5jcnlwdGVkLWRhdGEnOwoKU0VUIGRlY3J5cHRlZF9kYXRhID0gQUVBRC5ERUNSWVBUKGtleSwgY2lwaGVydGV4dCwgJycpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>DECLARE key BYTES = FROM_HEX('your-hex-encoded-key');
+DECLARE ciphertext BYTES = 'your-encrypted-data';
+
+SET decrypted_data = AEAD.DECRYPT(key, ciphertext, '');</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>El xifrat de dades a BigQuery és un component crític de la seguretat de dades, assegurant que les vostres dades estiguin protegides tant en repòs com en trànsit. Comprenent i utilitzant tant claus de xifrat gestionades per Google com gestionades pel client, podeu millorar la seguretat dels vostres datasets. A més, tècniques avançades de xifrat com el xifrat a nivell de columna proporcionen una major granularitat i control sobre la protecció de dades.</p>
+<p>Seguint les millors pràctiques i aprofitant les funcions de xifrat proporcionades per BigQuery, podeu assegurar que les vostres dades es mantinguin segures i compleixin amb els estàndards de la indústria.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='managing-access-control'>&#x25C4;Gestió del control d'accés</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Xifrat de Dades a BigQuery</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='auditing-and-monitoring'>Auditoria i monitoratge &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particionament de Taules</title>
+
+    <link rel="alternate" href="https://campusempresa.com/postgresql/partitioning-tables" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/postgresql/partitioning-tables" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/postgresql/partitioning-tables" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/postgresql/partitioning-tables" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/postgresql/partitioning-tables" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='stored-procedures-and-triggers'>&#x25C4;Procediments emmagatzemats i triggers</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Particionament de Taules</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='replication-and-high-availability'>Replicació i alta disponibilitat &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>El particionament de taules a PostgreSQL és una característica potent que et permet dividir taules grans en peces més petites i manejables, anomenades particions. Això pot millorar el rendiment, la gestió i l'escalabilitat. En aquest tema, tractarem els conceptes bàsics del particionament de taules, diferents mètodes de particionament i com implementar-los a PostgreSQL.</p>
+</div><h1>Introducció al Particionament de Taules</h1>
+<div class='content'><ul>
+<li><strong>Definició</strong>: El particionament és el procés de dividir una taula gran en peces més petites i manejables, anomenades particions, que poden millorar el rendiment de les consultes i simplificar la gestió de dades.</li>
+<li><strong>Beneficis</strong>:
+<ul>
+<li>Millora del rendiment de les consultes escanejant només les particions rellevants.</li>
+<li>Manteniment més fàcil permetent operacions en particions individuals.</li>
+<li>Millor organització i gestió de dades.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Tipus de Particionament</h1>
+<div class='content'><p>PostgreSQL admet diversos tipus de particionament:</p>
+<ol>
+<li><strong>Particionament per Rang</strong>: Divideix les dades basant-se en un rang de valors.</li>
+<li><strong>Particionament per Llista</strong>: Divideix les dades basant-se en una llista de valors.</li>
+<li><strong>Particionament per Hash</strong>: Divideix les dades basant-se en una funció hash.</li>
+<li><strong>Particionament Compost</strong>: Combina múltiples mètodes de particionament.</li>
+</ol>
+</div><h2>Particionament per Rang</h2>
+<div class='content'><p>El particionament per rang és útil quan vols dividir les dades basant-te en un rang continu de valors, com ara dates o rangs numèrics.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIHNhbGVzICgKICAgIGlkIFNFUklBTCBQUklNQVJZIEtFWSwKICAgIHNhbGVfZGF0ZSBEQVRFIE5PVCBOVUxMLAogICAgYW1vdW50IE5VTUVSSUMKKSBQQVJUSVRJT04gQlkgUkFOR0UgKHNhbGVfZGF0ZSk7CgpDUkVBVEUgVEFCTEUgc2FsZXNfMjAyMiBQQVJUSVRJT04gT0Ygc2FsZXMKICAgIEZPUiBWQUxVRVMgRlJPTSAoJzIwMjItMDEtMDEnKSBUTyAoJzIwMjMtMDEtMDEnKTsKCkNSRUFURSBUQUJMRSBzYWxlc18yMDIzIFBBUlRJVElPTiBPRiBzYWxlcwogICAgRk9SIFZBTFVFUyBGUk9NICgnMjAyMy0wMS0wMScpIFRPICgnMjAyNC0wMS0wMScpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE sales (
+    id SERIAL PRIMARY KEY,
+    sale_date DATE NOT NULL,
+    amount NUMERIC
+) PARTITION BY RANGE (sale_date);
+
+CREATE TABLE sales_2022 PARTITION OF sales
+    FOR VALUES FROM ('2022-01-01') TO ('2023-01-01');
+
+CREATE TABLE sales_2023 PARTITION OF sales
+    FOR VALUES FROM ('2023-01-01') TO ('2024-01-01');</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li>La taula <code>sales</code> està particionada per la columna <code>sale_date</code>.</li>
+<li>Es creen dues particions: <code>sales_2022</code> i <code>sales_2023</code>, cadascuna cobrint un rang específic de dates.</li>
+</ul>
+</div><h2>Particionament per Llista</h2>
+<div class='content'><p>El particionament per llista és útil quan vols dividir les dades basant-te en un conjunt discret de valors, com ara categories o regions.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIGVtcGxveWVlcyAoCiAgICBpZCBTRVJJQUwgUFJJTUFSWSBLRVksCiAgICBkZXBhcnRtZW50IFRFWFQgTk9UIE5VTEwsCiAgICBuYW1lIFRFWFQKKSBQQVJUSVRJT04gQlkgTElTVCAoZGVwYXJ0bWVudCk7CgpDUkVBVEUgVEFCTEUgZW1wbG95ZWVzX3NhbGVzIFBBUlRJVElPTiBPRiBlbXBsb3llZXMKICAgIEZPUiBWQUxVRVMgSU4gKCdTYWxlcycpOwoKQ1JFQVRFIFRBQkxFIGVtcGxveWVlc19ociBQQVJUSVRJT04gT0YgZW1wbG95ZWVzCiAgICBGT1IgVkFMVUVTIElOICgnSFInKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE employees (
+    id SERIAL PRIMARY KEY,
+    department TEXT NOT NULL,
+    name TEXT
+) PARTITION BY LIST (department);
+
+CREATE TABLE employees_sales PARTITION OF employees
+    FOR VALUES IN ('Sales');
+
+CREATE TABLE employees_hr PARTITION OF employees
+    FOR VALUES IN ('HR');</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li>La taula <code>employees</code> està particionada per la columna <code>department</code>.</li>
+<li>Es creen dues particions: <code>employees_sales</code> i <code>employees_hr</code>, cadascuna cobrint departaments específics.</li>
+</ul>
+</div><h2>Particionament per Hash</h2>
+<div class='content'><p>El particionament per hash és útil quan vols distribuir uniformement les dades a través d'un nombre de particions utilitzant una funció hash.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIG9yZGVycyAoCiAgICBpZCBTRVJJQUwgUFJJTUFSWSBLRVksCiAgICBjdXN0b21lcl9pZCBJTlQgTk9UIE5VTEwsCiAgICBvcmRlcl9kYXRlIERBVEUKKSBQQVJUSVRJT04gQlkgSEFTSCAoY3VzdG9tZXJfaWQpOwoKQ1JFQVRFIFRBQkxFIG9yZGVyc19wMCBQQVJUSVRJT04gT0Ygb3JkZXJzCiAgICBGT1IgVkFMVUVTIFdJVEggKE1PRFVMVVMgNCwgUkVNQUlOREVSIDApOwoKQ1JFQVRFIFRBQkxFIG9yZGVyc19wMSBQQVJUSVRJT04gT0Ygb3JkZXJzCiAgICBGT1IgVkFMVUVTIFdJVEggKE1PRFVMVVMgNCwgUkVNQUlOREVSIDEpOwoKQ1JFQVRFIFRBQkxFIG9yZGVyc19wMiBQQVJUSVRJT04gT0Ygb3JkZXJzCiAgICBGT1IgVkFMVUVTIFdJVEggKE1PRFVMVVMgNCwgUkVNQUlOREVSIDIpOwoKQ1JFQVRFIFRBQkxFIG9yZGVyc19wMyBQQVJUSVRJT04gT0Ygb3JkZXJzCiAgICBGT1IgVkFMVUVTIFdJVEggKE1PRFVMVVMgNCwgUkVNQUlOREVSIDMpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    customer_id INT NOT NULL,
+    order_date DATE
+) PARTITION BY HASH (customer_id);
+
+CREATE TABLE orders_p0 PARTITION OF orders
+    FOR VALUES WITH (MODULUS 4, REMAINDER 0);
+
+CREATE TABLE orders_p1 PARTITION OF orders
+    FOR VALUES WITH (MODULUS 4, REMAINDER 1);
+
+CREATE TABLE orders_p2 PARTITION OF orders
+    FOR VALUES WITH (MODULUS 4, REMAINDER 2);
+
+CREATE TABLE orders_p3 PARTITION OF orders
+    FOR VALUES WITH (MODULUS 4, REMAINDER 3);</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li>La taula <code>orders</code> està particionada per la columna <code>customer_id</code> utilitzant una funció hash.</li>
+<li>Es creen quatre particions, cadascuna gestionant un residu diferent de la funció hash.</li>
+</ul>
+</div><h2>Particionament Compost</h2>
+<div class='content'><p>El particionament compost combina múltiples mètodes de particionament per aconseguir una organització de dades més complexa.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIGxvZ3MgKAogICAgaWQgU0VSSUFMIFBSSU1BUlkgS0VZLAogICAgbG9nX2RhdGUgREFURSBOT1QgTlVMTCwKICAgIHJlZ2lvbiBURVhUIE5PVCBOVUxMLAogICAgbWVzc2FnZSBURVhUCikgUEFSVElUSU9OIEJZIFJBTkdFIChsb2dfZGF0ZSk7CgpDUkVBVEUgVEFCTEUgbG9nc18yMDIyIFBBUlRJVElPTiBPRiBsb2dzCiAgICBGT1IgVkFMVUVTIEZST00gKCcyMDIyLTAxLTAxJykgVE8gKCcyMDIzLTAxLTAxJykKICAgIFBBUlRJVElPTiBCWSBMSVNUIChyZWdpb24pOwoKQ1JFQVRFIFRBQkxFIGxvZ3NfMjAyMl91cyBQQVJUSVRJT04gT0YgbG9nc18yMDIyCiAgICBGT1IgVkFMVUVTIElOICgnVVMnKTsKCkNSRUFURSBUQUJMRSBsb2dzXzIwMjJfZXUgUEFSVElUSU9OIE9GIGxvZ3NfMjAyMgogICAgRk9SIFZBTFVFUyBJTiAoJ0VVJyk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE logs (
+    id SERIAL PRIMARY KEY,
+    log_date DATE NOT NULL,
+    region TEXT NOT NULL,
+    message TEXT
+) PARTITION BY RANGE (log_date);
+
+CREATE TABLE logs_2022 PARTITION OF logs
+    FOR VALUES FROM ('2022-01-01') TO ('2023-01-01')
+    PARTITION BY LIST (region);
+
+CREATE TABLE logs_2022_us PARTITION OF logs_2022
+    FOR VALUES IN ('US');
+
+CREATE TABLE logs_2022_eu PARTITION OF logs_2022
+    FOR VALUES IN ('EU');</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li>La taula <code>logs</code> està primer particionada per la columna <code>log_date</code> utilitzant particionament per rang.</li>
+<li>La partició <code>logs_2022</code> està ulteriorment particionada per la columna <code>region</code> utilitzant particionament per llista.</li>
+</ul>
+</div><h1>Gestió de Particions</h1>
+<div class='content'><ul>
+<li><strong>Afegir Particions</strong>: Pots afegir noves particions a mesura que les teves dades creixen.</li>
+<li><strong>Eliminar Particions</strong>: Pots eliminar particions que ja no són necessàries.</li>
+<li><strong>Adjuntar/Desadjuntar Particions</strong>: Pots adjuntar o desadjuntar particions a/de una taula particionada.</li>
+</ul>
+<h4>Exemple: Afegir una Partició</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIHNhbGVzXzIwMjQgUEFSVElUSU9OIE9GIHNhbGVzCiAgICBGT1IgVkFMVUVTIEZST00gKCcyMDI0LTAxLTAxJykgVE8gKCcyMDI1LTAxLTAxJyk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE sales_2024 PARTITION OF sales
+    FOR VALUES FROM ('2024-01-01') TO ('2025-01-01');</pre></div><div class='content'><h4>Exemple: Eliminar una Partició</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RFJPUCBUQUJMRSBzYWxlc18yMDIyOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>DROP TABLE sales_2022;</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>El particionament de taules a PostgreSQL és una característica potent que pot millorar significativament el rendiment i la gestió de grans conjunts de dades. Entenent i implementant diferents mètodes de particionament—rang, llista, hash i compost—pots optimitzar la teva base de dades per a un millor rendiment de les consultes i un manteniment més fàcil. Recorda planificar acuradament la teva estratègia de particionament basant-te en el teu cas d'ús específic i la distribució de dades.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='stored-procedures-and-triggers'>&#x25C4;Procediments emmagatzemats i triggers</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Particionament de Taules</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='replication-and-high-availability'>Replicació i alta disponibilitat &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprendre el bucle d'esdeveniments de Node.js</title>
+
+    <link rel="alternate" href="https://campusempresa.com/nodejs/event-loop" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/nodejs/event-loop" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/nodejs/event-loop" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/nodejs/event-loop" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/nodejs/event-loop" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='first-nodejs-app'>&#x25C4;La Teva Primera Aplicació Node.js</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Comprendre el bucle d'esdeveniments de Node.js</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='modules-and-require'>Mòduls i require() &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>El bucle d'esdeveniments de Node.js és un concepte fonamental que permet a Node.js realitzar operacions d'E/S no bloquejants. Entendre com funciona el bucle d'esdeveniments és crucial per escriure aplicacions Node.js eficients i amb bon rendiment.</p>
+</div><h1>Conceptes clau</h1>
+<div class='content'><ul>
+<li><strong>Naturalesa de fil únic</strong>: Node.js opera en un únic fil, però pot gestionar múltiples operacions simultàniament utilitzant el bucle d'esdeveniments.</li>
+<li><strong>E/S no bloquejant</strong>: Node.js utilitza operacions d'E/S no bloquejants per gestionar múltiples sol·licituds sense esperar que cap d'elles es completi.</li>
+<li><strong>Fases del bucle d'esdeveniments</strong>: El bucle d'esdeveniments té diverses fases, cadascuna responsable de diferents tipus d'operacions.</li>
+</ul>
+</div><h1>Fases del bucle d'esdeveniments</h1>
+<div class='content'><p>El bucle d'esdeveniments en Node.js consta de les següents fases:</p>
+<ol>
+<li><strong>Timers</strong>: Aquesta fase executa les devolucions de trucada programades per <code>setTimeout()</code> i <code>setInterval()</code>.</li>
+<li><strong>Devolucions de trucada pendents</strong>: Executa les devolucions de trucada d'E/S ajornades a la següent iteració del bucle.</li>
+<li><strong>Idle, Prepare</strong>: Ús intern només.</li>
+<li><strong>Poll</strong>: Recupera nous esdeveniments d'E/S; executa devolucions de trucada relacionades amb l'E/S (excloent devolucions de trucada de tancament, temporitzadors i <code>setImmediate()</code>).</li>
+<li><strong>Check</strong>: Executa devolucions de trucada programades per <code>setImmediate()</code>.</li>
+<li><strong>Devolucions de trucada de tancament</strong>: Executa devolucions de trucada de tancament, per exemple, <code>socket.on('close', ...)</code>.</li>
+</ol>
+</div><h1>Exemple de codi: Bucle d'esdeveniments bàsic</h1>
+<div class='content'><p>Aquí teniu un exemple senzill per il·lustrar com funciona el bucle d'esdeveniments en Node.js:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZnMgPSByZXF1aXJlKCdmcycpOwoKY29uc29sZS5sb2coJ1N0YXJ0Jyk7CgpzZXRUaW1lb3V0KCgpID0+IHsKICBjb25zb2xlLmxvZygnVGltZW91dCAxJyk7Cn0sIDApOwoKc2V0SW1tZWRpYXRlKCgpID0+IHsKICBjb25zb2xlLmxvZygnSW1tZWRpYXRlIDEnKTsKfSk7Cgpmcy5yZWFkRmlsZShfX2ZpbGVuYW1lLCAoKSA9PiB7CiAgY29uc29sZS5sb2coJ0ZpbGUgUmVhZCcpOwp9KTsKCmNvbnNvbGUubG9nKCdFbmQnKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const fs = require('fs');
+
+console.log('Start');
+
+setTimeout(() =&gt; {
+  console.log('Timeout 1');
+}, 0);
+
+setImmediate(() =&gt; {
+  console.log('Immediate 1');
+});
+
+fs.readFile(__filename, () =&gt; {
+  console.log('File Read');
+});
+
+console.log('End');</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ol>
+<li><strong>Codi sincrònic</strong>: <code>console.log('Start')</code> i <code>console.log('End')</code> s'executen primer.</li>
+<li><strong>Fase de temporitzadors</strong>: <code>setTimeout(() =&gt; { console.log('Timeout 1'); }, 0);</code> està programat per executar-se després de la fase de poll.</li>
+<li><strong>Fase de check</strong>: <code>setImmediate(() =&gt; { console.log('Immediate 1'); });</code> està programat per executar-se després de la fase de poll.</li>
+<li><strong>Fase de poll</strong>: <code>fs.readFile(__filename, () =&gt; { console.log('File Read'); });</code> llegeix el fitxer de manera asíncrona i programa la devolució de trucada.</li>
+</ol>
+</div><h2>Sortida esperada</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U3RhcnQKRW5kCkZpbGUgUmVhZApJbW1lZGlhdGUgMQpUaW1lb3V0IDE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Start
+End
+File Read
+Immediate 1
+Timeout 1</pre></div><div class='content'></div><h1>Conceptes avançats</h1>
+<div class='content'><ul>
+<li><strong>Microtasques</strong>: Les microtasques (per exemple, <code>process.nextTick()</code> i Promeses) s'executen immediatament després del script que s'està executant i abans que el bucle d'esdeveniments continuï.</li>
+<li><strong>Operacions bloquejants</strong>: Eviteu operacions bloquejants (per exemple, lectures de fitxers sincròniques) ja que poden aturar el bucle d'esdeveniments i degradar el rendiment.</li>
+</ul>
+</div><h1>Exemple de codi: Microtasques</h1>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc29sZS5sb2coJ1N0YXJ0Jyk7CgpzZXRUaW1lb3V0KCgpID0+IHsKICBjb25zb2xlLmxvZygnVGltZW91dCcpOwp9LCAwKTsKClByb21pc2UucmVzb2x2ZSgpLnRoZW4oKCkgPT4gewogIGNvbnNvbGUubG9nKCdQcm9taXNlJyk7Cn0pOwoKcHJvY2Vzcy5uZXh0VGljaygoKSA9PiB7CiAgY29uc29sZS5sb2coJ05leHQgVGljaycpOwp9KTsKCmNvbnNvbGUubG9nKCdFbmQnKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>console.log('Start');
+
+setTimeout(() =&gt; {
+  console.log('Timeout');
+}, 0);
+
+Promise.resolve().then(() =&gt; {
+  console.log('Promise');
+});
+
+process.nextTick(() =&gt; {
+  console.log('Next Tick');
+});
+
+console.log('End');</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ol>
+<li><strong>Codi sincrònic</strong>: <code>console.log('Start')</code> i <code>console.log('End')</code> s'executen primer.</li>
+<li><strong>Microtasques</strong>: <code>process.nextTick()</code> i les devolucions de trucada de la Promesa s'executen abans que el bucle d'esdeveniments continuï.</li>
+<li><strong>Fase de temporitzadors</strong>: <code>setTimeout(() =&gt; { console.log('Timeout'); }, 0);</code> està programat per executar-se després de la fase de poll.</li>
+</ol>
+</div><h2>Sortida esperada</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U3RhcnQKRW5kCk5leHQgVGljawpQcm9taXNlClRpbWVvdXQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Start
+End
+Next Tick
+Promise
+Timeout</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>Entendre el bucle d'esdeveniments de Node.js és essencial per escriure aplicacions eficients i amb bon rendiment. Punts clau a recordar:</p>
+<ul>
+<li>Node.js és de fil únic però pot gestionar múltiples operacions simultàniament utilitzant el bucle d'esdeveniments.</li>
+<li>El bucle d'esdeveniments té diverses fases, cadascuna responsable de diferents tipus d'operacions.</li>
+<li>Les microtasques s'executen abans que el bucle d'esdeveniments continuï a la següent fase.</li>
+<li>Eviteu operacions bloquejants per assegurar que el bucle d'esdeveniments funcioni sense problemes.</li>
+</ul>
+<p>En dominar el bucle d'esdeveniments, podeu escriure aplicacions Node.js més eficients i responsives.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='first-nodejs-app'>&#x25C4;La Teva Primera Aplicació Node.js</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Comprendre el bucle d'esdeveniments de Node.js</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='modules-and-require'>Mòduls i require() &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

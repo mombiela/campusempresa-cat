@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NIO (New I/O) a Java</title>
+
+    <link rel="alternate" href="https://campusempresa.com/java/nio" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/java/nio" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/java/nio" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/java/nio" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/java/nio" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='serialization'>&#x25C4;Serialització</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">NIO (New I/O) a Java</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-multithreading'>Introducció a Multithreading &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a NIO</h1>
+<div class='content'><p>Java NIO (New I/O) és una API d'I/O alternativa per a Java que ofereix una manera diferent de treballar amb I/O que el paquet d'I/O estàndard (java.io). Es va introduir a Java 1.4 i proporciona una manera més eficient i escalable de gestionar operacions d'I/O.</p>
+</div><h2>Conceptes Clau de NIO</h2>
+<div class='content'><ul>
+<li><strong>Buffers</strong>: Contenidors per a dades que es poden llegir o escriure.</li>
+<li><strong>Canals</strong>: Una nova abstracció primitiva d'I/O que suporta la lectura i escriptura en buffers.</li>
+<li><strong>Selectors</strong>: Permeten que un únic fil gestioni múltiples canals per a operacions d'I/O no bloquejants.</li>
+</ul>
+</div><h1>Buffers</h1>
+<div class='content'><p>Els buffers són fonamentals per a NIO. S'utilitzen per a contenir dades que es transfereixen entre un canal i una aplicació.</p>
+<ul>
+<li><strong>Tipus de Buffers</strong>: ByteBuffer, CharBuffer, ShortBuffer, IntBuffer, LongBuffer, FloatBuffer, DoubleBuffer.</li>
+<li><strong>Operacions de Buffer</strong>:
+<ul>
+<li><code>put()</code>: Escriu dades al buffer.</li>
+<li><code>get()</code>: Llegeix dades del buffer.</li>
+<li><code>flip()</code>: Prepara el buffer per a la lectura després de l'escriptura.</li>
+<li><code>clear()</code>: Neteja el buffer per a l'escriptura.</li>
+<li><code>rewind()</code>: Rebobina el buffer per a tornar a llegir les dades.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Exemple d'Ús de Buffers</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEubmlvLkJ5dGVCdWZmZXI7CgpwdWJsaWMgY2xhc3MgQnVmZmVyRXhhbXBsZSB7CiAgICBwdWJsaWMgc3RhdGljIHZvaWQgbWFpbihTdHJpbmdbXSBhcmdzKSB7CiAgICAgICAgQnl0ZUJ1ZmZlciBidWZmZXIgPSBCeXRlQnVmZmVyLmFsbG9jYXRlKDEwKTsKCiAgICAgICAgLy8gRXNjcml1cmUgZGFkZXMgYWwgYnVmZmVyCiAgICAgICAgZm9yIChpbnQgaSA9IDA7IGkgPCBidWZmZXIuY2FwYWNpdHkoKTsgaSsrKSB7CiAgICAgICAgICAgIGJ1ZmZlci5wdXQoKGJ5dGUpIGkpOwogICAgICAgIH0KCiAgICAgICAgLy8gR2lyYXIgZWwgYnVmZmVyIHBlciBwcmVwYXJhci1sbyBwZXIgYSBsYSBsZWN0dXJhCiAgICAgICAgYnVmZmVyLmZsaXAoKTsKCiAgICAgICAgLy8gTGxlZ2lyIGRhZGVzIGRlbCBidWZmZXIKICAgICAgICB3aGlsZSAoYnVmZmVyLmhhc1JlbWFpbmluZygpKSB7CiAgICAgICAgICAgIFN5c3RlbS5vdXQucHJpbnQoYnVmZmVyLmdldCgpICsgIiAiKTsKICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.nio.ByteBuffer;
+
+public class BufferExample {
+    public static void main(String[] args) {
+        ByteBuffer buffer = ByteBuffer.allocate(10);
+
+        // Escriure dades al buffer
+        for (int i = 0; i &lt; buffer.capacity(); i++) {
+            buffer.put((byte) i);
+        }
+
+        // Girar el buffer per preparar-lo per a la lectura
+        buffer.flip();
+
+        // Llegir dades del buffer
+        while (buffer.hasRemaining()) {
+            System.out.print(buffer.get() + &quot; &quot;);
+        }
+    }
+}</pre></div><div class='content'></div><h1>Canals</h1>
+<div class='content'><p>Els canals s'utilitzen per a la transferència de dades entre buffers i entitats d'I/O com fitxers o sockets.</p>
+<ul>
+<li><strong>Tipus de Canals</strong>: FileChannel, DatagramChannel, SocketChannel, ServerSocketChannel.</li>
+<li><strong>Operacions de Canal</strong>:
+<ul>
+<li><code>read()</code>: Llegeix dades del canal en un buffer.</li>
+<li><code>write()</code>: Escriu dades d'un buffer al canal.</li>
+<li><code>close()</code>: Tanca el canal.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Exemple d'Ús de Canals</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEuaW8uUmFuZG9tQWNjZXNzRmlsZTsKaW1wb3J0IGphdmEubmlvLkJ5dGVCdWZmZXI7CmltcG9ydCBqYXZhLm5pby5jaGFubmVscy5GaWxlQ2hhbm5lbDsKCnB1YmxpYyBjbGFzcyBDaGFubmVsRXhhbXBsZSB7CiAgICBwdWJsaWMgc3RhdGljIHZvaWQgbWFpbihTdHJpbmdbXSBhcmdzKSB0aHJvd3MgRXhjZXB0aW9uIHsKICAgICAgICBSYW5kb21BY2Nlc3NGaWxlIGZpbGUgPSBuZXcgUmFuZG9tQWNjZXNzRmlsZSgiZXhhbXBsZS50eHQiLCAicnciKTsKICAgICAgICBGaWxlQ2hhbm5lbCBjaGFubmVsID0gZmlsZS5nZXRDaGFubmVsKCk7CgogICAgICAgIEJ5dGVCdWZmZXIgYnVmZmVyID0gQnl0ZUJ1ZmZlci5hbGxvY2F0ZSg0OCk7CiAgICAgICAgaW50IGJ5dGVzUmVhZCA9IGNoYW5uZWwucmVhZChidWZmZXIpOwoKICAgICAgICB3aGlsZSAoYnl0ZXNSZWFkICE9IC0xKSB7CiAgICAgICAgICAgIGJ1ZmZlci5mbGlwKCk7CiAgICAgICAgICAgIHdoaWxlIChidWZmZXIuaGFzUmVtYWluaW5nKCkpIHsKICAgICAgICAgICAgICAgIFN5c3RlbS5vdXQucHJpbnQoKGNoYXIpIGJ1ZmZlci5nZXQoKSk7CiAgICAgICAgICAgIH0KICAgICAgICAgICAgYnVmZmVyLmNsZWFyKCk7CiAgICAgICAgICAgIGJ5dGVzUmVhZCA9IGNoYW5uZWwucmVhZChidWZmZXIpOwogICAgICAgIH0KICAgICAgICBjaGFubmVsLmNsb3NlKCk7CiAgICAgICAgZmlsZS5jbG9zZSgpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
+
+public class ChannelExample {
+    public static void main(String[] args) throws Exception {
+        RandomAccessFile file = new RandomAccessFile(&quot;example.txt&quot;, &quot;rw&quot;);
+        FileChannel channel = file.getChannel();
+
+        ByteBuffer buffer = ByteBuffer.allocate(48);
+        int bytesRead = channel.read(buffer);
+
+        while (bytesRead != -1) {
+            buffer.flip();
+            while (buffer.hasRemaining()) {
+                System.out.print((char) buffer.get());
+            }
+            buffer.clear();
+            bytesRead = channel.read(buffer);
+        }
+        channel.close();
+        file.close();
+    }
+}</pre></div><div class='content'></div><h1>Selectors</h1>
+<div class='content'><p>Els selectors permeten que un únic fil gestioni múltiples canals, cosa que és útil per a operacions d'I/O no bloquejants.</p>
+<ul>
+<li><strong>Operacions de Selector</strong>:
+<ul>
+<li><code>select()</code>: Bloqueja fins que almenys un canal estigui llest per a les operacions que t'interessen.</li>
+<li><code>selectedKeys()</code>: Retorna el conjunt de claus que representen els canals que estan llestos per a operacions d'I/O.</li>
+<li><code>register()</code>: Registra un canal amb el selector.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Exemple d'Ús de Selectors</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEuaW8uSU9FeGNlcHRpb247CmltcG9ydCBqYXZhLm5ldC5JbmV0U29ja2V0QWRkcmVzczsKaW1wb3J0IGphdmEubmlvLkJ5dGVCdWZmZXI7CmltcG9ydCBqYXZhLm5pby5jaGFubmVscy5TZWxlY3Rpb25LZXk7CmltcG9ydCBqYXZhLm5pby5jaGFubmVscy5TZWxlY3RvcjsKaW1wb3J0IGphdmEubmlvLmNoYW5uZWxzLlNlcnZlclNvY2tldENoYW5uZWw7CmltcG9ydCBqYXZhLm5pby5jaGFubmVscy5Tb2NrZXRDaGFubmVsOwppbXBvcnQgamF2YS51dGlsLkl0ZXJhdG9yOwoKcHVibGljIGNsYXNzIFNlbGVjdG9yRXhhbXBsZSB7CiAgICBwdWJsaWMgc3RhdGljIHZvaWQgbWFpbihTdHJpbmdbXSBhcmdzKSB0aHJvd3MgSU9FeGNlcHRpb24gewogICAgICAgIFNlbGVjdG9yIHNlbGVjdG9yID0gU2VsZWN0b3Iub3BlbigpOwogICAgICAgIFNlcnZlclNvY2tldENoYW5uZWwgc2VydmVyQ2hhbm5lbCA9IFNlcnZlclNvY2tldENoYW5uZWwub3BlbigpOwogICAgICAgIHNlcnZlckNoYW5uZWwuYmluZChuZXcgSW5ldFNvY2tldEFkZHJlc3MoImxvY2FsaG9zdCIsIDgwODApKTsKICAgICAgICBzZXJ2ZXJDaGFubmVsLmNvbmZpZ3VyZUJsb2NraW5nKGZhbHNlKTsKICAgICAgICBzZXJ2ZXJDaGFubmVsLnJlZ2lzdGVyKHNlbGVjdG9yLCBTZWxlY3Rpb25LZXkuT1BfQUNDRVBUKTsKCiAgICAgICAgd2hpbGUgKHRydWUpIHsKICAgICAgICAgICAgc2VsZWN0b3Iuc2VsZWN0KCk7CiAgICAgICAgICAgIEl0ZXJhdG9yPFNlbGVjdGlvbktleT4ga2V5cyA9IHNlbGVjdG9yLnNlbGVjdGVkS2V5cygpLml0ZXJhdG9yKCk7CgogICAgICAgICAgICB3aGlsZSAoa2V5cy5oYXNOZXh0KCkpIHsKICAgICAgICAgICAgICAgIFNlbGVjdGlvbktleSBrZXkgPSBrZXlzLm5leHQoKTsKICAgICAgICAgICAgICAgIGtleXMucmVtb3ZlKCk7CgogICAgICAgICAgICAgICAgaWYgKGtleS5pc0FjY2VwdGFibGUoKSkgewogICAgICAgICAgICAgICAgICAgIFNlcnZlclNvY2tldENoYW5uZWwgc2VydmVyID0gKFNlcnZlclNvY2tldENoYW5uZWwpIGtleS5jaGFubmVsKCk7CiAgICAgICAgICAgICAgICAgICAgU29ja2V0Q2hhbm5lbCBjbGllbnQgPSBzZXJ2ZXIuYWNjZXB0KCk7CiAgICAgICAgICAgICAgICAgICAgY2xpZW50LmNvbmZpZ3VyZUJsb2NraW5nKGZhbHNlKTsKICAgICAgICAgICAgICAgICAgICBjbGllbnQucmVnaXN0ZXIoc2VsZWN0b3IsIFNlbGVjdGlvbktleS5PUF9SRUFEKTsKICAgICAgICAgICAgICAgIH0gZWxzZSBpZiAoa2V5LmlzUmVhZGFibGUoKSkgewogICAgICAgICAgICAgICAgICAgIFNvY2tldENoYW5uZWwgY2xpZW50ID0gKFNvY2tldENoYW5uZWwpIGtleS5jaGFubmVsKCk7CiAgICAgICAgICAgICAgICAgICAgQnl0ZUJ1ZmZlciBidWZmZXIgPSBCeXRlQnVmZmVyLmFsbG9jYXRlKDI1Nik7CiAgICAgICAgICAgICAgICAgICAgY2xpZW50LnJlYWQoYnVmZmVyKTsKICAgICAgICAgICAgICAgICAgICBidWZmZXIuZmxpcCgpOwogICAgICAgICAgICAgICAgICAgIFN5c3RlbS5vdXQucHJpbnRsbihuZXcgU3RyaW5nKGJ1ZmZlci5hcnJheSgpKS50cmltKCkpOwogICAgICAgICAgICAgICAgICAgIGJ1ZmZlci5jbGVhcigpOwogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CiAgICAgICAgfQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
+import java.nio.channels.ServerSocketChannel;
+import java.nio.channels.SocketChannel;
+import java.util.Iterator;
+
+public class SelectorExample {
+    public static void main(String[] args) throws IOException {
+        Selector selector = Selector.open();
+        ServerSocketChannel serverChannel = ServerSocketChannel.open();
+        serverChannel.bind(new InetSocketAddress(&quot;localhost&quot;, 8080));
+        serverChannel.configureBlocking(false);
+        serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+
+        while (true) {
+            selector.select();
+            Iterator&lt;SelectionKey&gt; keys = selector.selectedKeys().iterator();
+
+            while (keys.hasNext()) {
+                SelectionKey key = keys.next();
+                keys.remove();
+
+                if (key.isAcceptable()) {
+                    ServerSocketChannel server = (ServerSocketChannel) key.channel();
+                    SocketChannel client = server.accept();
+                    client.configureBlocking(false);
+                    client.register(selector, SelectionKey.OP_READ);
+                } else if (key.isReadable()) {
+                    SocketChannel client = (SocketChannel) key.channel();
+                    ByteBuffer buffer = ByteBuffer.allocate(256);
+                    client.read(buffer);
+                    buffer.flip();
+                    System.out.println(new String(buffer.array()).trim());
+                    buffer.clear();
+                }
+            }
+        }
+    }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Java NIO proporciona una manera potent i flexible de gestionar operacions d'I/O, oferint millor rendiment i escalabilitat en comparació amb l'I/O tradicional. Entendre buffers, canals i selectors és crucial per aprofitar tot el potencial de NIO. Dominant aquests conceptes, pots construir aplicacions eficients i responsives que gestionin operacions d'I/O de manera efectiva.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='serialization'>&#x25C4;Serialització</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">NIO (New I/O) a Java</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-multithreading'>Introducció a Multithreading &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

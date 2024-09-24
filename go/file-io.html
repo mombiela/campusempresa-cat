@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrada/Sortida de Fitxers en Go</title>
+
+    <link rel="alternate" href="https://campusempresa.com/go/file-io" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/go/file-io" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/go/file-io" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/go/file-io" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/go/file-io" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='building-and-deploying-go-applications'>&#x25C4;Construcció i Desplegament d'Aplicacions Go</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Entrada/Sortida de Fitxers en Go</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='networking'>Xarxes &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a l'Entrada/Sortida de Fitxers</h1>
+<div class='content'><p>L'entrada/sortida de fitxers (Input/Output) és un aspecte fonamental de la programació que permet a un programa llegir i escriure fitxers. En Go, el paquet <code>os</code> proporciona una interfície independent de la plataforma per a la funcionalitat del sistema operatiu, incloent-hi l'entrada/sortida de fitxers.</p>
+</div><h1>Llegir Fitxers</h1>
+<div class='content'></div><h2>Obrir un Fitxer</h2>
+<div class='content'><p>Per llegir un fitxer, primer cal obrir-lo utilitzant la funció <code>os.Open</code>. Aquesta funció retorna un descriptor de fitxer i un error.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImZtdCIKICAgICJvcyIKKQoKZnVuYyBtYWluKCkgewogICAgZmlsZSwgZXJyIDo9IG9zLk9wZW4oImV4YW1wbGUudHh0IikKICAgIGlmIGVyciAhPSBuaWwgewogICAgICAgIGZtdC5QcmludGxuKCJFcnJvciBvcGVuaW5nIGZpbGU6IiwgZXJyKQogICAgICAgIHJldHVybgogICAgfQogICAgZGVmZXIgZmlsZS5DbG9zZSgpCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;fmt&quot;
+    &quot;os&quot;
+)
+
+func main() {
+    file, err := os.Open(&quot;example.txt&quot;)
+    if err != nil {
+        fmt.Println(&quot;Error opening file:&quot;, err)
+        return
+    }
+    defer file.Close()
+}</pre></div><div class='content'></div><h2>Llegir el Contingut del Fitxer</h2>
+<div class='content'><p>Un cop el fitxer està obert, pots llegir el seu contingut utilitzant diversos mètodes dels paquets <code>bufio</code> i <code>io/ioutil</code>.</p>
+<h4>Utilitzant <code>bufio.Scanner</code></h4>
+<p>El <code>bufio.Scanner</code> és útil per llegir un fitxer línia per línia.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImJ1ZmlvIgogICAgImZtdCIKICAgICJvcyIKKQoKZnVuYyBtYWluKCkgewogICAgZmlsZSwgZXJyIDo9IG9zLk9wZW4oImV4YW1wbGUudHh0IikKICAgIGlmIChlcnIgIT0gbmlsKSB7CiAgICAgICAgZm10LlByaW50bG4oIkVycm9yIG9wZW5pbmcgZmlsZToiLCBlcnIpCiAgICAgICAgcmV0dXJuCiAgICB9CiAgICBkZWZlciBmaWxlLkNsb3NlKCkKCiAgICBzY2FubmVyIDo9IGJ1ZmlvLk5ld1NjYW5uZXIoZmlsZSkKICAgIGZvciBzY2FubmVyLlNjYW4oKSB7CiAgICAgICAgZm10LlByaW50bG4oc2Nhbm5lci5UZXh0KCkpCiAgICB9CgogICAgaWYgZXJyIDo9IHNjYW5uZXIuRXJyKCk7IGVyciAhPSBuaWwgewogICAgICAgIGZtdC5QcmludGxuKCJFcnJvciByZWFkaW5nIGZpbGU6IiwgZXJyKQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;bufio&quot;
+    &quot;fmt&quot;
+    &quot;os&quot;
+)
+
+func main() {
+    file, err := os.Open(&quot;example.txt&quot;)
+    if (err != nil) {
+        fmt.Println(&quot;Error opening file:&quot;, err)
+        return
+    }
+    defer file.Close()
+
+    scanner := bufio.NewScanner(file)
+    for scanner.Scan() {
+        fmt.Println(scanner.Text())
+    }
+
+    if err := scanner.Err(); err != nil {
+        fmt.Println(&quot;Error reading file:&quot;, err)
+    }
+}</pre></div><div class='content'><h4>Utilitzant <code>ioutil.ReadFile</code></h4>
+<p>La funció <code>ioutil.ReadFile</code> llegeix tot el contingut del fitxer a la memòria.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImZtdCIKICAgICJpby9pb3V0aWwiCikKCmZ1bmMgbWFpbigpIHsKICAgIGNvbnRlbnQsIGVyciA6PSBpb3V0aWwuUmVhZEZpbGUoImV4YW1wbGUudHh0IikKICAgIGlmIGVyciAhPSBuaWwgewogICAgICAgIGZtdC5QcmludGxuKCJFcnJvciByZWFkaW5nIGZpbGU6IiwgZXJyKQogICAgICAgIHJldHVybgogICAgfQogICAgZm10LlByaW50bG4oc3RyaW5nKGNvbnRlbnQpKQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;fmt&quot;
+    &quot;io/ioutil&quot;
+)
+
+func main() {
+    content, err := ioutil.ReadFile(&quot;example.txt&quot;)
+    if err != nil {
+        fmt.Println(&quot;Error reading file:&quot;, err)
+        return
+    }
+    fmt.Println(string(content))
+}</pre></div><div class='content'></div><h1>Escriure Fitxers</h1>
+<div class='content'></div><h2>Crear o Obrir un Fitxer per Escriure</h2>
+<div class='content'><p>Per escriure a un fitxer, pots utilitzar <code>os.Create</code> o <code>os.OpenFile</code>. La funció <code>os.Create</code> crea un fitxer si no existeix o el trunca si ho fa.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImZtdCIKICAgICJvcyIKKQoKZnVuYyBtYWluKCkgewogICAgZmlsZSwgZXJyIDo9IG9zLkNyZWF0ZSgiZXhhbXBsZS50eHQiKQogICAgaWYgZXJyICE9IG5pbCB7CiAgICAgICAgZm10LlByaW50bG4oIkVycm9yIGNyZWF0aW5nIGZpbGU6IiwgZXJyKQogICAgICAgIHJldHVybgogICAgfQogICAgZGVmZXIgZmlsZS5DbG9zZSgpCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;fmt&quot;
+    &quot;os&quot;
+)
+
+func main() {
+    file, err := os.Create(&quot;example.txt&quot;)
+    if err != nil {
+        fmt.Println(&quot;Error creating file:&quot;, err)
+        return
+    }
+    defer file.Close()
+}</pre></div><div class='content'></div><h2>Escriure Contingut a un Fitxer</h2>
+<div class='content'><p>Pots escriure a un fitxer utilitzant els mètodes <code>Write</code> o <code>WriteString</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImZtdCIKICAgICJvcyIKKQoKZnVuYyBtYWluKCkgewogICAgZmlsZSwgZXJyIDo9IG9zLkNyZWF0ZSgiZXhhbXBsZS50eHQiKQogICAgaWYgZXJyICE9IG5pbCB7CiAgICAgICAgZm10LlByaW50bG4oIkVycm9yIGNyZWF0aW5nIGZpbGU6IiwgZXJyKQogICAgICAgIHJldHVybgogICAgfQogICAgZGVmZXIgZmlsZS5DbG9zZSgpCgogICAgXywgZXJyID0gZmlsZS5Xcml0ZVN0cmluZygiSGVsbG8sIFdvcmxkIVxuIikKICAgIGlmIGVyciAhPSBuaWwgewogICAgICAgIGZtdC5QcmludGxuKCJFcnJvciB3cml0aW5nIHRvIGZpbGU6IiwgZXJyKQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;fmt&quot;
+    &quot;os&quot;
+)
+
+func main() {
+    file, err := os.Create(&quot;example.txt&quot;)
+    if err != nil {
+        fmt.Println(&quot;Error creating file:&quot;, err)
+        return
+    }
+    defer file.Close()
+
+    _, err = file.WriteString(&quot;Hello, World!\n&quot;)
+    if err != nil {
+        fmt.Println(&quot;Error writing to file:&quot;, err)
+    }
+}</pre></div><div class='content'></div><h2>Utilitzant `bufio.Writer`</h2>
+<div class='content'><p>Per escriure amb buffer, pots utilitzar <code>bufio.Writer</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImJ1ZmlvIgogICAgImZtdCIKICAgICJvcyIKKQoKZnVuYyBtYWluKCkgewogICAgZmlsZSwgZXJyIDo9IG9zLkNyZWF0ZSgiZXhhbXBsZS50eHQiKQogICAgaWYgZXJyICE9IG5pbCB7CiAgICAgICAgZm10LlByaW50bG4oIkVycm9yIGNyZWF0aW5nIGZpbGU6IiwgZXJyKQogICAgICAgIHJldHVybgogICAgfQogICAgZGVmZXIgZmlsZS5DbG9zZSgpCgogICAgd3JpdGVyIDo9IGJ1ZmlvLk5ld1dyaXRlcihmaWxlKQogICAgXywgZXJyID0gd3JpdGVyLldyaXRlU3RyaW5nKCJIZWxsbywgQnVmZmVyZWQgV29ybGQhXG4iKQogICAgaWYgZXJyICE9IG5pbCB7CiAgICAgICAgZm10LlByaW50bG4oIkVycm9yIHdyaXRpbmcgdG8gZmlsZToiLCBlcnIpCiAgICB9CiAgICB3cml0ZXIuRmx1c2goKQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;bufio&quot;
+    &quot;fmt&quot;
+    &quot;os&quot;
+)
+
+func main() {
+    file, err := os.Create(&quot;example.txt&quot;)
+    if err != nil {
+        fmt.Println(&quot;Error creating file:&quot;, err)
+        return
+    }
+    defer file.Close()
+
+    writer := bufio.NewWriter(file)
+    _, err = writer.WriteString(&quot;Hello, Buffered World!\n&quot;)
+    if err != nil {
+        fmt.Println(&quot;Error writing to file:&quot;, err)
+    }
+    writer.Flush()
+}</pre></div><div class='content'></div><h1>Operacions Avançades amb Fitxers</h1>
+<div class='content'></div><h2>Permisos de Fitxers</h2>
+<div class='content'><p>Quan crees o obres fitxers, pots especificar els permisos del fitxer utilitzant <code>os.OpenFile</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImZtdCIKICAgICJvcyIKKQoKZnVuYyBtYWluKCkgewogICAgZmlsZSwgZXJyIDo9IG9zLk9wZW5GaWxlKCJleGFtcGxlLnR4dCIsIG9zLk9fQ1JFQVRFfG9zLk9fV1JPTkxZLCAwNjQ0KQogICAgaWYgZXJyICE9IG5pbCB7CiAgICAgICAgZm10LlByaW50bG4oIkVycm9yIG9wZW5pbmcgZmlsZToiLCBlcnIpCiAgICAgICAgcmV0dXJuCiAgICB9CiAgICBkZWZlciBmaWxlLkNsb3NlKCkKCiAgICBfLCBlcnIgPSBmaWxlLldyaXRlU3RyaW5nKCJIZWxsbyB3aXRoIHBlcm1pc3Npb25zIVxuIikKICAgIGlmIGVyciAhPSBuaWwgewogICAgICAgIGZtdC5QcmludGxuKCJFcnJvciB3cml0aW5nIHRvIGZpbGU6IiwgZXJyKQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;fmt&quot;
+    &quot;os&quot;
+)
+
+func main() {
+    file, err := os.OpenFile(&quot;example.txt&quot;, os.O_CREATE|os.O_WRONLY, 0644)
+    if err != nil {
+        fmt.Println(&quot;Error opening file:&quot;, err)
+        return
+    }
+    defer file.Close()
+
+    _, err = file.WriteString(&quot;Hello with permissions!\n&quot;)
+    if err != nil {
+        fmt.Println(&quot;Error writing to file:&quot;, err)
+    }
+}</pre></div><div class='content'></div><h2>Informació del Fitxer</h2>
+<div class='content'><p>Pots obtenir informació del fitxer utilitzant la funció <code>os.Stat</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImZtdCIKICAgICJvcyIKKQoKZnVuYyBtYWluKCkgewogICAgZmlsZUluZm8sIGVyciA6PSBvcy5TdGF0KCJleGFtcGxlLnR4dCIpCiAgICBpZiBlcnIgIT0gbmlsIHsKICAgICAgICBmbXQuUHJpbnRsbigiRXJyb3IgZ2V0dGluZyBmaWxlIGluZm86IiwgZXJyKQogICAgICAgIHJldHVybgogICAgfQogICAgZm10LlByaW50ZigiRmlsZSBOYW1lOiAlc1xuIiwgZmlsZUluZm8uTmFtZSgpKQogICAgZm10LlByaW50ZigiU2l6ZTogJWQgYnl0ZXNcbiIsIGZpbGVJbmZvLlNpemUoKSkKICAgIGZtdC5QcmludGYoIlBlcm1pc3Npb25zOiAlc1xuIiwgZmlsZUluZm8uTW9kZSgpKQogICAgZm10LlByaW50ZigiTGFzdCBNb2RpZmllZDogJXNcbiIsIGZpbGVJbmZvLk1vZFRpbWUoKSkKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;fmt&quot;
+    &quot;os&quot;
+)
+
+func main() {
+    fileInfo, err := os.Stat(&quot;example.txt&quot;)
+    if err != nil {
+        fmt.Println(&quot;Error getting file info:&quot;, err)
+        return
+    }
+    fmt.Printf(&quot;File Name: %s\n&quot;, fileInfo.Name())
+    fmt.Printf(&quot;Size: %d bytes\n&quot;, fileInfo.Size())
+    fmt.Printf(&quot;Permissions: %s\n&quot;, fileInfo.Mode())
+    fmt.Printf(&quot;Last Modified: %s\n&quot;, fileInfo.ModTime())
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>L'entrada/sortida de fitxers és una habilitat crucial per a qualsevol programador. En Go, els paquets <code>os</code>, <code>bufio</code> i <code>io/ioutil</code> proporcionen eines potents per treballar amb fitxers. Comprenent com llegir i escriure fitxers, gestionar errors i administrar permisos de fitxers, pots crear aplicacions robustes que interactuen amb el sistema de fitxers de manera efectiva.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='building-and-deploying-go-applications'>&#x25C4;Construcció i Desplegament d'Aplicacions Go</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Entrada/Sortida de Fitxers en Go</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='networking'>Xarxes &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

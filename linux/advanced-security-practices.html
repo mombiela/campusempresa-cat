@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pràctiques Avançades de Seguretat</title>
+
+    <link rel="alternate" href="https://campusempresa.com/linux/advanced-security-practices" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/linux/advanced-security-practices" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/linux/advanced-security-practices" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/linux/advanced-security-practices" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/linux/advanced-security-practices" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='linux-kernel-and-modules'>&#x25C4;Nucli de Linux i Mòduls</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Pràctiques Avançades de Seguretat</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='high-availability-and-load-balancing'>Alta Disponibilitat i Balanceig de Càrrega &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquesta secció, aprofundirem en les pràctiques avançades de seguretat per a sistemes Linux. Això inclourà tècniques per assegurar el teu sistema, monitoritzar possibles amenaces i respondre a incidents de seguretat. Al final d'aquesta secció, hauràs de tenir una comprensió completa de com mantenir un entorn Linux segur.</p>
+</div><h1>Enduriment del Sistema</h1>
+<div class='content'><p>L'enduriment del sistema implica configurar el sistema per reduir la seva superfície d'atac i mitigar possibles vulnerabilitats.</p>
+</div><h2>Enduriment del Nucli</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Desactivar Sistemes de Fitxers No Utilitzats</strong>: Prevenir la càrrega de sistemes de fitxers innecessaris per reduir la superfície d'atac.</p>
+<pre><code class="language-bash">echo &quot;install cramfs /bin/true&quot; &gt;&gt; /etc/modprobe.d/disable-cramfs.conf
+echo &quot;install freevxfs /bin/true&quot; &gt;&gt; /etc/modprobe.d/disable-freevxfs.conf
+</code></pre>
+</li>
+<li>
+<p><strong>Activar SELinux o AppArmor</strong>: Utilitza Security-Enhanced Linux (SELinux) o AppArmor per fer complir les polítiques de seguretat.</p>
+<pre><code class="language-bash"># Comprovar l'estat de SELinux
+sestatus
+
+# Activar SELinux
+sudo setenforce 1
+</code></pre>
+</li>
+</ul>
+</div><h2>Enduriment de la Xarxa</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Desactivar Serveis de Xarxa No Utilitzats</strong>: Apaga els serveis que no estan en ús per minimitzar possibles punts d'entrada.</p>
+<pre><code class="language-bash">sudo systemctl disable telnet
+sudo systemctl stop telnet
+</code></pre>
+</li>
+<li>
+<p><strong>Configurar el Tallafocs</strong>: Utilitza <code>iptables</code> o <code>firewalld</code> per controlar el trànsit entrant i sortint.</p>
+<pre><code class="language-bash"># Exemple de regla iptables per permetre SSH i bloquejar tot el demés
+sudo iptables -A INPUT -p tcp --dport 22 -j ACCEPT
+sudo iptables -A INPUT -j DROP
+</code></pre>
+</li>
+</ul>
+</div><h1>Monitorització i Registre</h1>
+<div class='content'><p>Una monitorització i registre efectius són crucials per detectar i respondre a incidents de seguretat.</p>
+</div><h2>Registres del Sistema</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Configurar <code>rsyslog</code></strong>: Assegura't que <code>rsyslog</code> està configurat per capturar i emmagatzemar registres.</p>
+<pre><code class="language-bash">sudo systemctl enable rsyslog
+sudo systemctl start rsyslog
+</code></pre>
+</li>
+<li>
+<p><strong>Rotació de Registres</strong>: Utilitza <code>logrotate</code> per gestionar la mida i la retenció dels fitxers de registre.</p>
+<pre><code class="language-bash"># Exemple de configuració de logrotate per /var/log/syslog
+/var/log/syslog {
+    daily
+    rotate 7
+    compress
+    missingok
+    notifempty
+    create 0640 root utmp
+}
+</code></pre>
+</li>
+</ul>
+</div><h2>Sistemes de Detecció d'Intrusions (IDS)</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Instal·lar i Configurar <code>AIDE</code></strong>: Advanced Intrusion Detection Environment (AIDE) ajuda a monitoritzar la integritat dels fitxers.</p>
+<pre><code class="language-bash">sudo apt-get install aide
+sudo aideinit
+sudo cp /var/lib/aide/aide.db.new /var/lib/aide/aide.db
+</code></pre>
+</li>
+<li>
+<p><strong>Utilitzar <code>Snort</code> per a la Monitorització de Xarxa</strong>: Snort és un sistema de detecció d'intrusions de xarxa que pot monitoritzar i registrar el trànsit de xarxa.</p>
+<pre><code class="language-bash">sudo apt-get install snort
+sudo snort -A console -i eth0 -c /etc/snort/snort.conf
+</code></pre>
+</li>
+</ul>
+</div><h1>Control d'Accés</h1>
+<div class='content'><p>Implementar mesures estrictes de control d'accés és essencial per mantenir la seguretat del sistema.</p>
+</div><h2>Gestió d'Usuaris i Grups</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Principi de Menor Privilegi</strong>: Assegura't que els usuaris tenen els permisos mínims necessaris.</p>
+<pre><code class="language-bash"># Afegir un usuari a un grup específic
+sudo usermod -aG groupname username
+</code></pre>
+</li>
+<li>
+<p><strong>Polítiques de Contrasenyes</strong>: Fer complir polítiques de contrasenyes fortes utilitzant <code>pam_pwquality</code>.</p>
+<pre><code class="language-bash"># Editar /etc/security/pwquality.conf
+minlen = 12
+dcredit = -1
+ucredit = -1
+ocredit = -1
+</code></pre>
+</li>
+</ul>
+</div><h2>Enduriment de SSH</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Desactivar l'Inici de Sessió com a Root</strong>: Prevenir l'inici de sessió com a root a través de SSH.</p>
+<pre><code class="language-bash"># Editar /etc/ssh/sshd_config
+PermitRootLogin no
+</code></pre>
+</li>
+<li>
+<p><strong>Utilitzar Autenticació Basada en Claus</strong>: Desactivar l'autenticació per contrasenya i utilitzar claus SSH.</p>
+<pre><code class="language-bash"># Editar /etc/ssh/sshd_config
+PasswordAuthentication no
+</code></pre>
+</li>
+</ul>
+</div><h1>Resposta a Incidents</h1>
+<div class='content'><p>Estar preparat per respondre a incidents de seguretat és crucial per minimitzar els danys.</p>
+</div><h2>Pla de Resposta a Incidents</h2>
+<div class='content'><ul>
+<li><strong>Preparació</strong>: Tenir un pla de resposta a incidents documentat.</li>
+<li><strong>Detecció i Anàlisi</strong>: Utilitzar eines de monitorització per detectar incidents.</li>
+<li><strong>Contenció, Erradicació i Recuperació</strong>: Passos per contenir i eliminar amenaces.</li>
+<li><strong>Activitat Post-Incident</strong>: Revisar i millorar les mesures de seguretat.</li>
+</ul>
+</div><h2>Eines per a la Resposta a Incidents</h2>
+<div class='content'><ul>
+<li>
+<p><strong><code>tcpdump</code></strong>: Capturar i analitzar el trànsit de xarxa.</p>
+<pre><code class="language-bash">sudo tcpdump -i eth0 -w capture.pcap
+</code></pre>
+</li>
+<li>
+<p><strong><code>chkrootkit</code></strong>: Comprovar la presència de rootkits al sistema.</p>
+<pre><code class="language-bash">sudo apt-get install chkrootkit
+sudo chkrootkit
+</code></pre>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem cobert pràctiques avançades de seguretat per a sistemes Linux, incloent l'enduriment del sistema, la monitorització i el registre, el control d'accés i la resposta a incidents. Implementant aquestes pràctiques, pots millorar significativament la seguretat del teu entorn Linux i estar millor preparat per gestionar possibles amenaces de seguretat.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='linux-kernel-and-modules'>&#x25C4;Nucli de Linux i Mòduls</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Pràctiques Avançades de Seguretat</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='high-availability-and-load-balancing'>Alta Disponibilitat i Balanceig de Càrrega &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

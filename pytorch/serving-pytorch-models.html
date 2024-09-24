@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servir Models PyTorch</title>
+
+    <link rel="alternate" href="https://campusempresa.com/pytorch/serving-pytorch-models" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/pytorch/serving-pytorch-models" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/pytorch/serving-pytorch-models" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/pytorch/serving-pytorch-models" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/pytorch/serving-pytorch-models" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='exporting-models-with-torchscript'>&#x25C4;Exportació de Models amb TorchScript</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Servir Models PyTorch</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='optimizing-for-inference'>Optimització per a Inferència &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquesta secció, cobrirem com servir models PyTorch perquè es puguin utilitzar en entorns de producció. Servir un model implica fer-lo disponible per a inferència a través d'una API o una altra interfície. Aquest és un pas crucial en el desplegament de models d'aprenentatge automàtic a aplicacions del món real.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Serialització del Model</strong>: Guardar un model entrenat al disc.</li>
+<li><strong>Deserialització del Model</strong>: Carregar un model guardat des del disc.</li>
+<li><strong>Inferència</strong>: Executar el model per fer prediccions sobre noves dades.</li>
+<li><strong>API REST</strong>: Una manera comuna de servir models a través de la web.</li>
+<li><strong>Eines de Desplegament</strong>: Eines i marcs que ajuden en el desplegament de models.</li>
+</ul>
+</div><h1>Serialització i Deserialització del Model</h1>
+<div class='content'><p>Abans de servir un model, cal guardar-lo després de l'entrenament. PyTorch proporciona mètodes senzills per a això.</p>
+</div><h2>Guardar un Model</h2>
+<div class='content'><p>Pots guardar un model utilitzant <code>torch.save</code>. Aquesta funció serialitza el model i el guarda al disc.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCgojIFN1cG9zYW50IHF1ZSBgbW9kZWxgIMOpcyBlbCB0ZXUgbW9kZWwgZW50cmVuYXQKdG9yY2guc2F2ZShtb2RlbC5zdGF0ZV9kaWN0KCksICdtb2RlbC5wdGgnKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+
+# Suposant que `model` &eacute;s el teu model entrenat
+torch.save(model.state_dict(), 'model.pth')</pre></div><div class='content'></div><h2>Carregar un Model</h2>
+<div class='content'><p>Per carregar un model guardat, utilitzes <code>torch.load</code> i <code>load_state_dict</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmZyb20geW91cl9tb2RlbF9maWxlIGltcG9ydCBZb3VyTW9kZWxDbGFzcwoKbW9kZWwgPSBZb3VyTW9kZWxDbGFzcygpCm1vZGVsLmxvYWRfc3RhdGVfZGljdCh0b3JjaC5sb2FkKCdtb2RlbC5wdGgnKSkKbW9kZWwuZXZhbCgpICAjIFBvc2FyIGVsIG1vZGVsIGVuIG1vZGUgZCdhdmFsdWFjacOz"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+from your_model_file import YourModelClass
+
+model = YourModelClass()
+model.load_state_dict(torch.load('model.pth'))
+model.eval()  # Posar el model en mode d'avaluaci&oacute;</pre></div><div class='content'></div><h1>Servir Models amb una API REST</h1>
+<div class='content'><p>Una de les maneres més comunes de servir un model és a través d'una API REST. Això permet als clients enviar sol·licituds HTTP per obtenir prediccions del model.</p>
+</div><h2>Utilitzant Flask</h2>
+<div class='content'><p>Flask és un marc web lleuger per a Python que es fa servir comunament per servir models d'aprenentatge automàtic.</p>
+<h4>Configurar Flask</h4>
+<p>Primer, instal·la Flask si no ho has fet ja:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgRmxhc2s="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install Flask</pre></div><div class='content'><h4>Crear una Aplicació Flask</h4>
+<p>Aquí tens un exemple bàsic d'una aplicació Flask que serveix un model PyTorch:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2ssIHJlcXVlc3QsIGpzb25pZnkKaW1wb3J0IHRvcmNoCmZyb20geW91cl9tb2RlbF9maWxlIGltcG9ydCBZb3VyTW9kZWxDbGFzcwoKYXBwID0gRmxhc2soX19uYW1lX18pCgojIENhcnJlZ2FyIGVsIG1vZGVsCm1vZGVsID0gWW91ck1vZGVsQ2xhc3MoKQptb2RlbC5sb2FkX3N0YXRlX2RpY3QodG9yY2gubG9hZCgnbW9kZWwucHRoJykpCm1vZGVsLmV2YWwoKQoKQGFwcC5yb3V0ZSgnL3ByZWRpY3QnLCBtZXRob2RzPVsnUE9TVCddKQpkZWYgcHJlZGljdCgpOgogICAgZGF0YSA9IHJlcXVlc3QuZ2V0X2pzb24oZm9yY2U9VHJ1ZSkKICAgIGlucHV0cyA9IHRvcmNoLnRlbnNvcihkYXRhWydpbnB1dHMnXSkKICAgIHdpdGggdG9yY2gubm9fZ3JhZCgpOgogICAgICAgIG91dHB1dHMgPSBtb2RlbChpbnB1dHMpCiAgICByZXR1cm4ganNvbmlmeSh7J291dHB1dHMnOiBvdXRwdXRzLnRvbGlzdCgpfSkKCmlmIF9fbmFtZV9fID09ICdfX21haW5fXyc6CiAgICBhcHAucnVuKGRlYnVnPVRydWUp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask, request, jsonify
+import torch
+from your_model_file import YourModelClass
+
+app = Flask(__name__)
+
+# Carregar el model
+model = YourModelClass()
+model.load_state_dict(torch.load('model.pth'))
+model.eval()
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    data = request.get_json(force=True)
+    inputs = torch.tensor(data['inputs'])
+    with torch.no_grad():
+        outputs = model(inputs)
+    return jsonify({'outputs': outputs.tolist()})
+
+if __name__ == '__main__':
+    app.run(debug=True)</pre></div><div class='content'></div><h2>Provar l'API</h2>
+<div class='content'><p>Pots provar l'API utilitzant eines com <code>curl</code> o Postman.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y3VybCAtWCBQT1NUIC1IICJDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24iIC1kICd7ImlucHV0cyI6IFsxLjAsIDIuMCwgMy4wXX0nIGh0dHA6Ly8xMjcuMC4wLjE6NTAwMC9wcmVkaWN0"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>curl -X POST -H &quot;Content-Type: application/json&quot; -d '{&quot;inputs&quot;: [1.0, 2.0, 3.0]}' http://127.0.0.1:5000/predict</pre></div><div class='content'></div><h1>Eines de Desplegament</h1>
+<div class='content'><p>Diverses eines poden ajudar-te a desplegar el teu model de manera més eficient:</p>
+<ul>
+<li><strong>TorchServe</strong>: Una eina flexible i fàcil d'utilitzar per servir models PyTorch.</li>
+<li><strong>Docker</strong>: Eina de contenidorització que pot empaquetar la teva aplicació i les seves dependències.</li>
+<li><strong>Kubernetes</strong>: Eina d'orquestració per desplegar, escalar i gestionar aplicacions contenidoritzades.</li>
+</ul>
+</div><h2>Utilitzant TorchServe</h2>
+<div class='content'><p>TorchServe és una eina dissenyada específicament per servir models PyTorch. Simplifica el procés i proporciona característiques com registre, mètriques i servei de múltiples models.</p>
+<h4>Instal·lar TorchServe</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgdG9yY2hzZXJ2ZSB0b3JjaC1tb2RlbC1hcmNoaXZlcg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install torchserve torch-model-archiver</pre></div><div class='content'><h4>Arxivar el Model</h4>
+<p>Necessites crear un arxiu d'arxiu de model (<code>.mar</code>) que TorchServe pugui utilitzar.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dG9yY2gtbW9kZWwtYXJjaGl2ZXIgLS1tb2RlbC1uYW1lIG15X21vZGVsIC0tdmVyc2lvbiAxLjAgLS1zZXJpYWxpemVkLWZpbGUgbW9kZWwucHRoIC0taGFuZGxlciBoYW5kbGVyLnB5IC0tZXh0cmEtZmlsZXMgInlvdXJfbW9kZWxfZmlsZS5weSI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>torch-model-archiver --model-name my_model --version 1.0 --serialized-file model.pth --handler handler.py --extra-files &quot;your_model_file.py&quot;</pre></div><div class='content'><h4>Iniciar TorchServe</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dG9yY2hzZXJ2ZSAtLXN0YXJ0IC0tbmNzIC0tbW9kZWwtc3RvcmUgbW9kZWxfc3RvcmUgLS1tb2RlbHMgbXlfbW9kZWw9bXlfbW9kZWwubWFy"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>torchserve --start --ncs --model-store model_store --models my_model=my_model.mar</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Servir models PyTorch és un pas crucial en el desplegament d'aplicacions d'aprenentatge automàtic. Entenent com serialitzar i deserialitzar models, crear APIs REST amb Flask i utilitzar eines de desplegament com TorchServe, pots fer que els teus models estiguin disponibles per a ús en el món real. Aquesta secció t'ha proporcionat el coneixement fonamental i exemples pràctics per començar a servir els teus models PyTorch.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='exporting-models-with-torchscript'>&#x25C4;Exportació de Models amb TorchScript</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Servir Models PyTorch</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='optimizing-for-inference'>Optimització per a Inferència &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

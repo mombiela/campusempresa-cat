@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supòsits en JUnit</title>
+
+    <link rel="alternate" href="https://campusempresa.com/junit/assumptions-in-junit" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/junit/assumptions-in-junit" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/junit/assumptions-in-junit" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/junit/assumptions-in-junit" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/junit/assumptions-in-junit" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='rules-in-junit'>&#x25C4;Regles a JUnit</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Supòsits en JUnit</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='theories-in-junit'>Teories a JUnit &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció als Supòsits</h1>
+<div class='content'><p>En JUnit, els supòsits s'utilitzen per desactivar condicionalment les proves basades en certs criteris. Si un supòsit falla, la prova es salta en lloc de marcar-se com a fallida. Això és particularment útil per a proves que només s'han d'executar sota condicions específiques, com ara quan es configuren certes propietats del sistema o quan s'executa en un sistema operatiu particular.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Supòsits</strong>: Condicions que s'han de complir perquè una prova s'executi.</li>
+<li><strong>Classe Assume</strong>: JUnit proporciona la classe <code>Assume</code> per fer supòsits en les proves.</li>
+<li><strong>Execució Condicional de Proves</strong>: Les proves es salten si els supòsits no es compleixen.</li>
+</ul>
+</div><h1>Ús dels Supòsits en JUnit</h1>
+<div class='content'><p>JUnit proporciona diversos mètodes estàtics en la classe <code>Assume</code> per fer supòsits. Els mètodes més utilitzats són:</p>
+<ul>
+<li><code>assumeTrue(boolean condition)</code>: Salta la prova si la condició és falsa.</li>
+<li><code>assumeFalse(boolean condition)</code>: Salta la prova si la condició és certa.</li>
+<li><code>assumeThat(T actual, Matcher&lt;T&gt; matcher)</code>: Salta la prova si el valor actual no coincideix amb el matcher.</li>
+</ul>
+</div><h2>Exemple: Supòsits Bàsics</h2>
+<div class='content'><p>Vegem un exemple senzill on utilitzem <code>assumeTrue</code> per saltar una prova si no es compleix una certa condició.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHN0YXRpYyBvcmcuanVuaXQuanVwaXRlci5hcGkuQXNzdW1wdGlvbnMuYXNzdW1lVHJ1ZTsKaW1wb3J0IG9yZy5qdW5pdC5qdXBpdGVyLmFwaS5UZXN0OwoKcHVibGljIGNsYXNzIEFzc3VtcHRpb25UZXN0IHsKCiAgICBAVGVzdAogICAgdm9pZCB0ZXN0T25seU9uQ2lTZXJ2ZXIoKSB7CiAgICAgICAgYXNzdW1lVHJ1ZSgiQ0kiLmVxdWFscyhTeXN0ZW0uZ2V0ZW52KCJFTlYiKSkpOwogICAgICAgIC8vIEzDsmdpY2EgZGUgcHJvdmEgcXVlIG5vbcOpcyBzJ2hhIGQnZXhlY3V0YXIgZW4gdW4gc2Vydmlkb3IgQ0kKICAgICAgICBTeXN0ZW0ub3V0LnByaW50bG4oIkFxdWVzdGEgcHJvdmEgbm9tw6lzIHMnZXhlY3V0YSBlbiB1biBzZXJ2aWRvciBDSS4iKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import org.junit.jupiter.api.Test;
+
+public class AssumptionTest {
+
+    @Test
+    void testOnlyOnCiServer() {
+        assumeTrue(&quot;CI&quot;.equals(System.getenv(&quot;ENV&quot;)));
+        // L&ograve;gica de prova que nom&eacute;s s'ha d'executar en un servidor CI
+        System.out.println(&quot;Aquesta prova nom&eacute;s s'executa en un servidor CI.&quot;);
+    }
+}</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li>La prova <code>testOnlyOnCiServer</code> només s'executarà si la variable d'entorn <code>ENV</code> està configurada a <code>CI</code>.</li>
+<li>Si el supòsit falla, la prova es salta.</li>
+</ul>
+</div><h2>Exemple: Ús de assumeThat</h2>
+<div class='content'><p>El mètode <code>assumeThat</code> és útil quan vols fer supòsits més complexos utilitzant matchers.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHN0YXRpYyBvcmcuaGFtY3Jlc3QuQ29yZU1hdGNoZXJzLmlzOwppbXBvcnQgc3RhdGljIG9yZy5qdW5pdC5qdXBpdGVyLmFwaS5Bc3N1bXB0aW9ucy5hc3N1bWVUaGF0OwppbXBvcnQgb3JnLmp1bml0Lmp1cGl0ZXIuYXBpLlRlc3Q7CgpwdWJsaWMgY2xhc3MgQXNzdW1wdGlvblRlc3QgewoKICAgIEBUZXN0CiAgICB2b2lkIHRlc3RPbmx5T25TcGVjaWZpY0phdmFWZXJzaW9uKCkgewogICAgICAgIGFzc3VtZVRoYXQoU3lzdGVtLmdldFByb3BlcnR5KCJqYXZhLnZlcnNpb24iKSwgaXMoIjExIikpOwogICAgICAgIC8vIEzDsmdpY2EgZGUgcHJvdmEgcXVlIG5vbcOpcyBzJ2hhIGQnZXhlY3V0YXIgZW4gSmF2YSAxMQogICAgICAgIFN5c3RlbS5vdXQucHJpbnRsbigiQXF1ZXN0YSBwcm92YSBub23DqXMgcydleGVjdXRhIGVuIEphdmEgMTEuIik7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import static org.hamcrest.CoreMatchers.is;
+import static org.junit.jupiter.api.Assumptions.assumeThat;
+import org.junit.jupiter.api.Test;
+
+public class AssumptionTest {
+
+    @Test
+    void testOnlyOnSpecificJavaVersion() {
+        assumeThat(System.getProperty(&quot;java.version&quot;), is(&quot;11&quot;));
+        // L&ograve;gica de prova que nom&eacute;s s'ha d'executar en Java 11
+        System.out.println(&quot;Aquesta prova nom&eacute;s s'executa en Java 11.&quot;);
+    }
+}</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li>La prova <code>testOnlyOnSpecificJavaVersion</code> només s'executarà si la versió de Java és 11.</li>
+<li>Si el supòsit falla, la prova es salta.</li>
+</ul>
+</div><h1>Casos Pràctics</h1>
+<div class='content'><ul>
+<li><strong>Proves Específiques d'Entorn</strong>: Executar proves només en certs entorns (p. ex., servidors CI, sistema operatiu específic).</li>
+<li><strong>Proves Específiques de Configuració</strong>: Executar proves només quan es configuren certes configuracions o propietats.</li>
+<li><strong>Proves Dependents de Recursos</strong>: Saltar proves si els recursos necessaris (p. ex., bases de dades, serveis externs) no estan disponibles.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Els supòsits en JUnit proporcionen una manera poderosa de saltar condicionalment les proves basades en criteris específics. Utilitzant la classe <code>Assume</code>, pots assegurar-te que les proves només s'executin quan es compleixin les condicions necessàries, fent que el teu conjunt de proves sigui més robust i adaptable a diferents entorns i configuracions. Entendre i utilitzar efectivament els supòsits pot ajudar-te a escriure proves més flexibles i mantenibles.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='rules-in-junit'>&#x25C4;Regles a JUnit</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Supòsits en JUnit</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='theories-in-junit'>Teories a JUnit &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

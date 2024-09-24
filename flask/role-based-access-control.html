@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control d'Accés Basat en Rols a Flask</title>
+
+    <link rel="alternate" href="https://campusempresa.com/flask/role-based-access-control" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/flask/role-based-access-control" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/flask/role-based-access-control" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/flask/role-based-access-control" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/flask/role-based-access-control" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='user-registration'>&#x25C4;Registre d'Usuaris</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Control d'Accés Basat en Rols a Flask</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='blueprints-large-applications'>Blueprints per a Aplicacions Grans &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció al Control d'Accés Basat en Rols (RBAC)</h1>
+<div class='content'><p>El Control d'Accés Basat en Rols (RBAC) és un mètode per regular l'accés als recursos basat en els rols dels usuaris individuals dins d'una organització. En una aplicació Flask, RBAC es pot implementar per assegurar que els usuaris tinguin els permisos adequats per accedir a certes parts de l'aplicació.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Rols</strong>: Un rol és una col·lecció de permisos. Exemples inclouen 'admin', 'editor', 'viewer'.</li>
+<li><strong>Permisos</strong>: Els permisos són els drets per realitzar certes accions. Exemples inclouen 'read', 'write', 'delete'.</li>
+<li><strong>Usuaris</strong>: Els usuaris són assignats a rols que determinen els seus permisos.</li>
+</ul>
+</div><h1>Configuració de Flask per RBAC</h1>
+<div class='content'><p>Per implementar RBAC a Flask, utilitzarem l'extensió <code>Flask-Security</code>, que proporciona una manera senzilla de gestionar l'autenticació i la gestió de rols.</p>
+</div><h2>Instal·lació</h2>
+<div class='content'><p>Primer, instal·la els paquets necessaris:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgRmxhc2sgRmxhc2stU1FMQWxjaGVteSBGbGFzay1TZWN1cml0eQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install Flask Flask-SQLAlchemy Flask-Security</pre></div><div class='content'></div><h2>Configuració Bàsica</h2>
+<div class='content'><p>Crea una aplicació Flask bàsica i configura-la per utilitzar Flask-Security.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2sKZnJvbSBmbGFza19zcWxhbGNoZW15IGltcG9ydCBTUUxBbGNoZW15CmZyb20gZmxhc2tfc2VjdXJpdHkgaW1wb3J0IFNlY3VyaXR5LCBTUUxBbGNoZW15VXNlckRhdGFzdG9yZSwgVXNlck1peGluLCBSb2xlTWl4aW4KCmFwcCA9IEZsYXNrKF9fbmFtZV9fKQphcHAuY29uZmlnWydTRUNSRVRfS0VZJ10gPSAnc3VwZXItc2VjcmV0JwphcHAuY29uZmlnWydTUUxBTENIRU1ZX0RBVEFCQVNFX1VSSSddID0gJ3NxbGl0ZTovLy9yYmFjLmRiJwphcHAuY29uZmlnWydTRUNVUklUWV9SRUdJU1RFUkFCTEUnXSA9IFRydWUKYXBwLmNvbmZpZ1snU0VDVVJJVFlfUEFTU1dPUkRfU0FMVCddID0gJ3N1cGVyLXNlY3JldC1zYWx0JwoKZGIgPSBTUUxBbGNoZW15KGFwcCkKCiMgRGVmaW5pciBtb2RlbHMKcm9sZXNfdXNlcnMgPSBkYi5UYWJsZSgncm9sZXNfdXNlcnMnLAogICAgZGIuQ29sdW1uKCd1c2VyX2lkJywgZGIuSW50ZWdlcigpLCBkYi5Gb3JlaWduS2V5KCd1c2VyLmlkJykpLAogICAgZGIuQ29sdW1uKCdyb2xlX2lkJywgZGIuSW50ZWdlcigpLCBkYi5Gb3JlaWduS2V5KCdyb2xlLmlkJykpCikKCmNsYXNzIFJvbGUoZGIuTW9kZWwsIFJvbGVNaXhpbik6CiAgICBpZCA9IGRiLkNvbHVtbihkYi5JbnRlZ2VyKCksIHByaW1hcnlfa2V5PVRydWUpCiAgICBuYW1lID0gZGIuQ29sdW1uKGRiLlN0cmluZyg4MCksIHVuaXF1ZT1UcnVlKQogICAgZGVzY3JpcHRpb24gPSBkYi5Db2x1bW4oZGIuU3RyaW5nKDI1NSkpCgpjbGFzcyBVc2VyKGRiLk1vZGVsLCBVc2VyTWl4aW4pOgogICAgaWQgPSBkYi5Db2x1bW4oZGIuSW50ZWdlcigpLCBwcmltYXJ5X2tleT1UcnVlKQogICAgZW1haWwgPSBkYi5Db2x1bW4oZGIuU3RyaW5nKDI1NSksIHVuaXF1ZT1UcnVlKQogICAgcGFzc3dvcmQgPSBkYi5Db2x1bW4oZGIuU3RyaW5nKDI1NSkpCiAgICBhY3RpdmUgPSBkYi5Db2x1bW4oZGIuQm9vbGVhbigpKQogICAgcm9sZXMgPSBkYi5yZWxhdGlvbnNoaXAoJ1JvbGUnLCBzZWNvbmRhcnk9cm9sZXNfdXNlcnMsIGJhY2tyZWY9ZGIuYmFja3JlZigndXNlcnMnLCBsYXp5PSdkeW5hbWljJykpCgojIENvbmZpZ3VyYXIgRmxhc2stU2VjdXJpdHkKdXNlcl9kYXRhc3RvcmUgPSBTUUxBbGNoZW15VXNlckRhdGFzdG9yZShkYiwgVXNlciwgUm9sZSkKc2VjdXJpdHkgPSBTZWN1cml0eShhcHAsIHVzZXJfZGF0YXN0b3JlKQoKQGFwcC5iZWZvcmVfZmlyc3RfcmVxdWVzdApkZWYgY3JlYXRlX3VzZXIoKToKICAgIGRiLmNyZWF0ZV9hbGwoKQogICAgaWYgbm90IHVzZXJfZGF0YXN0b3JlLmZpbmRfdXNlcihlbWFpbD0iYWRtaW5AZXhhbXBsZS5jb20iKToKICAgICAgICB1c2VyX2RhdGFzdG9yZS5jcmVhdGVfdXNlcihlbWFpbD0iYWRtaW5AZXhhbXBsZS5jb20iLCBwYXNzd29yZD0icGFzc3dvcmQiKQogICAgZGIuc2Vzc2lvbi5jb21taXQoKQoKaWYgX19uYW1lX18gPT0gJ19fbWFpbl9fJzoKICAgIGFwcC5ydW4oZGVidWc9VHJ1ZSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'super-secret'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rbac.db'
+app.config['SECURITY_REGISTERABLE'] = True
+app.config['SECURITY_PASSWORD_SALT'] = 'super-secret-salt'
+
+db = SQLAlchemy(app)
+
+# Definir models
+roles_users = db.Table('roles_users',
+    db.Column('user_id', db.Integer(), db.ForeignKey('user.id')),
+    db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
+)
+
+class Role(db.Model, RoleMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))
+
+class User(db.Model, UserMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    email = db.Column(db.String(255), unique=True)
+    password = db.Column(db.String(255))
+    active = db.Column(db.Boolean())
+    roles = db.relationship('Role', secondary=roles_users, backref=db.backref('users', lazy='dynamic'))
+
+# Configurar Flask-Security
+user_datastore = SQLAlchemyUserDatastore(db, User, Role)
+security = Security(app, user_datastore)
+
+@app.before_first_request
+def create_user():
+    db.create_all()
+    if not user_datastore.find_user(email=&quot;admin@example.com&quot;):
+        user_datastore.create_user(email=&quot;admin@example.com&quot;, password=&quot;password&quot;)
+    db.session.commit()
+
+if __name__ == '__main__':
+    app.run(debug=True)</pre></div><div class='content'></div><h1>Assignació de Rols als Usuaris</h1>
+<div class='content'><p>Per assignar rols als usuaris, pots utilitzar l'API de Flask-Security. Aquí tens un exemple de com crear rols i assignar-los a un usuari.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QGFwcC5iZWZvcmVfZmlyc3RfcmVxdWVzdApkZWYgY3JlYXRlX3VzZXIoKToKICAgIGRiLmNyZWF0ZV9hbGwoKQogICAgaWYgbm90IHVzZXJfZGF0YXN0b3JlLmZpbmRfdXNlcihlbWFpbD0iYWRtaW5AZXhhbXBsZS5jb20iKToKICAgICAgICBhZG1pbl9yb2xlID0gdXNlcl9kYXRhc3RvcmUuY3JlYXRlX3JvbGUobmFtZT0nYWRtaW4nLCBkZXNjcmlwdGlvbj0nQWRtaW5pc3RyYXRvcicpCiAgICAgICAgdXNlciA9IHVzZXJfZGF0YXN0b3JlLmNyZWF0ZV91c2VyKGVtYWlsPSJhZG1pbkBleGFtcGxlLmNvbSIsIHBhc3N3b3JkPSJwYXNzd29yZCIpCiAgICAgICAgdXNlcl9kYXRhc3RvcmUuYWRkX3JvbGVfdG9fdXNlcih1c2VyLCBhZG1pbl9yb2xlKQogICAgZGIuc2Vzc2lvbi5jb21taXQoKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@app.before_first_request
+def create_user():
+    db.create_all()
+    if not user_datastore.find_user(email=&quot;admin@example.com&quot;):
+        admin_role = user_datastore.create_role(name='admin', description='Administrator')
+        user = user_datastore.create_user(email=&quot;admin@example.com&quot;, password=&quot;password&quot;)
+        user_datastore.add_role_to_user(user, admin_role)
+    db.session.commit()</pre></div><div class='content'></div><h1>Protecció de Rutes amb Rols</h1>
+<div class='content'><p>Pots protegir rutes especificant els rols requerits utilitzant el decorador <code>@roles_required</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFza19zZWN1cml0eSBpbXBvcnQgcm9sZXNfcmVxdWlyZWQKCkBhcHAucm91dGUoJy9hZG1pbicpCkByb2xlc19yZXF1aXJlZCgnYWRtaW4nKQpkZWYgYWRtaW5fcGFnZSgpOgogICAgcmV0dXJuICJCZW52aW5ndXQgYSBsYSBww6BnaW5hIGQnYWRtaW5pc3RyYWNpw7MhIgoKQGFwcC5yb3V0ZSgnL2VkaXRvcicpCkByb2xlc19yZXF1aXJlZCgnZWRpdG9yJykKZGVmIGVkaXRvcl9wYWdlKCk6CiAgICByZXR1cm4gIkJlbnZpbmd1dCBhIGxhIHDDoGdpbmEgZGUgbCdlZGl0b3IhIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask_security import roles_required
+
+@app.route('/admin')
+@roles_required('admin')
+def admin_page():
+    return &quot;Benvingut a la p&agrave;gina d'administraci&oacute;!&quot;
+
+@app.route('/editor')
+@roles_required('editor')
+def editor_page():
+    return &quot;Benvingut a la p&agrave;gina de l'editor!&quot;</pre></div><div class='content'></div><h1>Gestió Avançada de Rols</h1>
+<div class='content'><p>Per a una gestió més avançada de rols, podries necessitar crear decoradors personalitzats o utilitzar el decorador <code>@roles_accepted</code> per permetre múltiples rols.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFza19zZWN1cml0eSBpbXBvcnQgcm9sZXNfYWNjZXB0ZWQKCkBhcHAucm91dGUoJy9kYXNoYm9hcmQnKQpAcm9sZXNfYWNjZXB0ZWQoJ2FkbWluJywgJ2VkaXRvcicpCmRlZiBkYXNoYm9hcmQoKToKICAgIHJldHVybiAiQmVudmluZ3V0IGFsIHRhdWxlciBkZSBjb250cm9sISI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask_security import roles_accepted
+
+@app.route('/dashboard')
+@roles_accepted('admin', 'editor')
+def dashboard():
+    return &quot;Benvingut al tauler de control!&quot;</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>El Control d'Accés Basat en Rols (RBAC) és una manera poderosa de gestionar els permisos dels usuaris en una aplicació Flask. Utilitzant Flask-Security, pots configurar fàcilment rols i permisos, assignar rols als usuaris i protegir rutes basades en rols. Això assegura que només els usuaris autoritzats puguin accedir a certes parts de la teva aplicació, millorant la seguretat i l'organització.</p>
+<p>Seguint els passos descrits en aquest tema, ara hauries de tenir una comprensió bàsica de com implementar RBAC en les teves aplicacions Flask. Continua explorant la documentació de Flask-Security per obtenir més funcions avançades i opcions de personalització.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='user-registration'>&#x25C4;Registre d'Usuaris</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Control d'Accés Basat en Rols a Flask</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='blueprints-large-applications'>Blueprints per a Aplicacions Grans &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

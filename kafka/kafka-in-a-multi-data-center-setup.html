@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kafka en una Configuració Multi-Centre de Dades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/kafka/kafka-in-a-multi-data-center-setup" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/kafka/kafka-in-a-multi-data-center-setup" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/kafka/kafka-in-a-multi-data-center-setup" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/kafka/kafka-in-a-multi-data-center-setup" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/kafka/kafka-in-a-multi-data-center-setup" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='kafka-performance-tuning'>&#x25C4;Optimització del rendiment de Kafka</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Kafka en una Configuració Multi-Centre de Dades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='real-world-kafka-use-cases'>Usos reals de Kafka &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Apache Kafka és una plataforma de streaming distribuïda àmpliament utilitzada per construir canals de dades en temps real i aplicacions de streaming. En una configuració multi-centre de dades, Kafka pot proporcionar alta disponibilitat, recuperació de desastres i localitat de dades. Aquesta secció cobrirà els conceptes clau, configuracions i millors pràctiques per configurar Kafka a través de múltiples centres de dades.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Centre de Dades (DC):</strong> Una ubicació física o virtual on es troben els recursos informàtics.</li>
+<li><strong>Replicació:</strong> El procés de copiar dades d'un broker de Kafka a un altre per assegurar la redundància i disponibilitat de les dades.</li>
+<li><strong>Latència:</strong> El retard en la transmissió de dades entre centres de dades.</li>
+<li><strong>Replicació entre Centres de Dades:</strong> El procés de replicar temes de Kafka a través de múltiples centres de dades.</li>
+</ul>
+</div><h1>Beneficis de la Configuració Multi-Centre de Dades</h1>
+<div class='content'><ul>
+<li><strong>Alta Disponibilitat:</strong> Assegura que Kafka segueixi operatiu fins i tot si un centre de dades cau.</li>
+<li><strong>Recuperació de Desastres:</strong> Proporciona una còpia de seguretat en cas de fallades catastròfiques.</li>
+<li><strong>Localitat de Dades:</strong> Redueix la latència mantenint les dades més a prop dels consumidors.</li>
+</ul>
+</div><h1>Configuració de Kafka en un Entorn Multi-Centre de Dades</h1>
+<div class='content'></div><h2>Prerequisits</h2>
+<div class='content'><ul>
+<li>Múltiples centres de dades amb connectivitat de xarxa.</li>
+<li>Brokers de Kafka instal·lats en cada centre de dades.</li>
+<li>Conjunt de Zookeeper per gestionar els clústers de Kafka.</li>
+</ul>
+</div><h2>Passos de Configuració</h2>
+<div class='content'><h4>1. Configurar els Brokers de Kafka</h4>
+<p>Cada broker de Kafka ha de ser conscient de la configuració multi-centre de dades. Això es fa establint la propietat <code>broker.rack</code> en el fitxer <code>server.properties</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBzZXJ2ZXIucHJvcGVydGllcwpicm9rZXIuaWQ9MQpicm9rZXIucmFjaz11cy1lYXN0LTE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># server.properties
+broker.id=1
+broker.rack=us-east-1</pre></div><div class='content'><h4>2. Configurar la Replicació de Temes</h4>
+<p>Quan es crea un tema, especifiqueu el factor de replicació i la ubicació de les rèpliques a través dels centres de dades.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YmluL2thZmthLXRvcGljcy5zaCAtLWNyZWF0ZSAtLXRvcGljIG15LXRvcGljIC0tcGFydGl0aW9ucyAzIC0tcmVwbGljYXRpb24tZmFjdG9yIDMgLS1jb25maWcgbWluLmluc3luYy5yZXBsaWNhcz0yIC0tem9va2VlcGVyIGxvY2FsaG9zdDoyMTgx"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>bin/kafka-topics.sh --create --topic my-topic --partitions 3 --replication-factor 3 --config min.insync.replicas=2 --zookeeper localhost:2181</pre></div><div class='content'><h4>3. Utilitzar MirrorMaker per a la Replicació entre Centres de Dades</h4>
+<p>Kafka MirrorMaker és una eina per replicar dades entre clústers de Kafka en diferents centres de dades.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YmluL2thZmthLW1pcnJvci1tYWtlci5zaCAtLWNvbnN1bWVyLmNvbmZpZyBjb25zdW1lci5wcm9wZXJ0aWVzIC0tcHJvZHVjZXIuY29uZmlnIHByb2R1Y2VyLnByb3BlcnRpZXMgLS13aGl0ZWxpc3QgbXktdG9waWM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>bin/kafka-mirror-maker.sh --consumer.config consumer.properties --producer.config producer.properties --whitelist my-topic</pre></div><div class='content'><ul>
+<li><strong>consumer.properties</strong></li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ym9vdHN0cmFwLnNlcnZlcnM9c291cmNlLWNsdXN0ZXI6OTA5Mgpncm91cC5pZD1taXJyb3ItbWFrZXItY29uc3VtZXI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>bootstrap.servers=source-cluster:9092
+group.id=mirror-maker-consumer</pre></div><div class='content'><ul>
+<li><strong>producer.properties</strong></li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ym9vdHN0cmFwLnNlcnZlcnM9dGFyZ2V0LWNsdXN0ZXI6OTA5Mg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>bootstrap.servers=target-cluster:9092</pre></div><div class='content'></div><h1>Millors Pràctiques</h1>
+<div class='content'><ul>
+<li><strong>Configuració de Xarxa:</strong> Assegureu connexions de xarxa de baixa latència i alta amplada de banda entre centres de dades.</li>
+<li><strong>Seguretat:</strong> Utilitzeu SSL/TLS per a la transmissió segura de dades entre centres de dades.</li>
+<li><strong>Monitorització:</strong> Implementeu eines de monitorització per seguir la salut i el rendiment dels clústers de Kafka.</li>
+<li><strong>Proves:</strong> Proveu regularment els procediments de failover i recuperació de desastres.</li>
+</ul>
+</div><h1>Escenari d'Exemple</h1>
+<div class='content'></div><h2>Escenari: Configuració Multi-Centre de Dades per a una Plataforma Global de Comerç Electrònic</h2>
+<div class='content'><h4>Requisits</h4>
+<ul>
+<li>Centres de dades a Amèrica del Nord, Europa i Àsia.</li>
+<li>Processament de comandes en temps real amb baixa latència.</li>
+<li>Alta disponibilitat i recuperació de desastres.</li>
+</ul>
+<h4>Passos d'Implementació</h4>
+<ol>
+<li>
+<p><strong>Configurar brokers de Kafka en cada centre de dades:</strong></p>
+<ul>
+<li>Amèrica del Nord: <code>broker.rack=us-east-1</code></li>
+<li>Europa: <code>broker.rack=eu-west-1</code></li>
+<li>Àsia: <code>broker.rack=ap-south-1</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Crear temes amb replicació entre centres de dades:</strong></p>
+<pre><code class="language-bash">bin/kafka-topics.sh --create --topic orders --partitions 6 --replication-factor 3 --config min.insync.replicas=2 --zookeeper localhost:2181
+</code></pre>
+</li>
+<li>
+<p><strong>Configurar MirrorMaker per a la replicació de dades:</strong></p>
+<pre><code class="language-bash">bin/kafka-mirror-maker.sh --consumer.config consumer.properties --producer.config producer.properties --whitelist orders
+</code></pre>
+</li>
+<li>
+<p><strong>Monitoritzar i assegurar la configuració:</strong></p>
+<ul>
+<li>Utilitzeu eines com Prometheus i Grafana per a la monitorització.</li>
+<li>Implementeu SSL/TLS per a la comunicació segura.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Configurar Kafka en un entorn multi-centre de dades millora la resiliència, disponibilitat i rendiment de la vostra plataforma de streaming de dades. Seguint les millors pràctiques i configuracions descrites en aquesta secció, podeu assegurar que la vostra configuració de Kafka sigui robusta i capaç de gestionar la replicació entre centres de dades de manera eficient.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='kafka-performance-tuning'>&#x25C4;Optimització del rendiment de Kafka</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Kafka en una Configuració Multi-Centre de Dades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='real-world-kafka-use-cases'>Usos reals de Kafka &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

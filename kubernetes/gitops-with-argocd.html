@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GitOps amb ArgoCD</title>
+
+    <link rel="alternate" href="https://campusempresa.com/kubernetes/gitops-with-argocd" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/kubernetes/gitops-with-argocd" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/kubernetes/gitops-with-argocd" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/kubernetes/gitops-with-argocd" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/kubernetes/gitops-with-argocd" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='jenkins-x'>&#x25C4;Jenkins X</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">GitOps amb ArgoCD</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='automating-deployments'>Automatització de Desplegaments &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a GitOps</h1>
+<div class='content'><ul>
+<li><strong>Definició</strong>: GitOps és un conjunt de pràctiques per gestionar la infraestructura i les configuracions d'aplicacions utilitzant Git.</li>
+<li><strong>Principis Bàsics</strong>:
+<ul>
+<li><strong>Descripcions Declaratives</strong>: Totes les configuracions es descriuen de manera declarativa.</li>
+<li><strong>Control de Versions</strong>: Les configuracions es guarden en un sistema de control de versions (per exemple, Git).</li>
+<li><strong>Aplicació Automàtica</strong>: Els canvis en les configuracions s'apliquen automàticament al sistema.</li>
+<li><strong>Reconciliació Contínua</strong>: El sistema assegura contínuament que l'estat actual coincideixi amb l'estat desitjat.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Introducció a ArgoCD</h1>
+<div class='content'><ul>
+<li><strong>Definició</strong>: ArgoCD és una eina de lliurament continu declarativa, GitOps, per a Kubernetes.</li>
+<li><strong>Característiques Clau</strong>:
+<ul>
+<li><strong>GitOps Declaratiu</strong>: Utilitza repositoris Git com a font de veritat per a l'estat desitjat de les aplicacions.</li>
+<li><strong>Sincronització Automàtica</strong>: Sincronitza automàticament l'estat del clúster amb l'estat definit a Git.</li>
+<li><strong>Autocuració</strong>: Corregeix automàticament la desviació entre l'estat desitjat i l'estat actual.</li>
+<li><strong>Suport Multi-Clúster</strong>: Gestiona aplicacions a través de múltiples clústers de Kubernetes.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Configuració d'ArgoCD</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Prerequisits</strong>:</p>
+<ul>
+<li>Un clúster de Kubernetes en funcionament.</li>
+<li>Eina de línia de comandes <code>kubectl</code> configurada per interactuar amb el teu clúster.</li>
+<li>Un repositori Git amb manifests de Kubernetes.</li>
+</ul>
+</li>
+<li>
+<p><strong>Passos d'Instal·lació</strong>:</p>
+<ol>
+<li><strong>Instal·lar ArgoCD a Kubernetes</strong>:
+<pre><code class="language-sh">kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+</code></pre>
+</li>
+<li><strong>Accedir al Servidor API d'ArgoCD</strong>:
+<pre><code class="language-sh">kubectl port-forward svc/argocd-server -n argocd 8080:443
+</code></pre>
+</li>
+<li><strong>Iniciar Sessió a ArgoCD</strong>:
+<pre><code class="language-sh"># Obtenir la contrasenya inicial d'administrador
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath=&quot;{.data.password}&quot; | base64 -d
+# Obrir la interfície d'usuari d'ArgoCD al teu navegador a https://localhost:8080
+</code></pre>
+</li>
+</ol>
+</li>
+</ul>
+</div><h1>Configuració d'ArgoCD</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Connectar un Repositori Git</strong>:</p>
+<ul>
+<li><strong>Crear una Aplicació</strong>:
+<pre><code class="language-sh">argocd app create my-app <br>      --repo https://github.com/my-org/my-repo.git <br>      --path path/to/manifests <br>      --dest-server https://kubernetes.default.svc <br>      --dest-namespace default
+</code></pre>
+</li>
+<li><strong>Sincronitzar l'Aplicació</strong>:
+<pre><code class="language-sh">argocd app sync my-app
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Configuració de l'Aplicació</strong>:</p>
+<ul>
+<li><strong>Exemple de Manifest d'Aplicació</strong>:
+<pre><code class="language-yaml">apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/argoproj/argocd-example-apps'
+    targetRevision: HEAD
+    path: guestbook
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</div><h1>Funcions Avançades d'ArgoCD</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Polítiques de Sincronització Automàtica</strong>:</p>
+<ul>
+<li><strong>Autocuració</strong>: Corregeix automàticament qualsevol desviació entre l'estat desitjat i l'estat actual.</li>
+<li><strong>Poda</strong>: Elimina automàticament els recursos que ja no estan definits al repositori Git.</li>
+</ul>
+</li>
+<li>
+<p><strong>Gestió Multi-Clúster</strong>:</p>
+<ul>
+<li><strong>Afegir un Clúster</strong>:
+<pre><code class="language-sh">argocd cluster add &lt;context-name&gt;
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Comprovacions de Salut Personalitzades</strong>:</p>
+<ul>
+<li><strong>Definir Comprovacions de Salut Personalitzades</strong>:
+<pre><code class="language-yaml">apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: guestbook
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/argoproj/argocd-example-apps'
+    targetRevision: HEAD
+    path: guestbook
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: guestbook-ui
+      health:
+        status: Healthy
+        message: 'Guestbook UI is healthy'
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><ul>
+<li><strong>Resum</strong>:
+<ul>
+<li>GitOps amb ArgoCD proporciona una manera poderosa de gestionar aplicacions de Kubernetes de manera declarativa utilitzant Git com a font de veritat.</li>
+<li>ArgoCD automatitza el procés de desplegament, assegurant que l'estat actual del clúster coincideixi amb l'estat desitjat definit a Git.</li>
+<li>Funcions avançades com les polítiques de sincronització automàtica, la gestió multi-clúster i les comprovacions de salut personalitzades fan d'ArgoCD una eina versàtil per al lliurament continu de Kubernetes.</li>
+</ul>
+</li>
+</ul>
+<p>Dominant GitOps amb ArgoCD, pots aconseguir desplegaments més fiables i consistents, reduir la intervenció manual i millorar l'estabilitat general dels teus entorns de Kubernetes.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='jenkins-x'>&#x25C4;Jenkins X</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">GitOps amb ArgoCD</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='automating-deployments'>Automatització de Desplegaments &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

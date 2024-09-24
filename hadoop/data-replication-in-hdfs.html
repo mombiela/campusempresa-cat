@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Replicació de Dades a HDFS</title>
+
+    <link rel="alternate" href="https://campusempresa.com/hadoop/data-replication-in-hdfs" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/hadoop/data-replication-in-hdfs" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/hadoop/data-replication-in-hdfs" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/hadoop/data-replication-in-hdfs" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/hadoop/data-replication-in-hdfs" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='hdfs-commands'>&#x25C4;Comandes de HDFS</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Replicació de Dades a HDFS</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='hdfs-fault-tolerance'>Tolerància a Fallades de HDFS &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a HDFS</h1>
+<div class='content'><p>Hadoop Distributed File System (HDFS) està dissenyat per emmagatzemar grans conjunts de dades de manera fiable i per transmetre aquests conjunts de dades a alta amplada de banda a les aplicacions d'usuari. Una de les característiques clau de HDFS és la replicació de dades, que garanteix la fiabilitat i la disponibilitat de les dades.</p>
+</div><h1>Conceptes Clau de la Replicació de Dades</h1>
+<div class='content'><ul>
+<li><strong>Factor de Replicació</strong>: El nombre de còpies de cada bloc de dades que HDFS manté.</li>
+<li><strong>Blocs de Dades</strong>: HDFS divideix els fitxers en blocs, típicament de 128MB o 256MB de mida.</li>
+<li><strong>Namenode</strong>: El servidor mestre que gestiona l'espai de noms del sistema de fitxers i controla l'accés als fitxers per part dels clients.</li>
+<li><strong>Datanodes</strong>: Els nodes on s'emmagatzema la dada real. Són responsables de servir les sol·licituds de lectura i escriptura dels clients del sistema de fitxers.</li>
+</ul>
+</div><h1>Com Funciona la Replicació de Dades</h1>
+<div class='content'></div><h2>Factor de Replicació</h2>
+<div class='content'><p>El factor de replicació és un paràmetre crític a HDFS. Per defecte, HDFS replica cada bloc tres vegades, però això es pot configurar segons les necessitats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PHByb3BlcnR5PgogIDxuYW1lPmRmcy5yZXBsaWNhdGlvbjwvbmFtZT4KICA8dmFsdWU+MzwvdmFsdWU+CjwvcHJvcGVydHk+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;property&gt;
+  &lt;name&gt;dfs.replication&lt;/name&gt;
+  &lt;value&gt;3&lt;/value&gt;
+&lt;/property&gt;</pre></div><div class='content'></div><h2>Estratègia de Col·locació de Blocs</h2>
+<div class='content'><p>HDFS utilitza una estratègia específica per col·locar les rèpliques dels blocs:</p>
+<ol>
+<li><strong>Primera Rèplica</strong>: Col·locada al mateix node que el client.</li>
+<li><strong>Segona Rèplica</strong>: Col·locada en un rack diferent de la primera rèplica.</li>
+<li><strong>Tercera Rèplica</strong>: Col·locada al mateix rack que la segona rèplica però en un node diferent.</li>
+</ol>
+</div><h2>Integritat de les Dades</h2>
+<div class='content'><p>HDFS garanteix la integritat de les dades calculant sumes de verificació per a cada bloc de dades i verificant-les durant les operacions de lectura. Si es troba que un bloc està corrupte, es reemplaça amb una rèplica.</p>
+</div><h1>Exemple de Codi: Configuració del Factor de Replicació</h1>
+<div class='content'></div><h2>Configuració del Factor de Replicació a la Configuració de HDFS</h2>
+<div class='content'><p>Per configurar el factor de replicació, cal modificar el fitxer <code>hdfs-site.xml</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PGNvbmZpZ3VyYXRpb24+CiAgPHByb3BlcnR5PgogICAgPG5hbWU+ZGZzLnJlcGxpY2F0aW9uPC9uYW1lPgogICAgPHZhbHVlPjM8L3ZhbHVlPgogIDwvcHJvcGVydHk+CjwvY29uZmlndXJhdGlvbj4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;configuration&gt;
+  &lt;property&gt;
+    &lt;name&gt;dfs.replication&lt;/name&gt;
+    &lt;value&gt;3&lt;/value&gt;
+  &lt;/property&gt;
+&lt;/configuration&gt;</pre></div><div class='content'></div><h2>Canvi del Factor de Replicació per a un Fitxer Específic</h2>
+<div class='content'><p>També es pot canviar el factor de replicació per a un fitxer específic utilitzant la línia de comandes de Hadoop:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGFkb29wIGZzIC1zZXRyZXAgLXcgMiAvcGF0aC90by9maWxl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>hadoop fs -setrep -w 2 /path/to/file</pre></div><div class='content'><p>Aquesta comanda estableix el factor de replicació del fitxer especificat a 2.</p>
+</div><h1>Monitorització i Gestió de la Replicació</h1>
+<div class='content'></div><h2>Comprovació del Factor de Replicació</h2>
+<div class='content'><p>Es pot comprovar el factor de replicació d'un fitxer utilitzant la comanda <code>hadoop fs</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGFkb29wIGZzIC1zdGF0ICVyIC9wYXRoL3RvL2ZpbGU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>hadoop fs -stat %r /path/to/file</pre></div><div class='content'></div><h2>Gestió de Blocs Sub-Replicats</h2>
+<div class='content'><p>HDFS detecta automàticament els blocs sub-replicats i programa la replicació fins que s'aconsegueix el factor de replicació desitjat. Es pot desencadenar manualment aquest procés utilitzant la següent comanda:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGRmcyBkZnNhZG1pbiAtc2V0QmFsYW5jZXJCYW5kd2lkdGggPGJhbmR3aWR0aD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>hdfs dfsadmin -setBalancerBandwidth &lt;bandwidth&gt;</pre></div><div class='content'></div><h2>Gestió de Blocs Sobre-Replicats</h2>
+<div class='content'><p>De manera similar, HDFS pot detectar blocs sobre-replicats i eliminar rèpliques excessives per mantenir el factor de replicació desitjat.</p>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La replicació de dades a HDFS és una característica fonamental que garanteix la fiabilitat i la disponibilitat de les dades. Comprenent i configurant el factor de replicació, monitoritzant l'estat de la replicació i gestionant els blocs sub- i sobre-replicats, es pot mantenir un entorn HDFS robust i eficient.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='hdfs-commands'>&#x25C4;Comandes de HDFS</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Replicació de Dades a HDFS</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='hdfs-fault-tolerance'>Tolerància a Fallades de HDFS &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió d'Errors i Depuració</title>
+
+    <link rel="alternate" href="https://campusempresa.com/bash/error-handling-and-debugging" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/bash/error-handling-and-debugging" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/bash/error-handling-and-debugging" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/bash/error-handling-and-debugging" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/bash/error-handling-and-debugging" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='regular-expressions'>&#x25C4;Expressions Regulars</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió d'Errors i Depuració</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='file-testing'>Proves de Fitxers &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>La gestió d'errors i la depuració són habilitats crucials per a qualsevol programador de Bash. Aquesta secció cobrirà els conceptes bàsics de la gestió d'errors, tècniques comunes de depuració i mètodes avançats per assegurar que els teus scripts funcionin de manera suau i eficient.</p>
+</div><h1>Gestió d'Errors</h1>
+<div class='content'></div><h2>Gestió Bàsica d'Errors</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Estat de Sortida</strong>: Cada comanda retorna un estat de sortida (0 per èxit, no zero per fallada).</p>
+<pre><code class="language-bash">ls /directori_inexistent
+echo $?  # Mostra: 2 (o un altre valor no zero indicant un error)
+</code></pre>
+</li>
+<li>
+<p><strong>Ús de <code>if</code> Statements</strong>: Comprova l'estat de sortida de les comandes.</p>
+<pre><code class="language-bash">if ls /directori_inexistent; then
+  echo &quot;El directori existeix&quot;
+else
+  echo &quot;El directori no existeix&quot;
+fi
+</code></pre>
+</li>
+</ul>
+</div><h2>Gestió Avançada d'Errors</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Comanda <code>set</code></strong>: Modifica el comportament de la shell per gestionar errors de manera més efectiva.</p>
+<ul>
+<li><code>set -e</code>: Surt immediatament si una comanda surt amb un estat no zero.</li>
+<li><code>set -u</code>: Tracta les variables no establertes com un error.</li>
+<li><code>set -o pipefail</code>: Retorna l'estat de sortida de l'última comanda en la pipeline que ha fallat.</li>
+</ul>
+<pre><code class="language-bash">set -euo pipefail
+
+mkdir /algún_directori
+cd /algún_directori
+</code></pre>
+</li>
+<li>
+<p><strong>Comanda Trap</strong>: Executa una comanda quan l'script surt o rep un senyal.</p>
+<pre><code class="language-bash">trap 'echo &quot;S'ha produït un error. Sortint...&quot;; exit 1' ERR
+</code></pre>
+</li>
+</ul>
+</div><h1>Tècniques de Depuració</h1>
+<div class='content'></div><h2>Depuració Bàsica</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Declaracions Echo</strong>: Imprimeix valors de variables i el progrés de l'script.</p>
+<pre><code class="language-bash">echo &quot;Iniciant l'script...&quot;
+echo &quot;Valor de la variable: $variable&quot;
+</code></pre>
+</li>
+<li>
+<p><strong><code>set -x</code></strong>: Habilita el mode de depuració per imprimir cada comanda abans d'executar-la.</p>
+<pre><code class="language-bash">set -x
+ls /algún_directori
+set +x  # Deshabilita el mode de depuració
+</code></pre>
+</li>
+</ul>
+</div><h2>Depuració Avançada</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Ús de <code>trap</code> per a la Depuració</strong>: Captura i depura errors.</p>
+<pre><code class="language-bash">trap 'echo &quot;Error a la línia $LINENO&quot;; exit 1' ERR
+</code></pre>
+</li>
+<li>
+<p><strong>Variable <code>PS4</code></strong>: Personalitza el prompt de depuració.</p>
+<pre><code class="language-bash">export PS4='+ $BASH_SOURCE:$LINENO: '
+set -x
+ls /algún_directori
+set +x
+</code></pre>
+</li>
+</ul>
+</div><h1>Errors Comuns i Solucions</h1>
+<div class='content'></div><h2>Errors de Sintaxi</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Cometes Faltants</strong>: Assegura't que les cadenes estiguin correctament entre cometes.</p>
+<pre><code class="language-bash">echo &quot;Hola, Món&quot;  # Correcte
+echo Hola, Món    # Incorrecte
+</code></pre>
+</li>
+<li>
+<p><strong>Ús Incorrecte de Variables</strong>: Utilitza <code>$</code> per referenciar variables.</p>
+<pre><code class="language-bash">nom=&quot;Joan&quot;
+echo $nom  # Correcte
+echo nom   # Incorrecte
+</code></pre>
+</li>
+</ul>
+</div><h2>Errors Lògics</h2>
+<div class='content'><ul>
+<li><strong>Condicionals Incorrectes</strong>: Assegura't que les condicions estiguin correctament escrites.
+<pre><code class="language-bash">if [ &quot;$valor&quot; -eq 10 ]; then
+  echo &quot;El valor és 10&quot;
+fi
+</code></pre>
+</li>
+</ul>
+</div><h2>Errors d'Execució</h2>
+<div class='content'><ul>
+<li><strong>Fitxer No Trobat</strong>: Comprova l'existència del fitxer abans d'accedir-hi.
+<pre><code class="language-bash">if [ -f &quot;/camí/al/fitxer&quot; ]; then
+  cat /camí/al/fitxer
+else
+  echo &quot;Fitxer no trobat&quot;
+fi
+</code></pre>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La gestió d'errors i la depuració són habilitats essencials per escriure scripts de Bash robustos. Comprenent els estats de sortida, utilitzant les comandes <code>set</code> i <code>trap</code>, i emprant tècniques de depuració com <code>set -x</code> i declaracions echo, pots gestionar i solucionar efectivament els errors en els teus scripts. Practica aquestes tècniques per millorar la teva competència en scripting i assegurar que els teus scripts funcionin sense problemes.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='regular-expressions'>&#x25C4;Expressions Regulars</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió d'Errors i Depuració</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='file-testing'>Proves de Fitxers &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

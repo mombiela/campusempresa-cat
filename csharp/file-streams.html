@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxos de fitxers en C#</title>
+
+    <link rel="alternate" href="https://campusempresa.com/csharp/file-streams" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/csharp/file-streams" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/csharp/file-streams" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/csharp/file-streams" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/csharp/file-streams" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='reading-writing-files'>&#x25C4;Lectura i Escriptura de Fitxers</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Fluxos de fitxers en C#</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='serialization-deserialization'>Serialització i Deserialització &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció als fluxos de fitxers</h1>
+<div class='content'><p>Els fluxos de fitxers en C# s'utilitzen per llegir i escriure fitxers. Proporcionen una manera de gestionar les operacions de fitxers de manera eficient i segura. Entendre els fluxos de fitxers és crucial per a tasques com l'emmagatzematge de dades, la gestió de configuracions i el registre de logs.</p>
+</div><h1>Conceptes bàsics</h1>
+<div class='content'><ul>
+<li><strong>Flux</strong>: Una seqüència de bytes que es poden llegir o escriure.</li>
+<li><strong>FileStream</strong>: Una classe al namespace <code>System.IO</code> utilitzada per llegir i escriure fitxers.</li>
+<li><strong>StreamReader</strong>: Una classe per llegir caràcters d'un flux de bytes en una codificació particular.</li>
+<li><strong>StreamWriter</strong>: Una classe per escriure caràcters a un flux en una codificació particular.</li>
+</ul>
+</div><h1>Treballant amb FileStream</h1>
+<h2>Llegint d'un fitxer</h2>
+<div class='content'><p>Per llegir d'un fitxer, pots utilitzar la classe <code>FileStream</code> juntament amb <code>StreamReader</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNpbmcgU3lzdGVtOwp1c2luZyBTeXN0ZW0uSU87CgpjbGFzcyBQcm9ncmFtCnsKICAgIHN0YXRpYyB2b2lkIE1haW4oKQogICAgewogICAgICAgIHN0cmluZyBwYXRoID0gImV4YW1wbGUudHh0IjsKICAgICAgICAKICAgICAgICB1c2luZyAoRmlsZVN0cmVhbSBmcyA9IG5ldyBGaWxlU3RyZWFtKHBhdGgsIEZpbGVNb2RlLk9wZW4sIEZpbGVBY2Nlc3MuUmVhZCkpCiAgICAgICAgdXNpbmcgKFN0cmVhbVJlYWRlciBzciA9IG5ldyBTdHJlYW1SZWFkZXIoZnMpKQogICAgICAgIHsKICAgICAgICAgICAgc3RyaW5nIGNvbnRlbnQgPSBzci5SZWFkVG9FbmQoKTsKICAgICAgICAgICAgQ29uc29sZS5Xcml0ZUxpbmUoY29udGVudCk7CiAgICAgICAgfQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>using System;
+using System.IO;
+
+class Program
+{
+    static void Main()
+    {
+        string path = &quot;example.txt&quot;;
+        
+        using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
+        using (StreamReader sr = new StreamReader(fs))
+        {
+            string content = sr.ReadToEnd();
+            Console.WriteLine(content);
+        }
+    }
+}</pre></div><div class='content'><ul>
+<li><strong>FileMode.Open</strong>: Obre el fitxer si existeix.</li>
+<li><strong>FileAccess.Read</strong>: Concedeix accés de lectura al fitxer.</li>
+<li><strong>ReadToEnd()</strong>: Llegeix tots els caràcters des de la posició actual fins al final del flux.</li>
+</ul>
+</div><h2>Escriure a un fitxer</h2>
+<div class='content'><p>Per escriure a un fitxer, pots utilitzar la classe <code>FileStream</code> juntament amb <code>StreamWriter</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNpbmcgU3lzdGVtOwp1c2luZyBTeXN0ZW0uSU87CgpjbGFzcyBQcm9ncmFtCnsKICAgIHN0YXRpYyB2b2lkIE1haW4oKQogICAgewogICAgICAgIHN0cmluZyBwYXRoID0gImV4YW1wbGUudHh0IjsKICAgICAgICBzdHJpbmcgY29udGVudCA9ICJIZWxsbywgV29ybGQhIjsKICAgICAgICAKICAgICAgICB1c2luZyAoRmlsZVN0cmVhbSBmcyA9IG5ldyBGaWxlU3RyZWFtKHBhdGgsIEZpbGVNb2RlLkNyZWF0ZSwgRmlsZUFjY2Vzcy5Xcml0ZSkpCiAgICAgICAgdXNpbmcgKFN0cmVhbVdyaXRlciBzdyA9IG5ldyBTdHJlYW1Xcml0ZXIoZnMpKQogICAgICAgIHsKICAgICAgICAgICAgc3cuV3JpdGUoY29udGVudCk7CiAgICAgICAgfQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>using System;
+using System.IO;
+
+class Program
+{
+    static void Main()
+    {
+        string path = &quot;example.txt&quot;;
+        string content = &quot;Hello, World!&quot;;
+        
+        using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write))
+        using (StreamWriter sw = new StreamWriter(fs))
+        {
+            sw.Write(content);
+        }
+    }
+}</pre></div><div class='content'><ul>
+<li><strong>FileMode.Create</strong>: Crea un nou fitxer, o sobreescriu un fitxer existent.</li>
+<li><strong>FileAccess.Write</strong>: Concedeix accés d'escriptura al fitxer.</li>
+<li><strong>Write()</strong>: Escriu una cadena al flux.</li>
+</ul>
+</div><h1>Operacions avançades amb fluxos de fitxers</h1>
+<h2>Operacions de fitxers asíncrones</h2>
+<div class='content'><p>Les operacions asíncrones poden millorar el rendiment evitant bloquejar el fil principal.</p>
+<h4>Lectura asíncrona</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNpbmcgU3lzdGVtOwp1c2luZyBTeXN0ZW0uSU87CnVzaW5nIFN5c3RlbS5UaHJlYWRpbmcuVGFza3M7CgpjbGFzcyBQcm9ncmFtCnsKICAgIHN0YXRpYyBhc3luYyBUYXNrIE1haW4oKQogICAgewogICAgICAgIHN0cmluZyBwYXRoID0gImV4YW1wbGUudHh0IjsKICAgICAgICAKICAgICAgICB1c2luZyAoRmlsZVN0cmVhbSBmcyA9IG5ldyBGaWxlU3RyZWFtKHBhdGgsIEZpbGVNb2RlLk9wZW4sIEZpbGVBY2Nlc3MuUmVhZCwgRmlsZVNoYXJlLlJlYWQsIDQwOTYsIHRydWUpKQogICAgICAgIHVzaW5nIChTdHJlYW1SZWFkZXIgc3IgPSBuZXcgU3RyZWFtUmVhZGVyKGZzKSkKICAgICAgICB7CiAgICAgICAgICAgIHN0cmluZyBjb250ZW50ID0gYXdhaXQgc3IuUmVhZFRvRW5kQXN5bmMoKTsKICAgICAgICAgICAgQ29uc29sZS5Xcml0ZUxpbmUoY29udGVudCk7CiAgICAgICAgfQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>using System;
+using System.IO;
+using System.Threading.Tasks;
+
+class Program
+{
+    static async Task Main()
+    {
+        string path = &quot;example.txt&quot;;
+        
+        using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
+        using (StreamReader sr = new StreamReader(fs))
+        {
+            string content = await sr.ReadToEndAsync();
+            Console.WriteLine(content);
+        }
+    }
+}</pre></div><div class='content'><ul>
+<li><strong>ReadToEndAsync()</strong>: Llegeix asíncronament tots els caràcters des de la posició actual fins al final del flux.</li>
+</ul>
+<h4>Escriptura asíncrona</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNpbmcgU3lzdGVtOwp1c2luZyBTeXN0ZW0uSU87CnVzaW5nIFN5c3RlbS5UaHJlYWRpbmcuVGFza3M7CgpjbGFzcyBQcm9ncmFtCnsKICAgIHN0YXRpYyBhc3luYyBUYXNrIE1haW4oKQogICAgewogICAgICAgIHN0cmluZyBwYXRoID0gImV4YW1wbGUudHh0IjsKICAgICAgICBzdHJpbmcgY29udGVudCA9ICJIZWxsbywgQXN5bmMgV29ybGQhIjsKICAgICAgICAKICAgICAgICB1c2luZyAoRmlsZVN0cmVhbSBmcyA9IG5ldyBGaWxlU3RyZWFtKHBhdGgsIEZpbGVNb2RlLkNyZWF0ZSwgRmlsZUFjY2Vzcy5Xcml0ZSwgRmlsZVNoYXJlLk5vbmUsIDQwOTYsIHRydWUpKQogICAgICAgIHVzaW5nIChTdHJlYW1Xcml0ZXIgc3cgPSBuZXcgU3RyZWFtV3JpdGVyKGZzKSkKICAgICAgICB7CiAgICAgICAgICAgIGF3YWl0IHN3LldyaXRlQXN5bmMoY29udGVudCk7CiAgICAgICAgfQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>using System;
+using System.IO;
+using System.Threading.Tasks;
+
+class Program
+{
+    static async Task Main()
+    {
+        string path = &quot;example.txt&quot;;
+        string content = &quot;Hello, Async World!&quot;;
+        
+        using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true))
+        using (StreamWriter sw = new StreamWriter(fs))
+        {
+            await sw.WriteAsync(content);
+        }
+    }
+}</pre></div><div class='content'><ul>
+<li><strong>WriteAsync()</strong>: Escriu asíncronament una cadena al flux.</li>
+</ul>
+</div><h2>Gestió de dades binàries</h2>
+<div class='content'><p>Per a dades binàries, utilitza <code>BinaryReader</code> i <code>BinaryWriter</code>.</p>
+<h4>Llegint dades binàries</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNpbmcgU3lzdGVtOwp1c2luZyBTeXN0ZW0uSU87CgpjbGFzcyBQcm9ncmFtCnsKICAgIHN0YXRpYyB2b2lkIE1haW4oKQogICAgewogICAgICAgIHN0cmluZyBwYXRoID0gImV4YW1wbGUuYmluIjsKICAgICAgICAKICAgICAgICB1c2luZyAoRmlsZVN0cmVhbSBmcyA9IG5ldyBGaWxlU3RyZWFtKHBhdGgsIEZpbGVNb2RlLk9wZW4sIEZpbGVBY2Nlc3MuUmVhZCkpCiAgICAgICAgdXNpbmcgKEJpbmFyeVJlYWRlciBiciA9IG5ldyBCaW5hcnlSZWFkZXIoZnMpKQogICAgICAgIHsKICAgICAgICAgICAgaW50IG51bWJlciA9IGJyLlJlYWRJbnQzMigpOwogICAgICAgICAgICBDb25zb2xlLldyaXRlTGluZShudW1iZXIpOwogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>using System;
+using System.IO;
+
+class Program
+{
+    static void Main()
+    {
+        string path = &quot;example.bin&quot;;
+        
+        using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read))
+        using (BinaryReader br = new BinaryReader(fs))
+        {
+            int number = br.ReadInt32();
+            Console.WriteLine(number);
+        }
+    }
+}</pre></div><div class='content'><ul>
+<li><strong>ReadInt32()</strong>: Llegeix un enter de 4 bytes amb signe del flux.</li>
+</ul>
+<h4>Escriure dades binàries</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNpbmcgU3lzdGVtOwp1c2luZyBTeXN0ZW0uSU87CgpjbGFzcyBQcm9ncmFtCnsKICAgIHN0YXRpYyB2b2lkIE1haW4oKQogICAgewogICAgICAgIHN0cmluZyBwYXRoID0gImV4YW1wbGUuYmluIjsKICAgICAgICBpbnQgbnVtYmVyID0gMTIzNDU7CiAgICAgICAgCiAgICAgICAgdXNpbmcgKEZpbGVTdHJlYW0gZnMgPSBuZXcgRmlsZVN0cmVhbShwYXRoLCBGaWxlTW9kZS5DcmVhdGUsIEZpbGVBY2Nlc3MuV3JpdGUpKQogICAgICAgIHVzaW5nIChCaW5hcnlXcml0ZXIgYncgPSBuZXcgQmluYXJ5V3JpdGVyKGZzKSkKICAgICAgICB7CiAgICAgICAgICAgIGJ3LldyaXRlKG51bWJlcik7CiAgICAgICAgfQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>using System;
+using System.IO;
+
+class Program
+{
+    static void Main()
+    {
+        string path = &quot;example.bin&quot;;
+        int number = 12345;
+        
+        using (FileStream fs = new FileStream(path, FileMode.Create, FileAccess.Write))
+        using (BinaryWriter bw = new BinaryWriter(fs))
+        {
+            bw.Write(number);
+        }
+    }
+}</pre></div><div class='content'><ul>
+<li><strong>Write(int)</strong>: Escriu un enter de 4 bytes amb signe al flux.</li>
+</ul>
+</div><h1>Resum</h1>
+<div class='content'><p>Els fluxos de fitxers en C# proporcionen una manera poderosa de gestionar operacions de fitxers, des de la lectura i escriptura bàsiques fins a la gestió més avançada de dades asíncrones i binàries. Dominant els fluxos de fitxers, pots gestionar eficientment l'emmagatzematge i la recuperació de dades en les teves aplicacions.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='reading-writing-files'>&#x25C4;Lectura i Escriptura de Fitxers</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Fluxos de fitxers en C#</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='serialization-deserialization'>Serialització i Deserialització &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

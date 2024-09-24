@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Llegir i Escriure Fitxers en Lua</title>
+
+    <link rel="alternate" href="https://campusempresa.com/lua/reading-and-writing-files" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/lua/reading-and-writing-files" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/lua/reading-and-writing-files" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/lua/reading-and-writing-files" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/lua/reading-and-writing-files" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='polymorphism'>&#x25C4;Polimorfisme</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Llegir i Escriure Fitxers en Lua</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='file-manipulation'>Manipulació de Fitxers &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Llegir i escriure fitxers és una habilitat fonamental en la programació. En Lua, les operacions amb fitxers són senzilles i potents, permetent-te gestionar fitxers amb facilitat. Aquesta secció et guiarà a través dels conceptes bàsics de la gestió de fitxers en Lua, des d'obrir i tancar fitxers fins a llegir i escriure dades.</p>
+</div><h1>Obrir i Tancar Fitxers</h1>
+<div class='content'><p>Per treballar amb fitxers en Lua, primer has d'obrir-los. Lua proporciona la funció <code>io.open</code> per a aquest propòsit.</p>
+</div><h2>Obrir un Fitxer</h2>
+<div class='content'><p>La funció <code>io.open</code> requereix dos arguments: el camí del fitxer i el mode en què vols obrir el fitxer.</p>
+<ul>
+<li><strong>Modes:</strong>
+<ul>
+<li><code>&quot;r&quot;</code>: Mode de lectura (per defecte). Obre el fitxer per a lectura.</li>
+<li><code>&quot;w&quot;</code>: Mode d'escriptura. Obre el fitxer per a escriptura (i crea el fitxer si no existeix).</li>
+<li><code>&quot;a&quot;</code>: Mode d'addició. Obre el fitxer per a afegir dades.</li>
+<li><code>&quot;r+&quot;</code>: Mode de lectura/actualització. Obre el fitxer tant per a lectura com per a escriptura.</li>
+<li><code>&quot;w+&quot;</code>: Mode d'escriptura/actualització. Obre el fitxer tant per a lectura com per a escriptura (i crea el fitxer si no existeix).</li>
+<li><code>&quot;a+&quot;</code>: Mode d'addició/actualització. Obre el fitxer tant per a lectura com per a afegir dades.</li>
+</ul>
+</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgZmlsZSA9IGlvLm9wZW4oImV4YW1wbGUudHh0IiwgInIiKSAtLSBPYnJlICdleGFtcGxlLnR4dCcgcGVyIGEgbGVjdHVyYQppZiBub3QgZmlsZSB0aGVuCiAgICBwcmludCgiTm8gcydoYSBwb2d1dCBvYnJpciBlbCBmaXR4ZXIiKQogICAgcmV0dXJuCmVuZA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local file = io.open(&quot;example.txt&quot;, &quot;r&quot;) -- Obre 'example.txt' per a lectura
+if not file then
+    print(&quot;No s'ha pogut obrir el fitxer&quot;)
+    return
+end</pre></div><div class='content'></div><h2>Tancar un Fitxer</h2>
+<div class='content'><p>Sempre tanca el fitxer després d'haver acabat amb ell per alliberar recursos del sistema.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZmlsZTpjbG9zZSgp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>file:close()</pre></div><div class='content'></div><h1>Llegir de Fitxers</h1>
+<div class='content'><p>Lua proporciona diverses maneres de llegir fitxers. Pots llegir tot el fitxer, un nombre específic de bytes, o línia per línia.</p>
+</div><h2>Llegir Tot el Fitxer</h2>
+<div class='content'><p>Per llegir tot el contingut d'un fitxer, utilitza el mètode <code>:read(&quot;*all&quot;)</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgZmlsZSA9IGlvLm9wZW4oImV4YW1wbGUudHh0IiwgInIiKQpsb2NhbCBjb250ZW50ID0gZmlsZTpyZWFkKCIqYWxsIikKcHJpbnQoY29udGVudCkKZmlsZTpjbG9zZSgp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local file = io.open(&quot;example.txt&quot;, &quot;r&quot;)
+local content = file:read(&quot;*all&quot;)
+print(content)
+file:close()</pre></div><div class='content'></div><h2>Llegir Línies</h2>
+<div class='content'><p>Per llegir un fitxer línia per línia, utilitza el mètode <code>:read(&quot;*line&quot;)</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgZmlsZSA9IGlvLm9wZW4oImV4YW1wbGUudHh0IiwgInIiKQpmb3IgbGluZSBpbiBmaWxlOmxpbmVzKCkgZG8KICAgIHByaW50KGxpbmUpCmVuZApmaWxlOmNsb3NlKCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local file = io.open(&quot;example.txt&quot;, &quot;r&quot;)
+for line in file:lines() do
+    print(line)
+end
+file:close()</pre></div><div class='content'></div><h2>Llegir un Nombre Específic de Bytes</h2>
+<div class='content'><p>Per llegir un nombre específic de bytes, passa el nombre de bytes com a argument al mètode <code>:read</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgZmlsZSA9IGlvLm9wZW4oImV4YW1wbGUudHh0IiwgInIiKQpsb2NhbCBjb250ZW50ID0gZmlsZTpyZWFkKDEwKSAtLSBMbGVnZWl4IGVscyBwcmltZXJzIDEwIGJ5dGVzCnByaW50KGNvbnRlbnQpCmZpbGU6Y2xvc2UoKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local file = io.open(&quot;example.txt&quot;, &quot;r&quot;)
+local content = file:read(10) -- Llegeix els primers 10 bytes
+print(content)
+file:close()</pre></div><div class='content'></div><h1>Escriure a Fitxers</h1>
+<div class='content'><p>Escriure a fitxers en Lua és tan senzill com llegir-los. Pots escriure cadenes, nombres, o qualsevol altre tipus de dada que es pugui convertir a una cadena.</p>
+</div><h2>Escriure Cadenes</h2>
+<div class='content'><p>Per escriure una cadena a un fitxer, utilitza el mètode <code>:write</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgZmlsZSA9IGlvLm9wZW4oImV4YW1wbGUudHh0IiwgInciKQpmaWxlOndyaXRlKCJIb2xhLCBNw7NuISIpCmZpbGU6Y2xvc2UoKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local file = io.open(&quot;example.txt&quot;, &quot;w&quot;)
+file:write(&quot;Hola, M&oacute;n!&quot;)
+file:close()</pre></div><div class='content'></div><h2>Escriure Múltiples Línies</h2>
+<div class='content'><p>Per escriure múltiples línies, pots utilitzar múltiples crides a <code>:write</code> o una sola crida amb caràcters de nova línia.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgZmlsZSA9IGlvLm9wZW4oImV4YW1wbGUudHh0IiwgInciKQpmaWxlOndyaXRlKCJQcmltZXJhIGzDrW5pYVxuIikKZmlsZTp3cml0ZSgiU2Vnb25hIGzDrW5pYVxuIikKZmlsZTpjbG9zZSgp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local file = io.open(&quot;example.txt&quot;, &quot;w&quot;)
+file:write(&quot;Primera l&iacute;nia\n&quot;)
+file:write(&quot;Segona l&iacute;nia\n&quot;)
+file:close()</pre></div><div class='content'></div><h1>Afegir a Fitxers</h1>
+<div class='content'><p>Afegir dades a un fitxer significa afegir noves dades al final del fitxer sense sobreescriure el contingut existent.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgZmlsZSA9IGlvLm9wZW4oImV4YW1wbGUudHh0IiwgImEiKQpmaWxlOndyaXRlKCJBcXVlc3RhIMOpcyB1bmEgbMOtbmlhIGFmZWdpZGEuXG4iKQpmaWxlOmNsb3NlKCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local file = io.open(&quot;example.txt&quot;, &quot;a&quot;)
+file:write(&quot;Aquesta &eacute;s una l&iacute;nia afegida.\n&quot;)
+file:close()</pre></div><div class='content'></div><h1>Gestió d'Errors</h1>
+<div class='content'><p>Quan treballes amb fitxers, és essencial gestionar els possibles errors, com intentar obrir un fitxer inexistent o no tenir permisos.</p>
+</div><h2>Comprovar Errors</h2>
+<div class='content'><p>Pots comprovar si un fitxer s'ha obert correctament verificant si el manejador del fitxer és <code>nil</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgZmlsZSwgZXJyID0gaW8ub3Blbigibm9uZXhpc3RlbnQudHh0IiwgInIiKQppZiBub3QgZmlsZSB0aGVuCiAgICBwcmludCgiRXJyb3IgZW4gb2JyaXIgZWwgZml0eGVyOiAiIC4uIGVycikKZWxzZQogICAgLS0gUHJvY2VkaXIgYW1iIGxlcyBvcGVyYWNpb25zIGRlbCBmaXR4ZXIKICAgIGZpbGU6Y2xvc2UoKQplbmQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local file, err = io.open(&quot;nonexistent.txt&quot;, &quot;r&quot;)
+if not file then
+    print(&quot;Error en obrir el fitxer: &quot; .. err)
+else
+    -- Procedir amb les operacions del fitxer
+    file:close()
+end</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, has après a:</p>
+<ul>
+<li>Obrir i tancar fitxers en diversos modes.</li>
+<li>Llegir fitxers utilitzant diferents mètodes.</li>
+<li>Escriure i afegir dades a fitxers.</li>
+<li>Gestionar errors quan treballes amb fitxers.</li>
+</ul>
+<p>La gestió de fitxers és una part crucial de moltes aplicacions, i dominar aquests conceptes bàsics t'ajudarà a gestionar dades de manera eficient en els teus programes Lua. Practica aquests conceptes amb diferents operacions de fitxers per sentir-te més còmode amb la gestió de fitxers en Lua.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='polymorphism'>&#x25C4;Polimorfisme</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Llegir i Escriure Fitxers en Lua</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='file-manipulation'>Manipulació de Fitxers &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

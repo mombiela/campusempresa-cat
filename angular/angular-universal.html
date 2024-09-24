@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Angular Universal (Renderitzat del costat del servidor)</title>
+
+    <link rel="alternate" href="https://campusempresa.com/angular/angular-universal" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/angular/angular-universal" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/angular/angular-universal" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/angular/angular-universal" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/angular/angular-universal" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='end-to-end-testing'>&#x25C4;Proves de cap a cap</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Angular Universal (Renderitzat del costat del servidor)</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='performance-optimization'>Optimització del rendiment &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a Angular Universal</h1>
+<div class='content'><p>Angular Universal és una tecnologia que permet que les aplicacions Angular es renderitzin al costat del servidor. Això pot millorar el rendiment, el SEO i l'experiència de l'usuari en lliurar pàgines completament renderitzades al client.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Renderitzat del costat del servidor (SSR)</strong>: El procés de renderitzar pàgines web al servidor en lloc del client.</li>
+<li><strong>Angular Universal</strong>: Una eina que permet SSR per a aplicacions Angular.</li>
+<li><strong>Beneficis SEO</strong>: Els motors de cerca poden rastrejar pàgines completament renderitzades, millorant els rànquings dels motors de cerca.</li>
+<li><strong>Rendiment</strong>: Temps de càrrega inicial més ràpids ja que el servidor envia una pàgina completament renderitzada al client.</li>
+</ul>
+</div><h1>Configuració d'Angular Universal</h1>
+<div class='content'><p>Per començar amb Angular Universal, cal afegir-lo al teu projecte Angular existent.</p>
+</div><h2>Passos per Afegir Angular Universal</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Instal·la Angular Universal</strong>:</p>
+<pre><code class="language-bash">ng add @nguniversal/express-engine
+</code></pre>
+<p>Aquesta comanda configurarà la teva aplicació Angular per utilitzar Angular Universal amb un servidor Express.</p>
+</li>
+<li>
+<p><strong>Actualitza <code>angular.json</code></strong>:
+Assegura't que les configuracions de build i server estiguin correctament configurades al teu fitxer <code>angular.json</code>.</p>
+</li>
+<li>
+<p><strong>Modifica <code>server.ts</code></strong>:
+El fitxer <code>server.ts</code> és el punt d'entrada per a la teva aplicació del costat del servidor. Hauria de semblar-se a això:</p>
+<pre><code class="language-typescript">import 'zone.js/dist/zone-node';
+import { ngExpressEngine } from '@nguniversal/express-engine';
+import * as express from 'express';
+import { join } from 'path';
+
+import { AppServerModule } from './src/main.server';
+import { APP_BASE_HREF } from '@angular/common';
+import { existsSync } from 'fs';
+
+// L'app d'Express s'exporta perquè pugui ser utilitzada per Funcions sense servidor.
+export function app() {
+  const server = express();
+  const distFolder = join(process.cwd(), 'dist/your-project-name/browser');
+  const indexHtml = existsSync(join(distFolder, 'index.original.html')) ? 'index.original.html' : 'index';
+
+  server.engine('html', ngExpressEngine({
+    bootstrap: AppServerModule,
+  }));
+
+  server.set('view engine', 'html');
+  server.set('views', distFolder);
+
+  server.get('*.*', express.static(distFolder, {
+    maxAge: '1y'
+  }));
+
+  server.get('*', (req, res) =&gt; {
+    res.render(indexHtml, { req, providers: [{ provide: APP_BASE_HREF, useValue: req.baseUrl }] });
+  });
+
+  return server;
+}
+
+function run() {
+  const port = process.env.PORT || 4000;
+
+  const server = app();
+  server.listen(port, () =&gt; {
+    console.log(`Servidor Node Express escoltant a http://localhost:${port}`);
+  });
+}
+
+declare const __non_webpack_require__: NodeRequire;
+
+if (require.main === module) {
+  run();
+}
+
+export * from './src/main.server';
+</code></pre>
+</li>
+<li>
+<p><strong>Actualitza <code>main.server.ts</code></strong>:
+Assegura't que el teu fitxer <code>main.server.ts</code> inicialitzi el mòdul del servidor:</p>
+<pre><code class="language-typescript">import { enableProdMode } from '@angular/core';
+import { environment } from './environments/environment';
+
+if (environment.production) {
+  enableProdMode();
+}
+
+export { AppServerModule } from './app/app.server.module';
+export { renderModule, renderModuleFactory } from '@angular/platform-server';
+</code></pre>
+</li>
+</ol>
+</div><h1>Executar l'Aplicació</h1>
+<div class='content'><p>Per executar la teva aplicació Angular Universal, cal construir tant el codi del client com el del servidor i després servir-lo.</p>
+</div><h2>Construir i Servir</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Construeix el Client i el Servidor</strong>:</p>
+<pre><code class="language-bash">npm run build:ssr
+</code></pre>
+</li>
+<li>
+<p><strong>Serveix l'Aplicació</strong>:</p>
+<pre><code class="language-bash">npm run serve:ssr
+</code></pre>
+</li>
+</ol>
+</div><h1>Beneficis d'Angular Universal</h1>
+<div class='content'><ul>
+<li><strong>Millora del SEO</strong>: Els motors de cerca poden indexar el teu lloc de manera més efectiva.</li>
+<li><strong>Càrrega Inicial més Ràpida</strong>: Els usuaris reben una pàgina completament renderitzada des del servidor, reduint el temps fins a la primera pintura significativa.</li>
+<li><strong>Millor Experiència d'Usuari</strong>: Els usuaris poden veure el contingut més ràpidament, fins i tot en xarxes lentes.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Angular Universal és una eina poderosa per millorar el rendiment i el SEO de les aplicacions Angular mitjançant el renderitzat del costat del servidor. Seguint els passos de configuració i entenent els conceptes clau, pots aprofitar Angular Universal per oferir una millor experiència d'usuari i millorar la visibilitat de la teva aplicació en els motors de cerca.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='end-to-end-testing'>&#x25C4;Proves de cap a cap</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Angular Universal (Renderitzat del costat del servidor)</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='performance-optimization'>Optimització del rendiment &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

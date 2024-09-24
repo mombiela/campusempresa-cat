@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducció als índexs</title>
+
+    <link rel="alternate" href="https://campusempresa.com/postgresql/introduction-to-indexes" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/postgresql/introduction-to-indexes" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/postgresql/introduction-to-indexes" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/postgresql/introduction-to-indexes" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/postgresql/introduction-to-indexes" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='user-defined-functions'>&#x25C4;Funcions definides per l'usuari</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Introducció als índexs</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='creating-and-managing-indexes'>Creació i gestió d'índexs &#x25BA;</a>
+			</div>
+</div>
+<div class='index'><p>Els índexs són un component crucial en els sistemes de gestió de bases de dades, incloent PostgreSQL. Milloren la velocitat de les operacions de recuperació de dades proporcionant accés ràpid a les files d'una taula. Aquesta secció cobrirà els conceptes bàsics dels índexs, els seus tipus i com utilitzar-los de manera efectiva en PostgreSQL.</p>
+</div><h2>Què és un índex?</h2>
+<div class='index'><p>Un índex és un objecte de base de dades que millora la velocitat de les operacions de recuperació de dades en una taula a costa d'un emmagatzematge addicional i una sobrecàrrega de manteniment. Pensa en un índex com un mapa de carreteres que t'ajuda a localitzar ràpidament les dades que necessites sense escanejar tota la taula.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='index'><ul>
+<li><strong>Indexació</strong>: El procés de crear un índex en una columna de taula per accelerar la recuperació de dades.</li>
+<li><strong>Índex B-tree</strong>: El tipus d'índex per defecte i més utilitzat en PostgreSQL.</li>
+<li><strong>Índex únic</strong>: Assegura que les columnes indexades continguin valors únics.</li>
+<li><strong>Índex compost</strong>: Un índex en múltiples columnes.</li>
+<li><strong>Índex parcial</strong>: Un índex construït en un subconjunt d'una taula, definit per una condició.</li>
+<li><strong>Índex d'expressió</strong>: Un índex basat en una expressió en lloc d'un valor de columna.</li>
+</ul>
+</div><h2>Tipus d'índexs en PostgreSQL</h2>
+<div class='index'><p>PostgreSQL admet diversos tipus d'índexs, cadascun adequat per a diferents casos d'ús.</p>
+</div><h2>Índex B-tree</h2>
+<div class='index'><p>El tipus d'índex per defecte en PostgreSQL, adequat per a la majoria de consultes.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIElOREVYIGlkeF9jb2x1bW5fbmFtZSBPTiB0YWJsZV9uYW1lKGNvbHVtbl9uYW1lKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE INDEX idx_column_name ON table_name(column_name);</pre></div><div class='index'></div><h2>Índex únic</h2>
+<div class='index'><p>Assegura que tots els valors en la columna indexada siguin únics.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFVOSVFVRSBJTkRFWCBpZHhfdW5pcXVlX2NvbHVtbl9uYW1lIE9OIHRhYmxlX25hbWUoY29sdW1uX25hbWUpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE UNIQUE INDEX idx_unique_column_name ON table_name(column_name);</pre></div><div class='index'></div><h2>Índex compost</h2>
+<div class='index'><p>Un índex en múltiples columnes, útil per a consultes que filtren en més d'una columna.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIElOREVYIGlkeF9jb21wb3NpdGVfY29sdW1ucyBPTiB0YWJsZV9uYW1lKGNvbHVtbjEsIGNvbHVtbjIpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE INDEX idx_composite_columns ON table_name(column1, column2);</pre></div><div class='index'></div><h2>Índex parcial</h2>
+<div class='index'><p>Un índex en un subconjunt de files, definit per una condició.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIElOREVYIGlkeF9wYXJ0aWFsIE9OIHRhYmxlX25hbWUoY29sdW1uX25hbWUpIFdIRVJFIGNvbmRpdGlvbjs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE INDEX idx_partial ON table_name(column_name) WHERE condition;</pre></div><div class='index'></div><h2>Índex d'expressió</h2>
+<div class='index'><p>Un índex basat en una expressió en lloc d'un valor de columna directe.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIElOREVYIGlkeF9leHByZXNzaW9uIE9OIHRhYmxlX25hbWUoKGxvd2VyKGNvbHVtbl9uYW1lKSkpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE INDEX idx_expression ON table_name((lower(column_name)));</pre></div><div class='index'></div><h2>Creació i Gestió d'Índexs</h2>
+<div class='index'></div><h2>Creació d'un Índex</h2>
+<div class='index'><p>Per crear un índex, utilitza la instrucció <code>CREATE INDEX</code>. Aquí tens un exemple de creació d'un índex B-tree en la columna <code>name</code> d'una taula <code>users</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIElOREVYIGlkeF91c2Vyc19uYW1lIE9OIHVzZXJzKG5hbWUpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE INDEX idx_users_name ON users(name);</pre></div><div class='index'></div><h2>Eliminació d'un Índex</h2>
+<div class='index'><p>Per eliminar un índex, utilitza la instrucció <code>DROP INDEX</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RFJPUCBJTkRFWCBpZHhfdXNlcnNfbmFtZTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>DROP INDEX idx_users_name;</pre></div><div class='index'></div><h2>Visualització d'Índexs</h2>
+<div class='index'><p>Per veure els índexs en una taula, pots consultar el catàleg de sistema <code>pg_indexes</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGluZGV4bmFtZSwgaW5kZXhkZWYKRlJPTSBwZ19pbmRleGVzCldIRVJFIHRhYmxlbmFtZSA9ICd1c2Vycyc7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT indexname, indexdef
+FROM pg_indexes
+WHERE tablename = 'users';</pre></div><div class='index'></div><h2>Quan Utilitzar Índexs</h2>
+<div class='index'><p>Els índexs són beneficiosos per a:</p>
+<ul>
+<li><strong>Accelerar consultes SELECT</strong>: Especialment aquelles amb claus WHERE, JOINs i claus ORDER BY.</li>
+<li><strong>Enforçar la unicitat</strong>: Utilitzant índexs únics per assegurar la integritat de les dades.</li>
+</ul>
+<p>No obstant això, els índexs tenen desavantatges:</p>
+<ul>
+<li><strong>Sobrecàrrega d'emmagatzematge</strong>: Els índexs consumeixen espai addicional en disc.</li>
+<li><strong>Sobrecàrrega de manteniment</strong>: Els índexs necessiten ser actualitzats cada vegada que les columnes indexades són modificades, la qual cosa pot alentir les operacions INSERT, UPDATE i DELETE.</li>
+</ul>
+</div><h2>Millors Pràctiques</h2>
+<div class='index'><ul>
+<li><strong>Indexar selectivament</strong>: Només indexa columnes que s'utilitzen freqüentment en consultes.</li>
+<li><strong>Monitoritzar el rendiment</strong>: Utilitza la comanda <code>EXPLAIN</code> de PostgreSQL per analitzar el rendiment de les consultes i determinar si els índexs s'estan utilitzant de manera efectiva.</li>
+<li><strong>Evitar la sobreindexació</strong>: Massa índexs poden degradar el rendiment a causa de l'augment de la sobrecàrrega de manteniment.</li>
+</ul>
+</div><h2>Conclusió</h2>
+<div class='index'><p>Els índexs són eines poderoses per optimitzar el rendiment de les consultes en PostgreSQL. Comprenent els diferents tipus d'índexs i els seus casos d'ús, pots prendre decisions informades sobre quan i com utilitzar-los. Recorda equilibrar els beneficis d'una recuperació de dades més ràpida amb els costos d'emmagatzematge addicional i manteniment. Utilitza els índexs amb prudència per mantenir un sistema de bases de dades eficient i amb bon rendiment.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='user-defined-functions'>&#x25C4;Funcions definides per l'usuari</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Introducció als índexs</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='creating-and-managing-indexes'>Creació i gestió d'índexs &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

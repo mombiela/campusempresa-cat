@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executar Consultes SQL Programàticament</title>
+
+    <link rel="alternate" href="https://campusempresa.com/apachespark/running-sql-queries-programmatically" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/apachespark/running-sql-queries-programmatically" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/apachespark/running-sql-queries-programmatically" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/apachespark/running-sql-queries-programmatically" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/apachespark/running-sql-queries-programmatically" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='dataframes-api'>&#x25C4;API de DataFrames</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Executar Consultes SQL Programàticament</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='data-sources-and-sinks'>Fonts i Destinacions de Dades &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquesta secció, explorarem com executar consultes SQL programàticament utilitzant Apache Spark. Aquesta és una habilitat crucial per a enginyers de dades i científics de dades que necessiten realitzar manipulacions i anàlisis de dades complexes. Cobrirà els conceptes bàsics de Spark SQL, com crear DataFrames i com executar consultes SQL sobre aquests DataFrames.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>SparkSession</strong>: El punt d'entrada per programar Spark amb l'API de Dataset i DataFrame.</li>
+<li><strong>DataFrame</strong>: Una col·lecció distribuïda de dades organitzada en columnes amb nom.</li>
+<li><strong>SQLContext</strong>: Un punt d'entrada per treballar amb dades estructurades (DataFrames) a Spark.</li>
+</ul>
+</div><h1>Configuració de SparkSession</h1>
+<div class='content'><p>Abans d'executar consultes SQL, cal configurar una SparkSession. Aquest és el punt d'entrada per a totes les funcionalitats de Spark.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBweXNwYXJrLnNxbCBpbXBvcnQgU3BhcmtTZXNzaW9uCgojIEluaWNpYWxpdHphciBTcGFya1Nlc3Npb24Kc3BhcmsgPSBTcGFya1Nlc3Npb24uYnVpbGRlciBcCiAgICAuYXBwTmFtZSgiU1FMIFF1ZXJpZXMgUHJvZ3JhbW1hdGljYWxseSIpIFwKICAgIC5nZXRPckNyZWF0ZSgp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from pyspark.sql import SparkSession
+
+# Inicialitzar SparkSession
+spark = SparkSession.builder \
+    .appName(&quot;SQL Queries Programmatically&quot;) \
+    .getOrCreate()</pre></div><div class='content'></div><h1>Creació de DataFrames</h1>
+<div class='content'><p>Els DataFrames són l'abstracció principal a Spark SQL. Pots crear DataFrames a partir de diverses fonts de dades, com ara fitxers JSON, CSV i Parquet.</p>
+</div><h2>Exemple: Creació d'un DataFrame a partir d'un fitxer JSON</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDYXJyZWdhciBkYWRlcyBKU09OIGVuIHVuIERhdGFGcmFtZQpkZiA9IHNwYXJrLnJlYWQuanNvbigicGF0aC90by95b3VyL2pzb25maWxlLmpzb24iKQoKIyBNb3N0cmFyIGwnZXNxdWVtYSBkZWwgRGF0YUZyYW1lCmRmLnByaW50U2NoZW1hKCkKCiMgTW9zdHJhciBsZXMgcHJpbWVyZXMgZmlsZXMgZGVsIERhdGFGcmFtZQpkZi5zaG93KCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Carregar dades JSON en un DataFrame
+df = spark.read.json(&quot;path/to/your/jsonfile.json&quot;)
+
+# Mostrar l'esquema del DataFrame
+df.printSchema()
+
+# Mostrar les primeres files del DataFrame
+df.show()</pre></div><div class='content'></div><h1>Executar Consultes SQL</h1>
+<div class='content'><p>Un cop tens un DataFrame, pots registrar-lo com una vista temporal i executar consultes SQL contra ell.</p>
+</div><h2>Exemple: Registrar un DataFrame com una Vista Temporal</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBSZWdpc3RyYXIgZWwgRGF0YUZyYW1lIGNvbSB1bmEgdmlzdGEgdGVtcG9yYWwKZGYuY3JlYXRlT3JSZXBsYWNlVGVtcFZpZXcoIm15X3RhYmxlIikKCiMgRXhlY3V0YXIgdW5hIGNvbnN1bHRhIFNRTApyZXN1bHQgPSBzcGFyay5zcWwoIlNFTEVDVCAqIEZST00gbXlfdGFibGUgV0hFUkUgYWdlID4gMzAiKQoKIyBNb3N0cmFyIGVsIHJlc3VsdGF0CnJlc3VsdC5zaG93KCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Registrar el DataFrame com una vista temporal
+df.createOrReplaceTempView(&quot;my_table&quot;)
+
+# Executar una consulta SQL
+result = spark.sql(&quot;SELECT * FROM my_table WHERE age &gt; 30&quot;)
+
+# Mostrar el resultat
+result.show()</pre></div><div class='content'></div><h1>Consultes SQL Avançades</h1>
+<div class='content'><p>A mesura que et familiaritzis amb les consultes SQL bàsiques, pots començar a explorar consultes més avançades, com ara unions, agregacions i funcions de finestra.</p>
+</div><h2>Exemple: Realitzar una Unió</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDYXJyZWdhciB1biBhbHRyZSBEYXRhRnJhbWUKZGYyID0gc3BhcmsucmVhZC5qc29uKCJwYXRoL3RvL2Fub3RoZXIvanNvbmZpbGUuanNvbiIpCgojIFJlZ2lzdHJhciBlbCBzZWdvbiBEYXRhRnJhbWUgY29tIHVuYSB2aXN0YSB0ZW1wb3JhbApkZjIuY3JlYXRlT3JSZXBsYWNlVGVtcFZpZXcoImFub3RoZXJfdGFibGUiKQoKIyBSZWFsaXR6YXIgdW5hIHVuacOzIGVudHJlIGxlcyBkdWVzIHRhdWxlcwpqb2luX3Jlc3VsdCA9IHNwYXJrLnNxbCgiIiIKICAgIFNFTEVDVCBhLm5hbWUsIGIuc2FsYXJ5CiAgICBGUk9NIG15X3RhYmxlIGEKICAgIEpPSU4gYW5vdGhlcl90YWJsZSBiCiAgICBPTiBhLmlkID0gYi5pZAoiIiIpCgojIE1vc3RyYXIgZWwgcmVzdWx0YXQgZGUgbGEgdW5pw7MKam9pbl9yZXN1bHQuc2hvdygp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Carregar un altre DataFrame
+df2 = spark.read.json(&quot;path/to/another/jsonfile.json&quot;)
+
+# Registrar el segon DataFrame com una vista temporal
+df2.createOrReplaceTempView(&quot;another_table&quot;)
+
+# Realitzar una uni&oacute; entre les dues taules
+join_result = spark.sql(&quot;&quot;&quot;
+    SELECT a.name, b.salary
+    FROM my_table a
+    JOIN another_table b
+    ON a.id = b.id
+&quot;&quot;&quot;)
+
+# Mostrar el resultat de la uni&oacute;
+join_result.show()</pre></div><div class='content'></div><h2>Exemple: Agregacions</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBSZWFsaXR6YXIgdW5hIGNvbnN1bHRhIGQnYWdyZWdhY2nDswphZ2dfcmVzdWx0ID0gc3Bhcmsuc3FsKCIiIgogICAgU0VMRUNUIGRlcGFydG1lbnQsIEFWRyhzYWxhcnkpIGFzIGF2Z19zYWxhcnkKICAgIEZST00gYW5vdGhlcl90YWJsZQogICAgR1JPVVAgQlkgZGVwYXJ0bWVudAoiIiIpCgojIE1vc3RyYXIgZWwgcmVzdWx0YXQgZGUgbCdhZ3JlZ2FjacOzCmFnZ19yZXN1bHQuc2hvdygp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Realitzar una consulta d'agregaci&oacute;
+agg_result = spark.sql(&quot;&quot;&quot;
+    SELECT department, AVG(salary) as avg_salary
+    FROM another_table
+    GROUP BY department
+&quot;&quot;&quot;)
+
+# Mostrar el resultat de l'agregaci&oacute;
+agg_result.show()</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Executar consultes SQL programàticament a Apache Spark et permet aprofitar el poder de la computació distribuïda per a l'anàlisi i manipulació de dades. Entenent com crear DataFrames, registrar-los com a vistes temporals i executar consultes SQL, pots realitzar operacions de dades complexes de manera eficient. A mesura que avancis, podràs explorar funcionalitats SQL més sofisticades per satisfer les teves necessitats de processament de dades.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='dataframes-api'>&#x25C4;API de DataFrames</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Executar Consultes SQL Programàticament</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='data-sources-and-sinks'>Fonts i Destinacions de Dades &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

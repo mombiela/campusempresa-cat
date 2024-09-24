@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticació Multi-Factor (MFA) a AWS</title>
+
+    <link rel="alternate" href="https://campusempresa.com/aws/multi-factor-authentication" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/aws/multi-factor-authentication" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/aws/multi-factor-authentication" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/aws/multi-factor-authentication" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/aws/multi-factor-authentication" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='iam-policies-and-permissions'>&#x25C4;Polítiques i Permisos IAM</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Autenticació Multi-Factor (MFA) a AWS</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-aws-networking'>Introducció a les Xarxes d'AWS &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a l'Autenticació Multi-Factor (MFA)</h1>
+<div class='content'><p>L'Autenticació Multi-Factor (MFA) és un sistema de seguretat que requereix més d'un mètode d'autenticació per verificar la identitat de l'usuari per a un inici de sessió o una altra transacció. MFA combina dos o més credencials independents: el que l'usuari sap (contrasenya), el que l'usuari té (testimoni de seguretat) i el que l'usuari és (verificació biomètrica).</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Alguna Cosa que Saps</strong>: Normalment una contrasenya o PIN.</li>
+<li><strong>Alguna Cosa que Tens</strong>: Un dispositiu físic com un telèfon intel·ligent o un testimoni de maquinari.</li>
+<li><strong>Alguna Cosa que Ets</strong>: Verificació biomètrica com empremtes digitals o reconeixement facial.</li>
+</ul>
+</div><h1>Importància de MFA a AWS</h1>
+<div class='content'><p>Els entorns AWS sovint contenen dades sensibles i aplicacions crítiques. Implementar MFA afegeix una capa extra de seguretat, fent significativament més difícil que usuaris no autoritzats obtinguin accés.</p>
+</div><h2>Beneficis de MFA</h2>
+<div class='content'><ul>
+<li><strong>Seguretat Millorada</strong>: Redueix el risc de comptes compromesos.</li>
+<li><strong>Compliment</strong>: Ajuda a complir amb els requisits reguladors.</li>
+<li><strong>Responsabilitat de l'Usuari</strong>: Assegura que només els usuaris autoritzats poden realitzar certes accions.</li>
+</ul>
+</div><h1>Configuració de MFA a AWS</h1>
+<div class='content'></div><h2>Prerequisits</h2>
+<div class='content'><ul>
+<li>Un compte AWS.</li>
+<li>Accés a la Consola de Gestió d'AWS.</li>
+<li>Un dispositiu MFA compatible (per exemple, un telèfon intel·ligent amb una aplicació MFA com Google Authenticator o un dispositiu MFA de maquinari).</li>
+</ul>
+</div><h2>Passos per Activar MFA per a Usuaris IAM d'AWS</h2>
+<div class='content'><ol>
+<li><strong>Inicia sessió a la Consola de Gestió d'AWS</strong>.</li>
+<li><strong>Navega al Tauler de Control IAM</strong>:
+<ul>
+<li>Ves al servei IAM des de la Consola de Gestió d'AWS.</li>
+</ul>
+</li>
+<li><strong>Selecciona Usuaris</strong>:
+<ul>
+<li>Tria l'usuari per al qual vols activar MFA.</li>
+</ul>
+</li>
+<li><strong>Gestiona el Dispositiu MFA</strong>:
+<ul>
+<li>A la secció de detalls de l'usuari, fes clic a la pestanya &quot;Credencials de seguretat&quot;.</li>
+<li>Fes clic a &quot;Gestiona&quot; al costat de la secció &quot;Dispositiu MFA assignat&quot;.</li>
+</ul>
+</li>
+<li><strong>Tria el Tipus de Dispositiu MFA</strong>:
+<ul>
+<li>Selecciona &quot;Dispositiu MFA virtual&quot; o &quot;Dispositiu MFA de maquinari&quot;.</li>
+</ul>
+</li>
+<li><strong>Configura el Dispositiu MFA</strong>:
+<ul>
+<li>Per a un dispositiu MFA virtual, utilitza una aplicació MFA per escanejar el codi QR proporcionat per AWS.</li>
+<li>Per a un dispositiu MFA de maquinari, introdueix el número de sèrie del dispositiu.</li>
+</ul>
+</li>
+<li><strong>Assigna el Dispositiu MFA</strong>:
+<ul>
+<li>Introdueix els codis d'autenticació generats pel dispositiu MFA per completar la configuració.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Exemple: Activació d'un Dispositiu MFA Virtual</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("MS4gT2JyZSBsYSBjb25zb2xhIElBTSBhIGh0dHBzOi8vY29uc29sZS5hd3MuYW1hem9uLmNvbS9pYW0vLgoyLiBBbCBwYW5lbGwgZGUgbmF2ZWdhY2nDsywgdHJpYSBVc3VhcmlzLgozLiBUcmlhIGVsIG5vbSBkZSBsJ3VzdWFyaSBwZXIgYWwgcXVhbCB2b2xzIGFjdGl2YXIgTUZBLgo0LiBUcmlhIGxhIHBlc3RhbnlhIENyZWRlbmNpYWxzIGRlIHNlZ3VyZXRhdC4KNS4gQSBsYSBzZWNjacOzIEF1dGVudGljYWNpw7MgbXVsdGktZmFjdG9yIChNRkEpLCB0cmlhIEdlc3Rpb25hLgo2LiBUcmlhIERpc3Bvc2l0aXUgTUZBIHZpcnR1YWwsIGkgZGVzcHLDqXMgdHJpYSBDb250aW51YS4KNy4gT2JyZSBsYSB0ZXZhIGFwbGljYWNpw7MgTUZBIGFsIHRldSB0ZWzDqGZvbiBpbnRlbMK3bGlnZW50IGkgZXNjYW5lamEgZWwgY29kaSBRUiBtb3N0cmF0IGEgbGEgY29uc29sYSBkJ0FXUy4KOC4gSW50cm9kdWVpeCBlbHMgZG9zIGNvZGlzIGQnYXV0ZW50aWNhY2nDsyBjb25zZWN1dGl1cyBnZW5lcmF0cyBwZXIgbGEgdGV2YSBhcGxpY2FjacOzIE1GQS4KOS4gVHJpYSBBc3NpZ25hIE1GQS4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>1. Obre la consola IAM a https://console.aws.amazon.com/iam/.
+2. Al panell de navegaci&oacute;, tria Usuaris.
+3. Tria el nom de l'usuari per al qual vols activar MFA.
+4. Tria la pestanya Credencials de seguretat.
+5. A la secci&oacute; Autenticaci&oacute; multi-factor (MFA), tria Gestiona.
+6. Tria Dispositiu MFA virtual, i despr&eacute;s tria Continua.
+7. Obre la teva aplicaci&oacute; MFA al teu tel&egrave;fon intel&middot;ligent i escaneja el codi QR mostrat a la consola d'AWS.
+8. Introdueix els dos codis d'autenticaci&oacute; consecutius generats per la teva aplicaci&oacute; MFA.
+9. Tria Assigna MFA.</pre></div><div class='content'></div><h1>Configuracions Avançades de MFA</h1>
+<div class='content'></div><h2>MFA per al Compte Root</h2>
+<div class='content'><ul>
+<li><strong>Altament Recomanat</strong>: El compte root té accés il·limitat als teus recursos AWS.</li>
+<li><strong>Passos</strong>: Similar a l'activació de MFA per a usuaris IAM però fet a través de la configuració de seguretat del compte root.</li>
+</ul>
+</div><h2>MFA per a AWS CLI i SDK</h2>
+<div class='content'><ul>
+<li><strong>Credencials de Seguretat Temporals</strong>: Utilitza AWS STS (Security Token Service) per generar credencials temporals que requereixen MFA.</li>
+<li><strong>Exemple</strong>:
+<pre><code class="language-bash">aws sts get-session-token --serial-number arn-of-the-mfa-device --token-code code-from-token
+</code></pre>
+</li>
+</ul>
+</div><h2>Aplicació de MFA amb Polítiques IAM</h2>
+<div class='content'><ul>
+<li><strong>Exemple de Política IAM</strong>:
+<pre><code class="language-json">{
+    &quot;Version&quot;: &quot;2012-10-17&quot;,
+    &quot;Statement&quot;: [
+        {
+            &quot;Effect&quot;: &quot;Deny&quot;,
+            &quot;Action&quot;: &quot;*&quot;,
+            &quot;Resource&quot;: &quot;*&quot;,
+            &quot;Condition&quot;: {
+                &quot;BoolIfExists&quot;: {
+                    &quot;aws:MultiFactorAuthPresent&quot;: &quot;false&quot;
+                }
+            }
+        }
+    ]
+}
+</code></pre>
+</li>
+</ul>
+</div><h1>Resolució de Problemes de MFA</h1>
+<div class='content'><ul>
+<li><strong>Dispositiu MFA Perdut</strong>: Utilitza el compte root per desactivar MFA per a l'usuari afectat i reconfigura-ho.</li>
+<li><strong>Problemes de Sincronització</strong>: Assegura't que l'hora del teu dispositiu MFA està sincronitzada amb els servidors d'AWS.</li>
+<li><strong>Codis de Respatller</strong>: AWS no proporciona codis de respatller; considera tenir un dispositiu MFA secundari.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>L'Autenticació Multi-Factor (MFA) és una mesura de seguretat crítica per protegir el teu entorn AWS. Requerint múltiples formes de verificació, MFA millora significativament la seguretat dels teus recursos AWS. Configurar MFA és senzill i es pot fer a través de la Consola de Gestió d'AWS, CLI o SDK. Les configuracions avançades i les polítiques poden reforçar encara més l'ús de MFA, assegurant pràctiques de seguretat robustes a tota la teva infraestructura AWS.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='iam-policies-and-permissions'>&#x25C4;Polítiques i Permisos IAM</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Autenticació Multi-Factor (MFA) a AWS</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-aws-networking'>Introducció a les Xarxes d'AWS &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

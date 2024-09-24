@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerca de text complet a PostgreSQL</title>
+
+    <link rel="alternate" href="https://campusempresa.com/postgresql/full-text-search" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/postgresql/full-text-search" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/postgresql/full-text-search" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/postgresql/full-text-search" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/postgresql/full-text-search" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='common-table-expressions'>&#x25C4;Expressions de taula comunes (CTEs)</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Cerca de text complet a PostgreSQL</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='understanding-data-types'>Comprensió dels tipus de dades &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a la cerca de text complet</h1>
+<div class='content'><p>La cerca de text complet (FTS) a PostgreSQL et permet cercar de manera eficient documents o text dins d'una base de dades. A diferència del simple patró de coincidència amb <code>LIKE</code>, FTS pot gestionar consultes complexes i classificar els resultats segons la rellevància.</p>
+</div><h2>Conceptes clau</h2>
+<div class='content'><ul>
+<li><strong>Tokenització</strong>: Dividir el text en tokens (paraules o termes).</li>
+<li><strong>Normalització</strong>: Convertir els tokens a una forma estàndard (per exemple, minúscules, arrelament).</li>
+<li><strong>Diccionaris</strong>: S'utilitzen per definir com es processen els tokens.</li>
+<li><strong>TSVector</strong>: Un tipus de dades que emmagatzema text preprocessat per a una cerca eficient.</li>
+<li><strong>TSQuery</strong>: Un tipus de dades que representa una consulta de cerca.</li>
+</ul>
+</div><h1>Configuració de la cerca de text complet</h1>
+<div class='content'></div><h2>Creació d'una columna TSVector</h2>
+<div class='content'><p>Per utilitzar FTS, cal crear una columna que emmagatzemi el text preprocessat.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QUxURVIgVEFCTEUgYXJ0aWNsZXMgQUREIENPTFVNTiB0c3YgdHN2ZWN0b3I7ClVQREFURSBhcnRpY2xlcyBTRVQgdHN2ID0gdG9fdHN2ZWN0b3IoJ2VuZ2xpc2gnLCB0aXRsZSB8fCAnICcgfHwgYm9keSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ALTER TABLE articles ADD COLUMN tsv tsvector;
+UPDATE articles SET tsv = to_tsvector('english', title || ' ' || body);</pre></div><div class='content'></div><h2>Indexació de la columna TSVector</h2>
+<div class='content'><p>Crear un índex a la columna <code>tsvector</code> millora el rendiment de la cerca.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIElOREVYIGlkeF9mdHMgT04gYXJ0aWNsZXMgVVNJTkcgZ2luKHRzdik7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE INDEX idx_fts ON articles USING gin(tsv);</pre></div><div class='content'></div><h1>Realització de cerques de text complet</h1>
+<div class='content'></div><h2>Cerca bàsica</h2>
+<div class='content'><p>Pots realitzar una cerca bàsica de text complet utilitzant l'operador <code>@@</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIHRpdGxlLCBib2R5CkZST00gYXJ0aWNsZXMKV0hFUkUgdHN2IEBAIHRvX3RzcXVlcnkoJ2VuZ2xpc2gnLCAncG9zdGdyZXNxbCAmIHNlYXJjaCcpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT title, body
+FROM articles
+WHERE tsv @@ to_tsquery('english', 'postgresql &amp; search');</pre></div><div class='content'></div><h2>Classificació dels resultats de la cerca</h2>
+<div class='content'><p>Per classificar els resultats de la cerca segons la rellevància, utilitza la funció <code>ts_rank</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIHRpdGxlLCBib2R5LCB0c19yYW5rKHRzdiwgdG9fdHNxdWVyeSgnZW5nbGlzaCcsICdwb3N0Z3Jlc3FsICYgc2VhcmNoJykpIEFTIHJhbmsKRlJPTSBhcnRpY2xlcwpXSEVSRSB0c3YgQEAgdG9fdHNxdWVyeSgnZW5nbGlzaCcsICdwb3N0Z3Jlc3FsICYgc2VhcmNoJykKT1JERVIgQlkgcmFuayBERVNDOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT title, body, ts_rank(tsv, to_tsquery('english', 'postgresql &amp; search')) AS rank
+FROM articles
+WHERE tsv @@ to_tsquery('english', 'postgresql &amp; search')
+ORDER BY rank DESC;</pre></div><div class='content'></div><h1>Tècniques avançades de cerca de text complet</h1>
+<div class='content'></div><h2>Ús de múltiples diccionaris</h2>
+<div class='content'><p>Pots utilitzar múltiples diccionaris per gestionar diferents idiomes o vocabularis especialitzats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRFWFQgU0VBUkNIIENPTkZJR1VSQVRJT04gbXlfY29uZmlnIChDT1BZID0gcGdfY2F0YWxvZy5lbmdsaXNoKTsKQUxURVIgVEVYVCBTRUFSQ0ggQ09ORklHVVJBVElPTiBteV9jb25maWcKICAgIEFMVEVSIE1BUFBJTkcgRk9SIGh3b3JkLCBod29yZF9wYXJ0LCB3b3JkCiAgICBXSVRIIHNpbXBsZSwgZW5nbGlzaF9zdGVtOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TEXT SEARCH CONFIGURATION my_config (COPY = pg_catalog.english);
+ALTER TEXT SEARCH CONFIGURATION my_config
+    ALTER MAPPING FOR hword, hword_part, word
+    WITH simple, english_stem;</pre></div><div class='content'></div><h2>Destacar termes de cerca</h2>
+<div class='content'><p>Destacar els termes de cerca en els resultats pot facilitar veure per què s'ha coincidit un document.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIHRpdGxlLCB0c19oZWFkbGluZSgnZW5nbGlzaCcsIGJvZHksIHRvX3RzcXVlcnkoJ2VuZ2xpc2gnLCAncG9zdGdyZXNxbCAmIHNlYXJjaCcpKSBBUyBoaWdobGlnaHRlZF9ib2R5CkZST00gYXJ0aWNsZXMKV0hFUkUgdHN2IEBAIHRvX3RzcXVlcnkoJ2VuZ2xpc2gnLCAncG9zdGdyZXNxbCAmIHNlYXJjaCcpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT title, ts_headline('english', body, to_tsquery('english', 'postgresql &amp; search')) AS highlighted_body
+FROM articles
+WHERE tsv @@ to_tsquery('english', 'postgresql &amp; search');</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>La cerca de text complet a PostgreSQL és una característica potent que permet cerques de text eficients i complexes. Comprenent i utilitzant la tokenització, la normalització i els tipus de dades <code>tsvector</code> i <code>tsquery</code>, pots crear funcionalitats de cerca robustes a les teves aplicacions. Recorda indexar les teves columnes <code>tsvector</code> i considera utilitzar tècniques avançades com múltiples diccionaris i destacat de termes per millorar les teves capacitats de cerca.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='common-table-expressions'>&#x25C4;Expressions de taula comunes (CTEs)</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Cerca de text complet a PostgreSQL</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='understanding-data-types'>Comprensió dels tipus de dades &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

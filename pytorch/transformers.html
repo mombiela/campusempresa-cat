@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformers en PyTorch</title>
+
+    <link rel="alternate" href="https://campusempresa.com/pytorch/transformers" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/pytorch/transformers" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/pytorch/transformers" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/pytorch/transformers" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/pytorch/transformers" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='long-short-term-memory-networks-lstms'>&#x25C4;Xarxes de Memòria a Curt i Llarg Termini (LSTMs)</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Transformers en PyTorch</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='custom-datasets-and-dataloaders'>Datasets i DataLoaders Personalitzats &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció als Transformers</h1>
+<div class='content'><p>Els transformers són un tipus d'arquitectura de model que ha revolucionat el camp del processament del llenguatge natural (NLP). Estan dissenyats per manejar dades seqüencials i han tingut molt èxit en tasques com la traducció de llenguatges, el resum de textos i més.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Mecanisme d'Atenció</strong>: Permet al model centrar-se en diferents parts de la seqüència d'entrada quan fa prediccions.</li>
+<li><strong>Auto-Atenció</strong>: Un tipus de mecanisme d'atenció on el model atén a diferents posicions de la mateixa seqüència.</li>
+<li><strong>Arquitectura Encoder-Decoder</strong>: El model transformer original consta d'un encoder per processar l'entrada i un decoder per generar la sortida.</li>
+</ul>
+</div><h1>Configuració de l'Entorn PyTorch</h1>
+<div class='content'><p>Abans d'endinsar-nos en els transformers, assegureu-vos que teniu PyTorch instal·lat. Podeu instal·lar-lo utilitzant pip:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgdG9yY2ggdG9yY2h2aXNpb24="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install torch torchvision</pre></div><div class='content'></div><h1>Model Transformer Bàsic</h1>
+<div class='content'><p>PyTorch proporciona un mòdul <code>nn.Transformer</code> que es pot utilitzar per construir models transformer.</p>
+</div><h2>Exemple: Model Transformer Simple</h2>
+<div class='content'><p>Comencem amb un exemple simple per entendre l'estructura bàsica d'un model transformer.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaC5ubiBhcyBubgppbXBvcnQgdG9yY2gub3B0aW0gYXMgb3B0aW0KCiMgRGVmaW5pciBlbCBtb2RlbCB0cmFuc2Zvcm1lcgpjbGFzcyBTaW1wbGVUcmFuc2Zvcm1lcihubi5Nb2R1bGUpOgogICAgZGVmIF9faW5pdF9fKHNlbGYsIGlucHV0X2RpbSwgbW9kZWxfZGltLCBudW1faGVhZHMsIG51bV9sYXllcnMsIG91dHB1dF9kaW0pOgogICAgICAgIHN1cGVyKFNpbXBsZVRyYW5zZm9ybWVyLCBzZWxmKS5fX2luaXRfXygpCiAgICAgICAgc2VsZi50cmFuc2Zvcm1lciA9IG5uLlRyYW5zZm9ybWVyKGRfbW9kZWw9bW9kZWxfZGltLCBuaGVhZD1udW1faGVhZHMsIG51bV9lbmNvZGVyX2xheWVycz1udW1fbGF5ZXJzLCBudW1fZGVjb2Rlcl9sYXllcnM9bnVtX2xheWVycykKICAgICAgICBzZWxmLmZjID0gbm4uTGluZWFyKG1vZGVsX2RpbSwgb3V0cHV0X2RpbSkKICAgIAogICAgZGVmIGZvcndhcmQoc2VsZiwgc3JjLCB0Z3QpOgogICAgICAgIHRyYW5zZm9ybWVyX291dHB1dCA9IHNlbGYudHJhbnNmb3JtZXIoc3JjLCB0Z3QpCiAgICAgICAgb3V0cHV0ID0gc2VsZi5mYyh0cmFuc2Zvcm1lcl9vdXRwdXQpCiAgICAgICAgcmV0dXJuIG91dHB1dAoKIyBIaXBlcnBhcsOgbWV0cmVzCmlucHV0X2RpbSA9IDEwCm1vZGVsX2RpbSA9IDUxMgpudW1faGVhZHMgPSA4Cm51bV9sYXllcnMgPSA2Cm91dHB1dF9kaW0gPSAxMAoKIyBJbmljaWFsaXR6YXIgZWwgbW9kZWwsIGxhIGZ1bmNpw7MgZGUgcMOocmR1YSBpIGwnb3B0aW1pdHphZG9yCm1vZGVsID0gU2ltcGxlVHJhbnNmb3JtZXIoaW5wdXRfZGltLCBtb2RlbF9kaW0sIG51bV9oZWFkcywgbnVtX2xheWVycywgb3V0cHV0X2RpbSkKY3JpdGVyaW9uID0gbm4uTVNFTG9zcygpCm9wdGltaXplciA9IG9wdGltLkFkYW0obW9kZWwucGFyYW1ldGVycygpLCBscj0wLjAwMSkKCiMgRGFkZXMgZmljdMOtY2llcwpzcmMgPSB0b3JjaC5yYW5kKCgxMCwgMzIsIGlucHV0X2RpbSkpICAjIChsb25naXR1ZF9zZXHDvMOobmNpYSwgbWlkYV9iYXRjaCwgaW5wdXRfZGltKQp0Z3QgPSB0b3JjaC5yYW5kKCgyMCwgMzIsIGlucHV0X2RpbSkpICAjIChsb25naXR1ZF9zZXHDvMOobmNpYSwgbWlkYV9iYXRjaCwgaW5wdXRfZGltKQpvdXRwdXQgPSBtb2RlbChzcmMsIHRndCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# Definir el model transformer
+class SimpleTransformer(nn.Module):
+    def __init__(self, input_dim, model_dim, num_heads, num_layers, output_dim):
+        super(SimpleTransformer, self).__init__()
+        self.transformer = nn.Transformer(d_model=model_dim, nhead=num_heads, num_encoder_layers=num_layers, num_decoder_layers=num_layers)
+        self.fc = nn.Linear(model_dim, output_dim)
+    
+    def forward(self, src, tgt):
+        transformer_output = self.transformer(src, tgt)
+        output = self.fc(transformer_output)
+        return output
+
+# Hiperpar&agrave;metres
+input_dim = 10
+model_dim = 512
+num_heads = 8
+num_layers = 6
+output_dim = 10
+
+# Inicialitzar el model, la funci&oacute; de p&egrave;rdua i l'optimitzador
+model = SimpleTransformer(input_dim, model_dim, num_heads, num_layers, output_dim)
+criterion = nn.MSELoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# Dades fict&iacute;cies
+src = torch.rand((10, 32, input_dim))  # (longitud_seq&uuml;&egrave;ncia, mida_batch, input_dim)
+tgt = torch.rand((20, 32, input_dim))  # (longitud_seq&uuml;&egrave;ncia, mida_batch, input_dim)
+output = model(src, tgt)</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Inicialització del Model</strong>: Definim una classe <code>SimpleTransformer</code> que hereta de <code>nn.Module</code>.</li>
+<li><strong>Capa Transformer</strong>: Utilitzem <code>nn.Transformer</code> per crear l'arquitectura transformer.</li>
+<li><strong>Capa Completament Connectada</strong>: Una capa lineal per mapar la sortida del transformer a la dimensió de sortida desitjada.</li>
+<li><strong>Mètode Forward</strong>: Defineix com les dades d'entrada flueixen a través del model.</li>
+<li><strong>Dades Fictícies</strong>: Creem tensors aleatoris per simular seqüències d'entrada i objectiu.</li>
+</ul>
+</div><h1>Tècniques Avançades de Transformers</h1>
+<div class='content'><p>A mesura que avanceu, podeu explorar tècniques més avançades i personalitzacions.</p>
+</div><h2>Mecanisme d'Atenció Personalitzat</h2>
+<div class='content'><p>Podeu crear mecanismes d'atenció personalitzats per adaptar-vos millor a tasques específiques.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgQ3VzdG9tQXR0ZW50aW9uKG5uLk1vZHVsZSk6CiAgICBkZWYgX19pbml0X18oc2VsZiwgbW9kZWxfZGltLCBudW1faGVhZHMpOgogICAgICAgIHN1cGVyKEN1c3RvbUF0dGVudGlvbiwgc2VsZikuX19pbml0X18oKQogICAgICAgIHNlbGYuYXR0ZW50aW9uID0gbm4uTXVsdGloZWFkQXR0ZW50aW9uKGVtYmVkX2RpbT1tb2RlbF9kaW0sIG51bV9oZWFkcz1udW1faGVhZHMpCiAgICAKICAgIGRlZiBmb3J3YXJkKHNlbGYsIHF1ZXJ5LCBrZXksIHZhbHVlKToKICAgICAgICBhdHRuX291dHB1dCwgXyA9IHNlbGYuYXR0ZW50aW9uKHF1ZXJ5LCBrZXksIHZhbHVlKQogICAgICAgIHJldHVybiBhdHRuX291dHB1dAoKIyBFeGVtcGxlIGQnw7pzCmN1c3RvbV9hdHRlbnRpb24gPSBDdXN0b21BdHRlbnRpb24obW9kZWxfZGltPTUxMiwgbnVtX2hlYWRzPTgpCnF1ZXJ5ID0gdG9yY2gucmFuZCgoMTAsIDMyLCA1MTIpKSAgIyAobG9uZ2l0dWRfc2Vxw7zDqG5jaWEsIG1pZGFfYmF0Y2gsIG1vZGVsX2RpbSkKa2V5ID0gdG9yY2gucmFuZCgoMTAsIDMyLCA1MTIpKQp2YWx1ZSA9IHRvcmNoLnJhbmQoKDEwLCAzMiwgNTEyKSkKYXR0bl9vdXRwdXQgPSBjdXN0b21fYXR0ZW50aW9uKHF1ZXJ5LCBrZXksIHZhbHVlKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class CustomAttention(nn.Module):
+    def __init__(self, model_dim, num_heads):
+        super(CustomAttention, self).__init__()
+        self.attention = nn.MultiheadAttention(embed_dim=model_dim, num_heads=num_heads)
+    
+    def forward(self, query, key, value):
+        attn_output, _ = self.attention(query, key, value)
+        return attn_output
+
+# Exemple d'&uacute;s
+custom_attention = CustomAttention(model_dim=512, num_heads=8)
+query = torch.rand((10, 32, 512))  # (longitud_seq&uuml;&egrave;ncia, mida_batch, model_dim)
+key = torch.rand((10, 32, 512))
+value = torch.rand((10, 32, 512))
+attn_output = custom_attention(query, key, value)</pre></div><div class='content'></div><h2>Ajust Fi de Transformers Preentrenats</h2>
+<div class='content'><p>PyTorch també admet l'ajust fi de models transformer preentrenats de biblioteques com <code>transformers</code> de Hugging Face.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSB0cmFuc2Zvcm1lcnMgaW1wb3J0IEJlcnRNb2RlbCwgQmVydFRva2VuaXplcgoKIyBDYXJyZWdhciBlbCBtb2RlbCBCRVJUIHByZWVudHJlbmF0IGkgZWwgdG9rZW5pdHphZG9yCm1vZGVsX25hbWUgPSAnYmVydC1iYXNlLXVuY2FzZWQnCnRva2VuaXplciA9IEJlcnRUb2tlbml6ZXIuZnJvbV9wcmV0cmFpbmVkKG1vZGVsX25hbWUpCm1vZGVsID0gQmVydE1vZGVsLmZyb21fcHJldHJhaW5lZChtb2RlbF9uYW1lKQoKIyBUb2tlbml0emFyIGwnZW50cmFkYQppbnB1dF90ZXh0ID0gIkhlbGxvLCBob3cgYXJlIHlvdT8iCmlucHV0cyA9IHRva2VuaXplcihpbnB1dF90ZXh0LCByZXR1cm5fdGVuc29ycz0ncHQnKQoKIyBQYXNzYWRhIGVuZGF2YW50Cm91dHB1dHMgPSBtb2RlbCgqKmlucHV0cyk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from transformers import BertModel, BertTokenizer
+
+# Carregar el model BERT preentrenat i el tokenitzador
+model_name = 'bert-base-uncased'
+tokenizer = BertTokenizer.from_pretrained(model_name)
+model = BertModel.from_pretrained(model_name)
+
+# Tokenitzar l'entrada
+input_text = &quot;Hello, how are you?&quot;
+inputs = tokenizer(input_text, return_tensors='pt')
+
+# Passada endavant
+outputs = model(**inputs)</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Atenció Personalitzada</strong>: Definim una classe <code>CustomAttention</code> per crear un mecanisme d'atenció multi-cap personalitzat.</li>
+<li><strong>Models Preentrenats</strong>: Utilitzant la biblioteca <code>transformers</code>, carreguem un model BERT preentrenat i un tokenitzador, tokenitzem el text d'entrada i realitzem una passada endavant.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Els transformers són una eina poderosa en el NLP modern, i PyTorch proporciona mòduls flexibles per construir i personalitzar aquests models. Des de models transformers bàsics fins a tècniques avançades com mecanismes d'atenció personalitzats i l'ajust fi de models preentrenats, podeu utilitzar PyTorch per implementar solucions NLP d'avantguarda. Continueu experimentant amb diferents arquitectures i conjunts de dades per aprofundir en la vostra comprensió i millorar els vostres models.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='long-short-term-memory-networks-lstms'>&#x25C4;Xarxes de Memòria a Curt i Llarg Termini (LSTMs)</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Transformers en PyTorch</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='custom-datasets-and-dataloaders'>Datasets i DataLoaders Personalitzats &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

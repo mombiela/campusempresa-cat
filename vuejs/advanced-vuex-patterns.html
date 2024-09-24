@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patrons avançats de Vuex</title>
+
+    <link rel="alternate" href="https://campusempresa.com/vuejs/advanced-vuex-patterns" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/vuejs/advanced-vuex-patterns" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/vuejs/advanced-vuex-patterns" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/vuejs/advanced-vuex-patterns" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/vuejs/advanced-vuex-patterns" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='using-vuex-components'>&#x25C4;Utilitzant Vuex en components</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Patrons avançats de Vuex</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-axios'>Introducció a Axios &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquesta secció, explorarem patrons avançats en Vuex, la biblioteca de gestió d'estat per a Vue.js. Aquests patrons t'ajudaran a gestionar la lògica d'estat complexa, millorar el manteniment del codi i augmentar l'escalabilitat de les teves aplicacions Vue.js.</p>
+</div><h1>Conceptes clau</h1>
+<div class='content'><ul>
+<li><strong>Mòduls</strong>: Organitzar l'estat, les mutacions, les accions i els getters en mòduls separats.</li>
+<li><strong>Espais de noms</strong>: Utilitzar espais de noms per evitar conflictes de noms en aplicacions grans.</li>
+<li><strong>Mòduls dinàmics</strong>: Registrar i desregistrar mòduls dinàmicament.</li>
+<li><strong>API de composició amb Vuex</strong>: Integrar Vuex amb l'API de composició per a una millor reutilització.</li>
+<li><strong>Plugins</strong>: Estendre la funcionalitat de Vuex amb plugins.</li>
+<li><strong>Proves de Vuex</strong>: Escriure proves unitàries per a la botiga Vuex.</li>
+</ul>
+</div><h1>Mòduls</h1>
+<div class='content'><p>Els mòduls et permeten dividir la teva botiga en múltiples botigues més petites, cadascuna gestionant el seu propi estat, mutacions, accions i getters.</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3RvcmUvbW9kdWxlcy91c2VyLmpzCmNvbnN0IHN0YXRlID0gewogIG5hbWU6ICcnLAogIGFnZTogbnVsbCwKfTsKCmNvbnN0IG11dGF0aW9ucyA9IHsKICBTRVRfVVNFUihzdGF0ZSwgdXNlcikgewogICAgc3RhdGUubmFtZSA9IHVzZXIubmFtZTsKICAgIHN0YXRlLmFnZSA9IHVzZXIuYWdlOwogIH0sCn07Cgpjb25zdCBhY3Rpb25zID0gewogIHVwZGF0ZVVzZXIoeyBjb21taXQgfSwgdXNlcikgewogICAgY29tbWl0KCdTRVRfVVNFUicsIHVzZXIpOwogIH0sCn07Cgpjb25zdCBnZXR0ZXJzID0gewogIHVzZXJOYW1lOiAoc3RhdGUpID0+IHN0YXRlLm5hbWUsCiAgdXNlckFnZTogKHN0YXRlKSA9PiBzdGF0ZS5hZ2UsCn07CgpleHBvcnQgZGVmYXVsdCB7CiAgc3RhdGUsCiAgbXV0YXRpb25zLAogIGFjdGlvbnMsCiAgZ2V0dGVycywKfTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// store/modules/user.js
+const state = {
+  name: '',
+  age: null,
+};
+
+const mutations = {
+  SET_USER(state, user) {
+    state.name = user.name;
+    state.age = user.age;
+  },
+};
+
+const actions = {
+  updateUser({ commit }, user) {
+    commit('SET_USER', user);
+  },
+};
+
+const getters = {
+  userName: (state) =&gt; state.name,
+  userAge: (state) =&gt; state.age,
+};
+
+export default {
+  state,
+  mutations,
+  actions,
+  getters,
+};</pre></div><div class='content'></div><h2>Registrar mòduls</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3RvcmUvaW5kZXguanMKaW1wb3J0IFZ1ZSBmcm9tICd2dWUnOwppbXBvcnQgVnVleCBmcm9tICd2dWV4JzsKaW1wb3J0IHVzZXIgZnJvbSAnLi9tb2R1bGVzL3VzZXInOwoKVnVlLnVzZShWdWV4KTsKCmV4cG9ydCBkZWZhdWx0IG5ldyBWdWV4LlN0b3JlKHsKICBtb2R1bGVzOiB7CiAgICB1c2VyLAogIH0sCn0pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// store/index.js
+import Vue from 'vue';
+import Vuex from 'vuex';
+import user from './modules/user';
+
+Vue.use(Vuex);
+
+export default new Vuex.Store({
+  modules: {
+    user,
+  },
+});</pre></div><div class='content'></div><h1>Espais de noms</h1>
+<div class='content'><p>Els espais de noms ajuden a evitar conflictes de noms encapsulant l'estat del mòdul, les mutacions, les accions i els getters.</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3RvcmUvbW9kdWxlcy91c2VyLmpzCmV4cG9ydCBkZWZhdWx0IHsKICBuYW1lc3BhY2VkOiB0cnVlLAogIHN0YXRlOiB7IC4uLiB9LAogIG11dGF0aW9uczogeyAuLi4gfSwKICBhY3Rpb25zOiB7IC4uLiB9LAogIGdldHRlcnM6IHsgLi4uIH0sCn07"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// store/modules/user.js
+export default {
+  namespaced: true,
+  state: { ... },
+  mutations: { ... },
+  actions: { ... },
+  getters: { ... },
+};</pre></div><div class='content'></div><h2>Accedir a mòduls amb espais de noms</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRW4gdW4gY29tcG9uZW50IFZ1ZQp0aGlzLiRzdG9yZS5kaXNwYXRjaCgndXNlci91cGRhdGVVc2VyJywgdXNlcik7CnRoaXMuJHN0b3JlLmNvbW1pdCgndXNlci9TRVRfVVNFUicsIHVzZXIpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// En un component Vue
+this.$store.dispatch('user/updateUser', user);
+this.$store.commit('user/SET_USER', user);</pre></div><div class='content'></div><h1>Mòduls dinàmics</h1>
+<div class='content'><p>Els mòduls dinàmics es poden registrar i desregistrar en temps d'execució, cosa que és útil per a aplicacions grans o quan els mòduls només es necessiten sota certes condicions.</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gUmVnaXN0cmFyIHVuIG3DsmR1bCBkaW7DoG1pYwp0aGlzLiRzdG9yZS5yZWdpc3Rlck1vZHVsZSgnZHluYW1pY01vZHVsZScsIHsKICBzdGF0ZTogeyAuLi4gfSwKICBtdXRhdGlvbnM6IHsgLi4uIH0sCiAgYWN0aW9uczogeyAuLi4gfSwKICBnZXR0ZXJzOiB7IC4uLiB9LAp9KTsKCi8vIERlc3JlZ2lzdHJhciB1biBtw7JkdWwgZGluw6BtaWMKdGhpcy4kc3RvcmUudW5yZWdpc3Rlck1vZHVsZSgnZHluYW1pY01vZHVsZScpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Registrar un m&ograve;dul din&agrave;mic
+this.$store.registerModule('dynamicModule', {
+  state: { ... },
+  mutations: { ... },
+  actions: { ... },
+  getters: { ... },
+});
+
+// Desregistrar un m&ograve;dul din&agrave;mic
+this.$store.unregisterModule('dynamicModule');</pre></div><div class='content'></div><h1>API de composició amb Vuex</h1>
+<div class='content'><p>Utilitzar Vuex amb l'API de composició permet una millor organització del codi i reutilització.</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3RvcmUvbW9kdWxlcy91c2VyLmpzCmltcG9ydCB7IHJlYWN0aXZlLCB0b1JlZnMgfSBmcm9tICd2dWUnOwoKZXhwb3J0IGRlZmF1bHQgewogIG5hbWVzcGFjZWQ6IHRydWUsCiAgc3RhdGU6ICgpID0+IHJlYWN0aXZlKHsKICAgIG5hbWU6ICcnLAogICAgYWdlOiBudWxsLAogIH0pLAogIG11dGF0aW9uczogeyAuLi4gfSwKICBhY3Rpb25zOiB7IC4uLiB9LAogIGdldHRlcnM6IHsgLi4uIH0sCn07CgovLyBFbiB1biBjb21wb25lbnQgVnVlCmltcG9ydCB7IHVzZVN0b3JlIH0gZnJvbSAndnVleCc7CmltcG9ydCB7IGNvbXB1dGVkIH0gZnJvbSAndnVlJzsKCmV4cG9ydCBkZWZhdWx0IHsKICBzZXR1cCgpIHsKICAgIGNvbnN0IHN0b3JlID0gdXNlU3RvcmUoKTsKICAgIGNvbnN0IHVzZXJOYW1lID0gY29tcHV0ZWQoKCkgPT4gc3RvcmUuc3RhdGUudXNlci5uYW1lKTsKICAgIGNvbnN0IHVzZXJBZ2UgPSBjb21wdXRlZCgoKSA9PiBzdG9yZS5zdGF0ZS51c2VyLmFnZSk7CgogICAgcmV0dXJuIHsgdXNlck5hbWUsIHVzZXJBZ2UgfTsKICB9LAp9Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// store/modules/user.js
+import { reactive, toRefs } from 'vue';
+
+export default {
+  namespaced: true,
+  state: () =&gt; reactive({
+    name: '',
+    age: null,
+  }),
+  mutations: { ... },
+  actions: { ... },
+  getters: { ... },
+};
+
+// En un component Vue
+import { useStore } from 'vuex';
+import { computed } from 'vue';
+
+export default {
+  setup() {
+    const store = useStore();
+    const userName = computed(() =&gt; store.state.user.name);
+    const userAge = computed(() =&gt; store.state.user.age);
+
+    return { userName, userAge };
+  },
+};</pre></div><div class='content'></div><h1>Plugins</h1>
+<div class='content'><p>Els plugins de Vuex es poden utilitzar per estendre la funcionalitat de la botiga.</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gUGx1Z2luIGRlIHJlZ2lzdHJlCmNvbnN0IGxvZ2dlciA9IChzdG9yZSkgPT4gewogIHN0b3JlLnN1YnNjcmliZSgobXV0YXRpb24sIHN0YXRlKSA9PiB7CiAgICBjb25zb2xlLmxvZyhtdXRhdGlvbi50eXBlKTsKICAgIGNvbnNvbGUubG9nKG11dGF0aW9uLnBheWxvYWQpOwogIH0pOwp9OwoKZXhwb3J0IGRlZmF1bHQgbmV3IFZ1ZXguU3RvcmUoewogIHBsdWdpbnM6IFtsb2dnZXJdLAp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Plugin de registre
+const logger = (store) =&gt; {
+  store.subscribe((mutation, state) =&gt; {
+    console.log(mutation.type);
+    console.log(mutation.payload);
+  });
+};
+
+export default new Vuex.Store({
+  plugins: [logger],
+});</pre></div><div class='content'></div><h1>Proves de Vuex</h1>
+<div class='content'><p>Escriure proves unitàries per a la botiga Vuex assegura la fiabilitat de la teva lògica de gestió d'estat.</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3RvcmUvbW9kdWxlcy91c2VyLmpzCmltcG9ydCB7IG11dGF0aW9ucyB9IGZyb20gJy4vdXNlcic7CmNvbnN0IHsgU0VUX1VTRVIgfSA9IG11dGF0aW9uczsKCmRlc2NyaWJlKCdtdXRhdGlvbnMnLCAoKSA9PiB7CiAgaXQoJ1NFVF9VU0VSJywgKCkgPT4gewogICAgY29uc3Qgc3RhdGUgPSB7IG5hbWU6ICcnLCBhZ2U6IG51bGwgfTsKICAgIFNFVF9VU0VSKHN0YXRlLCB7IG5hbWU6ICdKb2huJywgYWdlOiAzMCB9KTsKICAgIGV4cGVjdChzdGF0ZS5uYW1lKS50b0JlKCdKb2huJyk7CiAgICBleHBlY3Qoc3RhdGUuYWdlKS50b0JlKDMwKTsKICB9KTsKfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// store/modules/user.js
+import { mutations } from './user';
+const { SET_USER } = mutations;
+
+describe('mutations', () =&gt; {
+  it('SET_USER', () =&gt; {
+    const state = { name: '', age: null };
+    SET_USER(state, { name: 'John', age: 30 });
+    expect(state.name).toBe('John');
+    expect(state.age).toBe(30);
+  });
+});</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Els patrons avançats de Vuex com ara mòduls, espais de noms, mòduls dinàmics, l'API de composició, plugins i proves poden millorar significativament l'estructura i el manteniment de les teves aplicacions Vue.js. En dominar aquests patrons, pots construir aplicacions escalables i robustes amb facilitat.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='using-vuex-components'>&#x25C4;Utilitzant Vuex en components</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Patrons avançats de Vuex</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-axios'>Introducció a Axios &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

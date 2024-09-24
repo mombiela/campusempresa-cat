@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticació i Autorització a MongoDB</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mongodb/authentication-and-authorization" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mongodb/authentication-and-authorization" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mongodb/authentication-and-authorization" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mongodb/authentication-and-authorization" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mongodb/authentication-and-authorization" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='managing-sharded-clusters'>&#x25C4;Gestionant Clústers Fragmentats</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Autenticació i Autorització a MongoDB</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='role-based-access-control'>Control d'Accés Basat en Rols (RBAC) &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>L'autenticació i l'autorització són components crítics de la seguretat de la base de dades. Aquesta secció et guiarà a través dels conceptes i la implementació de l'autenticació i l'autorització a MongoDB, des de nivells bàsics fins a avançats.</p>
+</div><h1>Introducció a l'Autenticació i l'Autorització</h1>
+<div class='content'><ul>
+<li><strong>Autenticació</strong>: El procés de verificar la identitat d'un usuari o procés.</li>
+<li><strong>Autorització</strong>: El procés de determinar què pot fer un usuari o procés autenticat.</li>
+</ul>
+</div><h1>Autenticació a MongoDB</h1>
+<div class='content'></div><h2>Conceptes Bàsics</h2>
+<div class='content'><ul>
+<li><strong>Usuari</strong>: Una entitat que pot ser autenticada.</li>
+<li><strong>Rol</strong>: Un conjunt de privilegis que es poden assignar a un usuari.</li>
+<li><strong>Privilegi</strong>: Una acció específica que un usuari pot realitzar sobre un recurs.</li>
+</ul>
+</div><h2>Activació de l'Autenticació</h2>
+<div class='content'><p>Per defecte, MongoDB no requereix autenticació. Per activar l'autenticació, cal iniciar el servidor MongoDB amb l'opció <code>--auth</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9uZ29kIC0tYXV0aCAtLWRicGF0aCAvZGF0YS9kYg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>mongod --auth --dbpath /data/db</pre></div><div class='content'></div><h2>Creació d'Usuaris</h2>
+<div class='content'><p>Per crear un usuari, cal connectar-se a la instància de MongoDB sense autenticació i utilitzar el mètode <code>db.createUser</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIGFkbWluCmRiLmNyZWF0ZVVzZXIoewogIHVzZXI6ICJhZG1pbiIsCiAgcHdkOiAicGFzc3dvcmQxMjMiLAogIHJvbGVzOiBbIHsgcm9sZTogInVzZXJBZG1pbkFueURhdGFiYXNlIiwgZGI6ICJhZG1pbiIgfSBdCn0p"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use admin
+db.createUser({
+  user: &quot;admin&quot;,
+  pwd: &quot;password123&quot;,
+  roles: [ { role: &quot;userAdminAnyDatabase&quot;, db: &quot;admin&quot; } ]
+})</pre></div><div class='content'></div><h2>Autenticació d'Usuaris</h2>
+<div class='content'><p>Un cop creats els usuaris, poden autenticar-se utilitzant el mètode <code>db.auth</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIGFkbWluCmRiLmF1dGgoImFkbWluIiwgInBhc3N3b3JkMTIzIik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use admin
+db.auth(&quot;admin&quot;, &quot;password123&quot;)</pre></div><div class='content'></div><h1>Autorització a MongoDB</h1>
+<div class='content'></div><h2>Control d'Accés Basat en Rols (RBAC)</h2>
+<div class='content'><p>MongoDB utilitza el Control d'Accés Basat en Rols (RBAC) per gestionar l'autorització. Els rols atorguen als usuaris privilegis específics sobre recursos.</p>
+</div><h2>Rols Integrats</h2>
+<div class='content'><p>MongoDB proporciona diversos rols integrats, com ara:</p>
+<ul>
+<li><strong>read</strong>: Atorga accés de només lectura a una base de dades.</li>
+<li><strong>readWrite</strong>: Atorga accés de lectura i escriptura a una base de dades.</li>
+<li><strong>dbAdmin</strong>: Atorga drets administratius a una base de dades.</li>
+<li><strong>userAdmin</strong>: Atorga la capacitat de crear i modificar rols i usuaris en una base de dades.</li>
+</ul>
+</div><h2>Rols Personalitzats</h2>
+<div class='content'><p>També es poden crear rols personalitzats per satisfer necessitats específiques.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGIuY3JlYXRlUm9sZSh7CiAgcm9sZTogImN1c3RvbVJvbGUiLAogIHByaXZpbGVnZXM6IFsKICAgIHsgcmVzb3VyY2U6IHsgZGI6ICJ0ZXN0IiwgY29sbGVjdGlvbjogIiIgfSwgYWN0aW9uczogWyAiZmluZCIsICJpbnNlcnQiIF0gfQogIF0sCiAgcm9sZXM6IFtdCn0p"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>db.createRole({
+  role: &quot;customRole&quot;,
+  privileges: [
+    { resource: { db: &quot;test&quot;, collection: &quot;&quot; }, actions: [ &quot;find&quot;, &quot;insert&quot; ] }
+  ],
+  roles: []
+})</pre></div><div class='content'></div><h2>Assignació de Rols a Usuaris</h2>
+<div class='content'><p>Els rols es poden assignar als usuaris quan es creen o es modifiquen.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGIuY3JlYXRlVXNlcih7CiAgdXNlcjogImFwcFVzZXIiLAogIHB3ZDogImFwcFBhc3N3b3JkIiwKICByb2xlczogWyB7IHJvbGU6ICJyZWFkV3JpdGUiLCBkYjogInRlc3QiIH0gXQp9KQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>db.createUser({
+  user: &quot;appUser&quot;,
+  pwd: &quot;appPassword&quot;,
+  roles: [ { role: &quot;readWrite&quot;, db: &quot;test&quot; } ]
+})</pre></div><div class='content'></div><h1>Exemples Pràctics</h1>
+<div class='content'></div><h2>Exemple 1: Creació d'un Usuari Administrador</h2>
+<div class='content'><ol>
+<li>Inicia MongoDB sense autenticació.</li>
+<li>Crea un usuari administrador.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIGFkbWluCmRiLmNyZWF0ZVVzZXIoewogIHVzZXI6ICJhZG1pbiIsCiAgcHdkOiAiYWRtaW5QYXNzIiwKICByb2xlczogWyB7IHJvbGU6ICJyb290IiwgZGI6ICJhZG1pbiIgfSBdCn0p"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use admin
+db.createUser({
+  user: &quot;admin&quot;,
+  pwd: &quot;adminPass&quot;,
+  roles: [ { role: &quot;root&quot;, db: &quot;admin&quot; } ]
+})</pre></div><div class='content'><ol start="3">
+<li>Reinicia MongoDB amb l'autenticació activada.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9uZ29kIC0tYXV0aCAtLWRicGF0aCAvZGF0YS9kYg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>mongod --auth --dbpath /data/db</pre></div><div class='content'><ol start="4">
+<li>Autentica't com a usuari administrador.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIGFkbWluCmRiLmF1dGgoImFkbWluIiwgImFkbWluUGFzcyIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use admin
+db.auth(&quot;admin&quot;, &quot;adminPass&quot;)</pre></div><div class='content'></div><h2>Exemple 2: Creació i Autenticació d'un Usuari Regular</h2>
+<div class='content'><ol>
+<li>Autentica't com a usuari administrador.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIGFkbWluCmRiLmF1dGgoImFkbWluIiwgImFkbWluUGFzcyIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use admin
+db.auth(&quot;admin&quot;, &quot;adminPass&quot;)</pre></div><div class='content'><ol start="2">
+<li>Crea un usuari regular amb accés de lectura i escriptura a la base de dades <code>test</code>.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIHRlc3QKZGIuY3JlYXRlVXNlcih7CiAgdXNlcjogInRlc3RVc2VyIiwKICBwd2Q6ICJ0ZXN0UGFzcyIsCiAgcm9sZXM6IFsgeyByb2xlOiAicmVhZFdyaXRlIiwgZGI6ICJ0ZXN0IiB9IF0KfSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use test
+db.createUser({
+  user: &quot;testUser&quot;,
+  pwd: &quot;testPass&quot;,
+  roles: [ { role: &quot;readWrite&quot;, db: &quot;test&quot; } ]
+})</pre></div><div class='content'><ol start="3">
+<li>Autentica't com a usuari regular.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIHRlc3QKZGIuYXV0aCgidGVzdFVzZXIiLCAidGVzdFBhc3MiKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use test
+db.auth(&quot;testUser&quot;, &quot;testPass&quot;)</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem cobert els conceptes bàsics de l'autenticació i l'autorització a MongoDB. Hem après a:</p>
+<ul>
+<li>Activar l'autenticació.</li>
+<li>Crear i autenticar usuaris.</li>
+<li>Utilitzar rols integrats i crear rols personalitzats.</li>
+<li>Assignar rols als usuaris.</li>
+</ul>
+<p>Entendre aquests conceptes és crucial per assegurar les teves instàncies de MongoDB i garantir que només els usuaris autoritzats puguin accedir i manipular les teves dades.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='managing-sharded-clusters'>&#x25C4;Gestionant Clústers Fragmentats</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Autenticació i Autorització a MongoDB</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='role-based-access-control'>Control d'Accés Basat en Rols (RBAC) &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

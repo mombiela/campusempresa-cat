@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conceptes Bàsics d'Autenticació d'Usuaris</title>
+
+    <link rel="alternate" href="https://campusempresa.com/django/user-authentication-basics" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/django/user-authentication-basics" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/django/user-authentication-basics" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/django/user-authentication-basics" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/django/user-authentication-basics" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='custom-template-filters'>&#x25C4;Filtres de Plantilles Personalitzats</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Conceptes Bàsics d'Autenticació d'Usuaris</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='login-and-logout'>Inici i Tancament de Sessió &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>L'autenticació d'usuaris és un aspecte crucial del desenvolupament web, assegurant que els usuaris són qui diuen ser. En Django, el framework proporciona eines robustes per gestionar l'autenticació de manera eficient. Aquesta secció et guiarà a través dels conceptes bàsics de l'autenticació d'usuaris en Django, des de la configuració fins a la implementació de funcions avançades.</p>
+</div><h1>Configurant l'Autenticació en Django</h1>
+<div class='content'></div><h2>Instal·lant Django</h2>
+<div class='content'><p>Abans de submergir-te en l'autenticació, assegura't de tenir Django instal·lat. Pots instal·lar-lo utilitzant pip:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgZGphbmdv"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install django</pre></div><div class='content'></div><h2>Creant un Projecte Django</h2>
+<div class='content'><p>Crea un nou projecte Django i navega dins d'ell:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGphbmdvLWFkbWluIHN0YXJ0cHJvamVjdCBteXByb2plY3QKY2QgbXlwcm9qZWN0"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>django-admin startproject myproject
+cd myproject</pre></div><div class='content'></div><h2>Creant una App Django</h2>
+<div class='content'><p>Crea una nova app dins del teu projecte per gestionar l'autenticació d'usuaris:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHl0aG9uIG1hbmFnZS5weSBzdGFydGFwcCBhY2NvdW50cw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>python manage.py startapp accounts</pre></div><div class='content'></div><h2>Afegint l'App a INSTALLED_APPS</h2>
+<div class='content'><p>Afegeix la nova app creada a la llista <code>INSTALLED_APPS</code> a <code>settings.py</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBteXByb2plY3Qvc2V0dGluZ3MucHkKCklOU1RBTExFRF9BUFBTID0gWwogICAgLi4uCiAgICAnYWNjb3VudHMnLAogICAgJ2RqYW5nby5jb250cmliLmF1dGgnLAogICAgJ2RqYW5nby5jb250cmliLmNvbnRlbnR0eXBlcycsCiAgICAuLi4KXQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># myproject/settings.py
+
+INSTALLED_APPS = [
+    ...
+    'accounts',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    ...
+]</pre></div><div class='content'></div><h1>Model d'Usuari i Vistes d'Autenticació</h1>
+<div class='content'></div><h2>Utilitzant el Model d'Usuari Integrat de Django</h2>
+<div class='content'><p>Django proporciona un model d'usuari integrat que pots utilitzar per a l'autenticació. Pots importar-lo de la següent manera:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBkamFuZ28uY29udHJpYi5hdXRoLm1vZGVscyBpbXBvcnQgVXNlcg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from django.contrib.auth.models import User</pre></div><div class='content'></div><h2>Creant la Vista de Registre d'Usuaris</h2>
+<div class='content'><p>Crea una vista per gestionar el registre d'usuaris a <code>views.py</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhY2NvdW50cy92aWV3cy5weQoKZnJvbSBkamFuZ28uc2hvcnRjdXRzIGltcG9ydCByZW5kZXIsIHJlZGlyZWN0CmZyb20gZGphbmdvLmNvbnRyaWIuYXV0aC5mb3JtcyBpbXBvcnQgVXNlckNyZWF0aW9uRm9ybQoKZGVmIHJlZ2lzdGVyKHJlcXVlc3QpOgogICAgaWYgcmVxdWVzdC5tZXRob2QgPT0gJ1BPU1QnOgogICAgICAgIGZvcm0gPSBVc2VyQ3JlYXRpb25Gb3JtKHJlcXVlc3QuUE9TVCkKICAgICAgICBpZiBmb3JtLmlzX3ZhbGlkKCk6CiAgICAgICAgICAgIGZvcm0uc2F2ZSgpCiAgICAgICAgICAgIHJldHVybiByZWRpcmVjdCgnbG9naW4nKQogICAgZWxzZToKICAgICAgICBmb3JtID0gVXNlckNyZWF0aW9uRm9ybSgpCiAgICByZXR1cm4gcmVuZGVyKHJlcXVlc3QsICdhY2NvdW50cy9yZWdpc3Rlci5odG1sJywgeydmb3JtJzogZm9ybX0p"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># accounts/views.py
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.forms import UserCreationForm
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+    return render(request, 'accounts/register.html', {'form': form})</pre></div><div class='content'></div><h2>Creant la Plantilla de Registre d'Usuaris</h2>
+<div class='content'><p>Crea una plantilla per al registre d'usuaris a <code>templates/accounts/register.html</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCEtLSB0ZW1wbGF0ZXMvYWNjb3VudHMvcmVnaXN0ZXIuaHRtbCAtLT4KCjwhRE9DVFlQRSBodG1sPgo8aHRtbD4KPGhlYWQ+CiAgICA8dGl0bGU+UmVnaXN0cmU8L3RpdGxlPgo8L2hlYWQ+Cjxib2R5PgogICAgPGgyPlJlZ2lzdHJlPC9oMj4KICAgIDxmb3JtIG1ldGhvZD0icG9zdCI+CiAgICAgICAgeyUgY3NyZl90b2tlbiAlfQogICAgICAgIHt7IGZvcm0uYXNfcCB9fQogICAgICAgIDxidXR0b24gdHlwZT0ic3VibWl0Ij5SZWdpc3RyYSd0PC9idXR0b24+CiAgICA8L2Zvcm0+CjwvYm9keT4KPC9odG1sPg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!-- templates/accounts/register.html --&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Registre&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h2&gt;Registre&lt;/h2&gt;
+    &lt;form method=&quot;post&quot;&gt;
+        {% csrf_token %}
+        {{ form.as_p }}
+        &lt;button type=&quot;submit&quot;&gt;Registra't&lt;/button&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'></div><h2>Afegint Patrons d'URL</h2>
+<div class='content'><p>Afegeix patrons d'URL per dirigir les sol·licituds a la vista de registre:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhY2NvdW50cy91cmxzLnB5Cgpmcm9tIGRqYW5nby51cmxzIGltcG9ydCBwYXRoCmZyb20gLiBpbXBvcnQgdmlld3MKCnVybHBhdHRlcm5zID0gWwogICAgcGF0aCgncmVnaXN0ZXIvJywgdmlld3MucmVnaXN0ZXIsIG5hbWU9J3JlZ2lzdGVyJyksCl0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># accounts/urls.py
+
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('register/', views.register, name='register'),
+]</pre></div><div class='content'><p>Inclou les URLs de <code>accounts</code> al <code>urls.py</code> principal del projecte:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBteXByb2plY3QvdXJscy5weQoKZnJvbSBkamFuZ28uY29udHJpYiBpbXBvcnQgYWRtaW4KZnJvbSBkamFuZ28udXJscyBpbXBvcnQgaW5jbHVkZSwgcGF0aAoKdXJscGF0dGVybnMgPSBbCiAgICBwYXRoKCdhZG1pbi8nLCBhZG1pbi5zaXRlLnVybHMpLAogICAgcGF0aCgnYWNjb3VudHMvJywgaW5jbHVkZSgnYWNjb3VudHMudXJscycpKSwKXQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># myproject/urls.py
+
+from django.contrib import admin
+from django.urls import include, path
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('accounts/', include('accounts.urls')),
+]</pre></div><div class='content'></div><h1>Inici de Sessió i Tancament de Sessió d'Usuaris</h1>
+<div class='content'></div><h2>Creant la Vista d'Inici de Sessió</h2>
+<div class='content'><p>Django proporciona vistes integrades per a l'inici i tancament de sessió. Pots utilitzar <code>LoginView</code> i <code>LogoutView</code> de <code>django.contrib.auth.views</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhY2NvdW50cy91cmxzLnB5Cgpmcm9tIGRqYW5nby5jb250cmliLmF1dGggaW1wb3J0IHZpZXdzIGFzIGF1dGhfdmlld3MKCnVybHBhdHRlcm5zID0gWwogICAgLi4uCiAgICBwYXRoKCdsb2dpbi8nLCBhdXRoX3ZpZXdzLkxvZ2luVmlldy5hc192aWV3KHRlbXBsYXRlX25hbWU9J2FjY291bnRzL2xvZ2luLmh0bWwnKSwgbmFtZT0nbG9naW4nKSwKICAgIHBhdGgoJ2xvZ291dC8nLCBhdXRoX3ZpZXdzLkxvZ291dFZpZXcuYXNfdmlldygpLCBuYW1lPSdsb2dvdXQnKSwKXQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># accounts/urls.py
+
+from django.contrib.auth import views as auth_views
+
+urlpatterns = [
+    ...
+    path('login/', auth_views.LoginView.as_view(template_name='accounts/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+]</pre></div><div class='content'></div><h2>Creant la Plantilla d'Inici de Sessió</h2>
+<div class='content'><p>Crea una plantilla per a l'inici de sessió d'usuaris a <code>templates/accounts/login.html</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCEtLSB0ZW1wbGF0ZXMvYWNjb3VudHMvbG9naW4uaHRtbCAtLT4KCjwhRE9DVFlQRSBodG1sPgo8aHRtbD4KPGhlYWQ+CiAgICA8dGl0bGU+SW5pY2kgZGUgU2Vzc2nDszwvdGl0bGU+CjwvaGVhZD4KPGJvZHk+CiAgICA8aDI+SW5pY2kgZGUgU2Vzc2nDszwvaDI+CiAgICA8Zm9ybSBtZXRob2Q9InBvc3QiPgogICAgICAgIHslIGNzcmZfdG9rZW4gJX0KICAgICAgICB7eyBmb3JtLmFzX3AgfX0KICAgICAgICA8YnV0dG9uIHR5cGU9InN1Ym1pdCI+SW5pY2lhIFNlc3Npw7M8L2J1dHRvbj4KICAgIDwvZm9ybT4KPC9ib2R5Pgo8L2h0bWw+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!-- templates/accounts/login.html --&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Inici de Sessi&oacute;&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h2&gt;Inici de Sessi&oacute;&lt;/h2&gt;
+    &lt;form method=&quot;post&quot;&gt;
+        {% csrf_token %}
+        {{ form.as_p }}
+        &lt;button type=&quot;submit&quot;&gt;Inicia Sessi&oacute;&lt;/button&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'></div><h1>Protegint Vistes amb Login Required</h1>
+<div class='content'></div><h2>Utilitzant el Decorador Login Required</h2>
+<div class='content'><p>Per restringir l'accés a certes vistes, utilitza el decorador <code>login_required</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhY2NvdW50cy92aWV3cy5weQoKZnJvbSBkamFuZ28uY29udHJpYi5hdXRoLmRlY29yYXRvcnMgaW1wb3J0IGxvZ2luX3JlcXVpcmVkCgpAbG9naW5fcmVxdWlyZWQKZGVmIHByb2ZpbGUocmVxdWVzdCk6CiAgICByZXR1cm4gcmVuZGVyKHJlcXVlc3QsICdhY2NvdW50cy9wcm9maWxlLmh0bWwnKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># accounts/views.py
+
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def profile(request):
+    return render(request, 'accounts/profile.html')</pre></div><div class='content'></div><h2>Creant la Plantilla de Perfil</h2>
+<div class='content'><p>Crea una plantilla per al perfil d'usuari a <code>templates/accounts/profile.html</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCEtLSB0ZW1wbGF0ZXMvYWNjb3VudHMvcHJvZmlsZS5odG1sIC0tPgoKPCFET0NUWVBFIGh0bWw+CjxodG1sPgo8aGVhZD4KICAgIDx0aXRsZT5QZXJmaWw8L3RpdGxlPgo8L2hlYWQ+Cjxib2R5PgogICAgPGgyPlBlcmZpbDwvaDI+CiAgICA8cD5CZW52aW5ndXQsIHt7IHVzZXIudXNlcm5hbWUgfX0hPC9wPgo8L2JvZHk+CjwvaHRtbD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!-- templates/accounts/profile.html --&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Perfil&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h2&gt;Perfil&lt;/h2&gt;
+    &lt;p&gt;Benvingut, {{ user.username }}!&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'></div><h2>Afegint el Patró d'URL del Perfil</h2>
+<div class='content'><p>Afegeix el patró d'URL per a la vista del perfil:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhY2NvdW50cy91cmxzLnB5Cgp1cmxwYXR0ZXJucyA9IFsKICAgIC4uLgogICAgcGF0aCgncHJvZmlsZS8nLCB2aWV3cy5wcm9maWxlLCBuYW1lPSdwcm9maWxlJyksCl0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># accounts/urls.py
+
+urlpatterns = [
+    ...
+    path('profile/', views.profile, name='profile'),
+]</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, has après els conceptes bàsics de l'autenticació d'usuaris en Django. Hem cobert:</p>
+<ul>
+<li>Configurar un projecte i una app Django.</li>
+<li>Utilitzar el model d'usuari integrat de Django.</li>
+<li>Crear vistes de registre, inici de sessió i perfil.</li>
+<li>Protegir vistes amb el decorador <code>login_required</code>.</li>
+</ul>
+<p>Entenent aquests fonaments, pots construir aplicacions web més segures i fàcils d'usar. En les següents seccions, ens endinsarem en temes d'autenticació més avançats, com models d'usuaris personalitzats i autenticació de tercers.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='custom-template-filters'>&#x25C4;Filtres de Plantilles Personalitzats</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Conceptes Bàsics d'Autenticació d'Usuaris</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='login-and-logout'>Inici i Tancament de Sessió &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

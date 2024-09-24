@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimització del Rendiment en Django</title>
+
+    <link rel="alternate" href="https://campusempresa.com/django/performance-optimization" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/django/performance-optimization" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/django/performance-optimization" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/django/performance-optimization" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/django/performance-optimization" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='deploying-to-aws'>&#x25C4;Desplegant a AWS</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització del Rendiment en Django</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-django-rest-framework'>Introducció a Django REST Framework &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>L'optimització del rendiment és crucial per assegurar que les teves aplicacions Django funcionin eficientment i puguin gestionar càrregues de trànsit elevades. Aquest tema et guiarà a través de diverses tècniques i millors pràctiques per optimitzar el rendiment de les teves aplicacions Django, des de nivells bàsics fins a avançats.</p>
+</div><h1>Entendre els Colls d'Ampolla de Rendiment</h1>
+<div class='content'><p>Abans d'entrar en tècniques d'optimització, és essencial entendre on poden ocórrer els colls d'ampolla de rendiment en una aplicació Django.</p>
+<ul>
+<li><strong>Consultes a la Base de Dades</strong>: Consultes ineficients poden alentir la teva aplicació.</li>
+<li><strong>Renderització de Plantilles</strong>: Plantilles complexes poden augmentar el temps de renderització.</li>
+<li><strong>Fitxers Estàtics</strong>: Servir fitxers estàtics de manera ineficient pot degradar el rendiment.</li>
+<li><strong>Middleware</strong>: Middleware innecessari o mal escrit pot afegir sobrecàrrega.</li>
+<li><strong>Paquets de Tercers</strong>: Alguns paquets poden introduir problemes de rendiment.</li>
+</ul>
+</div><h1>Optimització de la Base de Dades</h1>
+<div class='content'></div><h2>Consultes Eficients</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Utilitza l'ORM de Django Eficientment</strong>: Escriu consultes que minimitzin els accessos a la base de dades.</p>
+<pre><code class="language-python"># Ineficient: Múltiples consultes
+books = [book for book in Book.objects.all()]
+
+# Eficient: Una sola consulta
+books = Book.objects.all()
+</code></pre>
+</li>
+<li>
+<p><strong>Select Related i Prefetch Related</strong>: Utilitza aquests mètodes per reduir el nombre de consultes.</p>
+<pre><code class="language-python"># Ineficient: Múltiples consultes per a objectes relacionats
+books = Book.objects.all()
+for book in books:
+    author = book.author
+
+# Eficient: Una sola consulta amb objectes relacionats
+books = Book.objects.select_related('author').all()
+</code></pre>
+</li>
+</ul>
+</div><h2>Indexació</h2>
+<div class='content'><ul>
+<li><strong>Afegeix Índexs</strong>: Assegura't que els camps consultats freqüentment estiguin indexats.
+<pre><code class="language-python">class Book(models.Model):
+    title = models.CharField(max_length=100, db_index=True)
+</code></pre>
+</li>
+</ul>
+</div><h2>Eines d'Optimització de Consultes</h2>
+<div class='content'><ul>
+<li><strong>Django Debug Toolbar</strong>: Utilitza aquesta eina per analitzar i optimitzar consultes.
+<pre><code class="language-bash">pip install django-debug-toolbar
+</code></pre>
+</li>
+</ul>
+</div><h1>Memòria Cau</h1>
+<div class='content'></div><h2>Tipus de Memòria Cau</h2>
+<div class='content'><ul>
+<li><strong>Memòria Cau de la Base de Dades</strong>: Emmagatzema resultats de consultes per reduir la càrrega de la base de dades.</li>
+<li><strong>Memòria Cau de Plantilles</strong>: Emmagatzema plantilles renderitzades per evitar re-renderitzacions.</li>
+<li><strong>Memòria Cau de Vistes</strong>: Emmagatzema vistes completes per servir contingut pre-renderitzat.</li>
+</ul>
+</div><h2>Implementació de la Memòria Cau</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Utilitzant el Marc de Memòria Cau de Django</strong>: Configura la memòria cau a <code>settings.py</code>.</p>
+<pre><code class="language-python">CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Emmagatzema una Vista en Memòria Cau</strong>: Utilitza el decorador <code>cache_page</code>.</p>
+<pre><code class="language-python">from django.views.decorators.cache import cache_page
+
+@cache_page(60 * 15)
+def my_view(request):
+    # Codi de la vista aquí
+</code></pre>
+</li>
+</ul>
+</div><h1>Fitxers Estàtics i Multimèdia</h1>
+<div class='content'></div><h2>Servir Fitxers Estàtics Eficientment</h2>
+<div class='content'><ul>
+<li><strong>Utilitza un CDN</strong>: Descarrega el servei de fitxers estàtics a una Xarxa de Distribució de Continguts.</li>
+<li><strong>Comanda <code>collectstatic</code> de Django</strong>: Recull fitxers estàtics per a un servei eficient.
+<pre><code class="language-bash">python manage.py collectstatic
+</code></pre>
+</li>
+</ul>
+</div><h2>Optimització de Fitxers Multimèdia</h2>
+<div class='content'><ul>
+<li><strong>Compressió d'Imatges</strong>: Comprimeix imatges per reduir els temps de càrrega.</li>
+<li><strong>Càrrega Per Mandra</strong>: Carrega imatges només quan estiguin en la finestra de visualització.</li>
+</ul>
+</div><h1>Optimització del Middleware</h1>
+<div class='content'></div><h2>Anàlisi del Middleware</h2>
+<div class='content'><ul>
+<li><strong>Ordre del Middleware</strong>: Assegura't que el middleware estigui ordenat correctament per minimitzar el temps de processament.</li>
+<li><strong>Elimina Middleware Innecessari</strong>: Desactiva el middleware que no sigui essencial.</li>
+</ul>
+</div><h1>Tècniques Avançades</h1>
+<div class='content'></div><h2>Processament Asíncron</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Celery</strong>: Utilitza Celery per a tasques en segon pla.</p>
+<pre><code class="language-bash">pip install celery
+</code></pre>
+<pre><code class="language-python"># settings.py
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+</code></pre>
+<pre><code class="language-python"># tasks.py
+from celery import shared_task
+
+@shared_task
+def add(x, y):
+    return x + y
+</code></pre>
+</li>
+</ul>
+</div><h2>Equilibri de Càrrega</h2>
+<div class='content'><ul>
+<li><strong>Escalat Horitzontal</strong>: Distribueix el trànsit a través de múltiples servidors.</li>
+<li><strong>Utilitzant Nginx</strong>: Configura Nginx com a proxy invers i equilibrador de càrrega.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>L'optimització del rendiment en Django implica una combinació de consultes eficients a la base de dades, estratègies efectives de memòria cau, servei optimitzat de fitxers estàtics i multimèdia, i una gestió acurada del middleware. Entenent i implementant aquestes tècniques, pots millorar significativament el rendiment de les teves aplicacions Django, assegurant que siguin escalables i responsives sota càrregues de trànsit elevades.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='deploying-to-aws'>&#x25C4;Desplegant a AWS</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització del Rendiment en Django</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-django-rest-framework'>Introducció a Django REST Framework &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

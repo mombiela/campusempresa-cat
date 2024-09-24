@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desplegar Kafka en Producció</title>
+
+    <link rel="alternate" href="https://campusempresa.com/kafka/deploying-kafka-in-production" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/kafka/deploying-kafka-in-production" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/kafka/deploying-kafka-in-production" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/kafka/deploying-kafka-in-production" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/kafka/deploying-kafka-in-production" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='integrating-kafka-with-other-systems'>&#x25C4;Integració de Kafka amb altres sistemes</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Desplegar Kafka en Producció</a>
+	</div>
+	<div class='col-4 text-end'>
+			</div>
+</div>
+<div class='content'><p>Desplegar Kafka en producció implica diversos passos i consideracions per assegurar una configuració fiable, escalable i mantenible. Aquesta secció et guiarà a través dels aspectes essencials del desplegament de Kafka en un entorn de producció.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Configuració del Clúster</strong>: Comprendre l'arquitectura i els components d'un clúster de Kafka.</li>
+<li><strong>Configuració</strong>: Configuracions clau per a brokers, temes i clients.</li>
+<li><strong>Seguretat</strong>: Implementar autenticació, autorització i xifratge.</li>
+<li><strong>Monitorització i Registre</strong>: Eines i pràctiques per monitoritzar clústers de Kafka.</li>
+<li><strong>Escalabilitat</strong>: Estratègies per escalar Kafka per manejar una càrrega augmentada.</li>
+<li><strong>Còpia de Seguretat i Recuperació</strong>: Assegurar la durabilitat de les dades i la recuperació en cas de fallades.</li>
+</ul>
+</div><h1>Configuració del Clúster</h1>
+<div class='content'><p>Configurar un clúster de Kafka implica configurar múltiples brokers per treballar junts. Un clúster típic de Kafka consisteix en:</p>
+<ul>
+<li><strong>Brokers</strong>: Servidors que emmagatzemen i serveixen dades.</li>
+<li><strong>Zookeeper</strong>: Gestiona les metadades del clúster i l'elecció del líder.</li>
+<li><strong>Productors</strong>: Clients que publiquen dades als temes.</li>
+<li><strong>Consumidors</strong>: Clients que llegeixen dades dels temes.</li>
+</ul>
+</div><h2>Exemple de Configuració</h2>
+<div class='content'><p>Una configuració bàsica d'un broker de Kafka podria semblar així:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBzZXJ2ZXIucHJvcGVydGllcwpicm9rZXIuaWQ9MApsb2cuZGlycz0vdmFyL2xpYi9rYWZrYS9kYXRhCnpvb2tlZXBlci5jb25uZWN0PWxvY2FsaG9zdDoyMTgxCm51bS5uZXR3b3JrLnRocmVhZHM9MwpudW0uaW8udGhyZWFkcz04CnNvY2tldC5zZW5kLmJ1ZmZlci5ieXRlcz0xMDI0MDAKc29ja2V0LnJlY2VpdmUuYnVmZmVyLmJ5dGVzPTEwMjQwMApzb2NrZXQucmVxdWVzdC5tYXguYnl0ZXM9MTA0ODU3NjAwCmxvZy5yZXRlbnRpb24uaG91cnM9MTY4CmxvZy5zZWdtZW50LmJ5dGVzPTEwNzM3NDE4MjQKbG9nLnJldGVudGlvbi5jaGVjay5pbnRlcnZhbC5tcz0zMDAwMDA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># server.properties
+broker.id=0
+log.dirs=/var/lib/kafka/data
+zookeeper.connect=localhost:2181
+num.network.threads=3
+num.io.threads=8
+socket.send.buffer.bytes=102400
+socket.receive.buffer.bytes=102400
+socket.request.max.bytes=104857600
+log.retention.hours=168
+log.segment.bytes=1073741824
+log.retention.check.interval.ms=300000</pre></div><div class='content'></div><h1>Configuració</h1>
+<div class='content'><p>Una configuració adequada és crucial per al rendiment i la fiabilitat del teu clúster de Kafka.</p>
+</div><h2>Configuració del Broker</h2>
+<div class='content'><ul>
+<li><strong>broker.id</strong>: Identificador únic per a cada broker.</li>
+<li><strong>log.dirs</strong>: Directories on Kafka emmagatzemarà els fitxers de registre.</li>
+<li><strong>zookeeper.connect</strong>: Cadena de connexió de Zookeeper.</li>
+</ul>
+</div><h2>Configuració del Tema</h2>
+<div class='content'><ul>
+<li><strong>replication.factor</strong>: Nombre de còpies de les dades d'un tema.</li>
+<li><strong>partitions</strong>: Nombre de particions per a un tema.</li>
+</ul>
+</div><h2>Configuració del Client</h2>
+<div class='content'><ul>
+<li><strong>acks</strong>: Nombre de reconeixements que el productor requereix que el líder hagi rebut abans de considerar una sol·licitud completa.</li>
+<li><strong>retries</strong>: Nombre de reintents per a intents d'enviament fallits.</li>
+</ul>
+</div><h1>Seguretat</h1>
+<div class='content'><p>Assegurar un clúster de Kafka implica:</p>
+<ul>
+<li><strong>Autenticació</strong>: Assegurar que només els clients autoritzats es puguin connectar.</li>
+<li><strong>Autorització</strong>: Controlar què poden fer els clients autenticats.</li>
+<li><strong>Xifratge</strong>: Protegir les dades en trànsit.</li>
+</ul>
+</div><h2>Exemple de Configuració de Seguretat</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBzZXJ2ZXIucHJvcGVydGllcwpsaXN0ZW5lcnM9U0FTTF9TU0w6Ly86OTA5MwpzZWN1cml0eS5pbnRlci5icm9rZXIucHJvdG9jb2w9U0FTTF9TU0wKc2FzbC5tZWNoYW5pc20uaW50ZXIuYnJva2VyLnByb3RvY29sPVBMQUlOCnNzbC5rZXlzdG9yZS5sb2NhdGlvbj0vdmFyL3ByaXZhdGUvc3NsL2thZmthLnNlcnZlci5rZXlzdG9yZS5qa3MKc3NsLmtleXN0b3JlLnBhc3N3b3JkPWtleXN0b3JlLXBhc3N3b3JkCnNzbC5rZXkucGFzc3dvcmQ9a2V5LXBhc3N3b3JkCnNzbC50cnVzdHN0b3JlLmxvY2F0aW9uPS92YXIvcHJpdmF0ZS9zc2wva2Fma2Euc2VydmVyLnRydXN0c3RvcmUuamtzCnNzbC50cnVzdHN0b3JlLnBhc3N3b3JkPXRydXN0c3RvcmUtcGFzc3dvcmQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># server.properties
+listeners=SASL_SSL://:9093
+security.inter.broker.protocol=SASL_SSL
+sasl.mechanism.inter.broker.protocol=PLAIN
+ssl.keystore.location=/var/private/ssl/kafka.server.keystore.jks
+ssl.keystore.password=keystore-password
+ssl.key.password=key-password
+ssl.truststore.location=/var/private/ssl/kafka.server.truststore.jks
+ssl.truststore.password=truststore-password</pre></div><div class='content'></div><h1>Monitorització i Registre</h1>
+<div class='content'><p>Monitoritzar Kafka implica fer un seguiment de diverses mètriques i registres per assegurar que el clúster estigui sa i funcioni bé.</p>
+</div><h2>Eines</h2>
+<div class='content'><ul>
+<li><strong>Kafka Manager</strong>: Una eina web per gestionar i monitoritzar clústers de Kafka.</li>
+<li><strong>Prometheus i Grafana</strong>: Per recollir i visualitzar mètriques.</li>
+<li><strong>ELK Stack</strong>: Per a l'agregació i anàlisi de registres.</li>
+</ul>
+</div><h2>Mètriques Clau</h2>
+<div class='content'><ul>
+<li><strong>Mètriques del Broker</strong>: Ús de CPU, memòria, I/O de disc.</li>
+<li><strong>Mètriques del Tema</strong>: Taxes de missatges, retard, distribució de particions.</li>
+<li><strong>Mètriques del Consumidor</strong>: Retard, rendiment.</li>
+</ul>
+</div><h1>Escalabilitat</h1>
+<div class='content'><p>Escalar Kafka implica afegir més brokers i particions per manejar una càrrega augmentada.</p>
+</div><h2>Estratègies</h2>
+<div class='content'><ul>
+<li><strong>Escalabilitat Horitzontal</strong>: Afegir més brokers al clúster.</li>
+<li><strong>Escalabilitat Vertical</strong>: Augmentar els recursos (CPU, memòria, disc) dels brokers existents.</li>
+<li><strong>Particionament</strong>: Augmentar el nombre de particions per als temes per distribuir la càrrega.</li>
+</ul>
+</div><h1>Còpia de Seguretat i Recuperació</h1>
+<div class='content'><p>Assegurar la durabilitat de les dades i la capacitat de recuperar-se de fallades és crític.</p>
+</div><h2>Estratègies</h2>
+<div class='content'><ul>
+<li><strong>Replicació</strong>: Configurar un factor de replicació més alt per als temes crítics.</li>
+<li><strong>Instantànies</strong>: Fer instantànies regulars dels registres de Kafka.</li>
+<li><strong>Recuperació de Desastres</strong>: Configurar la replicació entre clústers utilitzant eines com MirrorMaker.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Desplegar Kafka en producció requereix una planificació i configuració acurades per assegurar la fiabilitat, seguretat i escalabilitat. Comprenent els conceptes clau i les millors pràctiques descrites en aquesta secció, pots configurar un clúster de Kafka robust que satisfaci les teves necessitats de producció. Recorda monitoritzar i ajustar contínuament la teva configuració a mesura que la teva càrrega de treball i requisits evolucionin.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='integrating-kafka-with-other-systems'>&#x25C4;Integració de Kafka amb altres sistemes</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Desplegar Kafka en Producció</a>
+	</div>
+	<div class='col-4 text-end'>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persistència de Dades amb AsyncStorage</title>
+
+    <link rel="alternate" href="https://campusempresa.com/reactnative/persisting-data-asyncstorage" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/reactnative/persisting-data-asyncstorage" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/reactnative/persisting-data-asyncstorage" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/reactnative/persisting-data-asyncstorage" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/reactnative/persisting-data-asyncstorage" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='handling-api-responses'>&#x25C4;Gestió de respostes d'API</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Persistència de Dades amb AsyncStorage</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='using-animations'>Ús d'animacions &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a AsyncStorage</h1>
+<div class='content'><p>AsyncStorage és un sistema d'emmagatzematge simple, no xifrat, asíncron, persistent i de clau-valor que és global per a l'aplicació. S'utilitza en React Native per emmagatzemar dades que necessiten persistir entre llançaments de l'aplicació.</p>
+<ul>
+<li><strong>Conceptes Clau:</strong>
+<ul>
+<li><strong>Emmagatzematge de Clau-Valor:</strong> Les dades s'emmagatzemen com a parells clau-valor.</li>
+<li><strong>Asíncron:</strong> Les operacions no bloquegen, permetent un rendiment suau de la interfície d'usuari.</li>
+<li><strong>Persistent:</strong> Les dades romanen disponibles fins i tot després de tancar i reobrir l'aplicació.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Configuració de AsyncStorage</h1>
+<div class='content'><p>Per utilitzar AsyncStorage en el teu projecte de React Native, necessites instal·lar el paquet.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnBtIGluc3RhbGwgQHJlYWN0LW5hdGl2ZS1hc3luYy1zdG9yYWdlL2FzeW5jLXN0b3JhZ2U="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npm install @react-native-async-storage/async-storage</pre></div><div class='content'><p>Després de la instal·lació, necessites importar-lo al teu component.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IEFzeW5jU3RvcmFnZSBmcm9tICdAcmVhY3QtbmF0aXZlLWFzeW5jLXN0b3JhZ2UvYXN5bmMtc3RvcmFnZSc7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import AsyncStorage from '@react-native-async-storage/async-storage';</pre></div><div class='content'></div><h1>Operacions Bàsiques amb AsyncStorage</h1>
+<div class='content'></div><h2>Emmagatzemar Dades</h2>
+<div class='content'><p>Per emmagatzemar dades, utilitza el mètode <code>setItem</code>. Aquest mètode pren dos arguments: la clau i el valor.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3Qgc3RvcmVEYXRhID0gYXN5bmMgKGtleSwgdmFsdWUpID0+IHsKICB0cnkgewogICAgYXdhaXQgQXN5bmNTdG9yYWdlLnNldEl0ZW0oa2V5LCB2YWx1ZSk7CiAgICBjb25zb2xlLmxvZygnRGFkZXMgZGVzYWRlcyBjb3JyZWN0YW1lbnQnKTsKICB9IGNhdGNoIChlKSB7CiAgICBjb25zb2xlLmVycm9yKCdObyBzXCdoYW4gcG9ndXQgZGVzYXIgbGVzIGRhZGVzIGEgbFwnZW1tYWdhdHplbWF0Z2UnLCBlKTsKICB9Cn07"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const storeData = async (key, value) =&gt; {
+  try {
+    await AsyncStorage.setItem(key, value);
+    console.log('Dades desades correctament');
+  } catch (e) {
+    console.error('No s\'han pogut desar les dades a l\'emmagatzematge', e);
+  }
+};</pre></div><div class='content'></div><h2>Recuperar Dades</h2>
+<div class='content'><p>Per recuperar dades, utilitza el mètode <code>getItem</code>. Aquest mètode pren un argument: la clau.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZ2V0RGF0YSA9IGFzeW5jIChrZXkpID0+IHsKICB0cnkgewogICAgY29uc3QgdmFsdWUgPSBhd2FpdCBBc3luY1N0b3JhZ2UuZ2V0SXRlbShrZXkpOwogICAgaWYgKHZhbHVlICE9PSBudWxsKSB7CiAgICAgIGNvbnNvbGUubG9nKCdEYWRlcyByZWN1cGVyYWRlcyBjb3JyZWN0YW1lbnQnLCB2YWx1ZSk7CiAgICAgIHJldHVybiB2YWx1ZTsKICAgIH0KICB9IGNhdGNoIChlKSB7CiAgICBjb25zb2xlLmVycm9yKCdObyBzXCdoYW4gcG9ndXQgcmVjdXBlcmFyIGxlcyBkYWRlcyBkZSBsXCdlbW1hZ2F0emVtYXRnZScsIGUpOwogIH0KfTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const getData = async (key) =&gt; {
+  try {
+    const value = await AsyncStorage.getItem(key);
+    if (value !== null) {
+      console.log('Dades recuperades correctament', value);
+      return value;
+    }
+  } catch (e) {
+    console.error('No s\'han pogut recuperar les dades de l\'emmagatzematge', e);
+  }
+};</pre></div><div class='content'></div><h2>Eliminar Dades</h2>
+<div class='content'><p>Per eliminar dades, utilitza el mètode <code>removeItem</code>. Aquest mètode pren un argument: la clau.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgcmVtb3ZlRGF0YSA9IGFzeW5jIChrZXkpID0+IHsKICB0cnkgewogICAgYXdhaXQgQXN5bmNTdG9yYWdlLnJlbW92ZUl0ZW0oa2V5KTsKICAgIGNvbnNvbGUubG9nKCdEYWRlcyBlbGltaW5hZGVzIGNvcnJlY3RhbWVudCcpOwogIH0gY2F0Y2ggKGUpIHsKICAgIGNvbnNvbGUuZXJyb3IoJ05vIHNcJ2hhbiBwb2d1dCBlbGltaW5hciBsZXMgZGFkZXMgZGUgbFwnZW1tYWdhdHplbWF0Z2UnLCBlKTsKICB9Cn07"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const removeData = async (key) =&gt; {
+  try {
+    await AsyncStorage.removeItem(key);
+    console.log('Dades eliminades correctament');
+  } catch (e) {
+    console.error('No s\'han pogut eliminar les dades de l\'emmagatzematge', e);
+  }
+};</pre></div><div class='content'></div><h1>Ús Avançat</h1>
+<div class='content'></div><h2>Emmagatzemar Dades Complexes</h2>
+<div class='content'><p>AsyncStorage només pot emmagatzemar cadenes, així que per emmagatzemar tipus de dades complexes com objectes o arrays, necessites serialitzar-los utilitzant <code>JSON.stringify</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3Qgc3RvcmVDb21wbGV4RGF0YSA9IGFzeW5jIChrZXksIHZhbHVlKSA9PiB7CiAgdHJ5IHsKICAgIGNvbnN0IGpzb25WYWx1ZSA9IEpTT04uc3RyaW5naWZ5KHZhbHVlKTsKICAgIGF3YWl0IEFzeW5jU3RvcmFnZS5zZXRJdGVtKGtleSwganNvblZhbHVlKTsKICAgIGNvbnNvbGUubG9nKCdEYWRlcyBjb21wbGV4ZXMgZGVzYWRlcyBjb3JyZWN0YW1lbnQnKTsKICB9IGNhdGNoIChlKSB7CiAgICBjb25zb2xlLmVycm9yKCdObyBzXCdoYW4gcG9ndXQgZGVzYXIgbGVzIGRhZGVzIGNvbXBsZXhlcyBhIGxcJ2VtbWFnYXR6ZW1hdGdlJywgZSk7CiAgfQp9Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const storeComplexData = async (key, value) =&gt; {
+  try {
+    const jsonValue = JSON.stringify(value);
+    await AsyncStorage.setItem(key, jsonValue);
+    console.log('Dades complexes desades correctament');
+  } catch (e) {
+    console.error('No s\'han pogut desar les dades complexes a l\'emmagatzematge', e);
+  }
+};</pre></div><div class='content'></div><h2>Recuperar Dades Complexes</h2>
+<div class='content'><p>Per recuperar dades complexes, necessites deserialitzar-les utilitzant <code>JSON.parse</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZ2V0Q29tcGxleERhdGEgPSBhc3luYyAoa2V5KSA9PiB7CiAgdHJ5IHsKICAgIGNvbnN0IGpzb25WYWx1ZSA9IGF3YWl0IEFzeW5jU3RvcmFnZS5nZXRJdGVtKGtleSk7CiAgICByZXR1cm4ganNvblZhbHVlICE9IG51bGwgPyBKU09OLnBhcnNlKGpzb25WYWx1ZSkgOiBudWxsOwogIH0gY2F0Y2ggKGUpIHsKICAgIGNvbnNvbGUuZXJyb3IoJ05vIHNcJ2hhbiBwb2d1dCByZWN1cGVyYXIgbGVzIGRhZGVzIGNvbXBsZXhlcyBkZSBsXCdlbW1hZ2F0emVtYXRnZScsIGUpOwogIH0KfTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const getComplexData = async (key) =&gt; {
+  try {
+    const jsonValue = await AsyncStorage.getItem(key);
+    return jsonValue != null ? JSON.parse(jsonValue) : null;
+  } catch (e) {
+    console.error('No s\'han pogut recuperar les dades complexes de l\'emmagatzematge', e);
+  }
+};</pre></div><div class='content'></div><h2>Esborrar Totes les Dades</h2>
+<div class='content'><p>Per esborrar totes les dades emmagatzemades a AsyncStorage, utilitza el mètode <code>clear</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgY2xlYXJBbGxEYXRhID0gYXN5bmMgKCkgPT4gewogIHRyeSB7CiAgICBhd2FpdCBBc3luY1N0b3JhZ2UuY2xlYXIoKTsKICAgIGNvbnNvbGUubG9nKCdUb3RlcyBsZXMgZGFkZXMgZXNib3JyYWRlcyBjb3JyZWN0YW1lbnQnKTsKICB9IGNhdGNoIChlKSB7CiAgICBjb25zb2xlLmVycm9yKCdObyBzXCdoYSBwb2d1dCBlc2JvcnJhciBsXCdlbW1hZ2F0emVtYXRnZScsIGUpOwogIH0KfTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const clearAllData = async () =&gt; {
+  try {
+    await AsyncStorage.clear();
+    console.log('Totes les dades esborrades correctament');
+  } catch (e) {
+    console.error('No s\'ha pogut esborrar l\'emmagatzematge', e);
+  }
+};</pre></div><div class='content'></div><h1>Gestió d'Errors</h1>
+<div class='content'><p>Una correcta gestió d'errors és crucial quan es treballa amb AsyncStorage per assegurar una experiència d'usuari suau.</p>
+<ul>
+<li><strong>Blocs Try-Catch:</strong> Utilitza blocs try-catch per gestionar els errors de manera elegant.</li>
+<li><strong>Valors de Reserva:</strong> Proporciona valors de reserva quan la recuperació de dades falla.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZ2V0RGF0YVdpdGhGYWxsYmFjayA9IGFzeW5jIChrZXksIGZhbGxiYWNrVmFsdWUpID0+IHsKICB0cnkgewogICAgY29uc3QgdmFsdWUgPSBhd2FpdCBBc3luY1N0b3JhZ2UuZ2V0SXRlbShrZXkpOwogICAgcmV0dXJuIHZhbHVlICE9IG51bGwgPyB2YWx1ZSA6IGZhbGxiYWNrVmFsdWU7CiAgfSBjYXRjaCAoZSkgewogICAgY29uc29sZS5lcnJvcignTm8gc1wnaGFuIHBvZ3V0IHJlY3VwZXJhciBsZXMgZGFkZXMgZGUgbFwnZW1tYWdhdHplbWF0Z2UnLCBlKTsKICAgIHJldHVybiBmYWxsYmFja1ZhbHVlOwogIH0KfTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const getDataWithFallback = async (key, fallbackValue) =&gt; {
+  try {
+    const value = await AsyncStorage.getItem(key);
+    return value != null ? value : fallbackValue;
+  } catch (e) {
+    console.error('No s\'han pogut recuperar les dades de l\'emmagatzematge', e);
+    return fallbackValue;
+  }
+};</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>AsyncStorage és una eina poderosa per a la persistència de dades en aplicacions React Native. Entenent les seves operacions bàsiques i avançades, pots gestionar efectivament l'emmagatzematge i la recuperació de dades, assegurant una experiència d'usuari sense interrupcions. Recorda gestionar els errors de manera elegant i considera les implicacions de rendiment de la teva estratègia d'emmagatzematge de dades.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='handling-api-responses'>&#x25C4;Gestió de respostes d'API</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Persistència de Dades amb AsyncStorage</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='using-animations'>Ús d'animacions &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

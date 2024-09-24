@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mocking a Kotlin</title>
+
+    <link rel="alternate" href="https://campusempresa.com/kotlin/mocking-in-kotlin" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/kotlin/mocking-in-kotlin" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/kotlin/mocking-in-kotlin" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/kotlin/mocking-in-kotlin" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/kotlin/mocking-in-kotlin" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='unit-testing-with-kotlin'>&#x25C4;Proves Unitàries amb Kotlin</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Mocking a Kotlin</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='debugging-techniques'>Tècniques de Depuració &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>El mocking és un concepte essencial en les proves unitàries, permetent als desenvolupadors simular el comportament d'objectes i sistemes complexos. Aquest tema et guiarà a través dels conceptes bàsics del mocking a Kotlin, utilitzant biblioteques populars com Mockito i MockK, i proporcionarà exemples pràctics i exercicis per consolidar la teva comprensió.</p>
+</div><h1>Introducció al Mocking</h1>
+<div class='content'><p>El mocking és el procés de crear objectes que simulen el comportament d'objectes reals. Això és particularment útil en les proves unitàries, on vols aïllar la unitat de codi que s'està provant i evitar dependències de sistemes externs o objectes complexos.</p>
+<ul>
+<li><strong>Per què Mocking?</strong>
+<ul>
+<li>Aïllar la unitat de codi sota prova.</li>
+<li>Simular objectes i sistemes complexos.</li>
+<li>Controlar el comportament de les dependències.</li>
+<li>Millorar la fiabilitat i el rendiment de les proves.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Biblioteques de Mocking a Kotlin</h1>
+<div class='content'><p>Kotlin suporta diverses biblioteques de mocking, amb Mockito i MockK sent les més populars.</p>
+</div><h2>Mockito</h2>
+<div class='content'><p>Mockito és un marc de mocking àmpliament utilitzat per a Java, i es pot utilitzar a Kotlin amb una configuració addicional.</p>
+<h4>Configuració de Mockito</h4>
+<p>Per utilitzar Mockito en el teu projecte Kotlin, afegeix les següents dependències al teu fitxer <code>build.gradle</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVwZW5kZW5jaWVzIHsKICAgIHRlc3RJbXBsZW1lbnRhdGlvbiAib3JnLm1vY2tpdG86bW9ja2l0by1jb3JlOjMuKyIgLy8gVXRpbGl0emEgbCfDumx0aW1hIHZlcnNpw7MKICAgIHRlc3RJbXBsZW1lbnRhdGlvbiAib3JnLm1vY2tpdG86bW9ja2l0by1pbmxpbmU6My4rIgogICAgdGVzdEltcGxlbWVudGF0aW9uICJvcmcuamV0YnJhaW5zLmtvdGxpbjprb3RsaW4tdGVzdDoxLisiIC8vIFV0aWxpdHphIGwnw7psdGltYSB2ZXJzacOzCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>dependencies {
+    testImplementation &quot;org.mockito:mockito-core:3.+&quot; // Utilitza l'&uacute;ltima versi&oacute;
+    testImplementation &quot;org.mockito:mockito-inline:3.+&quot;
+    testImplementation &quot;org.jetbrains.kotlin:kotlin-test:1.+&quot; // Utilitza l'&uacute;ltima versi&oacute;
+}</pre></div><div class='content'><h4>Exemple bàsic de Mockito</h4>
+<p>Aquí tens un exemple senzill d'utilitzar Mockito per fer mocking d'una dependència a Kotlin:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5qdW5pdC5UZXN0CmltcG9ydCBvcmcubW9ja2l0by5Nb2NraXRvLioKCmNsYXNzIFVzZXJTZXJ2aWNlVGVzdCB7CgogICAgQFRlc3QKICAgIGZ1biBgc2hvdWxkIHJldHVybiB1c2VyIGRldGFpbHNgKCkgewogICAgICAgIC8vIEFycmFuZ2UKICAgICAgICB2YWwgdXNlclJlcG9zaXRvcnkgPSBtb2NrKFVzZXJSZXBvc2l0b3J5OjpjbGFzcy5qYXZhKQogICAgICAgIHZhbCB1c2VyU2VydmljZSA9IFVzZXJTZXJ2aWNlKHVzZXJSZXBvc2l0b3J5KQogICAgICAgIHZhbCB1c2VyID0gVXNlcigiSm9obiIsICJEb2UiKQogICAgICAgIAogICAgICAgIGB3aGVuYCh1c2VyUmVwb3NpdG9yeS5nZXRVc2VyRGV0YWlscygiSm9obiIpKS50aGVuUmV0dXJuKHVzZXIpCgogICAgICAgIC8vIEFjdAogICAgICAgIHZhbCByZXN1bHQgPSB1c2VyU2VydmljZS5nZXRVc2VyRGV0YWlscygiSm9obiIpCgogICAgICAgIC8vIEFzc2VydAogICAgICAgIGFzc2VydChyZXN1bHQgPT0gdXNlcikKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.junit.Test
+import org.mockito.Mockito.*
+
+class UserServiceTest {
+
+    @Test
+    fun `should return user details`() {
+        // Arrange
+        val userRepository = mock(UserRepository::class.java)
+        val userService = UserService(userRepository)
+        val user = User(&quot;John&quot;, &quot;Doe&quot;)
+        
+        `when`(userRepository.getUserDetails(&quot;John&quot;)).thenReturn(user)
+
+        // Act
+        val result = userService.getUserDetails(&quot;John&quot;)
+
+        // Assert
+        assert(result == user)
+    }
+}</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li>Fem mocking de la dependència <code>UserRepository</code>.</li>
+<li>Definim el comportament del mock utilitzant <code>when</code> i <code>thenReturn</code>.</li>
+<li>Verifiquem el resultat utilitzant assertions.</li>
+</ul>
+</div><h2>MockK</h2>
+<div class='content'><p>MockK és una biblioteca de mocking específica per a Kotlin que proporciona una experiència més idiomàtica per a Kotlin.</p>
+<h4>Configuració de MockK</h4>
+<p>Per utilitzar MockK en el teu projecte Kotlin, afegeix les següents dependències al teu fitxer <code>build.gradle</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVwZW5kZW5jaWVzIHsKICAgIHRlc3RJbXBsZW1lbnRhdGlvbiAiaW8ubW9ja2s6bW9ja2s6MS4rIiAvLyBVdGlsaXR6YSBsJ8O6bHRpbWEgdmVyc2nDswogICAgdGVzdEltcGxlbWVudGF0aW9uICJvcmcuamV0YnJhaW5zLmtvdGxpbjprb3RsaW4tdGVzdDoxLisiIC8vIFV0aWxpdHphIGwnw7psdGltYSB2ZXJzacOzCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>dependencies {
+    testImplementation &quot;io.mockk:mockk:1.+&quot; // Utilitza l'&uacute;ltima versi&oacute;
+    testImplementation &quot;org.jetbrains.kotlin:kotlin-test:1.+&quot; // Utilitza l'&uacute;ltima versi&oacute;
+}</pre></div><div class='content'><h4>Exemple bàsic de MockK</h4>
+<p>Aquí tens un exemple senzill d'utilitzar MockK per fer mocking d'una dependència a Kotlin:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGlvLm1vY2trLmV2ZXJ5CmltcG9ydCBpby5tb2Nray5tb2NrawppbXBvcnQgaW8ubW9ja2sudmVyaWZ5CmltcG9ydCBvcmcuanVuaXQuVGVzdAoKY2xhc3MgVXNlclNlcnZpY2VUZXN0IHsKCiAgICBAVGVzdAogICAgZnVuIGBzaG91bGQgcmV0dXJuIHVzZXIgZGV0YWlsc2AoKSB7CiAgICAgICAgLy8gQXJyYW5nZQogICAgICAgIHZhbCB1c2VyUmVwb3NpdG9yeSA9IG1vY2trPFVzZXJSZXBvc2l0b3J5PigpCiAgICAgICAgdmFsIHVzZXJTZXJ2aWNlID0gVXNlclNlcnZpY2UodXNlclJlcG9zaXRvcnkpCiAgICAgICAgdmFsIHVzZXIgPSBVc2VyKCJKb2huIiwgIkRvZSIpCiAgICAgICAgCiAgICAgICAgZXZlcnkgeyB1c2VyUmVwb3NpdG9yeS5nZXRVc2VyRGV0YWlscygiSm9obiIpIH0gcmV0dXJucyB1c2VyCgogICAgICAgIC8vIEFjdAogICAgICAgIHZhbCByZXN1bHQgPSB1c2VyU2VydmljZS5nZXRVc2VyRGV0YWlscygiSm9obiIpCgogICAgICAgIC8vIEFzc2VydAogICAgICAgIGFzc2VydChyZXN1bHQgPT0gdXNlcikKICAgICAgICB2ZXJpZnkgeyB1c2VyUmVwb3NpdG9yeS5nZXRVc2VyRGV0YWlscygiSm9obiIpIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import io.mockk.every
+import io.mockk.mockk
+import io.mockk.verify
+import org.junit.Test
+
+class UserServiceTest {
+
+    @Test
+    fun `should return user details`() {
+        // Arrange
+        val userRepository = mockk&lt;UserRepository&gt;()
+        val userService = UserService(userRepository)
+        val user = User(&quot;John&quot;, &quot;Doe&quot;)
+        
+        every { userRepository.getUserDetails(&quot;John&quot;) } returns user
+
+        // Act
+        val result = userService.getUserDetails(&quot;John&quot;)
+
+        // Assert
+        assert(result == user)
+        verify { userRepository.getUserDetails(&quot;John&quot;) }
+    }
+}</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li>Fem mocking de la dependència <code>UserRepository</code> utilitzant <code>mockk</code>.</li>
+<li>Definim el comportament del mock utilitzant <code>every</code> i <code>returns</code>.</li>
+<li>Verifiquem la interacció amb el mock utilitzant <code>verify</code>.</li>
+</ul>
+</div><h1>Tècniques avançades de Mocking</h1>
+<div class='content'></div><h2>Coincidència d'arguments</h2>
+<div class='content'><p>Tant Mockito com MockK suporten la coincidència d'arguments, permetent-te especificar condicions per als arguments dels mètodes.</p>
+<h4>Coincidència d'arguments de Mockito</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YHdoZW5gKHVzZXJSZXBvc2l0b3J5LmdldFVzZXJEZXRhaWxzKGFueVN0cmluZygpKSkudGhlblJldHVybih1c2VyKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>`when`(userRepository.getUserDetails(anyString())).thenReturn(user)</pre></div><div class='content'><h4>Coincidència d'arguments de MockK</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZXZlcnkgeyB1c2VyUmVwb3NpdG9yeS5nZXRVc2VyRGV0YWlscyhhbnkoKSkgfSByZXR1cm5zIHVzZXI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>every { userRepository.getUserDetails(any()) } returns user</pre></div><div class='content'></div><h2>Verificació d'interaccions</h2>
+<div class='content'><p>Pots verificar que certes interaccions amb els mocks han ocorregut.</p>
+<h4>Verificació de Mockito</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmVyaWZ5KHVzZXJSZXBvc2l0b3J5KS5nZXRVc2VyRGV0YWlscygiSm9obiIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>verify(userRepository).getUserDetails(&quot;John&quot;)</pre></div><div class='content'><h4>Verificació de MockK</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmVyaWZ5IHsgdXNlclJlcG9zaXRvcnkuZ2V0VXNlckRldGFpbHMoIkpvaG4iKSB9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>verify { userRepository.getUserDetails(&quot;John&quot;) }</pre></div><div class='content'></div><h2>Captura d'arguments</h2>
+<div class='content'><p>De vegades, necessites capturar arguments passats a mètodes mockejats.</p>
+<h4>Argument Captor de Mockito</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIGNhcHRvciA9IEFyZ3VtZW50Q2FwdG9yLmZvckNsYXNzKFN0cmluZzo6Y2xhc3MuamF2YSkKdmVyaWZ5KHVzZXJSZXBvc2l0b3J5KS5nZXRVc2VyRGV0YWlscyhjYXB0b3IuY2FwdHVyZSgpKQphc3NlcnQoY2FwdG9yLnZhbHVlID09ICJKb2huIik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val captor = ArgumentCaptor.forClass(String::class.java)
+verify(userRepository).getUserDetails(captor.capture())
+assert(captor.value == &quot;John&quot;)</pre></div><div class='content'><h4>Argument Captor de MockK</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIHNsb3QgPSBzbG90PFN0cmluZz4oKQp2ZXJpZnkgeyB1c2VyUmVwb3NpdG9yeS5nZXRVc2VyRGV0YWlscyhjYXB0dXJlKHNsb3QpKSB9CmFzc2VydChzbG90LmNhcHR1cmVkID09ICJKb2huIik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val slot = slot&lt;String&gt;()
+verify { userRepository.getUserDetails(capture(slot)) }
+assert(slot.captured == &quot;John&quot;)</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>El mocking és una tècnica poderosa en les proves unitàries que et permet aïllar la unitat de codi sota prova i simular dependències complexes. Kotlin suporta diverses biblioteques de mocking, amb Mockito i MockK sent les més populars. Comprenent els conceptes bàsics i les tècniques avançades de mocking, pots escriure proves més fiables i mantenibles per a les teves aplicacions Kotlin.</p>
+</div><h2>Punts clau</h2>
+<div class='content'><ul>
+<li>El mocking ajuda aïllar la unitat de codi sota prova.</li>
+<li>Mockito i MockK són biblioteques de mocking populars a Kotlin.</li>
+<li>El mocking bàsic implica crear mocks, definir comportaments i verificar interaccions.</li>
+<li>Les tècniques avançades inclouen la coincidència d'arguments, la verificació d'interaccions i la captura d'arguments.</li>
+</ul>
+<p>Practica utilitzant aquestes tècniques en els teus projectes per obtenir una comprensió més profunda i millorar les teves habilitats de prova.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='unit-testing-with-kotlin'>&#x25C4;Proves Unitàries amb Kotlin</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Mocking a Kotlin</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='debugging-techniques'>Tècniques de Depuració &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

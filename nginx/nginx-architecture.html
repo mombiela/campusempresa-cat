@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprendre l'Arquitectura de NGINX</title>
+
+    <link rel="alternate" href="https://campusempresa.com/nginx/nginx-architecture" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/nginx/nginx-architecture" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/nginx/nginx-architecture" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/nginx/nginx-architecture" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/nginx/nginx-architecture" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='starting-and-stopping-nginx'>&#x25C4;Iniciar i Aturar NGINX</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Comprendre l'Arquitectura de NGINX</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='nginx-configuration-file-structure'>Estructura del Fitxer de Configuració de NGINX &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a NGINX</h1>
+<div class='content'><p>NGINX és un servidor HTTP d'alt rendiment, proxy invers i servidor proxy IMAP/POP3. És conegut per la seva estabilitat, conjunt ric de funcionalitats, configuració senzilla i baix consum de recursos.</p>
+</div><h1>Components Clau de l'Arquitectura de NGINX</h1>
+<div class='content'></div><h2>Processos Master i Worker</h2>
+<div class='content'><ul>
+<li><strong>Procés Master</strong>: Gestiona els processos worker, llegeix i avalua els fitxers de configuració, i manté el procés principal.</li>
+<li><strong>Processos Worker</strong>: Gestionen el processament real de les sol·licituds. Cada procés worker és monofil i gestiona múltiples connexions utilitzant E/S asíncrona i no bloquejant.</li>
+</ul>
+</div><h2>Arquitectura Basada en Esdeveniments</h2>
+<div class='content'><ul>
+<li><strong>Bucle d'Esdeveniments</strong>: NGINX utilitza un model basat en esdeveniments on cada procés worker executa un bucle que espera esdeveniments (com connexions entrants) i els processa.</li>
+<li><strong>E/S No Bloquejant</strong>: Permet a NGINX gestionar moltes connexions simultàniament sense crear un nou fil per a cada connexió.</li>
+</ul>
+</div><h2>Mòduls</h2>
+<div class='content'><ul>
+<li><strong>Mòduls Bàsics</strong>: Proporcionen funcionalitats essencials com el processament HTTP, de correu i de flux.</li>
+<li><strong>Mòduls Opcional</strong>: Amplien les capacitats de NGINX, com SSL, compressió Gzip i reescriptura d'URL.</li>
+</ul>
+</div><h2>Fitxers de Configuració</h2>
+<div class='content'><ul>
+<li><strong>nginx.conf</strong>: El fitxer de configuració principal on es defineixen els paràmetres del servidor, els processos worker i altres directives.</li>
+<li><strong>Directives Include</strong>: Permet dividir la configuració en múltiples fitxers per a una millor organització.</li>
+</ul>
+</div><h1>Exemple de Configuració de NGINX</h1>
+<div class='content'><p>A continuació es mostra un exemple senzill d'un fitxer <code>nginx.conf</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("d29ya2VyX3Byb2Nlc3NlcyAgMTsKCmV2ZW50cyB7CiAgICB3b3JrZXJfY29ubmVjdGlvbnMgIDEwMjQ7Cn0KCmh0dHAgewogICAgc2VydmVyIHsKICAgICAgICBsaXN0ZW4gICAgICAgODA7CiAgICAgICAgc2VydmVyX25hbWUgIGxvY2FsaG9zdDsKCiAgICAgICAgbG9jYXRpb24gLyB7CiAgICAgICAgICAgIHJvb3QgICBodG1sOwogICAgICAgICAgICBpbmRleCAgaW5kZXguaHRtbCBpbmRleC5odG07CiAgICAgICAgfQoKICAgICAgICBlcnJvcl9wYWdlICAgNTAwIDUwMiA1MDMgNTA0ICAvNTB4Lmh0bWw7CiAgICAgICAgbG9jYXRpb24gPSAvNTB4Lmh0bWwgewogICAgICAgICAgICByb290ICAgaHRtbDsKICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>worker_processes  1;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    server {
+        listen       80;
+        server_name  localhost;
+
+        location / {
+            root   html;
+            index  index.html index.htm;
+        }
+
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   html;
+        }
+    }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>worker_processes 1;</strong>: Defineix el nombre de processos worker.</li>
+<li><strong>events</strong>: Bloc on es configuren els paràmetres relacionats amb esdeveniments.
+<ul>
+<li><strong>worker_connections 1024;</strong>: Nombre màxim de connexions simultànies per worker.</li>
+</ul>
+</li>
+<li><strong>http</strong>: Bloc on es defineixen els paràmetres del servidor HTTP.
+<ul>
+<li><strong>server</strong>: Defineix un servidor virtual.
+<ul>
+<li><strong>listen 80;</strong>: El servidor escolta al port 80.</li>
+<li><strong>server_name localhost;</strong>: Nom del servidor.</li>
+<li><strong>location /</strong>: Defineix com processar les sol·licituds a l'URL arrel.
+<ul>
+<li><strong>root html;</strong>: Directori arrel per als fitxers.</li>
+<li><strong>index index.html index.htm;</strong>: Fitxers per defecte a servir.</li>
+</ul>
+</li>
+<li><strong>error_page 500 502 503 504 /50x.html;</strong>: Pàgines d'error personalitzades.</li>
+<li><strong>location = /50x.html</strong>: Defineix com servir la pàgina d'error personalitzada.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conceptes Avançats</h1>
+<div class='content'></div><h2>Balanceig de Càrrega</h2>
+<div class='content'><p>NGINX pot distribuir el trànsit entrant entre múltiples servidors per assegurar alta disponibilitat i fiabilitat.</p>
+<h4>Exemple de Configuració</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aHR0cCB7CiAgICB1cHN0cmVhbSBiYWNrZW5kIHsKICAgICAgICBzZXJ2ZXIgYmFja2VuZDEuZXhhbXBsZS5jb207CiAgICAgICAgc2VydmVyIGJhY2tlbmQyLmV4YW1wbGUuY29tOwogICAgfQoKICAgIHNlcnZlciB7CiAgICAgICAgbGlzdGVuIDgwOwoKICAgICAgICBsb2NhdGlvbiAvIHsKICAgICAgICAgICAgcHJveHlfcGFzcyBodHRwOi8vYmFja2VuZDsKICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>http {
+    upstream backend {
+        server backend1.example.com;
+        server backend2.example.com;
+    }
+
+    server {
+        listen 80;
+
+        location / {
+            proxy_pass http://backend;
+        }
+    }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>upstream backend</strong>: Defineix un grup de servidors backend.
+<ul>
+<li><strong>server backend1.example.com;</strong>: Primer servidor backend.</li>
+<li><strong>server backend2.example.com;</strong>: Segon servidor backend.</li>
+</ul>
+</li>
+<li><strong>proxy_pass http://backend;</strong>: Redirigeix les sol·licituds al grup backend definit.</li>
+</ul>
+</div><h2>Emmagatzematge en Memòria Cau</h2>
+<div class='content'><p>NGINX pot emmagatzemar en memòria cau les respostes per millorar el rendiment i reduir la càrrega als servidors backend.</p>
+<h4>Exemple de Configuració</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aHR0cCB7CiAgICBwcm94eV9jYWNoZV9wYXRoIC9kYXRhL25naW54L2NhY2hlIGxldmVscz0xOjIga2V5c196b25lPW15X2NhY2hlOjEwbSBtYXhfc2l6ZT0xMGcgaW5hY3RpdmU9NjBtIHVzZV90ZW1wX3BhdGg9b2ZmOwoKICAgIHNlcnZlciB7CiAgICAgICAgbGlzdGVuIDgwOwoKICAgICAgICBsb2NhdGlvbiAvIHsKICAgICAgICAgICAgcHJveHlfY2FjaGUgbXlfY2FjaGU7CiAgICAgICAgICAgIHByb3h5X3Bhc3MgaHR0cDovL2JhY2tlbmQ7CiAgICAgICAgfQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>http {
+    proxy_cache_path /data/nginx/cache levels=1:2 keys_zone=my_cache:10m max_size=10g inactive=60m use_temp_path=off;
+
+    server {
+        listen 80;
+
+        location / {
+            proxy_cache my_cache;
+            proxy_pass http://backend;
+        }
+    }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>proxy_cache_path</strong>: Defineix el camí d'emmagatzematge de la memòria cau i els paràmetres.
+<ul>
+<li><strong>/data/nginx/cache</strong>: Directori per a l'emmagatzematge de la memòria cau.</li>
+<li><strong>levels=1:2</strong>: Estructura de directoris per als fitxers de la memòria cau.</li>
+<li><strong>keys_zone=my_cache:10m</strong>: Defineix una zona de memòria compartida per a les claus de la memòria cau.</li>
+<li><strong>max_size=10g</strong>: Mida màxima de la memòria cau.</li>
+<li><strong>inactive=60m</strong>: Temps després del qual els elements inactius de la memòria cau són eliminats.</li>
+<li><strong>use_temp_path=off</strong>: Desactiva l'emmagatzematge temporal de fitxers.</li>
+</ul>
+</li>
+<li><strong>proxy_cache my_cache;</strong>: Activa l'emmagatzematge en memòria cau per a la ubicació.</li>
+</ul>
+</div><h1>Resum</h1>
+<div class='content'><p>Comprendre l'arquitectura de NGINX és crucial per configurar i optimitzar el teu servidor de manera efectiva. Els components clau inclouen els processos master i worker, l'arquitectura basada en esdeveniments i el disseny modular. Dominant els fitxers de configuració i les funcionalitats avançades com el balanceig de càrrega i l'emmagatzematge en memòria cau, pots aprofitar NGINX per construir aplicacions web d'alt rendiment i escalables.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='starting-and-stopping-nginx'>&#x25C4;Iniciar i Aturar NGINX</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Comprendre l'Arquitectura de NGINX</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='nginx-configuration-file-structure'>Estructura del Fitxer de Configuració de NGINX &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

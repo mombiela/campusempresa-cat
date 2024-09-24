@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concurrència i Paral·lelisme en F#</title>
+
+    <link rel="alternate" href="https://campusempresa.com/fsharp/concurrency-and-parallelism" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/fsharp/concurrency-and-parallelism" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/fsharp/concurrency-and-parallelism" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/fsharp/concurrency-and-parallelism" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/fsharp/concurrency-and-parallelism" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='metaprogramming'>&#x25C4;Metaprogramació</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Concurrència i Paral·lelisme en F#</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='testing-and-debugging'>Proves i Depuració &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>La concurrència i el paral·lelisme són conceptes essencials en la programació moderna, especialment per a aplicacions que requereixen alt rendiment i capacitat de resposta. En aquesta secció, explorarem com F# maneja la concurrència i el paral·lelisme, proporcionant-te les eines per escriure codi eficient i escalable.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Concurrència</strong>: La capacitat de gestionar múltiples tasques al mateix temps. Implica gestionar múltiples tasques que poden córrer de manera independent però no necessàriament simultània.</li>
+<li><strong>Paral·lelisme</strong>: La capacitat d'executar múltiples tasques simultàniament, típicament per millorar el rendiment utilitzant múltiples processadors o nuclis.</li>
+</ul>
+</div><h1>Concurrència en F#</h1>
+<div class='content'><p>F# proporciona diverses maneres de gestionar la concurrència, incloent-hi fluxos de treball asíncrons i el mòdul <code>Async</code>.</p>
+</div><h2>Fluxos de Treball Asíncrons</h2>
+<div class='content'><p>Els fluxos de treball asíncrons en F# et permeten escriure codi no bloquejant que pot realitzar operacions d'E/S sense congelar el fil principal.</p>
+<h4>Exemple: Flux de Treball Asíncron Bàsic</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBTeXN0ZW0uTmV0CgpsZXQgZmV0Y2hVcmxBc3luYyAodXJsOiBzdHJpbmcpID0KICAgIGFzeW5jIHsKICAgICAgICBsZXQgcmVxdWVzdCA9IFdlYlJlcXVlc3QuQ3JlYXRlKHVybCkKICAgICAgICB1c2UhIHJlc3BvbnNlID0gcmVxdWVzdC5Bc3luY0dldFJlc3BvbnNlKCkKICAgICAgICB1c2Ugc3RyZWFtID0gcmVzcG9uc2UuR2V0UmVzcG9uc2VTdHJlYW0oKQogICAgICAgIHVzZSByZWFkZXIgPSBuZXcgU3lzdGVtLklPLlN0cmVhbVJlYWRlcihzdHJlYW0pCiAgICAgICAgbGV0IGh0bWwgPSByZWFkZXIuUmVhZFRvRW5kKCkKICAgICAgICByZXR1cm4gaHRtbAogICAgfQoKbGV0IHVybCA9ICJodHRwOi8vZXhhbXBsZS5jb20iCmxldCBodG1sID0gZmV0Y2hVcmxBc3luYyB1cmwgfD4gQXN5bmMuUnVuU3luY2hyb25vdXNseQpwcmludGZuICIlcyIgaHRtbA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open System.Net
+
+let fetchUrlAsync (url: string) =
+    async {
+        let request = WebRequest.Create(url)
+        use! response = request.AsyncGetResponse()
+        use stream = response.GetResponseStream()
+        use reader = new System.IO.StreamReader(stream)
+        let html = reader.ReadToEnd()
+        return html
+    }
+
+let url = &quot;http://example.com&quot;
+let html = fetchUrlAsync url |&gt; Async.RunSynchronously
+printfn &quot;%s&quot; html</pre></div><div class='content'><ul>
+<li><code>async { ... }</code>: Defineix un flux de treball asíncron.</li>
+<li><code>use!</code>: Espera el resultat d'una operació asíncrona.</li>
+</ul>
+</div><h2>El Mòdul `Async`</h2>
+<div class='content'><p>El mòdul <code>Async</code> proporciona diverses funcions per treballar amb fluxos de treball asíncrons.</p>
+<h4>Exemple: Fluxos de Treball Asíncrons Paral·lels</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bGV0IHVybHMgPSBbImh0dHA6Ly9leGFtcGxlLmNvbSI7ICJodHRwOi8vZXhhbXBsZS5vcmciOyAiaHR0cDovL2V4YW1wbGUubmV0Il0KCmxldCBmZXRjaEFsbFVybHNBc3luYyB1cmxzID0KICAgIHVybHMKICAgIHw+IExpc3QubWFwIGZldGNoVXJsQXN5bmMKICAgIHw+IEFzeW5jLlBhcmFsbGVsCiAgICB8PiBBc3luYy5SdW5TeW5jaHJvbm91c2x5CgpsZXQgcmVzdWx0cyA9IGZldGNoQWxsVXJsc0FzeW5jIHVybHMKcmVzdWx0cyB8PiBBcnJheS5pdGVyIChwcmludGZuICIlcyIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>let urls = [&quot;http://example.com&quot;; &quot;http://example.org&quot;; &quot;http://example.net&quot;]
+
+let fetchAllUrlsAsync urls =
+    urls
+    |&gt; List.map fetchUrlAsync
+    |&gt; Async.Parallel
+    |&gt; Async.RunSynchronously
+
+let results = fetchAllUrlsAsync urls
+results |&gt; Array.iter (printfn &quot;%s&quot;)</pre></div><div class='content'><ul>
+<li><code>Async.Parallel</code>: Executa múltiples fluxos de treball asíncrons en paral·lel.</li>
+<li><code>Async.RunSynchronously</code>: Executa un flux de treball asíncron de manera síncrona.</li>
+</ul>
+</div><h1>Paral·lelisme en F#</h1>
+<div class='content'><p>F# aprofita la Task Parallel Library (TPL) de .NET per al paral·lelisme, permetent-te realitzar càlculs en paral·lel.</p>
+</div><h2>Càlculs Paral·lels</h2>
+<div class='content'><p>El mòdul <code>Parallel</code> en F# proporciona funcions per realitzar càlculs paral·lels.</p>
+<h4>Exemple: Processament Paral·lel d'Arrays</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBTeXN0ZW0uVGhyZWFkaW5nLlRhc2tzCgpsZXQgbnVtYmVycyA9IFt8IDEgLi4gMTAwMDAwMCB8XQoKbGV0IHN1bU9mU3F1YXJlc1BhcmFsbGVsIChudW1zOiBpbnRbXSkgPQogICAgbnVtcwogICAgfD4gQXJyYXkuUGFyYWxsZWwubWFwIChmdW4geCAtPiB4ICogeCkKICAgIHw+IEFycmF5LnN1bQoKbGV0IHJlc3VsdCA9IHN1bU9mU3F1YXJlc1BhcmFsbGVsIG51bWJlcnMKcHJpbnRmbiAiU3VtIG9mIHNxdWFyZXM6ICVkIiByZXN1bHQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open System.Threading.Tasks
+
+let numbers = [| 1 .. 1000000 |]
+
+let sumOfSquaresParallel (nums: int[]) =
+    nums
+    |&gt; Array.Parallel.map (fun x -&gt; x * x)
+    |&gt; Array.sum
+
+let result = sumOfSquaresParallel numbers
+printfn &quot;Sum of squares: %d&quot; result</pre></div><div class='content'><ul>
+<li><code>Array.Parallel.map</code>: Aplica una funció a cada element de l'array en paral·lel.</li>
+<li><code>Array.sum</code>: Suma els elements de l'array.</li>
+</ul>
+</div><h2>Task Parallel Library (TPL)</h2>
+<div class='content'><p>La TPL proporciona més control sobre les tasques paral·leles, incloent-hi la creació de tasques, continuació i cancel·lació.</p>
+<h4>Exemple: Utilitzant Tasques</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBTeXN0ZW0uVGhyZWFkaW5nLlRhc2tzCgpsZXQgdGFzazEgPSBUYXNrLlJ1bihmdW4gKCkgLT4gCiAgICAvLyBTaW11bGEgdW5hIG1pY2EgZGUgdHJlYmFsbAogICAgU3lzdGVtLlRocmVhZGluZy5UaHJlYWQuU2xlZXAoMTAwMCkKICAgIDQyKQoKbGV0IHRhc2syID0gVGFzay5SdW4oZnVuICgpIC0+IAogICAgLy8gU2ltdWxhIHVuYSBtaWNhIGRlIHRyZWJhbGwKICAgIFN5c3RlbS5UaHJlYWRpbmcuVGhyZWFkLlNsZWVwKDUwMCkKICAgIDI0KQoKbGV0IGNvbWJpbmVkVGFzayA9IFRhc2suV2hlbkFsbCh0YXNrMSwgdGFzazIpCgpjb21iaW5lZFRhc2suQ29udGludWVXaXRoKGZ1biB0IC0+CiAgICBsZXQgcmVzdWx0cyA9IHQuUmVzdWx0CiAgICBwcmludGZuICJSZXN1bHRzOiAlQSIgcmVzdWx0cwopIHw+IGlnbm9yZQoKLy8gRXNwZXJhIHF1ZSBsYSB0YXNjYSBjb21iaW5hZGEgZXMgY29tcGxldGkKY29tYmluZWRUYXNrLldhaXQoKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open System.Threading.Tasks
+
+let task1 = Task.Run(fun () -&gt; 
+    // Simula una mica de treball
+    System.Threading.Thread.Sleep(1000)
+    42)
+
+let task2 = Task.Run(fun () -&gt; 
+    // Simula una mica de treball
+    System.Threading.Thread.Sleep(500)
+    24)
+
+let combinedTask = Task.WhenAll(task1, task2)
+
+combinedTask.ContinueWith(fun t -&gt;
+    let results = t.Result
+    printfn &quot;Results: %A&quot; results
+) |&gt; ignore
+
+// Espera que la tasca combinada es completi
+combinedTask.Wait()</pre></div><div class='content'><ul>
+<li><code>Task.Run</code>: Crea i inicia una nova tasca.</li>
+<li><code>Task.WhenAll</code>: Crea una tasca que es completarà quan totes les tasques subministrades hagin completat.</li>
+<li><code>ContinueWith</code>: Especifica una acció a realitzar quan la tasca es completa.</li>
+</ul>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem explorat els conceptes de concurrència i paral·lelisme en F#. Hem cobert:</p>
+<ul>
+<li>Fluxos de treball asíncrons utilitzant la paraula clau <code>async</code> i el mòdul <code>Async</code>.</li>
+<li>Càlculs paral·lels utilitzant el mòdul <code>Parallel</code> i la Task Parallel Library (TPL).</li>
+</ul>
+<p>Entendre aquests conceptes i eines t'ajudarà a escriure aplicacions eficients i responsives en F#. Practica amb els exemples proporcionats i intenta implementar les teves pròpies solucions concurrents i paral·leles per reforçar el teu aprenentatge.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='metaprogramming'>&#x25C4;Metaprogramació</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Concurrència i Paral·lelisme en F#</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='testing-and-debugging'>Proves i Depuració &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

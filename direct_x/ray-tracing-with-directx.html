@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Traçat de Raigs amb DirectX</title>
+
+    <link rel="alternate" href="https://campusempresa.com/direct_x/ray-tracing-with-directx" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/direct_x/ray-tracing-with-directx" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/direct_x/ray-tracing-with-directx" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/direct_x/ray-tracing-with-directx" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/direct_x/ray-tracing-with-directx" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='directx-12-features'>&#x25C4;Característiques de DirectX 12</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Traçat de Raigs amb DirectX</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='virtual-reality-and-directx'>Realitat Virtual i DirectX &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció al Traçat de Raigs</h1>
+<div class='content'><p>El traçat de raigs és una tècnica de renderització que simula la manera en què la llum interactua amb els objectes per produir imatges realistes. A diferència de la rasterització tradicional, que processa cada triangle individualment, el traçat de raigs traça el camí dels raigs de llum mentre viatgen a través de l'escena.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Raigs</strong>: Línies que representen el camí de la llum.</li>
+<li><strong>Intersecció</strong>: El punt on un raig colpeja un objecte.</li>
+<li><strong>Ombrejat</strong>: Calculant el color en el punt d'intersecció.</li>
+<li><strong>Reflexió i Refracció</strong>: Raigs rebotant en superfícies o passant a través de materials transparents.</li>
+<li><strong>Estructures d'Acceleració</strong>: Estructures de dades que optimitzen les proves d'intersecció raig-objecte.</li>
+</ul>
+</div><h1>Configuració de DirectX per al Traçat de Raigs</h1>
+<div class='content'><p>Abans d'endinsar-nos en el traçat de raigs, assegureu-vos que teniu una configuració bàsica de DirectX. Això inclou inicialitzar Direct3D, crear un dispositiu i configurar una cadena d'intercanvi.</p>
+</div><h2>Inicialització Bàsica de DirectX</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gSW5pY2lhbGl0emFyIERpcmVjdDNECkQzRDEyQ3JlYXRlRGV2aWNlKC4uLik7CkQzRDEyX0NPTU1BTkRfUVVFVUVfREVTQyBxdWV1ZURlc2MgPSB7fTsKSUQzRDEyQ29tbWFuZFF1ZXVlKiBjb21tYW5kUXVldWU7CmRldmljZS0+Q3JlYXRlQ29tbWFuZFF1ZXVlKCZxdWV1ZURlc2MsIElJRF9QUFZfQVJHUygmY29tbWFuZFF1ZXVlKSk7CgovLyBDcmVhciBDYWRlbmEgZCdJbnRlcmNhbnZpCkRYR0lfU1dBUF9DSEFJTl9ERVNDIHN3YXBDaGFpbkRlc2MgPSB7fTsKSURYR0lTd2FwQ2hhaW4qIHN3YXBDaGFpbjsKZmFjdG9yeS0+Q3JlYXRlU3dhcENoYWluKGNvbW1hbmRRdWV1ZSwgJnN3YXBDaGFpbkRlc2MsICZzd2FwQ2hhaW4pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Inicialitzar Direct3D
+D3D12CreateDevice(...);
+D3D12_COMMAND_QUEUE_DESC queueDesc = {};
+ID3D12CommandQueue* commandQueue;
+device-&gt;CreateCommandQueue(&amp;queueDesc, IID_PPV_ARGS(&amp;commandQueue));
+
+// Crear Cadena d'Intercanvi
+DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
+IDXGISwapChain* swapChain;
+factory-&gt;CreateSwapChain(commandQueue, &amp;swapChainDesc, &amp;swapChain);</pre></div><div class='content'></div><h1>Implementació del Traçat de Raigs en DirectX</h1>
+<h2>Configuració del Pipeline de Traçat de Raigs</h2>
+<div class='content'><p>DirectX 12 introdueix l'API DXR (DirectX Raytracing), que amplia DirectX 12 per donar suport al traçat de raigs. El pipeline de traçat de raigs consta de diversos components clau:</p>
+<ul>
+<li><strong>Shader de Generació de Raigs</strong>: Inicia els raigs.</li>
+<li><strong>Shader d'Intersecció</strong>: Determina si i on un raig interseca un objecte.</li>
+<li><strong>Shader de Qualsevol Colp</strong>: S'executa quan un raig interseca qualsevol geometria.</li>
+<li><strong>Shader de Colp Més Proper</strong>: S'executa per a la intersecció més propera.</li>
+<li><strong>Shader de Fallada</strong>: S'executa quan un raig falla en colpejar tota la geometria.</li>
+</ul>
+</div><h2>Creació de l'Objecte d'Estat del Pipeline de Traçat de Raigs (RTPSO)</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRGVmaW5pciBsJ29iamVjdGUgZCdlc3RhdCBkZWwgcGlwZWxpbmUgZGUgdHJhw6dhdCBkZSByYWlncyAoUlRQU08pCkQzRDEyX1NUQVRFX09CSkVDVF9ERVNDIHJheXRyYWNpbmdQaXBlbGluZSA9IHt9OwpyYXl0cmFjaW5nUGlwZWxpbmUuVHlwZSA9IEQzRDEyX1NUQVRFX09CSkVDVF9UWVBFX1JBWVRSQUNJTkdfUElQRUxJTkU7CgovLyBBZmVnaXIgc3Vib2JqZWN0ZXM6IHNoYWRlcnMsIHNpZ25hdHVyZXMgZCdhcnJlbCwgZXRjLgpEM0QxMl9FWFBPUlRfREVTQyBleHBvcnREZXNjID0ge307CmV4cG9ydERlc2MuTmFtZSA9IEwiUmF5R2VuU2hhZGVyIjsKZXhwb3J0RGVzYy5FeHBvcnRUb1JlbmFtZSA9IEwiUmF5R2VuU2hhZGVyIjsKcmF5dHJhY2luZ1BpcGVsaW5lLnBTdWJvYmplY3RzID0gJmV4cG9ydERlc2M7CnJheXRyYWNpbmdQaXBlbGluZS5OdW1TdWJvYmplY3RzID0gMTsKCi8vIENyZWFyIGVsIFJUUFNPCklEM0QxMlN0YXRlT2JqZWN0KiBwU3RhdGVPYmplY3Q7CmRldmljZS0+Q3JlYXRlU3RhdGVPYmplY3QoJnJheXRyYWNpbmdQaXBlbGluZSwgSUlEX1BQVl9BUkdTKCZwU3RhdGVPYmplY3QpKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Definir l'objecte d'estat del pipeline de tra&ccedil;at de raigs (RTPSO)
+D3D12_STATE_OBJECT_DESC raytracingPipeline = {};
+raytracingPipeline.Type = D3D12_STATE_OBJECT_TYPE_RAYTRACING_PIPELINE;
+
+// Afegir subobjectes: shaders, signatures d'arrel, etc.
+D3D12_EXPORT_DESC exportDesc = {};
+exportDesc.Name = L&quot;RayGenShader&quot;;
+exportDesc.ExportToRename = L&quot;RayGenShader&quot;;
+raytracingPipeline.pSubobjects = &amp;exportDesc;
+raytracingPipeline.NumSubobjects = 1;
+
+// Crear el RTPSO
+ID3D12StateObject* pStateObject;
+device-&gt;CreateStateObject(&amp;raytracingPipeline, IID_PPV_ARGS(&amp;pStateObject));</pre></div><div class='content'></div><h2>Construcció d'Estructures d'Acceleració</h2>
+<div class='content'><p>Les estructures d'acceleració són essencials per a un traçat de raigs eficient. Es divideixen en dos tipus: estructures d'acceleració de nivell inferior (BLAS) per a objectes individuals i estructures d'acceleració de nivell superior (TLAS) per a l'escena.</p>
+<h4>Creació d'una Estructura d'Acceleració de Nivell Inferior (BLAS)</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRGVmaW5pciBsYSBnZW9tZXRyaWEgcGVyIGEgQkxBUwpEM0QxMl9SQVlUUkFDSU5HX0dFT01FVFJZX0RFU0MgZ2VvbWV0cnlEZXNjID0ge307Cmdlb21ldHJ5RGVzYy5UeXBlID0gRDNEMTJfUkFZVFJBQ0lOR19HRU9NRVRSWV9UWVBFX1RSSUFOR0xFUzsKZ2VvbWV0cnlEZXNjLlRyaWFuZ2xlcy5WZXJ0ZXhCdWZmZXIuU3RhcnRBZGRyZXNzID0gdmVydGV4QnVmZmVyLT5HZXRHUFVWaXJ0dWFsQWRkcmVzcygpOwpnZW9tZXRyeURlc2MuVHJpYW5nbGVzLlZlcnRleENvdW50ID0gdmVydGV4Q291bnQ7CgovLyBDb25zdHJ1aXIgQkxBUwpEM0QxMl9CVUlMRF9SQVlUUkFDSU5HX0FDQ0VMRVJBVElPTl9TVFJVQ1RVUkVfREVTQyBibGFzRGVzYyA9IHt9OwpibGFzRGVzYy5JbnB1dHMuVHlwZSA9IEQzRDEyX1JBWVRSQUNJTkdfQUNDRUxFUkFUSU9OX1NUUlVDVFVSRV9UWVBFX0JPVFRPTV9MRVZFTDsKYmxhc0Rlc2MuSW5wdXRzLkRlc2NzTGF5b3V0ID0gRDNEMTJfRUxFTUVOVFNfTEFZT1VUX0FSUkFZOwpibGFzRGVzYy5JbnB1dHMucEdlb21ldHJ5RGVzY3MgPSAmZ2VvbWV0cnlEZXNjOwpibGFzRGVzYy5JbnB1dHMuTnVtRGVzY3MgPSAxOwpjb21tYW5kTGlzdC0+QnVpbGRSYXl0cmFjaW5nQWNjZWxlcmF0aW9uU3RydWN0dXJlKCZibGFzRGVzYywgMCwgbnVsbHB0cik7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Definir la geometria per a BLAS
+D3D12_RAYTRACING_GEOMETRY_DESC geometryDesc = {};
+geometryDesc.Type = D3D12_RAYTRACING_GEOMETRY_TYPE_TRIANGLES;
+geometryDesc.Triangles.VertexBuffer.StartAddress = vertexBuffer-&gt;GetGPUVirtualAddress();
+geometryDesc.Triangles.VertexCount = vertexCount;
+
+// Construir BLAS
+D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC blasDesc = {};
+blasDesc.Inputs.Type = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL;
+blasDesc.Inputs.DescsLayout = D3D12_ELEMENTS_LAYOUT_ARRAY;
+blasDesc.Inputs.pGeometryDescs = &amp;geometryDesc;
+blasDesc.Inputs.NumDescs = 1;
+commandList-&gt;BuildRaytracingAccelerationStructure(&amp;blasDesc, 0, nullptr);</pre></div><div class='content'><h4>Creació d'una Estructura d'Acceleració de Nivell Superior (TLAS)</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRGVmaW5pciBpbnN0w6BuY2lhIHBlciBhIFRMQVMKRDNEMTJfUkFZVFJBQ0lOR19JTlNUQU5DRV9ERVNDIGluc3RhbmNlRGVzYyA9IHt9OwppbnN0YW5jZURlc2MuVHJhbnNmb3JtID0gLi4uOyAvLyBFc3RhYmxpciBsYSBtYXRyaXUgZGUgdHJhbnNmb3JtYWNpw7MKaW5zdGFuY2VEZXNjLkluc3RhbmNlSUQgPSAwOwppbnN0YW5jZURlc2MuSW5zdGFuY2VNYXNrID0gMHhGRjsKaW5zdGFuY2VEZXNjLkFjY2VsZXJhdGlvblN0cnVjdHVyZSA9IGJsYXMtPkdldEdQVVZpcnR1YWxBZGRyZXNzKCk7CgovLyBDb25zdHJ1aXIgVExBUwpEM0QxMl9CVUlMRF9SQVlUUkFDSU5HX0FDQ0VMRVJBVElPTl9TVFJVQ1RVUkVfREVTQyB0bGFzRGVzYyA9IHt9Owp0bGFzRGVzYy5JbnB1dHMuVHlwZSA9IEQzRDEyX1JBWVRSQUNJTkdfQUNDRUxFUkFUSU9OX1NUUlVDVFVSRV9UWVBFX1RPUF9MRVZFTDsKdGxhc0Rlc2MuSW5wdXRzLkRlc2NzTGF5b3V0ID0gRDNEMTJfRUxFTUVOVFNfTEFZT1VUX0FSUkFZOwp0bGFzRGVzYy5JbnB1dHMuSW5zdGFuY2VEZXNjcyA9IGluc3RhbmNlQnVmZmVyLT5HZXRHUFVWaXJ0dWFsQWRkcmVzcygpOwp0bGFzRGVzYy5JbnB1dHMuTnVtRGVzY3MgPSAxOwpjb21tYW5kTGlzdC0+QnVpbGRSYXl0cmFjaW5nQWNjZWxlcmF0aW9uU3RydWN0dXJlKCZ0bGFzRGVzYywgMCwgbnVsbHB0cik7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Definir inst&agrave;ncia per a TLAS
+D3D12_RAYTRACING_INSTANCE_DESC instanceDesc = {};
+instanceDesc.Transform = ...; // Establir la matriu de transformaci&oacute;
+instanceDesc.InstanceID = 0;
+instanceDesc.InstanceMask = 0xFF;
+instanceDesc.AccelerationStructure = blas-&gt;GetGPUVirtualAddress();
+
+// Construir TLAS
+D3D12_BUILD_RAYTRACING_ACCELERATION_STRUCTURE_DESC tlasDesc = {};
+tlasDesc.Inputs.Type = D3D12_RAYTRACING_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL;
+tlasDesc.Inputs.DescsLayout = D3D12_ELEMENTS_LAYOUT_ARRAY;
+tlasDesc.Inputs.InstanceDescs = instanceBuffer-&gt;GetGPUVirtualAddress();
+tlasDesc.Inputs.NumDescs = 1;
+commandList-&gt;BuildRaytracingAccelerationStructure(&amp;tlasDesc, 0, nullptr);</pre></div><div class='content'></div><h1>Shaders per al Traçat de Raigs</h1>
+<div class='content'><p>Els shaders són crucials en el traçat de raigs per generar raigs, gestionar interseccions i ombrejar.</p>
+</div><h2>Shader de Generació de Raigs</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gU2hhZGVyIGRlIEdlbmVyYWNpw7MgZGUgUmFpZ3MKW3NoYWRlcigicmF5Z2VuZXJhdGlvbiIpXQp2b2lkIFJheUdlblNoYWRlcigpCnsKICAgIC8vIEdlbmVyYXIgcmFpZ3MgcHJpbWFyaXMKICAgIFJheURlc2MgcmF5OwogICAgcmF5Lk9yaWdpbiA9IGNhbWVyYVBvc2l0aW9uOwogICAgcmF5LkRpcmVjdGlvbiA9IGNhbGN1bGF0ZVJheURpcmVjdGlvbigpOwogICAgVHJhY2VSYXkodGxhcywgUkFZX0ZMQUdfTk9ORSwgMHhGRiwgMCwgMSwgMCwgcmF5LCBwYXlsb2FkKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Shader de Generaci&oacute; de Raigs
+[shader(&quot;raygeneration&quot;)]
+void RayGenShader()
+{
+    // Generar raigs primaris
+    RayDesc ray;
+    ray.Origin = cameraPosition;
+    ray.Direction = calculateRayDirection();
+    TraceRay(tlas, RAY_FLAG_NONE, 0xFF, 0, 1, 0, ray, payload);
+}</pre></div><div class='content'></div><h2>Shader de Colp Més Proper</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gU2hhZGVyIGRlIENvbHAgTcOpcyBQcm9wZXIKW3NoYWRlcigiY2xvc2VzdGhpdCIpXQp2b2lkIENsb3Nlc3RIaXRTaGFkZXIoaW5vdXQgUmF5UGF5bG9hZCBwYXlsb2FkLCBpbiBJbnRlcnNlY3Rpb25BdHRyaWJ1dGVzIGF0dHJpYikKewogICAgLy8gQ2FsY3VsYXIgbCdvbWJyZWphdCBlbiBlbCBwdW50IGQnaW50ZXJzZWNjacOzCiAgICBmbG9hdDMgaGl0UG9pbnQgPSByYXkuT3JpZ2luICsgcmF5LkRpcmVjdGlvbiAqIGF0dHJpYi5IaXRUOwogICAgcGF5bG9hZC5Db2xvciA9IGNhbGN1bGF0ZVNoYWRpbmcoaGl0UG9pbnQsIGF0dHJpYi5Ob3JtYWwpOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Shader de Colp M&eacute;s Proper
+[shader(&quot;closesthit&quot;)]
+void ClosestHitShader(inout RayPayload payload, in IntersectionAttributes attrib)
+{
+    // Calcular l'ombrejat en el punt d'intersecci&oacute;
+    float3 hitPoint = ray.Origin + ray.Direction * attrib.HitT;
+    payload.Color = calculateShading(hitPoint, attrib.Normal);
+}</pre></div><div class='content'></div><h2>Shader de Fallada</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gU2hhZGVyIGRlIEZhbGxhZGEKW3NoYWRlcigibWlzcyIpXQp2b2lkIE1pc3NTaGFkZXIoaW5vdXQgUmF5UGF5bG9hZCBwYXlsb2FkKQp7CiAgICAvLyBFc3RhYmxpciBjb2xvciBkZSBmb25zCiAgICBwYXlsb2FkLkNvbG9yID0gZmxvYXQzKDAuMCwgMC4wLCAwLjApOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Shader de Fallada
+[shader(&quot;miss&quot;)]
+void MissShader(inout RayPayload payload)
+{
+    // Establir color de fons
+    payload.Color = float3(0.0, 0.0, 0.0);
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>El traçat de raigs amb DirectX implica configurar un pipeline especialitzat, crear estructures d'acceleració i escriure shaders per gestionar la generació de raigs, les interseccions i l'ombrejat. Tot i que requereix una configuració més complexa en comparació amb la rasterització tradicional, els resultats poden produir imatges altament realistes simulant amb precisió el comportament de la llum.</p>
+<p>Entenent i implementant aquests conceptes, podeu aprofitar el poder de DirectX per crear visuals impressionants en les vostres aplicacions.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='directx-12-features'>&#x25C4;Característiques de DirectX 12</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Traçat de Raigs amb DirectX</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='virtual-reality-and-directx'>Realitat Virtual i DirectX &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió Avançada d'Errors</title>
+
+    <link rel="alternate" href="https://campusempresa.com/powershell/advanced-error-handling" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/powershell/advanced-error-handling" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/powershell/advanced-error-handling" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/powershell/advanced-error-handling" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/powershell/advanced-error-handling" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='using-dotnet-classes'>&#x25C4;Utilitzar Classes .NET</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió Avançada d'Errors</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='managing-processes'>Gestionar Processos &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquesta secció, aprofundirem en tècniques avançades de gestió d'errors en PowerShell. Una correcta gestió d'errors és crucial per crear scripts robustos i fiables. Cobriràrem diversos mètodes per gestionar errors, incloent blocs try/catch, variables d'error i missatges d'error personalitzats.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Tipus d'Errors</strong>: Entendre la diferència entre errors terminants i no terminants.</li>
+<li><strong>Try/Catch/Finally</strong>: Utilitzar blocs try/catch/finally per gestionar errors.</li>
+<li><strong>Variables d'Error</strong>: Utilitzar <code>$Error</code>, <code>$?</code> i <code>$LASTEXITCODE</code> per capturar i analitzar errors.</li>
+<li><strong>Missatges d'Error Personalitzats</strong>: Crear i llençar missatges d'error personalitzats.</li>
+<li><strong>Paràmetre ErrorAction</strong>: Controlar el comportament dels errors amb el paràmetre <code>-ErrorAction</code>.</li>
+<li><strong>Funcions de Gestió d'Errors</strong>: Escriure funcions per gestionar errors de manera més efectiva.</li>
+</ul>
+</div><h1>Tipus d'Errors</h1>
+<div class='content'></div><h2>Errors Terminants</h2>
+<div class='content'><p>Els errors terminants aturen l'execució d'un script. Es poden capturar i gestionar utilitzant blocs try/catch.</p>
+</div><h2>Errors No Terminants</h2>
+<div class='content'><p>Els errors no terminants no aturen l'execució de l'script. Normalment es registren i es poden controlar utilitzant el paràmetre <code>-ErrorAction</code>.</p>
+</div><h1>Try/Catch/Finally</h1>
+<div class='content'></div><h2>Sintaxi i Ús</h2>
+<div class='content'><p>El constructe try/catch/finally permet gestionar errors de manera elegant.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHJ5IHsKICAgICMgQ29kaSBxdWUgcG90IGNhdXNhciB1biBlcnJvcgogICAgR2V0LUl0ZW0gIkM6XE5vbkV4aXN0ZW50RmlsZS50eHQiCn0gY2F0Y2ggewogICAgIyBDb2RpIHBlciBnZXN0aW9uYXIgbCdlcnJvcgogICAgV3JpdGUtSG9zdCAiUydoYSBwcm9kdcOvdCB1biBlcnJvcjogJF8iCn0gZmluYWxseSB7CiAgICAjIENvZGkgcXVlIHMnZXhlY3V0YSBpbmRlcGVuZGVudG1lbnQgZGUgc2kgaGkgaGEgdW4gZXJyb3IgbyBubwogICAgV3JpdGUtSG9zdCAiRXhlY3VjacOzIGNvbXBsZXRhZGEuIgp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>try {
+    # Codi que pot causar un error
+    Get-Item &quot;C:\NonExistentFile.txt&quot;
+} catch {
+    # Codi per gestionar l'error
+    Write-Host &quot;S'ha produ&iuml;t un error: $_&quot;
+} finally {
+    # Codi que s'executa independentment de si hi ha un error o no
+    Write-Host &quot;Execuci&oacute; completada.&quot;
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>try</strong>: Conté el codi que podria llençar un error.</li>
+<li><strong>catch</strong>: Conté el codi per gestionar l'error.</li>
+<li><strong>finally</strong>: Conté el codi que s'executarà independentment de si s'ha produït un error o no.</li>
+</ul>
+</div><h1>Variables d'Error</h1>
+<div class='content'></div><h2>`$Error`</h2>
+<div class='content'><p>La variable <code>$Error</code> és una matriu que emmagatzema objectes d'error. L'error més recent està a l'índex 0.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R2V0LUl0ZW0gIkM6XE5vbkV4aXN0ZW50RmlsZS50eHQiCldyaXRlLUhvc3QgIsOabHRpbSBlcnJvcjogJCgkRXJyb3JbMF0pIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Get-Item &quot;C:\NonExistentFile.txt&quot;
+Write-Host &quot;&Uacute;ltim error: $($Error[0])&quot;</pre></div><div class='content'></div><h2>`$?`</h2>
+<div class='content'><p>La variable <code>$?</code> indica si l'última comanda ha estat exitosa (<code>True</code>) o no (<code>False</code>).</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R2V0LUl0ZW0gIkM6XE5vbkV4aXN0ZW50RmlsZS50eHQiCmlmICgkPykgewogICAgV3JpdGUtSG9zdCAiTGEgY29tYW5kYSBoYSB0aW5ndXQgw6h4aXQuIgp9IGVsc2UgewogICAgV3JpdGUtSG9zdCAiTGEgY29tYW5kYSBoYSBmYWxsYXQuIgp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Get-Item &quot;C:\NonExistentFile.txt&quot;
+if ($?) {
+    Write-Host &quot;La comanda ha tingut &egrave;xit.&quot;
+} else {
+    Write-Host &quot;La comanda ha fallat.&quot;
+}</pre></div><div class='content'></div><h2>`$LASTEXITCODE`</h2>
+<div class='content'><p>La variable <code>$LASTEXITCODE</code> conté el codi de sortida de l'últim programa basat en Windows que s'ha executat.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y21kIC9jIGV4aXQgMQpXcml0ZS1Ib3N0ICLDmmx0aW0gY29kaSBkZSBzb3J0aWRhOiAkTEFTVEVYSVRDT0RFIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>cmd /c exit 1
+Write-Host &quot;&Uacute;ltim codi de sortida: $LASTEXITCODE&quot;</pre></div><div class='content'></div><h1>Missatges d'Error Personalitzats</h1>
+<div class='content'></div><h2>Llençar Errors Personalitzats</h2>
+<div class='content'><p>Pots llençar errors personalitzats utilitzant la paraula clau <code>throw</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gVGVzdC1FcnJvciB7CiAgICBwYXJhbSAoJHZhbHVlKQogICAgaWYgKCR2YWx1ZSAtbHQgMCkgewogICAgICAgIHRocm93ICJFbCB2YWxvciBubyBwb3Qgc2VyIG5lZ2F0aXUuIgogICAgfQogICAgV3JpdGUtSG9zdCAiRWwgdmFsb3Igw6lzICR2YWx1ZSIKfQoKdHJ5IHsKICAgIFRlc3QtRXJyb3IgLXZhbHVlIC0xCn0gY2F0Y2ggewogICAgV3JpdGUtSG9zdCAiUydoYSBjYXB0dXJhdCB1biBlcnJvcjogJF8iCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function Test-Error {
+    param ($value)
+    if ($value -lt 0) {
+        throw &quot;El valor no pot ser negatiu.&quot;
+    }
+    Write-Host &quot;El valor &eacute;s $value&quot;
+}
+
+try {
+    Test-Error -value -1
+} catch {
+    Write-Host &quot;S'ha capturat un error: $_&quot;
+}</pre></div><div class='content'></div><h1>Paràmetre ErrorAction</h1>
+<div class='content'></div><h2>Controlar el Comportament dels Errors</h2>
+<div class='content'><p>El paràmetre <code>-ErrorAction</code> et permet especificar com PowerShell respon als errors no terminants.</p>
+<ul>
+<li><strong>Continue</strong>: Comportament per defecte, continua l'execució.</li>
+<li><strong>Stop</strong>: Tracta l'error com a terminant.</li>
+<li><strong>SilentlyContinue</strong>: Suprimeix el missatge d'error.</li>
+<li><strong>Inquire</strong>: Demana entrada a l'usuari.</li>
+<li><strong>Ignore</strong>: Ignora completament l'error.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R2V0LUl0ZW0gIkM6XE5vbkV4aXN0ZW50RmlsZS50eHQiIC1FcnJvckFjdGlvbiBTaWxlbnRseUNvbnRpbnVl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Get-Item &quot;C:\NonExistentFile.txt&quot; -ErrorAction SilentlyContinue</pre></div><div class='content'></div><h1>Funcions de Gestió d'Errors</h1>
+<div class='content'></div><h2>Exemple de Funció</h2>
+<div class='content'><p>Crear una funció per gestionar errors pot fer que els teus scripts siguin més modulars i reutilitzables.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gSW52b2tlLVNhZmVDb21tYW5kIHsKICAgIHBhcmFtICgKICAgICAgICBbc2NyaXB0YmxvY2tdJENvbW1hbmQKICAgICkKICAgIHRyeSB7CiAgICAgICAgJiAkQ29tbWFuZAogICAgfSBjYXRjaCB7CiAgICAgICAgV3JpdGUtSG9zdCAiUydoYSBwcm9kdcOvdCB1biBlcnJvcjogJF8iCiAgICB9Cn0KCkludm9rZS1TYWZlQ29tbWFuZCAtQ29tbWFuZCB7IEdldC1JdGVtICJDOlxOb25FeGlzdGVudEZpbGUudHh0IiB9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function Invoke-SafeCommand {
+    param (
+        [scriptblock]$Command
+    )
+    try {
+        &amp; $Command
+    } catch {
+        Write-Host &quot;S'ha produ&iuml;t un error: $_&quot;
+    }
+}
+
+Invoke-SafeCommand -Command { Get-Item &quot;C:\NonExistentFile.txt&quot; }</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>La gestió avançada d'errors en PowerShell és essencial per crear scripts fiables i mantenibles. Entenent i utilitzant blocs try/catch/finally, variables d'error, missatges d'error personalitzats i el paràmetre <code>-ErrorAction</code>, pots gestionar errors de manera efectiva i assegurar-te que els teus scripts s'executin sense problemes. Practica aquestes tècniques per convertir-te en un expert en la gestió d'errors en PowerShell.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='using-dotnet-classes'>&#x25C4;Utilitzar Classes .NET</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió Avançada d'Errors</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='managing-processes'>Gestionar Processos &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

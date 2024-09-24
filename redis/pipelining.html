@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipelining en Redis</title>
+
+    <link rel="alternate" href="https://campusempresa.com/redis/pipelining" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/redis/pipelining" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/redis/pipelining" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/redis/pipelining" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/redis/pipelining" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='transactions'>&#x25C4;Transaccions</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Pipelining en Redis</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='scripting-with-lua'>Scripting amb Lua &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció al Pipelining</h1>
+<div class='content'><p>El pipelining és una tècnica en Redis que permet al client enviar múltiples comandes al servidor sense esperar les respostes de les comandes anteriors. Això pot millorar significativament el rendiment de la teva aplicació reduint la latència causada pels temps de viatge d'anada i tornada entre el client i el servidor.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Latència</strong>: El temps que triga una comanda a viatjar des del client fins al servidor i tornar.</li>
+<li><strong>Temps de Viatge d'Anada i Tornada (RTT)</strong>: El temps que triga una sol·licitud a arribar al servidor i la resposta a tornar al client.</li>
+<li><strong>Processament per Lots</strong>: Enviar múltiples comandes en un sol lot per reduir el nombre de viatges d'anada i tornada.</li>
+</ul>
+</div><h1>Com Funciona el Pipelining</h1>
+<div class='content'><p>Quan s'utilitza el pipelining, el client envia un lot de comandes al servidor Redis d'una sola vegada. El servidor processa totes les comandes i envia les respostes en un sol lot. Això redueix el nombre de viatges d'anada i tornada i pot millorar molt el rendiment.</p>
+</div><h2>Exemple Sense Pipelining</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHJlZGlzCgojIENvbm5lY3Rhci1zZSBhbCBzZXJ2aWRvciBSZWRpcwpjbGllbnQgPSByZWRpcy5TdHJpY3RSZWRpcyhob3N0PSdsb2NhbGhvc3QnLCBwb3J0PTYzNzksIGRiPTApCgojIEV4ZWN1dGFyIGNvbWFuZGVzIHVuYSBwZXIgdW5hCmNsaWVudC5zZXQoJ2tleTEnLCAndmFsdWUxJykKY2xpZW50LnNldCgna2V5MicsICd2YWx1ZTInKQpjbGllbnQuc2V0KCdrZXkzJywgJ3ZhbHVlMycpCgojIE9idGVuaXIgdmFsb3JzIHVuIHBlciB1bgp2YWx1ZTEgPSBjbGllbnQuZ2V0KCdrZXkxJykKdmFsdWUyID0gY2xpZW50LmdldCgna2V5MicpCnZhbHVlMyA9IGNsaWVudC5nZXQoJ2tleTMnKQoKcHJpbnQodmFsdWUxLCB2YWx1ZTIsIHZhbHVlMyk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import redis
+
+# Connectar-se al servidor Redis
+client = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+# Executar comandes una per una
+client.set('key1', 'value1')
+client.set('key2', 'value2')
+client.set('key3', 'value3')
+
+# Obtenir valors un per un
+value1 = client.get('key1')
+value2 = client.get('key2')
+value3 = client.get('key3')
+
+print(value1, value2, value3)</pre></div><div class='content'></div><h2>Exemple Amb Pipelining</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHJlZGlzCgojIENvbm5lY3Rhci1zZSBhbCBzZXJ2aWRvciBSZWRpcwpjbGllbnQgPSByZWRpcy5TdHJpY3RSZWRpcyhob3N0PSdsb2NhbGhvc3QnLCBwb3J0PTYzNzksIGRiPTApCgojIENyZWFyIHVuIHBpcGVsaW5lCnBpcGVsaW5lID0gY2xpZW50LnBpcGVsaW5lKCkKCiMgRW52aWFyIGNvbWFuZGVzIGFsIHBpcGVsaW5lCnBpcGVsaW5lLnNldCgna2V5MScsICd2YWx1ZTEnKQpwaXBlbGluZS5zZXQoJ2tleTInLCAndmFsdWUyJykKcGlwZWxpbmUuc2V0KCdrZXkzJywgJ3ZhbHVlMycpCgojIEV4ZWN1dGFyIHRvdGVzIGxlcyBjb21hbmRlcyBkZWwgcGlwZWxpbmUKcGlwZWxpbmUuZXhlY3V0ZSgpCgojIE9idGVuaXIgdmFsb3JzIHV0aWxpdHphbnQgZWwgcGlwZWxpbmUKcGlwZWxpbmUuZ2V0KCdrZXkxJykKcGlwZWxpbmUuZ2V0KCdrZXkyJykKcGlwZWxpbmUuZ2V0KCdrZXkzJykKCiMgRXhlY3V0YXIgdG90ZXMgbGVzIGNvbWFuZGVzIGdldApyZXN1bHRzID0gcGlwZWxpbmUuZXhlY3V0ZSgpCgpwcmludChyZXN1bHRzKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import redis
+
+# Connectar-se al servidor Redis
+client = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+# Crear un pipeline
+pipeline = client.pipeline()
+
+# Enviar comandes al pipeline
+pipeline.set('key1', 'value1')
+pipeline.set('key2', 'value2')
+pipeline.set('key3', 'value3')
+
+# Executar totes les comandes del pipeline
+pipeline.execute()
+
+# Obtenir valors utilitzant el pipeline
+pipeline.get('key1')
+pipeline.get('key2')
+pipeline.get('key3')
+
+# Executar totes les comandes get
+results = pipeline.execute()
+
+print(results)</pre></div><div class='content'></div><h1>Beneficis del Pipelining</h1>
+<div class='content'><ul>
+<li><strong>Reducció de la Latència</strong>: En enviar múltiples comandes en un sol lot, la latència es redueix significativament.</li>
+<li><strong>Millora del Rendiment</strong>: Es poden processar més comandes en un període de temps més curt.</li>
+<li><strong>Eficiència de Xarxa</strong>: S'envien menys paquets per la xarxa, cosa que pot reduir la congestió de la xarxa.</li>
+</ul>
+</div><h1>Quan Utilitzar el Pipelining</h1>
+<div class='content'><ul>
+<li><strong>Operacions en Bloc</strong>: Quan necessites realitzar un gran nombre d'operacions en un període curt.</li>
+<li><strong>Processament per Lots</strong>: Quan es processa dades en lots, com ara carregar dades a Redis o realitzar actualitzacions massives.</li>
+<li><strong>Aplicacions Sensibles a la Latència</strong>: Les aplicacions que requereixen baixa latència poden beneficiar-se de la reducció dels temps de viatge d'anada i tornada.</li>
+</ul>
+</div><h1>Limitacions del Pipelining</h1>
+<div class='content'><ul>
+<li><strong>Ús de Memòria</strong>: El pipelining pot augmentar l'ús de memòria tant al client com al servidor, ja que les comandes i respostes es guarden en memòria intermèdia.</li>
+<li><strong>Gestió d'Errors</strong>: La gestió d'errors pot ser més complexa ja que s'envien múltiples comandes alhora.</li>
+<li><strong>Ordre d'Execució</strong>: Les comandes s'executen en l'ordre en què s'envien, cosa que pot no ser sempre desitjable.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>El pipelining és una característica potent en Redis que pot millorar significativament el rendiment de la teva aplicació reduint la latència i augmentant el rendiment. Entenent quan i com utilitzar el pipelining, pots fer que les teves interaccions amb Redis siguin més eficients i efectives. No obstant això, és important ser conscient de les seves limitacions i utilitzar-lo amb prudència per evitar possibles inconvenients.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='transactions'>&#x25C4;Transaccions</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Pipelining en Redis</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='scripting-with-lua'>Scripting amb Lua &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

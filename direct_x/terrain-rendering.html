@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renderització de Terreny en DirectX</title>
+
+    <link rel="alternate" href="https://campusempresa.com/direct_x/terrain-rendering" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/direct_x/terrain-rendering" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/direct_x/terrain-rendering" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/direct_x/terrain-rendering" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/direct_x/terrain-rendering" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='particle-systems'>&#x25C4;Sistemes de Partícules</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Renderització de Terreny en DirectX</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-game-development-with-directx'>Introducció al Desenvolupament de Jocs amb DirectX &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a la Renderització de Terreny</h1>
+<div class='content'><p>La renderització de terreny és un aspecte crucial de moltes aplicacions 3D, especialment en jocs i simulacions. Aquest tema et guiarà a través del procés de renderització de terreny utilitzant DirectX, començant per conceptes bàsics i avançant gradualment cap a tècniques avançades.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Heightmaps</strong>: Una imatge 2D on cada píxel representa l'altura en aquell punt del terreny.</li>
+<li><strong>Buffers de Vèrtexs i Índexs</strong>: Estructures utilitzades per emmagatzemar dades de vèrtexs i índexs per a una renderització eficient.</li>
+<li><strong>Shaders</strong>: Programes que s'executen a la GPU per controlar la pipeline de renderització.</li>
+<li><strong>Nivell de Detall (LOD)</strong>: Tècniques per gestionar la complexitat de la malla del terreny en funció de la distància de la càmera.</li>
+</ul>
+</div><h1>Configuració de l'Entorn</h1>
+<div class='content'><p>Abans d'endinsar-te en la renderització de terreny, assegura't de tenir una configuració de DirectX funcional. Això inclou:</p>
+<ul>
+<li>Instal·lar el SDK de DirectX.</li>
+<li>Configurar una aplicació bàsica de DirectX amb un bucle de renderització.</li>
+</ul>
+</div><h1>Creació d'un Heightmap</h1>
+<div class='content'><p>Un heightmap és una imatge en escala de grisos on la brillantor de cada píxel representa l'altura del terreny en aquell punt.</p>
+</div><h2>Carregant un Heightmap</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ym9vbCBMb2FkSGVpZ2h0bWFwKGNvbnN0IHN0ZDo6c3RyaW5nJiBmaWxlbmFtZSwgc3RkOjp2ZWN0b3I8ZmxvYXQ+JiBoZWlnaHREYXRhLCBpbnQmIHdpZHRoLCBpbnQmIGhlaWdodCkgewogICAgLy8gQ2FycmVnYXIgbGEgaW1hdGdlIHV0aWxpdHphbnQgdW5hIGJpYmxpb3RlY2EgY29tIHN0Yl9pbWFnZQogICAgaW50IGNoYW5uZWxzOwogICAgdW5zaWduZWQgY2hhciogZGF0YSA9IHN0YmlfbG9hZChmaWxlbmFtZS5jX3N0cigpLCAmd2lkdGgsICZoZWlnaHQsICZjaGFubmVscywgMSk7CiAgICBpZiAoIWRhdGEpIHJldHVybiBmYWxzZTsKCiAgICBoZWlnaHREYXRhLnJlc2l6ZSh3aWR0aCAqIGhlaWdodCk7CiAgICBmb3IgKGludCBpID0gMDsgaSA8IHdpZHRoICogaGVpZ2h0OyArK2kpIHsKICAgICAgICBoZWlnaHREYXRhW2ldID0gc3RhdGljX2Nhc3Q8ZmxvYXQ+KGRhdGFbaV0pIC8gMjU1LjBmOwogICAgfQoKICAgIHN0YmlfaW1hZ2VfZnJlZShkYXRhKTsKICAgIHJldHVybiB0cnVlOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>bool LoadHeightmap(const std::string&amp; filename, std::vector&lt;float&gt;&amp; heightData, int&amp; width, int&amp; height) {
+    // Carregar la imatge utilitzant una biblioteca com stb_image
+    int channels;
+    unsigned char* data = stbi_load(filename.c_str(), &amp;width, &amp;height, &amp;channels, 1);
+    if (!data) return false;
+
+    heightData.resize(width * height);
+    for (int i = 0; i &lt; width * height; ++i) {
+        heightData[i] = static_cast&lt;float&gt;(data[i]) / 255.0f;
+    }
+
+    stbi_image_free(data);
+    return true;
+}</pre></div><div class='content'><p>Aquest fragment de codi demostra com carregar un heightmap utilitzant la biblioteca stb_image. Les dades d'altura es normalitzen a un rang de 0.0 a 1.0.</p>
+</div><h1>Generació de la Malla del Terreny</h1>
+<div class='content'><p>Un cop carregat el heightmap, el següent pas és generar la malla del terreny.</p>
+</div><h2>Creació de Buffers de Vèrtexs i Índexs</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dm9pZCBDcmVhdGVUZXJyYWluTWVzaChjb25zdCBzdGQ6OnZlY3RvcjxmbG9hdD4mIGhlaWdodERhdGEsIGludCB3aWR0aCwgaW50IGhlaWdodCwgc3RkOjp2ZWN0b3I8VmVydGV4PiYgdmVydGljZXMsIHN0ZDo6dmVjdG9yPHVpbnQzMl90PiYgaW5kaWNlcykgewogICAgLy8gR2VuZXJhciB2w6hydGV4cwogICAgZm9yIChpbnQgeiA9IDA7IHogPCBoZWlnaHQ7ICsreikgewogICAgICAgIGZvciAoaW50IHggPSAwOyB4IDwgd2lkdGg7ICsreCkgewogICAgICAgICAgICBmbG9hdCB5ID0gaGVpZ2h0RGF0YVt6ICogd2lkdGggKyB4XTsKICAgICAgICAgICAgdmVydGljZXMucHVzaF9iYWNrKFZlcnRleHsgWE1GTE9BVDMoeCwgeSwgeiksIFhNRkxPQVQzKDAuMGYsIDEuMGYsIDAuMGYpLCBYTUZMT0FUMih4IC8gKGZsb2F0KXdpZHRoLCB6IC8gKGZsb2F0KWhlaWdodCkgfSk7CiAgICAgICAgfQogICAgfQoKICAgIC8vIEdlbmVyYXIgw61uZGV4cwogICAgZm9yIChpbnQgeiA9IDA7IHogPCBoZWlnaHQgLSAxOyArK3opIHsKICAgICAgICBmb3IgKGludCB4ID0gMDsgeCA8IHdpZHRoIC0gMTsgKyt4KSB7CiAgICAgICAgICAgIGludCB0b3BMZWZ0ID0geiAqIHdpZHRoICsgeDsKICAgICAgICAgICAgaW50IHRvcFJpZ2h0ID0gdG9wTGVmdCArIDE7CiAgICAgICAgICAgIGludCBib3R0b21MZWZ0ID0gKHogKyAxKSAqIHdpZHRoICsgeDsKICAgICAgICAgICAgaW50IGJvdHRvbVJpZ2h0ID0gYm90dG9tTGVmdCArIDE7CgogICAgICAgICAgICBpbmRpY2VzLnB1c2hfYmFjayh0b3BMZWZ0KTsKICAgICAgICAgICAgaW5kaWNlcy5wdXNoX2JhY2soYm90dG9tTGVmdCk7CiAgICAgICAgICAgIGluZGljZXMucHVzaF9iYWNrKHRvcFJpZ2h0KTsKCiAgICAgICAgICAgIGluZGljZXMucHVzaF9iYWNrKHRvcFJpZ2h0KTsKICAgICAgICAgICAgaW5kaWNlcy5wdXNoX2JhY2soYm90dG9tTGVmdCk7CiAgICAgICAgICAgIGluZGljZXMucHVzaF9iYWNrKGJvdHRvbVJpZ2h0KTsKICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>void CreateTerrainMesh(const std::vector&lt;float&gt;&amp; heightData, int width, int height, std::vector&lt;Vertex&gt;&amp; vertices, std::vector&lt;uint32_t&gt;&amp; indices) {
+    // Generar v&egrave;rtexs
+    for (int z = 0; z &lt; height; ++z) {
+        for (int x = 0; x &lt; width; ++x) {
+            float y = heightData[z * width + x];
+            vertices.push_back(Vertex{ XMFLOAT3(x, y, z), XMFLOAT3(0.0f, 1.0f, 0.0f), XMFLOAT2(x / (float)width, z / (float)height) });
+        }
+    }
+
+    // Generar &iacute;ndexs
+    for (int z = 0; z &lt; height - 1; ++z) {
+        for (int x = 0; x &lt; width - 1; ++x) {
+            int topLeft = z * width + x;
+            int topRight = topLeft + 1;
+            int bottomLeft = (z + 1) * width + x;
+            int bottomRight = bottomLeft + 1;
+
+            indices.push_back(topLeft);
+            indices.push_back(bottomLeft);
+            indices.push_back(topRight);
+
+            indices.push_back(topRight);
+            indices.push_back(bottomLeft);
+            indices.push_back(bottomRight);
+        }
+    }
+}</pre></div><div class='content'><p>Aquesta funció genera vèrtexs i índexs per a la malla del terreny basant-se en les dades del heightmap.</p>
+</div><h1>Aplicació de Shaders</h1>
+<div class='content'><p>Els shaders són essencials per renderitzar el terreny amb il·luminació i textures.</p>
+</div><h2>Vertex Shader</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2J1ZmZlciBDb25zdGFudEJ1ZmZlciA6IHJlZ2lzdGVyKGIwKSB7CiAgICBtYXRyaXggd29ybGRNYXRyaXg7CiAgICBtYXRyaXggdmlld01hdHJpeDsKICAgIG1hdHJpeCBwcm9qZWN0aW9uTWF0cml4Owp9CgpzdHJ1Y3QgVlNfSU5QVVQgewogICAgZmxvYXQzIHBvcyA6IFBPU0lUSU9OOwogICAgZmxvYXQzIG5vcm1hbCA6IE5PUk1BTDsKICAgIGZsb2F0MiB0ZXggOiBURVhDT09SRDA7Cn07CgpzdHJ1Y3QgUFNfSU5QVVQgewogICAgZmxvYXQ0IHBvcyA6IFNWX1BPU0lUSU9OOwogICAgZmxvYXQzIG5vcm1hbCA6IE5PUk1BTDsKICAgIGZsb2F0MiB0ZXggOiBURVhDT09SRDA7Cn07CgpQU19JTlBVVCBWUyhWU19JTlBVVCBpbnB1dCkgewogICAgUFNfSU5QVVQgb3V0cHV0OwogICAgZmxvYXQ0IHdvcmxkUG9zID0gbXVsKGZsb2F0NChpbnB1dC5wb3MsIDEuMGYpLCB3b3JsZE1hdHJpeCk7CiAgICBvdXRwdXQucG9zID0gbXVsKHdvcmxkUG9zLCB2aWV3TWF0cml4KTsKICAgIG91dHB1dC5wb3MgPSBtdWwob3V0cHV0LnBvcywgcHJvamVjdGlvbk1hdHJpeCk7CiAgICBvdXRwdXQubm9ybWFsID0gbXVsKGlucHV0Lm5vcm1hbCwgKGZsb2F0M3gzKXdvcmxkTWF0cml4KTsKICAgIG91dHB1dC50ZXggPSBpbnB1dC50ZXg7CiAgICByZXR1cm4gb3V0cHV0Owp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>cbuffer ConstantBuffer : register(b0) {
+    matrix worldMatrix;
+    matrix viewMatrix;
+    matrix projectionMatrix;
+}
+
+struct VS_INPUT {
+    float3 pos : POSITION;
+    float3 normal : NORMAL;
+    float2 tex : TEXCOORD0;
+};
+
+struct PS_INPUT {
+    float4 pos : SV_POSITION;
+    float3 normal : NORMAL;
+    float2 tex : TEXCOORD0;
+};
+
+PS_INPUT VS(VS_INPUT input) {
+    PS_INPUT output;
+    float4 worldPos = mul(float4(input.pos, 1.0f), worldMatrix);
+    output.pos = mul(worldPos, viewMatrix);
+    output.pos = mul(output.pos, projectionMatrix);
+    output.normal = mul(input.normal, (float3x3)worldMatrix);
+    output.tex = input.tex;
+    return output;
+}</pre></div><div class='content'></div><h2>Pixel Shader</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("VGV4dHVyZTJEIHRlcnJhaW5UZXh0dXJlIDogcmVnaXN0ZXIodDApOwpTYW1wbGVyU3RhdGUgc2FtcGxlclN0YXRlIDogcmVnaXN0ZXIoczApOwoKc3RydWN0IFBTX0lOUFVUIHsKICAgIGZsb2F0NCBwb3MgOiBTVl9QT1NJVElPTjsKICAgIGZsb2F0MyBub3JtYWwgOiBOT1JNQUw7CiAgICBmbG9hdDIgdGV4IDogVEVYQ09PUkQwOwp9OwoKZmxvYXQ0IFBTKFBTX0lOUFVUIGlucHV0KSA6IFNWX1RBUkdFVCB7CiAgICBmbG9hdDQgY29sb3IgPSB0ZXJyYWluVGV4dHVyZS5TYW1wbGUoc2FtcGxlclN0YXRlLCBpbnB1dC50ZXgpOwogICAgcmV0dXJuIGNvbG9yOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Texture2D terrainTexture : register(t0);
+SamplerState samplerState : register(s0);
+
+struct PS_INPUT {
+    float4 pos : SV_POSITION;
+    float3 normal : NORMAL;
+    float2 tex : TEXCOORD0;
+};
+
+float4 PS(PS_INPUT input) : SV_TARGET {
+    float4 color = terrainTexture.Sample(samplerState, input.tex);
+    return color;
+}</pre></div><div class='content'><p>Aquests shaders gestionen la transformació dels vèrtexs i apliquen una textura al terreny.</p>
+</div><h1>Nivell de Detall (LOD)</h1>
+<div class='content'><p>Per optimitzar el rendiment, utilitza tècniques de LOD per reduir la complexitat de la malla del terreny en funció de la distància de la càmera.</p>
+</div><h2>Implementació de LOD</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dm9pZCBVcGRhdGVMT0QoY29uc3QgQ2FtZXJhJiBjYW1lcmEsIHN0ZDo6dmVjdG9yPFZlcnRleD4mIHZlcnRpY2VzLCBzdGQ6OnZlY3Rvcjx1aW50MzJfdD4mIGluZGljZXMpIHsKICAgIC8vIFNpbXBsaWZpY2FyIGxhIG1hbGxhIGRlbCB0ZXJyZW55IGVuIGZ1bmNpw7MgZGUgbGEgZGlzdMOgbmNpYSBkZSBsYSBjw6BtZXJhCiAgICAvLyBBaXjDsiDDqXMgdW4gbWFyY2Fkb3IgZGUgcG9zaWNpw7MgcGVyIGEgbGEgaW1wbGVtZW50YWNpw7MgZGUgTE9ECn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>void UpdateLOD(const Camera&amp; camera, std::vector&lt;Vertex&gt;&amp; vertices, std::vector&lt;uint32_t&gt;&amp; indices) {
+    // Simplificar la malla del terreny en funci&oacute; de la dist&agrave;ncia de la c&agrave;mera
+    // Aix&ograve; &eacute;s un marcador de posici&oacute; per a la implementaci&oacute; de LOD
+}</pre></div><div class='content'><p>Aquesta funció hauria d'ajustar la complexitat de la malla del terreny en funció de la distància de la càmera.</p>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La renderització de terreny en DirectX implica diversos passos, incloent la càrrega de heightmaps, la generació de malles, l'aplicació de shaders i l'optimització amb tècniques de LOD. Seguint aquests passos, pots crear terrenys detallats i eficients per a les teves aplicacions 3D. Practica amb diferents heightmaps i shaders per millorar la teva comprensió i habilitats en la renderització de terreny.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='particle-systems'>&#x25C4;Sistemes de Partícules</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Renderització de Terreny en DirectX</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-game-development-with-directx'>Introducció al Desenvolupament de Jocs amb DirectX &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Implementant el Frontend</title>
+
+    <link rel="alternate" href="https://campusempresa.com/graphql/implementing-frontend" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/graphql/implementing-frontend" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/graphql/implementing-frontend" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/graphql/implementing-frontend" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/graphql/implementing-frontend" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='implementing-backend'>&#x25C4;Implementació del Backend</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Implementant el Frontend</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='deploying-application'>Desplegament de l'aplicació &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquesta secció, explorarem com implementar un frontend que interactua amb una API GraphQL. Cobrirem els conceptes bàsics de la configuració d'un projecte frontend, la realització de consultes i mutacions GraphQL, i la gestió de respostes. Al final d'aquesta secció, seràs capaç de crear una aplicació frontend senzilla que es comuniqui amb un servidor GraphQL.</p>
+</div><h1>Configurant el Projecte Frontend</h1>
+<div class='content'><p>Per començar, necessitem configurar un projecte frontend. Utilitzarem React per a aquest exemple, però els conceptes es poden aplicar a altres frameworks frontend també.</p>
+</div><h2>Prerequisits</h2>
+<div class='content'><ul>
+<li>Node.js i npm instal·lats</li>
+<li>Coneixements bàsics de React</li>
+</ul>
+</div><h2>Passos per Configurar</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crea un nou projecte React:</strong></p>
+<pre><code class="language-bash">npx create-react-app graphql-frontend
+cd graphql-frontend
+</code></pre>
+</li>
+<li>
+<p><strong>Instal·la Apollo Client:</strong></p>
+<p>Apollo Client és una biblioteca popular per interactuar amb APIs GraphQL en una aplicació React.</p>
+<pre><code class="language-bash">npm install @apollo/client graphql
+</code></pre>
+</li>
+<li>
+<p><strong>Configura Apollo Client:</strong></p>
+<p>Crea un nou fitxer <code>src/apolloClient.js</code> i configura Apollo Client.</p>
+<pre><code class="language-javascript">import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+
+const client = new ApolloClient({
+  uri: 'http://localhost:4000/graphql', // Reemplaça amb la URL del teu servidor GraphQL
+  cache: new InMemoryCache()
+});
+
+export default client;
+</code></pre>
+</li>
+<li>
+<p><strong>Embolcalla la teva aplicació amb ApolloProvider:</strong></p>
+<p>Modifica <code>src/index.js</code> per incloure ApolloProvider.</p>
+<pre><code class="language-javascript">import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+import client from './apolloClient';
+import { ApolloProvider } from '@apollo/client';
+
+ReactDOM.render(
+  &lt;ApolloProvider client={client}&gt;
+    &lt;App /&gt;
+  &lt;/ApolloProvider&gt;,
+  document.getElementById('root')
+);
+</code></pre>
+</li>
+</ol>
+</div><h1>Realitzant Consultes GraphQL</h1>
+<div class='content'><p>Ara que hem configurat el nostre projecte, fem una consulta GraphQL per obtenir dades del servidor.</p>
+</div><h2>Exemple de Consulta</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Defineix la consulta:</strong></p>
+<p>Crea un nou fitxer <code>src/queries.js</code> i defineix la teva consulta GraphQL.</p>
+<pre><code class="language-javascript">import { gql } from '@apollo/client';
+
+export const GET_USERS = gql`
+  query GetUsers {
+    users {
+      id
+      name
+      email
+    }
+  }
+`;
+</code></pre>
+</li>
+<li>
+<p><strong>Utilitza la consulta en un component:</strong></p>
+<p>Modifica <code>src/App.js</code> per utilitzar la consulta.</p>
+<pre><code class="language-javascript">import React from 'react';
+import { useQuery } from '@apollo/client';
+import { GET_USERS } from './queries';
+
+function App() {
+  const { loading, error, data } = useQuery(GET_USERS);
+
+  if (loading) return &lt;p&gt;Loading...&lt;/p&gt;;
+  if (error) return &lt;p&gt;Error :(&lt;/p&gt;;
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Users&lt;/h1&gt;
+      &lt;ul&gt;
+        {data.users.map(user =&gt; (
+          &lt;li key={user.id}&gt;
+            {user.name} - {user.email}
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;
+</code></pre>
+</li>
+</ol>
+</div><h1>Realitzant Mutacions GraphQL</h1>
+<div class='content'><p>A més de les consultes, també podem realitzar mutacions per modificar dades en el servidor.</p>
+</div><h2>Exemple de Mutació</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Defineix la mutació:</strong></p>
+<p>Afegeix una mutació a <code>src/queries.js</code>.</p>
+<pre><code class="language-javascript">export const ADD_USER = gql`
+  mutation AddUser($name: String!, $email: String!) {
+    addUser(name: $name, email: $email) {
+      id
+      name
+      email
+    }
+  }
+`;
+</code></pre>
+</li>
+<li>
+<p><strong>Utilitza la mutació en un component:</strong></p>
+<p>Modifica <code>src/App.js</code> per incloure un formulari per afegir un nou usuari.</p>
+<pre><code class="language-javascript">import React, { useState } from 'react';
+import { useQuery, useMutation } from '@apollo/client';
+import { GET_USERS, ADD_USER } from './queries';
+
+function App() {
+  const { loading, error, data } = useQuery(GET_USERS);
+  const [addUser] = useMutation(ADD_USER);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+
+  const handleSubmit = async (e) =&gt; {
+    e.preventDefault();
+    await addUser({ variables: { name, email } });
+    setName('');
+    setEmail('');
+  };
+
+  if (loading) return &lt;p&gt;Loading...&lt;/p&gt;;
+  if (error) return &lt;p&gt;Error :(&lt;/p&gt;;
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Users&lt;/h1&gt;
+      &lt;ul&gt;
+        {data.users.map(user =&gt; (
+          &lt;li key={user.id}&gt;
+            {user.name} - {user.email}
+          &lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+      &lt;h2&gt;Add User&lt;/h2&gt;
+      &lt;form onSubmit={handleSubmit}&gt;
+        &lt;input
+          type=&quot;text&quot;
+          placeholder=&quot;Name&quot;
+          value={name}
+          onChange={(e) =&gt; setName(e.target.value)}
+        /&gt;
+        &lt;input
+          type=&quot;email&quot;
+          placeholder=&quot;Email&quot;
+          value={email}
+          onChange={(e) =&gt; setEmail(e.target.value)}
+        /&gt;
+        &lt;button type=&quot;submit&quot;&gt;Add User&lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;
+</code></pre>
+</li>
+</ol>
+</div><h1>Gestionant Respostes i Errors</h1>
+<div class='content'><p>Gestionar respostes i errors és crucial per a una aplicació robusta.</p>
+</div><h2>Exemple</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Estats de Càrrega i Error:</strong></p>
+<p>Assegura't de gestionar els estats de càrrega i error en els teus components.</p>
+<pre><code class="language-javascript">if (loading) return &lt;p&gt;Loading...&lt;/p&gt;;
+if (error) return &lt;p&gt;Error :(&lt;/p&gt;;
+</code></pre>
+</li>
+<li>
+<p><strong>Actualitzacions Optimistes de la UI:</strong></p>
+<p>Per a una millor experiència d'usuari, pots utilitzar actualitzacions optimistes de la UI quan realitzis mutacions.</p>
+<pre><code class="language-javascript">const [addUser] = useMutation(ADD_USER, {
+  optimisticResponse: {
+    addUser: {
+      id: -1, // ID temporal
+      name,
+      email,
+      __typename: 'User'
+    }
+  },
+  update: (cache, { data: { addUser } }) =&gt; {
+    const { users } = cache.readQuery({ query: GET_USERS });
+    cache.writeQuery({
+      query: GET_USERS,
+      data: { users: users.concat([addUser]) }
+    });
+  }
+});
+</code></pre>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem cobert els conceptes bàsics d'implementar un frontend que interactua amb una API GraphQL. Hem configurat un projecte React amb Apollo Client, hem realitzat consultes i mutacions GraphQL, i hem gestionat respostes i errors. Amb aquestes habilitats, pots construir aplicacions més complexes que aprofitin el poder de GraphQL per a una obtenció i manipulació de dades eficient.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='implementing-backend'>&#x25C4;Implementació del Backend</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Implementant el Frontend</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='deploying-application'>Desplegament de l'aplicació &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

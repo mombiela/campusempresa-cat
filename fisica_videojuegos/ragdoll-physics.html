@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ragdoll Physics</title>
+
+    <link rel="alternate" href="https://campusempresa.com/fisica_videojuegos/ragdoll-physics" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/fisica_videojuegos/ragdoll-physics" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/fisica_videojuegos/ragdoll-physics" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/fisica_videojuegos/ragdoll-physics" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/fisica_videojuegos/ragdoll-physics" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='interaccion-entre-fluidos-y-solidos'>&#x25C4;Interacció entre Fluids i Sòlids</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Ragdoll Physics</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='soft-body-dynamics'>Soft Body Dynamics &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a Ragdoll Physics</h1>
+<div class='content'><p>Ragdoll Physics és una tècnica utilitzada en videojocs per simular el moviment realista de cossos humans o animals quan estan en estat d'inèrcia, és a dir, quan no estan controlats activament pel jugador o la IA. Aquesta tècnica s'utilitza principalment per millorar la immersió i el realisme en els jocs, especialment en situacions on els personatges són derribats o eliminats.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Cossos Rígids</strong>: Els personatges es descomponen en múltiples cossos rígids connectats per articulacions.</li>
+<li><strong>Articulacions</strong>: Connexions entre els cossos rígids que permeten moviments limitats, simulant les articulacions humanes.</li>
+<li><strong>Forces i Torque</strong>: Aplicació de forces i torque per simular la gravetat i altres interaccions físiques.</li>
+<li><strong>Col·lisions</strong>: Detecció i resposta a col·lisions per evitar que els cossos travessin l'entorn del joc.</li>
+</ul>
+</div><h1>Implementació de Ragdoll Physics</h1>
+<div class='content'></div><h2>Descomposició del Personatge</h2>
+<div class='content'><p>El primer pas per implementar Ragdoll Physics és descompondre el personatge en múltiples cossos rígids. Cada cos rígid representa una part del cos, com el tors, les extremitats i el cap.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBFeGVtcGxlIGVuIHBzZXVkb2NvZGkgcGVyIGRlc2NvbXBvbmRyZSB1biBwZXJzb25hdGdlIGVuIGNvc3NvcyByw61naWRzCmNsYXNzIFJhZ2RvbGw6CiAgICBkZWYgX19pbml0X18oc2VsZik6CiAgICAgICAgc2VsZi50b3JzbyA9IFJpZ2lkQm9keSgidG9yc28iKQogICAgICAgIHNlbGYuaGVhZCA9IFJpZ2lkQm9keSgiaGVhZCIpCiAgICAgICAgc2VsZi5sZWZ0X2FybSA9IFJpZ2lkQm9keSgibGVmdF9hcm0iKQogICAgICAgIHNlbGYucmlnaHRfYXJtID0gUmlnaWRCb2R5KCJyaWdodF9hcm0iKQogICAgICAgIHNlbGYubGVmdF9sZWcgPSBSaWdpZEJvZHkoImxlZnRfbGVnIikKICAgICAgICBzZWxmLnJpZ2h0X2xlZyA9IFJpZ2lkQm9keSgicmlnaHRfbGVnIik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Exemple en pseudocodi per descompondre un personatge en cossos r&iacute;gids
+class Ragdoll:
+    def __init__(self):
+        self.torso = RigidBody(&quot;torso&quot;)
+        self.head = RigidBody(&quot;head&quot;)
+        self.left_arm = RigidBody(&quot;left_arm&quot;)
+        self.right_arm = RigidBody(&quot;right_arm&quot;)
+        self.left_leg = RigidBody(&quot;left_leg&quot;)
+        self.right_leg = RigidBody(&quot;right_leg&quot;)</pre></div><div class='content'></div><h2>Connexió de Cossos Rígids amb Articulacions</h2>
+<div class='content'><p>Les articulacions connecten els cossos rígids i permeten moviments limitats, simulant les articulacions humanes.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBFeGVtcGxlIGVuIHBzZXVkb2NvZGkgcGVyIGNvbm5lY3RhciBjb3Nzb3MgcsOtZ2lkcyBhbWIgYXJ0aWN1bGFjaW9ucwpjbGFzcyBSYWdkb2xsOgogICAgZGVmIF9faW5pdF9fKHNlbGYpOgogICAgICAgICMgSW5pY2lhbGl0emFjacOzIGRlIGNvc3NvcyByw61naWRzCiAgICAgICAgc2VsZi50b3JzbyA9IFJpZ2lkQm9keSgidG9yc28iKQogICAgICAgIHNlbGYuaGVhZCA9IFJpZ2lkQm9keSgiaGVhZCIpCiAgICAgICAgc2VsZi5sZWZ0X2FybSA9IFJpZ2lkQm9keSgibGVmdF9hcm0iKQogICAgICAgIHNlbGYucmlnaHRfYXJtID0gUmlnaWRCb2R5KCJyaWdodF9hcm0iKQogICAgICAgIHNlbGYubGVmdF9sZWcgPSBSaWdpZEJvZHkoImxlZnRfbGVnIikKICAgICAgICBzZWxmLnJpZ2h0X2xlZyA9IFJpZ2lkQm9keSgicmlnaHRfbGVnIikKICAgICAgICAKICAgICAgICAjIENvbm5leGnDsyBkZSBjb3Nzb3MgcsOtZ2lkcyBhbWIgYXJ0aWN1bGFjaW9ucwogICAgICAgIHNlbGYubmVja19qb2ludCA9IEpvaW50KHNlbGYudG9yc28sIHNlbGYuaGVhZCwgIm5lY2siKQogICAgICAgIHNlbGYubGVmdF9zaG91bGRlcl9qb2ludCA9IEpvaW50KHNlbGYudG9yc28sIHNlbGYubGVmdF9hcm0sICJsZWZ0X3Nob3VsZGVyIikKICAgICAgICBzZWxmLnJpZ2h0X3Nob3VsZGVyX2pvaW50ID0gSm9pbnQoc2VsZi50b3Jzbywgc2VsZi5yaWdodF9hcm0sICJyaWdodF9zaG91bGRlciIpCiAgICAgICAgc2VsZi5sZWZ0X2hpcF9qb2ludCA9IEpvaW50KHNlbGYudG9yc28sIHNlbGYubGVmdF9sZWcsICJsZWZ0X2hpcCIpCiAgICAgICAgc2VsZi5yaWdodF9oaXBfam9pbnQgPSBKb2ludChzZWxmLnRvcnNvLCBzZWxmLnJpZ2h0X2xlZywgInJpZ2h0X2hpcCIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Exemple en pseudocodi per connectar cossos r&iacute;gids amb articulacions
+class Ragdoll:
+    def __init__(self):
+        # Inicialitzaci&oacute; de cossos r&iacute;gids
+        self.torso = RigidBody(&quot;torso&quot;)
+        self.head = RigidBody(&quot;head&quot;)
+        self.left_arm = RigidBody(&quot;left_arm&quot;)
+        self.right_arm = RigidBody(&quot;right_arm&quot;)
+        self.left_leg = RigidBody(&quot;left_leg&quot;)
+        self.right_leg = RigidBody(&quot;right_leg&quot;)
+        
+        # Connexi&oacute; de cossos r&iacute;gids amb articulacions
+        self.neck_joint = Joint(self.torso, self.head, &quot;neck&quot;)
+        self.left_shoulder_joint = Joint(self.torso, self.left_arm, &quot;left_shoulder&quot;)
+        self.right_shoulder_joint = Joint(self.torso, self.right_arm, &quot;right_shoulder&quot;)
+        self.left_hip_joint = Joint(self.torso, self.left_leg, &quot;left_hip&quot;)
+        self.right_hip_joint = Joint(self.torso, self.right_leg, &quot;right_hip&quot;)</pre></div><div class='content'></div><h2>Aplicació de Forces i Torque</h2>
+<div class='content'><p>Per simular la gravetat i altres interaccions físiques, s'apliquen forces i torque als cossos rígids.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBFeGVtcGxlIGVuIHBzZXVkb2NvZGkgcGVyIGFwbGljYXIgZm9yY2VzIGkgdG9ycXVlCmNsYXNzIFJhZ2RvbGw6CiAgICBkZWYgYXBwbHlfZm9yY2VzKHNlbGYpOgogICAgICAgIGZvciBib2R5IGluIHNlbGYuYm9kaWVzOgogICAgICAgICAgICBib2R5LmFwcGx5X2ZvcmNlKGdyYXZpdHkpCiAgICAgICAgICAgIGJvZHkuYXBwbHlfdG9ycXVlKGV4dGVybmFsX2ZvcmNlcyk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Exemple en pseudocodi per aplicar forces i torque
+class Ragdoll:
+    def apply_forces(self):
+        for body in self.bodies:
+            body.apply_force(gravity)
+            body.apply_torque(external_forces)</pre></div><div class='content'></div><h2>Detecció i Resposta a Col·lisions</h2>
+<div class='content'><p>La detecció i resposta a col·lisions és crucial per evitar que els cossos travessin l'entorn del joc.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBFeGVtcGxlIGVuIHBzZXVkb2NvZGkgcGVyIGRldGVjY2nDsyBpIHJlc3Bvc3RhIGEgY29swrdsaXNpb25zCmNsYXNzIFJhZ2RvbGw6CiAgICBkZWYgZGV0ZWN0X2NvbGxpc2lvbnMoc2VsZik6CiAgICAgICAgZm9yIGJvZHkgaW4gc2VsZi5ib2RpZXM6CiAgICAgICAgICAgIGlmIGJvZHkuY29sbGlkZXNfd2l0aChlbnZpcm9ubWVudCk6CiAgICAgICAgICAgICAgICBib2R5LnJlc29sdmVfY29sbGlzaW9uKGVudmlyb25tZW50KQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Exemple en pseudocodi per detecci&oacute; i resposta a col&middot;lisions
+class Ragdoll:
+    def detect_collisions(self):
+        for body in self.bodies:
+            if body.collides_with(environment):
+                body.resolve_collision(environment)</pre></div><div class='content'></div><h1>Exemple Complet</h1>
+<div class='content'><p>A continuació, es mostra un exemple complet de com es pot implementar Ragdoll Physics en un personatge.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgUmFnZG9sbDoKICAgIGRlZiBfX2luaXRfXyhzZWxmKToKICAgICAgICBzZWxmLnRvcnNvID0gUmlnaWRCb2R5KCJ0b3JzbyIpCiAgICAgICAgc2VsZi5oZWFkID0gUmlnaWRCb2R5KCJoZWFkIikKICAgICAgICBzZWxmLmxlZnRfYXJtID0gUmlnaWRCb2R5KCJsZWZ0X2FybSIpCiAgICAgICAgc2VsZi5yaWdodF9hcm0gPSBSaWdpZEJvZHkoInJpZ2h0X2FybSIpCiAgICAgICAgc2VsZi5sZWZ0X2xlZyA9IFJpZ2lkQm9keSgibGVmdF9sZWciKQogICAgICAgIHNlbGYucmlnaHRfbGVnID0gUmlnaWRCb2R5KCJyaWdodF9sZWciKQogICAgICAgIAogICAgICAgIHNlbGYubmVja19qb2ludCA9IEpvaW50KHNlbGYudG9yc28sIHNlbGYuaGVhZCwgIm5lY2siKQogICAgICAgIHNlbGYubGVmdF9zaG91bGRlcl9qb2ludCA9IEpvaW50KHNlbGYudG9yc28sIHNlbGYubGVmdF9hcm0sICJsZWZ0X3Nob3VsZGVyIikKICAgICAgICBzZWxmLnJpZ2h0X3Nob3VsZGVyX2pvaW50ID0gSm9pbnQoc2VsZi50b3Jzbywgc2VsZi5yaWdodF9hcm0sICJyaWdodF9zaG91bGRlciIpCiAgICAgICAgc2VsZi5sZWZ0X2hpcF9qb2ludCA9IEpvaW50KHNlbGYudG9yc28sIHNlbGYubGVmdF9sZWcsICJsZWZ0X2hpcCIpCiAgICAgICAgc2VsZi5yaWdodF9oaXBfam9pbnQgPSBKb2ludChzZWxmLnRvcnNvLCBzZWxmLnJpZ2h0X2xlZywgInJpZ2h0X2hpcCIpCiAgICAgICAgCiAgICAgICAgc2VsZi5ib2RpZXMgPSBbc2VsZi50b3Jzbywgc2VsZi5oZWFkLCBzZWxmLmxlZnRfYXJtLCBzZWxmLnJpZ2h0X2FybSwgc2VsZi5sZWZ0X2xlZywgc2VsZi5yaWdodF9sZWddCiAgICAKICAgIGRlZiBhcHBseV9mb3JjZXMoc2VsZik6CiAgICAgICAgZ3Jhdml0eSA9IFZlY3RvcigwLCAtOS44MSwgMCkKICAgICAgICBmb3IgYm9keSBpbiBzZWxmLmJvZGllczoKICAgICAgICAgICAgYm9keS5hcHBseV9mb3JjZShncmF2aXR5KQogICAgICAgICAgICBib2R5LmFwcGx5X3RvcnF1ZShWZWN0b3IoMCwgMCwgMCkpICAjIEV4ZW1wbGUgZGUgdG9ycXVlIG51bAogICAgCiAgICBkZWYgZGV0ZWN0X2NvbGxpc2lvbnMoc2VsZiwgZW52aXJvbm1lbnQpOgogICAgICAgIGZvciBib2R5IGluIHNlbGYuYm9kaWVzOgogICAgICAgICAgICBpZiBib2R5LmNvbGxpZGVzX3dpdGgoZW52aXJvbm1lbnQpOgogICAgICAgICAgICAgICAgYm9keS5yZXNvbHZlX2NvbGxpc2lvbihlbnZpcm9ubWVudCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class Ragdoll:
+    def __init__(self):
+        self.torso = RigidBody(&quot;torso&quot;)
+        self.head = RigidBody(&quot;head&quot;)
+        self.left_arm = RigidBody(&quot;left_arm&quot;)
+        self.right_arm = RigidBody(&quot;right_arm&quot;)
+        self.left_leg = RigidBody(&quot;left_leg&quot;)
+        self.right_leg = RigidBody(&quot;right_leg&quot;)
+        
+        self.neck_joint = Joint(self.torso, self.head, &quot;neck&quot;)
+        self.left_shoulder_joint = Joint(self.torso, self.left_arm, &quot;left_shoulder&quot;)
+        self.right_shoulder_joint = Joint(self.torso, self.right_arm, &quot;right_shoulder&quot;)
+        self.left_hip_joint = Joint(self.torso, self.left_leg, &quot;left_hip&quot;)
+        self.right_hip_joint = Joint(self.torso, self.right_leg, &quot;right_hip&quot;)
+        
+        self.bodies = [self.torso, self.head, self.left_arm, self.right_arm, self.left_leg, self.right_leg]
+    
+    def apply_forces(self):
+        gravity = Vector(0, -9.81, 0)
+        for body in self.bodies:
+            body.apply_force(gravity)
+            body.apply_torque(Vector(0, 0, 0))  # Exemple de torque nul
+    
+    def detect_collisions(self, environment):
+        for body in self.bodies:
+            if body.collides_with(environment):
+                body.resolve_collision(environment)</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Ragdoll Physics és una tècnica poderosa per simular el moviment realista de cossos en videojocs. En descompondre un personatge en cossos rígids, connectar-los amb articulacions i aplicar forces i torque, es pot aconseguir un comportament convincent i natural. La detecció i resposta a col·lisions asseguren que els cossos interactuïn correctament amb l'entorn del joc, millorant la immersió i el realisme.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='interaccion-entre-fluidos-y-solidos'>&#x25C4;Interacció entre Fluids i Sòlids</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Ragdoll Physics</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='soft-body-dynamics'>Soft Body Dynamics &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

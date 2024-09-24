@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utilitzant Passport.js</title>
+
+    <link rel="alternate" href="https://campusempresa.com/nodejs/passport-js" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/nodejs/passport-js" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/nodejs/passport-js" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/nodejs/passport-js" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/nodejs/passport-js" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='intro-to-authentication'>&#x25C4;Introducció a l'Autenticació</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Utilitzant Passport.js</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='jwt'>JWT (JSON Web Tokens) &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a Passport.js</h1>
+<div class='content'><p>Passport.js és un middleware d'autenticació popular per a Node.js. Està dissenyat per ser senzill i no intrusiu, fent que sigui fàcil d'integrar en qualsevol aplicació Node.js. Passport.js suporta diversos mecanismes d'autenticació, coneguts com a estratègies, incloent-hi l'autenticació local, OAuth i OpenID.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Middleware</strong>: Passport.js actua com a middleware en una aplicació Node.js, gestionant les sol·licituds d'autenticació.</li>
+<li><strong>Estratègies</strong>: Passport.js utilitza estratègies per autenticar les sol·licituds. Les estratègies poden ser locals (nom d'usuari i contrasenya) o externes (proveïdors OAuth com Google, Facebook).</li>
+<li><strong>Sessions</strong>: Passport.js pot gestionar sessions d'usuari, permetent als usuaris mantenir-se connectats a través de múltiples sol·licituds.</li>
+</ul>
+</div><h1>Configuració de Passport.js</h1>
+<div class='content'><p>Per començar amb Passport.js, necessites instal·lar-lo juntament amb les estratègies necessàries.</p>
+</div><h2>Instal·lació</h2>
+<div class='content'><p>Primer, instal·la Passport.js i l'estratègia local utilitzant npm:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnBtIGluc3RhbGwgcGFzc3BvcnQgcGFzc3BvcnQtbG9jYWw="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npm install passport passport-local</pre></div><div class='content'></div><h2>Configuració Bàsica</h2>
+<div class='content'><p>Crea una configuració bàsica per a Passport.js en la teva aplicació Node.js.</p>
+<ol>
+<li>
+<p><strong>Inicialitza Passport.js</strong>:</p>
+<pre><code class="language-javascript">const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+
+app.use(passport.initialize());
+app.use(passport.session());
+</code></pre>
+</li>
+<li>
+<p><strong>Defineix l'Estratègia Local</strong>:</p>
+<pre><code class="language-javascript">passport.use(new LocalStrategy(
+  function(username, password, done) {
+    // Substitueix això amb la teva lògica de cerca d'usuari
+    User.findOne({ username: username }, function (err, user) {
+      if (err) { return done(err); }
+      if (!user) { return done(null, false, { message: 'Nom d'usuari incorrecte.' }); }
+      if (!user.verifyPassword(password)) { return done(null, false, { message: 'Contrasenya incorrecta.' }); }
+      return done(null, user);
+    });
+  }
+));
+</code></pre>
+</li>
+<li>
+<p><strong>Serialitza i Deserialitza l'Usuari</strong>:</p>
+<pre><code class="language-javascript">passport.serializeUser(function(user, done) {
+  done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findById(id, function(err, user) {
+    done(err, user);
+  });
+});
+</code></pre>
+</li>
+</ol>
+</div><h1>Utilitzant Passport.js en Rutes</h1>
+<div class='content'><p>Per protegir rutes i gestionar l'autenticació, pots utilitzar Passport.js en les teves definicions de rutes.</p>
+</div><h2>Ruta de Connexió</h2>
+<div class='content'><p>Crea una ruta de connexió que utilitzi Passport.js per autenticar els usuaris:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBwLnBvc3QoJy9sb2dpbicsIHBhc3Nwb3J0LmF1dGhlbnRpY2F0ZSgnbG9jYWwnLCB7CiAgc3VjY2Vzc1JlZGlyZWN0OiAnL2Rhc2hib2FyZCcsCiAgZmFpbHVyZVJlZGlyZWN0OiAnL2xvZ2luJywKICBmYWlsdXJlRmxhc2g6IHRydWUKfSkpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>app.post('/login', passport.authenticate('local', {
+  successRedirect: '/dashboard',
+  failureRedirect: '/login',
+  failureFlash: true
+}));</pre></div><div class='content'></div><h2>Ruta Protegida</h2>
+<div class='content'><p>Protegeix rutes assegurant-te que l'usuari està autenticat:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gZW5zdXJlQXV0aGVudGljYXRlZChyZXEsIHJlcywgbmV4dCkgewogIGlmIChyZXEuaXNBdXRoZW50aWNhdGVkKCkpIHsKICAgIHJldHVybiBuZXh0KCk7CiAgfQogIHJlcy5yZWRpcmVjdCgnL2xvZ2luJyk7Cn0KCmFwcC5nZXQoJy9kYXNoYm9hcmQnLCBlbnN1cmVBdXRoZW50aWNhdGVkLCAocmVxLCByZXMpID0+IHsKICByZXMuc2VuZCgnQmVudmluZ3V0IGFsIHRldSB0YXVsZXIhJyk7Cn0pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/login');
+}
+
+app.get('/dashboard', ensureAuthenticated, (req, res) =&gt; {
+  res.send('Benvingut al teu tauler!');
+});</pre></div><div class='content'></div><h1>Utilitzant Estratègies OAuth</h1>
+<div class='content'><p>Passport.js suporta diverses estratègies OAuth, com Google, Facebook i GitHub. Aquí tens un exemple de configuració de Google OAuth.</p>
+</div><h2>Instal·lació</h2>
+<div class='content'><p>Instal·la l'estratègia Google OAuth:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnBtIGluc3RhbGwgcGFzc3BvcnQtZ29vZ2xlLW9hdXRoMjA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npm install passport-google-oauth20</pre></div><div class='content'></div><h2>Configuració</h2>
+<div class='content'><p>Configura l'estratègia Google OAuth:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgR29vZ2xlU3RyYXRlZ3kgPSByZXF1aXJlKCdwYXNzcG9ydC1nb29nbGUtb2F1dGgyMCcpLlN0cmF0ZWd5OwoKcGFzc3BvcnQudXNlKG5ldyBHb29nbGVTdHJhdGVneSh7CiAgICBjbGllbnRJRDogJ0VMX1RFVkFfQ0xJRU5UX0lEX0RFX0dPT0dMRScsCiAgICBjbGllbnRTZWNyZXQ6ICdFTF9URVVfQ0xJRU5UX1NFQ1JFVF9ERV9HT09HTEUnLAogICAgY2FsbGJhY2tVUkw6ICdodHRwOi8vd3d3LmV4YW1wbGUuY29tL2F1dGgvZ29vZ2xlL2NhbGxiYWNrJwogIH0sCiAgZnVuY3Rpb24odG9rZW4sIHRva2VuU2VjcmV0LCBwcm9maWxlLCBkb25lKSB7CiAgICBVc2VyLmZpbmRPckNyZWF0ZSh7IGdvb2dsZUlkOiBwcm9maWxlLmlkIH0sIGZ1bmN0aW9uIChlcnIsIHVzZXIpIHsKICAgICAgcmV0dXJuIGRvbmUoZXJyLCB1c2VyKTsKICAgIH0pOwogIH0KKSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+passport.use(new GoogleStrategy({
+    clientID: 'EL_TEVA_CLIENT_ID_DE_GOOGLE',
+    clientSecret: 'EL_TEU_CLIENT_SECRET_DE_GOOGLE',
+    callbackURL: 'http://www.example.com/auth/google/callback'
+  },
+  function(token, tokenSecret, profile, done) {
+    User.findOrCreate({ googleId: profile.id }, function (err, user) {
+      return done(err, user);
+    });
+  }
+));</pre></div><div class='content'></div><h2>Rutes per Google OAuth</h2>
+<div class='content'><p>Defineix rutes per gestionar l'autenticació Google OAuth:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBwLmdldCgnL2F1dGgvZ29vZ2xlJywKICBwYXNzcG9ydC5hdXRoZW50aWNhdGUoJ2dvb2dsZScsIHsgc2NvcGU6IFsnaHR0cHM6Ly93d3cuZ29vZ2xlYXBpcy5jb20vYXV0aC9wbHVzLmxvZ2luJ10gfSkpOwoKYXBwLmdldCgnL2F1dGgvZ29vZ2xlL2NhbGxiYWNrJywgCiAgcGFzc3BvcnQuYXV0aGVudGljYXRlKCdnb29nbGUnLCB7IGZhaWx1cmVSZWRpcmVjdDogJy9sb2dpbicgfSksCiAgZnVuY3Rpb24ocmVxLCByZXMpIHsKICAgIC8vIEF1dGVudGljYWNpw7MgZXhpdG9zYSwgcmVkaXJpZ2VpeCBhIGNhc2EuCiAgICByZXMucmVkaXJlY3QoJy8nKTsKICB9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>app.get('/auth/google',
+  passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }));
+
+app.get('/auth/google/callback', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Autenticaci&oacute; exitosa, redirigeix a casa.
+    res.redirect('/');
+  });</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Passport.js és un middleware d'autenticació potent i flexible per a Node.js. Entenent els seus conceptes bàsics i aprenent a configurar i utilitzar diverses estratègies, pots integrar fàcilment l'autenticació en les teves aplicacions Node.js. Tant si necessites una autenticació local senzilla com integracions OAuth complexes, Passport.js proporciona una solució robusta per satisfer les teves necessitats.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='intro-to-authentication'>&#x25C4;Introducció a l'Autenticació</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Utilitzant Passport.js</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='jwt'>JWT (JSON Web Tokens) &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

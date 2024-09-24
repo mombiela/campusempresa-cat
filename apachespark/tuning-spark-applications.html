@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajustar Aplicacions Spark</title>
+
+    <link rel="alternate" href="https://campusempresa.com/apachespark/tuning-spark-applications" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/apachespark/tuning-spark-applications" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/apachespark/tuning-spark-applications" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/apachespark/tuning-spark-applications" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/apachespark/tuning-spark-applications" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='caching-and-persistence'>&#x25C4;Caché i Persistència</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Ajustar Aplicacions Spark</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='advanced-rdd-operations'>Operacions Avançades de RDD &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Ajustar aplicacions Spark és crucial per optimitzar el rendiment i la utilització de recursos. Aquesta secció cobrirà els conceptes clau, configuracions i millors pràctiques per ajustar aplicacions Apache Spark des d'un nivell principiant fins a un nivell avançat.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Gestor de Clúster</strong>: El component responsable de gestionar els recursos a través del clúster.</li>
+<li><strong>Executor</strong>: Un agent distribuït responsable d'executar tasques.</li>
+<li><strong>Driver</strong>: El procés que executa la funció main() de l'aplicació i crea el SparkContext.</li>
+<li><strong>Tasca</strong>: La unitat de treball més petita a Spark.</li>
+<li><strong>Treball</strong>: Un conjunt de tasques paral·leles que realitzen un càlcul en un RDD de Spark.</li>
+<li><strong>Etapa</strong>: Un conjunt de tasques que es poden executar en paral·lel.</li>
+</ul>
+</div><h1>Paràmetres Bàsics d'Ajust</h1>
+<h2>Memòria de l'Executor</h2>
+<div class='content'><ul>
+<li><strong>spark.executor.memory</strong>: Quantitat de memòria a utilitzar per procés executor.
+<pre><code class="language-scala">spark.conf.set(&quot;spark.executor.memory&quot;, &quot;4g&quot;)
+</code></pre>
+</li>
+</ul>
+</div><h2>Nuclis de l'Executor</h2>
+<div class='content'><ul>
+<li><strong>spark.executor.cores</strong>: Nombre de nuclis a utilitzar en cada executor.
+<pre><code class="language-scala">spark.conf.set(&quot;spark.executor.cores&quot;, &quot;2&quot;)
+</code></pre>
+</li>
+</ul>
+</div><h2>Memòria del Driver</h2>
+<div class='content'><ul>
+<li><strong>spark.driver.memory</strong>: Quantitat de memòria a utilitzar per al procés driver.
+<pre><code class="language-scala">spark.conf.set(&quot;spark.driver.memory&quot;, &quot;2g&quot;)
+</code></pre>
+</li>
+</ul>
+</div><h1>Paràmetres Avançats d'Ajust</h1>
+<h2>Assignació Dinàmica</h2>
+<div class='content'><ul>
+<li><strong>spark.dynamicAllocation.enabled</strong>: Habilita o deshabilita l'assignació dinàmica d'executors.
+<pre><code class="language-scala">spark.conf.set(&quot;spark.dynamicAllocation.enabled&quot;, &quot;true&quot;)
+</code></pre>
+</li>
+</ul>
+</div><h2>Paral·lelisme</h2>
+<div class='content'><ul>
+<li><strong>spark.default.parallelism</strong>: Nombre predeterminat de particions en RDDs retornats per transformacions com <code>join</code>, <code>reduceByKey</code> i <code>parallelize</code>.
+<pre><code class="language-scala">spark.conf.set(&quot;spark.default.parallelism&quot;, &quot;100&quot;)
+</code></pre>
+</li>
+</ul>
+</div><h2>Particions de Shuffle</h2>
+<div class='content'><ul>
+<li><strong>spark.sql.shuffle.partitions</strong>: Configura el nombre de particions a utilitzar quan es fa shuffle de dades per a joins o agregacions.
+<pre><code class="language-scala">spark.conf.set(&quot;spark.sql.shuffle.partitions&quot;, &quot;200&quot;)
+</code></pre>
+</li>
+</ul>
+</div><h1>Millors Pràctiques</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Evitar Transformacions Amples</strong>: Minimitza l'ús de transformacions amples com <code>groupByKey</code> i <code>reduceByKey</code> que poden causar shuffle.</p>
+</li>
+<li>
+<p><strong>Variables de Difusió</strong>: Utilitza variables de difusió per distribuir eficientment dades grans de només lectura a tots els nodes.</p>
+<pre><code class="language-scala">val broadcastVar = sparkContext.broadcast(Array(1, 2, 3))
+</code></pre>
+</li>
+<li>
+<p><strong>Caché i Persistència</strong>: Fes caché de dades accedides freqüentment per reduir el temps de càlcul.</p>
+<pre><code class="language-scala">val cachedData = data.cache()
+</code></pre>
+</li>
+<li>
+<p><strong>Assignació de Recursos</strong>: Assigna correctament els recursos basant-te en la càrrega de treball i la capacitat del clúster.</p>
+</li>
+</ul>
+</div><h1>Exemple: Ajustar una Aplicació Spark</h1>
+<div class='content'><p>Aquí tens un exemple d'ajustar una aplicació Spark amb alguns dels paràmetres discutits:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5hcGFjaGUuc3Bhcmsuc3FsLlNwYXJrU2Vzc2lvbgoKdmFsIHNwYXJrID0gU3BhcmtTZXNzaW9uLmJ1aWxkZXIKICAuYXBwTmFtZSgiVHVuaW5nRXhhbXBsZSIpCiAgLmNvbmZpZygic3BhcmsuZXhlY3V0b3IubWVtb3J5IiwgIjRnIikKICAuY29uZmlnKCJzcGFyay5leGVjdXRvci5jb3JlcyIsICIyIikKICAuY29uZmlnKCJzcGFyay5kcml2ZXIubWVtb3J5IiwgIjJnIikKICAuY29uZmlnKCJzcGFyay5keW5hbWljQWxsb2NhdGlvbi5lbmFibGVkIiwgInRydWUiKQogIC5jb25maWcoInNwYXJrLmRlZmF1bHQucGFyYWxsZWxpc20iLCAiMTAwIikKICAuY29uZmlnKCJzcGFyay5zcWwuc2h1ZmZsZS5wYXJ0aXRpb25zIiwgIjIwMCIpCiAgLmdldE9yQ3JlYXRlKCkKCnZhbCBkYXRhID0gc3BhcmsucmVhZC50ZXh0RmlsZSgiaGRmczovL3BhdGgvdG8vZGF0YSIpCgovLyBFeGVtcGxlIGRlIHRyYW5zZm9ybWFjacOzCnZhbCB3b3JkQ291bnRzID0gZGF0YS5mbGF0TWFwKGxpbmUgPT4gbGluZS5zcGxpdCgiICIpKQogIC5tYXAod29yZCA9PiAod29yZCwgMSkpCiAgLnJlZHVjZUJ5S2V5KF8gKyBfKQoKLy8gRmVzIGNhY2jDqSBkZWwgcmVzdWx0YXQKdmFsIGNhY2hlZFdvcmRDb3VudHMgPSB3b3JkQ291bnRzLmNhY2hlKCkKCi8vIEFjY2nDsyBwZXIgZGVzZW5jYWRlbmFyIGVsIGPDoGxjdWwKY2FjaGVkV29yZENvdW50cy5jb2xsZWN0KCkuZm9yZWFjaChwcmludGxuKQoKc3Bhcmsuc3RvcCgp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.apache.spark.sql.SparkSession
+
+val spark = SparkSession.builder
+  .appName(&quot;TuningExample&quot;)
+  .config(&quot;spark.executor.memory&quot;, &quot;4g&quot;)
+  .config(&quot;spark.executor.cores&quot;, &quot;2&quot;)
+  .config(&quot;spark.driver.memory&quot;, &quot;2g&quot;)
+  .config(&quot;spark.dynamicAllocation.enabled&quot;, &quot;true&quot;)
+  .config(&quot;spark.default.parallelism&quot;, &quot;100&quot;)
+  .config(&quot;spark.sql.shuffle.partitions&quot;, &quot;200&quot;)
+  .getOrCreate()
+
+val data = spark.read.textFile(&quot;hdfs://path/to/data&quot;)
+
+// Exemple de transformaci&oacute;
+val wordCounts = data.flatMap(line =&gt; line.split(&quot; &quot;))
+  .map(word =&gt; (word, 1))
+  .reduceByKey(_ + _)
+
+// Fes cach&eacute; del resultat
+val cachedWordCounts = wordCounts.cache()
+
+// Acci&oacute; per desencadenar el c&agrave;lcul
+cachedWordCounts.collect().foreach(println)
+
+spark.stop()</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Ajustar aplicacions Spark implica entendre i configurar diversos paràmetres per optimitzar el rendiment i la utilització de recursos. Ajustant la memòria de l'executor, els nuclis, la memòria del driver i aprofitant funcions avançades com l'assignació dinàmica i el caché, pots millorar significativament l'eficiència de les teves aplicacions Spark. Sempre monitora i perfila les teves aplicacions per identificar colls d'ampolla i prendre decisions basades en dades per ajustar-les.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='caching-and-persistence'>&#x25C4;Caché i Persistència</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Ajustar Aplicacions Spark</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='advanced-rdd-operations'>Operacions Avançades de RDD &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

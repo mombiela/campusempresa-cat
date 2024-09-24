@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autograd: Diferenciació Automàtica</title>
+
+    <link rel="alternate" href="https://campusempresa.com/pytorch/autograd-automatic-differentiation" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/pytorch/autograd-automatic-differentiation" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/pytorch/autograd-automatic-differentiation" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/pytorch/autograd-automatic-differentiation" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/pytorch/autograd-automatic-differentiation" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='basic-tensor-operations'>&#x25C4;Operacions Bàsiques amb Tensor</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Autograd: Diferenciació Automàtica</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-neural-networks'>Introducció a les Xarxes Neuronals &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a Autograd</h1>
+<div class='content'><p>Autograd és el motor de diferenciació automàtica de PyTorch que impulsa l'entrenament de xarxes neuronals. Proporciona la capacitat de calcular automàticament gradients, que són essencials per optimitzar les xarxes neuronals.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Tensors</strong>: Els blocs fonamentals en PyTorch, similars als arrays en NumPy.</li>
+<li><strong>Gradients</strong>: Derivades de tensors que s'utilitzen per actualitzar els paràmetres del model durant l'entrenament.</li>
+<li><strong>Grau Computacional</strong>: Un gràfic dinàmic que registra les operacions realitzades sobre tensors per calcular gradients.</li>
+</ul>
+</div><h1>Configuració d'Autograd</h1>
+<div class='content'><p>Per utilitzar Autograd, cal entendre com crear tensors i habilitar el càlcul de gradients.</p>
+</div><h2>Creació de Tensors amb Gradients</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCgojIENyZWFyIHVuIHRlbnNvciBpIGhhYmlsaXRhciBlbCBjw6BsY3VsIGRlIGdyYWRpZW50cwp4ID0gdG9yY2gudGVuc29yKFsxLjAsIDIuMCwgMy4wXSwgcmVxdWlyZXNfZ3JhZD1UcnVlKQpwcmludCh4KQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+
+# Crear un tensor i habilitar el c&agrave;lcul de gradients
+x = torch.tensor([1.0, 2.0, 3.0], requires_grad=True)
+print(x)</pre></div><div class='content'><ul>
+<li><code>requires_grad=True</code>: Aquesta bandera indica a PyTorch que faci un seguiment de totes les operacions sobre aquest tensor.</li>
+</ul>
+</div><h2>Càlcul Bàsic de Gradients</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBEZWZpbmlyIHVuYSBmdW5jacOzIHNpbXBsZQp5ID0geCArIDIKeiA9IHkgKiB5ICogMgoKIyBDYWxjdWxhciBlbHMgZ3JhZGllbnRzCnouYmFja3dhcmQodG9yY2gudGVuc29yKFsxLjAsIDEuMCwgMS4wXSkpCnByaW50KHguZ3JhZCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Definir una funci&oacute; simple
+y = x + 2
+z = y * y * 2
+
+# Calcular els gradients
+z.backward(torch.tensor([1.0, 1.0, 1.0]))
+print(x.grad)</pre></div><div class='content'><ul>
+<li><code>backward()</code>: Aquesta funció calcula el gradient de <code>z</code> respecte a <code>x</code>.</li>
+<li><code>x.grad</code>: Aquest atribut conté els gradients calculats.</li>
+</ul>
+</div><h1>Comprensió del Grau Computacional</h1>
+<div class='content'><p>El grau computacional és un gràfic acíclic dirigit on els nodes representen operacions i les vores representen tensors.</p>
+</div><h2>Exemple d'un Grau Computacional</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YSA9IHRvcmNoLnRlbnNvcihbMi4wLCAzLjBdLCByZXF1aXJlc19ncmFkPVRydWUpCmIgPSBhICogMgpjID0gYiArIDMKZCA9IGMubWVhbigpCgpkLmJhY2t3YXJkKCkKcHJpbnQoYS5ncmFkKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>a = torch.tensor([2.0, 3.0], requires_grad=True)
+b = a * 2
+c = b + 3
+d = c.mean()
+
+d.backward()
+print(a.grad)</pre></div><div class='content'><ul>
+<li>Aquí, <code>a</code> és el tensor d'entrada, <code>b</code> i <code>c</code> són tensors intermedis, i <code>d</code> és el resultat final.</li>
+<li><code>d.backward()</code>: Calcula el gradient de <code>d</code> respecte a <code>a</code>.</li>
+</ul>
+</div><h1>Tècniques Avançades d'Autograd</h1>
+<h2>Acumulació de Gradients</h2>
+<div class='content'><p>Els gradients s'acumulen a l'atribut <code>.grad</code>. Això és útil per al descens de gradient en mini-lots.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBOZXRlamFyIGVscyBncmFkaWVudHMgYWJhbnMgZCdleGVjdXRhciBlbCBwYXMgYmFja3dhcmQKeC5ncmFkLnplcm9fKCkKCiMgUmVhbGl0emFyIHVuIGFsdHJlIHBhcyBiYWNrd2FyZAp6LmJhY2t3YXJkKHRvcmNoLnRlbnNvcihbMS4wLCAxLjAsIDEuMF0pKQpwcmludCh4LmdyYWQp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Netejar els gradients abans d'executar el pas backward
+x.grad.zero_()
+
+# Realitzar un altre pas backward
+z.backward(torch.tensor([1.0, 1.0, 1.0]))
+print(x.grad)</pre></div><div class='content'></div><h2>Aturar el Seguiment de Gradients</h2>
+<div class='content'><p>De vegades cal aturar el seguiment de gradients, per exemple, durant la inferència.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("d2l0aCB0b3JjaC5ub19ncmFkKCk6CiAgICB5ID0geCAqIDIKcHJpbnQoeS5yZXF1aXJlc19ncmFkKSAgIyBTb3J0aWRhOiBGYWxzZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>with torch.no_grad():
+    y = x * 2
+print(y.requires_grad)  # Sortida: False</pre></div><div class='content'></div><h2>Gradients Personalitzats</h2>
+<div class='content'><p>Es poden definir gradients personalitzats utilitzant la classe <code>torch.autograd.Function</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgTXlSZUxVKHRvcmNoLmF1dG9ncmFkLkZ1bmN0aW9uKToKICAgIEBzdGF0aWNtZXRob2QKICAgIGRlZiBmb3J3YXJkKGN0eCwgaW5wdXQpOgogICAgICAgIGN0eC5zYXZlX2Zvcl9iYWNrd2FyZChpbnB1dCkKICAgICAgICByZXR1cm4gaW5wdXQuY2xhbXAobWluPTApCgogICAgQHN0YXRpY21ldGhvZAogICAgZGVmIGJhY2t3YXJkKGN0eCwgZ3JhZF9vdXRwdXQpOgogICAgICAgIGlucHV0LCA9IGN0eC5zYXZlZF90ZW5zb3JzCiAgICAgICAgZ3JhZF9pbnB1dCA9IGdyYWRfb3V0cHV0LmNsb25lKCkKICAgICAgICBncmFkX2lucHV0W2lucHV0IDwgMF0gPSAwCiAgICAgICAgcmV0dXJuIGdyYWRfaW5wdXQKCiMgVXRpbGl0emFyIGVsIFJlTFUgcGVyc29uYWxpdHphdApyZWx1ID0gTXlSZUxVLmFwcGx5CnggPSB0b3JjaC50ZW5zb3IoWy0xLjAsIDIuMCwgMy4wXSwgcmVxdWlyZXNfZ3JhZD1UcnVlKQp5ID0gcmVsdSh4KQp5LmJhY2t3YXJkKHRvcmNoLnRlbnNvcihbMS4wLCAxLjAsIDEuMF0pKQpwcmludCh4LmdyYWQp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class MyReLU(torch.autograd.Function):
+    @staticmethod
+    def forward(ctx, input):
+        ctx.save_for_backward(input)
+        return input.clamp(min=0)
+
+    @staticmethod
+    def backward(ctx, grad_output):
+        input, = ctx.saved_tensors
+        grad_input = grad_output.clone()
+        grad_input[input &lt; 0] = 0
+        return grad_input
+
+# Utilitzar el ReLU personalitzat
+relu = MyReLU.apply
+x = torch.tensor([-1.0, 2.0, 3.0], requires_grad=True)
+y = relu(x)
+y.backward(torch.tensor([1.0, 1.0, 1.0]))
+print(x.grad)</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Autograd és una característica poderosa en PyTorch que simplifica el procés de càlcul de gradients, que són essencials per entrenar xarxes neuronals. Entenent com crear tensors amb gradients, manipular el grau computacional i utilitzar tècniques avançades com l'acumulació de gradients i gradients personalitzats, pots aprofitar efectivament Autograd en els teus projectes d'aprenentatge profund.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='basic-tensor-operations'>&#x25C4;Operacions Bàsiques amb Tensor</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Autograd: Diferenciació Automàtica</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-neural-networks'>Introducció a les Xarxes Neuronals &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

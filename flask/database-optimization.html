@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimització de Bases de Dades en Flask</title>
+
+    <link rel="alternate" href="https://campusempresa.com/flask/database-optimization" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/flask/database-optimization" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/flask/database-optimization" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/flask/database-optimization" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/flask/database-optimization" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='caching-strategies'>&#x25C4;Estratègies de Caché</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització de Bases de Dades en Flask</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='asynchronous-tasks-celery'>Tasques Asíncrones amb Celery &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a l'Optimització de Bases de Dades</h1>
+<div class='content'><p>L'optimització de bases de dades és crucial per assegurar que la teva aplicació Flask funcioni de manera eficient, especialment a mesura que augmenta la quantitat de dades i el nombre d'usuaris. Aquesta secció cobrirà els conceptes bàsics de l'optimització de bases de dades, incloent per què és important i els conceptes fonamentals que necessites entendre.</p>
+<ul>
+<li>
+<p><strong>Per què optimitzar?</strong></p>
+<ul>
+<li>Millorar el rendiment de l'aplicació.</li>
+<li>Reduir la càrrega del servidor i els costos.</li>
+<li>Millorar l'experiència de l'usuari amb temps de resposta més ràpids.</li>
+</ul>
+</li>
+<li>
+<p><strong>Conceptes clau</strong></p>
+<ul>
+<li>Indexació</li>
+<li>Optimització de consultes</li>
+<li>Emmagatzematge en memòria cau</li>
+<li>Normalització de bases de dades</li>
+<li>Pooling de connexions</li>
+</ul>
+</li>
+</ul>
+</div><h1>Indexació</h1>
+<div class='content'><p>Els índexs són estructures de dades especials que milloren la velocitat de les operacions de recuperació de dades en una taula de base de dades a costa d'espai d'emmagatzematge addicional i operacions d'escriptura més lentes.</p>
+<ul>
+<li>
+<p><strong>Creació d'índexs</strong></p>
+<pre><code class="language-python">from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), index=True)  # Índex en username
+    email = db.Column(db.String(120), unique=True, index=True)  # Índex únic en email
+</code></pre>
+</li>
+<li>
+<p><strong>Beneficis</strong></p>
+<ul>
+<li>Operacions de cerca més ràpides.</li>
+<li>Ordenació i filtratge eficients.</li>
+</ul>
+</li>
+<li>
+<p><strong>Desavantatges</strong></p>
+<ul>
+<li>Requisits d'emmagatzematge augmentats.</li>
+<li>Operacions d'inserció, actualització i eliminació més lentes.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Optimització de Consultes</h1>
+<div class='content'><p>Optimitzar les teves consultes SQL pot millorar significativament el rendiment de la teva aplicació Flask.</p>
+<ul>
+<li>
+<p><strong>Utilitza instruccions SELECT amb saviesa</strong></p>
+<pre><code class="language-python"># Consulta ineficient
+users = User.query.all()
+
+# Consulta eficient
+users = User.query.filter_by(active=True).all()
+</code></pre>
+</li>
+<li>
+<p><strong>Evita el problema de la consulta N+1</strong></p>
+<pre><code class="language-python"># Consulta ineficient
+users = User.query.all()
+for user in users:
+    print(user.profile)
+
+# Consulta eficient utilitzant join
+users = User.query.join(Profile).all()
+for user in users:
+    print(user.profile)
+</code></pre>
+</li>
+<li>
+<p><strong>Utilitza la paginació</strong></p>
+<pre><code class="language-python"># Recuperar tots els registres alhora
+users = User.query.all()
+
+# Recuperar registres en pàgines
+users = User.query.paginate(page=1, per_page=10).items
+</code></pre>
+</li>
+</ul>
+</div><h1>Emmagatzematge en Memòria Cau</h1>
+<div class='content'><p>L'emmagatzematge en memòria cau pot reduir significativament la càrrega de la teva base de dades emmagatzemant dades accedides freqüentment en memòria.</p>
+<ul>
+<li>
+<p><strong>Utilitzant Flask-Caching</strong></p>
+<pre><code class="language-python">from flask_caching import Cache
+
+cache = Cache(config={'CACHE_TYPE': 'simple'})
+
+@app.route('/user/&lt;int:user_id&gt;')
+@cache.cached(timeout=60)
+def get_user(user_id):
+    user = User.query.get(user_id)
+    return jsonify(user)
+</code></pre>
+</li>
+<li>
+<p><strong>Beneficis</strong></p>
+<ul>
+<li>Reducció de la càrrega de la base de dades.</li>
+<li>Temps de resposta més ràpids.</li>
+</ul>
+</li>
+<li>
+<p><strong>Desavantatges</strong></p>
+<ul>
+<li>Complexitat en la invalidació de la memòria cau.</li>
+<li>Potencial de dades obsoletes.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Normalització de Bases de Dades</h1>
+<div class='content'><p>La normalització és el procés d'organitzar els camps i les taules d'una base de dades relacional per minimitzar la redundància i la dependència.</p>
+<ul>
+<li>
+<p><strong>Formes de normalització</strong></p>
+<ul>
+<li>Primera Forma Normal (1NF)</li>
+<li>Segona Forma Normal (2NF)</li>
+<li>Tercera Forma Normal (3NF)</li>
+</ul>
+</li>
+<li>
+<p><strong>Exemple</strong></p>
+<pre><code class="language-python"># Taula no normalitzada
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    customer_name = db.Column(db.String(80))
+    product_name = db.Column(db.String(80))
+
+# Taules normalitzades
+class Customer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80))
+
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80))
+
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
+</code></pre>
+</li>
+</ul>
+</div><h1>Pooling de Connexions</h1>
+<div class='content'><p>El pooling de connexions es refereix a la pràctica de mantenir una memòria cau de connexions de base de dades perquè les connexions es puguin reutilitzar quan es requereixin futures sol·licituds a la base de dades.</p>
+<ul>
+<li>
+<p><strong>Utilitzant el Pooling de Connexions de SQLAlchemy</strong></p>
+<pre><code class="language-python">app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://user:password@localhost/dbname'
+app.config['SQLALCHEMY_POOL_SIZE'] = 10
+app.config['SQLALCHEMY_POOL_TIMEOUT'] = 30
+</code></pre>
+</li>
+<li>
+<p><strong>Beneficis</strong></p>
+<ul>
+<li>Reducció del cost de connexió.</li>
+<li>Millora del rendiment per aplicacions amb molt trànsit.</li>
+</ul>
+</li>
+<li>
+<p><strong>Desavantatges</strong></p>
+<ul>
+<li>Complexitat en la gestió de la mida del pool i els temps d'espera.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>L'optimització de bases de dades és un aspecte crític del desenvolupament d'aplicacions Flask eficients i escalables. Entenent i implementant tècniques com la indexació, l'optimització de consultes, l'emmagatzematge en memòria cau, la normalització i el pooling de connexions, pots millorar significativament el rendiment i la fiabilitat de la teva aplicació. Recorda sempre monitoritzar i perfilar les teves consultes de base de dades per identificar i abordar colls d'ampolla de rendiment.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='caching-strategies'>&#x25C4;Estratègies de Caché</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització de Bases de Dades en Flask</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='asynchronous-tasks-celery'>Tasques Asíncrones amb Celery &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

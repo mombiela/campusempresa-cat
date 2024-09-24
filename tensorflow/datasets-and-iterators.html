@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Datasets i Iteradors en TensorFlow</title>
+
+    <link rel="alternate" href="https://campusempresa.com/tensorflow/datasets-and-iterators" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/tensorflow/datasets-and-iterators" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/tensorflow/datasets-and-iterators" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/tensorflow/datasets-and-iterators" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/tensorflow/datasets-and-iterators" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='loading-and-preprocessing-data'>&#x25C4;Carregar i preprocessar dades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Datasets i Iteradors en TensorFlow</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='data-augmentation'>Augmentació de dades &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquesta secció, explorarem com gestionar dades de manera eficient utilitzant Datasets i Iteradors en TensorFlow. Això és crucial per construir models d'aprenentatge automàtic escalables i eficients. Cobrirem els conceptes bàsics de la creació de datasets, la seva transformació i la seva iteració.</p>
+</div><h1>Creació de Datasets</h1>
+<div class='content'><p>TensorFlow proporciona l'API <code>tf.data</code> per construir pipelines d'entrada complexes a partir de peces senzilles i reutilitzables.</p>
+</div><h2>Des de Tensores</h2>
+<div class='content'><p>Pots crear un dataset directament des de tensors utilitzant <code>tf.data.Dataset.from_tensor_slices</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKCiMgQ3JlYXIgdW4gZGF0YXNldCBkZXMgZGUgdGVuc29ycwpkYXRhID0gdGYuZGF0YS5EYXRhc2V0LmZyb21fdGVuc29yX3NsaWNlcyhbMSwgMiwgMywgNCwgNV0pCmZvciBlbGVtZW50IGluIGRhdGE6CiAgICBwcmludChlbGVtZW50Lm51bXB5KCkp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+
+# Crear un dataset des de tensors
+data = tf.data.Dataset.from_tensor_slices([1, 2, 3, 4, 5])
+for element in data:
+    print(element.numpy())</pre></div><div class='content'></div><h2>Des de Fitxers</h2>
+<div class='content'><p>També pots crear datasets des de fitxers, com ara fitxers CSV o fitxers TFRecord.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDcmVhciB1biBkYXRhc2V0IGRlcyBkJ3VuIGZpdHhlciBDU1YKZmlsZV9wYXRoID0gJ3BhdGgvdG8veW91ci9jc3ZmaWxlLmNzdicKZGF0YXNldCA9IHRmLmRhdGEuZXhwZXJpbWVudGFsLm1ha2VfY3N2X2RhdGFzZXQoCiAgICBmaWxlX3BhdGgsCiAgICBiYXRjaF9zaXplPTUsCiAgICBsYWJlbF9uYW1lPSdsYWJlbF9jb2x1bW5fbmFtZScsCiAgICBuYV92YWx1ZT0iPyIsCiAgICBudW1fZXBvY2hzPTEsCiAgICBpZ25vcmVfZXJyb3JzPVRydWUKKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Crear un dataset des d'un fitxer CSV
+file_path = 'path/to/your/csvfile.csv'
+dataset = tf.data.experimental.make_csv_dataset(
+    file_path,
+    batch_size=5,
+    label_name='label_column_name',
+    na_value=&quot;?&quot;,
+    num_epochs=1,
+    ignore_errors=True
+)</pre></div><div class='content'></div><h1>Transformació de Datasets</h1>
+<div class='content'><p>Les transformacions et permeten mapar, agrupar en lots, barrejar i prefetch dades per optimitzar el pipeline d'entrada.</p>
+</div><h2>Mapeig</h2>
+<div class='content'><p>Utilitza el mètode <code>map</code> per aplicar una funció a cada element del dataset.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIGFkZF9vbmUoeCk6CiAgICByZXR1cm4geCArIDEKCm1hcHBlZF9kYXRhID0gZGF0YS5tYXAoYWRkX29uZSkKZm9yIGVsZW1lbnQgaW4gbWFwcGVkX2RhdGE6CiAgICBwcmludChlbGVtZW50Lm51bXB5KCkp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def add_one(x):
+    return x + 1
+
+mapped_data = data.map(add_one)
+for element in mapped_data:
+    print(element.numpy())</pre></div><div class='content'></div><h2>Agrupació en Lots</h2>
+<div class='content'><p>L'agrupació en lots combina elements consecutius del dataset en un sol element.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YmF0Y2hlZF9kYXRhID0gZGF0YS5iYXRjaCgyKQpmb3IgYmF0Y2ggaW4gYmF0Y2hlZF9kYXRhOgogICAgcHJpbnQoYmF0Y2gubnVtcHkoKSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>batched_data = data.batch(2)
+for batch in batched_data:
+    print(batch.numpy())</pre></div><div class='content'></div><h2>Barreja</h2>
+<div class='content'><p>La barreja randomitza l'ordre dels elements en el dataset.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2h1ZmZsZWRfZGF0YSA9IGRhdGEuc2h1ZmZsZShidWZmZXJfc2l6ZT01KQpmb3IgZWxlbWVudCBpbiBzaHVmZmxlZF9kYXRhOgogICAgcHJpbnQoZWxlbWVudC5udW1weSgpKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>shuffled_data = data.shuffle(buffer_size=5)
+for element in shuffled_data:
+    print(element.numpy())</pre></div><div class='content'></div><h2>Prefetch</h2>
+<div class='content'><p>El prefetch solapa el preprocessament i l'execució del model de dades.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHJlZmV0Y2hlZF9kYXRhID0gZGF0YS5wcmVmZXRjaChidWZmZXJfc2l6ZT10Zi5kYXRhLmV4cGVyaW1lbnRhbC5BVVRPVFVORSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>prefetched_data = data.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)</pre></div><div class='content'></div><h1>Iteració a Través de Datasets</h1>
+<div class='content'><p>Els iteradors proporcionen una manera d'accedir als elements del dataset.</p>
+</div><h2>Iterador One-shot</h2>
+<div class='content'><p>Un iterador one-shot és la forma més senzilla d'iterador.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aXRlcmF0b3IgPSBpdGVyKGRhdGEpCnByaW50KG5leHQoaXRlcmF0b3IpLm51bXB5KCkp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>iterator = iter(data)
+print(next(iterator).numpy())</pre></div><div class='content'></div><h2>Iterador Inicialitzable</h2>
+<div class='content'><p>Un iterador inicialitzable requereix una inicialització explícita.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aXRlcmF0b3IgPSBpdGVyKGRhdGEpCnByaW50KG5leHQoaXRlcmF0b3IpLm51bXB5KCkp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>iterator = iter(data)
+print(next(iterator).numpy())</pre></div><div class='content'></div><h1>Tècniques Avançades</h1>
+<div class='content'><p>Per pipelines d'entrada més complexos, pots utilitzar característiques com <code>tf.data.Dataset.zip</code>, <code>tf.data.Dataset.concatenate</code> i <code>tf.data.Dataset.interleave</code>.</p>
+</div><h2>Zipping Datasets</h2>
+<div class='content'><p>Combina elements de dos datasets en un sol dataset.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGF0YXNldDEgPSB0Zi5kYXRhLkRhdGFzZXQuZnJvbV90ZW5zb3Jfc2xpY2VzKFsxLCAyLCAzXSkKZGF0YXNldDIgPSB0Zi5kYXRhLkRhdGFzZXQuZnJvbV90ZW5zb3Jfc2xpY2VzKFsnYScsICdiJywgJ2MnXSkKemlwcGVkX2RhdGEgPSB0Zi5kYXRhLkRhdGFzZXQuemlwKChkYXRhc2V0MSwgZGF0YXNldDIpKQoKZm9yIGVsZW1lbnQgaW4gemlwcGVkX2RhdGE6CiAgICBwcmludChlbGVtZW50KQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>dataset1 = tf.data.Dataset.from_tensor_slices([1, 2, 3])
+dataset2 = tf.data.Dataset.from_tensor_slices(['a', 'b', 'c'])
+zipped_data = tf.data.Dataset.zip((dataset1, dataset2))
+
+for element in zipped_data:
+    print(element)</pre></div><div class='content'></div><h2>Concatenació de Datasets</h2>
+<div class='content'><p>Concatena dos datasets.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGF0YXNldDMgPSB0Zi5kYXRhLkRhdGFzZXQuZnJvbV90ZW5zb3Jfc2xpY2VzKFs0LCA1LCA2XSkKY29uY2F0ZW5hdGVkX2RhdGEgPSBkYXRhc2V0MS5jb25jYXRlbmF0ZShkYXRhc2V0MykKCmZvciBlbGVtZW50IGluIGNvbmNhdGVuYXRlZF9kYXRhOgogICAgcHJpbnQoZWxlbWVudC5udW1weSgpKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>dataset3 = tf.data.Dataset.from_tensor_slices([4, 5, 6])
+concatenated_data = dataset1.concatenate(dataset3)
+
+for element in concatenated_data:
+    print(element.numpy())</pre></div><div class='content'></div><h2>Interleaving Datasets</h2>
+<div class='content'><p>Intercala elements de múltiples datasets.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW50ZXJsZWF2ZWRfZGF0YSA9IHRmLmRhdGEuRGF0YXNldC5mcm9tX3RlbnNvcl9zbGljZXMoWzEsIDIsIDNdKS5pbnRlcmxlYXZlKAogICAgbGFtYmRhIHg6IHRmLmRhdGEuRGF0YXNldC5mcm9tX3RlbnNvcnMoeCkucmVwZWF0KDIpLAogICAgY3ljbGVfbGVuZ3RoPTIKKQoKZm9yIGVsZW1lbnQgaW4gaW50ZXJsZWF2ZWRfZGF0YToKICAgIHByaW50KGVsZW1lbnQubnVtcHkoKSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>interleaved_data = tf.data.Dataset.from_tensor_slices([1, 2, 3]).interleave(
+    lambda x: tf.data.Dataset.from_tensors(x).repeat(2),
+    cycle_length=2
+)
+
+for element in interleaved_data:
+    print(element.numpy())</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem cobert els conceptes bàsics i algunes tècniques avançades per gestionar datasets i iteradors en TensorFlow. La gestió eficient de dades és crucial per construir models d'aprenentatge automàtic escalables. En dominar aquestes tècniques, pots assegurar-te que els teus models siguin tant eficients com efectius.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='loading-and-preprocessing-data'>&#x25C4;Carregar i preprocessar dades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Datasets i Iteradors en TensorFlow</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='data-augmentation'>Augmentació de dades &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

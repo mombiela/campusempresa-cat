@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escalar Redis</title>
+
+    <link rel="alternate" href="https://campusempresa.com/redis/scaling-redis" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/redis/scaling-redis" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/redis/scaling-redis" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/redis/scaling-redis" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/redis/scaling-redis" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='cluster-mode'>&#x25C4;Mode Clúster</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Escalar Redis</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-redis-modules'>Introducció als Mòduls de Redis &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Escalar Redis és un tema crucial per als desenvolupadors que necessiten assegurar-se que les seves aplicacions poden gestionar una càrrega augmentada i mantenir el rendiment. Aquesta secció cobrirà els conceptes clau, estratègies i tècniques per escalar Redis des d'una sola instància fins a un sistema distribuït i altament disponible.</p>
+</div><h1>Conceptes Clau en Escalar Redis</h1>
+<div class='content'><ul>
+<li><strong>Escalat Vertical</strong>: Augmentar la capacitat d'una sola instància de Redis afegint més CPU, RAM o emmagatzematge.</li>
+<li><strong>Escalat Horitzontal</strong>: Distribuir la càrrega entre múltiples instàncies de Redis.</li>
+<li><strong>Sharding</strong>: Dividir les dades entre múltiples instàncies de Redis per distribuir la càrrega.</li>
+<li><strong>Replicació</strong>: Crear còpies de les instàncies de Redis per assegurar la disponibilitat de dades i la tolerància a fallades.</li>
+<li><strong>Redis Sentinel</strong>: Un sistema per gestionar instàncies de Redis, proporcionant alta disponibilitat i monitoratge.</li>
+<li><strong>Redis Cluster</strong>: Una implementació distribuïda de Redis que automàticament fa sharding de les dades i proporciona alta disponibilitat.</li>
+</ul>
+</div><h1>Escalat Vertical</h1>
+<div class='content'><p>L'escalat vertical implica actualitzar els recursos de maquinari d'una sola instància de Redis. Això pot ser una solució ràpida per a problemes de rendiment però té limitacions.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBBdWdtZW50YXIgZWwgbMOtbWl0IGRlIG1lbcOycmlhIGVuIGVsIGZpdHhlciBkZSBjb25maWd1cmFjacOzIGRlIFJlZGlzIChyZWRpcy5jb25mKQptYXhtZW1vcnkgNGdi"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Augmentar el l&iacute;mit de mem&ograve;ria en el fitxer de configuraci&oacute; de Redis (redis.conf)
+maxmemory 4gb</pre></div><div class='content'><ul>
+<li><strong>Pros</strong>:
+<ul>
+<li>Fàcil d'implementar.</li>
+<li>No es requereixen canvis en el codi de l'aplicació.</li>
+</ul>
+</li>
+<li><strong>Contres</strong>:
+<ul>
+<li>Limitat per la capacitat màxima d'una sola màquina.</li>
+<li>No proporciona tolerància a fallades.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Escalat Horitzontal</h1>
+<div class='content'><p>L'escalat horitzontal implica afegir més instàncies de Redis i distribuir la càrrega entre elles. Això es pot aconseguir a través de sharding i replicació.</p>
+</div><h2>Sharding</h2>
+<div class='content'><p>El sharding divideix el conjunt de dades en peces més petites i manejables, cadascuna emmagatzemada en una instància diferent de Redis.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBVdGlsaXR6YW50IHVuYSBiaWJsaW90ZWNhIGNsaWVudCBjb20gYHJlZGlzLXB5YCBwZXIgaW1wbGVtZW50YXIgc2hhcmRpbmcKZnJvbSByZWRpc2NsdXN0ZXIgaW1wb3J0IFJlZGlzQ2x1c3RlcgoKc3RhcnR1cF9ub2RlcyA9IFt7Imhvc3QiOiAiMTI3LjAuMC4xIiwgInBvcnQiOiAiNzAwMCJ9XQpyYyA9IFJlZGlzQ2x1c3RlcihzdGFydHVwX25vZGVzPXN0YXJ0dXBfbm9kZXMsIGRlY29kZV9yZXNwb25zZXM9VHJ1ZSkKCiMgRXN0YWJsaXIgdW5hIGNsYXUgZW4gZWwgY2zDunN0ZXIKcmMuc2V0KCJrZXkxIiwgInZhbHVlMSIpCgojIE9idGVuaXIgdW5hIGNsYXUgZGVsIGNsw7pzdGVyCnZhbHVlID0gcmMuZ2V0KCJrZXkxIikKcHJpbnQodmFsdWUp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Utilitzant una biblioteca client com `redis-py` per implementar sharding
+from rediscluster import RedisCluster
+
+startup_nodes = [{&quot;host&quot;: &quot;127.0.0.1&quot;, &quot;port&quot;: &quot;7000&quot;}]
+rc = RedisCluster(startup_nodes=startup_nodes, decode_responses=True)
+
+# Establir una clau en el cl&uacute;ster
+rc.set(&quot;key1&quot;, &quot;value1&quot;)
+
+# Obtenir una clau del cl&uacute;ster
+value = rc.get(&quot;key1&quot;)
+print(value)</pre></div><div class='content'><ul>
+<li><strong>Pros</strong>:
+<ul>
+<li>Distribueix la càrrega entre múltiples instàncies.</li>
+<li>Augmenta la memòria total disponible i la CPU.</li>
+</ul>
+</li>
+<li><strong>Contres</strong>:
+<ul>
+<li>Requereix canvis en el codi de l'aplicació.</li>
+<li>Més complex de gestionar.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Replicació</h2>
+<div class='content'><p>La replicació implica crear còpies de les instàncies de Redis per assegurar la disponibilitat de dades i la tolerància a fallades.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDb25maWd1cmFjacOzIHBlciBhIGxhIGluc3TDoG5jaWEgbWVzdHJlIChyZWRpcy5jb25mKQpyZXBsaWNhb2YgPG1hc3Rlci1pcD4gPG1hc3Rlci1wb3J0Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Configuraci&oacute; per a la inst&agrave;ncia mestre (redis.conf)
+replicaof &lt;master-ip&gt; &lt;master-port&gt;</pre></div><div class='content'><ul>
+<li><strong>Pros</strong>:
+<ul>
+<li>Proporciona alta disponibilitat.</li>
+<li>Permet escalar lectures distribuint les sol·licituds de lectura entre rèpliques.</li>
+</ul>
+</li>
+<li><strong>Contres</strong>:
+<ul>
+<li>Augmenta l'ús de memòria.</li>
+<li>Requereix configuració i gestió addicionals.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Redis Sentinel</h1>
+<div class='content'><p>Redis Sentinel proporciona alta disponibilitat i monitoratge per a les instàncies de Redis. Gestiona automàticament el failover i la recuperació.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDb25maWd1cmFjacOzIGRlIFNlbnRpbmVsIChzZW50aW5lbC5jb25mKQpzZW50aW5lbCBtb25pdG9yIG15bWFzdGVyIDEyNy4wLjAuMSA2Mzc5IDIKc2VudGluZWwgZG93bi1hZnRlci1taWxsaXNlY29uZHMgbXltYXN0ZXIgNTAwMApzZW50aW5lbCBmYWlsb3Zlci10aW1lb3V0IG15bWFzdGVyIDYwMDAwCnNlbnRpbmVsIHBhcmFsbGVsLXN5bmNzIG15bWFzdGVyIDE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Configuraci&oacute; de Sentinel (sentinel.conf)
+sentinel monitor mymaster 127.0.0.1 6379 2
+sentinel down-after-milliseconds mymaster 5000
+sentinel failover-timeout mymaster 60000
+sentinel parallel-syncs mymaster 1</pre></div><div class='content'><ul>
+<li><strong>Pros</strong>:
+<ul>
+<li>Failover i recuperació automàtics.</li>
+<li>Monitoratge i gestió centralitzats.</li>
+</ul>
+</li>
+<li><strong>Contres</strong>:
+<ul>
+<li>Components addicionals per gestionar.</li>
+<li>Requereix una configuració acurada.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Redis Cluster</h1>
+<div class='content'><p>Redis Cluster és una implementació distribuïda de Redis que proporciona sharding automàtic i alta disponibilitat.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDcmVhciB1biBSZWRpcyBDbHVzdGVyIHV0aWxpdHphbnQgbCdlaW5hIGByZWRpcy1jbGlgCnJlZGlzLWNsaSAtLWNsdXN0ZXIgY3JlYXRlIDEyNy4wLjAuMTo3MDAwIDEyNy4wLjAuMTo3MDAxIDEyNy4wLjAuMTo3MDAyIDEyNy4wLjAuMTo3MDAzIDEyNy4wLjAuMTo3MDA0IDEyNy4wLjAuMTo3MDA1IC0tY2x1c3Rlci1yZXBsaWNhcyAx"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Crear un Redis Cluster utilitzant l'eina `redis-cli`
+redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 --cluster-replicas 1</pre></div><div class='content'><ul>
+<li><strong>Pros</strong>:
+<ul>
+<li>Sharding automàtic i alta disponibilitat.</li>
+<li>Simplifica l'escalat horitzontal.</li>
+</ul>
+</li>
+<li><strong>Contres</strong>:
+<ul>
+<li>Més complex de configurar i gestionar.</li>
+<li>Requereix Redis 3.0 o posterior.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Escalar Redis implica una combinació d'estratègies d'escalat vertical i horitzontal. L'escalat vertical pot proporcionar un alleujament immediat per a problemes de rendiment però està limitat per la capacitat d'una sola màquina. L'escalat horitzontal, a través de sharding i replicació, distribueix la càrrega entre múltiples instàncies i proporciona alta disponibilitat. Redis Sentinel i Redis Cluster milloren encara més l'escalabilitat i la fiabilitat de les implementacions de Redis automatitzant el failover i el sharding.</p>
+<p>Comprenent i implementant aquestes estratègies, els desenvolupadors poden assegurar-se que les seves implementacions de Redis poden gestionar una càrrega augmentada i mantenir un alt rendiment i disponibilitat.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='cluster-mode'>&#x25C4;Mode Clúster</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Escalar Redis</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-redis-modules'>Introducció als Mòduls de Redis &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

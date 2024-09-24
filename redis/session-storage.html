@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emmagatzematge de sessions amb Redis</title>
+
+    <link rel="alternate" href="https://campusempresa.com/redis/session-storage" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/redis/session-storage" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/redis/session-storage" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/redis/session-storage" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/redis/session-storage" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='caching'>&#x25C4;Caché</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Emmagatzematge de sessions amb Redis</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='real-time-analytics'>Anàlisi en Temps Real &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a l'emmagatzematge de sessions</h1>
+<div class='content'><p>L'emmagatzematge de sessions és un aspecte crític del desenvolupament web, ja que permet emmagatzemar dades específiques de l'usuari entre sol·licituds HTTP. Redis, un magatzem de dades estructurades en memòria, s'utilitza àmpliament per a l'emmagatzematge de sessions a causa de la seva velocitat i eficiència.</p>
+</div><h1>Per què utilitzar Redis per a l'emmagatzematge de sessions?</h1>
+<div class='content'><ul>
+<li><strong>Rendiment</strong>: Redis opera en memòria, proporcionant operacions de lectura i escriptura extremadament ràpides.</li>
+<li><strong>Escalabilitat</strong>: Redis pot gestionar un gran nombre de connexions concurrents i dades.</li>
+<li><strong>Persistència</strong>: Redis ofereix opcions per a la persistència de dades, assegurant que les dades de sessió no es perdin.</li>
+<li><strong>Estructures de dades</strong>: Redis admet diverses estructures de dades com cadenes, hash, llistes, conjunts i conjunts ordenats, fent-lo versàtil per a diferents necessitats d'emmagatzematge de sessions.</li>
+</ul>
+</div><h1>Configuració de Redis per a l'emmagatzematge de sessions</h1>
+<div class='content'><p>Per utilitzar Redis per a l'emmagatzematge de sessions, cal instal·lar Redis i una biblioteca client de Redis per al teu llenguatge de programació. A continuació es mostren els passos per configurar Redis amb Node.js.</p>
+</div><h2>Instal·lació de Redis</h2>
+<div class='content'><p>Primer, instal·la Redis a la teva màquina. Per exemple, a Ubuntu:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3VkbyBhcHQgdXBkYXRlCnN1ZG8gYXB0IGluc3RhbGwgcmVkaXMtc2VydmVy"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>sudo apt update
+sudo apt install redis-server</pre></div><div class='content'><p>Inicia el servidor Redis:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3VkbyBzeXN0ZW1jdGwgc3RhcnQgcmVkaXMtc2VydmVy"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>sudo systemctl start redis-server</pre></div><div class='content'></div><h2>Instal·lació del client Redis per a Node.js</h2>
+<div class='content'><p>Instal·la el paquet <code>redis</code> utilitzant npm:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnBtIGluc3RhbGwgcmVkaXM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npm install redis</pre></div><div class='content'></div><h1>Emmagatzematge de sessions a Redis</h1>
+<h2>Exemple bàsic</h2>
+<div class='content'><p>Aquí tens un exemple bàsic d'emmagatzematge i recuperació de dades de sessió utilitzant Redis en una aplicació Node.js.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgcmVkaXMgPSByZXF1aXJlKCdyZWRpcycpOwpjb25zdCBjbGllbnQgPSByZWRpcy5jcmVhdGVDbGllbnQoKTsKCi8vIENvbm5lY3Rhci1zZSBhbCBzZXJ2aWRvciBSZWRpcwpjbGllbnQub24oJ2Nvbm5lY3QnLCBmdW5jdGlvbigpIHsKICAgIGNvbnNvbGUubG9nKCdDb25uZWN0YXQgYSBSZWRpcy4uLicpOwp9KTsKCi8vIEVtbWFnYXR6ZW1hdGdlIGRlIGRhZGVzIGRlIHNlc3Npw7MKY29uc3Qgc2Vzc2lvbklkID0gJ3Nlc3M6MTIzNDUnOwpjb25zdCBzZXNzaW9uRGF0YSA9IHsKICAgIHVzZXJJZDogJ3VzZXIxMjMnLAogICAgaXNBdXRoZW50aWNhdGVkOiB0cnVlLAogICAgbGFzdEFjY2VzczogbmV3IERhdGUoKS50b0lTT1N0cmluZygpCn07CgpjbGllbnQuaG1zZXQoc2Vzc2lvbklkLCBzZXNzaW9uRGF0YSwgKGVyciwgcmVzKSA9PiB7CiAgICBpZiAoZXJyKSB7CiAgICAgICAgY29uc29sZS5lcnJvcignRXJyb3IgZW4gZW1tYWdhdHplbWFyIGxlcyBkYWRlcyBkZSBzZXNzacOzOicsIGVycik7CiAgICB9IGVsc2UgewogICAgICAgIGNvbnNvbGUubG9nKCdEYWRlcyBkZSBzZXNzacOzIGVtbWFnYXR6ZW1hZGVzOicsIHJlcyk7CiAgICB9Cn0pOwoKLy8gUmVjdXBlcmFjacOzIGRlIGRhZGVzIGRlIHNlc3Npw7MKY2xpZW50LmhnZXRhbGwoc2Vzc2lvbklkLCAoZXJyLCBzZXNzaW9uKSA9PiB7CiAgICBpZiAoZXJyKSB7CiAgICAgICAgY29uc29sZS5lcnJvcignRXJyb3IgZW4gcmVjdXBlcmFyIGxlcyBkYWRlcyBkZSBzZXNzacOzOicsIGVycik7CiAgICB9IGVsc2UgewogICAgICAgIGNvbnNvbGUubG9nKCdEYWRlcyBkZSBzZXNzacOzIHJlY3VwZXJhZGVzOicsIHNlc3Npb24pOwogICAgfQp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const redis = require('redis');
+const client = redis.createClient();
+
+// Connectar-se al servidor Redis
+client.on('connect', function() {
+    console.log('Connectat a Redis...');
+});
+
+// Emmagatzematge de dades de sessi&oacute;
+const sessionId = 'sess:12345';
+const sessionData = {
+    userId: 'user123',
+    isAuthenticated: true,
+    lastAccess: new Date().toISOString()
+};
+
+client.hmset(sessionId, sessionData, (err, res) =&gt; {
+    if (err) {
+        console.error('Error en emmagatzemar les dades de sessi&oacute;:', err);
+    } else {
+        console.log('Dades de sessi&oacute; emmagatzemades:', res);
+    }
+});
+
+// Recuperaci&oacute; de dades de sessi&oacute;
+client.hgetall(sessionId, (err, session) =&gt; {
+    if (err) {
+        console.error('Error en recuperar les dades de sessi&oacute;:', err);
+    } else {
+        console.log('Dades de sessi&oacute; recuperades:', session);
+    }
+});</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Connexió a Redis</strong>: El mètode <code>redis.createClient()</code> crea un nou client Redis.</li>
+<li><strong>Emmagatzematge de dades</strong>: El mètode <code>hmset</code> emmagatzema un hash (parells clau-valor) a Redis.</li>
+<li><strong>Recuperació de dades</strong>: El mètode <code>hgetall</code> recupera tots els camps i valors del hash emmagatzemat a la clau donada.</li>
+</ul>
+</div><h1>Gestió avançada de sessions</h1>
+<h2>Expiració de sessions</h2>
+<div class='content'><p>Per expirar automàticament les sessions després d'un cert període, utilitza el comandament <code>expire</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3Qgc2Vzc2lvbklkID0gJ3Nlc3M6MTIzNDUnOwpjb25zdCBzZXNzaW9uVFRMID0gMzYwMDsgLy8gVGVtcHMgZGUgdmlkYSBlbiBzZWdvbnMgKDEgaG9yYSkKCmNsaWVudC5leHBpcmUoc2Vzc2lvbklkLCBzZXNzaW9uVFRMLCAoZXJyLCByZXMpID0+IHsKICAgIGlmIChlcnIpIHsKICAgICAgICBjb25zb2xlLmVycm9yKCdFcnJvciBlbiBlc3RhYmxpciBlbCBUVEwgZGUgbGEgc2Vzc2nDszonLCBlcnIpOwogICAgfSBlbHNlIHsKICAgICAgICBjb25zb2xlLmxvZygnVFRMIGRlIGxhIHNlc3Npw7MgZXN0YWJsZXJ0OicsIHJlcyk7CiAgICB9Cn0pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const sessionId = 'sess:12345';
+const sessionTTL = 3600; // Temps de vida en segons (1 hora)
+
+client.expire(sessionId, sessionTTL, (err, res) =&gt; {
+    if (err) {
+        console.error('Error en establir el TTL de la sessi&oacute;:', err);
+    } else {
+        console.log('TTL de la sessi&oacute; establert:', res);
+    }
+});</pre></div><div class='content'></div><h2>Emmagatzematge persistent</h2>
+<div class='content'><p>Redis es pot configurar per persistir dades al disc, assegurant que les dades de sessió no es perdin en reinicis del servidor. Això es pot fer utilitzant instantànies RDB (Redis Database) o registres AOF (Append-Only File).</p>
+</div><h2>Escalabilitat de Redis</h2>
+<div class='content'><p>Per a aplicacions a gran escala, pots escalar Redis utilitzant:</p>
+<ul>
+<li><strong>Replicació</strong>: Crear rèpliques del servidor Redis per a l'escalabilitat de lectura i la redundància de dades.</li>
+<li><strong>Fragmentació</strong>: Distribuir dades entre múltiples instàncies de Redis per gestionar més dades i trànsit.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Redis és una eina poderosa per a l'emmagatzematge de sessions, oferint alt rendiment, escalabilitat i flexibilitat. Entenent els conceptes bàsics d'emmagatzematge i recuperació de dades de sessió, establint temps d'expiració i configurant la persistència, pots gestionar efectivament les sessions d'usuari a les teves aplicacions web. A mesura que avancis, considera explorar la replicació i la fragmentació de Redis per escalar la teva solució d'emmagatzematge de sessions.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='caching'>&#x25C4;Caché</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Emmagatzematge de sessions amb Redis</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='real-time-analytics'>Anàlisi en Temps Real &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

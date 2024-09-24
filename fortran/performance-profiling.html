@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Rendiment en Fortran</title>
+
+    <link rel="alternate" href="https://campusempresa.com/fortran/performance-profiling" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/fortran/performance-profiling" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/fortran/performance-profiling" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/fortran/performance-profiling" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/fortran/performance-profiling" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='debugging-techniques'>&#x25C4;Tècniques de Depuració</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Perfil de Rendiment en Fortran</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='version-control-git'>Control de Versions amb Git &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>El perfil de rendiment és una habilitat essencial per a qualsevol programador de Fortran que vulgui escriure codi eficient i optimitzat. Aquest tema et guiarà a través dels conceptes bàsics del perfil de rendiment, les eines disponibles i les tècniques avançades per identificar i resoldre colls d'ampolla de rendiment en els teus programes Fortran.</p>
+</div><h1>Introducció al Perfil de Rendiment</h1>
+<div class='content'><p>El perfil de rendiment implica mesurar el comportament en temps d'execució d'un programa per identificar les seccions de codi que consumeixen més recursos. Aquest procés ajuda a optimitzar el codi per obtenir un millor rendiment.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Perfilat</strong>: El procés de mesurar la complexitat espacial (memòria) i temporal d'un programa.</li>
+<li><strong>Colls d'ampolla</strong>: Seccions de codi que redueixen significativament el rendiment global.</li>
+<li><strong>Optimització</strong>: Millorar l'eficiència del codi abordant els colls d'ampolla.</li>
+</ul>
+</div><h1>Eines per al Perfil de Rendiment en Fortran</h1>
+<div class='content'><p>Hi ha diverses eines que es poden utilitzar per fer el perfil de programes Fortran. Aquí en tens algunes de les més utilitzades:</p>
+<ul>
+<li><strong>gprof</strong>: Un perfilador GNU que funciona amb programes compilats amb el compilador GNU Fortran (gfortran).</li>
+<li><strong>Intel VTune Profiler</strong>: Una eina d'anàlisi de rendiment per a aplicacions que s'executen en processadors Intel.</li>
+<li><strong>TAU (Tuning and Analysis Utilities)</strong>: Un conjunt d'eines de perfilat i traçat de rendiment per a programes paral·lels.</li>
+</ul>
+</div><h2>Ús de gprof</h2>
+<div class='content'><p><code>gprof</code> és una eina de perfilat àmpliament utilitzada que pot ajudar-te a identificar quines parts del teu programa Fortran consumeixen més temps.</p>
+<h4>Passos per Utilitzar gprof:</h4>
+<ol>
+<li><strong>Compila el teu codi Fortran amb el perfilat habilitat</strong>:
+<pre><code class="language-sh">gfortran -pg -o my_program my_program.f90
+</code></pre>
+</li>
+<li><strong>Executa el teu programa</strong>:
+<pre><code class="language-sh">./my_program
+</code></pre>
+</li>
+<li><strong>Genera l'informe de perfilat</strong>:
+<pre><code class="language-sh">gprof my_program gmon.out &gt; analysis.txt
+</code></pre>
+</li>
+</ol>
+<h4>Exemple:</h4>
+<p>Considera un programa Fortran senzill <code>example.f90</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHJvZ3JhbSBleGFtcGxlCiAgICBpbXBsaWNpdCBub25lCiAgICBpbnRlZ2VyIDo6IGksIGosIHN1bQoKICAgIHN1bSA9IDAKICAgIGRvIGkgPSAxLCAxMDAwCiAgICAgICAgZG8gaiA9IDEsIDEwMDAKICAgICAgICAgICAgc3VtID0gc3VtICsgaSAqIGoKICAgICAgICBlbmQgZG8KICAgIGVuZCBkbwoKICAgIHByaW50ICosICJTdW0gaXMgIiwgc3VtCmVuZCBwcm9ncmFtIGV4YW1wbGU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>program example
+    implicit none
+    integer :: i, j, sum
+
+    sum = 0
+    do i = 1, 1000
+        do j = 1, 1000
+            sum = sum + i * j
+        end do
+    end do
+
+    print *, &quot;Sum is &quot;, sum
+end program example</pre></div><div class='content'><p>Compila i fes el perfil del programa:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2ZvcnRyYW4gLXBnIC1vIGV4YW1wbGUgZXhhbXBsZS5mOTAKLi9leGFtcGxlCmdwcm9mIGV4YW1wbGUgZ21vbi5vdXQgPiBhbmFseXNpcy50eHQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>gfortran -pg -o example example.f90
+./example
+gprof example gmon.out &gt; analysis.txt</pre></div><div class='content'><p>El fitxer <code>analysis.txt</code> contindrà un informe detallat que mostrarà on el programa passa la major part del seu temps.</p>
+</div><h1>Tècniques Avançades de Perfilat</h1>
+<div class='content'></div><h2>Anàlisi de Punts Calents</h2>
+<div class='content'><p>L'anàlisi de punts calents implica identificar les parts del codi que consumeixen més temps. Això es pot fer utilitzant eines com Intel VTune Profiler.</p>
+</div><h2>Perfilat de Memòria</h2>
+<div class='content'><p>El perfilat de memòria ajuda a identificar fuites de memòria i ús ineficient de la memòria. Eines com Valgrind es poden utilitzar per a aquest propòsit.</p>
+</div><h2>Perfilat Paral·lel</h2>
+<div class='content'><p>Per a programes Fortran paral·lels, eines de perfilat com TAU poden ajudar a analitzar el rendiment de les seccions paral·leles.</p>
+<h4>Exemple amb TAU:</h4>
+<ol>
+<li><strong>Instrumenta el codi</strong>:
+<pre><code class="language-sh">tau_f90.sh -o my_program my_program.f90
+</code></pre>
+</li>
+<li><strong>Executa el programa</strong>:
+<pre><code class="language-sh">mpirun -np 4 ./my_program
+</code></pre>
+</li>
+<li><strong>Analitza els resultats</strong> utilitzant les eines d'anàlisi de TAU.</li>
+</ol>
+</div><h1>Resum</h1>
+<div class='content'><p>El perfil de rendiment és un pas crític en l'optimització de programes Fortran. Utilitzant eines com <code>gprof</code>, Intel VTune Profiler i TAU, pots identificar i resoldre colls d'ampolla de rendiment. Entendre i aplicar aquestes tècniques de perfilat t'ajudarà a escriure codi Fortran més eficient i d'alt rendiment.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='debugging-techniques'>&#x25C4;Tècniques de Depuració</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Perfil de Rendiment en Fortran</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='version-control-git'>Control de Versions amb Git &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

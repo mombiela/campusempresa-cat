@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renderització de Plantilles</title>
+
+    <link rel="alternate" href="https://campusempresa.com/flask/rendering-templates" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/flask/rendering-templates" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/flask/rendering-templates" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/flask/rendering-templates" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/flask/rendering-templates" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='http-methods-in-flask'>&#x25C4;Mètodes HTTP a Flask</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Renderització de Plantilles</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='jinja2-templating-engine'>Motor de Plantilles Jinja2 &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquesta secció, explorarem com renderitzar plantilles en Flask, un aspecte crucial per construir aplicacions web dinàmiques. Cobrirem els conceptes bàsics de la renderització de plantilles, com passar dades a les plantilles i tècniques avançades per crear plantilles reutilitzables i mantenibles.</p>
+</div><h1>Introducció a les Plantilles</h1>
+<div class='content'><p>Les plantilles permeten separar la capa de presentació de la lògica de negoci de la teva aplicació. Flask utilitza Jinja2 com a motor de plantilles, que proporciona una manera poderosa de generar HTML dinàmicament.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Motor de Plantilles</strong>: Un component de programari que combina plantilles amb un model de dades per produir documents.</li>
+<li><strong>Jinja2</strong>: El motor de plantilles per defecte de Flask, que permet la generació de contingut dinàmic.</li>
+<li><strong>Renderització</strong>: El procés de generar l'HTML final a partir de plantilles i dades.</li>
+</ul>
+</div><h1>Renderització Bàsica de Plantilles</h1>
+<div class='content'><p>Per renderitzar una plantilla en Flask, utilitzes la funció <code>render_template</code>. Aquesta funció pren el nom del fitxer de la plantilla i qualsevol dada que vulguis passar-li.</p>
+</div><h2>Exemple</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear un Fitxer de Plantilla</strong>: Desa el següent codi HTML en un fitxer anomenat <code>index.html</code> dins d'una carpeta anomenada <code>templates</code>.</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;{{ title }}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;{{ heading }}&lt;/h1&gt;
+    &lt;p&gt;{{ message }}&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+</li>
+<li>
+<p><strong>Renderitzar la Plantilla en Flask</strong>: Utilitza la funció <code>render_template</code> en la teva ruta de Flask.</p>
+<pre><code class="language-python">from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return render_template('index.html', title='Home Page', heading='Welcome to Flask', message='This is a basic template rendering example.')
+
+if __name__ == '__main__':
+    app.run(debug=True)
+</code></pre>
+</li>
+</ol>
+</div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Variables de Plantilla</strong>: <code>{{ title }}</code>, <code>{{ heading }}</code> i <code>{{ message }}</code> són espais reservats en la plantilla que seran reemplaçats amb els valors passats des de la ruta de Flask.</li>
+<li><strong>Funció render_template</strong>: Aquesta funció pren el nom del fitxer de la plantilla i arguments de paraula clau per a les dades que es passaran a la plantilla.</li>
+</ul>
+</div><h1>Passar Dades a les Plantilles</h1>
+<div class='content'><p>Pots passar diversos tipus de dades a les plantilles, incloent-hi cadenes de text, llistes, diccionaris i més.</p>
+</div><h2>Exemple amb Llista i Diccionari</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Fitxer de Plantilla</strong>: Desa el següent codi HTML en un fitxer anomenat <code>data.html</code>.</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Data Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Users&lt;/h1&gt;
+    &lt;ul&gt;
+        {% for user in users %}
+            &lt;li&gt;{{ user.name }} - {{ user.email }}&lt;/li&gt;
+        {% endfor %}
+    &lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+</li>
+<li>
+<p><strong>Renderitzar la Plantilla amb Dades</strong>:</p>
+<pre><code class="language-python">@app.route('/users')
+def users():
+    users = [
+        {'name': 'Alice', 'email': 'alice@example.com'},
+        {'name': 'Bob', 'email': 'bob@example.com'},
+        {'name': 'Charlie', 'email': 'charlie@example.com'}
+    ]
+    return render_template('data.html', users=users)
+</code></pre>
+</li>
+</ol>
+</div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Iteració en Plantilles</strong>: <code>{% for user in users %}</code> és un bucle de Jinja2 que itera sobre la llista d'usuaris i renderitza el nom i el correu electrònic de cada usuari.</li>
+<li><strong>Context de Plantilla</strong>: La variable <code>users</code> es passa a la plantilla i es pot accedir dins de la plantilla.</li>
+</ul>
+</div><h1>Funcions Avançades de Plantilles</h1>
+<div class='content'><p>Flask i Jinja2 ofereixen funcions avançades per fer les plantilles més poderoses i mantenibles.</p>
+</div><h2>Herència de Plantilles</h2>
+<div class='content'><p>L'herència de plantilles permet crear una plantilla base que altres plantilles poden estendre. Això és útil per mantenir un disseny consistent a través de múltiples pàgines.</p>
+<ol>
+<li>
+<p><strong>Plantilla Base</strong>: Desa el següent codi HTML en un fitxer anomenat <code>base.html</code>.</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;{% block title %}My Website{% endblock %}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;header&gt;
+        &lt;h1&gt;My Website&lt;/h1&gt;
+    &lt;/header&gt;
+    &lt;main&gt;
+        {% block content %}{% endblock %}
+    &lt;/main&gt;
+    &lt;footer&gt;
+        &lt;p&gt;&amp;copy; 2023 My Website&lt;/p&gt;
+    &lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+</li>
+<li>
+<p><strong>Plantilla Filla</strong>: Desa el següent codi HTML en un fitxer anomenat <code>child.html</code>.</p>
+<pre><code class="language-html">{% extends &quot;base.html&quot; %}
+
+{% block title %}Home Page{% endblock %}
+
+{% block content %}
+    &lt;h2&gt;Welcome to the Home Page&lt;/h2&gt;
+    &lt;p&gt;This is the content of the home page.&lt;/p&gt;
+{% endblock %}
+</code></pre>
+</li>
+<li>
+<p><strong>Renderitzar la Plantilla Filla</strong>:</p>
+<pre><code class="language-python">@app.route('/home')
+def home():
+    return render_template('child.html')
+</code></pre>
+</li>
+</ol>
+</div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Blocs de Plantilla</strong>: <code>{% block title %}</code> i <code>{% block content %}</code> defineixen seccions de la plantilla que poden ser sobreescrites per plantilles filles.</li>
+<li><strong>Extensió de Plantilles</strong>: <code>{% extends &quot;base.html&quot; %}</code> indica que <code>child.html</code> estèn <code>base.html</code>.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Renderitzar plantilles en Flask és una manera poderosa de crear pàgines web dinàmiques. Entenent els conceptes bàsics de la renderització de plantilles, passant dades a les plantilles i utilitzant funcions avançades com l'herència de plantilles, pots construir aplicacions web mantenibles i escalables. Practica aquests conceptes amb diferents tipus de dades i plantilles per convertir-te en un expert en la renderització de plantilles amb Flask.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='http-methods-in-flask'>&#x25C4;Mètodes HTTP a Flask</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Renderització de Plantilles</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='jinja2-templating-engine'>Motor de Plantilles Jinja2 &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

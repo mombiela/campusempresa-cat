@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validació i maneig d'errors en REST API</title>
+
+    <link rel="alternate" href="https://campusempresa.com/rest_api/validacion-y-manejo-de-errores" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/rest_api/validacion-y-manejo-de-errores" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/rest_api/validacion-y-manejo-de-errores" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/rest_api/validacion-y-manejo-de-errores" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/rest_api/validacion-y-manejo-de-errores" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='manejo-de-peticiones-y-respuestas'>&#x25C4;Gestió de peticions i respostes</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Validació i maneig d'errors en REST API</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='autenticacion-y-autorizacion'>Autenticació i autorització &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, aprendrem sobre la importància de la validació i el maneig d'errors en el desenvolupament de REST APIs. Aquests aspectes són crucials per garantir la robustesa, seguretat i usabilitat de les APIs. Cobrirem conceptes clau, pràctiques recomanades i exemples d'implementació.</p>
+</div><h1>Validació de Dades</h1>
+<div class='content'></div><h2>Què és la validació de dades?</h2>
+<div class='content'><p>La validació de dades és el procés d'assegurar que les dades enviades a l'API compleixen amb els requisits esperats abans de ser processades. Això inclou verificar tipus de dades, formats, rangs i altres restriccions.</p>
+</div><h2>Importància de la validació</h2>
+<div class='content'><ul>
+<li><strong>Seguretat</strong>: Prevé atacs com la injecció de SQL.</li>
+<li><strong>Integritat de dades</strong>: Assegura que les dades emmagatzemades siguin correctes i consistents.</li>
+<li><strong>Experiència de l'usuari</strong>: Proporciona retroalimentació immediata sobre errors en les dades enviades.</li>
+</ul>
+</div><h2>Tipus de validació</h2>
+<div class='content'><ul>
+<li><strong>Validació del costat del client</strong>: Realitzada al navegador abans d'enviar les dades al servidor.</li>
+<li><strong>Validació del costat del servidor</strong>: Realitzada al servidor per assegurar que les dades rebudes són vàlides.</li>
+</ul>
+</div><h2>Exemple de validació en Node.js amb Express</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoJ2V4cHJlc3MnKTsKY29uc3QgYXBwID0gZXhwcmVzcygpOwphcHAudXNlKGV4cHJlc3MuanNvbigpKTsKCmFwcC5wb3N0KCcvYXBpL3VzZXJzJywgKHJlcSwgcmVzKSA9PiB7CiAgICBjb25zdCB7IG5hbWUsIGVtYWlsLCBhZ2UgfSA9IHJlcS5ib2R5OwoKICAgIC8vIFZhbGlkYWNpw7MgYsOgc2ljYQogICAgaWYgKCFuYW1lIHx8ICFlbWFpbCB8fCAhYWdlKSB7CiAgICAgICAgcmV0dXJuIHJlcy5zdGF0dXMoNDAwKS5qc29uKHsgZXJyb3I6ICdUb3RzIGVscyBjYW1wcyBzw7NuIG9ibGlnYXRvcmlzJyB9KTsKICAgIH0KCiAgICAvLyBWYWxpZGFjacOzIGRlIHRpcHVzIGRlIGRhZGVzCiAgICBpZiAodHlwZW9mIG5hbWUgIT09ICdzdHJpbmcnIHx8IHR5cGVvZiBlbWFpbCAhPT0gJ3N0cmluZycgfHwgdHlwZW9mIGFnZSAhPT0gJ251bWJlcicpIHsKICAgICAgICByZXR1cm4gcmVzLnN0YXR1cyg0MDApLmpzb24oeyBlcnJvcjogJ1RpcHVzIGRlIGRhZGVzIGluY29ycmVjdGVzJyB9KTsKICAgIH0KCiAgICAvLyBWYWxpZGFjacOzIGRlIGZvcm1hdCBkZSBjb3JyZXUgZWxlY3Ryw7JuaWMKICAgIGNvbnN0IGVtYWlsUmVnZXggPSAvXlteXHNAXStAW15cc0BdK1wuW15cc0BdKyQvOwogICAgaWYgKCFlbWFpbFJlZ2V4LnRlc3QoZW1haWwpKSB7CiAgICAgICAgcmV0dXJuIHJlcy5zdGF0dXMoNDAwKS5qc29uKHsgZXJyb3I6ICdGb3JtYXQgZGUgY29ycmV1IGVsZWN0csOybmljIGludsOgbGlkJyB9KTsKICAgIH0KCiAgICByZXMuc3RhdHVzKDIwMSkuanNvbih7IG1lc3NhZ2U6ICdVc3VhcmkgY3JlYXQgZXhpdG9zYW1lbnQnIH0pOwp9KTsKCmFwcC5saXN0ZW4oMzAwMCwgKCkgPT4gY29uc29sZS5sb2coJ1NlcnZlciBydW5uaW5nIG9uIHBvcnQgMzAwMCcpKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const express = require('express');
+const app = express();
+app.use(express.json());
+
+app.post('/api/users', (req, res) =&gt; {
+    const { name, email, age } = req.body;
+
+    // Validaci&oacute; b&agrave;sica
+    if (!name || !email || !age) {
+        return res.status(400).json({ error: 'Tots els camps s&oacute;n obligatoris' });
+    }
+
+    // Validaci&oacute; de tipus de dades
+    if (typeof name !== 'string' || typeof email !== 'string' || typeof age !== 'number') {
+        return res.status(400).json({ error: 'Tipus de dades incorrectes' });
+    }
+
+    // Validaci&oacute; de format de correu electr&ograve;nic
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: 'Format de correu electr&ograve;nic inv&agrave;lid' });
+    }
+
+    res.status(201).json({ message: 'Usuari creat exitosament' });
+});
+
+app.listen(3000, () =&gt; console.log('Server running on port 3000'));</pre></div><div class='content'></div><h1>Maneig d'Errors</h1>
+<div class='content'></div><h2>Què és el maneig d'errors?</h2>
+<div class='content'><p>El maneig d'errors és el procés de capturar, gestionar i respondre a errors que ocorren durant l'execució d'una API. Això inclou errors de validació, errors del servidor i errors de xarxa.</p>
+</div><h2>Importància del maneig d'errors</h2>
+<div class='content'><ul>
+<li><strong>Robustesa</strong>: Assegura que l'API pot gestionar situacions inesperades sense fallar.</li>
+<li><strong>Seguretat</strong>: Evita l'exposició d'informació sensible.</li>
+<li><strong>Usabilitat</strong>: Proporciona missatges d'error clars i útils als usuaris.</li>
+</ul>
+</div><h2>Tipus d'errors comuns</h2>
+<div class='content'><ul>
+<li><strong>Errors de client (4xx)</strong>: Errors causats per sol·licituds incorrectes del client.</li>
+<li><strong>Errors del servidor (5xx)</strong>: Errors causats per problemes al servidor.</li>
+</ul>
+</div><h2>Exemple de maneig d'errors en Node.js amb Express</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoJ2V4cHJlc3MnKTsKY29uc3QgYXBwID0gZXhwcmVzcygpOwphcHAudXNlKGV4cHJlc3MuanNvbigpKTsKCmFwcC5nZXQoJy9hcGkvcmVzb3VyY2UnLCAocmVxLCByZXMsIG5leHQpID0+IHsKICAgIHRyeSB7CiAgICAgICAgLy8gU2ltdWxhY2nDsyBkJ3VuIGVycm9yIGRlbCBzZXJ2aWRvcgogICAgICAgIHRocm93IG5ldyBFcnJvcignRXJyb3IgZGVsIHNlcnZpZG9yJyk7CiAgICB9IGNhdGNoIChlcnJvcikgewogICAgICAgIG5leHQoZXJyb3IpOwogICAgfQp9KTsKCi8vIE1pZGRsZXdhcmUgZGUgbWFuZWlnIGQnZXJyb3JzCmFwcC51c2UoKGVyciwgcmVxLCByZXMsIG5leHQpID0+IHsKICAgIGNvbnNvbGUuZXJyb3IoZXJyLnN0YWNrKTsKICAgIHJlcy5zdGF0dXMoNTAwKS5qc29uKHsgZXJyb3I6ICdWYSBvY8OzcnJlciB1biBlcnJvciBhbCBzZXJ2aWRvcicgfSk7Cn0pOwoKYXBwLmxpc3RlbigzMDAwLCAoKSA9PiBjb25zb2xlLmxvZygnU2VydmVyIHJ1bm5pbmcgb24gcG9ydCAzMDAwJykpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const express = require('express');
+const app = express();
+app.use(express.json());
+
+app.get('/api/resource', (req, res, next) =&gt; {
+    try {
+        // Simulaci&oacute; d'un error del servidor
+        throw new Error('Error del servidor');
+    } catch (error) {
+        next(error);
+    }
+});
+
+// Middleware de maneig d'errors
+app.use((err, req, res, next) =&gt; {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Va oc&oacute;rrer un error al servidor' });
+});
+
+app.listen(3000, () =&gt; console.log('Server running on port 3000'));</pre></div><div class='content'></div><h1>Pràctiques recomanades</h1>
+<div class='content'></div><h2>Validació</h2>
+<div class='content'><ul>
+<li><strong>Usar llibreries de validació</strong>: Llibreries com Joi, Yup o Validator.js poden simplificar la validació.</li>
+<li><strong>Validar tant al client com al servidor</strong>: Encara que la validació del costat del client millora l'experiència de l'usuari, la validació del costat del servidor és essencial per a la seguretat.</li>
+</ul>
+</div><h2>Maneig d'errors</h2>
+<div class='content'><ul>
+<li><strong>Usar codis d'estat HTTP apropiats</strong>: Assegura't de retornar el codi d'estat HTTP correcte per a cada tipus d'error.</li>
+<li><strong>No exposar detalls interns</strong>: Evita incloure informació sensible en els missatges d'error.</li>
+<li><strong>Registrar errors</strong>: Implementa un sistema de logging per registrar i monitoritzar errors.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La validació i el maneig d'errors són components essencials en el desenvolupament de REST APIs. Implementar una validació robusta i un maneig d'errors adequat no només millora la seguretat i la integritat de les dades, sinó que també proporciona una millor experiència a l'usuari. Assegura't de seguir les pràctiques recomanades i utilitzar eines adequades per simplificar aquests processos.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='manejo-de-peticiones-y-respuestas'>&#x25C4;Gestió de peticions i respostes</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Validació i maneig d'errors en REST API</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='autenticacion-y-autorizacion'>Autenticació i autorització &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

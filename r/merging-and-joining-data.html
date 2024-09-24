@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fusionar i Unir Dades en R</title>
+
+    <link rel="alternate" href="https://campusempresa.com/r/merging-and-joining-data" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/r/merging-and-joining-data" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/r/merging-and-joining-data" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/r/merging-and-joining-data" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/r/merging-and-joining-data" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='subsetting-data'>&#x25C4;Subsetting de Dades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Fusionar i Unir Dades en R</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='data-transformation-with-dplyr'>Transformació de Dades amb dplyr &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Fusionar i unir dades són tasques essencials en l'anàlisi i manipulació de dades. En R, aquestes operacions et permeten combinar conjunts de dades basats en columnes comunes o índexs de files. Aquesta secció cobrirà diversos mètodes per fusionar i unir dades, des de tècniques bàsiques fins a avançades.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Fusionar</strong>: Combinar conjunts de dades basats en columnes comunes.</li>
+<li><strong>Unir</strong>: Similar a fusionar però sovint es refereix a operacions tipus SQL.</li>
+<li><strong>Inner Join</strong>: Retorna només les files amb claus coincidents en ambdós conjunts de dades.</li>
+<li><strong>Outer Join</strong>: Retorna totes les files de tots dos conjunts de dades, amb <code>NA</code> per a coincidències que falten.</li>
+<li><strong>Left Join</strong>: Retorna totes les files del conjunt de dades de l'esquerra i les files coincidents del conjunt de dades de la dreta.</li>
+<li><strong>Right Join</strong>: Retorna totes les files del conjunt de dades de la dreta i les files coincidents del conjunt de dades de l'esquerra.</li>
+</ul>
+</div><h1>Fusió Bàsica amb `merge()`</h1>
+<div class='content'><p>La funció <code>merge()</code> en R és una eina versàtil per fusionar data frames.</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDcmVhciBkYXRhIGZyYW1lcyBkZSBtb3N0cmEKZGYxIDwtIGRhdGEuZnJhbWUoSUQgPSAxOjQsIE5hbWUgPSBjKCJBbGljZSIsICJCb2IiLCAiQ2hhcmxpZSIsICJEYXZpZCIpKQpkZjIgPC0gZGF0YS5mcmFtZShJRCA9IGMoMiwgNCwgNSksIEFnZSA9IGMoMjUsIDMwLCAzNSkpCgojIFJlYWxpdHphciB1bmEgaW5uZXIgam9pbgptZXJnZWRfZGYgPC0gbWVyZ2UoZGYxLCBkZjIsIGJ5ID0gIklEIikKcHJpbnQobWVyZ2VkX2RmKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Crear data frames de mostra
+df1 &lt;- data.frame(ID = 1:4, Name = c(&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;, &quot;David&quot;))
+df2 &lt;- data.frame(ID = c(2, 4, 5), Age = c(25, 30, 35))
+
+# Realitzar una inner join
+merged_df &lt;- merge(df1, df2, by = &quot;ID&quot;)
+print(merged_df)</pre></div><div class='content'><p>Explicació:</p>
+<ul>
+<li><code>df1</code> i <code>df2</code> es fusionen basats en la columna comuna <code>ID</code>.</li>
+<li>Només les files amb valors <code>ID</code> coincidents en ambdós data frames s'inclouen en el resultat.</li>
+</ul>
+</div><h1>Tipus d'Unions</h1>
+<h2>Inner Join</h2>
+<div class='content'><p>Retorna files amb claus coincidents en ambdós conjunts de dades.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW5uZXJfam9pbl9kZiA8LSBtZXJnZShkZjEsIGRmMiwgYnkgPSAiSUQiKQpwcmludChpbm5lcl9qb2luX2RmKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>inner_join_df &lt;- merge(df1, df2, by = &quot;ID&quot;)
+print(inner_join_df)</pre></div><div class='content'></div><h2>Left Join</h2>
+<div class='content'><p>Retorna totes les files del conjunt de dades de l'esquerra i les files coincidents del conjunt de dades de la dreta.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bGVmdF9qb2luX2RmIDwtIG1lcmdlKGRmMSwgZGYyLCBieSA9ICJJRCIsIGFsbC54ID0gVFJVRSkKcHJpbnQobGVmdF9qb2luX2RmKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>left_join_df &lt;- merge(df1, df2, by = &quot;ID&quot;, all.x = TRUE)
+print(left_join_df)</pre></div><div class='content'></div><h2>Right Join</h2>
+<div class='content'><p>Retorna totes les files del conjunt de dades de la dreta i les files coincidents del conjunt de dades de l'esquerra.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmlnaHRfam9pbl9kZiA8LSBtZXJnZShkZjEsIGRmMiwgYnkgPSAiSUQiLCBhbGwueSA9IFRSVUUpCnByaW50KHJpZ2h0X2pvaW5fZGYp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>right_join_df &lt;- merge(df1, df2, by = &quot;ID&quot;, all.y = TRUE)
+print(right_join_df)</pre></div><div class='content'></div><h2>Outer Join</h2>
+<div class='content'><p>Retorna totes les files de tots dos conjunts de dades, amb <code>NA</code> per a coincidències que falten.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3V0ZXJfam9pbl9kZiA8LSBtZXJnZShkZjEsIGRmMiwgYnkgPSAiSUQiLCBhbGwgPSBUUlVFKQpwcmludChvdXRlcl9qb2luX2RmKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>outer_join_df &lt;- merge(df1, df2, by = &quot;ID&quot;, all = TRUE)
+print(outer_join_df)</pre></div><div class='content'></div><h1>Fusió Avançada amb `dplyr`</h1>
+<div class='content'><p>El paquet <code>dplyr</code> proporciona funcions més intuïtives per fusionar i unir dades.</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bGlicmFyeShkcGx5cikKCiMgQ3JlYXIgZGF0YSBmcmFtZXMgZGUgbW9zdHJhCmRmMSA8LSBkYXRhLmZyYW1lKElEID0gMTo0LCBOYW1lID0gYygiQWxpY2UiLCAiQm9iIiwgIkNoYXJsaWUiLCAiRGF2aWQiKSkKZGYyIDwtIGRhdGEuZnJhbWUoSUQgPSBjKDIsIDQsIDUpLCBBZ2UgPSBjKDI1LCAzMCwgMzUpKQoKIyBSZWFsaXR6YXIgdW5hIGlubmVyIGpvaW4KaW5uZXJfam9pbl9kZiA8LSBpbm5lcl9qb2luKGRmMSwgZGYyLCBieSA9ICJJRCIpCnByaW50KGlubmVyX2pvaW5fZGYp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>library(dplyr)
+
+# Crear data frames de mostra
+df1 &lt;- data.frame(ID = 1:4, Name = c(&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;, &quot;David&quot;))
+df2 &lt;- data.frame(ID = c(2, 4, 5), Age = c(25, 30, 35))
+
+# Realitzar una inner join
+inner_join_df &lt;- inner_join(df1, df2, by = &quot;ID&quot;)
+print(inner_join_df)</pre></div><div class='content'></div><h2>Altres Unions en `dplyr`</h2>
+<div class='content'><ul>
+<li><strong>Left Join</strong>: <code>left_join(df1, df2, by = &quot;ID&quot;)</code></li>
+<li><strong>Right Join</strong>: <code>right_join(df1, df2, by = &quot;ID&quot;)</code></li>
+<li><strong>Full Join</strong>: <code>full_join(df1, df2, by = &quot;ID&quot;)</code></li>
+</ul>
+</div><h1>Comparació de `merge()` i Unions de `dplyr`</h1>
+<div class='content'><p>| Característica | Funció <code>merge()</code>   | Funcions de <code>dplyr</code> |
+|----------------|---------------------|---------------------|
+| Sintaxi        | Més verbosa         | Més intuïtiva       |
+| Rendiment      | Generalment més lent| Generalment més ràpid|
+| Flexibilitat   | Alta                | Alta                |
+| Llegibilitat   | Moderada            | Alta                |</p>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Fusionar i unir dades són operacions fonamentals en l'anàlisi de dades. R proporciona múltiples maneres d'aconseguir-ho, des de la funció base <code>merge()</code> fins al paquet més amigable <code>dplyr</code>. Entendre aquests mètodes et permet combinar conjunts de dades de manera eficient i realitzar una anàlisi de dades completa.</p>
+<p>En dominar aquestes tècniques, podràs gestionar tasques complexes de manipulació de dades i assegurar-te que els teus conjunts de dades es combinen de manera precisa per a una anàlisi posterior.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='subsetting-data'>&#x25C4;Subsetting de Dades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Fusionar i Unir Dades en R</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='data-transformation-with-dplyr'>Transformació de Dades amb dplyr &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

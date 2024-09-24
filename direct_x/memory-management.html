@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió de Memòria en DirectX</title>
+
+    <link rel="alternate" href="https://campusempresa.com/direct_x/memory-management" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/direct_x/memory-management" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/direct_x/memory-management" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/direct_x/memory-management" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/direct_x/memory-management" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='performance-optimization'>&#x25C4;Optimització del Rendiment</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió de Memòria en DirectX</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='debugging-and-profiling'>Depuració i Perfilat &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La gestió de memòria és un aspecte crític per desenvolupar aplicacions eficients i efectives utilitzant DirectX. Aquest tema et guiarà des dels conceptes bàsics de la gestió de memòria fins a tècniques avançades, assegurant que tinguis una comprensió sòlida de com manejar la memòria en aplicacions DirectX.</p>
+</div><h1>Introducció a la Gestió de Memòria</h1>
+<div class='content'><p>La gestió de memòria en DirectX implica l'assignació, ús i alliberament de recursos de memòria necessaris per renderitzar gràfics. Una gestió adequada de la memòria assegura que la teva aplicació funcioni de manera suau i eficient sense quedar-se sense memòria o causar fuites de memòria.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Memòria Heap</strong>: Memòria assignada dinàmicament durant el temps d'execució.</li>
+<li><strong>Memòria Stack</strong>: Memòria assignada per a la gestió de crides a funcions.</li>
+<li><strong>VRAM (Video RAM)</strong>: Memòria a la GPU utilitzada per emmagatzemar textures, buffers i altres dades gràfiques.</li>
+<li><strong>Vida útil del recurs</strong>: El període durant el qual un recurs està assignat i en ús.</li>
+<li><strong>Fuites de memòria</strong>: Es produeixen quan la memòria que ja no és necessària no s'allibera correctament.</li>
+</ul>
+</div><h1>Tècniques Bàsiques de Gestió de Memòria</h1>
+<div class='content'></div><h2>Assignació i Alliberament de Recursos</h2>
+<div class='content'><p>En DirectX, recursos com textures, buffers i shaders han de ser assignats i alliberats correctament per gestionar la memòria de manera eficient.</p>
+<h4>Exemple: Creació i Alliberament d'un Buffer</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRGVmaW5laXggbGEgZGVzY3JpcGNpw7MgZGVsIGJ1ZmZlcgpEM0QxMV9CVUZGRVJfREVTQyBidWZmZXJEZXNjID0ge307CmJ1ZmZlckRlc2MuVXNhZ2UgPSBEM0QxMV9VU0FHRV9ERUZBVUxUOwpidWZmZXJEZXNjLkJ5dGVXaWR0aCA9IHNpemVvZihWZXJ0ZXgpICogdmVydGV4Q291bnQ7CmJ1ZmZlckRlc2MuQmluZEZsYWdzID0gRDNEMTFfQklORF9WRVJURVhfQlVGRkVSOwpidWZmZXJEZXNjLkNQVUFjY2Vzc0ZsYWdzID0gMDsKCi8vIERlZmluZWl4IGxlcyBkYWRlcyBpbmljaWFscwpEM0QxMV9TVUJSRVNPVVJDRV9EQVRBIGluaXREYXRhID0ge307CmluaXREYXRhLnBTeXNNZW0gPSB2ZXJ0aWNlczsKCi8vIENyZWEgZWwgYnVmZmVyCklEM0QxMUJ1ZmZlciogdmVydGV4QnVmZmVyID0gbnVsbHB0cjsKSFJFU1VMVCBociA9IGRldmljZS0+Q3JlYXRlQnVmZmVyKCZidWZmZXJEZXNjLCAmaW5pdERhdGEsICZ2ZXJ0ZXhCdWZmZXIpOwppZiAoRkFJTEVEKGhyKSkgewogICAgLy8gR2VzdGlvbmEgbCdlcnJvcgp9CgovLyBVdGlsaXR6YSBlbCBidWZmZXIuLi4KCi8vIEFsbGliZXJhIGVsIGJ1ZmZlciBxdWFuIGhhZ2lzIGFjYWJhdAppZiAodmVydGV4QnVmZmVyKSB7CiAgICB2ZXJ0ZXhCdWZmZXItPlJlbGVhc2UoKTsKICAgIHZlcnRleEJ1ZmZlciA9IG51bGxwdHI7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Defineix la descripci&oacute; del buffer
+D3D11_BUFFER_DESC bufferDesc = {};
+bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+bufferDesc.ByteWidth = sizeof(Vertex) * vertexCount;
+bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+bufferDesc.CPUAccessFlags = 0;
+
+// Defineix les dades inicials
+D3D11_SUBRESOURCE_DATA initData = {};
+initData.pSysMem = vertices;
+
+// Crea el buffer
+ID3D11Buffer* vertexBuffer = nullptr;
+HRESULT hr = device-&gt;CreateBuffer(&amp;bufferDesc, &amp;initData, &amp;vertexBuffer);
+if (FAILED(hr)) {
+    // Gestiona l'error
+}
+
+// Utilitza el buffer...
+
+// Allibera el buffer quan hagis acabat
+if (vertexBuffer) {
+    vertexBuffer-&gt;Release();
+    vertexBuffer = nullptr;
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Aquest fragment de codi demostra com crear un buffer de vèrtexs i alliberar-lo quan ja no és necessari. Alliberar correctament els recursos és crucial per evitar fuites de memòria.</li>
+</ul>
+</div><h2>Gestió de la Vida Útil del Recurs</h2>
+<div class='content'><p>Entendre la vida útil dels recursos és essencial per a una gestió eficient de la memòria. Els recursos s'han de crear quan es necessiten i alliberar tan aviat com ja no siguin necessaris.</p>
+</div><h1>Tècniques Intermèdies de Gestió de Memòria</h1>
+<div class='content'></div><h2>Ús de Punteres Intel·ligents</h2>
+<div class='content'><p>Les punteres intel·ligents en C++ poden ajudar a gestionar la vida útil dels recursos automàticament, reduint el risc de fuites de memòria.</p>
+<h4>Exemple: Ús de ComPtr per a Recursos DirectX</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPHdybC9jbGllbnQuaD4KdXNpbmcgTWljcm9zb2Z0OjpXUkw6OkNvbVB0cjsKCi8vIERlZmluZWl4IHVuYSBwdW50ZXJhIGludGVswrdsaWdlbnQgcGVyIGEgdW4gcmVjdXJzIERpcmVjdFgKQ29tUHRyPElEM0QxMUJ1ZmZlcj4gdmVydGV4QnVmZmVyOwoKLy8gQ3JlYSBlbCBidWZmZXIKSFJFU1VMVCBociA9IGRldmljZS0+Q3JlYXRlQnVmZmVyKCZidWZmZXJEZXNjLCAmaW5pdERhdGEsIHZlcnRleEJ1ZmZlci5HZXRBZGRyZXNzT2YoKSk7CmlmIChGQUlMRUQoaHIpKSB7CiAgICAvLyBHZXN0aW9uYSBsJ2Vycm9yCn0KCi8vIFV0aWxpdHphIGVsIGJ1ZmZlci4uLgoKLy8gTm8gY2FsIGFsbGliZXJhciBtYW51YWxtZW50IGVsIGJ1ZmZlciwgQ29tUHRyIHMnZW5jYXJyZWdhcsOg"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;wrl/client.h&gt;
+using Microsoft::WRL::ComPtr;
+
+// Defineix una puntera intel&middot;ligent per a un recurs DirectX
+ComPtr&lt;ID3D11Buffer&gt; vertexBuffer;
+
+// Crea el buffer
+HRESULT hr = device-&gt;CreateBuffer(&amp;bufferDesc, &amp;initData, vertexBuffer.GetAddressOf());
+if (FAILED(hr)) {
+    // Gestiona l'error
+}
+
+// Utilitza el buffer...
+
+// No cal alliberar manualment el buffer, ComPtr s'encarregar&agrave;</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: <code>ComPtr</code> és una puntera intel·ligent proporcionada per la Windows Runtime Library (WRL) que allibera automàticament el recurs quan surt de l'àmbit.</li>
+</ul>
+</div><h2>Actualitzacions Eficients de Recursos</h2>
+<div class='content'><p>Actualitzar recursos de manera eficient pot ajudar a gestionar l'ús de la memòria i millorar el rendiment.</p>
+<h4>Exemple: Actualització d'un Buffer</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gTWFwZWphIGVsIGJ1ZmZlciBwZXIgYWN0dWFsaXR6YXItbmUgZWwgY29udGluZ3V0CkQzRDExX01BUFBFRF9TVUJSRVNPVVJDRSBtYXBwZWRSZXNvdXJjZTsKaHIgPSBjb250ZXh0LT5NYXAodmVydGV4QnVmZmVyLkdldCgpLCAwLCBEM0QxMV9NQVBfV1JJVEVfRElTQ0FSRCwgMCwgJm1hcHBlZFJlc291cmNlKTsKaWYgKFNVQ0NFRURFRChocikpIHsKICAgIC8vIENvcGlhIG5vdmVzIGRhZGVzIGFsIGJ1ZmZlcgogICAgbWVtY3B5KG1hcHBlZFJlc291cmNlLnBEYXRhLCBuZXdWZXJ0aWNlcywgc2l6ZW9mKFZlcnRleCkgKiB2ZXJ0ZXhDb3VudCk7CiAgICBjb250ZXh0LT5Vbm1hcCh2ZXJ0ZXhCdWZmZXIuR2V0KCksIDApOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Mapeja el buffer per actualitzar-ne el contingut
+D3D11_MAPPED_SUBRESOURCE mappedResource;
+hr = context-&gt;Map(vertexBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &amp;mappedResource);
+if (SUCCEEDED(hr)) {
+    // Copia noves dades al buffer
+    memcpy(mappedResource.pData, newVertices, sizeof(Vertex) * vertexCount);
+    context-&gt;Unmap(vertexBuffer.Get(), 0);
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Aquest exemple mostra com mapar un buffer, actualitzar-ne el contingut i desmapar-lo. Utilitzar <code>D3D11_MAP_WRITE_DISCARD</code> assegura que la GPU pugui gestionar l'actualització de manera eficient.</li>
+</ul>
+</div><h1>Tècniques Avançades de Gestió de Memòria</h1>
+<div class='content'></div><h2>Pools de Memòria</h2>
+<div class='content'><p>Els pools de memòria es poden utilitzar per gestionar la memòria de manera més eficient assignant un bloc gran de memòria i subassignant trossos més petits d'aquest.</p>
+<h4>Exemple: Implementació d'un Pool de Memòria Simple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgTWVtb3J5UG9vbCB7CnB1YmxpYzoKICAgIE1lbW9yeVBvb2woc2l6ZV90IHNpemUpIHsKICAgICAgICBwb29sID0gbWFsbG9jKHNpemUpOwogICAgICAgIHBvb2xTaXplID0gc2l6ZTsKICAgICAgICB1c2VkID0gMDsKICAgIH0KCiAgICB+TWVtb3J5UG9vbCgpIHsKICAgICAgICBmcmVlKHBvb2wpOwogICAgfQoKICAgIHZvaWQqIEFsbG9jYXRlKHNpemVfdCBzaXplKSB7CiAgICAgICAgaWYgKHVzZWQgKyBzaXplID4gcG9vbFNpemUpIHsKICAgICAgICAgICAgcmV0dXJuIG51bGxwdHI7IC8vIE5vIGhpIGhhIHByb3UgbWVtw7JyaWEKICAgICAgICB9CiAgICAgICAgdm9pZCogcHRyID0gc3RhdGljX2Nhc3Q8Y2hhcio+KHBvb2wpICsgdXNlZDsKICAgICAgICB1c2VkICs9IHNpemU7CiAgICAgICAgcmV0dXJuIHB0cjsKICAgIH0KCiAgICB2b2lkIFJlc2V0KCkgewogICAgICAgIHVzZWQgPSAwOwogICAgfQoKcHJpdmF0ZToKICAgIHZvaWQqIHBvb2w7CiAgICBzaXplX3QgcG9vbFNpemU7CiAgICBzaXplX3QgdXNlZDsKfTsKCi8vIMOacwpNZW1vcnlQb29sIHBvb2woMTAyNCAqIDEwMjQpOyAvLyBQb29sIGRlIDEgTUIKdm9pZCogbWVtb3J5ID0gcG9vbC5BbGxvY2F0ZSgyNTYpOyAvLyBBc3NpZ25hIDI1NiBieXRlcw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class MemoryPool {
+public:
+    MemoryPool(size_t size) {
+        pool = malloc(size);
+        poolSize = size;
+        used = 0;
+    }
+
+    ~MemoryPool() {
+        free(pool);
+    }
+
+    void* Allocate(size_t size) {
+        if (used + size &gt; poolSize) {
+            return nullptr; // No hi ha prou mem&ograve;ria
+        }
+        void* ptr = static_cast&lt;char*&gt;(pool) + used;
+        used += size;
+        return ptr;
+    }
+
+    void Reset() {
+        used = 0;
+    }
+
+private:
+    void* pool;
+    size_t poolSize;
+    size_t used;
+};
+
+// &Uacute;s
+MemoryPool pool(1024 * 1024); // Pool de 1 MB
+void* memory = pool.Allocate(256); // Assigna 256 bytes</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Aquest codi demostra una implementació simple d'un pool de memòria. Els pools de memòria poden ajudar a reduir la fragmentació i millorar el rendiment de l'assignació.</li>
+</ul>
+</div><h2>Gestió de Textures i Buffers Grans</h2>
+<div class='content'><p>Gestionar textures i buffers grans de manera eficient és crucial per a aplicacions d'alt rendiment.</p>
+<h4>Exemple: Ús de Arrays de Textures</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRGVmaW5laXggbGEgZGVzY3JpcGNpw7MgZGUgbCdhcnJheSBkZSB0ZXh0dXJlcwpEM0QxMV9URVhUVVJFMkRfREVTQyB0ZXh0dXJlRGVzYyA9IHt9Owp0ZXh0dXJlRGVzYy5XaWR0aCA9IHRleHR1cmVXaWR0aDsKdGV4dHVyZURlc2MuSGVpZ2h0ID0gdGV4dHVyZUhlaWdodDsKdGV4dHVyZURlc2MuTWlwTGV2ZWxzID0gMTsKdGV4dHVyZURlc2MuQXJyYXlTaXplID0gdGV4dHVyZUFycmF5U2l6ZTsKdGV4dHVyZURlc2MuRm9ybWF0ID0gRFhHSV9GT1JNQVRfUjhHOEI4QThfVU5PUk07CnRleHR1cmVEZXNjLlVzYWdlID0gRDNEMTFfVVNBR0VfREVGQVVMVDsKdGV4dHVyZURlc2MuQmluZEZsYWdzID0gRDNEMTFfQklORF9TSEFERVJfUkVTT1VSQ0U7CnRleHR1cmVEZXNjLlNhbXBsZURlc2MuQ291bnQgPSAxOwoKLy8gQ3JlYSBsJ2FycmF5IGRlIHRleHR1cmVzCklEM0QxMVRleHR1cmUyRCogdGV4dHVyZUFycmF5ID0gbnVsbHB0cjsKaHIgPSBkZXZpY2UtPkNyZWF0ZVRleHR1cmUyRCgmdGV4dHVyZURlc2MsIG51bGxwdHIsICZ0ZXh0dXJlQXJyYXkpOwppZiAoRkFJTEVEKGhyKSkgewogICAgLy8gR2VzdGlvbmEgbCdlcnJvcgp9CgovLyBVdGlsaXR6YSBsJ2FycmF5IGRlIHRleHR1cmVzLi4uCgovLyBBbGxpYmVyYSBsJ2FycmF5IGRlIHRleHR1cmVzIHF1YW4gaGFnaXMgYWNhYmF0CmlmICh0ZXh0dXJlQXJyYXkpIHsKICAgIHRleHR1cmVBcnJheS0+UmVsZWFzZSgpOwogICAgdGV4dHVyZUFycmF5ID0gbnVsbHB0cjsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Defineix la descripci&oacute; de l'array de textures
+D3D11_TEXTURE2D_DESC textureDesc = {};
+textureDesc.Width = textureWidth;
+textureDesc.Height = textureHeight;
+textureDesc.MipLevels = 1;
+textureDesc.ArraySize = textureArraySize;
+textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+textureDesc.Usage = D3D11_USAGE_DEFAULT;
+textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+textureDesc.SampleDesc.Count = 1;
+
+// Crea l'array de textures
+ID3D11Texture2D* textureArray = nullptr;
+hr = device-&gt;CreateTexture2D(&amp;textureDesc, nullptr, &amp;textureArray);
+if (FAILED(hr)) {
+    // Gestiona l'error
+}
+
+// Utilitza l'array de textures...
+
+// Allibera l'array de textures quan hagis acabat
+if (textureArray) {
+    textureArray-&gt;Release();
+    textureArray = nullptr;
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Aquest exemple mostra com crear un array de textures, que pot ser més eficient que utilitzar múltiples textures individuals.</li>
+</ul>
+</div><h1>Resum</h1>
+<div class='content'><p>La gestió de memòria en DirectX és una habilitat fonamental que implica entendre com assignar, utilitzar i alliberar recursos de manera eficient. Des de tècniques bàsiques com la creació i alliberament de buffers fins a mètodes avançats com l'ús de pools de memòria i la gestió de textures grans, dominar la gestió de memòria t'ajudarà a desenvolupar aplicacions DirectX d'alt rendiment.</p>
+<p>Seguint les millors pràctiques i aprofitant eines com les punteres intel·ligents i les actualitzacions eficients de recursos, pots assegurar que les teves aplicacions funcionin de manera suau i evitar problemes comuns com les fuites de memòria i la fragmentació.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='performance-optimization'>&#x25C4;Optimització del Rendiment</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió de Memòria en DirectX</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='debugging-and-profiling'>Depuració i Perfilat &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

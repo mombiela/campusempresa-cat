@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passar Missatges a Rust</title>
+
+    <link rel="alternate" href="https://campusempresa.com/rust/message-passing" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/rust/message-passing" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/rust/message-passing" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/rust/message-passing" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/rust/message-passing" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='threads'>&#x25C4;Fils</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Passar Missatges a Rust</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='shared-state'>Estat Compartit &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Passar missatges és un concepte fonamental en la programació concurrent, on els fils o processos es comuniquen enviant missatges entre ells. Rust, amb el seu fort èmfasi en la seguretat i la concurrència, proporciona eines robustes per passar missatges. Aquest tema et guiarà des dels conceptes bàsics fins als avançats de passar missatges a Rust.</p>
+</div><h1>Introducció a Passar Missatges</h1>
+<div class='content'><p>Passar missatges implica l'intercanvi de dades entre fils o processos. A Rust, això s'aconsegueix típicament utilitzant canals. Els canals proporcionen una manera perquè una part del teu codi enviï dades a una altra part, fins i tot si estan executant-se concurrentment.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Canals</strong>: Un canal a Rust és una manera d'enviar dades entre fils.</li>
+<li><strong>Emissor</strong>: La part del canal que envia dades.</li>
+<li><strong>Receptor</strong>: La part del canal que rep dades.</li>
+<li><strong>Concurrència</strong>: Executar múltiples computacions simultàniament.</li>
+</ul>
+</div><h1>Passar Missatges Bàsic amb Canals</h1>
+<div class='content'><p>La biblioteca estàndard de Rust proporciona canals per passar missatges. Els canals es creen utilitzant el mòdul <code>std::sync::mpsc</code>, on <code>mpsc</code> significa &quot;multiple producer, single consumer&quot; (múltiples productors, un sol consumidor).</p>
+</div><h2>Crear un Canal</h2>
+<div class='content'><p>Per crear un canal, utilitzes la funció <code>channel</code>, que retorna una tupla que conté un emissor i un receptor.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIHN0ZDo6c3luYzo6bXBzYzsKdXNlIHN0ZDo6dGhyZWFkOwoKZm4gbWFpbigpIHsKICAgIC8vIENyZWFyIHVuIGNhbmFsCiAgICBsZXQgKHR4LCByeCkgPSBtcHNjOjpjaGFubmVsKCk7CgogICAgLy8gQ3JlYXIgdW4gbm91IGZpbAogICAgdGhyZWFkOjpzcGF3bihtb3ZlIHx8IHsKICAgICAgICAvLyBFbnZpYXIgdW4gbWlzc2F0Z2UKICAgICAgICB0eC5zZW5kKCJIb2xhIGRlcyBkZWwgZmlsISIpLnVud3JhcCgpOwogICAgfSk7CgogICAgLy8gUmVicmUgZWwgbWlzc2F0Z2UKICAgIGxldCByZWJ1dCA9IHJ4LnJlY3YoKS51bndyYXAoKTsKICAgIHByaW50bG4hKCJSZWJ1dDoge30iLCByZWJ1dCk7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use std::sync::mpsc;
+use std::thread;
+
+fn main() {
+    // Crear un canal
+    let (tx, rx) = mpsc::channel();
+
+    // Crear un nou fil
+    thread::spawn(move || {
+        // Enviar un missatge
+        tx.send(&quot;Hola des del fil!&quot;).unwrap();
+    });
+
+    // Rebre el missatge
+    let rebut = rx.recv().unwrap();
+    println!(&quot;Rebut: {}&quot;, rebut);
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Creació del Canal</strong>: <code>let (tx, rx) = mpsc::channel();</code> crea un nou canal. <code>tx</code> és l'emissor, i <code>rx</code> és el receptor.</li>
+<li><strong>Creació del Fil</strong>: <code>thread::spawn(move || { ... })</code> crea un nou fil.</li>
+<li><strong>Enviar un Missatge</strong>: <code>tx.send(&quot;Hola des del fil!&quot;).unwrap();</code> envia un missatge des del nou fil.</li>
+<li><strong>Rebre un Missatge</strong>: <code>let rebut = rx.recv().unwrap();</code> rep el missatge en el fil principal.</li>
+</ul>
+</div><h1>Passar Missatges Avançat</h1>
+<div class='content'></div><h2>Múltiples Productors</h2>
+<div class='content'><p>Els canals de Rust suporten múltiples productors, el que significa que múltiples fils poden enviar missatges al mateix receptor.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIHN0ZDo6c3luYzo6bXBzYzsKdXNlIHN0ZDo6dGhyZWFkOwp1c2Ugc3RkOjp0aW1lOjpEdXJhdGlvbjsKCmZuIG1haW4oKSB7CiAgICBsZXQgKHR4LCByeCkgPSBtcHNjOjpjaGFubmVsKCk7CgogICAgZm9yIGkgaW4gMC4uNSB7CiAgICAgICAgbGV0IHR4X2Nsb25lID0gdHguY2xvbmUoKTsKICAgICAgICB0aHJlYWQ6OnNwYXduKG1vdmUgfHwgewogICAgICAgICAgICBsZXQgbWlzc2F0Z2UgPSBmb3JtYXQhKCJNaXNzYXRnZSBkZWwgZmlsIHt9IiwgaSk7CiAgICAgICAgICAgIHR4X2Nsb25lLnNlbmQobWlzc2F0Z2UpLnVud3JhcCgpOwogICAgICAgICAgICB0aHJlYWQ6OnNsZWVwKER1cmF0aW9uOjpmcm9tX21pbGxpcygxMDApKTsKICAgICAgICB9KTsKICAgIH0KCiAgICBmb3IgcmVidXQgZW4gcnggewogICAgICAgIHByaW50bG4hKCJSZWJ1dDoge30iLCByZWJ1dCk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use std::sync::mpsc;
+use std::thread;
+use std::time::Duration;
+
+fn main() {
+    let (tx, rx) = mpsc::channel();
+
+    for i in 0..5 {
+        let tx_clone = tx.clone();
+        thread::spawn(move || {
+            let missatge = format!(&quot;Missatge del fil {}&quot;, i);
+            tx_clone.send(missatge).unwrap();
+            thread::sleep(Duration::from_millis(100));
+        });
+    }
+
+    for rebut en rx {
+        println!(&quot;Rebut: {}&quot;, rebut);
+    }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Clonar l'Emissor</strong>: <code>let tx_clone = tx.clone();</code> permet que múltiples fils enviïn missatges al mateix receptor.</li>
+<li><strong>Rebre Missatges</strong>: <code>for rebut en rx { ... }</code> itera sobre els missatges entrants.</li>
+</ul>
+</div><h2>Utilitzar `try_recv` per a Recepció No Bloquejant</h2>
+<div class='content'><p>El mètode <code>recv</code> bloqueja fins que un missatge està disponible. Si necessites una recepció no bloquejant, utilitza <code>try_recv</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIHN0ZDo6c3luYzo6bXBzYzsKdXNlIHN0ZDo6dGhyZWFkOwp1c2Ugc3RkOjp0aW1lOjpEdXJhdGlvbjsKCmZuIG1haW4oKSB7CiAgICBsZXQgKHR4LCByeCkgPSBtcHNjOjpjaGFubmVsKCk7CgogICAgdGhyZWFkOjpzcGF3bihtb3ZlIHx8IHsKICAgICAgICB0aHJlYWQ6OnNsZWVwKER1cmF0aW9uOjpmcm9tX3NlY3MoMSkpOwogICAgICAgIHR4LnNlbmQoIk1pc3NhdGdlIHJldGFyZGF0IikudW53cmFwKCk7CiAgICB9KTsKCiAgICBsb29wIHsKICAgICAgICBtYXRjaCByeC50cnlfcmVjdigpIHsKICAgICAgICAgICAgT2sobWlzc2F0Z2UpID0+IHsKICAgICAgICAgICAgICAgIHByaW50bG4hKCJSZWJ1dDoge30iLCBtaXNzYXRnZSk7CiAgICAgICAgICAgICAgICBicmVhazsKICAgICAgICAgICAgfQogICAgICAgICAgICBFcnIoXykgPT4gewogICAgICAgICAgICAgICAgcHJpbnRsbiEoIkVuY2FyYSBubyBoaSBoYSBtaXNzYXRnZS4uLiIpOwogICAgICAgICAgICAgICAgdGhyZWFkOjpzbGVlcChEdXJhdGlvbjo6ZnJvbV9taWxsaXMoMjAwKSk7CiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use std::sync::mpsc;
+use std::thread;
+use std::time::Duration;
+
+fn main() {
+    let (tx, rx) = mpsc::channel();
+
+    thread::spawn(move || {
+        thread::sleep(Duration::from_secs(1));
+        tx.send(&quot;Missatge retardat&quot;).unwrap();
+    });
+
+    loop {
+        match rx.try_recv() {
+            Ok(missatge) =&gt; {
+                println!(&quot;Rebut: {}&quot;, missatge);
+                break;
+            }
+            Err(_) =&gt; {
+                println!(&quot;Encara no hi ha missatge...&quot;);
+                thread::sleep(Duration::from_millis(200));
+            }
+        }
+    }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Recepció No Bloquejant</strong>: <code>match rx.try_recv() { ... }</code> intenta rebre un missatge sense bloquejar.</li>
+<li><strong>Gestionar Errors</strong>: La branca <code>Err(_)</code> gestiona el cas en què encara no hi ha cap missatge disponible.</li>
+</ul>
+</div><h1>Resum</h1>
+<div class='content'><p>Passar missatges a Rust és una eina poderosa per a la programació concurrent. Utilitzant canals, pots comunicar-te de manera segura i eficient entre fils. Punts clau a recordar:</p>
+<ul>
+<li>Els canals es creen utilitzant <code>std::sync::mpsc::channel</code>.</li>
+<li>Un canal consisteix en un emissor i un receptor.</li>
+<li>Múltiples fils poden enviar missatges al mateix receptor clonant l'emissor.</li>
+<li>Utilitza <code>recv</code> per a recepció bloquejant i <code>try_recv</code> per a recepció no bloquejant.</li>
+</ul>
+<p>Entendre aquests conceptes t'ajudarà a escriure programes segurs i concurrents a Rust.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='threads'>&#x25C4;Fils</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Passar Missatges a Rust</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='shared-state'>Estat Compartit &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

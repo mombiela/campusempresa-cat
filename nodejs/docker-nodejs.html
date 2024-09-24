@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utilitzant Docker amb Node.js</title>
+
+    <link rel="alternate" href="https://campusempresa.com/nodejs/docker-nodejs" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/nodejs/docker-nodejs" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/nodejs/docker-nodejs" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/nodejs/docker-nodejs" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/nodejs/docker-nodejs" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='deploying-nodejs'>&#x25C4;Desplegant Aplicacions Node.js</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Utilitzant Docker amb Node.js</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='scaling-applications'>Escalant Aplicacions &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a Docker</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Què és Docker?</strong></p>
+<ul>
+<li>Docker és una plataforma per desenvolupar, enviar i executar aplicacions dins de contenidors.</li>
+<li>Els contenidors són lleugers, portàtils i garanteixen la consistència a través de diferents entorns.</li>
+</ul>
+</li>
+<li>
+<p><strong>Per què utilitzar Docker amb Node.js?</strong></p>
+<ul>
+<li>Simplifica el procés de configuració.</li>
+<li>Garanteix la consistència a través dels entorns de desenvolupament, proves i producció.</li>
+<li>Facilita la gestió de dependències i versions.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Configurant Docker</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Instal·lant Docker</strong></p>
+<ul>
+<li>Segueix la guia oficial d'instal·lació de Docker per al teu sistema operatiu: <a href="https://docs.docker.com/get-docker/">Docker Installation</a></li>
+</ul>
+</li>
+<li>
+<p><strong>Comandes bàsiques de Docker</strong></p>
+<ul>
+<li><code>docker --version</code>: Comprovar la versió de Docker.</li>
+<li><code>docker run</code>: Executar un contenidor.</li>
+<li><code>docker build</code>: Construir una imatge a partir d'un Dockerfile.</li>
+<li><code>docker ps</code>: Llistar els contenidors en execució.</li>
+<li><code>docker stop</code>: Aturar un contenidor en execució.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Creant una Aplicació Simple de Node.js</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Aplicació bàsica de Node.js</strong></p>
+<pre><code class="language-javascript">// app.js
+const http = require('http');
+
+const hostname = '127.0.0.1';
+const port = 3000;
+
+const server = http.createServer((req, res) =&gt; {
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/plain');
+  res.end('Hello World\n');
+});
+
+server.listen(port, hostname, () =&gt; {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
+</code></pre>
+</li>
+<li>
+<p><strong>Package.json</strong></p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;docker-nodejs-app&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;description&quot;: &quot;A simple Node.js app to demonstrate Docker&quot;,
+  &quot;main&quot;: &quot;app.js&quot;,
+  &quot;scripts&quot;: {
+    &quot;start&quot;: &quot;node app.js&quot;
+  },
+  &quot;dependencies&quot;: {
+    &quot;http&quot;: &quot;^0.0.1-security&quot;
+  }
+}
+</code></pre>
+</li>
+</ul>
+</div><h1>Dockeritzant l'Aplicació de Node.js</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Creant un Dockerfile</strong></p>
+<pre><code class="language-dockerfile"># Utilitza la imatge oficial de Node.js del Docker Hub
+FROM node:14
+
+# Crear i canviar al directori de l'aplicació
+WORKDIR /usr/src/app
+
+# Copiar package.json i package-lock.json
+COPY package*.json ./
+
+# Instal·lar dependències
+RUN npm install
+
+# Copiar la resta del codi de l'aplicació
+COPY . .
+
+# Exposar el port en què s'executa l'aplicació
+EXPOSE 3000
+
+# Definir la comanda per executar l'aplicació
+CMD [&quot;node&quot;, &quot;app.js&quot;]
+</code></pre>
+</li>
+<li>
+<p><strong>Construint la Imatge de Docker</strong></p>
+<pre><code class="language-bash">docker build -t docker-nodejs-app .
+</code></pre>
+</li>
+<li>
+<p><strong>Executant el Contenidor de Docker</strong></p>
+<pre><code class="language-bash">docker run -p 3000:3000 docker-nodejs-app
+</code></pre>
+</li>
+</ul>
+</div><h1>Gestionant Contenidors de Docker</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Veient Contenidors en Execució</strong></p>
+<pre><code class="language-bash">docker ps
+</code></pre>
+</li>
+<li>
+<p><strong>Aturant un Contenidor</strong></p>
+<pre><code class="language-bash">docker stop &lt;container_id&gt;
+</code></pre>
+</li>
+<li>
+<p><strong>Eliminant un Contenidor</strong></p>
+<pre><code class="language-bash">docker rm &lt;container_id&gt;
+</code></pre>
+</li>
+</ul>
+</div><h1>Conceptes Avançats de Docker</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Docker Compose</strong></p>
+<ul>
+<li>
+<p>Docker Compose és una eina per definir i executar aplicacions Docker amb múltiples contenidors.</p>
+</li>
+<li>
+<p><strong>docker-compose.yml</strong></p>
+<pre><code class="language-yaml">version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - &quot;3000:3000&quot;
+</code></pre>
+</li>
+<li>
+<p><strong>Executant Docker Compose</strong></p>
+<pre><code class="language-bash">docker-compose up
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Volums de Docker</strong></p>
+<ul>
+<li>
+<p>Els volums s'utilitzen per persistir dades generades i utilitzades pels contenidors de Docker.</p>
+</li>
+<li>
+<p><strong>Creant un Volum</strong></p>
+<pre><code class="language-bash">docker volume create my_volume
+</code></pre>
+</li>
+<li>
+<p><strong>Utilitzant un Volum en Docker Compose</strong></p>
+<pre><code class="language-yaml">version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - &quot;3000:3000&quot;
+    volumes:
+      - my_volume:/usr/src/app
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Utilitzar Docker amb Node.js simplifica el procés de desenvolupament i desplegament garantint la consistència a través de diferents entorns. Dockeritzant les teves aplicacions de Node.js, pots gestionar fàcilment les dependències, escalar les teves aplicacions i mantenir una configuració de desenvolupament neta i reproduïble. Docker Compose millora encara més això permetent-te gestionar aplicacions amb múltiples contenidors amb facilitat.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='deploying-nodejs'>&#x25C4;Desplegant Aplicacions Node.js</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Utilitzant Docker amb Node.js</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='scaling-applications'>Escalant Aplicacions &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

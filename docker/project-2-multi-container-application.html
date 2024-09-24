@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 2: Aplicació Multi-Contenidor</title>
+
+    <link rel="alternate" href="https://campusempresa.com/docker/project-2-multi-container-application" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/docker/project-2-multi-container-application" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/docker/project-2-multi-container-application" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/docker/project-2-multi-container-application" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/docker/project-2-multi-container-application" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='project-1-simple-web-application'>&#x25C4;Projecte 1: Aplicació web simple</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Project 2: Aplicació Multi-Contenidor</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='project-3-ci-cd-pipeline-docker'>Projecte 3: Pipeline CI/CD amb Docker &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest projecte, construirem una aplicació multi-contenidor utilitzant Docker. Aquest projecte t'ajudarà a entendre com orquestrar múltiples serveis, gestionar dependències i assegurar una comunicació fluida entre contenidors.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Docker Compose</strong>: Una eina per definir i executar aplicacions Docker multi-contenidor.</li>
+<li><strong>Servei</strong>: Un contenidor en un fitxer Docker Compose.</li>
+<li><strong>Xarxa</strong>: Una xarxa Docker que permet als contenidors comunicar-se entre ells.</li>
+<li><strong>Volum</strong>: Un mecanisme d'emmagatzematge persistent per als contenidors Docker.</li>
+</ul>
+</div><h1>Configuració del Projecte</h1>
+<div class='content'><p>Per començar, crearem una aplicació simple multi-contenidor que consisteix en un servidor web i una base de dades.</p>
+</div><h2>Pas 1: Crear el Directori del Projecte</h2>
+<div class='content'><p>Primer, crea un directori per al teu projecte:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bWtkaXIgbXVsdGktY29udGFpbmVyLWFwcApjZCBtdWx0aS1jb250YWluZXItYXBw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>mkdir multi-container-app
+cd multi-container-app</pre></div><div class='content'></div><h2>Pas 2: Definir el Fitxer Docker Compose</h2>
+<div class='content'><p>Crea un fitxer <code>docker-compose.yml</code> per definir els serveis:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmVyc2lvbjogJzMuOCcKCnNlcnZpY2VzOgogIHdlYjoKICAgIGltYWdlOiBuZ2lueDpsYXRlc3QKICAgIHBvcnRzOgogICAgICAtICI4MDo4MCIKICAgIG5ldHdvcmtzOgogICAgICAtIGFwcC1uZXR3b3JrCgogIGRiOgogICAgaW1hZ2U6IHBvc3RncmVzOmxhdGVzdAogICAgZW52aXJvbm1lbnQ6CiAgICAgIFBPU1RHUkVTX1VTRVI6IGV4YW1wbGUKICAgICAgUE9TVEdSRVNfUEFTU1dPUkQ6IGV4YW1wbGUKICAgIHZvbHVtZXM6CiAgICAgIC0gZGItZGF0YTovdmFyL2xpYi9wb3N0Z3Jlc3FsL2RhdGEKICAgIG5ldHdvcmtzOgogICAgICAtIGFwcC1uZXR3b3JrCgpuZXR3b3JrczoKICBhcHAtbmV0d29yazoKICAgIGRyaXZlcjogYnJpZGdlCgp2b2x1bWVzOgogIGRiLWRhdGE6"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>version: '3.8'
+
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - &quot;80:80&quot;
+    networks:
+      - app-network
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: example
+      POSTGRES_PASSWORD: example
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db-data:</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>version</strong>: Especifica la versió de Docker Compose.</li>
+<li><strong>services</strong>: Defineix els contenidors a executar.
+<ul>
+<li><strong>web</strong>: El servei de servidor web utilitzant la imatge Nginx.
+<ul>
+<li><strong>ports</strong>: Assigna el port 80 de l'amfitrió al port 80 del contenidor.</li>
+<li><strong>networks</strong>: Connecta el contenidor a la <code>app-network</code>.</li>
+</ul>
+</li>
+<li><strong>db</strong>: El servei de base de dades utilitzant la imatge PostgreSQL.
+<ul>
+<li><strong>environment</strong>: Estableix variables d'entorn per a l'usuari i la contrasenya de la base de dades.</li>
+<li><strong>volumes</strong>: Munta un volum per a l'emmagatzematge persistent.</li>
+<li><strong>networks</strong>: Connecta el contenidor a la <code>app-network</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>networks</strong>: Defineix una xarxa personalitzada anomenada <code>app-network</code>.</li>
+<li><strong>volumes</strong>: Defineix un volum anomenat <code>db-data</code> per a l'emmagatzematge persistent.</li>
+</ul>
+</div><h1>Executar l'Aplicació</h1>
+<div class='content'><p>Per executar l'aplicació, utilitza la següent comanda:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyLWNvbXBvc2UgdXAgLWQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker-compose up -d</pre></div><div class='content'><ul>
+<li>El flag <code>-d</code> executa els contenidors en mode desconnectat.</li>
+</ul>
+</div><h2>Comprovar els Serveis</h2>
+<div class='content'><p>Pots comprovar els serveis en execució utilitzant:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyLWNvbXBvc2UgcHM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker-compose ps</pre></div><div class='content'></div><h1>Interactuar amb els Contenidors</h1>
+<h2>Accedir al Servidor Web</h2>
+<div class='content'><p>Obre el teu navegador i navega a <code>http://localhost</code>. Hauries de veure la pàgina de benvinguda predeterminada de Nginx.</p>
+</div><h2>Accedir a la Base de Dades</h2>
+<div class='content'><p>Pots interactuar amb la base de dades PostgreSQL utilitzant un client PostgreSQL o l'eina de línia de comandes <code>psql</code>.</p>
+</div><h1>Aturar l'Aplicació</h1>
+<div class='content'><p>Per aturar l'aplicació, utilitza:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyLWNvbXBvc2UgZG93bg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker-compose down</pre></div><div class='content'><ul>
+<li>Aquesta comanda atura i elimina els contenidors, xarxes i volums definits en el fitxer <code>docker-compose.yml</code>.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest projecte, has après a:</p>
+<ul>
+<li>Definir i executar una aplicació multi-contenidor utilitzant Docker Compose.</li>
+<li>Configurar serveis amb configuracions específiques.</li>
+<li>Gestionar xarxes i volums per a la comunicació entre contenidors i l'emmagatzematge persistent.</li>
+</ul>
+<p>En dominar aquests conceptes, ara pots construir i gestionar aplicacions multi-contenidor més complexes, millorant les teves habilitats amb Docker des de nivell principiant fins a avançat.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='project-1-simple-web-application'>&#x25C4;Projecte 1: Aplicació web simple</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Project 2: Aplicació Multi-Contenidor</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='project-3-ci-cd-pipeline-docker'>Projecte 3: Pipeline CI/CD amb Docker &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

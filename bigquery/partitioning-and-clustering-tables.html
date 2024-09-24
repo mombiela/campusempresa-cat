@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particionament i Clustering de Taules</title>
+
+    <link rel="alternate" href="https://campusempresa.com/bigquery/partitioning-and-clustering-tables" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/bigquery/partitioning-and-clustering-tables" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/bigquery/partitioning-and-clustering-tables" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/bigquery/partitioning-and-clustering-tables" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/bigquery/partitioning-and-clustering-tables" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='using-functions-for-data-transformation'>&#x25C4;Ús de funcions per a la transformació de dades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Particionament i Clustering de Taules</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='advanced-joins-and-performance'>Unions avançades i rendiment &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>El particionament i el clustering són tècniques essencials a BigQuery que ajuden a optimitzar el rendiment de les consultes i gestionar grans conjunts de dades de manera eficient. Aquesta secció cobrirà els conceptes bàsics del particionament i el clustering, els seus beneficis i com implementar-los a BigQuery.</p>
+</div><h1>Particionament de Taules</h1>
+<div class='content'></div><h2>Què és el Particionament?</h2>
+<div class='content'><p>El particionament és el procés de dividir una taula gran en peces més petites i manejables anomenades particions. Cada partició es guarda per separat, cosa que pot millorar significativament el rendiment de les consultes i reduir els costos.</p>
+</div><h2>Tipus de Particionament</h2>
+<div class='content'><ul>
+<li><strong>Particionament basat en el temps</strong>: Divideix la taula en funció d'una columna de marca de temps o data.</li>
+<li><strong>Particionament per rang d'enters</strong>: Divideix la taula en funció d'una columna d'enters.</li>
+</ul>
+</div><h2>Beneficis del Particionament</h2>
+<div class='content'><ul>
+<li><strong>Millora del Rendiment de les Consultes</strong>: Les consultes poden escanejar només les particions rellevants en lloc de tota la taula.</li>
+<li><strong>Eficiència de Costos</strong>: Redueix la quantitat de dades escanejades, disminuint així els costos de les consultes.</li>
+<li><strong>Gestió de Dades</strong>: Facilita la gestió i manteniment de grans conjunts de dades.</li>
+</ul>
+</div><h2>Implementació del Particionament basat en el temps</h2>
+<div class='content'><p>Per crear una taula particionada basada en una columna de marca de temps:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIG15X2RhdGFzZXQubXlfcGFydGl0aW9uZWRfdGFibGUKUEFSVElUSU9OIEJZIERBVEUodGltZXN0YW1wX2NvbHVtbikKQVMKU0VMRUNUICogRlJPTSBteV9kYXRhc2V0Lm15X3NvdXJjZV90YWJsZTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE my_dataset.my_partitioned_table
+PARTITION BY DATE(timestamp_column)
+AS
+SELECT * FROM my_dataset.my_source_table;</pre></div><div class='content'></div><h2>Implementació del Particionament per rang d'enters</h2>
+<div class='content'><p>Per crear una taula particionada basada en una columna d'enters:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIG15X2RhdGFzZXQubXlfcGFydGl0aW9uZWRfdGFibGUKUEFSVElUSU9OIEJZIFJBTkdFX0JVQ0tFVChpbnRlZ2VyX2NvbHVtbiwgR0VORVJBVEVfQVJSQVkoMSwgMTAwLCAxMCkpCkFTClNFTEVDVCAqIEZST00gbXlfZGF0YXNldC5teV9zb3VyY2VfdGFibGU7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE my_dataset.my_partitioned_table
+PARTITION BY RANGE_BUCKET(integer_column, GENERATE_ARRAY(1, 100, 10))
+AS
+SELECT * FROM my_dataset.my_source_table;</pre></div><div class='content'></div><h2>Consultar Taules Particionades</h2>
+<div class='content'><p>Quan es consulten taules particionades, utilitzeu la columna de partició a la clàusula WHERE per limitar les dades escanejades:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUICoKRlJPTSBteV9kYXRhc2V0Lm15X3BhcnRpdGlvbmVkX3RhYmxlCldIRVJFIERBVEUodGltZXN0YW1wX2NvbHVtbikgPSAnMjAyMy0wMS0wMSc7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT *
+FROM my_dataset.my_partitioned_table
+WHERE DATE(timestamp_column) = '2023-01-01';</pre></div><div class='content'></div><h1>Clustering de Taules</h1>
+<div class='content'></div><h2>Què és el Clustering?</h2>
+<div class='content'><p>El clustering organitza les dades dins d'una taula particionada en funció dels valors d'una o més columnes. Això pot optimitzar encara més el rendiment de les consultes reduint la quantitat de dades escanejades dins de cada partició.</p>
+</div><h2>Beneficis del Clustering</h2>
+<div class='content'><ul>
+<li><strong>Millora del Rendiment de les Consultes</strong>: Millora l'eficiència de les consultes que filtren o agreguen sobre columnes agrupades.</li>
+<li><strong>Reducció de l'Escaneig de Dades</strong>: Limita les dades escanejades dins de cada partició, cosa que condueix a una execució més ràpida de les consultes.</li>
+</ul>
+</div><h2>Implementació del Clustering</h2>
+<div class='content'><p>Per crear una taula agrupada:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIG15X2RhdGFzZXQubXlfY2x1c3RlcmVkX3RhYmxlClBBUlRJVElPTiBCWSBEQVRFKHRpbWVzdGFtcF9jb2x1bW4pCkNMVVNURVIgQlkgY29sdW1uMSwgY29sdW1uMgpBUwpTRUxFQ1QgKiBGUk9NIG15X2RhdGFzZXQubXlfc291cmNlX3RhYmxlOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE my_dataset.my_clustered_table
+PARTITION BY DATE(timestamp_column)
+CLUSTER BY column1, column2
+AS
+SELECT * FROM my_dataset.my_source_table;</pre></div><div class='content'></div><h2>Consultar Taules Agrupades</h2>
+<div class='content'><p>Quan es consulten taules agrupades, utilitzeu les columnes agrupades a la clàusula WHERE per aprofitar el clustering:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUICoKRlJPTSBteV9kYXRhc2V0Lm15X2NsdXN0ZXJlZF90YWJsZQpXSEVSRSBjb2x1bW4xID0gJ3ZhbHVlMScgQU5EIGNvbHVtbjIgPSAndmFsdWUyJzs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT *
+FROM my_dataset.my_clustered_table
+WHERE column1 = 'value1' AND column2 = 'value2';</pre></div><div class='content'></div><h1>Millors Pràctiques</h1>
+<div class='content'></div><h2>Elecció de Columnes de Partició i Agrupació</h2>
+<div class='content'><ul>
+<li><strong>Columnes de Partició</strong>: Trieu columnes que s'utilitzin freqüentment en consultes basades en dates o rangs.</li>
+<li><strong>Columnes d'Agrupació</strong>: Trieu columnes que s'utilitzin sovint en operacions de filtratge o agregació.</li>
+</ul>
+</div><h2>Combinació de Particionament i Clustering</h2>
+<div class='content'><p>La combinació d'ambdues tècniques pot proporcionar el millor rendiment per a grans conjunts de dades. Per exemple, particioneu per data i agrupeu per columnes consultades freqüentment:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIG15X2RhdGFzZXQubXlfb3B0aW1pemVkX3RhYmxlClBBUlRJVElPTiBCWSBEQVRFKHRpbWVzdGFtcF9jb2x1bW4pCkNMVVNURVIgQlkgY29sdW1uMSwgY29sdW1uMgpBUwpTRUxFQ1QgKiBGUk9NIG15X2RhdGFzZXQubXlfc291cmNlX3RhYmxlOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE my_dataset.my_optimized_table
+PARTITION BY DATE(timestamp_column)
+CLUSTER BY column1, column2
+AS
+SELECT * FROM my_dataset.my_source_table;</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>El particionament i el clustering són tècniques poderoses a BigQuery que poden millorar significativament el rendiment de les consultes i gestionar grans conjunts de dades de manera eficient. Comprenent i implementant aquestes tècniques, podeu optimitzar l'ús de BigQuery, reduir costos i millorar la gestió de dades. Trieu sempre les columnes de partició i agrupació en funció dels vostres patrons de consulta per maximitzar els beneficis.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='using-functions-for-data-transformation'>&#x25C4;Ús de funcions per a la transformació de dades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Particionament i Clustering de Taules</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='advanced-joins-and-performance'>Unions avançades i rendiment &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

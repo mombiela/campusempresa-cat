@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conceptes bàsics de Dockerfile</title>
+
+    <link rel="alternate" href="https://campusempresa.com/docker/dockerfile-basics" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/docker/dockerfile-basics" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/docker/dockerfile-basics" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/docker/dockerfile-basics" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/docker/dockerfile-basics" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='creating-docker-images'>&#x25C4;Creant imatges de Docker</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Conceptes bàsics de Dockerfile</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='building-running-docker-images'>Construint i executant imatges de Docker &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a Dockerfile</h1>
+<div class='content'><p>Un Dockerfile és un document de text que conté totes les ordres que un usuari podria cridar a la línia de comandes per muntar una imatge. Utilitzant <code>docker build</code>, els usuaris poden crear una construcció automatitzada que executa diverses instruccions de la línia de comandes successivament.</p>
+</div><h1>Conceptes clau de Dockerfile</h1>
+<div class='content'><ul>
+<li><strong>FROM</strong>: Estableix la imatge base per a les instruccions següents.</li>
+<li><strong>RUN</strong>: Executa una ordre a la shell.</li>
+<li><strong>CMD</strong>: Proporciona l'ordre per defecte per al contenidor.</li>
+<li><strong>LABEL</strong>: Afegeix metadades a una imatge.</li>
+<li><strong>EXPOSE</strong>: Informa Docker que el contenidor escolta als ports de xarxa especificats en temps d'execució.</li>
+<li><strong>ENV</strong>: Estableix variables d'entorn.</li>
+<li><strong>ADD</strong>: Copia nous fitxers, directoris o URLs de fitxers remots des de <code>src</code> i els afegeix al sistema de fitxers del contenidor al camí <code>dest</code>.</li>
+<li><strong>COPY</strong>: Copia nous fitxers o directoris des de <code>src</code> i els afegeix al sistema de fitxers del contenidor al camí <code>dest</code>.</li>
+<li><strong>ENTRYPOINT</strong>: Configura un contenidor que s'executarà com un executable.</li>
+<li><strong>VOLUME</strong>: Crea un punt de muntatge amb el camí especificat i el marca com a contenidor de volums muntats externament des de l'amfitrió natiu o altres contenidors.</li>
+<li><strong>USER</strong>: Estableix l'UID (o nom d'usuari) a utilitzar quan s'executa la imatge i per a qualsevol instrucció <code>RUN</code>, <code>CMD</code> i <code>ENTRYPOINT</code> que la segueixi al Dockerfile.</li>
+<li><strong>WORKDIR</strong>: Estableix el directori de treball per a qualsevol instrucció <code>RUN</code>, <code>CMD</code>, <code>ENTRYPOINT</code>, <code>COPY</code> i <code>ADD</code> que la segueixi al Dockerfile.</li>
+</ul>
+</div><h1>Exemple bàsic de Dockerfile</h1>
+<div class='content'><p>Creem un Dockerfile senzill per a una aplicació Node.js.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBVdGlsaXR6YSB1bmEgaW1hdGdlIG9maWNpYWwgZGUgTm9kZS5qcyBjb20gYSBpbWF0Z2UgYmFzZQpGUk9NIG5vZGU6MTQKCiMgRXN0YWJsZWl4IGVsIGRpcmVjdG9yaSBkZSB0cmViYWxsIGRpbnMgZGVsIGNvbnRlbmlkb3IKV09SS0RJUiAvdXNyL3NyYy9hcHAKCiMgQ29waWEgZWxzIGZpdHhlcnMgcGFja2FnZS5qc29uIGkgcGFja2FnZS1sb2NrLmpzb24gYWwgZGlyZWN0b3JpIGRlIHRyZWJhbGwKQ09QWSBwYWNrYWdlKi5qc29uIC4vCgojIEluc3RhbMK3bGEgZWxzIHBhcXVldHMgbmVjZXNzYXJpcyBlc3BlY2lmaWNhdHMgYSBwYWNrYWdlLmpzb24KUlVOIG5wbSBpbnN0YWxsCgojIENvcGlhIGxhIHJlc3RhIGRlbCBjb2RpIGRlIGwnYXBsaWNhY2nDsyBhbCBkaXJlY3RvcmkgZGUgdHJlYmFsbApDT1BZIC4gLgoKIyBGYSBxdWUgZWwgcG9ydCA4MDgwIGVzdGlndWkgZGlzcG9uaWJsZSBwZXIgYWwgbcOzbiBmb3JhIGQnYXF1ZXN0IGNvbnRlbmlkb3IKRVhQT1NFIDgwODAKCiMgRGVmaW5laXggbGEgdmFyaWFibGUgZCdlbnRvcm4KRU5WIE5PREVfRU5WPXByb2R1Y3Rpb24KCiMgRXhlY3V0YSBsJ2FwbGljYWNpw7MKQ01EIFsibm9kZSIsICJhcHAuanMiXQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Utilitza una imatge oficial de Node.js com a imatge base
+FROM node:14
+
+# Estableix el directori de treball dins del contenidor
+WORKDIR /usr/src/app
+
+# Copia els fitxers package.json i package-lock.json al directori de treball
+COPY package*.json ./
+
+# Instal&middot;la els paquets necessaris especificats a package.json
+RUN npm install
+
+# Copia la resta del codi de l'aplicaci&oacute; al directori de treball
+COPY . .
+
+# Fa que el port 8080 estigui disponible per al m&oacute;n fora d'aquest contenidor
+EXPOSE 8080
+
+# Defineix la variable d'entorn
+ENV NODE_ENV=production
+
+# Executa l'aplicaci&oacute;
+CMD [&quot;node&quot;, &quot;app.js&quot;]</pre></div><div class='content'></div><h2>Explicació del Dockerfile</h2>
+<div class='content'><ul>
+<li><strong>FROM node:14</strong>: Aquesta línia especifica la imatge base. En aquest cas, és la imatge oficial de Node.js amb l'etiqueta <code>14</code>.</li>
+<li><strong>WORKDIR /usr/src/app</strong>: Això estableix el directori de treball dins del contenidor a <code>/usr/src/app</code>.</li>
+<li><em><em>COPY package</em>.json ./</em>*: Això copia els fitxers <code>package.json</code> i <code>package-lock.json</code> al directori de treball.</li>
+<li><strong>RUN npm install</strong>: Això executa l'ordre <code>npm install</code> per instal·lar les dependències.</li>
+<li><strong>COPY . .</strong>: Això copia la resta del codi de l'aplicació al directori de treball.</li>
+<li><strong>EXPOSE 8080</strong>: Això exposa el port 8080 al món exterior.</li>
+<li><strong>ENV NODE_ENV=production</strong>: Això estableix una variable d'entorn <code>NODE_ENV</code> a <code>production</code>.</li>
+<li><strong>CMD [&quot;node&quot;, &quot;app.js&quot;]</strong>: Això especifica l'ordre per executar l'aplicació.</li>
+</ul>
+</div><h1>Instruccions comunes de Dockerfile</h1>
+<div class='content'><p>Aquí hi ha una taula que resumeix algunes instruccions comunes de Dockerfile i els seus propòsits:</p>
+<p>| Instrucció  | Descripció |
+|-------------|-------------|
+| <code>FROM</code>      | Especifica la imatge base. |
+| <code>RUN</code>       | Executa una ordre a la shell. |
+| <code>CMD</code>       | Proporciona l'ordre per defecte per al contenidor. |
+| <code>LABEL</code>     | Afegeix metadades a una imatge. |
+| <code>EXPOSE</code>    | Informa Docker que el contenidor escolta als ports de xarxa especificats. |
+| <code>ENV</code>       | Estableix variables d'entorn. |
+| <code>ADD</code>       | Copia nous fitxers, directoris o URLs de fitxers remots al contenidor. |
+| <code>COPY</code>      | Copia nous fitxers o directoris al contenidor. |
+| <code>ENTRYPOINT</code>| Configura un contenidor que s'executarà com un executable. |
+| <code>VOLUME</code>    | Crea un punt de muntatge amb el camí especificat. |
+| <code>USER</code>      | Estableix l'UID (o nom d'usuari) a utilitzar quan s'executa la imatge. |
+| <code>WORKDIR</code>   | Estableix el directori de treball per a les instruccions següents. |</p>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Entendre els conceptes bàsics de Dockerfile és crucial per crear imatges Docker eficients i efectives. Dominant les instruccions clau i els seus propòsits, pots automatitzar el procés de construcció i assegurar-te que les teves aplicacions s'executin de manera consistent en diferents entorns. Practica escrivint Dockerfiles per a diferents aplicacions per obtenir una millor comprensió d'aquests conceptes.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='creating-docker-images'>&#x25C4;Creant imatges de Docker</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Conceptes bàsics de Dockerfile</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='building-running-docker-images'>Construint i executant imatges de Docker &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

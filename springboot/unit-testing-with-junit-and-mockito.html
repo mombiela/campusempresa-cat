@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proves Unitàries amb JUnit i Mockito</title>
+
+    <link rel="alternate" href="https://campusempresa.com/springboot/unit-testing-with-junit-and-mockito" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/springboot/unit-testing-with-junit-and-mockito" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/springboot/unit-testing-with-junit-and-mockito" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/springboot/unit-testing-with-junit-and-mockito" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/springboot/unit-testing-with-junit-and-mockito" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='introduction-to-testing-in-spring-boot'>&#x25C4;Introducció a les Proves a Spring Boot</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Proves Unitàries amb JUnit i Mockito</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='integration-testing'>Proves d'Integració &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a les Proves Unitàries</h1>
+<div class='content'><ul>
+<li><strong>Definició</strong>: Les proves unitàries impliquen provar components o funcions individuals d'una aplicació de programari per assegurar-se que funcionen com s'espera.</li>
+<li><strong>Importància</strong>: Ajuda a identificar errors aviat, simplifica la integració i assegura la fiabilitat del codi.</li>
+</ul>
+</div><h1>Configuració de JUnit i Mockito en Spring Boot</h1>
+<div class='content'><ul>
+<li><strong>Dependències</strong>: Afegeix les dependències necessàries al teu fitxer <code>pom.xml</code> o <code>build.gradle</code>.</li>
+</ul>
+</div><h2>Maven</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PGRlcGVuZGVuY3k+CiAgICA8Z3JvdXBJZD5vcmcuc3ByaW5nZnJhbWV3b3JrLmJvb3Q8L2dyb3VwSWQ+CiAgICA8YXJ0aWZhY3RJZD5zcHJpbmctYm9vdC1zdGFydGVyLXRlc3Q8L2FydGlmYWN0SWQ+CiAgICA8c2NvcGU+dGVzdDwvc2NvcGU+CjwvZGVwZW5kZW5jeT4KPGRlcGVuZGVuY3k+CiAgICA8Z3JvdXBJZD5vcmcubW9ja2l0bzwvZ3JvdXBJZD4KICAgIDxhcnRpZmFjdElkPm1vY2tpdG8tY29yZTwvYXJ0aWZhY3RJZD4KICAgIDxzY29wZT50ZXN0PC9zY29wZT4KPC9kZXBlbmRlbmN5Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;org.mockito&lt;/groupId&gt;
+    &lt;artifactId&gt;mockito-core&lt;/artifactId&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</pre></div><div class='content'></div><h2>Gradle</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVzdEltcGxlbWVudGF0aW9uICdvcmcuc3ByaW5nZnJhbWV3b3JrLmJvb3Q6c3ByaW5nLWJvb3Qtc3RhcnRlci10ZXN0Jwp0ZXN0SW1wbGVtZW50YXRpb24gJ29yZy5tb2NraXRvOm1vY2tpdG8tY29yZSc="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>testImplementation 'org.springframework.boot:spring-boot-starter-test'
+testImplementation 'org.mockito:mockito-core'</pre></div><div class='content'></div><h1>Escriure Proves Unitàries amb JUnit</h1>
+<div class='content'><ul>
+<li><strong>Estructura Bàsica</strong>: Una classe de prova JUnit típica inclou mètodes de configuració, mètodes de prova i mètodes de desmuntatge.</li>
+</ul>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5qdW5pdC5qdXBpdGVyLmFwaS5CZWZvcmVFYWNoOwppbXBvcnQgb3JnLmp1bml0Lmp1cGl0ZXIuYXBpLlRlc3Q7CmltcG9ydCBzdGF0aWMgb3JnLmp1bml0Lmp1cGl0ZXIuYXBpLkFzc2VydGlvbnMuYXNzZXJ0RXF1YWxzOwoKcHVibGljIGNsYXNzIENhbGN1bGF0b3JUZXN0IHsKCiAgICBwcml2YXRlIENhbGN1bGF0b3IgY2FsY3VsYXRvcjsKCiAgICBAQmVmb3JlRWFjaAogICAgcHVibGljIHZvaWQgc2V0VXAoKSB7CiAgICAgICAgY2FsY3VsYXRvciA9IG5ldyBDYWxjdWxhdG9yKCk7CiAgICB9CgogICAgQFRlc3QKICAgIHB1YmxpYyB2b2lkIHRlc3RBZGRpdGlvbigpIHsKICAgICAgICBpbnQgcmVzdWx0ID0gY2FsY3VsYXRvci5hZGQoMiwgMyk7CiAgICAgICAgYXNzZXJ0RXF1YWxzKDUsIHJlc3VsdCk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class CalculatorTest {
+
+    private Calculator calculator;
+
+    @BeforeEach
+    public void setUp() {
+        calculator = new Calculator();
+    }
+
+    @Test
+    public void testAddition() {
+        int result = calculator.add(2, 3);
+        assertEquals(5, result);
+    }
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>@BeforeEach</code>: Inicialitza l'entorn de prova abans de cada prova.</li>
+<li><code>@Test</code>: Marca un mètode com a mètode de prova.</li>
+<li><code>assertEquals</code>: Assegura que el resultat esperat coincideixi amb el resultat real.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Introducció a Mockito</h1>
+<div class='content'><ul>
+<li><strong>Definició</strong>: Mockito és un marc de treball per a la creació de mocks per a proves unitàries.</li>
+<li><strong>Propòsit</strong>: Permet provar components en aïllament simulant dependències.</li>
+</ul>
+</div><h1>Ús de Mockito en Proves Unitàries</h1>
+<div class='content'><ul>
+<li><strong>Anotacions</strong>: Les anotacions clau inclouen <code>@Mock</code>, <code>@InjectMocks</code> i <code>@RunWith(MockitoJUnitRunner.class)</code>.</li>
+</ul>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5qdW5pdC5qdXBpdGVyLmFwaS5CZWZvcmVFYWNoOwppbXBvcnQgb3JnLmp1bml0Lmp1cGl0ZXIuYXBpLlRlc3Q7CmltcG9ydCBvcmcubW9ja2l0by5JbmplY3RNb2NrczsKaW1wb3J0IG9yZy5tb2NraXRvLk1vY2s7CmltcG9ydCBvcmcubW9ja2l0by5Nb2NraXRvQW5ub3RhdGlvbnM7CgppbXBvcnQgc3RhdGljIG9yZy5tb2NraXRvLk1vY2tpdG8ud2hlbjsKaW1wb3J0IHN0YXRpYyBvcmcuanVuaXQuanVwaXRlci5hcGkuQXNzZXJ0aW9ucy5hc3NlcnRFcXVhbHM7CgpwdWJsaWMgY2xhc3MgVXNlclNlcnZpY2VUZXN0IHsKCiAgICBATW9jawogICAgcHJpdmF0ZSBVc2VyUmVwb3NpdG9yeSB1c2VyUmVwb3NpdG9yeTsKCiAgICBASW5qZWN0TW9ja3MKICAgIHByaXZhdGUgVXNlclNlcnZpY2UgdXNlclNlcnZpY2U7CgogICAgQEJlZm9yZUVhY2gKICAgIHB1YmxpYyB2b2lkIHNldFVwKCkgewogICAgICAgIE1vY2tpdG9Bbm5vdGF0aW9ucy5vcGVuTW9ja3ModGhpcyk7CiAgICB9CgogICAgQFRlc3QKICAgIHB1YmxpYyB2b2lkIHRlc3RHZXRVc2VyQnlJZCgpIHsKICAgICAgICBVc2VyIG1vY2tVc2VyID0gbmV3IFVzZXIoMSwgIkpvaG4gRG9lIik7CiAgICAgICAgd2hlbih1c2VyUmVwb3NpdG9yeS5maW5kQnlJZCgxKSkudGhlblJldHVybihPcHRpb25hbC5vZihtb2NrVXNlcikpOwoKICAgICAgICBVc2VyIHVzZXIgPSB1c2VyU2VydmljZS5nZXRVc2VyQnlJZCgxKTsKICAgICAgICBhc3NlcnRFcXVhbHMoIkpvaG4gRG9lIiwgdXNlci5nZXROYW1lKCkpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class UserServiceTest {
+
+    @Mock
+    private UserRepository userRepository;
+
+    @InjectMocks
+    private UserService userService;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testGetUserById() {
+        User mockUser = new User(1, &quot;John Doe&quot;);
+        when(userRepository.findById(1)).thenReturn(Optional.of(mockUser));
+
+        User user = userService.getUserById(1);
+        assertEquals(&quot;John Doe&quot;, user.getName());
+    }
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>@Mock</code>: Crea una instància mock de la dependència.</li>
+<li><code>@InjectMocks</code>: Injecta les dependències mock a la classe que s'està provant.</li>
+<li><code>MockitoAnnotations.openMocks(this)</code>: Inicialitza els mocks.</li>
+<li><code>when(...).thenReturn(...)</code>: Defineix el comportament del mock.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Temes Avançats</h1>
+<div class='content'><ul>
+<li><strong>Captors d'Arguments</strong>: Capturar arguments passats als mètodes mock.</li>
+<li><strong>Espies</strong>: Mocking parcial d'objectes reals.</li>
+<li><strong>Matchers Personalitzats</strong>: Crear matchers d'arguments personalitzats per a escenaris més complexos.</li>
+</ul>
+</div><h2>Exemple de Captor d'Arguments</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5tb2NraXRvLkFyZ3VtZW50Q2FwdG9yOwppbXBvcnQgc3RhdGljIG9yZy5tb2NraXRvLk1vY2tpdG8udmVyaWZ5OwoKQFRlc3QKcHVibGljIHZvaWQgdGVzdEFyZ3VtZW50Q2FwdG9yKCkgewogICAgQXJndW1lbnRDYXB0b3I8U3RyaW5nPiBjYXB0b3IgPSBBcmd1bWVudENhcHRvci5mb3JDbGFzcyhTdHJpbmcuY2xhc3MpOwogICAgdXNlclNlcnZpY2UudXBkYXRlVXNlck5hbWUoMSwgIkphbmUgRG9lIik7CgogICAgdmVyaWZ5KHVzZXJSZXBvc2l0b3J5KS51cGRhdGVOYW1lKGNhcHRvci5jYXB0dXJlKCkpOwogICAgYXNzZXJ0RXF1YWxzKCJKYW5lIERvZSIsIGNhcHRvci5nZXRWYWx1ZSgpKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.mockito.ArgumentCaptor;
+import static org.mockito.Mockito.verify;
+
+@Test
+public void testArgumentCaptor() {
+    ArgumentCaptor&lt;String&gt; captor = ArgumentCaptor.forClass(String.class);
+    userService.updateUserName(1, &quot;Jane Doe&quot;);
+
+    verify(userRepository).updateName(captor.capture());
+    assertEquals(&quot;Jane Doe&quot;, captor.getValue());
+}</pre></div><div class='content'></div><h1>Millors Pràctiques</h1>
+<div class='content'><ul>
+<li><strong>Aïllament</strong>: Prova una unitat a la vegada.</li>
+<li><strong>Llegibilitat</strong>: Escriu proves clares i comprensibles.</li>
+<li><strong>Mantenibilitat</strong>: Mantingues les proves actualitzades amb els canvis de codi.</li>
+<li><strong>Cobertura</strong>: Aspira a una alta cobertura de codi però prioritza proves significatives.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Les proves unitàries amb JUnit i Mockito en Spring Boot són essencials per assegurar la qualitat i la fiabilitat del codi. Comprenent els conceptes bàsics i avançant cap a escenaris més complexos, els desenvolupadors poden escriure proves efectives que detectin errors aviat i facilitin una integració suau. Recorda seguir les millors pràctiques per mantenir una suite de proves robusta.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='introduction-to-testing-in-spring-boot'>&#x25C4;Introducció a les Proves a Spring Boot</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Proves Unitàries amb JUnit i Mockito</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='integration-testing'>Proves d'Integració &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

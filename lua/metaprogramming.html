@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metaprogramació en Lua</title>
+
+    <link rel="alternate" href="https://campusempresa.com/lua/metaprogramming" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/lua/metaprogramming" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/lua/metaprogramming" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/lua/metaprogramming" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/lua/metaprogramming" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='developing-a-gui-application'>&#x25C4;Desenvolupar una Aplicació GUI</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Metaprogramació en Lua</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='luajit'>LuaJIT &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La metaprogramació és una tècnica de programació on el codi pot generar, modificar o analitzar altre codi. Lua, sent un llenguatge altament flexible i dinàmic, proporciona capacitats poderoses de metaprogramació. Aquest tema et guiarà des dels conceptes bàsics fins als avançats de la metaprogramació en Lua.</p>
+</div><h1>Introducció a la Metaprogramació</h1>
+<div class='content'><p>La metaprogramació et permet escriure codi que pot manipular altre codi. Això pot ser útil per a:</p>
+<ul>
+<li>Reduir la redundància</li>
+<li>Crear llenguatges específics de domini</li>
+<li>Implementar característiques avançades com la serialització, validació, i més</li>
+</ul>
+</div><h1>Conceptes Clau</h1>
+<div class='content'></div><h2>1. Metataules</h2>
+<div class='content'><p>Les metataules són una característica central en les capacitats de metaprogramació de Lua. Et permeten canviar el comportament de les taules.</p>
+<ul>
+<li><strong>Ús Bàsic</strong>: Una metataula és una taula regular que es pot adjuntar a una altra taula per modificar el seu comportament.</li>
+<li><strong>Metamètodes</strong>: Claus especials en una metataula que defineixen com han de comportar-se les operacions sobre la taula.</li>
+</ul>
+<h4>Exemple: Metataula Bàsica</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgbXlUYWJsZSA9IHt9CmxvY2FsIG15TWV0YXRhYmxlID0gewogICAgX19pbmRleCA9IGZ1bmN0aW9uKHRhYmxlLCBrZXkpCiAgICAgICAgcmV0dXJuICJDbGF1IG5vIHRyb2JhZGEiCiAgICBlbmQKfQoKc2V0bWV0YXRhYmxlKG15VGFibGUsIG15TWV0YXRhYmxlKQoKcHJpbnQobXlUYWJsZS5zb21lS2V5KSAgLS0gU29ydGlkYTogQ2xhdSBubyB0cm9iYWRh"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local myTable = {}
+local myMetatable = {
+    __index = function(table, key)
+        return &quot;Clau no trobada&quot;
+    end
+}
+
+setmetatable(myTable, myMetatable)
+
+print(myTable.someKey)  -- Sortida: Clau no trobada</pre></div><div class='content'></div><h2>2. Metamètodes</h2>
+<div class='content'><p>Els metamètodes són funcions especials en una metataula que sobreescriuen el comportament per defecte de les taules.</p>
+<ul>
+<li><strong>Metamètodes Comuns</strong>:
+<ul>
+<li><code>__index</code>: Personalitza l'indexació de la taula.</li>
+<li><code>__newindex</code>: Personalitza l'assignació de la taula.</li>
+<li><code>__add</code>, <code>__sub</code>, etc.: Personalitza les operacions aritmètiques.</li>
+<li><code>__call</code>: Fa que una taula sigui callable com una funció.</li>
+</ul>
+</li>
+</ul>
+<h4>Exemple: Indexació Personalitzada</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgZGVmYXVsdFRhYmxlID0ge2EgPSAxLCBiID0gMn0KbG9jYWwgbXlUYWJsZSA9IHNldG1ldGF0YWJsZSh7fSwgewogICAgX19pbmRleCA9IGRlZmF1bHRUYWJsZQp9KQoKcHJpbnQobXlUYWJsZS5hKSAgLS0gU29ydGlkYTogMQpwcmludChteVRhYmxlLmIpICAtLSBTb3J0aWRhOiAyCnByaW50KG15VGFibGUuYykgIC0tIFNvcnRpZGE6IG5pbA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local defaultTable = {a = 1, b = 2}
+local myTable = setmetatable({}, {
+    __index = defaultTable
+})
+
+print(myTable.a)  -- Sortida: 1
+print(myTable.b)  -- Sortida: 2
+print(myTable.c)  -- Sortida: nil</pre></div><div class='content'></div><h2>3. Taules Proxy</h2>
+<div class='content'><p>Les taules proxy s'utilitzen per interceptar operacions en una altra taula.</p>
+<h4>Exemple: Taula Proxy per a Registre</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgb3JpZ2luYWxUYWJsZSA9IHt4ID0gMTAsIHkgPSAyMH0KbG9jYWwgcHJveHkgPSB7fQoKc2V0bWV0YXRhYmxlKHByb3h5LCB7CiAgICBfX2luZGV4ID0gZnVuY3Rpb24oXywga2V5KQogICAgICAgIHByaW50KCJBY2NlZGludCBhIGxhIGNsYXU6Iiwga2V5KQogICAgICAgIHJldHVybiBvcmlnaW5hbFRhYmxlW2tleV0KICAgIGVuZCwKICAgIF9fbmV3aW5kZXggPSBmdW5jdGlvbihfLCBrZXksIHZhbHVlKQogICAgICAgIHByaW50KCJBc3NpZ25hbnQgbGEgY2xhdToiLCBrZXksICJhbCB2YWxvcjoiLCB2YWx1ZSkKICAgICAgICBvcmlnaW5hbFRhYmxlW2tleV0gPSB2YWx1ZQogICAgZW5kCn0pCgpwcmludChwcm94eS54KSAgLS0gU29ydGlkYTogQWNjZWRpbnQgYSBsYSBjbGF1OiB4IFxuIDEwCnByb3h5LnkgPSAzMCAgICAtLSBTb3J0aWRhOiBBc3NpZ25hbnQgbGEgY2xhdTogeSBhbCB2YWxvcjogMzA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local originalTable = {x = 10, y = 20}
+local proxy = {}
+
+setmetatable(proxy, {
+    __index = function(_, key)
+        print(&quot;Accedint a la clau:&quot;, key)
+        return originalTable[key]
+    end,
+    __newindex = function(_, key, value)
+        print(&quot;Assignant la clau:&quot;, key, &quot;al valor:&quot;, value)
+        originalTable[key] = value
+    end
+})
+
+print(proxy.x)  -- Sortida: Accedint a la clau: x \n 10
+proxy.y = 30    -- Sortida: Assignant la clau: y al valor: 30</pre></div><div class='content'></div><h2>4. Reflexió</h2>
+<div class='content'><p>La reflexió és la capacitat d'un programa per inspeccionar i modificar la seva estructura i comportament en temps d'execució.</p>
+<ul>
+<li><strong>Funcions</strong>: <code>type</code>, <code>getmetatable</code>, <code>setmetatable</code>, <code>pairs</code>, <code>ipairs</code>, etc.</li>
+<li><strong>Usos</strong>: Depuració, serialització, crides de funcions dinàmiques.</li>
+</ul>
+<h4>Exemple: Utilitzant Reflexió</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgZnVuY3Rpb24gZGVzY3JpYmVUYWJsZSh0KQogICAgZm9yIGtleSwgdmFsdWUgaW4gcGFpcnModCkgZG8KICAgICAgICBwcmludChrZXksIHR5cGUodmFsdWUpKQogICAgZW5kCmVuZAoKbG9jYWwgbXlUYWJsZSA9IHthID0gMSwgYiA9ICJob2xhIiwgYyA9IGZ1bmN0aW9uKCkgZW5kfQpkZXNjcmliZVRhYmxlKG15VGFibGUpCi0tIFNvcnRpZGE6Ci0tIGEgbnVtYmVyCi0tIGIgc3RyaW5nCi0tIGMgZnVuY3Rpb24="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local function describeTable(t)
+    for key, value in pairs(t) do
+        print(key, type(value))
+    end
+end
+
+local myTable = {a = 1, b = &quot;hola&quot;, c = function() end}
+describeTable(myTable)
+-- Sortida:
+-- a number
+-- b string
+-- c function</pre></div><div class='content'></div><h1>Metaprogramació Avançada</h1>
+<div class='content'></div><h2>1. Operadors Personalitzats</h2>
+<div class='content'><p>Lua et permet definir comportaments personalitzats per als operadors utilitzant metamètodes.</p>
+<h4>Exemple: Afecció Personalitzada</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgdmVjdG9yID0ge30KdmVjdG9yLl9faW5kZXggPSB2ZWN0b3IKCmZ1bmN0aW9uIHZlY3Rvci5uZXcoeCwgeSkKICAgIHJldHVybiBzZXRtZXRhdGFibGUoe3ggPSB4LCB5ID0geX0sIHZlY3RvcikKZW5kCgpmdW5jdGlvbiB2ZWN0b3IuX19hZGQodjEsIHYyKQogICAgcmV0dXJuIHZlY3Rvci5uZXcodjEueCArIHYyLngsIHYxLnkgKyB2Mi55KQplbmQKCmxvY2FsIHYxID0gdmVjdG9yLm5ldygxLCAyKQpsb2NhbCB2MiA9IHZlY3Rvci5uZXcoMywgNCkKbG9jYWwgdjMgPSB2MSArIHYyCgpwcmludCh2My54LCB2My55KSAgLS0gU29ydGlkYTogNCA2"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local vector = {}
+vector.__index = vector
+
+function vector.new(x, y)
+    return setmetatable({x = x, y = y}, vector)
+end
+
+function vector.__add(v1, v2)
+    return vector.new(v1.x + v2.x, v1.y + v2.y)
+end
+
+local v1 = vector.new(1, 2)
+local v2 = vector.new(3, 4)
+local v3 = v1 + v2
+
+print(v3.x, v3.y)  -- Sortida: 4 6</pre></div><div class='content'></div><h2>2. Generació Dinàmica de Codi</h2>
+<div class='content'><p>Lua pot generar i executar codi en temps d'execució utilitzant les funcions <code>load</code> i <code>loadstring</code>.</p>
+<h4>Exemple: Generant Funcions</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgY29kZSA9ICJyZXR1cm4gZnVuY3Rpb24oYSwgYikgcmV0dXJuIGEgKyBiIGVuZCIKbG9jYWwgYWRkRnVuY3Rpb24gPSBsb2FkKGNvZGUpKCkKcHJpbnQoYWRkRnVuY3Rpb24oMiwgMykpICAtLSBTb3J0aWRhOiA1"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local code = &quot;return function(a, b) return a + b end&quot;
+local addFunction = load(code)()
+print(addFunction(2, 3))  -- Sortida: 5</pre></div><div class='content'></div><h2>3. Llenguatges Específics de Domini (DSLs)</h2>
+<div class='content'><p>La flexibilitat de Lua et permet crear mini-llenguatges adaptats a tasques específiques.</p>
+<h4>Exemple: DSL Simple per a Configuració</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgY29uZmlnID0ge30KCmZ1bmN0aW9uIGNvbmZpZy5zZXQoa2V5LCB2YWx1ZSkKICAgIGNvbmZpZ1trZXldID0gdmFsdWUKZW5kCgpmdW5jdGlvbiBjb25maWcuZ2V0KGtleSkKICAgIHJldHVybiBjb25maWdba2V5XQplbmQKCi0tIEV4ZW1wbGUgZCfDunMKY29uZmlnLnNldCgidXNlcm5hbWUiLCAiYWRtaW4iKQpjb25maWcuc2V0KCJwYXNzd29yZCIsICIxMjM0IikKCnByaW50KGNvbmZpZy5nZXQoInVzZXJuYW1lIikpICAtLSBTb3J0aWRhOiBhZG1pbgpwcmludChjb25maWcuZ2V0KCJwYXNzd29yZCIpKSAgLS0gU29ydGlkYTogMTIzNA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local config = {}
+
+function config.set(key, value)
+    config[key] = value
+end
+
+function config.get(key)
+    return config[key]
+end
+
+-- Exemple d'&uacute;s
+config.set(&quot;username&quot;, &quot;admin&quot;)
+config.set(&quot;password&quot;, &quot;1234&quot;)
+
+print(config.get(&quot;username&quot;))  -- Sortida: admin
+print(config.get(&quot;password&quot;))  -- Sortida: 1234</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>La metaprogramació en Lua proporciona eines poderoses per escriure codi més flexible, reutilitzable i dinàmic. Entenent i utilitzant metataules, metamètodes, taules proxy, reflexió, operadors personalitzats, generació dinàmica de codi i DSLs, pots millorar significativament les teves capacitats de programació en Lua. Practica aquests conceptes amb diversos exemples i exercicis per dominar la metaprogramació en Lua.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='developing-a-gui-application'>&#x25C4;Desenvolupar una Aplicació GUI</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Metaprogramació en Lua</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='luajit'>LuaJIT &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

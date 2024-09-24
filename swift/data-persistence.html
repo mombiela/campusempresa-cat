@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persistència de Dades en Swift</title>
+
+    <link rel="alternate" href="https://campusempresa.com/swift/data-persistence" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/swift/data-persistence" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/swift/data-persistence" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/swift/data-persistence" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/swift/data-persistence" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='networking-and-api-integration'>&#x25C4;Integració de Xarxes i API</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Persistència de Dades en Swift</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='advanced-ui-techniques'>Tècniques Avançades d'Interfície d'Usuari &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La persistència de dades és un concepte crucial en el desenvolupament de programari, permetent que les aplicacions guardin i recuperin dades entre sessions. En Swift, hi ha diverses maneres d'aconseguir la persistència de dades, que van des de mètodes simples fins a complexos. Aquest tema cobrirà des de les tècniques bàsiques fins a les avançades per a la persistència de dades en Swift.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>UserDefaults</strong>: Una manera senzilla d'emmagatzemar petites peces de dades.</li>
+<li><strong>Sistema de Fitxers</strong>: Emmagatzemar dades en fitxers dins del sandbox de l'aplicació.</li>
+<li><strong>Core Data</strong>: Un potent framework per gestionar gràfics d'objectes i la persistència de dades.</li>
+<li><strong>SQLite</strong>: Un motor de base de dades lleuger que es pot utilitzar directament.</li>
+<li><strong>Keychain</strong>: Emmagatzematge segur per a informació sensible.</li>
+</ul>
+</div><h1>UserDefaults</h1>
+<div class='content'><p>UserDefaults és una manera senzilla i eficient d'emmagatzemar petites quantitats de dades, com ara preferències o configuracions de l'usuari.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gR3VhcmRhciBkYWRlcyBhIFVzZXJEZWZhdWx0cwpsZXQgZGVmYXVsdHMgPSBVc2VyRGVmYXVsdHMuc3RhbmRhcmQKZGVmYXVsdHMuc2V0KCJKb2huIERvZSIsIGZvcktleTogInVzZXJuYW1lIikKZGVmYXVsdHMuc2V0KDI1LCBmb3JLZXk6ICJhZ2UiKQoKLy8gUmVjdXBlcmFyIGRhZGVzIGRlIFVzZXJEZWZhdWx0cwppZiBsZXQgdXNlcm5hbWUgPSBkZWZhdWx0cy5zdHJpbmcoZm9yS2V5OiAidXNlcm5hbWUiKSB7CiAgICBwcmludCgiVXNlcm5hbWU6IFwodXNlcm5hbWUpIikKfQpsZXQgYWdlID0gZGVmYXVsdHMuaW50ZWdlcihmb3JLZXk6ICJhZ2UiKQpwcmludCgiQWdlOiBcKGFnZSkiKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Guardar dades a UserDefaults
+let defaults = UserDefaults.standard
+defaults.set(&quot;John Doe&quot;, forKey: &quot;username&quot;)
+defaults.set(25, forKey: &quot;age&quot;)
+
+// Recuperar dades de UserDefaults
+if let username = defaults.string(forKey: &quot;username&quot;) {
+    print(&quot;Username: \(username)&quot;)
+}
+let age = defaults.integer(forKey: &quot;age&quot;)
+print(&quot;Age: \(age)&quot;)</pre></div><div class='content'></div><h1>Sistema de Fitxers</h1>
+<div class='content'><p>Emmagatzemar dades en fitxers és útil per a conjunts de dades més grans o quan necessites gestionar fitxers directament.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gT2J0ZW5pciBlbCBjYW3DrSBhbCBkaXJlY3RvcmkgZGUgRG9jdW1lbnRzCmxldCBmaWxlTWFuYWdlciA9IEZpbGVNYW5hZ2VyLmRlZmF1bHQKbGV0IHVybHMgPSBmaWxlTWFuYWdlci51cmxzKGZvcjogLmRvY3VtZW50RGlyZWN0b3J5LCBpbjogLnVzZXJEb21haW5NYXNrKQppZiBsZXQgZG9jdW1lbnREaXJlY3RvcnkgPSB1cmxzLmZpcnN0IHsKICAgIGxldCBmaWxlVVJMID0gZG9jdW1lbnREaXJlY3RvcnkuYXBwZW5kaW5nUGF0aENvbXBvbmVudCgiZXhhbXBsZS50eHQiKQogICAgCiAgICAvLyBFc2NyaXVyZSBhIHVuIGZpdHhlcgogICAgbGV0IHRleHQgPSAiSGVsbG8sIFdvcmxkISIKICAgIGRvIHsKICAgICAgICB0cnkgdGV4dC53cml0ZSh0bzogZmlsZVVSTCwgYXRvbWljYWxseTogdHJ1ZSwgZW5jb2Rpbmc6IC51dGY4KQogICAgfSBjYXRjaCB7CiAgICAgICAgcHJpbnQoIkZhaWxlZCB0byB3cml0ZSB0byBmaWxlOiBcKGVycm9yKSIpCiAgICB9CiAgICAKICAgIC8vIExsZWdpciBkJ3VuIGZpdHhlcgogICAgZG8gewogICAgICAgIGxldCBzYXZlZFRleHQgPSB0cnkgU3RyaW5nKGNvbnRlbnRzT2Y6IGZpbGVVUkwsIGVuY29kaW5nOiAudXRmOCkKICAgICAgICBwcmludCgiU2F2ZWQgdGV4dDogXChzYXZlZFRleHQpIikKICAgIH0gY2F0Y2ggewogICAgICAgIHByaW50KCJGYWlsZWQgdG8gcmVhZCBmcm9tIGZpbGU6IFwoZXJyb3IpIikKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Obtenir el cam&iacute; al directori de Documents
+let fileManager = FileManager.default
+let urls = fileManager.urls(for: .documentDirectory, in: .userDomainMask)
+if let documentDirectory = urls.first {
+    let fileURL = documentDirectory.appendingPathComponent(&quot;example.txt&quot;)
+    
+    // Escriure a un fitxer
+    let text = &quot;Hello, World!&quot;
+    do {
+        try text.write(to: fileURL, atomically: true, encoding: .utf8)
+    } catch {
+        print(&quot;Failed to write to file: \(error)&quot;)
+    }
+    
+    // Llegir d'un fitxer
+    do {
+        let savedText = try String(contentsOf: fileURL, encoding: .utf8)
+        print(&quot;Saved text: \(savedText)&quot;)
+    } catch {
+        print(&quot;Failed to read from file: \(error)&quot;)
+    }
+}</pre></div><div class='content'></div><h1>Core Data</h1>
+<div class='content'><p>Core Data és un potent framework per gestionar gràfics d'objectes complexos i la persistència de dades. Proporciona una manera orientada a objectes d'interactuar amb una base de dades SQLite.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IENvcmVEYXRhCmltcG9ydCBVSUtpdAoKLy8gQ29uZmlndXJhY2nDsyBkZSBsJ3N0YWNrIGRlIENvcmUgRGF0YQpjbGFzcyBDb3JlRGF0YVN0YWNrIHsKICAgIHN0YXRpYyBsZXQgc2hhcmVkID0gQ29yZURhdGFTdGFjaygpCiAgICBwcml2YXRlIGluaXQoKSB7fQogICAgCiAgICBsYXp5IHZhciBwZXJzaXN0ZW50Q29udGFpbmVyOiBOU1BlcnNpc3RlbnRDb250YWluZXIgPSB7CiAgICAgICAgbGV0IGNvbnRhaW5lciA9IE5TUGVyc2lzdGVudENvbnRhaW5lcihuYW1lOiAiTW9kZWwiKQogICAgICAgIGNvbnRhaW5lci5sb2FkUGVyc2lzdGVudFN0b3JlcyB7IChzdG9yZURlc2NyaXB0aW9uLCBlcnJvcikgaW4KICAgICAgICAgICAgaWYgbGV0IGVycm9yID0gZXJyb3IgYXMgTlNFcnJvcj8gewogICAgICAgICAgICAgICAgZmF0YWxFcnJvcigiVW5yZXNvbHZlZCBlcnJvciBcKGVycm9yKSwgXChlcnJvci51c2VySW5mbykiKQogICAgICAgICAgICB9CiAgICAgICAgfQogICAgICAgIHJldHVybiBjb250YWluZXIKICAgIH0oKQogICAgCiAgICB2YXIgY29udGV4dDogTlNNYW5hZ2VkT2JqZWN0Q29udGV4dCB7CiAgICAgICAgcmV0dXJuIHBlcnNpc3RlbnRDb250YWluZXIudmlld0NvbnRleHQKICAgIH0KfQoKLy8gR3VhcmRhciBkYWRlcwpmdW5jIHNhdmVVc2VyKG5hbWU6IFN0cmluZywgYWdlOiBJbnQxNikgewogICAgbGV0IGNvbnRleHQgPSBDb3JlRGF0YVN0YWNrLnNoYXJlZC5jb250ZXh0CiAgICBsZXQgdXNlciA9IFVzZXIoY29udGV4dDogY29udGV4dCkKICAgIHVzZXIubmFtZSA9IG5hbWUKICAgIHVzZXIuYWdlID0gYWdlCiAgICAKICAgIGRvIHsKICAgICAgICB0cnkgY29udGV4dC5zYXZlKCkKICAgIH0gY2F0Y2ggewogICAgICAgIHByaW50KCJGYWlsZWQgdG8gc2F2ZSB1c2VyOiBcKGVycm9yKSIpCiAgICB9Cn0KCi8vIFJlY3VwZXJhciBkYWRlcwpmdW5jIGZldGNoVXNlcnMoKSAtPiBbVXNlcl0gewogICAgbGV0IGNvbnRleHQgPSBDb3JlRGF0YVN0YWNrLnNoYXJlZC5jb250ZXh0CiAgICBsZXQgZmV0Y2hSZXF1ZXN0OiBOU0ZldGNoUmVxdWVzdDxVc2VyPiA9IFVzZXIuZmV0Y2hSZXF1ZXN0KCkKICAgIAogICAgZG8gewogICAgICAgIGxldCB1c2VycyA9IHRyeSBjb250ZXh0LmZldGNoKGZldGNoUmVxdWVzdCkKICAgICAgICByZXR1cm4gdXNlcnMKICAgIH0gY2F0Y2ggewogICAgICAgIHByaW50KCJGYWlsZWQgdG8gZmV0Y2ggdXNlcnM6IFwoZXJyb3IpIikKICAgICAgICByZXR1cm4gW10KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import CoreData
+import UIKit
+
+// Configuraci&oacute; de l'stack de Core Data
+class CoreDataStack {
+    static let shared = CoreDataStack()
+    private init() {}
+    
+    lazy var persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: &quot;Model&quot;)
+        container.loadPersistentStores { (storeDescription, error) in
+            if let error = error as NSError? {
+                fatalError(&quot;Unresolved error \(error), \(error.userInfo)&quot;)
+            }
+        }
+        return container
+    }()
+    
+    var context: NSManagedObjectContext {
+        return persistentContainer.viewContext
+    }
+}
+
+// Guardar dades
+func saveUser(name: String, age: Int16) {
+    let context = CoreDataStack.shared.context
+    let user = User(context: context)
+    user.name = name
+    user.age = age
+    
+    do {
+        try context.save()
+    } catch {
+        print(&quot;Failed to save user: \(error)&quot;)
+    }
+}
+
+// Recuperar dades
+func fetchUsers() -&gt; [User] {
+    let context = CoreDataStack.shared.context
+    let fetchRequest: NSFetchRequest&lt;User&gt; = User.fetchRequest()
+    
+    do {
+        let users = try context.fetch(fetchRequest)
+        return users
+    } catch {
+        print(&quot;Failed to fetch users: \(error)&quot;)
+        return []
+    }
+}</pre></div><div class='content'></div><h1>SQLite</h1>
+<div class='content'><p>SQLite és una base de dades lleugera basada en disc que es pot utilitzar directament en Swift.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IFNRTGl0ZTMKCi8vIE9icmlyIHVuYSBjb25uZXhpw7MgYSBsYSBiYXNlIGRlIGRhZGVzCnZhciBkYjogT3BhcXVlUG9pbnRlcj8KaWYgc3FsaXRlM19vcGVuKCJleGFtcGxlLnNxbGl0ZSIsICZkYikgIT0gU1FMSVRFX09LIHsKICAgIHByaW50KCJGYWlsZWQgdG8gb3BlbiBkYXRhYmFzZSIpCn0KCi8vIENyZWFyIHVuYSB0YXVsYQpsZXQgY3JlYXRlVGFibGVRdWVyeSA9ICJDUkVBVEUgVEFCTEUgSUYgTk9UIEVYSVNUUyBVc2VycyAoaWQgSU5URUdFUiBQUklNQVJZIEtFWSBBVVRPSU5DUkVNRU5ULCBuYW1lIFRFWFQsIGFnZSBJTlRFR0VSKSIKaWYgc3FsaXRlM19leGVjKGRiLCBjcmVhdGVUYWJsZVF1ZXJ5LCBuaWwsIG5pbCwgbmlsKSAhPSBTUUxJVEVfT0sgewogICAgcHJpbnQoIkZhaWxlZCB0byBjcmVhdGUgdGFibGUiKQp9CgovLyBJbnNlcmlyIGRhZGVzCmxldCBpbnNlcnRRdWVyeSA9ICJJTlNFUlQgSU5UTyBVc2VycyAobmFtZSwgYWdlKSBWQUxVRVMgKCdKb2huIERvZScsIDI1KSIKaWYgc3FsaXRlM19leGVjKGRiLCBpbnNlcnRRdWVyeSwgbmlsLCBuaWwsIG5pbCkgIT0gU1FMSVRFX09LIHsKICAgIHByaW50KCJGYWlsZWQgdG8gaW5zZXJ0IGRhdGEiKQp9CgovLyBDb25zdWx0YXIgZGFkZXMKbGV0IHNlbGVjdFF1ZXJ5ID0gIlNFTEVDVCAqIEZST00gVXNlcnMiCnZhciBxdWVyeVN0YXRlbWVudDogT3BhcXVlUG9pbnRlcj8KaWYgc3FsaXRlM19wcmVwYXJlX3YyKGRiLCBzZWxlY3RRdWVyeSwgLTEsICZxdWVyeVN0YXRlbWVudCwgbmlsKSA9PSBTUUxJVEVfT0sgewogICAgd2hpbGUgc3FsaXRlM19zdGVwKHF1ZXJ5U3RhdGVtZW50KSA9PSBTUUxJVEVfUk9XIHsKICAgICAgICBsZXQgaWQgPSBzcWxpdGUzX2NvbHVtbl9pbnQocXVlcnlTdGF0ZW1lbnQsIDApCiAgICAgICAgbGV0IG5hbWUgPSBTdHJpbmcoY1N0cmluZzogc3FsaXRlM19jb2x1bW5fdGV4dChxdWVyeVN0YXRlbWVudCwgMSkpCiAgICAgICAgbGV0IGFnZSA9IHNxbGl0ZTNfY29sdW1uX2ludChxdWVyeVN0YXRlbWVudCwgMikKICAgICAgICBwcmludCgiVXNlcjogXChpZCksIE5hbWU6IFwobmFtZSksIEFnZTogXChhZ2UpIikKICAgIH0KfSBlbHNlIHsKICAgIHByaW50KCJGYWlsZWQgdG8gcXVlcnkgZGF0YSIpCn0KCi8vIFRhbmNhciBsYSBjb25uZXhpw7MgYSBsYSBiYXNlIGRlIGRhZGVzCnNxbGl0ZTNfY2xvc2UoZGIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import SQLite3
+
+// Obrir una connexi&oacute; a la base de dades
+var db: OpaquePointer?
+if sqlite3_open(&quot;example.sqlite&quot;, &amp;db) != SQLITE_OK {
+    print(&quot;Failed to open database&quot;)
+}
+
+// Crear una taula
+let createTableQuery = &quot;CREATE TABLE IF NOT EXISTS Users (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, age INTEGER)&quot;
+if sqlite3_exec(db, createTableQuery, nil, nil, nil) != SQLITE_OK {
+    print(&quot;Failed to create table&quot;)
+}
+
+// Inserir dades
+let insertQuery = &quot;INSERT INTO Users (name, age) VALUES ('John Doe', 25)&quot;
+if sqlite3_exec(db, insertQuery, nil, nil, nil) != SQLITE_OK {
+    print(&quot;Failed to insert data&quot;)
+}
+
+// Consultar dades
+let selectQuery = &quot;SELECT * FROM Users&quot;
+var queryStatement: OpaquePointer?
+if sqlite3_prepare_v2(db, selectQuery, -1, &amp;queryStatement, nil) == SQLITE_OK {
+    while sqlite3_step(queryStatement) == SQLITE_ROW {
+        let id = sqlite3_column_int(queryStatement, 0)
+        let name = String(cString: sqlite3_column_text(queryStatement, 1))
+        let age = sqlite3_column_int(queryStatement, 2)
+        print(&quot;User: \(id), Name: \(name), Age: \(age)&quot;)
+    }
+} else {
+    print(&quot;Failed to query data&quot;)
+}
+
+// Tancar la connexi&oacute; a la base de dades
+sqlite3_close(db)</pre></div><div class='content'></div><h1>Keychain</h1>
+<div class='content'><p>Keychain s'utilitza per emmagatzemar de manera segura informació sensible, com ara contrasenyes o tokens.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IFNlY3VyaXR5CgovLyBHdWFyZGFyIGRhZGVzIGEgS2V5Y2hhaW4KZnVuYyBzYXZlVG9LZXljaGFpbihhY2NvdW50OiBTdHJpbmcsIHNlcnZpY2U6IFN0cmluZywgZGF0YTogRGF0YSkgLT4gQm9vbCB7CiAgICBsZXQgcXVlcnk6IFtTdHJpbmc6IEFueV0gPSBbCiAgICAgICAga1NlY0NsYXNzIGFzIFN0cmluZzoga1NlY0NsYXNzR2VuZXJpY1Bhc3N3b3JkLAogICAgICAgIGtTZWNBdHRyQWNjb3VudCBhcyBTdHJpbmc6IGFjY291bnQsCiAgICAgICAga1NlY0F0dHJTZXJ2aWNlIGFzIFN0cmluZzogc2VydmljZSwKICAgICAgICBrU2VjVmFsdWVEYXRhIGFzIFN0cmluZzogZGF0YQogICAgXQogICAgU2VjSXRlbURlbGV0ZShxdWVyeSBhcyBDRkRpY3Rpb25hcnkpCiAgICBsZXQgc3RhdHVzID0gU2VjSXRlbUFkZChxdWVyeSBhcyBDRkRpY3Rpb25hcnksIG5pbCkKICAgIHJldHVybiBzdGF0dXMgPT0gZXJyU2VjU3VjY2Vzcwp9CgovLyBSZWN1cGVyYXIgZGFkZXMgZGUgS2V5Y2hhaW4KZnVuYyByZXRyaWV2ZUZyb21LZXljaGFpbihhY2NvdW50OiBTdHJpbmcsIHNlcnZpY2U6IFN0cmluZykgLT4gRGF0YT8gewogICAgbGV0IHF1ZXJ5OiBbU3RyaW5nOiBBbnldID0gWwogICAgICAgIGtTZWNDbGFzcyBhcyBTdHJpbmc6IGtTZWNDbGFzc0dlbmVyaWNQYXNzd29yZCwKICAgICAgICBrU2VjQXR0ckFjY291bnQgYXMgU3RyaW5nOiBhY2NvdW50LAogICAgICAgIGtTZWNBdHRyU2VydmljZSBhcyBTdHJpbmc6IHNlcnZpY2UsCiAgICAgICAga1NlY1JldHVybkRhdGEgYXMgU3RyaW5nOiB0cnVlLAogICAgICAgIGtTZWNNYXRjaExpbWl0IGFzIFN0cmluZzoga1NlY01hdGNoTGltaXRPbmUKICAgIF0KICAgIHZhciBkYXRhVHlwZVJlZjogQW55T2JqZWN0PwogICAgbGV0IHN0YXR1cyA9IFNlY0l0ZW1Db3B5TWF0Y2hpbmcocXVlcnkgYXMgQ0ZEaWN0aW9uYXJ5LCAmZGF0YVR5cGVSZWYpCiAgICBpZiBzdGF0dXMgPT0gZXJyU2VjU3VjY2VzcyB7CiAgICAgICAgcmV0dXJuIGRhdGFUeXBlUmVmIGFzPyBEYXRhCiAgICB9CiAgICByZXR1cm4gbmlsCn0KCi8vIEV4ZW1wbGUgZCfDunMKbGV0IGFjY291bnQgPSAidXNlckBleGFtcGxlLmNvbSIKbGV0IHNlcnZpY2UgPSAiY29tLmV4YW1wbGUubXlhcHAiCmxldCBwYXNzd29yZERhdGEgPSAicGFzc3dvcmQxMjMiLmRhdGEodXNpbmc6IC51dGY4KSEKCmlmIHNhdmVUb0tleWNoYWluKGFjY291bnQ6IGFjY291bnQsIHNlcnZpY2U6IHNlcnZpY2UsIGRhdGE6IHBhc3N3b3JkRGF0YSkgewogICAgcHJpbnQoIlBhc3N3b3JkIHNhdmVkIHRvIEtleWNoYWluIikKfQoKaWYgbGV0IHJldHJpZXZlZERhdGEgPSByZXRyaWV2ZUZyb21LZXljaGFpbihhY2NvdW50OiBhY2NvdW50LCBzZXJ2aWNlOiBzZXJ2aWNlKSwKICAgbGV0IHBhc3N3b3JkID0gU3RyaW5nKGRhdGE6IHJldHJpZXZlZERhdGEsIGVuY29kaW5nOiAudXRmOCkgewogICAgcHJpbnQoIlJldHJpZXZlZCBwYXNzd29yZDogXChwYXNzd29yZCkiKQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import Security
+
+// Guardar dades a Keychain
+func saveToKeychain(account: String, service: String, data: Data) -&gt; Bool {
+    let query: [String: Any] = [
+        kSecClass as String: kSecClassGenericPassword,
+        kSecAttrAccount as String: account,
+        kSecAttrService as String: service,
+        kSecValueData as String: data
+    ]
+    SecItemDelete(query as CFDictionary)
+    let status = SecItemAdd(query as CFDictionary, nil)
+    return status == errSecSuccess
+}
+
+// Recuperar dades de Keychain
+func retrieveFromKeychain(account: String, service: String) -&gt; Data? {
+    let query: [String: Any] = [
+        kSecClass as String: kSecClassGenericPassword,
+        kSecAttrAccount as String: account,
+        kSecAttrService as String: service,
+        kSecReturnData as String: true,
+        kSecMatchLimit as String: kSecMatchLimitOne
+    ]
+    var dataTypeRef: AnyObject?
+    let status = SecItemCopyMatching(query as CFDictionary, &amp;dataTypeRef)
+    if status == errSecSuccess {
+        return dataTypeRef as? Data
+    }
+    return nil
+}
+
+// Exemple d'&uacute;s
+let account = &quot;user@example.com&quot;
+let service = &quot;com.example.myapp&quot;
+let passwordData = &quot;password123&quot;.data(using: .utf8)!
+
+if saveToKeychain(account: account, service: service, data: passwordData) {
+    print(&quot;Password saved to Keychain&quot;)
+}
+
+if let retrievedData = retrieveFromKeychain(account: account, service: service),
+   let password = String(data: retrievedData, encoding: .utf8) {
+    print(&quot;Retrieved password: \(password)&quot;)
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>La persistència de dades és un aspecte fonamental del desenvolupament d'aplicacions, permetent que les aplicacions retinguin dades entre sessions. Swift proporciona múltiples mètodes per a la persistència de dades, cadascun adequat per a diferents casos d'ús:</p>
+<ul>
+<li><strong>UserDefaults</strong> per a l'emmagatzematge simple de clau-valor.</li>
+<li><strong>Sistema de Fitxers</strong> per a la gestió directa de fitxers.</li>
+<li><strong>Core Data</strong> per a models de dades complexos i gràfics d'objectes.</li>
+<li><strong>SQLite</strong> per a necessitats de bases de dades lleugeres.</li>
+<li><strong>Keychain</strong> per a l'emmagatzematge segur d'informació sensible.</li>
+</ul>
+<p>Entenent i utilitzant aquests mètodes, pots assegurar-te que les teves aplicacions Swift gestionin les dades de manera eficient i segura.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='networking-and-api-integration'>&#x25C4;Integració de Xarxes i API</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Persistència de Dades en Swift</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='advanced-ui-techniques'>Tècniques Avançades d'Interfície d'Usuari &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

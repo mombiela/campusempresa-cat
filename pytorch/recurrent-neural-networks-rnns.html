@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xarxes Neuronals Recurrents (RNNs)</title>
+
+    <link rel="alternate" href="https://campusempresa.com/pytorch/recurrent-neural-networks-rnns" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/pytorch/recurrent-neural-networks-rnns" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/pytorch/recurrent-neural-networks-rnns" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/pytorch/recurrent-neural-networks-rnns" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/pytorch/recurrent-neural-networks-rnns" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='convolutional-neural-networks-cnns'>&#x25C4;Xarxes Neuronals Convolucionals (CNNs)</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Xarxes Neuronals Recurrents (RNNs)</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='long-short-term-memory-networks-lstms'>Xarxes de Memòria a Curt i Llarg Termini (LSTMs) &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Les Xarxes Neuronals Recurrents (RNNs) són una classe de xarxes neuronals que són particularment efectives per a dades seqüencials. En aquesta secció, explorarem els fonaments de les RNNs, com implementar-les utilitzant PyTorch, i tècniques avançades per millorar el seu rendiment.</p>
+</div><h1>Introducció a les RNNs</h1>
+<div class='content'><ul>
+<li><strong>Dades Seqüencials</strong>: Dades on l'ordre dels elements és important, com sèries temporals, text i àudio.</li>
+<li><strong>Connexions Recurrents</strong>: A diferència de les xarxes neuronals tradicionals, les RNNs tenen connexions que formen cicles, permetent que la informació persisteixi.</li>
+</ul>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Estat Ocult</strong>: Una memòria que captura informació sobre els elements anteriors en la seqüència.</li>
+<li><strong>Gradients que Es Disminueixen/Es Disparen</strong>: Reptes en l'entrenament de les RNNs degut a dependències a llarg termini.</li>
+</ul>
+</div><h1>Implementant RNNs en PyTorch</h1>
+<div class='content'></div><h2>Estructura Bàsica de RNN</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaC5ubiBhcyBubgoKY2xhc3MgU2ltcGxlUk5OKG5uLk1vZHVsZSk6CiAgICBkZWYgX19pbml0X18oc2VsZiwgaW5wdXRfc2l6ZSwgaGlkZGVuX3NpemUsIG91dHB1dF9zaXplKToKICAgICAgICBzdXBlcihTaW1wbGVSTk4sIHNlbGYpLl9faW5pdF9fKCkKICAgICAgICBzZWxmLmhpZGRlbl9zaXplID0gaGlkZGVuX3NpemUKICAgICAgICBzZWxmLnJubiA9IG5uLlJOTihpbnB1dF9zaXplLCBoaWRkZW5fc2l6ZSwgYmF0Y2hfZmlyc3Q9VHJ1ZSkKICAgICAgICBzZWxmLmZjID0gbm4uTGluZWFyKGhpZGRlbl9zaXplLCBvdXRwdXRfc2l6ZSkKICAgIAogICAgZGVmIGZvcndhcmQoc2VsZiwgeCk6CiAgICAgICAgaDAgPSB0b3JjaC56ZXJvcygxLCB4LnNpemUoMCksIHNlbGYuaGlkZGVuX3NpemUpLnRvKHguZGV2aWNlKSAgIyBFc3RhdCBvY3VsdCBpbmljaWFsCiAgICAgICAgb3V0LCBobiA9IHNlbGYucm5uKHgsIGgwKQogICAgICAgIG91dCA9IHNlbGYuZmMob3V0WzosIC0xLCA6XSkgICMgUHJlbmVudCBsYSBzb3J0aWRhIGRlIGwnw7psdGltIHBhcyBkZSB0ZW1wcwogICAgICAgIHJldHVybiBvdXQKCiMgRXhlbXBsZSBkJ8O6cwppbnB1dF9zaXplID0gMTAKaGlkZGVuX3NpemUgPSAyMApvdXRwdXRfc2l6ZSA9IDEKbW9kZWwgPSBTaW1wbGVSTk4oaW5wdXRfc2l6ZSwgaGlkZGVuX3NpemUsIG91dHB1dF9zaXplKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torch.nn as nn
+
+class SimpleRNN(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(SimpleRNN, self).__init__()
+        self.hidden_size = hidden_size
+        self.rnn = nn.RNN(input_size, hidden_size, batch_first=True)
+        self.fc = nn.Linear(hidden_size, output_size)
+    
+    def forward(self, x):
+        h0 = torch.zeros(1, x.size(0), self.hidden_size).to(x.device)  # Estat ocult inicial
+        out, hn = self.rnn(x, h0)
+        out = self.fc(out[:, -1, :])  # Prenent la sortida de l'&uacute;ltim pas de temps
+        return out
+
+# Exemple d'&uacute;s
+input_size = 10
+hidden_size = 20
+output_size = 1
+model = SimpleRNN(input_size, hidden_size, output_size)</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Mida d'Entrada</strong>: Nombre de característiques en l'entrada.</li>
+<li><strong>Mida Oculta</strong>: Nombre de característiques en l'estat ocult.</li>
+<li><strong>Mida de Sortida</strong>: Nombre de característiques en la sortida.</li>
+<li><strong>Batch First</strong>: Indica que el tensor d'entrada té la mida del lot com a primera dimensió.</li>
+</ul>
+</div><h2>Entrenant la RNN</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoLm9wdGltIGFzIG9wdGltCgojIERhZGVzIGZpY3TDrWNpZXMKaW5wdXRzID0gdG9yY2gucmFuZG4oMzIsIDEwLCBpbnB1dF9zaXplKSAgIyBNaWRhIGRlbCBsb3QgZGUgMzIsIGxvbmdpdHVkIGRlIGxhIHNlccO8w6huY2lhIGRlIDEwCnRhcmdldHMgPSB0b3JjaC5yYW5kbigzMiwgb3V0cHV0X3NpemUpCgojIFDDqHJkdWEgaSBvcHRpbWl0emFkb3IKY3JpdGVyaW9uID0gbm4uTVNFTG9zcygpCm9wdGltaXplciA9IG9wdGltLkFkYW0obW9kZWwucGFyYW1ldGVycygpLCBscj0wLjAwMSkKCiMgQnVjbGUgZCdlbnRyZW5hbWVudApmb3IgZXBvY2ggaW4gcmFuZ2UoMTAwKToKICAgIG1vZGVsLnRyYWluKCkKICAgIG91dHB1dHMgPSBtb2RlbChpbnB1dHMpCiAgICBsb3NzID0gY3JpdGVyaW9uKG91dHB1dHMsIHRhcmdldHMpCiAgICAKICAgIG9wdGltaXplci56ZXJvX2dyYWQoKQogICAgbG9zcy5iYWNrd2FyZCgpCiAgICBvcHRpbWl6ZXIuc3RlcCgpCiAgICAKICAgIGlmIChlcG9jaCsxKSAlIDEwID09IDA6CiAgICAgICAgcHJpbnQoZidFcG9jaCBbe2Vwb2NoKzF9LzEwMF0sIExvc3M6IHtsb3NzLml0ZW0oKTouNGZ9Jyk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch.optim as optim
+
+# Dades fict&iacute;cies
+inputs = torch.randn(32, 10, input_size)  # Mida del lot de 32, longitud de la seq&uuml;&egrave;ncia de 10
+targets = torch.randn(32, output_size)
+
+# P&egrave;rdua i optimitzador
+criterion = nn.MSELoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# Bucle d'entrenament
+for epoch in range(100):
+    model.train()
+    outputs = model(inputs)
+    loss = criterion(outputs, targets)
+    
+    optimizer.zero_grad()
+    loss.backward()
+    optimizer.step()
+    
+    if (epoch+1) % 10 == 0:
+        print(f'Epoch [{epoch+1}/100], Loss: {loss.item():.4f}')</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Funció de Pèrdua</strong>: Error Quadràtic Mitjà (MSE) per a tasques de regressió.</li>
+<li><strong>Optimitzador</strong>: Optimitzador Adam per a un entrenament eficient.</li>
+<li><strong>Bucle d'Entrenament</strong>: Itera sobre èpoques, calcula la pèrdua, realitza la retropropagació i actualitza els pesos.</li>
+</ul>
+</div><h1>Tècniques Avançades de RNN</h1>
+<div class='content'></div><h2>Long Short-Term Memory (LSTM)</h2>
+<div class='content'><p>Les LSTMs són un tipus de RNN dissenyat per manejar el problema del gradient que es disminueix introduint portes que controlen el flux d'informació.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgU2ltcGxlTFNUTShubi5Nb2R1bGUpOgogICAgZGVmIF9faW5pdF9fKHNlbGYsIGlucHV0X3NpemUsIGhpZGRlbl9zaXplLCBvdXRwdXRfc2l6ZSk6CiAgICAgICAgc3VwZXIoU2ltcGxlTFNUTSwgc2VsZikuX19pbml0X18oKQogICAgICAgIHNlbGYuaGlkZGVuX3NpemUgPSBoaWRkZW5fc2l6ZQogICAgICAgIHNlbGYubHN0bSA9IG5uLkxTVE0oaW5wdXRfc2l6ZSwgaGlkZGVuX3NpemUsIGJhdGNoX2ZpcnN0PVRydWUpCiAgICAgICAgc2VsZi5mYyA9IG5uLkxpbmVhcihoaWRkZW5fc2l6ZSwgb3V0cHV0X3NpemUpCiAgICAKICAgIGRlZiBmb3J3YXJkKHNlbGYsIHgpOgogICAgICAgIGgwID0gdG9yY2guemVyb3MoMSwgeC5zaXplKDApLCBzZWxmLmhpZGRlbl9zaXplKS50byh4LmRldmljZSkKICAgICAgICBjMCA9IHRvcmNoLnplcm9zKDEsIHguc2l6ZSgwKSwgc2VsZi5oaWRkZW5fc2l6ZSkudG8oeC5kZXZpY2UpCiAgICAgICAgb3V0LCAoaG4sIGNuKSA9IHNlbGYubHN0bSh4LCAoaDAsIGMwKSkKICAgICAgICBvdXQgPSBzZWxmLmZjKG91dFs6LCAtMSwgOl0pCiAgICAgICAgcmV0dXJuIG91dAoKIyBFeGVtcGxlIGQnw7pzCm1vZGVsID0gU2ltcGxlTFNUTShpbnB1dF9zaXplLCBoaWRkZW5fc2l6ZSwgb3V0cHV0X3NpemUp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class SimpleLSTM(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(SimpleLSTM, self).__init__()
+        self.hidden_size = hidden_size
+        self.lstm = nn.LSTM(input_size, hidden_size, batch_first=True)
+        self.fc = nn.Linear(hidden_size, output_size)
+    
+    def forward(self, x):
+        h0 = torch.zeros(1, x.size(0), self.hidden_size).to(x.device)
+        c0 = torch.zeros(1, x.size(0), self.hidden_size).to(x.device)
+        out, (hn, cn) = self.lstm(x, (h0, c0))
+        out = self.fc(out[:, -1, :])
+        return out
+
+# Exemple d'&uacute;s
+model = SimpleLSTM(input_size, hidden_size, output_size)</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>LSTM</strong>: Similar a RNN però inclou estat de cel·la i portes (entrada, oblit, sortida) per gestionar dependències a llarg termini.</li>
+</ul>
+</div><h2>Gated Recurrent Unit (GRU)</h2>
+<div class='content'><p>Les GRUs són una alternativa més senzilla a les LSTMs, utilitzant menys portes i paràmetres.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgU2ltcGxlR1JVKG5uLk1vZHVsZSk6CiAgICBkZWYgX19pbml0X18oc2VsZiwgaW5wdXRfc2l6ZSwgaGlkZGVuX3NpemUsIG91dHB1dF9zaXplKToKICAgICAgICBzdXBlcihTaW1wbGVHUlUsIHNlbGYpLl9faW5pdF9fKCkKICAgICAgICBzZWxmLmhpZGRlbl9zaXplID0gaGlkZGVuX3NpemUKICAgICAgICBzZWxmLmdydSA9IG5uLkdSVShpbnB1dF9zaXplLCBoaWRkZW5fc2l6ZSwgYmF0Y2hfZmlyc3Q9VHJ1ZSkKICAgICAgICBzZWxmLmZjID0gbm4uTGluZWFyKGhpZGRlbl9zaXplLCBvdXRwdXRfc2l6ZSkKICAgIAogICAgZGVmIGZvcndhcmQoc2VsZiwgeCk6CiAgICAgICAgaDAgPSB0b3JjaC56ZXJvcygxLCB4LnNpemUoMCksIHNlbGYuaGlkZGVuX3NpemUpLnRvKHguZGV2aWNlKQogICAgICAgIG91dCwgaG4gPSBzZWxmLmdydSh4LCBoMCkKICAgICAgICBvdXQgPSBzZWxmLmZjKG91dFs6LCAtMSwgOl0pCiAgICAgICAgcmV0dXJuIG91dAoKIyBFeGVtcGxlIGQnw7pzCm1vZGVsID0gU2ltcGxlR1JVKGlucHV0X3NpemUsIGhpZGRlbl9zaXplLCBvdXRwdXRfc2l6ZSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class SimpleGRU(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(SimpleGRU, self).__init__()
+        self.hidden_size = hidden_size
+        self.gru = nn.GRU(input_size, hidden_size, batch_first=True)
+        self.fc = nn.Linear(hidden_size, output_size)
+    
+    def forward(self, x):
+        h0 = torch.zeros(1, x.size(0), self.hidden_size).to(x.device)
+        out, hn = self.gru(x, h0)
+        out = self.fc(out[:, -1, :])
+        return out
+
+# Exemple d'&uacute;s
+model = SimpleGRU(input_size, hidden_size, output_size)</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>GRU</strong>: Combina les portes d'oblit i d'entrada en una sola porta d'actualització, simplificant l'arquitectura.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Les Xarxes Neuronals Recurrents són eines poderoses per manejar dades seqüencials. Entenent els fonaments de les RNNs i implementant-les en PyTorch, pots abordar una àmplia gamma de problemes que involucren sèries temporals, text i més. Les variants avançades com les LSTMs i les GRUs ajuden a mitigar problemes comuns com els gradients que es disminueixen, fent-les adequades per a tasques més complexes. Amb pràctica i experimentació, pots aprofitar aquests models per construir aplicacions sofisticades.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='convolutional-neural-networks-cnns'>&#x25C4;Xarxes Neuronals Convolucionals (CNNs)</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Xarxes Neuronals Recurrents (RNNs)</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='long-short-term-memory-networks-lstms'>Xarxes de Memòria a Curt i Llarg Termini (LSTMs) &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

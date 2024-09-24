@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Implementació d'una Aplicació de Processament de Fluxos</title>
+
+    <link rel="alternate" href="https://campusempresa.com/kafka/implementing-a-stream-processing-application" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/kafka/implementing-a-stream-processing-application" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/kafka/implementing-a-stream-processing-application" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/kafka/implementing-a-stream-processing-application" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/kafka/implementing-a-stream-processing-application" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='building-a-real-time-data-pipeline'>&#x25C4;Construcció d'un pipeline de dades en temps real</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Implementació d'una Aplicació de Processament de Fluxos</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='integrating-kafka-with-other-systems'>Integració de Kafka amb altres sistemes &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció al Processament de Fluxos amb Kafka</h1>
+<div class='content'><p>El processament de fluxos és un paradigma que permet el processament continu de fluxos de dades en temps real. Apache Kafka, una plataforma de fluxos distribuïda, s'utilitza àmpliament per construir canonades de dades en temps real i aplicacions de fluxos.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Flux</strong>: Una seqüència il·limitada d'esdeveniments ordenats en el temps.</li>
+<li><strong>Processament de Fluxos</strong>: El processament continu de fluxos de dades.</li>
+<li><strong>Kafka Streams</strong>: Una biblioteca de clients per construir aplicacions i microserveis, on les dades d'entrada i sortida s'emmagatzemen en clústers de Kafka.</li>
+</ul>
+</div><h1>Configuració de Kafka</h1>
+<div class='content'><p>Abans d'endinsar-nos en el processament de fluxos, assegureu-vos que teniu Kafka configurat i en funcionament.</p>
+</div><h2>Instal·lació</h2>
+<div class='content'><ol>
+<li><strong>Descarregar Kafka</strong>:
+<pre><code class="language-sh">wget https://downloads.apache.org/kafka/2.8.0/kafka_2.13-2.8.0.tgz
+</code></pre>
+</li>
+<li><strong>Extreure l'arxiu</strong>:
+<pre><code class="language-sh">tar -xzf kafka_2.13-2.8.0.tgz
+cd kafka_2.13-2.8.0
+</code></pre>
+</li>
+<li><strong>Iniciar Zookeeper</strong>:
+<pre><code class="language-sh">bin/zookeeper-server-start.sh config/zookeeper.properties
+</code></pre>
+</li>
+<li><strong>Iniciar el Broker de Kafka</strong>:
+<pre><code class="language-sh">bin/kafka-server-start.sh config/server.properties
+</code></pre>
+</li>
+</ol>
+</div><h1>Creació d'una Aplicació de Processament de Fluxos amb Kafka</h1>
+<h2>Processament de Fluxos Bàsic</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear un Tema de Kafka</strong>:</p>
+<pre><code class="language-sh">bin/kafka-topics.sh --create --topic streams-plaintext-input --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+</code></pre>
+</li>
+<li>
+<p><strong>Exemple de Productor</strong>:</p>
+<pre><code class="language-sh">bin/kafka-console-producer.sh --topic streams-plaintext-input --bootstrap-server localhost:9092
+</code></pre>
+</li>
+<li>
+<p><strong>Exemple de Consumidor</strong>:</p>
+<pre><code class="language-sh">bin/kafka-console-consumer.sh --topic streams-plaintext-input --from-beginning --bootstrap-server localhost:9092
+</code></pre>
+</li>
+</ol>
+</div><h2>Escriure una Aplicació Senzilla de Kafka Streams</h2>
+<div class='content'><p>Aquí teniu un exemple senzill d'una aplicació de Kafka Streams en Java que llegeix d'un tema d'entrada, processa les dades i escriu a un tema de sortida.</p>
+<h4>Dependències de Maven</h4>
+<p>Afegiu les següents dependències al vostre <code>pom.xml</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PGRlcGVuZGVuY2llcz4KICAgIDxkZXBlbmRlbmN5PgogICAgICAgIDxncm91cElkPm9yZy5hcGFjaGUua2Fma2E8L2dyb3VwSWQ+CiAgICAgICAgPGFydGlmYWN0SWQ+a2Fma2Etc3RyZWFtczwvYXJ0aWZhY3RJZD4KICAgICAgICA8dmVyc2lvbj4yLjguMDwvdmVyc2lvbj4KICAgIDwvZGVwZW5kZW5jeT4KICAgIDxkZXBlbmRlbmN5PgogICAgICAgIDxncm91cElkPm9yZy5hcGFjaGUua2Fma2E8L2dyb3VwSWQ+CiAgICAgICAgPGFydGlmYWN0SWQ+a2Fma2EtY2xpZW50czwvYXJ0aWZhY3RJZD4KICAgICAgICA8dmVyc2lvbj4yLjguMDwvdmVyc2lvbj4KICAgIDwvZGVwZW5kZW5jeT4KPC9kZXBlbmRlbmNpZXM+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.kafka&lt;/groupId&gt;
+        &lt;artifactId&gt;kafka-streams&lt;/artifactId&gt;
+        &lt;version&gt;2.8.0&lt;/version&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.apache.kafka&lt;/groupId&gt;
+        &lt;artifactId&gt;kafka-clients&lt;/artifactId&gt;
+        &lt;version&gt;2.8.0&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</pre></div><div class='content'><h4>Exemple de Codi Java</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5hcGFjaGUua2Fma2EuY29tbW9uLnNlcmlhbGl6YXRpb24uU2VyZGVzOwppbXBvcnQgb3JnLmFwYWNoZS5rYWZrYS5zdHJlYW1zLkthZmthU3RyZWFtczsKaW1wb3J0IG9yZy5hcGFjaGUua2Fma2Euc3RyZWFtcy5TdHJlYW1zQnVpbGRlcjsKaW1wb3J0IG9yZy5hcGFjaGUua2Fma2Euc3RyZWFtcy5TdHJlYW1zQ29uZmlnOwppbXBvcnQgb3JnLmFwYWNoZS5rYWZrYS5zdHJlYW1zLmtzdHJlYW0uS1N0cmVhbTsKCmltcG9ydCBqYXZhLnV0aWwuUHJvcGVydGllczsKCnB1YmxpYyBjbGFzcyBTdHJlYW1Qcm9jZXNzaW5nQXBwIHsKICAgIHB1YmxpYyBzdGF0aWMgdm9pZCBtYWluKFN0cmluZ1tdIGFyZ3MpIHsKICAgICAgICBQcm9wZXJ0aWVzIHByb3BzID0gbmV3IFByb3BlcnRpZXMoKTsKICAgICAgICBwcm9wcy5wdXQoU3RyZWFtc0NvbmZpZy5BUFBMSUNBVElPTl9JRF9DT05GSUcsICJzdHJlYW0tcHJvY2Vzc2luZy1hcHAiKTsKICAgICAgICBwcm9wcy5wdXQoU3RyZWFtc0NvbmZpZy5CT09UU1RSQVBfU0VSVkVSU19DT05GSUcsICJsb2NhbGhvc3Q6OTA5MiIpOwogICAgICAgIHByb3BzLnB1dChTdHJlYW1zQ29uZmlnLkRFRkFVTFRfS0VZX1NFUkRFX0NMQVNTX0NPTkZJRywgU2VyZGVzLlN0cmluZygpLmdldENsYXNzKCkpOwogICAgICAgIHByb3BzLnB1dChTdHJlYW1zQ29uZmlnLkRFRkFVTFRfVkFMVUVfU0VSREVfQ0xBU1NfQ09ORklHLCBTZXJkZXMuU3RyaW5nKCkuZ2V0Q2xhc3MoKSk7CgogICAgICAgIFN0cmVhbXNCdWlsZGVyIGJ1aWxkZXIgPSBuZXcgU3RyZWFtc0J1aWxkZXIoKTsKICAgICAgICBLU3RyZWFtPFN0cmluZywgU3RyaW5nPiBzb3VyY2UgPSBidWlsZGVyLnN0cmVhbSgic3RyZWFtcy1wbGFpbnRleHQtaW5wdXQiKTsKICAgICAgICBzb3VyY2UudG8oInN0cmVhbXMtcGxhaW50ZXh0LW91dHB1dCIpOwoKICAgICAgICBLYWZrYVN0cmVhbXMgc3RyZWFtcyA9IG5ldyBLYWZrYVN0cmVhbXMoYnVpbGRlci5idWlsZCgpLCBwcm9wcyk7CiAgICAgICAgc3RyZWFtcy5zdGFydCgpOwoKICAgICAgICBSdW50aW1lLmdldFJ1bnRpbWUoKS5hZGRTaHV0ZG93bkhvb2sobmV3IFRocmVhZChzdHJlYW1zOjpjbG9zZSkpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.apache.kafka.common.serialization.Serdes;
+import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.StreamsConfig;
+import org.apache.kafka.streams.kstream.KStream;
+
+import java.util.Properties;
+
+public class StreamProcessingApp {
+    public static void main(String[] args) {
+        Properties props = new Properties();
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG, &quot;stream-processing-app&quot;);
+        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, &quot;localhost:9092&quot;);
+        props.put(StreamsConfig.DEFAULT_KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+        props.put(StreamsConfig.DEFAULT_VALUE_SERDE_CLASS_CONFIG, Serdes.String().getClass());
+
+        StreamsBuilder builder = new StreamsBuilder();
+        KStream&lt;String, String&gt; source = builder.stream(&quot;streams-plaintext-input&quot;);
+        source.to(&quot;streams-plaintext-output&quot;);
+
+        KafkaStreams streams = new KafkaStreams(builder.build(), props);
+        streams.start();
+
+        Runtime.getRuntime().addShutdownHook(new Thread(streams::close));
+    }
+}</pre></div><div class='content'></div><h2>Executar l'Aplicació</h2>
+<div class='content'><ol>
+<li><strong>Compilar i empaquetar la vostra aplicació</strong>:
+<pre><code class="language-sh">mvn clean package
+</code></pre>
+</li>
+<li><strong>Executar l'aplicació</strong>:
+<pre><code class="language-sh">java -cp target/your-app-jar-with-dependencies.jar com.yourpackage.StreamProcessingApp
+</code></pre>
+</li>
+</ol>
+</div><h1>Tècniques Avançades de Processament de Fluxos</h1>
+<h2>Transformacions amb Estat</h2>
+<div class='content'><p>Les transformacions amb estat us permeten mantenir l'estat a través de múltiples registres.</p>
+<h4>Exemple: Comptatge de Paraules</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5hcGFjaGUua2Fma2Euc3RyZWFtcy5rc3RyZWFtLktUYWJsZTsKaW1wb3J0IG9yZy5hcGFjaGUua2Fma2Euc3RyZWFtcy5rc3RyZWFtLk1hdGVyaWFsaXplZDsKaW1wb3J0IG9yZy5hcGFjaGUua2Fma2Euc3RyZWFtcy5rc3RyZWFtLlByb2R1Y2VkOwoKS1N0cmVhbTxTdHJpbmcsIFN0cmluZz4gdGV4dExpbmVzID0gYnVpbGRlci5zdHJlYW0oInN0cmVhbXMtcGxhaW50ZXh0LWlucHV0Iik7CktUYWJsZTxTdHJpbmcsIExvbmc+IHdvcmRDb3VudHMgPSB0ZXh0TGluZXMKICAgIC5mbGF0TWFwVmFsdWVzKHRleHRMaW5lIC0+IEFycmF5cy5hc0xpc3QodGV4dExpbmUudG9Mb3dlckNhc2UoKS5zcGxpdCgiXFxXKyIpKSkKICAgIC5ncm91cEJ5KChrZXksIHdvcmQpIC0+IHdvcmQpCiAgICAuY291bnQoTWF0ZXJpYWxpemVkLmFzKCJjb3VudHMtc3RvcmUiKSk7Cgp3b3JkQ291bnRzLnRvU3RyZWFtKCkudG8oInN0cmVhbXMtd29yZGNvdW50LW91dHB1dCIsIFByb2R1Y2VkLndpdGgoU2VyZGVzLlN0cmluZygpLCBTZXJkZXMuTG9uZygpKSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.apache.kafka.streams.kstream.KTable;
+import org.apache.kafka.streams.kstream.Materialized;
+import org.apache.kafka.streams.kstream.Produced;
+
+KStream&lt;String, String&gt; textLines = builder.stream(&quot;streams-plaintext-input&quot;);
+KTable&lt;String, Long&gt; wordCounts = textLines
+    .flatMapValues(textLine -&gt; Arrays.asList(textLine.toLowerCase().split(&quot;\\W+&quot;)))
+    .groupBy((key, word) -&gt; word)
+    .count(Materialized.as(&quot;counts-store&quot;));
+
+wordCounts.toStream().to(&quot;streams-wordcount-output&quot;, Produced.with(Serdes.String(), Serdes.Long()));</pre></div><div class='content'></div><h2>Finestra Temporal</h2>
+<div class='content'><p>La finestra temporal us permet agrupar registres que arriben dins d'un període de temps específic.</p>
+<h4>Exemple: Finestra de Tumbling</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5hcGFjaGUua2Fma2Euc3RyZWFtcy5rc3RyZWFtLlRpbWVXaW5kb3dzOwoKS1RhYmxlPFdpbmRvd2VkPFN0cmluZz4sIExvbmc+IHdpbmRvd2VkQ291bnRzID0gdGV4dExpbmVzCiAgICAuZmxhdE1hcFZhbHVlcyh0ZXh0TGluZSAtPiBBcnJheXMuYXNMaXN0KHRleHRMaW5lLnRvTG93ZXJDYXNlKCkuc3BsaXQoIlxcVysiKSkpCiAgICAuZ3JvdXBCeSgoa2V5LCB3b3JkKSAtPiB3b3JkKQogICAgLndpbmRvd2VkQnkoVGltZVdpbmRvd3Mub2YoRHVyYXRpb24ub2ZNaW51dGVzKDUpKSkKICAgIC5jb3VudChNYXRlcmlhbGl6ZWQuYXMoIndpbmRvd2VkLWNvdW50cy1zdG9yZSIpKTsKCndpbmRvd2VkQ291bnRzLnRvU3RyZWFtKCkudG8oInN0cmVhbXMtd2luZG93ZWQtd29yZGNvdW50LW91dHB1dCIsIFByb2R1Y2VkLndpdGgoV2luZG93ZWRTZXJkZXMudGltZVdpbmRvd2VkU2VyZGVGcm9tKFN0cmluZy5jbGFzcyksIFNlcmRlcy5Mb25nKCkpKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.apache.kafka.streams.kstream.TimeWindows;
+
+KTable&lt;Windowed&lt;String&gt;, Long&gt; windowedCounts = textLines
+    .flatMapValues(textLine -&gt; Arrays.asList(textLine.toLowerCase().split(&quot;\\W+&quot;)))
+    .groupBy((key, word) -&gt; word)
+    .windowedBy(TimeWindows.of(Duration.ofMinutes(5)))
+    .count(Materialized.as(&quot;windowed-counts-store&quot;));
+
+windowedCounts.toStream().to(&quot;streams-windowed-wordcount-output&quot;, Produced.with(WindowedSerdes.timeWindowedSerdeFrom(String.class), Serdes.Long()));</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Implementar una aplicació de processament de fluxos amb Kafka implica entendre els conceptes clau, configurar Kafka i escriure tant aplicacions de processament de fluxos senzilles com avançades. Dominant aquestes tècniques, podeu construir sistemes robustos de processament de dades en temps real que poden gestionar grans volums de dades de manera eficient.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='building-a-real-time-data-pipeline'>&#x25C4;Construcció d'un pipeline de dades en temps real</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Implementació d'una Aplicació de Processament de Fluxos</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='integrating-kafka-with-other-systems'>Integració de Kafka amb altres sistemes &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

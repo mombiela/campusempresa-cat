@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ús de les crides de servei del sistema</title>
+
+    <link rel="alternate" href="https://campusempresa.com/vms/using-system-service-calls" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/vms/using-system-service-calls" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/vms/using-system-service-calls" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/vms/using-system-service-calls" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/vms/using-system-service-calls" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='introduction-to-openvms-system-services'>&#x25C4;Introducció als Serveis del Sistema OpenVMS</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Ús de les crides de servei del sistema</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='interprocess-communication'>Comunicació Interprocessos &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a les crides de servei del sistema</h1>
+<div class='content'><p>Les crides de servei del sistema són fonamentals per interactuar amb el sistema operatiu OpenVMS. Proporcionen una manera perquè els programes sol·licitin serveis del sistema operatiu, com ara operacions de fitxers, control de processos i comunicació entre processos.</p>
+</div><h2>Conceptes clau</h2>
+<div class='content'><ul>
+<li><strong>Crida de servei del sistema</strong>: Una funció proporcionada pel sistema operatiu que pot ser invocada per programes d'usuari.</li>
+<li><strong>Convenció de crida</strong>: El mètode pel qual es criden els serveis del sistema, incloent com es passen els paràmetres i com es retornen els resultats.</li>
+<li><strong>Codis d'estat</strong>: Codis retornats pels serveis del sistema per indicar èxit o fracàs.</li>
+</ul>
+</div><h1>Crides de servei del sistema bàsiques</h1>
+<div class='content'><p>Els programadors principiants haurien de començar per entendre com fer crides de servei del sistema bàsiques i gestionar les seves respostes.</p>
+</div><h2>Exemple: Mostrar un missatge</h2>
+<div class='content'><p>El següent exemple demostra com utilitzar el servei del sistema <code>SYS$PUTMSG</code> per mostrar un missatge.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPGRlc2NyaXAuaD4KI2luY2x1ZGUgPHNzZGVmLmg+CiNpbmNsdWRlIDxzdHNkZWYuaD4KI2luY2x1ZGUgPHN0YXJsZXQuaD4KCmludCBtYWluKCkgewogICAgLy8gRGVmaW5pciBlbCBtaXNzYXRnZSBhIG1vc3RyYXIKICAgIGNoYXIgbWVzc2FnZVtdID0gIkhlbGxvLCBPcGVuVk1TISI7CiAgICAKICAgIC8vIENyZWFyIHVuIGRlc2NyaXB0b3IgcGVyIGFsIG1pc3NhdGdlCiAgICBzdHJ1Y3QgZHNjJGRlc2NyaXB0b3JfcyBtc2dfZGVzYzsKICAgIG1zZ19kZXNjLmRzYyR3X2xlbmd0aCA9IHNpemVvZihtZXNzYWdlKSAtIDE7CiAgICBtc2dfZGVzYy5kc2MkYV9wb2ludGVyID0gbWVzc2FnZTsKICAgIG1zZ19kZXNjLmRzYyRiX2R0eXBlID0gRFNDJEtfRFRZUEVfVDsKICAgIG1zZ19kZXNjLmRzYyRiX2NsYXNzID0gRFNDJEtfQ0xBU1NfUzsKCiAgICAvLyBDcmlkYXIgZWwgc2VydmVpIGRlbCBzaXN0ZW1hIFNZUyRQVVRNU0cKICAgIHVuc2lnbmVkIGxvbmcgc3RhdHVzID0gU1lTJFBVVE1TRygmbXNnX2Rlc2MpOwoKICAgIC8vIENvbXByb3ZhciBlbCBjb2RpIGQnZXN0YXQKICAgIGlmICghJFZNU19TVEFUVVNfU1VDQ0VTUyhzdGF0dXMpKSB7CiAgICAgICAgLy8gR2VzdGlvbmFyIGwnZXJyb3IKICAgICAgICByZXR1cm4gMTsKICAgIH0KCiAgICByZXR1cm4gMDsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;descrip.h&gt;
+#include &lt;ssdef.h&gt;
+#include &lt;stsdef.h&gt;
+#include &lt;starlet.h&gt;
+
+int main() {
+    // Definir el missatge a mostrar
+    char message[] = &quot;Hello, OpenVMS!&quot;;
+    
+    // Crear un descriptor per al missatge
+    struct dsc$descriptor_s msg_desc;
+    msg_desc.dsc$w_length = sizeof(message) - 1;
+    msg_desc.dsc$a_pointer = message;
+    msg_desc.dsc$b_dtype = DSC$K_DTYPE_T;
+    msg_desc.dsc$b_class = DSC$K_CLASS_S;
+
+    // Cridar el servei del sistema SYS$PUTMSG
+    unsigned long status = SYS$PUTMSG(&amp;msg_desc);
+
+    // Comprovar el codi d'estat
+    if (!$VMS_STATUS_SUCCESS(status)) {
+        // Gestionar l'error
+        return 1;
+    }
+
+    return 0;
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Descriptor</strong>: Una estructura que descriu el missatge a mostrar.</li>
+<li><strong>SYS$PUTMSG</strong>: La crida de servei del sistema utilitzada per mostrar el missatge.</li>
+<li><strong>Comprovació d'estat</strong>: Verifica si la crida ha tingut èxit.</li>
+</ul>
+</div><h1>Crides de servei del sistema intermèdies</h1>
+<div class='content'><p>A nivell intermedi, els programadors haurien d'aprendre a realitzar operacions més complexes, com ara la gestió de fitxers i el control de processos.</p>
+</div><h2>Exemple: Crear i escriure en un fitxer</h2>
+<div class='content'><p>El següent exemple demostra com crear un fitxer i escriure dades en ell utilitzant serveis del sistema.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPGRlc2NyaXAuaD4KI2luY2x1ZGUgPHJtcy5oPgojaW5jbHVkZSA8c3NkZWYuaD4KI2luY2x1ZGUgPHN0YXJsZXQuaD4KCmludCBtYWluKCkgewogICAgLy8gRGVmaW5pciBlbCBub20gZGVsIGZpdHhlciBpIGVsIGNvbnRpbmd1dAogICAgY2hhciBmaWxlbmFtZVtdID0gIlRFU1QuREFUIjsKICAgIGNoYXIgY29udGVudFtdID0gIlRoaXMgaXMgYSB0ZXN0IGZpbGUuIjsKCiAgICAvLyBDcmVhciB1biBkZXNjcmlwdG9yIHBlciBhbCBub20gZGVsIGZpdHhlcgogICAgc3RydWN0IGRzYyRkZXNjcmlwdG9yX3MgZmlsZV9kZXNjOwogICAgZmlsZV9kZXNjLmRzYyR3X2xlbmd0aCA9IHNpemVvZihmaWxlbmFtZSkgLSAxOwogICAgZmlsZV9kZXNjLmRzYyRhX3BvaW50ZXIgPSBmaWxlbmFtZTsKICAgIGZpbGVfZGVzYy5kc2MkYl9kdHlwZSA9IERTQyRLX0RUWVBFX1Q7CiAgICBmaWxlX2Rlc2MuZHNjJGJfY2xhc3MgPSBEU0MkS19DTEFTU19TOwoKICAgIC8vIENyZWFyIHVuIGJsb2MgZCdhY2PDqXMgYWwgZml0eGVyIChGQUIpCiAgICBzdHJ1Y3QgRkFCIGZhYiA9IGNjJHJtc19mYWI7CiAgICBmYWIuZmFiJGxfZm5hID0gZmlsZV9kZXNjLmRzYyRhX3BvaW50ZXI7CiAgICBmYWIuZmFiJGJfZm5zID0gZmlsZV9kZXNjLmRzYyR3X2xlbmd0aDsKICAgIGZhYi5mYWIkYl9mYWMgPSBGQUIkTV9QVVQ7CiAgICBmYWIuZmFiJGJfb3JnID0gRkFCJENfU0VROwogICAgZmFiLmZhYiRiX3JmbSA9IEZBQiRDX1ZBUjsKCiAgICAvLyBDcmVhciB1biBibG9jIGQnYWNjw6lzIGFsIHJlZ2lzdHJlIChSQUIpCiAgICBzdHJ1Y3QgUkFCIHJhYiA9IGNjJHJtc19yYWI7CiAgICByYWIucmFiJGxfZmFiID0gJmZhYjsKCiAgICAvLyBDcmVhciBlbCBmaXR4ZXIKICAgIHVuc2lnbmVkIGxvbmcgc3RhdHVzID0gU1lTJENSRUFURSgmZmFiKTsKICAgIGlmICghJFZNU19TVEFUVVNfU1VDQ0VTUyhzdGF0dXMpKSB7CiAgICAgICAgLy8gR2VzdGlvbmFyIGwnZXJyb3IKICAgICAgICByZXR1cm4gMTsKICAgIH0KCiAgICAvLyBFc2NyaXVyZSBlbiBlbCBmaXR4ZXIKICAgIHJhYi5yYWIkbF9yYmYgPSBjb250ZW50OwogICAgcmFiLnJhYiR3X3JzeiA9IHNpemVvZihjb250ZW50KSAtIDE7CiAgICBzdGF0dXMgPSBTWVMkUFVUKCZyYWIpOwogICAgaWYgKCEkVk1TX1NUQVRVU19TVUNDRVNTKHN0YXR1cykpIHsKICAgICAgICAvLyBHZXN0aW9uYXIgbCdlcnJvcgogICAgICAgIHJldHVybiAxOwogICAgfQoKICAgIC8vIFRhbmNhciBlbCBmaXR4ZXIKICAgIHN0YXR1cyA9IFNZUyRDTE9TRSgmZmFiKTsKICAgIGlmICghJFZNU19TVEFUVVNfU1VDQ0VTUyhzdGF0dXMpKSB7CiAgICAgICAgLy8gR2VzdGlvbmFyIGwnZXJyb3IKICAgICAgICByZXR1cm4gMTsKICAgIH0KCiAgICByZXR1cm4gMDsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;descrip.h&gt;
+#include &lt;rms.h&gt;
+#include &lt;ssdef.h&gt;
+#include &lt;starlet.h&gt;
+
+int main() {
+    // Definir el nom del fitxer i el contingut
+    char filename[] = &quot;TEST.DAT&quot;;
+    char content[] = &quot;This is a test file.&quot;;
+
+    // Crear un descriptor per al nom del fitxer
+    struct dsc$descriptor_s file_desc;
+    file_desc.dsc$w_length = sizeof(filename) - 1;
+    file_desc.dsc$a_pointer = filename;
+    file_desc.dsc$b_dtype = DSC$K_DTYPE_T;
+    file_desc.dsc$b_class = DSC$K_CLASS_S;
+
+    // Crear un bloc d'acc&eacute;s al fitxer (FAB)
+    struct FAB fab = cc$rms_fab;
+    fab.fab$l_fna = file_desc.dsc$a_pointer;
+    fab.fab$b_fns = file_desc.dsc$w_length;
+    fab.fab$b_fac = FAB$M_PUT;
+    fab.fab$b_org = FAB$C_SEQ;
+    fab.fab$b_rfm = FAB$C_VAR;
+
+    // Crear un bloc d'acc&eacute;s al registre (RAB)
+    struct RAB rab = cc$rms_rab;
+    rab.rab$l_fab = &amp;fab;
+
+    // Crear el fitxer
+    unsigned long status = SYS$CREATE(&amp;fab);
+    if (!$VMS_STATUS_SUCCESS(status)) {
+        // Gestionar l'error
+        return 1;
+    }
+
+    // Escriure en el fitxer
+    rab.rab$l_rbf = content;
+    rab.rab$w_rsz = sizeof(content) - 1;
+    status = SYS$PUT(&amp;rab);
+    if (!$VMS_STATUS_SUCCESS(status)) {
+        // Gestionar l'error
+        return 1;
+    }
+
+    // Tancar el fitxer
+    status = SYS$CLOSE(&amp;fab);
+    if (!$VMS_STATUS_SUCCESS(status)) {
+        // Gestionar l'error
+        return 1;
+    }
+
+    return 0;
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>FAB (Bloc d'Accés al Fitxer)</strong>: Defineix els atributs del fitxer.</li>
+<li><strong>RAB (Bloc d'Accés al Registre)</strong>: Defineix els atributs del registre.</li>
+<li><strong>SYS$CREATE</strong>: Crea el fitxer.</li>
+<li><strong>SYS$PUT</strong>: Escriu dades en el fitxer.</li>
+<li><strong>SYS$CLOSE</strong>: Tanca el fitxer.</li>
+</ul>
+</div><h1>Crides de servei del sistema avançades</h1>
+<div class='content'><p>Els programadors avançats haurien de ser capaços de gestionar tasques complexes com la comunicació entre processos i el control avançat de processos.</p>
+</div><h2>Exemple: Comunicació entre processos utilitzant bústies</h2>
+<div class='content'><p>El següent exemple demostra com utilitzar bústies per a la comunicació entre processos.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPGRlc2NyaXAuaD4KI2luY2x1ZGUgPHNzZGVmLmg+CiNpbmNsdWRlIDxzdGFybGV0Lmg+CiNpbmNsdWRlIDxpb2RlZi5oPgoKaW50IG1haW4oKSB7CiAgICAvLyBEZWZpbmlyIGVsIG5vbSBkZSBsYSBiw7pzdGlhCiAgICBjaGFyIG1haWxib3hfbmFtZVtdID0gIk1CWDEiOwoKICAgIC8vIENyZWFyIHVuIGRlc2NyaXB0b3IgcGVyIGFsIG5vbSBkZSBsYSBiw7pzdGlhCiAgICBzdHJ1Y3QgZHNjJGRlc2NyaXB0b3JfcyBtYnhfZGVzYzsKICAgIG1ieF9kZXNjLmRzYyR3X2xlbmd0aCA9IHNpemVvZihtYWlsYm94X25hbWUpIC0gMTsKICAgIG1ieF9kZXNjLmRzYyRhX3BvaW50ZXIgPSBtYWlsYm94X25hbWU7CiAgICBtYnhfZGVzYy5kc2MkYl9kdHlwZSA9IERTQyRLX0RUWVBFX1Q7CiAgICBtYnhfZGVzYy5kc2MkYl9jbGFzcyA9IERTQyRLX0NMQVNTX1M7CgogICAgLy8gQ3JlYXIgbGEgYsO6c3RpYQogICAgdW5zaWduZWQgc2hvcnQgbWJ4X2NoYW47CiAgICB1bnNpZ25lZCBsb25nIHN0YXR1cyA9IFNZUyRDUkVNQlgoMCwgJm1ieF9jaGFuLCAwLCAwLCAwLCAwLCAmbWJ4X2Rlc2MpOwogICAgaWYgKCEkVk1TX1NUQVRVU19TVUNDRVNTKHN0YXR1cykpIHsKICAgICAgICAvLyBHZXN0aW9uYXIgbCdlcnJvcgogICAgICAgIHJldHVybiAxOwogICAgfQoKICAgIC8vIEVzY3JpdXJlIHVuIG1pc3NhdGdlIGEgbGEgYsO6c3RpYQogICAgY2hhciBtZXNzYWdlW10gPSAiSGVsbG8gZnJvbSBwcm9jZXNzISI7CiAgICBzdGF0dXMgPSBTWVMkUUlPVygwLCBtYnhfY2hhbiwgSU8kX1dSSVRFVkJMSywgMCwgMCwgMCwgbWVzc2FnZSwgc2l6ZW9mKG1lc3NhZ2UpIC0gMSwgMCwgMCwgMCwgMCk7CiAgICBpZiAoISRWTVNfU1RBVFVTX1NVQ0NFU1Moc3RhdHVzKSkgewogICAgICAgIC8vIEdlc3Rpb25hciBsJ2Vycm9yCiAgICAgICAgcmV0dXJuIDE7CiAgICB9CgogICAgLy8gVGFuY2FyIGxhIGLDunN0aWEKICAgIHN0YXR1cyA9IFNZUyREQVNTR04obWJ4X2NoYW4pOwogICAgaWYgKCEkVk1TX1NUQVRVU19TVUNDRVNTKHN0YXR1cykpIHsKICAgICAgICAvLyBHZXN0aW9uYXIgbCdlcnJvcgogICAgICAgIHJldHVybiAxOwogICAgfQoKICAgIHJldHVybiAwOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;descrip.h&gt;
+#include &lt;ssdef.h&gt;
+#include &lt;starlet.h&gt;
+#include &lt;iodef.h&gt;
+
+int main() {
+    // Definir el nom de la b&uacute;stia
+    char mailbox_name[] = &quot;MBX1&quot;;
+
+    // Crear un descriptor per al nom de la b&uacute;stia
+    struct dsc$descriptor_s mbx_desc;
+    mbx_desc.dsc$w_length = sizeof(mailbox_name) - 1;
+    mbx_desc.dsc$a_pointer = mailbox_name;
+    mbx_desc.dsc$b_dtype = DSC$K_DTYPE_T;
+    mbx_desc.dsc$b_class = DSC$K_CLASS_S;
+
+    // Crear la b&uacute;stia
+    unsigned short mbx_chan;
+    unsigned long status = SYS$CREMBX(0, &amp;mbx_chan, 0, 0, 0, 0, &amp;mbx_desc);
+    if (!$VMS_STATUS_SUCCESS(status)) {
+        // Gestionar l'error
+        return 1;
+    }
+
+    // Escriure un missatge a la b&uacute;stia
+    char message[] = &quot;Hello from process!&quot;;
+    status = SYS$QIOW(0, mbx_chan, IO$_WRITEVBLK, 0, 0, 0, message, sizeof(message) - 1, 0, 0, 0, 0);
+    if (!$VMS_STATUS_SUCCESS(status)) {
+        // Gestionar l'error
+        return 1;
+    }
+
+    // Tancar la b&uacute;stia
+    status = SYS$DASSGN(mbx_chan);
+    if (!$VMS_STATUS_SUCCESS(status)) {
+        // Gestionar l'error
+        return 1;
+    }
+
+    return 0;
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>SYS$CREMBX</strong>: Crea una bústia.</li>
+<li><strong>SYS$QIOW</strong>: Realitza operacions d'E/S a la bústia.</li>
+<li><strong>SYS$DASSGN</strong>: Desassigna el canal de la bústia.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Entendre i utilitzar les crides de servei del sistema a OpenVMS és crucial per a una programació de sistemes efectiva. Començar amb crides bàsiques i progressar cap a operacions més complexes permet als programadors aprofitar tot el potencial del sistema operatiu OpenVMS. Dominant aquests conceptes, podeu desenvolupar aplicacions robustes i eficients que aprofitin les capacitats d'OpenVMS.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='introduction-to-openvms-system-services'>&#x25C4;Introducció als Serveis del Sistema OpenVMS</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Ús de les crides de servei del sistema</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='interprocess-communication'>Comunicació Interprocessos &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

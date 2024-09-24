@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processament amb estat vs sense estat</title>
+
+    <link rel="alternate" href="https://campusempresa.com/kafka/stateful-vs-stateless-processing" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/kafka/stateful-vs-stateless-processing" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/kafka/stateful-vs-stateless-processing" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/kafka/stateful-vs-stateless-processing" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/kafka/stateful-vs-stateless-processing" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='building-a-kafka-streams-application'>&#x25C4;Construcció d'una aplicació de fluxos de Kafka</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Processament amb estat vs sense estat</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-kafka-connect'>Introducció a Kafka Connect &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Apache Kafka és una eina poderosa per construir canals de dades en temps real i aplicacions de streaming. Entendre la diferència entre el processament amb estat i sense estat és crucial per dissenyar aplicacions Kafka eficients i escalables. Aquest tema cobrirà els conceptes clau, proporcionarà exemples i oferirà exercicis per consolidar la teva comprensió.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'></div><h2>Processament Sense Estat</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: El processament sense estat significa que cada esdeveniment es processa de manera independent sense cap coneixement dels esdeveniments anteriors.</li>
+<li><strong>Característiques</strong>:
+<ul>
+<li>No cal mantenir estat entre esdeveniments.</li>
+<li>Més fàcil d'escalar horitzontalment.</li>
+<li>Normalment implica transformacions simples o filtratge.</li>
+</ul>
+</li>
+<li><strong>Casos d'Ús</strong>:
+<ul>
+<li>Filtrar missatges no desitjats.</li>
+<li>Transformacions simples com convertir formats de dades.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Processament amb Estat</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: El processament amb estat implica mantenir estat a través de múltiples esdeveniments, permetent a l'aplicació recordar informació entre esdeveniments.</li>
+<li><strong>Característiques</strong>:
+<ul>
+<li>Requereix mantenir estat, sovint en un magatzem local o base de dades externa.</li>
+<li>Més complex d'escalar i gestionar.</li>
+<li>Permet operacions més complexes com agregacions, unions i càlculs amb finestres temporals.</li>
+</ul>
+</li>
+<li><strong>Casos d'Ús</strong>:
+<ul>
+<li>Comptar ocurrències d'esdeveniments.</li>
+<li>Agregar dades en finestres temporals.</li>
+<li>Unir fluxos de dades.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Processament Sense Estat en Kafka Streams</h1>
+<div class='content'></div><h2>Exemple: Filtrar Missatges</h2>
+<div class='content'><p>Comencem amb un exemple simple de processament sense estat: filtrar missatges.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5hcGFjaGUua2Fma2Euc3RyZWFtcy5LYWZrYVN0cmVhbXM7CmltcG9ydCBvcmcuYXBhY2hlLmthZmthLnN0cmVhbXMuU3RyZWFtc0J1aWxkZXI7CmltcG9ydCBvcmcuYXBhY2hlLmthZmthLnN0cmVhbXMua3N0cmVhbS5LU3RyZWFtOwppbXBvcnQgb3JnLmFwYWNoZS5rYWZrYS5zdHJlYW1zLmtzdHJlYW0uS1RhYmxlOwppbXBvcnQgb3JnLmFwYWNoZS5rYWZrYS5zdHJlYW1zLmtzdHJlYW0uQ29uc3VtZWQ7CmltcG9ydCBvcmcuYXBhY2hlLmthZmthLnN0cmVhbXMua3N0cmVhbS5Qcm9kdWNlZDsKCnB1YmxpYyBjbGFzcyBTdGF0ZWxlc3NFeGFtcGxlIHsKICAgIHB1YmxpYyBzdGF0aWMgdm9pZCBtYWluKFN0cmluZ1tdIGFyZ3MpIHsKICAgICAgICBTdHJlYW1zQnVpbGRlciBidWlsZGVyID0gbmV3IFN0cmVhbXNCdWlsZGVyKCk7CiAgICAgICAgS1N0cmVhbTxTdHJpbmcsIFN0cmluZz4gc291cmNlU3RyZWFtID0gYnVpbGRlci5zdHJlYW0oImlucHV0LXRvcGljIik7CgogICAgICAgIEtTdHJlYW08U3RyaW5nLCBTdHJpbmc+IGZpbHRlcmVkU3RyZWFtID0gc291cmNlU3RyZWFtLmZpbHRlcigKICAgICAgICAgICAgKGtleSwgdmFsdWUpIC0+IHZhbHVlLmNvbnRhaW5zKCJpbXBvcnRhbnQiKQogICAgICAgICk7CgogICAgICAgIGZpbHRlcmVkU3RyZWFtLnRvKCJvdXRwdXQtdG9waWMiLCBQcm9kdWNlZC53aXRoKFNlcmRlcy5TdHJpbmcoKSwgU2VyZGVzLlN0cmluZygpKSk7CgogICAgICAgIEthZmthU3RyZWFtcyBzdHJlYW1zID0gbmV3IEthZmthU3RyZWFtcyhidWlsZGVyLmJ1aWxkKCksIG5ldyBQcm9wZXJ0aWVzKCkpOwogICAgICAgIHN0cmVhbXMuc3RhcnQoKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.KTable;
+import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.Produced;
+
+public class StatelessExample {
+    public static void main(String[] args) {
+        StreamsBuilder builder = new StreamsBuilder();
+        KStream&lt;String, String&gt; sourceStream = builder.stream(&quot;input-topic&quot;);
+
+        KStream&lt;String, String&gt; filteredStream = sourceStream.filter(
+            (key, value) -&gt; value.contains(&quot;important&quot;)
+        );
+
+        filteredStream.to(&quot;output-topic&quot;, Produced.with(Serdes.String(), Serdes.String()));
+
+        KafkaStreams streams = new KafkaStreams(builder.build(), new Properties());
+        streams.start();
+    }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Flux d'Origen</strong>: Llegeix de &quot;input-topic&quot;.</li>
+<li><strong>Operació de Filtre</strong>: Manté només els missatges que contenen la paraula &quot;important&quot;.</li>
+<li><strong>Flux de Sortida</strong>: Escriu els missatges filtrats a &quot;output-topic&quot;.</li>
+</ul>
+</div><h1>Processament amb Estat en Kafka Streams</h1>
+<div class='content'></div><h2>Exemple: Comptar Ocurrències</h2>
+<div class='content'><p>Ara, vegem un exemple de processament amb estat: comptar ocurrències de paraules.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5hcGFjaGUua2Fma2Euc3RyZWFtcy5LYWZrYVN0cmVhbXM7CmltcG9ydCBvcmcuYXBhY2hlLmthZmthLnN0cmVhbXMuU3RyZWFtc0J1aWxkZXI7CmltcG9ydCBvcmcuYXBhY2hlLmthZmthLnN0cmVhbXMua3N0cmVhbS5LU3RyZWFtOwppbXBvcnQgb3JnLmFwYWNoZS5rYWZrYS5zdHJlYW1zLmtzdHJlYW0uS1RhYmxlOwppbXBvcnQgb3JnLmFwYWNoZS5rYWZrYS5zdHJlYW1zLmtzdHJlYW0uQ29uc3VtZWQ7CmltcG9ydCBvcmcuYXBhY2hlLmthZmthLnN0cmVhbXMua3N0cmVhbS5Qcm9kdWNlZDsKaW1wb3J0IG9yZy5hcGFjaGUua2Fma2Euc3RyZWFtcy5rc3RyZWFtLk1hdGVyaWFsaXplZDsKaW1wb3J0IG9yZy5hcGFjaGUua2Fma2Euc3RyZWFtcy5zdGF0ZS5TdG9yZXM7CgpwdWJsaWMgY2xhc3MgU3RhdGVmdWxFeGFtcGxlIHsKICAgIHB1YmxpYyBzdGF0aWMgdm9pZCBtYWluKFN0cmluZ1tdIGFyZ3MpIHsKICAgICAgICBTdHJlYW1zQnVpbGRlciBidWlsZGVyID0gbmV3IFN0cmVhbXNCdWlsZGVyKCk7CiAgICAgICAgS1N0cmVhbTxTdHJpbmcsIFN0cmluZz4gc291cmNlU3RyZWFtID0gYnVpbGRlci5zdHJlYW0oImlucHV0LXRvcGljIik7CgogICAgICAgIEtUYWJsZTxTdHJpbmcsIExvbmc+IHdvcmRDb3VudHMgPSBzb3VyY2VTdHJlYW0KICAgICAgICAgICAgLmZsYXRNYXBWYWx1ZXModmFsdWUgLT4gQXJyYXlzLmFzTGlzdCh2YWx1ZS50b0xvd2VyQ2FzZSgpLnNwbGl0KCJcXFcrIikpKQogICAgICAgICAgICAuZ3JvdXBCeSgoa2V5LCB3b3JkKSAtPiB3b3JkKQogICAgICAgICAgICAuY291bnQoTWF0ZXJpYWxpemVkLjxTdHJpbmcsIExvbmcsIEtleVZhbHVlU3RvcmU8Qnl0ZXMsIGJ5dGVbXT4+YXMoImNvdW50cy1zdG9yZSIpKTsKCiAgICAgICAgd29yZENvdW50cy50b1N0cmVhbSgpLnRvKCJvdXRwdXQtdG9waWMiLCBQcm9kdWNlZC53aXRoKFNlcmRlcy5TdHJpbmcoKSwgU2VyZGVzLkxvbmcoKSkpOwoKICAgICAgICBLYWZrYVN0cmVhbXMgc3RyZWFtcyA9IG5ldyBLYWZrYVN0cmVhbXMoYnVpbGRlci5idWlsZCgpLCBuZXcgUHJvcGVydGllcygpKTsKICAgICAgICBzdHJlYW1zLnN0YXJ0KCk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.kstream.KStream;
+import org.apache.kafka.streams.kstream.KTable;
+import org.apache.kafka.streams.kstream.Consumed;
+import org.apache.kafka.streams.kstream.Produced;
+import org.apache.kafka.streams.kstream.Materialized;
+import org.apache.kafka.streams.state.Stores;
+
+public class StatefulExample {
+    public static void main(String[] args) {
+        StreamsBuilder builder = new StreamsBuilder();
+        KStream&lt;String, String&gt; sourceStream = builder.stream(&quot;input-topic&quot;);
+
+        KTable&lt;String, Long&gt; wordCounts = sourceStream
+            .flatMapValues(value -&gt; Arrays.asList(value.toLowerCase().split(&quot;\\W+&quot;)))
+            .groupBy((key, word) -&gt; word)
+            .count(Materialized.&lt;String, Long, KeyValueStore&lt;Bytes, byte[]&gt;&gt;as(&quot;counts-store&quot;));
+
+        wordCounts.toStream().to(&quot;output-topic&quot;, Produced.with(Serdes.String(), Serdes.Long()));
+
+        KafkaStreams streams = new KafkaStreams(builder.build(), new Properties());
+        streams.start();
+    }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Flux d'Origen</strong>: Llegeix de &quot;input-topic&quot;.</li>
+<li><strong>Operació FlatMapValues</strong>: Divideix cada missatge en paraules.</li>
+<li><strong>Operació GroupBy</strong>: Agrupa les paraules.</li>
+<li><strong>Operació Count</strong>: Compta les ocurrències de cada paraula, mantenint estat a &quot;counts-store&quot;.</li>
+<li><strong>Flux de Sortida</strong>: Escriu els recomptes de paraules a &quot;output-topic&quot;.</li>
+</ul>
+</div><h1>Comparació</h1>
+<div class='content'><p>| Característica         | Processament Sense Estat              | Processament amb Estat                |
+|------------------------|----------------------------------------|---------------------------------------|
+| <strong>Gestió d'Estat</strong>     | No requereix gestió d'estat            | Requereix gestió d'estat              |
+| <strong>Complexitat</strong>        | Més simple d'implementar i escalar     | Més complex, requereix gestió acurada de l'estat |
+| <strong>Casos d'Ús</strong>         | Filtratge, transformacions simples     | Agregacions, unions, càlculs amb finestres temporals |
+| <strong>Escalabilitat</strong>      | Més fàcil d'escalar horitzontalment    | Més difícil d'escalar                 |</p>
+</div><h1>Exercicis</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Exercici de Processament Sense Estat</strong>:</p>
+<ul>
+<li>Modifica l'exemple sense estat per filtrar missatges que continguin la paraula &quot;urgent&quot;.</li>
+<li>Escriu els missatges filtrats a un nou tema anomenat &quot;urgent-messages&quot;.</li>
+</ul>
+</li>
+<li>
+<p><strong>Exercici de Processament amb Estat</strong>:</p>
+<ul>
+<li>Modifica l'exemple amb estat per comptar les ocurrències de cada caràcter en lloc de paraules.</li>
+<li>Escriu els recomptes de caràcters a un nou tema anomenat &quot;character-counts&quot;.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Entendre la diferència entre el processament amb estat i sense estat és essencial per dissenyar aplicacions Kafka efectives. El processament sense estat és més simple i fàcil d'escalar, fent-lo adequat per a tasques senzilles com el filtratge i les transformacions simples. El processament amb estat, tot i ser més complex, permet operacions poderoses com agregacions i unions, que són crucials per a moltes aplicacions de processament de dades en temps real. En dominar ambdós enfocaments, pots aprofitar Kafka Streams per construir aplicacions de streaming robustes i escalables.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='building-a-kafka-streams-application'>&#x25C4;Construcció d'una aplicació de fluxos de Kafka</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Processament amb estat vs sense estat</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-kafka-connect'>Introducció a Kafka Connect &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

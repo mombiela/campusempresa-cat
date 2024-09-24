@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decoradors de Propietats en TypeScript</title>
+
+    <link rel="alternate" href="https://campusempresa.com/typescript/property-decorators" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/typescript/property-decorators" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/typescript/property-decorators" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/typescript/property-decorators" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/typescript/property-decorators" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='method-decorators'>&#x25C4;Decoradors de mètode</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Decoradors de Propietats en TypeScript</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='parameter-decorators'>Decoradors de paràmetre &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Els decoradors de propietats són una característica poderosa en TypeScript que et permet modificar o anotar propietats dins d'una classe. Proporcionen una manera d'afegir metadades o canviar el comportament de les propietats d'una manera declarativa. Aquest tema et guiarà des dels conceptes bàsics fins a l'ús avançat dels decoradors de propietats.</p>
+</div><h1>Introducció als Decoradors de Propietats</h1>
+<div class='content'><ul>
+<li><strong>Definició</strong>: Els decoradors de propietats són funcions que s'apliquen a les propietats d'una classe.</li>
+<li><strong>Propòsit</strong>: Es poden utilitzar per afegir metadades, realitzar validacions o modificar el comportament de les propietats.</li>
+</ul>
+</div><h2>Sintaxi Bàsica</h2>
+<div class='content'><p>Un decorador de propietat és una funció que pren dos arguments:</p>
+<ol>
+<li>L'objectiu (el prototip de la classe per a propietats d'instància o la funció constructora per a propietats estàtiques).</li>
+<li>El nom de la propietat.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gTXlQcm9wZXJ0eURlY29yYXRvcih0YXJnZXQ6IGFueSwgcHJvcGVydHlLZXk6IHN0cmluZykgewogICAgY29uc29sZS5sb2coYFByb3BlcnR5RGVjb3JhdG9yIGNhbGxlZCBvbjogJHtwcm9wZXJ0eUtleX1gKTsKfQoKY2xhc3MgRXhhbXBsZUNsYXNzIHsKICAgIEBNeVByb3BlcnR5RGVjb3JhdG9yCiAgICBteVByb3BlcnR5OiBzdHJpbmc7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function MyPropertyDecorator(target: any, propertyKey: string) {
+    console.log(`PropertyDecorator called on: ${propertyKey}`);
+}
+
+class ExampleClass {
+    @MyPropertyDecorator
+    myProperty: string;
+}</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li><code>MyPropertyDecorator</code> és un decorador senzill que registra el nom de la propietat a la qual s'aplica.</li>
+<li><code>@MyPropertyDecorator</code> s'utilitza per anotar <code>myProperty</code> en <code>ExampleClass</code>.</li>
+</ul>
+</div><h1>Casos Pràctics</h1>
+<div class='content'></div><h2>Afegint Metadades</h2>
+<div class='content'><p>Els decoradors de propietats es poden utilitzar per afegir metadades a les propietats, cosa que pot ser útil per a diversos propòsits com la validació, la serialització o l'ORM (Mapatge Objecte-Relacional).</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gUmVxdWlyZWQodGFyZ2V0OiBhbnksIHByb3BlcnR5S2V5OiBzdHJpbmcpIHsKICAgIGlmICghdGFyZ2V0LmNvbnN0cnVjdG9yLnJlcXVpcmVkUHJvcGVydGllcykgewogICAgICAgIHRhcmdldC5jb25zdHJ1Y3Rvci5yZXF1aXJlZFByb3BlcnRpZXMgPSBbXTsKICAgIH0KICAgIHRhcmdldC5jb25zdHJ1Y3Rvci5yZXF1aXJlZFByb3BlcnRpZXMucHVzaChwcm9wZXJ0eUtleSk7Cn0KCmNsYXNzIFVzZXIgewogICAgQFJlcXVpcmVkCiAgICBuYW1lOiBzdHJpbmc7CgogICAgQFJlcXVpcmVkCiAgICBlbWFpbDogc3RyaW5nOwp9Cgpjb25zb2xlLmxvZyhVc2VyLnJlcXVpcmVkUHJvcGVydGllcyk7IC8vIFNvcnRpZGE6IFsnbmFtZScsICdlbWFpbCdd"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function Required(target: any, propertyKey: string) {
+    if (!target.constructor.requiredProperties) {
+        target.constructor.requiredProperties = [];
+    }
+    target.constructor.requiredProperties.push(propertyKey);
+}
+
+class User {
+    @Required
+    name: string;
+
+    @Required
+    email: string;
+}
+
+console.log(User.requiredProperties); // Sortida: ['name', 'email']</pre></div><div class='content'></div><h2>Validació</h2>
+<div class='content'><p>Pots utilitzar decoradors de propietats per fer complir regles de validació a les propietats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gTWluTGVuZ3RoKGxlbmd0aDogbnVtYmVyKSB7CiAgICByZXR1cm4gZnVuY3Rpb24gKHRhcmdldDogYW55LCBwcm9wZXJ0eUtleTogc3RyaW5nKSB7CiAgICAgICAgbGV0IHZhbHVlOiBzdHJpbmc7CgogICAgICAgIGNvbnN0IGdldHRlciA9ICgpID0+IHZhbHVlOwogICAgICAgIGNvbnN0IHNldHRlciA9IChuZXdWYWw6IHN0cmluZykgPT4gewogICAgICAgICAgICBpZiAobmV3VmFsLmxlbmd0aCA8IGxlbmd0aCkgewogICAgICAgICAgICAgICAgdGhyb3cgbmV3IEVycm9yKGBUaGUgbGVuZ3RoIG9mICR7cHJvcGVydHlLZXl9IHNob3VsZCBiZSBhdCBsZWFzdCAke2xlbmd0aH1gKTsKICAgICAgICAgICAgfQogICAgICAgICAgICB2YWx1ZSA9IG5ld1ZhbDsKICAgICAgICB9OwoKICAgICAgICBPYmplY3QuZGVmaW5lUHJvcGVydHkodGFyZ2V0LCBwcm9wZXJ0eUtleSwgewogICAgICAgICAgICBnZXQ6IGdldHRlciwKICAgICAgICAgICAgc2V0OiBzZXR0ZXIsCiAgICAgICAgICAgIGVudW1lcmFibGU6IHRydWUsCiAgICAgICAgICAgIGNvbmZpZ3VyYWJsZTogdHJ1ZQogICAgICAgIH0pOwogICAgfTsKfQoKY2xhc3MgUGVyc29uIHsKICAgIEBNaW5MZW5ndGgoMykKICAgIG5hbWU6IHN0cmluZzsKfQoKY29uc3QgcGVyc29uID0gbmV3IFBlcnNvbigpOwpwZXJzb24ubmFtZSA9ICJKbyI7IC8vIExsZW7Dp2EgdW4gZXJyb3I6IFRoZSBsZW5ndGggb2YgbmFtZSBzaG91bGQgYmUgYXQgbGVhc3QgMw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function MinLength(length: number) {
+    return function (target: any, propertyKey: string) {
+        let value: string;
+
+        const getter = () =&gt; value;
+        const setter = (newVal: string) =&gt; {
+            if (newVal.length &lt; length) {
+                throw new Error(`The length of ${propertyKey} should be at least ${length}`);
+            }
+            value = newVal;
+        };
+
+        Object.defineProperty(target, propertyKey, {
+            get: getter,
+            set: setter,
+            enumerable: true,
+            configurable: true
+        });
+    };
+}
+
+class Person {
+    @MinLength(3)
+    name: string;
+}
+
+const person = new Person();
+person.name = &quot;Jo&quot;; // Llen&ccedil;a un error: The length of name should be at least 3</pre></div><div class='content'></div><h1>Ús Avançat</h1>
+<div class='content'></div><h2>Combinant Diversos Decoradors</h2>
+<div class='content'><p>Pots aplicar diversos decoradors a una sola propietat. S'apliquen en l'ordre en què es declaren.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gRmlyc3REZWNvcmF0b3IodGFyZ2V0OiBhbnksIHByb3BlcnR5S2V5OiBzdHJpbmcpIHsKICAgIGNvbnNvbGUubG9nKGBGaXJzdERlY29yYXRvciBjYWxsZWQgb246ICR7cHJvcGVydHlLZXl9YCk7Cn0KCmZ1bmN0aW9uIFNlY29uZERlY29yYXRvcih0YXJnZXQ6IGFueSwgcHJvcGVydHlLZXk6IHN0cmluZykgewogICAgY29uc29sZS5sb2coYFNlY29uZERlY29yYXRvciBjYWxsZWQgb246ICR7cHJvcGVydHlLZXl9YCk7Cn0KCmNsYXNzIERlbW8gewogICAgQEZpcnN0RGVjb3JhdG9yCiAgICBAU2Vjb25kRGVjb3JhdG9yCiAgICBkZW1vUHJvcGVydHk6IHN0cmluZzsKfQoKLy8gU29ydGlkYToKLy8gU2Vjb25kRGVjb3JhdG9yIGNhbGxlZCBvbjogZGVtb1Byb3BlcnR5Ci8vIEZpcnN0RGVjb3JhdG9yIGNhbGxlZCBvbjogZGVtb1Byb3BlcnR5"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function FirstDecorator(target: any, propertyKey: string) {
+    console.log(`FirstDecorator called on: ${propertyKey}`);
+}
+
+function SecondDecorator(target: any, propertyKey: string) {
+    console.log(`SecondDecorator called on: ${propertyKey}`);
+}
+
+class Demo {
+    @FirstDecorator
+    @SecondDecorator
+    demoProperty: string;
+}
+
+// Sortida:
+// SecondDecorator called on: demoProperty
+// FirstDecorator called on: demoProperty</pre></div><div class='content'></div><h2>Utilitzant Decoradors amb Reflexió de Metadades</h2>
+<div class='content'><p>TypeScript admet la reflexió de metadades a través de la biblioteca <code>reflect-metadata</code>, que es pot utilitzar per emmagatzemar i recuperar metadades sobre propietats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0ICdyZWZsZWN0LW1ldGFkYXRhJzsKCmZ1bmN0aW9uIFJlZmxlY3RNZXRhZGF0YUV4YW1wbGUodGFyZ2V0OiBhbnksIHByb3BlcnR5S2V5OiBzdHJpbmcpIHsKICAgIFJlZmxlY3QuZGVmaW5lTWV0YWRhdGEoJ2V4YW1wbGVNZXRhZGF0YScsICdzb21lVmFsdWUnLCB0YXJnZXQsIHByb3BlcnR5S2V5KTsKfQoKY2xhc3MgU2FtcGxlIHsKICAgIEBSZWZsZWN0TWV0YWRhdGFFeGFtcGxlCiAgICBzYW1wbGVQcm9wZXJ0eTogc3RyaW5nOwp9Cgpjb25zdCBtZXRhZGF0YVZhbHVlID0gUmVmbGVjdC5nZXRNZXRhZGF0YSgnZXhhbXBsZU1ldGFkYXRhJywgU2FtcGxlLnByb3RvdHlwZSwgJ3NhbXBsZVByb3BlcnR5Jyk7CmNvbnNvbGUubG9nKG1ldGFkYXRhVmFsdWUpOyAvLyBTb3J0aWRhOiAnc29tZVZhbHVlJw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import 'reflect-metadata';
+
+function ReflectMetadataExample(target: any, propertyKey: string) {
+    Reflect.defineMetadata('exampleMetadata', 'someValue', target, propertyKey);
+}
+
+class Sample {
+    @ReflectMetadataExample
+    sampleProperty: string;
+}
+
+const metadataValue = Reflect.getMetadata('exampleMetadata', Sample.prototype, 'sampleProperty');
+console.log(metadataValue); // Sortida: 'someValue'</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Els decoradors de propietats en TypeScript proporcionen una manera poderosa d'afegir metadades, fer complir la validació i modificar el comportament de les propietats de la classe. Es poden utilitzar en una varietat d'escenaris, des de la simple registració fins a la validació complexa i la gestió de metadades. Comprenent i utilitzant els decoradors de propietats, pots escriure codi més declaratiu i mantenible.</p>
+<p>En aquest tema, hem cobert:</p>
+<ul>
+<li>La sintaxi bàsica i el propòsit dels decoradors de propietats.</li>
+<li>Casos pràctics incloent l'afegit de metadades i la validació.</li>
+<li>Ús avançat com la combinació de diversos decoradors i l'ús de la reflexió de metadades.</li>
+</ul>
+<p>Experimenta amb els decoradors de propietats en els teus projectes per veure com poden simplificar i millorar el teu codi!</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='method-decorators'>&#x25C4;Decoradors de mètode</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Decoradors de Propietats en TypeScript</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='parameter-decorators'>Decoradors de paràmetre &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

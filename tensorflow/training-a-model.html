@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrenament d'un Model</title>
+
+    <link rel="alternate" href="https://campusempresa.com/tensorflow/training-a-model" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/tensorflow/training-a-model" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/tensorflow/training-a-model" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/tensorflow/training-a-model" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/tensorflow/training-a-model" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='loss-functions-and-optimizers'>&#x25C4;Funcions de pèrdua i optimitzadors</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Entrenament d'un Model</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='evaluating-a-model'>Avaluar un model &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Entrenar un model és un pas fonamental en l'aprenentatge automàtic on el model aprèn a partir de dades. En TensorFlow, això implica definir un model, especificar una funció de pèrdua i utilitzar un optimitzador per ajustar els paràmetres del model per minimitzar la pèrdua. Aquesta secció et guiarà a través del procés d'entrenament d'un model en TensorFlow, des de conceptes bàsics fins a tècniques avançades.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Model</strong>: Una representació matemàtica d'un procés del món real. En TensorFlow, els models es construeixen típicament utilitzant l'API <code>tf.keras</code>.</li>
+<li><strong>Funció de Pèrdua</strong>: Una funció que mesura com de bé les prediccions del model coincideixen amb les dades reals. Les funcions de pèrdua comunes inclouen l'Error Quadràtic Mitjà (MSE) per a la regressió i l'Entropia Creuada Categòrica per a la classificació.</li>
+<li><strong>Optimitzador</strong>: Un algoritme que ajusta els paràmetres del model per minimitzar la funció de pèrdua. Els optimitzadors populars inclouen el Descens de Gradient Estocàstic (SGD) i Adam.</li>
+<li><strong>Èpoques</strong>: El nombre de vegades que tot el conjunt de dades es passa pel model durant l'entrenament.</li>
+<li><strong>Mida del Lot</strong>: El nombre de mostres processades abans que es facin actualitzacions als paràmetres del model.</li>
+</ul>
+</div><h1>Construcció d'un Model Simple</h1>
+<div class='content'></div><h2>Pas 1: Importar Biblioteques</h2>
+<div class='content'><p>Primer, importa les biblioteques necessàries.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKZnJvbSB0ZW5zb3JmbG93LmtlcmFzLm1vZGVscyBpbXBvcnQgU2VxdWVudGlhbApmcm9tIHRlbnNvcmZsb3cua2VyYXMubGF5ZXJzIGltcG9ydCBEZW5zZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense</pre></div><div class='content'></div><h2>Pas 2: Definir el Model</h2>
+<div class='content'><p>Crea una xarxa neuronal feedforward simple utilitzant l'API <code>Sequential</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kZWwgPSBTZXF1ZW50aWFsKFsKICAgIERlbnNlKDY0LCBhY3RpdmF0aW9uPSdyZWx1JywgaW5wdXRfc2hhcGU9KDc4NCwpKSwKICAgIERlbnNlKDY0LCBhY3RpdmF0aW9uPSdyZWx1JyksCiAgICBEZW5zZSgxMCwgYWN0aXZhdGlvbj0nc29mdG1heCcpCl0p"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>model = Sequential([
+    Dense(64, activation='relu', input_shape=(784,)),
+    Dense(64, activation='relu'),
+    Dense(10, activation='softmax')
+])</pre></div><div class='content'><ul>
+<li><strong>Capa Densa</strong>: Una capa totalment connectada on cada neurona està connectada a cada neurona de la capa anterior.</li>
+<li><strong>Funció d'Activació</strong>: Una funció aplicada a la sortida de cada neurona. Les opcions comunes inclouen <code>relu</code> (Unitat Lineal Rectificada) i <code>softmax</code>.</li>
+</ul>
+</div><h2>Pas 3: Compilar el Model</h2>
+<div class='content'><p>Especifica la funció de pèrdua, l'optimitzador i les mètriques.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kZWwuY29tcGlsZSgKICAgIG9wdGltaXplcj0nYWRhbScsCiAgICBsb3NzPSdzcGFyc2VfY2F0ZWdvcmljYWxfY3Jvc3NlbnRyb3B5JywKICAgIG1ldHJpY3M9WydhY2N1cmFjeSddCik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>model.compile(
+    optimizer='adam',
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy']
+)</pre></div><div class='content'><ul>
+<li><strong>Optimitzador</strong>: Adam és una elecció popular per la seva eficiència i rendiment.</li>
+<li><strong>Funció de Pèrdua</strong>: <code>sparse_categorical_crossentropy</code> s'utilitza per a problemes de classificació multiclasse.</li>
+<li><strong>Mètriques</strong>: L'exactitud és una mètrica comuna per a tasques de classificació.</li>
+</ul>
+</div><h2>Pas 4: Entrenar el Model</h2>
+<div class='content'><p>Utilitza el mètode <code>fit</code> per entrenar el model.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGlzdG9yeSA9IG1vZGVsLmZpdCgKICAgIHhfdHJhaW4sIHlfdHJhaW4sCiAgICBlcG9jaHM9MTAsCiAgICBiYXRjaF9zaXplPTMyLAogICAgdmFsaWRhdGlvbl9zcGxpdD0wLjIKKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>history = model.fit(
+    x_train, y_train,
+    epochs=10,
+    batch_size=32,
+    validation_split=0.2
+)</pre></div><div class='content'><ul>
+<li><strong>x_train</strong> i <strong>y_train</strong>: Dades d'entrenament i etiquetes.</li>
+<li><strong>èpoques</strong>: Nombre de vegades que el model iterarà sobre tot el conjunt de dades.</li>
+<li><strong>mida del lot</strong>: Nombre de mostres per actualització de gradient.</li>
+<li><strong>validation_split</strong>: Fracció de les dades d'entrenament que s'utilitzarà com a dades de validació.</li>
+</ul>
+</div><h1>Tècniques Avançades</h1>
+<div class='content'></div><h2>Aturada Primerenca</h2>
+<div class='content'><p>Evita el sobreajustament aturant l'entrenament quan la pèrdua de validació deixi de millorar.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSB0ZW5zb3JmbG93LmtlcmFzLmNhbGxiYWNrcyBpbXBvcnQgRWFybHlTdG9wcGluZwoKZWFybHlfc3RvcHBpbmcgPSBFYXJseVN0b3BwaW5nKAogICAgbW9uaXRvcj0ndmFsX2xvc3MnLAogICAgcGF0aWVuY2U9MywKICAgIHJlc3RvcmVfYmVzdF93ZWlnaHRzPVRydWUKKQoKaGlzdG9yeSA9IG1vZGVsLmZpdCgKICAgIHhfdHJhaW4sIHlfdHJhaW4sCiAgICBlcG9jaHM9NTAsCiAgICBiYXRjaF9zaXplPTMyLAogICAgdmFsaWRhdGlvbl9zcGxpdD0wLjIsCiAgICBjYWxsYmFja3M9W2Vhcmx5X3N0b3BwaW5nXQop"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from tensorflow.keras.callbacks import EarlyStopping
+
+early_stopping = EarlyStopping(
+    monitor='val_loss',
+    patience=3,
+    restore_best_weights=True
+)
+
+history = model.fit(
+    x_train, y_train,
+    epochs=50,
+    batch_size=32,
+    validation_split=0.2,
+    callbacks=[early_stopping]
+)</pre></div><div class='content'></div><h2>Programes de Taxa d'Aprenentatge</h2>
+<div class='content'><p>Ajusta la taxa d'aprenentatge durant l'entrenament per millorar la convergència.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSB0ZW5zb3JmbG93LmtlcmFzLmNhbGxiYWNrcyBpbXBvcnQgTGVhcm5pbmdSYXRlU2NoZWR1bGVyCgpkZWYgc2NoZWR1bGVyKGVwb2NoLCBscik6CiAgICBpZiBlcG9jaCA8IDEwOgogICAgICAgIHJldHVybiBscgogICAgZWxzZToKICAgICAgICByZXR1cm4gbHIgKiB0Zi5tYXRoLmV4cCgtMC4xKQoKbHJfc2NoZWR1bGVyID0gTGVhcm5pbmdSYXRlU2NoZWR1bGVyKHNjaGVkdWxlcikKCmhpc3RvcnkgPSBtb2RlbC5maXQoCiAgICB4X3RyYWluLCB5X3RyYWluLAogICAgZXBvY2hzPTUwLAogICAgYmF0Y2hfc2l6ZT0zMiwKICAgIHZhbGlkYXRpb25fc3BsaXQ9MC4yLAogICAgY2FsbGJhY2tzPVtscl9zY2hlZHVsZXJdCik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from tensorflow.keras.callbacks import LearningRateScheduler
+
+def scheduler(epoch, lr):
+    if epoch &lt; 10:
+        return lr
+    else:
+        return lr * tf.math.exp(-0.1)
+
+lr_scheduler = LearningRateScheduler(scheduler)
+
+history = model.fit(
+    x_train, y_train,
+    epochs=50,
+    batch_size=32,
+    validation_split=0.2,
+    callbacks=[lr_scheduler]
+)</pre></div><div class='content'></div><h2>Comprovació de Model</h2>
+<div class='content'><p>Guarda el model en diverses etapes durant l'entrenament.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSB0ZW5zb3JmbG93LmtlcmFzLmNhbGxiYWNrcyBpbXBvcnQgTW9kZWxDaGVja3BvaW50CgpjaGVja3BvaW50ID0gTW9kZWxDaGVja3BvaW50KAogICAgJ2Jlc3RfbW9kZWwuaDUnLAogICAgbW9uaXRvcj0ndmFsX2xvc3MnLAogICAgc2F2ZV9iZXN0X29ubHk9VHJ1ZQopCgpoaXN0b3J5ID0gbW9kZWwuZml0KAogICAgeF90cmFpbiwgeV90cmFpbiwKICAgIGVwb2Nocz01MCwKICAgIGJhdGNoX3NpemU9MzIsCiAgICB2YWxpZGF0aW9uX3NwbGl0PTAuMiwKICAgIGNhbGxiYWNrcz1bY2hlY2twb2ludF0KKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from tensorflow.keras.callbacks import ModelCheckpoint
+
+checkpoint = ModelCheckpoint(
+    'best_model.h5',
+    monitor='val_loss',
+    save_best_only=True
+)
+
+history = model.fit(
+    x_train, y_train,
+    epochs=50,
+    batch_size=32,
+    validation_split=0.2,
+    callbacks=[checkpoint]
+)</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>Entrenar un model en TensorFlow implica definir l'arquitectura del model, compilar-lo amb una funció de pèrdua i un optimitzador, i després ajustar-lo a les dades. Les tècniques avançades com l'aturada primerenca, els programes de taxa d'aprenentatge i la comprovació de models poden ajudar a millorar el rendiment i evitar el sobreajustament. Dominant aquests conceptes, pots construir i entrenar models d'aprenentatge automàtic robustos utilitzant TensorFlow.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='loss-functions-and-optimizers'>&#x25C4;Funcions de pèrdua i optimitzadors</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Entrenament d'un Model</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='evaluating-a-model'>Avaluar un model &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

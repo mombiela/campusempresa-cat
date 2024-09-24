@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Projectes amb Docker Compose</title>
+
+    <link rel="alternate" href="https://campusempresa.com/docker/managing-docker-compose-projects" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/docker/managing-docker-compose-projects" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/docker/managing-docker-compose-projects" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/docker/managing-docker-compose-projects" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/docker/managing-docker-compose-projects" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='networking-docker-compose'>&#x25C4;Xarxes amb Docker Compose</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestionar Projectes amb Docker Compose</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='docker-swarm-orchestration'>Docker Swarm i orquestració &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a Docker Compose</h1>
+<div class='content'><p>Docker Compose és una eina per definir i executar aplicacions Docker amb múltiples contenidors. Amb Compose, utilitzes un fitxer YAML per configurar els serveis de la teva aplicació. Després, amb una sola comanda, crees i inicies tots els serveis des de la teva configuració.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Servei</strong>: Un servei és un contenidor a la teva aplicació. Cada servei executa una imatge i es pot escalar especificant el nombre de contenidors a executar.</li>
+<li><strong>Volum</strong>: Els volums s'utilitzen per persistir dades generades i utilitzades pels contenidors Docker.</li>
+<li><strong>Xarxa</strong>: Les xarxes permeten que els contenidors es comuniquin entre ells, ja sigui en el mateix host o entre múltiples hosts.</li>
+</ul>
+</div><h1>Configurar Docker Compose</h1>
+<div class='content'><p>Per començar amb Docker Compose, necessites instal·lar Docker i Docker Compose a la teva màquina.</p>
+</div><h2>Instal·lació</h2>
+<div class='content'><ul>
+<li><strong>Docker</strong>: Segueix la guia d'instal·lació oficial de Docker per al teu sistema operatiu.</li>
+<li><strong>Docker Compose</strong>: Docker Compose està inclòs a Docker Desktop per a Windows i Mac. Per a Linux, pots instal·lar-lo utilitzant la següent comanda:
+<pre><code class="language-sh">sudo curl -L &quot;https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)&quot; -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+</code></pre>
+</li>
+</ul>
+</div><h1>Crear un Fitxer Docker Compose</h1>
+<div class='content'><p>Un fitxer Docker Compose és un fitxer YAML que defineix serveis, xarxes i volums per a una aplicació Docker.</p>
+</div><h2>Estructura Bàsica</h2>
+<div class='content'><p>Aquí tens un exemple bàsic d'un fitxer <code>docker-compose.yml</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmVyc2lvbjogJzMnCnNlcnZpY2VzOgogIHdlYjoKICAgIGltYWdlOiBuZ2lueDpsYXRlc3QKICAgIHBvcnRzOgogICAgICAtICI4MDo4MCIKICBkYjoKICAgIGltYWdlOiBwb3N0Z3JlczpsYXRlc3QKICAgIGVudmlyb25tZW50OgogICAgICBQT1NUR1JFU19QQVNTV09SRDogZXhhbXBsZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>version: '3'
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - &quot;80:80&quot;
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: example</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>version</strong>: Especifica la versió del format del fitxer Compose.</li>
+<li><strong>services</strong>: Defineix els serveis a executar.
+<ul>
+<li><strong>web</strong>: Un servei anomenat <code>web</code> que utilitza la imatge <code>nginx:latest</code>.
+<ul>
+<li><strong>ports</strong>: Mapatge del port 80 a l'host al port 80 al contenidor.</li>
+</ul>
+</li>
+<li><strong>db</strong>: Un servei anomenat <code>db</code> que utilitza la imatge <code>postgres:latest</code>.
+<ul>
+<li><strong>environment</strong>: Defineix variables d'entorn per al contenidor.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div><h1>Executar Docker Compose</h1>
+<div class='content'><p>Per iniciar els serveis definits al teu fitxer <code>docker-compose.yml</code>, navega al directori que conté el fitxer i executa:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyLWNvbXBvc2UgdXA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker-compose up</pre></div><div class='content'><p>Aquesta comanda iniciarà tots els serveis en primer pla. Per executar-los en segon pla, utilitza:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyLWNvbXBvc2UgdXAgLWQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker-compose up -d</pre></div><div class='content'></div><h1>Gestionar Serveis</h1>
+<div class='content'><p>Docker Compose proporciona diverses comandes per gestionar els teus serveis.</p>
+</div><h2>Comandes Comunes</h2>
+<div class='content'><ul>
+<li><strong>Iniciar Serveis</strong>: <code>docker-compose start</code></li>
+<li><strong>Aturar Serveis</strong>: <code>docker-compose stop</code></li>
+<li><strong>Reiniciar Serveis</strong>: <code>docker-compose restart</code></li>
+<li><strong>Veure Registres</strong>: <code>docker-compose logs</code></li>
+<li><strong>Escalar Serveis</strong>: <code>docker-compose up --scale web=3 -d</code></li>
+</ul>
+</div><h2>Exemple</h2>
+<div class='content'><p>Per escalar el servei <code>web</code> a 3 instàncies, utilitzaries:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyLWNvbXBvc2UgdXAgLS1zY2FsZSB3ZWI9MyAtZA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker-compose up --scale web=3 -d</pre></div><div class='content'></div><h1>Utilitzar Volums i Xarxes</h1>
+<div class='content'><p>Els volums i les xarxes són essencials per a la persistència de dades i la comunicació entre serveis.</p>
+</div><h2>Volums</h2>
+<div class='content'><p>Defineix volums al teu fitxer <code>docker-compose.yml</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmljZXM6CiAgZGI6CiAgICBpbWFnZTogcG9zdGdyZXM6bGF0ZXN0CiAgICB2b2x1bWVzOgogICAgICAtIGRiLWRhdGE6L3Zhci9saWIvcG9zdGdyZXNxbC9kYXRhCnZvbHVtZXM6CiAgZGItZGF0YTo="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>services:
+  db:
+    image: postgres:latest
+    volumes:
+      - db-data:/var/lib/postgresql/data
+volumes:
+  db-data:</pre></div><div class='content'></div><h2>Xarxes</h2>
+<div class='content'><p>Defineix xarxes personalitzades per als teus serveis:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmljZXM6CiAgd2ViOgogICAgaW1hZ2U6IG5naW54OmxhdGVzdAogICAgbmV0d29ya3M6CiAgICAgIC0gd2VibmV0CiAgZGI6CiAgICBpbWFnZTogcG9zdGdyZXM6bGF0ZXN0CiAgICBuZXR3b3JrczoKICAgICAgLSB3ZWJuZXQKbmV0d29ya3M6CiAgd2VibmV0Og=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>services:
+  web:
+    image: nginx:latest
+    networks:
+      - webnet
+  db:
+    image: postgres:latest
+    networks:
+      - webnet
+networks:
+  webnet:</pre></div><div class='content'></div><h1>Configuració Avançada</h1>
+<div class='content'><p>Docker Compose permet configuracions més avançades com utilitzar fitxers d'entorn, estendre serveis i utilitzar múltiples fitxers Compose.</p>
+</div><h2>Fitxers d'Entorn</h2>
+<div class='content'><p>Pots utilitzar un fitxer d'entorn per definir variables d'entorn:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmljZXM6CiAgd2ViOgogICAgaW1hZ2U6IG5naW54OmxhdGVzdAogICAgZW52X2ZpbGU6CiAgICAgIC0gLmVudg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>services:
+  web:
+    image: nginx:latest
+    env_file:
+      - .env</pre></div><div class='content'></div><h2>Estendre Serveis</h2>
+<div class='content'><p>Pots estendre serveis existents per reutilitzar configuracions:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmljZXM6CiAgYmFzZToKICAgIGltYWdlOiBuZ2lueDpsYXRlc3QKICB3ZWI6CiAgICBleHRlbmRzOgogICAgICBzZXJ2aWNlOiBiYXNlCiAgICAgIGZpbGU6IGNvbW1vbi1zZXJ2aWNlcy55bWw="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>services:
+  base:
+    image: nginx:latest
+  web:
+    extends:
+      service: base
+      file: common-services.yml</pre></div><div class='content'></div><h2>Múltiples Fitxers Compose</h2>
+<div class='content'><p>Pots utilitzar múltiples fitxers Compose per sobreescriure configuracions:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyLWNvbXBvc2UgLWYgZG9ja2VyLWNvbXBvc2UueW1sIC1mIGRvY2tlci1jb21wb3NlLm92ZXJyaWRlLnltbCB1cCAtZA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker-compose -f docker-compose.yml -f docker-compose.override.yml up -d</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Gestionar projectes amb Docker Compose implica entendre l'estructura del fitxer <code>docker-compose.yml</code>, executar i gestionar serveis, i utilitzar volums i xarxes per a la persistència de dades i la comunicació. Amb aquestes eines, pots gestionar eficientment aplicacions Docker amb múltiples contenidors, fent que els teus processos de desenvolupament i desplegament siguin més àgils i efectius.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='networking-docker-compose'>&#x25C4;Xarxes amb Docker Compose</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestionar Projectes amb Docker Compose</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='docker-swarm-orchestration'>Docker Swarm i orquestració &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

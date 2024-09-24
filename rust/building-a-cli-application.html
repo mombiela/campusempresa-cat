@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construint una Aplicació CLI</title>
+
+    <link rel="alternate" href="https://campusempresa.com/rust/building-a-cli-application" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/rust/building-a-cli-application" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/rust/building-a-cli-application" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/rust/building-a-cli-application" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/rust/building-a-cli-application" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='deploying-applications'>&#x25C4;Desplegar Aplicacions</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Construint una Aplicació CLI</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='building-a-web-application'>Construir una Aplicació Web &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest mòdul, explorarem com construir una aplicació d'Interfície de Línia de Comandes (CLI) utilitzant Rust. Les aplicacions CLI són eines poderoses que permeten als usuaris interactuar amb el programari a través de comandes de text. Al final d'aquest mòdul, seràs capaç de crear una aplicació CLI totalment funcional en Rust.</p>
+</div><h1>Prerequisits</h1>
+<div class='content'><p>Abans de començar aquest mòdul, hauries de tenir:</p>
+<ul>
+<li>Comprensió bàsica de la sintaxi i els conceptes de Rust.</li>
+<li>Rust instal·lat a la teva màquina.</li>
+<li>Familiaritat amb l'ús del terminal o la línia de comandes.</li>
+</ul>
+</div><h1>Configurant el Teu Projecte</h1>
+<div class='content'><p>Per començar, necessitem crear un nou projecte Rust. Obre el teu terminal i executa la següent comanda:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2FyZ28gbmV3IGNsaV9hcHAKY2QgY2xpX2FwcA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>cargo new cli_app
+cd cli_app</pre></div><div class='content'><p>Aquesta comanda crea un nou projecte Rust anomenat <code>cli_app</code> i navega dins del directori del projecte.</p>
+</div><h1>Afegint Dependències</h1>
+<div class='content'><p>Per construir aplicacions CLI, utilitzarem el crate <code>clap</code>, que proporciona una manera senzilla de parsejar arguments de línia de comandes.</p>
+<p>Afegeix el següent al teu fitxer <code>Cargo.toml</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("W2RlcGVuZGVuY2llc10KY2xhcCA9ICIzLjAi"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>[dependencies]
+clap = &quot;3.0&quot;</pre></div><div class='content'></div><h1>Aplicació CLI Bàsica</h1>
+<div class='content'><p>Comencem creant una aplicació CLI bàsica que accepti un únic argument i el mostri.</p>
+</div><h2>main.rs</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIGNsYXA6OlBhcnNlcjsKCi8vLyBQcm9ncmFtYSBzZW56aWxsIHBlciBzYWx1ZGFyIHVuYSBwZXJzb25hCiNbZGVyaXZlKFBhcnNlcildCnN0cnVjdCBDbGkgewogICAgLy8vIEVsIG5vbSBkZSBsYSBwZXJzb25hIGEgc2FsdWRhcgogICAgbmFtZTogU3RyaW5nLAp9CgpmbiBtYWluKCkgewogICAgbGV0IGFyZ3MgPSBDbGk6OnBhcnNlKCk7CiAgICBwcmludGxuISgiSG9sYSwge30hIiwgYXJncy5uYW1lKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use clap::Parser;
+
+/// Programa senzill per saludar una persona
+#[derive(Parser)]
+struct Cli {
+    /// El nom de la persona a saludar
+    name: String,
+}
+
+fn main() {
+    let args = Cli::parse();
+    println!(&quot;Hola, {}!&quot;, args.name);
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong><code>use clap::Parser;</code></strong>: Importa el trait <code>Parser</code> del crate <code>clap</code>.</li>
+<li><strong><code>#[derive(Parser)]</code></strong>: Deriva el trait <code>Parser</code> per a l'estructura <code>Cli</code>, permetent-li parsejar arguments de línia de comandes.</li>
+<li><strong><code>struct Cli</code></strong>: Defineix una estructura amb un únic camp <code>name</code> per mantenir l'argument.</li>
+<li><strong><code>Cli::parse()</code></strong>: Parseja els arguments de línia de comandes i retorna una instància de <code>Cli</code>.</li>
+<li><strong><code>println!</code></strong>: Mostra un missatge de salutació utilitzant el nom proporcionat.</li>
+</ul>
+</div><h1>Gestionant Múltiples Arguments</h1>
+<div class='content'><p>A continuació, ampliem la nostra aplicació per gestionar múltiples arguments i opcions.</p>
+</div><h2>main.rs</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIGNsYXA6OntQYXJzZXIsIEFyZ0VudW19OwoKI1tkZXJpdmUoUGFyc2VyKV0Kc3RydWN0IENsaSB7CiAgICAvLy8gRWwgbm9tIGRlIGxhIHBlcnNvbmEgYSBzYWx1ZGFyCiAgICBuYW1lOiBTdHJpbmcsCiAgICAvLy8gRWwgbm9tYnJlIGRlIHZlZ2FkZXMgYSBzYWx1ZGFyCiAgICAjW2NsYXAoc2hvcnQsIGxvbmcsIGRlZmF1bHRfdmFsdWVfdCA9IDEpXQogICAgY291bnQ6IHU4LAogICAgLy8vIEwnaWRpb21hIGEgdXRpbGl0emFyIHBlciBhIGxhIHNhbHV0YWNpw7MKICAgICNbY2xhcChhcmdfZW51bSwgc2hvcnQsIGxvbmcsIGRlZmF1bHRfdmFsdWVfdCA9IExhbmd1YWdlOjpFbmdsaXNoKV0KICAgIGxhbmd1YWdlOiBMYW5ndWFnZSwKfQoKI1tkZXJpdmUoQ29weSwgQ2xvbmUsIFBhcnRpYWxFcSwgRXEsIFBhcnRpYWxPcmQsIE9yZCwgQXJnRW51bSldCmVudW0gTGFuZ3VhZ2UgewogICAgRW5nbGlzaCwKICAgIFNwYW5pc2gsCiAgICBGcmVuY2gsCn0KCmZuIG1haW4oKSB7CiAgICBsZXQgYXJncyA9IENsaTo6cGFyc2UoKTsKICAgIGZvciBfIGluIDAuLmFyZ3MuY291bnQgewogICAgICAgIG1hdGNoIGFyZ3MubGFuZ3VhZ2UgewogICAgICAgICAgICBMYW5ndWFnZTo6RW5nbGlzaCA9PiBwcmludGxuISgiSGVsbG8sIHt9ISIsIGFyZ3MubmFtZSksCiAgICAgICAgICAgIExhbmd1YWdlOjpTcGFuaXNoID0+IHByaW50bG4hKCJIb2xhLCB7fSEiLCBhcmdzLm5hbWUpLAogICAgICAgICAgICBMYW5ndWFnZTo6RnJlbmNoID0+IHByaW50bG4hKCJCb25qb3VyLCB7fSEiLCBhcmdzLm5hbWUpLAogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use clap::{Parser, ArgEnum};
+
+#[derive(Parser)]
+struct Cli {
+    /// El nom de la persona a saludar
+    name: String,
+    /// El nombre de vegades a saludar
+    #[clap(short, long, default_value_t = 1)]
+    count: u8,
+    /// L'idioma a utilitzar per a la salutaci&oacute;
+    #[clap(arg_enum, short, long, default_value_t = Language::English)]
+    language: Language,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ArgEnum)]
+enum Language {
+    English,
+    Spanish,
+    French,
+}
+
+fn main() {
+    let args = Cli::parse();
+    for _ in 0..args.count {
+        match args.language {
+            Language::English =&gt; println!(&quot;Hello, {}!&quot;, args.name),
+            Language::Spanish =&gt; println!(&quot;Hola, {}!&quot;, args.name),
+            Language::French =&gt; println!(&quot;Bonjour, {}!&quot;, args.name),
+        }
+    }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong><code>#[clap(short, long, default_value_t = 1)]</code></strong>: Especifica que <code>count</code> es pot establir utilitzant <code>-c</code> o <code>--count</code> i per defecte és 1.</li>
+<li><strong><code>#[clap(arg_enum, short, long, default_value_t = Language::English)]</code></strong>: Especifica que <code>language</code> es pot establir utilitzant <code>-l</code> o <code>--language</code> i per defecte és <code>English</code>.</li>
+<li><strong><code>enum Language</code></strong>: Defineix una enumeració per als idiomes suportats.</li>
+<li><strong><code>match args.language</code></strong>: Compara l'idioma proporcionat i mostra la salutació en l'idioma corresponent.</li>
+</ul>
+</div><h1>Gestió d'Errors</h1>
+<div class='content'><p>La gestió adequada d'errors és crucial per a aplicacions CLI robustes. Afegim gestió d'errors a la nostra aplicació.</p>
+</div><h2>main.rs</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIGNsYXA6OntQYXJzZXIsIEFyZ0VudW19Owp1c2Ugc3RkOjplcnJvcjo6RXJyb3I7CgojW2Rlcml2ZShQYXJzZXIpXQpzdHJ1Y3QgQ2xpIHsKICAgIG5hbWU6IFN0cmluZywKICAgICNbY2xhcChzaG9ydCwgbG9uZywgZGVmYXVsdF92YWx1ZV90ID0gMSldCiAgICBjb3VudDogdTgsCiAgICAjW2NsYXAoYXJnX2VudW0sIHNob3J0LCBsb25nLCBkZWZhdWx0X3ZhbHVlX3QgPSBMYW5ndWFnZTo6RW5nbGlzaCldCiAgICBsYW5ndWFnZTogTGFuZ3VhZ2UsCn0KCiNbZGVyaXZlKENvcHksIENsb25lLCBQYXJ0aWFsRXEsIEVxLCBQYXJ0aWFsT3JkLCBPcmQsIEFyZ0VudW0pXQplbnVtIExhbmd1YWdlIHsKICAgIEVuZ2xpc2gsCiAgICBTcGFuaXNoLAogICAgRnJlbmNoLAp9CgpmbiBtYWluKCkgLT4gUmVzdWx0PCgpLCBCb3g8ZHluIEVycm9yPj4gewogICAgbGV0IGFyZ3MgPSBDbGk6OnBhcnNlKCk7CiAgICBmb3IgXyBpbiAwLi5hcmdzLmNvdW50IHsKICAgICAgICBtYXRjaCBhcmdzLmxhbmd1YWdlIHsKICAgICAgICAgICAgTGFuZ3VhZ2U6OkVuZ2xpc2ggPT4gcHJpbnRsbiEoIkhlbGxvLCB7fSEiLCBhcmdzLm5hbWUpLAogICAgICAgICAgICBMYW5ndWFnZTo6U3BhbmlzaCA9PiBwcmludGxuISgiSG9sYSwge30hIiwgYXJncy5uYW1lKSwKICAgICAgICAgICAgTGFuZ3VhZ2U6OkZyZW5jaCA9PiBwcmludGxuISgiQm9uam91ciwge30hIiwgYXJncy5uYW1lKSwKICAgICAgICB9CiAgICB9CiAgICBPaygoKSkKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use clap::{Parser, ArgEnum};
+use std::error::Error;
+
+#[derive(Parser)]
+struct Cli {
+    name: String,
+    #[clap(short, long, default_value_t = 1)]
+    count: u8,
+    #[clap(arg_enum, short, long, default_value_t = Language::English)]
+    language: Language,
+}
+
+#[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, ArgEnum)]
+enum Language {
+    English,
+    Spanish,
+    French,
+}
+
+fn main() -&gt; Result&lt;(), Box&lt;dyn Error&gt;&gt; {
+    let args = Cli::parse();
+    for _ in 0..args.count {
+        match args.language {
+            Language::English =&gt; println!(&quot;Hello, {}!&quot;, args.name),
+            Language::Spanish =&gt; println!(&quot;Hola, {}!&quot;, args.name),
+            Language::French =&gt; println!(&quot;Bonjour, {}!&quot;, args.name),
+        }
+    }
+    Ok(())
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong><code>Result&lt;(), Box&lt;dyn Error&gt;&gt;</code></strong>: Canvia el tipus de retorn de <code>main</code> a un <code>Result</code> per gestionar possibles errors.</li>
+<li><strong><code>Ok(())</code></strong>: Indica una execució exitosa.</li>
+</ul>
+</div><h1>Funcionalitats Avançades</h1>
+<div class='content'><p>Per a aplicacions CLI avançades, podries necessitar subcomandes, fitxers de configuració o un parsejat d'arguments més complex. El crate <code>clap</code> suporta aquestes funcionalitats.</p>
+</div><h2>Exemple de Subcomandes</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIGNsYXA6OntQYXJzZXIsIFN1YmNvbW1hbmR9OwoKI1tkZXJpdmUoUGFyc2VyKV0Kc3RydWN0IENsaSB7CiAgICAjW2NsYXAoc3ViY29tbWFuZCldCiAgICBjb21tYW5kOiBDb21tYW5kcywKfQoKI1tkZXJpdmUoU3ViY29tbWFuZCldCmVudW0gQ29tbWFuZHMgewogICAgR3JlZXQgewogICAgICAgIG5hbWU6IFN0cmluZywKICAgIH0sCiAgICBGYXJld2VsbCB7CiAgICAgICAgbmFtZTogU3RyaW5nLAogICAgfSwKfQoKZm4gbWFpbigpIHsKICAgIGxldCBhcmdzID0gQ2xpOjpwYXJzZSgpOwogICAgbWF0Y2ggYXJncy5jb21tYW5kIHsKICAgICAgICBDb21tYW5kczo6R3JlZXQgeyBuYW1lIH0gPT4gcHJpbnRsbiEoIkhlbGxvLCB7fSEiLCBuYW1lKSwKICAgICAgICBDb21tYW5kczo6RmFyZXdlbGwgeyBuYW1lIH0gPT4gcHJpbnRsbiEoIkdvb2RieWUsIHt9ISIsIG5hbWUpLAogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use clap::{Parser, Subcommand};
+
+#[derive(Parser)]
+struct Cli {
+    #[clap(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    Greet {
+        name: String,
+    },
+    Farewell {
+        name: String,
+    },
+}
+
+fn main() {
+    let args = Cli::parse();
+    match args.command {
+        Commands::Greet { name } =&gt; println!(&quot;Hello, {}!&quot;, name),
+        Commands::Farewell { name } =&gt; println!(&quot;Goodbye, {}!&quot;, name),
+    }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong><code>#[clap(subcommand)]</code></strong>: Especifica que <code>command</code> és una subcomanda.</li>
+<li><strong><code>enum Commands</code></strong>: Defineix les subcomandes <code>Greet</code> i <code>Farewell</code>.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest mòdul, hem cobert els conceptes bàsics de construir una aplicació CLI en Rust utilitzant el crate <code>clap</code>. Hem començat amb una aplicació senzilla, hem afegit múltiples arguments i opcions, hem implementat la gestió d'errors, i hem explorat funcionalitats avançades com les subcomandes. Amb aquestes habilitats, pots crear aplicacions CLI poderoses i fàcils d'utilitzar en Rust.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='deploying-applications'>&#x25C4;Desplegar Aplicacions</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Construint una Aplicació CLI</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='building-a-web-application'>Construir una Aplicació Web &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

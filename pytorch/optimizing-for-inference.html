@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimització per a la Inferència</title>
+
+    <link rel="alternate" href="https://campusempresa.com/pytorch/optimizing-for-inference" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/pytorch/optimizing-for-inference" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/pytorch/optimizing-for-inference" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/pytorch/optimizing-for-inference" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/pytorch/optimizing-for-inference" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='serving-pytorch-models'>&#x25C4;Servei de Models PyTorch</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització per a la Inferència</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='deploying-on-cloud-platforms'>Desplegament en Plataformes Cloud &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La inferència és el procés d'utilitzar un model entrenat per fer prediccions sobre noves dades. Optimitzar per a la inferència implica fer que el teu model funcioni més ràpid i de manera més eficient durant aquesta fase. Això és crucial per desplegar models en entorns de producció on el rendiment i la utilització de recursos són crítics.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Quantització del Model</strong>: Reduir la precisió dels pesos i activacions del model a amplades de bits inferiors (per exemple, de punt flotant de 32 bits a enter de 8 bits).</li>
+<li><strong>Poda</strong>: Eliminar pesos menys importants del model per reduir la seva mida i millorar la velocitat d'inferència.</li>
+<li><strong>Batching</strong>: Processar múltiples entrades alhora per aprofitar el paral·lelisme.</li>
+<li><strong>Acceleració de Maquinari</strong>: Utilitzar maquinari especialitzat com GPUs, TPUs o FPGAs per accelerar la inferència.</li>
+<li><strong>Exportació del Model</strong>: Convertir el model a un format optimitzat per a la inferència, com TorchScript o ONNX.</li>
+</ul>
+</div><h1>Quantització del Model</h1>
+<div class='content'><p>La quantització pot reduir significativament la mida del model i millorar la velocitat d'inferència amb una pèrdua mínima de precisió.</p>
+</div><h2>Exemple: Quantització Post-Entrenament</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaHZpc2lvbi5tb2RlbHMgYXMgbW9kZWxzCmZyb20gdG9yY2gucXVhbnRpemF0aW9uIGltcG9ydCBxdWFudGl6ZV9keW5hbWljCgojIENhcnJlZ2FyIHVuIG1vZGVsIHByZWVudHJlbmF0Cm1vZGVsID0gbW9kZWxzLnJlc25ldDE4KHByZXRyYWluZWQ9VHJ1ZSkKCiMgQXBsaWNhciBxdWFudGl0emFjacOzIGRpbsOgbWljYQpxdWFudGl6ZWRfbW9kZWwgPSBxdWFudGl6ZV9keW5hbWljKG1vZGVsLCB7dG9yY2gubm4uTGluZWFyfSwgZHR5cGU9dG9yY2gucWludDgpCgojIEd1YXJkYXIgZWwgbW9kZWwgcXVhbnRpdHphdAp0b3JjaC5zYXZlKHF1YW50aXplZF9tb2RlbC5zdGF0ZV9kaWN0KCksICdxdWFudGl6ZWRfcmVzbmV0MTgucHRoJyk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torchvision.models as models
+from torch.quantization import quantize_dynamic
+
+# Carregar un model preentrenat
+model = models.resnet18(pretrained=True)
+
+# Aplicar quantitzaci&oacute; din&agrave;mica
+quantized_model = quantize_dynamic(model, {torch.nn.Linear}, dtype=torch.qint8)
+
+# Guardar el model quantitzat
+torch.save(quantized_model.state_dict(), 'quantized_resnet18.pth')</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Aquest exemple demostra com aplicar quantització dinàmica a un model ResNet-18 preentrenat. La funció <code>quantize_dynamic</code> redueix la precisió de les capes lineals a enters de 8 bits.</li>
+</ul>
+</div><h1>Poda</h1>
+<div class='content'><p>La poda implica eliminar pesos que contribueixen menys a les prediccions del model, reduint així la complexitat del model.</p>
+</div><h2>Exemple: Poda Bàsica de Pesos</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaC5ubi51dGlscy5wcnVuZSBhcyBwcnVuZQoKIyBEZWZpbmlyIHVuIG1vZGVsIHNpbXBsZQptb2RlbCA9IHRvcmNoLm5uLlNlcXVlbnRpYWwoCiAgICB0b3JjaC5ubi5MaW5lYXIoMTAsIDEwKSwKICAgIHRvcmNoLm5uLlJlTFUoKSwKICAgIHRvcmNoLm5uLkxpbmVhcigxMCwgMSkKKQoKIyBBcGxpY2FyIHBvZGEgYSBsYSBwcmltZXJhIGNhcGEgbGluZWFsCnBydW5lLmwxX3Vuc3RydWN0dXJlZChtb2RlbFswXSwgbmFtZT0nd2VpZ2h0JywgYW1vdW50PTAuNCkKCiMgQ29tcHJvdmFyIGwnZXNjYXNzZXRhdCBkZSBsYSBjYXBhIHBvZGFkYQpwcmludChtb2RlbFswXS53ZWlnaHQp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torch.nn.utils.prune as prune
+
+# Definir un model simple
+model = torch.nn.Sequential(
+    torch.nn.Linear(10, 10),
+    torch.nn.ReLU(),
+    torch.nn.Linear(10, 1)
+)
+
+# Aplicar poda a la primera capa lineal
+prune.l1_unstructured(model[0], name='weight', amount=0.4)
+
+# Comprovar l'escassetat de la capa podada
+print(model[0].weight)</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Aquest exemple mostra com podar el 40% dels pesos en la primera capa lineal d'una xarxa neuronal simple utilitzant poda no estructurada L1.</li>
+</ul>
+</div><h1>Batching</h1>
+<div class='content'><p>El batching permet processar múltiples entrades simultàniament, cosa que pot accelerar significativament la inferència, especialment en GPUs.</p>
+</div><h2>Exemple: Batching d'Entrades</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCgojIERhZGVzIGQnZW50cmFkYSBmaWN0w61jaWVzCmlucHV0cyA9IHRvcmNoLnJhbmRuKDMyLCAzLCAyMjQsIDIyNCkgICMgQmF0Y2ggZGUgMzIgaW1hdGdlcwoKIyBDYXJyZWdhciB1biBtb2RlbCBwcmVlbnRyZW5hdAptb2RlbCA9IG1vZGVscy5yZXNuZXQxOChwcmV0cmFpbmVkPVRydWUpCm1vZGVsLmV2YWwoKQoKIyBSZWFsaXR6YXIgaW5mZXLDqG5jaWEKd2l0aCB0b3JjaC5ub19ncmFkKCk6CiAgICBvdXRwdXRzID0gbW9kZWwoaW5wdXRzKQoKcHJpbnQob3V0cHV0cy5zaGFwZSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+
+# Dades d'entrada fict&iacute;cies
+inputs = torch.randn(32, 3, 224, 224)  # Batch de 32 imatges
+
+# Carregar un model preentrenat
+model = models.resnet18(pretrained=True)
+model.eval()
+
+# Realitzar infer&egrave;ncia
+with torch.no_grad():
+    outputs = model(inputs)
+
+print(outputs.shape)</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Aquest exemple demostra com realitzar inferència en un batch de 32 imatges utilitzant un model ResNet-18 preentrenat. El context <code>torch.no_grad()</code> s'utilitza per desactivar el càlcul de gradients, que és innecessari per a la inferència i estalvia memòria.</li>
+</ul>
+</div><h1>Acceleració de Maquinari</h1>
+<div class='content'><p>Utilitzar maquinari especialitzat pot millorar enormement el rendiment de la inferència. PyTorch admet l'execució de models en GPUs i altres acceleradors.</p>
+</div><h2>Exemple: Utilitzar GPU per a la Inferència</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCgojIENvbXByb3ZhciBzaSBoaSBoYSBHUFUgZGlzcG9uaWJsZQpkZXZpY2UgPSB0b3JjaC5kZXZpY2UoJ2N1ZGEnIGlmIHRvcmNoLmN1ZGEuaXNfYXZhaWxhYmxlKCkgZWxzZSAnY3B1JykKCiMgQ2FycmVnYXIgdW4gbW9kZWwgcHJlZW50cmVuYXQgaSBtb3VyZSdsIGEgbGEgR1BVCm1vZGVsID0gbW9kZWxzLnJlc25ldDE4KHByZXRyYWluZWQ9VHJ1ZSkudG8oZGV2aWNlKQptb2RlbC5ldmFsKCkKCiMgRGFkZXMgZCdlbnRyYWRhIGZpY3TDrWNpZXMKaW5wdXRzID0gdG9yY2gucmFuZG4oMzIsIDMsIDIyNCwgMjI0KS50byhkZXZpY2UpICAjIEJhdGNoIGRlIDMyIGltYXRnZXMKCiMgUmVhbGl0emFyIGluZmVyw6huY2lhCndpdGggdG9yY2gubm9fZ3JhZCgpOgogICAgb3V0cHV0cyA9IG1vZGVsKGlucHV0cykKCnByaW50KG91dHB1dHMuc2hhcGUp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+
+# Comprovar si hi ha GPU disponible
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+# Carregar un model preentrenat i moure'l a la GPU
+model = models.resnet18(pretrained=True).to(device)
+model.eval()
+
+# Dades d'entrada fict&iacute;cies
+inputs = torch.randn(32, 3, 224, 224).to(device)  # Batch de 32 imatges
+
+# Realitzar infer&egrave;ncia
+with torch.no_grad():
+    outputs = model(inputs)
+
+print(outputs.shape)</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Aquest exemple mostra com moure un model i dades d'entrada a la GPU per a una inferència més ràpida. La funció <code>torch.cuda.is_available()</code> comprova si hi ha una GPU disponible.</li>
+</ul>
+</div><h1>Exportació del Model</h1>
+<div class='content'><p>Exportar el teu model a un format optimitzat per a la inferència pot millorar el rendiment i la compatibilitat amb diversos entorns de desplegament.</p>
+</div><h2>Exemple: Exportació a TorchScript</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCgojIENhcnJlZ2FyIHVuIG1vZGVsIHByZWVudHJlbmF0Cm1vZGVsID0gbW9kZWxzLnJlc25ldDE4KHByZXRyYWluZWQ9VHJ1ZSkKbW9kZWwuZXZhbCgpCgojIENvbnZlcnRpciBlbCBtb2RlbCBhIFRvcmNoU2NyaXB0CnNjcmlwdGVkX21vZGVsID0gdG9yY2guaml0LnNjcmlwdChtb2RlbCkKCiMgR3VhcmRhciBlbCBtb2RlbCBUb3JjaFNjcmlwdApzY3JpcHRlZF9tb2RlbC5zYXZlKCdyZXNuZXQxOF9zY3JpcHRlZC5wdCcp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+
+# Carregar un model preentrenat
+model = models.resnet18(pretrained=True)
+model.eval()
+
+# Convertir el model a TorchScript
+scripted_model = torch.jit.script(model)
+
+# Guardar el model TorchScript
+scripted_model.save('resnet18_scripted.pt')</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Aquest exemple demostra com convertir un model ResNet-18 preentrenat a TorchScript, que és un format optimitzat per a la inferència. La funció <code>torch.jit.script</code> s'utilitza per a aquesta conversió.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Optimitzar per a la inferència és un pas crític en el desplegament de models d'aprenentatge automàtic en producció. Tècniques com la quantització, la poda, el batching, l'acceleració de maquinari i l'exportació del model poden millorar significativament el rendiment i l'eficiència dels teus models. Entenent i aplicant aquestes tècniques, pots assegurar-te que els teus models funcionin més ràpid i de manera més eficient, fent-los més adequats per a aplicacions del món real.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='serving-pytorch-models'>&#x25C4;Servei de Models PyTorch</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització per a la Inferència</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='deploying-on-cloud-platforms'>Desplegament en Plataformes Cloud &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

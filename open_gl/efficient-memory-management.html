@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió Eficient de la Memòria en OpenGL</title>
+
+    <link rel="alternate" href="https://campusempresa.com/open_gl/efficient-memory-management" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/open_gl/efficient-memory-management" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/open_gl/efficient-memory-management" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/open_gl/efficient-memory-management" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/open_gl/efficient-memory-management" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='level-of-detail'>&#x25C4;Nivell de Detall (LOD)</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió Eficient de la Memòria en OpenGL</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='profiling-and-debugging'>Perfilat i Depuració &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La gestió eficient de la memòria és crucial per desenvolupar aplicacions OpenGL d'alt rendiment. Aquest tema et guiarà a través dels principis i pràctiques de la gestió efectiva de la memòria, des de nivells bàsics fins a avançats.</p>
+</div><h1>Introducció a la Gestió de la Memòria en OpenGL</h1>
+<div class='content'><p>La gestió de la memòria en OpenGL implica l'assignació, ús i desassignació de recursos de memòria com textures, buffers i shaders. Una gestió adequada assegura que la teva aplicació funcioni de manera fluida i eficient.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Buffers</strong>: Emmagatzemen dades de vèrtexs, índexs i altra informació.</li>
+<li><strong>Textures</strong>: Emmagatzemen dades d'imatge utilitzades per al renderitzat.</li>
+<li><strong>Shaders</strong>: Programes que s'executen a la GPU per controlar el renderitzat.</li>
+<li><strong>Framebuffers</strong>: Objectes que contenen objectius de renderitzat com buffers de color, profunditat i stencil.</li>
+</ul>
+</div><h1>Gestió de Buffers</h1>
+<div class='content'><p>Els buffers són essencials per emmagatzemar dades de vèrtexs, índexs i altra informació. Una gestió eficient dels buffers pot tenir un impacte significatiu en el rendiment de la teva aplicació OpenGL.</p>
+</div><h2>Creació i Vinculació de Buffers</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0x1aW50IGJ1ZmZlcjsKZ2xHZW5CdWZmZXJzKDEsICZidWZmZXIpOyAvLyBHZW5lcmFyIHVuIElEIGRlIGJ1ZmZlcgpnbEJpbmRCdWZmZXIoR0xfQVJSQVlfQlVGRkVSLCBidWZmZXIpOyAvLyBWaW5jdWxhciBlbCBidWZmZXIgYSBsJ29iamVjdGl1IEdMX0FSUkFZX0JVRkZFUg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GLuint buffer;
+glGenBuffers(1, &amp;buffer); // Generar un ID de buffer
+glBindBuffer(GL_ARRAY_BUFFER, buffer); // Vincular el buffer a l'objectiu GL_ARRAY_BUFFER</pre></div><div class='content'></div><h2>Assignació de Dades al Buffer</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0xmbG9hdCB2ZXJ0aWNlc1tdID0gewogICAgLy8gRGFkZXMgZGUgdsOocnRleHMKfTsKZ2xCdWZmZXJEYXRhKEdMX0FSUkFZX0JVRkZFUiwgc2l6ZW9mKHZlcnRpY2VzKSwgdmVydGljZXMsIEdMX1NUQVRJQ19EUkFXKTsgLy8gQXNzaWduYXIgaSBpbmljaWFsaXR6YXIgZGFkZXMgZGVsIGJ1ZmZlcg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GLfloat vertices[] = {
+    // Dades de v&egrave;rtexs
+};
+glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); // Assignar i inicialitzar dades del buffer</pre></div><div class='content'></div><h2>Consells d'Ús del Buffer</h2>
+<div class='content'><ul>
+<li><strong>GL_STATIC_DRAW</strong>: Les dades es configuraran una vegada i s'utilitzaran moltes vegades.</li>
+<li><strong>GL_DYNAMIC_DRAW</strong>: Les dades canviaran freqüentment i s'utilitzaran moltes vegades.</li>
+<li><strong>GL_STREAM_DRAW</strong>: Les dades es configuraran una vegada i s'utilitzaran poques vegades.</li>
+</ul>
+</div><h1>Gestió de Textures</h1>
+<div class='content'><p>Les textures s'utilitzen per emmagatzemar dades d'imatge per al renderitzat. Una gestió eficient de les textures implica minimitzar l'ús de memòria i optimitzar l'accés a les textures.</p>
+</div><h2>Carregar i Crear Textures</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0x1aW50IHRleHR1cmU7CmdsR2VuVGV4dHVyZXMoMSwgJnRleHR1cmUpOyAvLyBHZW5lcmFyIHVuIElEIGRlIHRleHR1cmEKZ2xCaW5kVGV4dHVyZShHTF9URVhUVVJFXzJELCB0ZXh0dXJlKTsgLy8gVmluY3VsYXIgbGEgdGV4dHVyYSBhIGwnb2JqZWN0aXUgR0xfVEVYVFVSRV8yRA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GLuint texture;
+glGenTextures(1, &amp;texture); // Generar un ID de textura
+glBindTexture(GL_TEXTURE_2D, texture); // Vincular la textura a l'objectiu GL_TEXTURE_2D</pre></div><div class='content'></div><h2>Configuració de Paràmetres de la Textura</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xUZXhQYXJhbWV0ZXJpKEdMX1RFWFRVUkVfMkQsIEdMX1RFWFRVUkVfV1JBUF9TLCBHTF9SRVBFQVQpOwpnbFRleFBhcmFtZXRlcmkoR0xfVEVYVFVSRV8yRCwgR0xfVEVYVFVSRV9XUkFQX1QsIEdMX1JFUEVBVCk7CmdsVGV4UGFyYW1ldGVyaShHTF9URVhUVVJFXzJELCBHTF9URVhUVVJFX01JTl9GSUxURVIsIEdMX0xJTkVBUik7CmdsVGV4UGFyYW1ldGVyaShHTF9URVhUVVJFXzJELCBHTF9URVhUVVJFX01BR19GSUxURVIsIEdMX0xJTkVBUik7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);</pre></div><div class='content'></div><h2>Carregar Dades de la Textura</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xUZXhJbWFnZTJEKEdMX1RFWFRVUkVfMkQsIDAsIEdMX1JHQiwgd2lkdGgsIGhlaWdodCwgMCwgR0xfUkdCLCBHTF9VTlNJR05FRF9CWVRFLCBkYXRhKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);</pre></div><div class='content'></div><h1>Gestió de Shaders</h1>
+<div class='content'><p>Els shaders són programes que s'executen a la GPU per controlar el renderitzat. Una gestió eficient dels shaders implica compilar, enllaçar i utilitzar shaders de manera efectiva.</p>
+</div><h2>Compilar Shaders</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0x1aW50IHZlcnRleFNoYWRlciA9IGdsQ3JlYXRlU2hhZGVyKEdMX1ZFUlRFWF9TSEFERVIpOwpnbFNoYWRlclNvdXJjZSh2ZXJ0ZXhTaGFkZXIsIDEsICZ2ZXJ0ZXhTaGFkZXJTb3VyY2UsIE5VTEwpOwpnbENvbXBpbGVTaGFkZXIodmVydGV4U2hhZGVyKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+glShaderSource(vertexShader, 1, &amp;vertexShaderSource, NULL);
+glCompileShader(vertexShader);</pre></div><div class='content'></div><h2>Enllaçar Shaders en un Programa</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0x1aW50IHNoYWRlclByb2dyYW0gPSBnbENyZWF0ZVByb2dyYW0oKTsKZ2xBdHRhY2hTaGFkZXIoc2hhZGVyUHJvZ3JhbSwgdmVydGV4U2hhZGVyKTsKZ2xBdHRhY2hTaGFkZXIoc2hhZGVyUHJvZ3JhbSwgZnJhZ21lbnRTaGFkZXIpOwpnbExpbmtQcm9ncmFtKHNoYWRlclByb2dyYW0pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GLuint shaderProgram = glCreateProgram();
+glAttachShader(shaderProgram, vertexShader);
+glAttachShader(shaderProgram, fragmentShader);
+glLinkProgram(shaderProgram);</pre></div><div class='content'></div><h2>Utilitzar Programes de Shaders</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xVc2VQcm9ncmFtKHNoYWRlclByb2dyYW0pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glUseProgram(shaderProgram);</pre></div><div class='content'></div><h1>Gestió de Framebuffers</h1>
+<div class='content'><p>Els framebuffers són objectes que contenen objectius de renderitzat com buffers de color, profunditat i stencil. Una gestió eficient dels framebuffers assegura que les operacions de renderitzat es realitzin correctament i eficientment.</p>
+</div><h2>Creació de Framebuffers</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0x1aW50IGZyYW1lYnVmZmVyOwpnbEdlbkZyYW1lYnVmZmVycygxLCAmZnJhbWVidWZmZXIpOwpnbEJpbmRGcmFtZWJ1ZmZlcihHTF9GUkFNRUJVRkZFUiwgZnJhbWVidWZmZXIpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GLuint framebuffer;
+glGenFramebuffers(1, &amp;framebuffer);
+glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);</pre></div><div class='content'></div><h2>Adjuntar Objectius de Renderitzat</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xGcmFtZWJ1ZmZlclRleHR1cmUyRChHTF9GUkFNRUJVRkZFUiwgR0xfQ09MT1JfQVRUQUNITUVOVDAsIEdMX1RFWFRVUkVfMkQsIHRleHR1cmUsIDApOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);</pre></div><div class='content'></div><h2>Comprovar l'Estat del Framebuffer</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aWYgKGdsQ2hlY2tGcmFtZWJ1ZmZlclN0YXR1cyhHTF9GUkFNRUJVRkZFUikgIT0gR0xfRlJBTUVCVUZGRVJfQ09NUExFVEUpIHsKICAgIC8vIEdlc3Rpb25hciBmcmFtZWJ1ZmZlciBpbmNvbXBsZXQKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+    // Gestionar framebuffer incomplet
+}</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>La gestió eficient de la memòria en OpenGL implica la manipulació acurada de buffers, textures, shaders i framebuffers. Entenent i aplicant els principis i pràctiques discutits en aquest tema, pots assegurar que les teves aplicacions OpenGL funcionin de manera fluida i eficient.</p>
+<ul>
+<li><strong>Buffers</strong>: Assignar i gestionar dades de vèrtexs eficientment.</li>
+<li><strong>Textures</strong>: Optimitzar l'ús de textures i minimitzar la sobrecàrrega de memòria.</li>
+<li><strong>Shaders</strong>: Compilar, enllaçar i utilitzar shaders de manera efectiva.</li>
+<li><strong>Framebuffers</strong>: Gestionar objectius de renderitzat per assegurar un renderitzat correcte i eficient.</li>
+</ul>
+<p>Dominant aquests conceptes, estaràs ben preparat per desenvolupar aplicacions OpenGL d'alt rendiment.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='level-of-detail'>&#x25C4;Nivell de Detall (LOD)</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió Eficient de la Memòria en OpenGL</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='profiling-and-debugging'>Perfilat i Depuració &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuració de la Integració Contínua</title>
+
+    <link rel="alternate" href="https://campusempresa.com/apache_cordova/setting-up-continuous-integration" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/apache_cordova/setting-up-continuous-integration" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/apache_cordova/setting-up-continuous-integration" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/apache_cordova/setting-up-continuous-integration" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/apache_cordova/setting-up-continuous-integration" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='automated-ui-testing'>&#x25C4;Proves UI Automatitzades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Configuració de la Integració Contínua</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='deploying-to-app-stores'>Desplegament a Botigues d'Apps &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La Integració Contínua (CI) és una pràctica de desenvolupament on els desenvolupadors integren codi en un repositori compartit freqüentment, preferiblement diverses vegades al dia. Cada integració es pot verificar amb una compilació automatitzada i proves automatitzades. Aquesta pràctica ajuda a detectar errors ràpidament i a millorar la qualitat del programari. En aquesta secció, explorarem com configurar la CI per a un projecte d'Apache Cordova.</p>
+</div><h1>Introducció a la Integració Contínua</h1>
+<div class='content'><ul>
+<li><strong>Definició</strong>: La Integració Contínua és la pràctica de fusionar totes les còpies de treball dels desenvolupadors en una línia principal compartida diverses vegades al dia.</li>
+<li><strong>Beneficis</strong>:
+<ul>
+<li>Detecció precoç d'errors d'integració.</li>
+<li>Reducció de problemes d'integració.</li>
+<li>Retroalimentació contínua sobre la salut del codi.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Triar una Eina de CI</h1>
+<div class='content'><p>Hi ha diverses eines de CI disponibles, cadascuna amb els seus punts forts i febles. Algunes eines de CI populars inclouen:</p>
+<ul>
+<li><strong>Jenkins</strong>: Un servidor d'automatització de codi obert.</li>
+<li><strong>Travis CI</strong>: Un servei d'integració contínua allotjat utilitzat per construir i provar projectes de programari allotjats a GitHub.</li>
+<li><strong>CircleCI</strong>: Una eina de CI/CD que automatitza el procés de desenvolupament de programari utilitzant integració contínua i lliurament continu.</li>
+<li><strong>GitHub Actions</strong>: Una eina de CI/CD integrada directament a GitHub.</li>
+</ul>
+<p>Per a aquest curs, utilitzarem GitHub Actions per la seva integració perfecta amb els repositoris de GitHub i la seva facilitat d'ús.</p>
+</div><h1>Configuració de GitHub Actions per a Apache Cordova</h1>
+<div class='content'></div><h2>Pas 1: Crear un Repositori a GitHub</h2>
+<div class='content'><ol>
+<li><strong>Crea un nou repositori</strong> a GitHub per al teu projecte d'Apache Cordova.</li>
+<li><strong>Clona el repositori</strong> a la teva màquina local i configura el teu projecte Cordova si encara no ho has fet.</li>
+</ol>
+</div><h2>Pas 2: Afegir un Workflow de GitHub Actions</h2>
+<div class='content'><ol>
+<li><strong>Crea un directori <code>.github/workflows</code></strong> a l'arrel del teu repositori.</li>
+<li><strong>Crea un nou fitxer</strong> en aquest directori anomenat <code>ci.yml</code>.</li>
+</ol>
+</div><h2>Pas 3: Definir el Workflow</h2>
+<div class='content'><p>Aquí tens un exemple de workflow simple de GitHub Actions per a un projecte d'Apache Cordova:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bmFtZTogQ29yZG92YSBDSQoKb246CiAgcHVzaDoKICAgIGJyYW5jaGVzOgogICAgICAtIG1haW4KICBwdWxsX3JlcXVlc3Q6CiAgICBicmFuY2hlczoKICAgICAgLSBtYWluCgpqb2JzOgogIGJ1aWxkOgogICAgcnVucy1vbjogdWJ1bnR1LWxhdGVzdAoKICAgIHN0ZXBzOgogICAgLSBuYW1lOiBDaGVja291dCBjb2RlCiAgICAgIHVzZXM6IGFjdGlvbnMvY2hlY2tvdXRAdjIKCiAgICAtIG5hbWU6IFNldCB1cCBOb2RlLmpzCiAgICAgIHVzZXM6IGFjdGlvbnMvc2V0dXAtbm9kZUB2MgogICAgICB3aXRoOgogICAgICAgIG5vZGUtdmVyc2lvbjogJzE0JwoKICAgIC0gbmFtZTogSW5zdGFsbCBDb3Jkb3ZhCiAgICAgIHJ1bjogbnBtIGluc3RhbGwgLWcgY29yZG92YQoKICAgIC0gbmFtZTogSW5zdGFsbCBwcm9qZWN0IGRlcGVuZGVuY2llcwogICAgICBydW46IG5wbSBpbnN0YWxsCgogICAgLSBuYW1lOiBCdWlsZCBDb3Jkb3ZhIHByb2plY3QKICAgICAgcnVuOiBjb3Jkb3ZhIGJ1aWxk"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>name: Cordova CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install Cordova
+      run: npm install -g cordova
+
+    - name: Install project dependencies
+      run: npm install
+
+    - name: Build Cordova project
+      run: cordova build</pre></div><div class='content'></div><h2>Explicació del Workflow</h2>
+<div class='content'><ul>
+<li><strong>name</strong>: El nom del workflow.</li>
+<li><strong>on</strong>: Especifica els esdeveniments que desencadenen el workflow. En aquest cas, el workflow s'executa en empentes i sol·licituds d'extracció a la branca <code>main</code>.</li>
+<li><strong>jobs</strong>: Defineix les tasques que s'executaran com a part del workflow.
+<ul>
+<li><strong>build</strong>: El nom de la tasca.</li>
+<li><strong>runs-on</strong>: Especifica el tipus de màquina per executar la tasca. <code>ubuntu-latest</code> és una opció comunament utilitzada.</li>
+<li><strong>steps</strong>: La seqüència de passos per executar en la tasca.
+<ul>
+<li><strong>Checkout code</strong>: Utilitza l'acció <code>actions/checkout</code> per comprovar el codi del repositori.</li>
+<li><strong>Set up Node.js</strong>: Utilitza l'acció <code>actions/setup-node</code> per configurar Node.js.</li>
+<li><strong>Install Cordova</strong>: Instal·la Cordova globalment utilitzant npm.</li>
+<li><strong>Install project dependencies</strong>: Instal·la les dependències npm del projecte.</li>
+<li><strong>Build Cordova project</strong>: Construeix el projecte Cordova.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div><h2>Pas 4: Fer Commit i Empènyer</h2>
+<div class='content'><ol>
+<li><strong>Fes commit del fitxer <code>ci.yml</code></strong> al teu repositori.</li>
+<li><strong>Empeny les canvis</strong> a GitHub.</li>
+</ol>
+<p>GitHub Actions detectarà automàticament el nou fitxer de workflow i començarà a executar el procés de CI basat en els desencadenants definits.</p>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Configurar la Integració Contínua per a un projecte d'Apache Cordova utilitzant GitHub Actions és un procés senzill que pot millorar significativament el teu flux de treball de desenvolupament. Automatitzant el procés de construcció i prova, pots assegurar-te que el teu codi es manté saludable i que els problemes d'integració es detecten aviat. Aquesta configuració es pot ampliar amb passos addicionals, com ara executar proves o desplegar l'aplicació, per millorar encara més la teva pipeline de CI.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='automated-ui-testing'>&#x25C4;Proves UI Automatitzades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Configuració de la Integració Contínua</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='deploying-to-app-stores'>Desplegament a Botigues d'Apps &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

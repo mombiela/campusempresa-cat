@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimització del Rendiment en Haskell</title>
+
+    <link rel="alternate" href="https://campusempresa.com/haskell/performance-optimization" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/haskell/performance-optimization" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/haskell/performance-optimization" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/haskell/performance-optimization" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/haskell/performance-optimization" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='code-style-formatting'>&#x25C4;Estil de Codi i Formatació</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització del Rendiment en Haskell</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='refactoring-haskell-code'>Refactorització del Codi Haskell &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a l'Optimització del Rendiment</h1>
+<div class='content'><p>L'optimització del rendiment en Haskell implica millorar l'eficiència del teu codi en termes de velocitat i ús de memòria. Aquesta secció et guiarà a través de diverses tècniques i millors pràctiques per escriure codi Haskell eficient.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Avaluació Peresosa</strong>: Entendre com funciona l'avaluació peresosa de Haskell és crucial per a l'optimització del rendiment.</li>
+<li><strong>Strictness</strong>: Saber quan i com utilitzar l'avaluació estricta per evitar un ús innecessari de memòria.</li>
+<li><strong>Perfilatge</strong>: Eines i tècniques per perfilar programes Haskell.</li>
+<li><strong>Estructures de Dades</strong>: Triar les estructures de dades adequades per al rendiment.</li>
+<li><strong>Concurrència i Paral·lelisme</strong>: Aprofitar les capacitats de Haskell per a la programació concurrent i paral·lela.</li>
+</ul>
+</div><h1>Avaluació Peresosa</h1>
+<div class='content'><p>Haskell utilitza l'avaluació peresosa per defecte, el que significa que les expressions no es calculen fins que els seus valors són necessaris. Això pot portar a millores de rendiment però també a un ús inesperat de memòria.</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gRXhlbXBsZSBkJ2F2YWx1YWNpw7MgcGVyZXNvc2EKbGV0IGluZmluaXRlTGlzdCA9IFsxLi5dICAtLSBBcXVlc3RhIGxsaXN0YSBubyBlcyBjYWxjdWxhIGZpbnMgcXVlIGVzIG5lY2Vzc2l0YQp0YWtlIDEwIGluZmluaXRlTGlzdCAgICAgICAtLSBOb23DqXMgZXMgY2FsY3VsZW4gZWxzIHByaW1lcnMgMTAgZWxlbWVudHM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Exemple d'avaluaci&oacute; peresosa
+let infiniteList = [1..]  -- Aquesta llista no es calcula fins que es necessita
+take 10 infiniteList       -- Nom&eacute;s es calculen els primers 10 elements</pre></div><div class='content'></div><h2>Punts Clau</h2>
+<div class='content'><ul>
+<li>L'avaluació peresosa pot estalviar temps de càlcul evitant càlculs innecessaris.</li>
+<li>També pot portar a fuites de memòria si no es gestiona correctament.</li>
+</ul>
+</div><h1>Strictness</h1>
+<div class='content'><p>De vegades, forçar l'avaluació (strictness) pot millorar el rendiment reduint l'ús de memòria.</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gVXRpbGl0emFudCBsJ2F2YWx1YWNpw7MgZXN0cmljdGEKaW1wb3J0IENvbnRyb2wuRGVlcFNlcSAoZGVlcHNlcSkKCmxldCBsaXN0ID0gWzEuLjEwMDAwMDBdCmxpc3QgYGRlZXBzZXFgIHB1dFN0ckxuICJMbGlzdGEgYXZhbHVhZGEi"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Utilitzant l'avaluaci&oacute; estricta
+import Control.DeepSeq (deepseq)
+
+let list = [1..1000000]
+list `deepseq` putStrLn &quot;Llista avaluada&quot;</pre></div><div class='content'></div><h2>Punts Clau</h2>
+<div class='content'><ul>
+<li>Utilitza l'avaluació estricta per evitar la construcció de grans thunks (càlculs diferits).</li>
+<li>Les funcions <code>seq</code> i <code>deepseq</code> poden ajudar a fer complir l'avaluació estricta.</li>
+</ul>
+</div><h1>Perfilatge</h1>
+<div class='content'><p>El perfilatge ajuda a identificar colls d'ampolla de rendiment en el teu codi.</p>
+</div><h2>Eines</h2>
+<div class='content'><ul>
+<li><strong>GHC Profiler</strong>: El compilador de Haskell de Glasgow (GHC) inclou eines de perfilatge integrades.</li>
+<li><strong>Criterion</strong>: Una biblioteca per a la comparació de rendiment del codi Haskell.</li>
+</ul>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gQ29tcGlsYXIgYW1iIHBlcmZpbGF0Z2UgaGFiaWxpdGF0CmdoYyAtcHJvZiAtZnByb2YtYXV0byAtcnRzb3B0cyBNeVByb2dyYW0uaHMKCi0tIEV4ZWN1dGFyIGVsIHByb2dyYW1hIGFtYiBwZXJmaWxhdGdlCi4vTXlQcm9ncmFtICtSVFMgLXA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Compilar amb perfilatge habilitat
+ghc -prof -fprof-auto -rtsopts MyProgram.hs
+
+-- Executar el programa amb perfilatge
+./MyProgram +RTS -p</pre></div><div class='content'></div><h2>Punts Clau</h2>
+<div class='content'><ul>
+<li>El perfilatge proporciona informació sobre quines parts del teu codi consumeixen més recursos.</li>
+<li>Utilitza les dades de perfilatge per guiar els teus esforços d'optimització.</li>
+</ul>
+</div><h1>Estructures de Dades</h1>
+<div class='content'><p>Triar les estructures de dades adequades pot tenir un impacte significatiu en el rendiment.</p>
+</div><h2>Taula Comparativa</h2>
+<div class='content'><p>| Estructura de Dades | Cas d'Ús | Característiques de Rendiment |
+|---------------------|----------|-------------------------------|
+| Llista              | Accés seqüencial, dades petites | Temps d'accés O(n) |
+| Vector              | Accés aleatori, dades grans | Temps d'accés O(1) |
+| Map                 | Parells clau-valor | Temps d'accés O(log n) |</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHF1YWxpZmllZCBEYXRhLlZlY3RvciBhcyBWCgpsZXQgdmVjID0gVi5mcm9tTGlzdCBbMS4uMTAwMDAwMF0KcHJpbnQgKHZlYyBWLiEgOTk5OTk5KSAgLS0gQWNjw6lzIGFsZWF0b3JpIHLDoHBpZA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import qualified Data.Vector as V
+
+let vec = V.fromList [1..1000000]
+print (vec V.! 999999)  -- Acc&eacute;s aleatori r&agrave;pid</pre></div><div class='content'></div><h2>Punts Clau</h2>
+<div class='content'><ul>
+<li>Les llistes són senzilles però poden ser ineficients per a grans conjunts de dades.</li>
+<li>Els vectors proporcionen accés aleatori ràpid i són més eficients en memòria per a grans conjunts de dades.</li>
+<li>Els mapes són útils per a parells clau-valor amb cerques eficients.</li>
+</ul>
+</div><h1>Concurrència i Paral·lelisme</h1>
+<div class='content'><p>Haskell proporciona un suport robust per a la programació concurrent i paral·lela, la qual cosa pot millorar significativament el rendiment per a certes tasques.</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IENvbnRyb2wuUGFyYWxsZWwgKHBhciwgcHNlcSkKCmxldCBhID0gZXhwZW5zaXZlQ29tcHV0YXRpb24xCmxldCBiID0gZXhwZW5zaXZlQ29tcHV0YXRpb24yCmEgYHBhcmAgKGIgYHBzZXFgIChhICsgYikp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import Control.Parallel (par, pseq)
+
+let a = expensiveComputation1
+let b = expensiveComputation2
+a `par` (b `pseq` (a + b))</pre></div><div class='content'></div><h2>Punts Clau</h2>
+<div class='content'><ul>
+<li>Utilitza <code>par</code> i <code>pseq</code> per paral·lelitzar càlculs.</li>
+<li>La concurrència es pot aconseguir utilitzant fils i programació asíncrona.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>L'optimització del rendiment en Haskell implica una comprensió profunda de l'avaluació peresosa, la strictness, el perfilatge, les estructures de dades i la concurrència. Aplicant aquestes tècniques, pots escriure codi Haskell eficient i amb bon rendiment. Recorda sempre perfilar el teu codi per identificar colls d'ampolla i guiar els teus esforços d'optimització.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='code-style-formatting'>&#x25C4;Estil de Codi i Formatació</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització del Rendiment en Haskell</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='refactoring-haskell-code'>Refactorització del Codi Haskell &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Entès!</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>
