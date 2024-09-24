@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxos en Dart</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/dart/streams" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/dart/streams" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/dart/streams" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/dart/streams" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/dart/streams" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='asynchronous-programming'>&#x25C4;Programació Asíncrona</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Fluxos en Dart</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='generators'>Generadors &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Els fluxos són una part fonamental de la programació asíncrona en Dart. Et permeten treballar amb seqüències d'esdeveniments asíncrons, com ara dades rebudes d'un servidor web o l'entrada de l'usuari.</p>
+</div><h1>Què són els fluxos?</h1>
+<div class='content'><ul>
+<li><strong>Definició</strong>: Un flux és una seqüència d'esdeveniments asíncrons. Cada esdeveniment és o bé un esdeveniment de dades o un esdeveniment d'error.</li>
+<li><strong>Usos</strong>: Els fluxos són útils per gestionar múltiples esdeveniments asíncrons al llarg del temps, com ara:
+<ul>
+<li>Rebre dades d'un servidor web.</li>
+<li>Gestionar l'entrada de l'usuari.</li>
+<li>Escoltar actualitzacions en temps real.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Tipus de fluxos</h1>
+<div class='content'><p>Dart proporciona dos tipus principals de fluxos:</p>
+<ul>
+<li><strong>Fluxos de subscripció única</strong>: Aquests fluxos només es poden escoltar una vegada. Són adequats per a esdeveniments que només ocorren una vegada o que necessiten ser processats en un ordre específic.</li>
+<li><strong>Fluxos de difusió</strong>: Aquests fluxos es poden escoltar múltiples vegades. Són adequats per a esdeveniments que poden ser processats per múltiples oients de manera independent.</li>
+</ul>
+</div><h1>Crear fluxos</h1>
+<div class='content'></div><h2>Flux de subscripció única</h2>
+<div class='content'><p>Pots crear un flux de subscripció única utilitzant la classe <code>Stream</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U3RyZWFtPGludD4gY291bnRTdHJlYW0oaW50IG1heCkgYXN5bmMqIHsKICBmb3IgKGludCBpID0gMTsgaSA8PSBtYXg7IGkrKykgewogICAgeWllbGQgaTsKICB9Cn0KCnZvaWQgbWFpbigpIGFzeW5jIHsKICBhd2FpdCBmb3IgKHZhciB2YWx1ZSBpbiBjb3VudFN0cmVhbSg1KSkgewogICAgcHJpbnQodmFsdWUpOyAvLyBJbXByaW1laXggMSwgMiwgMywgNCwgNQogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Stream&lt;int&gt; countStream(int max) async* {
+  for (int i = 1; i &lt;= max; i++) {
+    yield i;
+  }
+}
+
+void main() async {
+  await for (var value in countStream(5)) {
+    print(value); // Imprimeix 1, 2, 3, 4, 5
+  }
+}</pre></div><div class='content'></div><h2>Flux de difusió</h2>
+<div class='content'><p>Pots crear un flux de difusió utilitzant la classe <code>StreamController</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0ICdkYXJ0OmFzeW5jJzsKCnZvaWQgbWFpbigpIHsKICBmaW5hbCBjb250cm9sbGVyID0gU3RyZWFtQ29udHJvbGxlcjxpbnQ+LmJyb2FkY2FzdCgpOwoKICBjb250cm9sbGVyLnN0cmVhbS5saXN0ZW4oKGRhdGEpIHsKICAgIHByaW50KCdPaWVudCAxOiAkZGF0YScpOwogIH0pOwoKICBjb250cm9sbGVyLnN0cmVhbS5saXN0ZW4oKGRhdGEpIHsKICAgIHByaW50KCdPaWVudCAyOiAkZGF0YScpOwogIH0pOwoKICBmb3IgKGludCBpID0gMTsgaSA8PSAzOyBpKyspIHsKICAgIGNvbnRyb2xsZXIuYWRkKGkpOyAvLyBBZmVnZWl4IGRhZGVzIGFsIGZsdXgKICB9CgogIGNvbnRyb2xsZXIuY2xvc2UoKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import 'dart:async';
+
+void main() {
+  final controller = StreamController&lt;int&gt;.broadcast();
+
+  controller.stream.listen((data) {
+    print('Oient 1: $data');
+  });
+
+  controller.stream.listen((data) {
+    print('Oient 2: $data');
+  });
+
+  for (int i = 1; i &lt;= 3; i++) {
+    controller.add(i); // Afegeix dades al flux
+  }
+
+  controller.close();
+}</pre></div><div class='content'></div><h1>Escoltar fluxos</h1>
+<div class='content'><ul>
+<li><strong>await for</strong>: Utilitza aquesta sintaxi per escoltar un flux de manera asíncrona.</li>
+<li><strong>listen()</strong>: Utilitza aquest mètode per gestionar esdeveniments del flux amb callbacks.</li>
+</ul>
+</div><h2>Utilitzant `await for`</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U3RyZWFtPGludD4gY291bnRTdHJlYW0oaW50IG1heCkgYXN5bmMqIHsKICBmb3IgKGludCBpID0gMTsgaSA8PSBtYXg7IGkrKykgewogICAgeWllbGQgaTsKICB9Cn0KCnZvaWQgbWFpbigpIGFzeW5jIHsKICBhd2FpdCBmb3IgKHZhciB2YWx1ZSBpbiBjb3VudFN0cmVhbSg1KSkgewogICAgcHJpbnQodmFsdWUpOyAvLyBJbXByaW1laXggMSwgMiwgMywgNCwgNQogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Stream&lt;int&gt; countStream(int max) async* {
+  for (int i = 1; i &lt;= max; i++) {
+    yield i;
+  }
+}
+
+void main() async {
+  await for (var value in countStream(5)) {
+    print(value); // Imprimeix 1, 2, 3, 4, 5
+  }
+}</pre></div><div class='content'></div><h2>Utilitzant `listen()`</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U3RyZWFtPGludD4gY291bnRTdHJlYW0oaW50IG1heCkgYXN5bmMqIHsKICBmb3IgKGludCBpID0gMTsgaSA8PSBtYXg7IGkrKykgewogICAgeWllbGQgaTsKICB9Cn0KCnZvaWQgbWFpbigpIHsKICBjb3VudFN0cmVhbSg1KS5saXN0ZW4oKHZhbHVlKSB7CiAgICBwcmludCh2YWx1ZSk7IC8vIEltcHJpbWVpeCAxLCAyLCAzLCA0LCA1CiAgfSk7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Stream&lt;int&gt; countStream(int max) async* {
+  for (int i = 1; i &lt;= max; i++) {
+    yield i;
+  }
+}
+
+void main() {
+  countStream(5).listen((value) {
+    print(value); // Imprimeix 1, 2, 3, 4, 5
+  });
+}</pre></div><div class='content'></div><h1>Transformar fluxos</h1>
+<div class='content'><p>Els fluxos es poden transformar utilitzant diversos mètodes com <code>map()</code>, <code>where()</code>, <code>expand()</code>, i <code>reduce()</code>.</p>
+</div><h2>Exemple: Utilitzant `map()`</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U3RyZWFtPGludD4gY291bnRTdHJlYW0oaW50IG1heCkgYXN5bmMqIHsKICBmb3IgKGludCBpID0gMTsgaSA8PSBtYXg7IGkrKykgewogICAgeWllbGQgaTsKICB9Cn0KCnZvaWQgbWFpbigpIHsKICBjb3VudFN0cmVhbSg1KS5tYXAoKHZhbHVlKSA9PiB2YWx1ZSAqIDIpLmxpc3RlbigodmFsdWUpIHsKICAgIHByaW50KHZhbHVlKTsgLy8gSW1wcmltZWl4IDIsIDQsIDYsIDgsIDEwCiAgfSk7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Stream&lt;int&gt; countStream(int max) async* {
+  for (int i = 1; i &lt;= max; i++) {
+    yield i;
+  }
+}
+
+void main() {
+  countStream(5).map((value) =&gt; value * 2).listen((value) {
+    print(value); // Imprimeix 2, 4, 6, 8, 10
+  });
+}</pre></div><div class='content'></div><h1>Gestionar errors en fluxos</h1>
+<div class='content'><p>Els fluxos poden emetre esdeveniments d'error. Pots gestionar aquests errors utilitzant el paràmetre <code>onError</code> en el mètode <code>listen()</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U3RyZWFtPGludD4gZXJyb3JTdHJlYW0oKSBhc3luYyogewogIHlpZWxkIDE7CiAgdGhyb3cgRXhjZXB0aW9uKCdTJ2hhIHByb2R1w690IHVuIGVycm9yJyk7CiAgeWllbGQgMjsKfQoKdm9pZCBtYWluKCkgewogIGVycm9yU3RyZWFtKCkubGlzdGVuKAogICAgKHZhbHVlKSB7CiAgICAgIHByaW50KHZhbHVlKTsgLy8gSW1wcmltZWl4IDEKICAgIH0sCiAgICBvbkVycm9yOiAoZXJyb3IpIHsKICAgICAgcHJpbnQoJ0Vycm9yOiAkZXJyb3InKTsgLy8gSW1wcmltZWl4ICdFcnJvcjogRXhjZXB0aW9uOiBTJ2hhIHByb2R1w690IHVuIGVycm9yJwogICAgfSwKICApOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Stream&lt;int&gt; errorStream() async* {
+  yield 1;
+  throw Exception('S'ha produ&iuml;t un error');
+  yield 2;
+}
+
+void main() {
+  errorStream().listen(
+    (value) {
+      print(value); // Imprimeix 1
+    },
+    onError: (error) {
+      print('Error: $error'); // Imprimeix 'Error: Exception: S'ha produ&iuml;t un error'
+    },
+  );
+}</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>Els fluxos en Dart són una eina poderosa per gestionar seqüències asíncrones d'esdeveniments. Hi ha dos tipus principals: fluxos de subscripció única i fluxos de difusió. Pots crear fluxos utilitzant la classe <code>Stream</code> o <code>StreamController</code>. Escoltar fluxos es pot fer utilitzant <code>await for</code> o <code>listen()</code>. Els fluxos es poden transformar i els errors es poden gestionar de manera elegant. Entendre els fluxos és essencial per a una programació asíncrona efectiva en Dart.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='asynchronous-programming'>&#x25C4;Programació Asíncrona</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Fluxos en Dart</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='generators'>Generadors &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

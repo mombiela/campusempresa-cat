@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control d'Accés Basat en Rols en Node.js</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nodejs/role-based-access-control" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nodejs/role-based-access-control" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nodejs/role-based-access-control" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nodejs/role-based-access-control" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nodejs/role-based-access-control" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='jwt'>&#x25C4;JWT (JSON Web Tokens)</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Control d'Accés Basat en Rols en Node.js</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='intro-to-websockets'>Introducció a WebSockets &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>El Control d'Accés Basat en Rols (RBAC) és un mètode per regular l'accés als recursos basat en els rols dels usuaris individuals dins d'una organització. Aquest tema et guiarà a través de la implementació de RBAC en una aplicació Node.js, des de conceptes bàsics fins a tècniques avançades.</p>
+</div><h1>Introducció al Control d'Accés Basat en Rols</h1>
+<div class='content'><ul>
+<li><strong>Definició</strong>: RBAC és un mecanisme de control d'accés neutral en termes de polítiques, definit al voltant de rols i privilegis.</li>
+<li><strong>Propòsit</strong>: Simplificar la gestió de permisos assignant rols als usuaris i associant permisos amb aquests rols.</li>
+<li><strong>Beneficis</strong>:
+<ul>
+<li>Simplifica la gestió dels permisos d'usuari.</li>
+<li>Millora la seguretat assegurant que els usuaris només tinguin els permisos que necessiten.</li>
+<li>Escala bé amb el creixement de l'aplicació.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Configuració d'un Projecte Node.js</h1>
+<div class='content'><p>Abans d'entrar en RBAC, configurem un projecte bàsic de Node.js.</p>
+<ol>
+<li>
+<p><strong>Inicialitza un nou projecte Node.js</strong>:</p>
+<pre><code class="language-bash">mkdir rbac-example
+cd rbac-example
+npm init -y
+</code></pre>
+</li>
+<li>
+<p><strong>Instal·la els paquets necessaris</strong>:</p>
+<pre><code class="language-bash">npm install express jsonwebtoken bcryptjs
+</code></pre>
+</li>
+<li>
+<p><strong>Crea l'estructura del projecte</strong>:</p>
+<pre><code class="language-bash">mkdir src
+touch src/app.js src/routes.js src/controllers.js src/middleware.js
+</code></pre>
+</li>
+</ol>
+</div><h1>Conceptes Bàsics de RBAC</h1>
+<div class='content'></div><h2>Rols i Permisos</h2>
+<div class='content'><ul>
+<li><strong>Rols</strong>: Un rol és una col·lecció de permisos. Exemples inclouen <code>admin</code>, <code>editor</code> i <code>viewer</code>.</li>
+<li><strong>Permisos</strong>: Els permisos són drets d'accés específics als recursos, com ara <code>read</code>, <code>write</code> i <code>delete</code>.</li>
+</ul>
+</div><h2>Exemple de Mapeig de Rols i Permisos</h2>
+<div class='content'><p>| Rol    | Permisos            |
+|--------|----------------------|
+| Admin  | read, write, delete  |
+| Editor | read, write          |
+| Viewer | read                 |</p>
+</div><h1>Implementació de RBAC en Node.js</h1>
+<div class='content'></div><h2>Pas 1: Definir Rols i Permisos</h2>
+<div class='content'><p>Crea un fitxer <code>src/roles.js</code> per definir els rols i els seus permisos associats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3Qgcm9sZXMgPSB7CiAgICBhZG1pbjogWydyZWFkJywgJ3dyaXRlJywgJ2RlbGV0ZSddLAogICAgZWRpdG9yOiBbJ3JlYWQnLCAnd3JpdGUnXSwKICAgIHZpZXdlcjogWydyZWFkJ10KfTsKCm1vZHVsZS5leHBvcnRzID0gcm9sZXM7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const roles = {
+    admin: ['read', 'write', 'delete'],
+    editor: ['read', 'write'],
+    viewer: ['read']
+};
+
+module.exports = roles;</pre></div><div class='content'></div><h2>Pas 2: Middleware per a la Verificació de Rols</h2>
+<div class='content'><p>Crea un middleware per verificar si un usuari té el rol requerit per accedir a un recurs.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3JjL21pZGRsZXdhcmUuanMKY29uc3Qgcm9sZXMgPSByZXF1aXJlKCcuL3JvbGVzJyk7CgpmdW5jdGlvbiBhdXRob3JpemUocmVxdWlyZWRSb2xlKSB7CiAgICByZXR1cm4gKHJlcSwgcmVzLCBuZXh0KSA9PiB7CiAgICAgICAgY29uc3QgdXNlclJvbGUgPSByZXEudXNlci5yb2xlOyAvLyBTdXBvc2FudCBxdWUgcmVxLnVzZXIgw6lzIG9tcGxlcnQgcGVyIHVuIG1pZGRsZXdhcmUgZCdhdXRlbnRpY2FjacOzCiAgICAgICAgaWYgKHJvbGVzW3VzZXJSb2xlXSAmJiByb2xlc1t1c2VyUm9sZV0uaW5jbHVkZXMocmVxdWlyZWRSb2xlKSkgewogICAgICAgICAgICBuZXh0KCk7CiAgICAgICAgfSBlbHNlIHsKICAgICAgICAgICAgcmVzLnN0YXR1cyg0MDMpLmpzb24oeyBtZXNzYWdlOiAnRm9yYmlkZGVuJyB9KTsKICAgICAgICB9CiAgICB9Owp9Cgptb2R1bGUuZXhwb3J0cyA9IHsgYXV0aG9yaXplIH07"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// src/middleware.js
+const roles = require('./roles');
+
+function authorize(requiredRole) {
+    return (req, res, next) =&gt; {
+        const userRole = req.user.role; // Suposant que req.user &eacute;s omplert per un middleware d'autenticaci&oacute;
+        if (roles[userRole] &amp;&amp; roles[userRole].includes(requiredRole)) {
+            next();
+        } else {
+            res.status(403).json({ message: 'Forbidden' });
+        }
+    };
+}
+
+module.exports = { authorize };</pre></div><div class='content'></div><h2>Pas 3: Aplicar Middleware a les Rutes</h2>
+<div class='content'><p>Utilitza el middleware a les teves rutes per protegir els endpoints basats en rols.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3JjL3JvdXRlcy5qcwpjb25zdCBleHByZXNzID0gcmVxdWlyZSgnZXhwcmVzcycpOwpjb25zdCB7IGF1dGhvcml6ZSB9ID0gcmVxdWlyZSgnLi9taWRkbGV3YXJlJyk7CmNvbnN0IHJvdXRlciA9IGV4cHJlc3MuUm91dGVyKCk7Cgpyb3V0ZXIuZ2V0KCcvYWRtaW4nLCBhdXRob3JpemUoJ2FkbWluJyksIChyZXEsIHJlcykgPT4gewogICAgcmVzLnNlbmQoJ0FkbWluIGNvbnRlbnQnKTsKfSk7Cgpyb3V0ZXIuZ2V0KCcvZWRpdG9yJywgYXV0aG9yaXplKCdlZGl0b3InKSwgKHJlcSwgcmVzKSA9PiB7CiAgICByZXMuc2VuZCgnRWRpdG9yIGNvbnRlbnQnKTsKfSk7Cgpyb3V0ZXIuZ2V0KCcvdmlld2VyJywgYXV0aG9yaXplKCd2aWV3ZXInKSwgKHJlcSwgcmVzKSA9PiB7CiAgICByZXMuc2VuZCgnVmlld2VyIGNvbnRlbnQnKTsKfSk7Cgptb2R1bGUuZXhwb3J0cyA9IHJvdXRlcjs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// src/routes.js
+const express = require('express');
+const { authorize } = require('./middleware');
+const router = express.Router();
+
+router.get('/admin', authorize('admin'), (req, res) =&gt; {
+    res.send('Admin content');
+});
+
+router.get('/editor', authorize('editor'), (req, res) =&gt; {
+    res.send('Editor content');
+});
+
+router.get('/viewer', authorize('viewer'), (req, res) =&gt; {
+    res.send('Viewer content');
+});
+
+module.exports = router;</pre></div><div class='content'></div><h2>Pas 4: Integrar les Rutes a l'Aplicació</h2>
+<div class='content'><p>Integra les rutes al teu fitxer principal de l'aplicació.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3JjL2FwcC5qcwpjb25zdCBleHByZXNzID0gcmVxdWlyZSgnZXhwcmVzcycpOwpjb25zdCBhcHAgPSBleHByZXNzKCk7CmNvbnN0IHJvdXRlcyA9IHJlcXVpcmUoJy4vcm91dGVzJyk7CgovLyBNaWRkbGV3YXJlIHBlciBzaW11bGFyIGwnYXV0ZW50aWNhY2nDsyBkJ3VzdWFyaXMKYXBwLnVzZSgocmVxLCByZXMsIG5leHQpID0+IHsKICAgIHJlcS51c2VyID0geyByb2xlOiAnYWRtaW4nIH07IC8vIFNpbXVsYSB1biB1c3VhcmkgYXV0ZW50aWNhdCBhbWIgcm9sICdhZG1pbicKICAgIG5leHQoKTsKfSk7CgphcHAudXNlKCcvYXBpJywgcm91dGVzKTsKCmNvbnN0IFBPUlQgPSBwcm9jZXNzLmVudi5QT1JUIHx8IDMwMDA7CmFwcC5saXN0ZW4oUE9SVCwgKCkgPT4gewogICAgY29uc29sZS5sb2coYFNlcnZlciBpcyBydW5uaW5nIG9uIHBvcnQgJHtQT1JUfWApOwp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// src/app.js
+const express = require('express');
+const app = express();
+const routes = require('./routes');
+
+// Middleware per simular l'autenticaci&oacute; d'usuaris
+app.use((req, res, next) =&gt; {
+    req.user = { role: 'admin' }; // Simula un usuari autenticat amb rol 'admin'
+    next();
+});
+
+app.use('/api', routes);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () =&gt; {
+    console.log(`Server is running on port ${PORT}`);
+});</pre></div><div class='content'></div><h1>Tècniques Avançades de RBAC</h1>
+<div class='content'></div><h2>Assignació Dinàmica de Rols</h2>
+<div class='content'><p>Els rols es poden assignar dinàmicament basant-se en dades d'usuari d'una base de dades.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3JjL21pZGRsZXdhcmUuanMKY29uc3Qgcm9sZXMgPSByZXF1aXJlKCcuL3JvbGVzJyk7CmNvbnN0IFVzZXIgPSByZXF1aXJlKCcuL21vZGVscy9Vc2VyJyk7IC8vIFN1cG9zYW50IHF1ZSB0ZW5zIHVuIG1vZGVsIFVzZXIKCmFzeW5jIGZ1bmN0aW9uIGF1dGhvcml6ZShyZXF1aXJlZFJvbGUpIHsKICAgIHJldHVybiBhc3luYyAocmVxLCByZXMsIG5leHQpID0+IHsKICAgICAgICBjb25zdCB1c2VyID0gYXdhaXQgVXNlci5maW5kQnlJZChyZXEudXNlci5pZCk7IC8vIFJlY3VwZXJhIGwndXN1YXJpIGRlIGxhIGJhc2UgZGUgZGFkZXMKICAgICAgICBjb25zdCB1c2VyUm9sZSA9IHVzZXIucm9sZTsKICAgICAgICBpZiAocm9sZXNbdXNlclJvbGVdICYmIHJvbGVzW3VzZXJSb2xlXS5pbmNsdWRlcyhyZXF1aXJlZFJvbGUpKSB7CiAgICAgICAgICAgIG5leHQoKTsKICAgICAgICB9IGVsc2UgewogICAgICAgICAgICByZXMuc3RhdHVzKDQwMykuanNvbih7IG1lc3NhZ2U6ICdGb3JiaWRkZW4nIH0pOwogICAgICAgIH0KICAgIH07Cn0KCm1vZHVsZS5leHBvcnRzID0geyBhdXRob3JpemUgfTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// src/middleware.js
+const roles = require('./roles');
+const User = require('./models/User'); // Suposant que tens un model User
+
+async function authorize(requiredRole) {
+    return async (req, res, next) =&gt; {
+        const user = await User.findById(req.user.id); // Recupera l'usuari de la base de dades
+        const userRole = user.role;
+        if (roles[userRole] &amp;&amp; roles[userRole].includes(requiredRole)) {
+            next();
+        } else {
+            res.status(403).json({ message: 'Forbidden' });
+        }
+    };
+}
+
+module.exports = { authorize };</pre></div><div class='content'></div><h2>Jerarquies de Rols</h2>
+<div class='content'><p>Implementa jerarquies de rols on els rols superiors hereten permisos dels rols inferiors.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3Qgcm9sZXMgPSB7CiAgICBhZG1pbjogWydyZWFkJywgJ3dyaXRlJywgJ2RlbGV0ZSddLAogICAgZWRpdG9yOiBbJ3JlYWQnLCAnd3JpdGUnXSwKICAgIHZpZXdlcjogWydyZWFkJ10KfTsKCmZ1bmN0aW9uIGdldFBlcm1pc3Npb25zKHJvbGUpIHsKICAgIGNvbnN0IHJvbGVIaWVyYXJjaHkgPSB7CiAgICAgICAgYWRtaW46IFsnZWRpdG9yJywgJ3ZpZXdlciddLAogICAgICAgIGVkaXRvcjogWyd2aWV3ZXInXSwKICAgICAgICB2aWV3ZXI6IFtdCiAgICB9OwoKICAgIGxldCBwZXJtaXNzaW9ucyA9IG5ldyBTZXQocm9sZXNbcm9sZV0pOwogICAgKHJvbGVIaWVyYXJjaHlbcm9sZV0gfHwgW10pLmZvckVhY2goc3ViUm9sZSA9PiB7CiAgICAgICAgcm9sZXNbc3ViUm9sZV0uZm9yRWFjaChwZXJtaXNzaW9uID0+IHBlcm1pc3Npb25zLmFkZChwZXJtaXNzaW9uKSk7CiAgICB9KTsKCiAgICByZXR1cm4gQXJyYXkuZnJvbShwZXJtaXNzaW9ucyk7Cn0KCm1vZHVsZS5leHBvcnRzID0geyBnZXRQZXJtaXNzaW9ucyB9Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const roles = {
+    admin: ['read', 'write', 'delete'],
+    editor: ['read', 'write'],
+    viewer: ['read']
+};
+
+function getPermissions(role) {
+    const roleHierarchy = {
+        admin: ['editor', 'viewer'],
+        editor: ['viewer'],
+        viewer: []
+    };
+
+    let permissions = new Set(roles[role]);
+    (roleHierarchy[role] || []).forEach(subRole =&gt; {
+        roles[subRole].forEach(permission =&gt; permissions.add(permission));
+    });
+
+    return Array.from(permissions);
+}
+
+module.exports = { getPermissions };</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>El Control d'Accés Basat en Rols és un mètode poderós per gestionar els permisos d'usuari en una aplicació Node.js. Definint rols i permisos, creant middleware per a l'autorització, i aplicant aquests conceptes a les teves rutes, pots construir un sistema de control d'accés segur i escalable. Les tècniques avançades com l'assignació dinàmica de rols i les jerarquies de rols milloren encara més la flexibilitat i robustesa de la teva implementació de RBAC.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='jwt'>&#x25C4;JWT (JSON Web Tokens)</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Control d'Accés Basat en Rols en Node.js</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='intro-to-websockets'>Introducció a WebSockets &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

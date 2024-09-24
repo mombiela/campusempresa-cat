@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió de l'Estat de Terraform</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/terraform/managing-terraform-state" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/terraform/managing-terraform-state" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/terraform/managing-terraform-state" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/terraform/managing-terraform-state" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/terraform/managing-terraform-state" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='understanding-terraform-state'>&#x25C4;Entenent l'Estat de Terraform</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió de l'Estat de Terraform</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='variables-and-outputs'>Variables i Sortides &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a l'Estat de Terraform</h1>
+<div class='content'><p>L'estat de Terraform és un component crític de Terraform que fa un seguiment de la infraestructura gestionada per Terraform. Mapeja els recursos del món real a la teva configuració, fa un seguiment de les metadades i millora el rendiment per a infraestructures grans.</p>
+<ul>
+<li><strong>Propòsit de l'Estat de Terraform:</strong>
+<ul>
+<li><strong>Mapeig de Recursos:</strong> Fa un seguiment dels recursos i les seves atributs.</li>
+<li><strong>Emmagatzematge de Metadades:</strong> Emmagatzema metadades sobre els recursos per millorar el rendiment.</li>
+<li><strong>Sincronització amb el Món Real:</strong> Assegura que la configuració de Terraform coincideixi amb l'estat real de la infraestructura.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conceptes Bàsics de l'Arxiu d'Estat</h1>
+<div class='content'><p>L'arxiu d'estat és un arxiu JSON que Terraform utilitza per mapar els recursos definits en la teva configuració als recursos del món real.</p>
+<ul>
+<li><strong>Ubicació Per Defecte:</strong> Per defecte, Terraform emmagatzema l'arxiu d'estat localment a <code>terraform.tfstate</code>.</li>
+<li><strong>Estructura de l'Arxiu d'Estat:</strong> L'arxiu d'estat conté informació sobre els recursos, les seves atributs i metadades.</li>
+</ul>
+</div><h2>Exemple d'un Arxiu d'Estat</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJ2ZXJzaW9uIjogNCwKICAidGVycmFmb3JtX3ZlcnNpb24iOiAiMS4wLjAiLAogICJyZXNvdXJjZXMiOiBbCiAgICB7CiAgICAgICJtb2RlIjogIm1hbmFnZWQiLAogICAgICAidHlwZSI6ICJhd3NfaW5zdGFuY2UiLAogICAgICAibmFtZSI6ICJleGFtcGxlIiwKICAgICAgInByb3ZpZGVyIjogInByb3ZpZGVyW1wicmVnaXN0cnkudGVycmFmb3JtLmlvL2hhc2hpY29ycC9hd3NcIl0iLAogICAgICAiaW5zdGFuY2VzIjogWwogICAgICAgIHsKICAgICAgICAgICJzY2hlbWFfdmVyc2lvbiI6IDEsCiAgICAgICAgICAiYXR0cmlidXRlcyI6IHsKICAgICAgICAgICAgImFtaSI6ICJhbWktMGM1NWIxNTljYmZhZmUxZjAiLAogICAgICAgICAgICAiaW5zdGFuY2VfdHlwZSI6ICJ0Mi5taWNybyIsCiAgICAgICAgICAgICJ0YWdzIjogewogICAgICAgICAgICAgICJOYW1lIjogImV4YW1wbGUtaW5zdGFuY2UiCiAgICAgICAgICAgIH0KICAgICAgICAgIH0KICAgICAgICB9CiAgICAgIF0KICAgIH0KICBdCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;version&quot;: 4,
+  &quot;terraform_version&quot;: &quot;1.0.0&quot;,
+  &quot;resources&quot;: [
+    {
+      &quot;mode&quot;: &quot;managed&quot;,
+      &quot;type&quot;: &quot;aws_instance&quot;,
+      &quot;name&quot;: &quot;example&quot;,
+      &quot;provider&quot;: &quot;provider[\&quot;registry.terraform.io/hashicorp/aws\&quot;]&quot;,
+      &quot;instances&quot;: [
+        {
+          &quot;schema_version&quot;: 1,
+          &quot;attributes&quot;: {
+            &quot;ami&quot;: &quot;ami-0c55b159cbfafe1f0&quot;,
+            &quot;instance_type&quot;: &quot;t2.micro&quot;,
+            &quot;tags&quot;: {
+              &quot;Name&quot;: &quot;example-instance&quot;
+            }
+          }
+        }
+      ]
+    }
+  ]
+}</pre></div><div class='content'></div><h1>Estat Remot</h1>
+<div class='content'><p>Emmagatzemar l'arxiu d'estat localment no és ideal per a la col·laboració en equip o quan es treballa amb dades sensibles. L'emmagatzematge de l'estat remot permet emmagatzemar l'arxiu d'estat en una ubicació remota.</p>
+<ul>
+<li><strong>Beneficis de l'Estat Remot:</strong>
+<ul>
+<li><strong>Col·laboració:</strong> Diversos membres de l'equip poden accedir i actualitzar l'estat.</li>
+<li><strong>Seguretat:</strong> Els arxius d'estat es poden emmagatzemar en ubicacions segures.</li>
+<li><strong>Còpies de Seguretat:</strong> Les solucions d'emmagatzematge remot sovint proporcionen capacitats de còpia de seguretat.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Configuració de l'Estat Remot</h2>
+<div class='content'><p>Per configurar l'estat remot, cal especificar un backend en la teva configuració de Terraform.</p>
+<h4>Exemple: Utilitzant AWS S3 com a Backend</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHsKICBiYWNrZW5kICJzMyIgewogICAgYnVja2V0ID0gIm15LXRlcnJhZm9ybS1zdGF0ZSIKICAgIGtleSAgICA9ICJwYXRoL3RvL215L2tleSIKICAgIHJlZ2lvbiA9ICJ1cy13ZXN0LTIiCiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform {
+  backend &quot;s3&quot; {
+    bucket = &quot;my-terraform-state&quot;
+    key    = &quot;path/to/my/key&quot;
+    region = &quot;us-west-2&quot;
+  }
+}</pre></div><div class='content'></div><h1>Bloqueig de l'Estat</h1>
+<div class='content'><p>El bloqueig de l'estat és un mecanisme per prevenir operacions concurrents en el mateix arxiu d'estat, cosa que pot conduir a la corrupció.</p>
+<ul>
+<li><strong>Backends Suportats:</strong> Molts backends remots, com AWS S3 amb DynamoDB, suporten el bloqueig de l'estat.</li>
+<li><strong>Implementació:</strong> Quan un arxiu d'estat està bloquejat, altres operacions han d'esperar fins que el bloqueig es desallotgi.</li>
+</ul>
+</div><h2>Exemple: Activant el Bloqueig de l'Estat amb DynamoDB</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHsKICBiYWNrZW5kICJzMyIgewogICAgYnVja2V0ICAgICAgICAgPSAibXktdGVycmFmb3JtLXN0YXRlIgogICAga2V5ICAgICAgICAgICAgPSAicGF0aC90by9teS9rZXkiCiAgICByZWdpb24gICAgICAgICA9ICJ1cy13ZXN0LTIiCiAgICBkeW5hbW9kYl90YWJsZSA9ICJ0ZXJyYWZvcm0tbG9jayIKICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform {
+  backend &quot;s3&quot; {
+    bucket         = &quot;my-terraform-state&quot;
+    key            = &quot;path/to/my/key&quot;
+    region         = &quot;us-west-2&quot;
+    dynamodb_table = &quot;terraform-lock&quot;
+  }
+}</pre></div><div class='content'></div><h1>Comandes de Gestió de l'Estat</h1>
+<div class='content'><p>Terraform proporciona diverses comandes per gestionar l'arxiu d'estat.</p>
+<ul>
+<li><strong>terraform state list:</strong> Llista tots els recursos en l'arxiu d'estat.</li>
+<li><strong>terraform state show:</strong> Mostra informació detallada sobre un recurs en l'arxiu d'estat.</li>
+<li><strong>terraform state mv:</strong> Mou un recurs d'un estat a un altre.</li>
+<li><strong>terraform state rm:</strong> Elimina un recurs de l'arxiu d'estat.</li>
+<li><strong>terraform state pull:</strong> Recupera l'arxiu d'estat d'un backend remot.</li>
+<li><strong>terraform state push:</strong> Puja l'arxiu d'estat a un backend remot.</li>
+</ul>
+</div><h2>Exemple: Llistant Recursos en l'Arxiu d'Estat</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHN0YXRlIGxpc3Q="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform state list</pre></div><div class='content'></div><h2>Exemple: Mostrant Informació Detallada Sobre un Recurs</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHN0YXRlIHNob3cgYXdzX2luc3RhbmNlLmV4YW1wbGU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform state show aws_instance.example</pre></div><div class='content'></div><h1>Seguretat de l'Arxiu d'Estat</h1>
+<div class='content'><p>L'arxiu d'estat pot contenir informació sensible, com contrasenyes i claus privades. És important assegurar l'arxiu d'estat adequadament.</p>
+<ul>
+<li><strong>Xifratge:</strong> Utilitza xifratge per als arxius d'estat emmagatzemats en backends remots.</li>
+<li><strong>Control d'Accés:</strong> Restringeix l'accés a l'arxiu d'estat només als usuaris autoritzats.</li>
+<li><strong>Dades Sensibles:</strong> Evita emmagatzemar dades sensibles en l'arxiu d'estat quan sigui possible.</li>
+</ul>
+</div><h2>Exemple: Xifrant Arxius d'Estat en S3</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHsKICBiYWNrZW5kICJzMyIgewogICAgYnVja2V0ICAgICAgICAgPSAibXktdGVycmFmb3JtLXN0YXRlIgogICAga2V5ICAgICAgICAgICAgPSAicGF0aC90by9teS9rZXkiCiAgICByZWdpb24gICAgICAgICA9ICJ1cy13ZXN0LTIiCiAgICBlbmNyeXB0ICAgICAgICA9IHRydWUKICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform {
+  backend &quot;s3&quot; {
+    bucket         = &quot;my-terraform-state&quot;
+    key            = &quot;path/to/my/key&quot;
+    region         = &quot;us-west-2&quot;
+    encrypt        = true
+  }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Gestionar l'estat de Terraform és essencial per mantenir la integritat i la consistència de la teva infraestructura. Comprenent els conceptes bàsics dels arxius d'estat, configurant l'estat remot, implementant el bloqueig de l'estat, utilitzant comandes de gestió de l'estat i assegurant el teu arxiu d'estat, pots gestionar efectivament l'estat de Terraform i col·laborar amb el teu equip.</p>
+<p>En resum:</p>
+<ul>
+<li>L'estat de Terraform és crucial per mapar i gestionar recursos.</li>
+<li>L'emmagatzematge remot de l'estat millora la col·laboració i la seguretat.</li>
+<li>El bloqueig de l'estat prevé modificacions concurrents.</li>
+<li>Terraform proporciona diverses comandes per a la gestió de l'estat.</li>
+<li>Assegurar l'arxiu d'estat és important per protegir informació sensible.</li>
+</ul>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='understanding-terraform-state'>&#x25C4;Entenent l'Estat de Terraform</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió de l'Estat de Terraform</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='variables-and-outputs'>Variables i Sortides &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

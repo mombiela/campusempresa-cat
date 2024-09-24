@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funcions de pèrdua personalitzades a PyTorch</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/pytorch/custom-loss-functions" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/pytorch/custom-loss-functions" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/pytorch/custom-loss-functions" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/pytorch/custom-loss-functions" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/pytorch/custom-loss-functions" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='custom-datasets-and-dataloaders'>&#x25C4;Datasets i DataLoaders Personalitzats</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Funcions de pèrdua personalitzades a PyTorch</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='custom-layers-and-modules'>Capes i Mòduls Personalitzats &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquesta secció, explorarem com crear funcions de pèrdua personalitzades a PyTorch. Les funcions de pèrdua són un component crucial de l'entrenament de xarxes neuronals, ja que mesuren com de bé està funcionant el model. Tot i que PyTorch proporciona moltes funcions de pèrdua integrades, hi ha escenaris on potser necessiteu definir les vostres pròpies.</p>
+</div><h1>Conceptes clau</h1>
+<div class='content'><ul>
+<li><strong>Funció de pèrdua</strong>: Un mètode per avaluar com de bé les prediccions del model coincideixen amb els valors objectiu.</li>
+<li><strong>Propagació cap enrere</strong>: El procés de calcular el gradient de la funció de pèrdua respecte als paràmetres del model.</li>
+<li><strong>Autograd</strong>: La biblioteca de diferenciació automàtica de PyTorch que admet totes les operacions amb tensors.</li>
+</ul>
+</div><h1>Funcions de pèrdua integrades</h1>
+<div class='content'><p>Abans de submergir-nos en les funcions de pèrdua personalitzades, revisem breument algunes funcions de pèrdua integrades comunes a PyTorch:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaC5ubiBhcyBubgoKIyBQw6hyZHVhIGRlIGwnZXJyb3IgcXVhZHLDoHRpYyBtaXRqw6AKbXNlX2xvc3MgPSBubi5NU0VMb3NzKCkKCiMgUMOocmR1YSBkJ2VudHJvcGlhIGNyZXVhZGEKY3Jvc3NfZW50cm9weV9sb3NzID0gbm4uQ3Jvc3NFbnRyb3B5TG9zcygpCgojIFDDqHJkdWEgZCdlbnRyb3BpYSBjcmV1YWRhIGJpbsOgcmlhCmJjZV9sb3NzID0gbm4uQkNFTG9zcygp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torch.nn as nn
+
+# P&egrave;rdua de l'error quadr&agrave;tic mitj&agrave;
+mse_loss = nn.MSELoss()
+
+# P&egrave;rdua d'entropia creuada
+cross_entropy_loss = nn.CrossEntropyLoss()
+
+# P&egrave;rdua d'entropia creuada bin&agrave;ria
+bce_loss = nn.BCELoss()</pre></div><div class='content'></div><h1>Creació de funcions de pèrdua personalitzades</h1>
+<div class='content'><p>Crear una funció de pèrdua personalitzada a PyTorch implica definir una nova classe que hereti de <code>nn.Module</code> i sobreescriure el mètode <code>forward</code>.</p>
+</div><h2>Exemple 1: Pèrdua de l'error absolut mitjà (MAE)</h2>
+<div class='content'><p>Comencem amb un exemple senzill de creació d'una funció de pèrdua de l'error absolut mitjà (MAE).</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaC5ubiBhcyBubgoKY2xhc3MgTUFFTG9zcyhubi5Nb2R1bGUpOgogICAgZGVmIF9faW5pdF9fKHNlbGYpOgogICAgICAgIHN1cGVyKE1BRUxvc3MsIHNlbGYpLl9faW5pdF9fKCkKCiAgICBkZWYgZm9yd2FyZChzZWxmLCBwcmVkaWN0aW9ucywgdGFyZ2V0cyk6CiAgICAgICAgcmV0dXJuIHRvcmNoLm1lYW4odG9yY2guYWJzKHByZWRpY3Rpb25zIC0gdGFyZ2V0cykpCgojIEV4ZW1wbGUgZCfDunMKcHJlZGljdGlvbnMgPSB0b3JjaC50ZW5zb3IoWzAuNSwgMS41LCAyLjVdKQp0YXJnZXRzID0gdG9yY2gudGVuc29yKFsxLjAsIDIuMCwgMy4wXSkKbWFlX2xvc3MgPSBNQUVMb3NzKCkKbG9zcyA9IG1hZV9sb3NzKHByZWRpY3Rpb25zLCB0YXJnZXRzKQpwcmludChmJ1DDqHJkdWEgTUFFOiB7bG9zcy5pdGVtKCl9Jyk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torch.nn as nn
+
+class MAELoss(nn.Module):
+    def __init__(self):
+        super(MAELoss, self).__init__()
+
+    def forward(self, predictions, targets):
+        return torch.mean(torch.abs(predictions - targets))
+
+# Exemple d'&uacute;s
+predictions = torch.tensor([0.5, 1.5, 2.5])
+targets = torch.tensor([1.0, 2.0, 3.0])
+mae_loss = MAELoss()
+loss = mae_loss(predictions, targets)
+print(f'P&egrave;rdua MAE: {loss.item()}')</pre></div><div class='content'></div><h2>Exemple 2: Pèrdua de Huber</h2>
+<div class='content'><p>La pèrdua de Huber és menys sensible als valors atípics en les dades que la pèrdua de l'error quadràtic mitjà. Combina les millors propietats tant de MAE com de MSE.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgSHViZXJMb3NzKG5uLk1vZHVsZSk6CiAgICBkZWYgX19pbml0X18oc2VsZiwgZGVsdGE9MS4wKToKICAgICAgICBzdXBlcihIdWJlckxvc3MsIHNlbGYpLl9faW5pdF9fKCkKICAgICAgICBzZWxmLmRlbHRhID0gZGVsdGEKCiAgICBkZWYgZm9yd2FyZChzZWxmLCBwcmVkaWN0aW9ucywgdGFyZ2V0cyk6CiAgICAgICAgZXJyb3IgPSBwcmVkaWN0aW9ucyAtIHRhcmdldHMKICAgICAgICBpc19zbWFsbF9lcnJvciA9IHRvcmNoLmFicyhlcnJvcikgPD0gc2VsZi5kZWx0YQogICAgICAgIHNtYWxsX2Vycm9yX2xvc3MgPSAwLjUgKiB0b3JjaC5wb3coZXJyb3IsIDIpCiAgICAgICAgbGFyZ2VfZXJyb3JfbG9zcyA9IHNlbGYuZGVsdGEgKiAodG9yY2guYWJzKGVycm9yKSAtIDAuNSAqIHNlbGYuZGVsdGEpCiAgICAgICAgcmV0dXJuIHRvcmNoLm1lYW4odG9yY2gud2hlcmUoaXNfc21hbGxfZXJyb3IsIHNtYWxsX2Vycm9yX2xvc3MsIGxhcmdlX2Vycm9yX2xvc3MpKQoKIyBFeGVtcGxlIGQnw7pzCnByZWRpY3Rpb25zID0gdG9yY2gudGVuc29yKFswLjUsIDEuNSwgMi41XSkKdGFyZ2V0cyA9IHRvcmNoLnRlbnNvcihbMS4wLCAyLjAsIDMuMF0pCmh1YmVyX2xvc3MgPSBIdWJlckxvc3MoZGVsdGE9MS4wKQpsb3NzID0gaHViZXJfbG9zcyhwcmVkaWN0aW9ucywgdGFyZ2V0cykKcHJpbnQoZidQw6hyZHVhIGRlIEh1YmVyOiB7bG9zcy5pdGVtKCl9Jyk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class HuberLoss(nn.Module):
+    def __init__(self, delta=1.0):
+        super(HuberLoss, self).__init__()
+        self.delta = delta
+
+    def forward(self, predictions, targets):
+        error = predictions - targets
+        is_small_error = torch.abs(error) &lt;= self.delta
+        small_error_loss = 0.5 * torch.pow(error, 2)
+        large_error_loss = self.delta * (torch.abs(error) - 0.5 * self.delta)
+        return torch.mean(torch.where(is_small_error, small_error_loss, large_error_loss))
+
+# Exemple d'&uacute;s
+predictions = torch.tensor([0.5, 1.5, 2.5])
+targets = torch.tensor([1.0, 2.0, 3.0])
+huber_loss = HuberLoss(delta=1.0)
+loss = huber_loss(predictions, targets)
+print(f'P&egrave;rdua de Huber: {loss.item()}')</pre></div><div class='content'></div><h1>Funcions de pèrdua personalitzades avançades</h1>
+<div class='content'><p>Per a funcions de pèrdua personalitzades més avançades, potser necessiteu aprofitar directament la funcionalitat autograd de PyTorch.</p>
+</div><h2>Exemple 3: Penalització de gradient personalitzada</h2>
+<div class='content'><p>Suposem que voleu crear una funció de pèrdua personalitzada que inclogui un terme de penalització de gradient, sovint utilitzat en xarxes adversàries generatives (GANs).</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgR3JhZGllbnRQZW5hbHR5TG9zcyhubi5Nb2R1bGUpOgogICAgZGVmIF9faW5pdF9fKHNlbGYsIGxhbWJkYV9ncD0xMCk6CiAgICAgICAgc3VwZXIoR3JhZGllbnRQZW5hbHR5TG9zcywgc2VsZikuX19pbml0X18oKQogICAgICAgIHNlbGYubGFtYmRhX2dwID0gbGFtYmRhX2dwCgogICAgZGVmIGZvcndhcmQoc2VsZiwgZGlzY3JpbWluYXRvciwgcmVhbF9kYXRhLCBmYWtlX2RhdGEpOgogICAgICAgIGJhdGNoX3NpemUgPSByZWFsX2RhdGEuc2l6ZSgwKQogICAgICAgIGVwc2lsb24gPSB0b3JjaC5yYW5kKGJhdGNoX3NpemUsIDEsIDEsIDEsIGRldmljZT1yZWFsX2RhdGEuZGV2aWNlKQogICAgICAgIGludGVycG9sYXRlZCA9IGVwc2lsb24gKiByZWFsX2RhdGEgKyAoMSAtIGVwc2lsb24pICogZmFrZV9kYXRhCiAgICAgICAgaW50ZXJwb2xhdGVkLnJlcXVpcmVzX2dyYWRfKFRydWUpCgogICAgICAgIGRfaW50ZXJwb2xhdGVkID0gZGlzY3JpbWluYXRvcihpbnRlcnBvbGF0ZWQpCiAgICAgICAgZ3JhZGllbnRzID0gdG9yY2guYXV0b2dyYWQuZ3JhZCgKICAgICAgICAgICAgb3V0cHV0cz1kX2ludGVycG9sYXRlZCwKICAgICAgICAgICAgaW5wdXRzPWludGVycG9sYXRlZCwKICAgICAgICAgICAgZ3JhZF9vdXRwdXRzPXRvcmNoLm9uZXNfbGlrZShkX2ludGVycG9sYXRlZCksCiAgICAgICAgICAgIGNyZWF0ZV9ncmFwaD1UcnVlLAogICAgICAgICAgICByZXRhaW5fZ3JhcGg9VHJ1ZSwKICAgICAgICApWzBdCgogICAgICAgIGdyYWRpZW50cyA9IGdyYWRpZW50cy52aWV3KGJhdGNoX3NpemUsIC0xKQogICAgICAgIGdyYWRpZW50X3BlbmFsdHkgPSAoKGdyYWRpZW50cy5ub3JtKDIsIGRpbT0xKSAtIDEpICoqIDIpLm1lYW4oKQogICAgICAgIHJldHVybiBzZWxmLmxhbWJkYV9ncCAqIGdyYWRpZW50X3BlbmFsdHkKCiMgRXhlbXBsZSBkJ8O6cwojIFN1cG9zYW50IHF1ZSBgZGlzY3JpbWluYXRvcmAsIGByZWFsX2RhdGFgIGkgYGZha2VfZGF0YWAgZXN0YW4gZGVmaW5pdHMKZ3JhZGllbnRfcGVuYWx0eV9sb3NzID0gR3JhZGllbnRQZW5hbHR5TG9zcyhsYW1iZGFfZ3A9MTApCmxvc3MgPSBncmFkaWVudF9wZW5hbHR5X2xvc3MoZGlzY3JpbWluYXRvciwgcmVhbF9kYXRhLCBmYWtlX2RhdGEpCnByaW50KGYnUMOocmR1YSBkZSBwZW5hbGl0emFjacOzIGRlIGdyYWRpZW50OiB7bG9zcy5pdGVtKCl9Jyk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class GradientPenaltyLoss(nn.Module):
+    def __init__(self, lambda_gp=10):
+        super(GradientPenaltyLoss, self).__init__()
+        self.lambda_gp = lambda_gp
+
+    def forward(self, discriminator, real_data, fake_data):
+        batch_size = real_data.size(0)
+        epsilon = torch.rand(batch_size, 1, 1, 1, device=real_data.device)
+        interpolated = epsilon * real_data + (1 - epsilon) * fake_data
+        interpolated.requires_grad_(True)
+
+        d_interpolated = discriminator(interpolated)
+        gradients = torch.autograd.grad(
+            outputs=d_interpolated,
+            inputs=interpolated,
+            grad_outputs=torch.ones_like(d_interpolated),
+            create_graph=True,
+            retain_graph=True,
+        )[0]
+
+        gradients = gradients.view(batch_size, -1)
+        gradient_penalty = ((gradients.norm(2, dim=1) - 1) ** 2).mean()
+        return self.lambda_gp * gradient_penalty
+
+# Exemple d'&uacute;s
+# Suposant que `discriminator`, `real_data` i `fake_data` estan definits
+gradient_penalty_loss = GradientPenaltyLoss(lambda_gp=10)
+loss = gradient_penalty_loss(discriminator, real_data, fake_data)
+print(f'P&egrave;rdua de penalitzaci&oacute; de gradient: {loss.item()}')</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Les funcions de pèrdua personalitzades a PyTorch proporcionen flexibilitat per adaptar el procés d'entrenament a necessitats específiques. Comprenent com crear i implementar aquestes funcions, podeu millorar el rendiment dels vostres models i adaptar-vos a requisits de problemes únics. Ja sigui una simple pèrdua MAE o una penalització de gradient més complexa, el disseny modular de PyTorch fa que sigui senzill definir i utilitzar funcions de pèrdua personalitzades en la vostra pipeline d'entrenament.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='custom-datasets-and-dataloaders'>&#x25C4;Datasets i DataLoaders Personalitzats</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Funcions de pèrdua personalitzades a PyTorch</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='custom-layers-and-modules'>Capes i Mòduls Personalitzats &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

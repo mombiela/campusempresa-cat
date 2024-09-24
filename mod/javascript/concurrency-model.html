@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model de concurrència</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/javascript/concurrency-model" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/javascript/concurrency-model" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/javascript/concurrency-model" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/javascript/concurrency-model" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/javascript/concurrency-model" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='event-loop'>&#x25C4;Bucle d'Esdeveniments</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Model de concurrència</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='web-workers'>Treballadors Web &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a la concurrència en JavaScript</h1>
+<div class='content'><p>JavaScript és un llenguatge de fil únic, és a dir, té una pila de trucades i un heap de memòria. No obstant això, pot gestionar operacions concurrents utilitzant el seu model de concurrència basat en esdeveniments i no bloquejant. Aquesta secció us introduirà als conceptes bàsics de la concurrència en JavaScript.</p>
+<ul>
+<li><strong>Naturalesa de fil únic</strong>: JavaScript executa una peça de codi a la vegada.</li>
+<li><strong>Bucle d'esdeveniments</strong>: Gestiona l'execució de múltiples peces de codi al llarg del temps, manejant operacions asíncrones.</li>
+<li><strong>Cua de callbacks</strong>: Emmagatzema callbacks que estan llestos per ser executats.</li>
+<li><strong>APIs web</strong>: APIs proporcionades pel navegador que gestionen tasques asíncrones com sol·licituds HTTP, temporitzadors, etc.</li>
+</ul>
+</div><h1>El bucle d'esdeveniments</h1>
+<div class='content'><p>El bucle d'esdeveniments és el nucli del model de concurrència de JavaScript. Permet a JavaScript realitzar operacions no bloquejants delegant tasques al navegador o a l'entorn Node.js.</p>
+<ul>
+<li><strong>Pila de trucades</strong>: On s'executa el codi.</li>
+<li><strong>Cua de callbacks</strong>: Conté missatges (callbacks) per ser processats.</li>
+<li><strong>Bucle d'esdeveniments</strong>: Comprova contínuament la pila de trucades i la cua de callbacks, empènyer callbacks a la pila de trucades quan està buida.</li>
+</ul>
+</div><h2>Exemple: Bucle d'esdeveniments bàsic</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc29sZS5sb2coJ0luaWNpJyk7CgpzZXRUaW1lb3V0KCgpID0+IHsKICBjb25zb2xlLmxvZygnQ2FsbGJhY2sgZGUgdGVtcG9yaXR6YWRvcicpOwp9LCAxMDAwKTsKCmNvbnNvbGUubG9nKCdGaW5hbCcpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>console.log('Inici');
+
+setTimeout(() =&gt; {
+  console.log('Callback de temporitzador');
+}, 1000);
+
+console.log('Final');</pre></div><div class='content'><p>Explicació:</p>
+<ol>
+<li><code>console.log('Inici')</code> s'executa i es registra immediatament.</li>
+<li><code>setTimeout</code> programa un callback per ser executat després d'1 segon.</li>
+<li><code>console.log('Final')</code> s'executa i es registra immediatament.</li>
+<li>Després d'1 segon, el callback de <code>setTimeout</code> es posa a la cua de callbacks i eventualment s'executa.</li>
+</ol>
+</div><h1>Programació asíncrona</h1>
+<div class='content'><p>La programació asíncrona permet a JavaScript realitzar tasques de llarga durada sense bloquejar el fil principal.</p>
+<ul>
+<li><strong>Callbacks</strong>: Funcions passades com a arguments a altres funcions, executades després de la finalització d'una tasca asíncrona.</li>
+<li><strong>Promises</strong>: Objectes que representen la finalització (o fallada) eventual d'una operació asíncrona.</li>
+<li><strong>Async/Await</strong>: Sucre sintàctic sobre les promeses, fent que el codi asíncron sembli síncron.</li>
+</ul>
+</div><h2>Exemple: Callback</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gZmV0Y2hEYXRhKGNhbGxiYWNrKSB7CiAgc2V0VGltZW91dCgoKSA9PiB7CiAgICBjYWxsYmFjaygnRGFkZXMgcmVidWRlcycpOwogIH0sIDEwMDApOwp9CgpmZXRjaERhdGEoKGRhdGEpID0+IHsKICBjb25zb2xlLmxvZyhkYXRhKTsKfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function fetchData(callback) {
+  setTimeout(() =&gt; {
+    callback('Dades rebudes');
+  }, 1000);
+}
+
+fetchData((data) =&gt; {
+  console.log(data);
+});</pre></div><div class='content'><p>Explicació:</p>
+<ol>
+<li><code>fetchData</code> es crida amb una funció de callback.</li>
+<li><code>setTimeout</code> simula una operació asíncrona.</li>
+<li>Després d'1 segon, el callback s'executa, registrant 'Dades rebudes'.</li>
+</ol>
+</div><h2>Exemple: Promeses</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gZmV0Y2hEYXRhKCkgewogIHJldHVybiBuZXcgUHJvbWlzZSgocmVzb2x2ZSwgcmVqZWN0KSA9PiB7CiAgICBzZXRUaW1lb3V0KCgpID0+IHsKICAgICAgcmVzb2x2ZSgnRGFkZXMgcmVidWRlcycpOwogICAgfSwgMTAwMCk7CiAgfSk7Cn0KCmZldGNoRGF0YSgpLnRoZW4oKGRhdGEpID0+IHsKICBjb25zb2xlLmxvZyhkYXRhKTsKfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function fetchData() {
+  return new Promise((resolve, reject) =&gt; {
+    setTimeout(() =&gt; {
+      resolve('Dades rebudes');
+    }, 1000);
+  });
+}
+
+fetchData().then((data) =&gt; {
+  console.log(data);
+});</pre></div><div class='content'><p>Explicació:</p>
+<ol>
+<li><code>fetchData</code> retorna una promesa.</li>
+<li><code>setTimeout</code> simula una operació asíncrona.</li>
+<li>Després d'1 segon, la promesa es resol, i <code>then</code> es crida, registrant 'Dades rebudes'.</li>
+</ol>
+</div><h2>Exemple: Async/Await</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gZmV0Y2hEYXRhKCkgewogIHJldHVybiBuZXcgUHJvbWlzZSgocmVzb2x2ZSwgcmVqZWN0KSA9PiB7CiAgICBzZXRUaW1lb3V0KCgpID0+IHsKICAgICAgcmVzb2x2ZSgnRGFkZXMgcmVidWRlcycpOwogICAgfSwgMTAwMCk7CiAgfSk7Cn0KCmFzeW5jIGZ1bmN0aW9uIGdldERhdGEoKSB7CiAgY29uc3QgZGF0YSA9IGF3YWl0IGZldGNoRGF0YSgpOwogIGNvbnNvbGUubG9nKGRhdGEpOwp9CgpnZXREYXRhKCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function fetchData() {
+  return new Promise((resolve, reject) =&gt; {
+    setTimeout(() =&gt; {
+      resolve('Dades rebudes');
+    }, 1000);
+  });
+}
+
+async function getData() {
+  const data = await fetchData();
+  console.log(data);
+}
+
+getData();</pre></div><div class='content'><p>Explicació:</p>
+<ol>
+<li><code>fetchData</code> retorna una promesa.</li>
+<li><code>getData</code> és una funció asíncrona que espera que la promesa es resolgui.</li>
+<li>Després d'1 segon, <code>await</code> obté el valor resolt, registrant 'Dades rebudes'.</li>
+</ol>
+</div><h1>Conceptes avançats de concurrència</h1>
+<div class='content'><p>A mesura que avanceu, entendre patrons de concurrència més complexos i eines esdevé essencial.</p>
+<ul>
+<li><strong>Treballadors web</strong>: Permeten executar scripts en fils de fons.</li>
+<li><strong>Canals de missatges</strong>: Faciliten la comunicació entre diferents contextos (per exemple, fil principal i treballadors web).</li>
+<li><strong>Atomics i SharedArrayBuffer</strong>: Proporcionen primitives de concurrència de baix nivell per a memòria compartida.</li>
+</ul>
+</div><h2>Exemple: Treballadors web</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gd29ya2VyLmpzCnNlbGYub25tZXNzYWdlID0gZnVuY3Rpb24oZSkgewogIGNvbnN0IHJlc3VsdCA9IGUuZGF0YSAqIDI7CiAgc2VsZi5wb3N0TWVzc2FnZShyZXN1bHQpOwp9OwoKLy8gbWFpbi5qcwpjb25zdCB3b3JrZXIgPSBuZXcgV29ya2VyKCd3b3JrZXIuanMnKTsKd29ya2VyLm9ubWVzc2FnZSA9IGZ1bmN0aW9uKGUpIHsKICBjb25zb2xlLmxvZygnUmVzdWx0YXQgZGVsIHRyZWJhbGxhZG9yOicsIGUuZGF0YSk7Cn07Cndvcmtlci5wb3N0TWVzc2FnZSgxMCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// worker.js
+self.onmessage = function(e) {
+  const result = e.data * 2;
+  self.postMessage(result);
+};
+
+// main.js
+const worker = new Worker('worker.js');
+worker.onmessage = function(e) {
+  console.log('Resultat del treballador:', e.data);
+};
+worker.postMessage(10);</pre></div><div class='content'><p>Explicació:</p>
+<ol>
+<li><code>worker.js</code> escolta missatges i processa dades.</li>
+<li><code>main.js</code> crea un treballador i li envia dades.</li>
+<li>El treballador processa les dades i envia el resultat de nou al fil principal.</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>El model de concurrència de JavaScript, centrat al voltant del bucle d'esdeveniments, li permet gestionar operacions asíncrones de manera eficient malgrat ser de fil únic. Entendre el bucle d'esdeveniments, callbacks, promeses i async/await és crucial per escriure codi eficient i no bloquejant. A mesura que avanceu, explorar conceptes avançats com Treballadors web i memòria compartida pot millorar encara més la vostra capacitat per gestionar la concurrència en aplicacions JavaScript.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='event-loop'>&#x25C4;Bucle d'Esdeveniments</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Model de concurrència</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='web-workers'>Treballadors Web &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

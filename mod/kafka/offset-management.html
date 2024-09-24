@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió d'Offsets a Apache Kafka</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kafka/offset-management" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kafka/offset-management" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kafka/offset-management" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kafka/offset-management" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kafka/offset-management" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='consumer-groups'>&#x25C4;Grups de consumidors</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió d'Offsets a Apache Kafka</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-kafka-streams'>Introducció als fluxos de Kafka &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La gestió d'offsets és un concepte crucial a Apache Kafka, ja que determina com els consumidors fan el seguiment dels missatges que han llegit d'un tema. Aquest tema et guiarà des dels aspectes bàsics fins als avançats de la gestió d'offsets a Kafka.</p>
+</div><h1>Introducció als Offsets</h1>
+<div class='content'><p>Els offsets són identificadors únics assignats a cada missatge dins d'una partició de Kafka. Ajuden els consumidors a saber quins missatges han estat llegits i quins encara han de ser processats.</p>
+<ul>
+<li><strong>Offset</strong>: Un número ID seqüencial assignat a cada missatge dins d'una partició.</li>
+<li><strong>Partició</strong>: Una divisió d'un tema que permet a Kafka escalar horitzontalment i gestionar la càrrega.</li>
+</ul>
+</div><h2>Exemple</h2>
+<div class='content'><p>Considera un tema <code>orders</code> amb dues particions:</p>
+<p>| Partició | Missatge | Offset |
+|----------|----------|--------|
+| 0        | Order1   | 0      |
+| 0        | Order2   | 1      |
+| 1        | Order3   | 0      |
+| 1        | Order4   | 1      |</p>
+</div><h1>Com Funcionen els Offsets</h1>
+<div class='content'><p>Quan un consumidor llegeix missatges d'una partició, fa el seguiment de l'offset de l'últim missatge que ha processat. Això permet al consumidor reprendre la lectura des de la posició correcta en cas de fallada o reinici.</p>
+<ul>
+<li><strong>Grup de Consumidors</strong>: Un grup de consumidors que treballen junts per consumir missatges d'un tema.</li>
+<li><strong>Offset Committed</strong>: L'últim offset que ha estat reconegut pel consumidor com a processat.</li>
+</ul>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gUHNldWRvLWNvZGkgcGVyIGEgdW4gY29uc3VtaWRvciBkZSBLYWZrYSBxdWUgbGxlZ2VpeCBtaXNzYXRnZXMgaSBjb21tZXQgb2Zmc2V0cwp3aGlsZSAodHJ1ZSkgewogICAgQ29uc3VtZXJSZWNvcmRzPFN0cmluZywgU3RyaW5nPiByZWNvcmRzID0gY29uc3VtZXIucG9sbChEdXJhdGlvbi5vZk1pbGxpcygxMDApKTsKICAgIGZvciAoQ29uc3VtZXJSZWNvcmQ8U3RyaW5nLCBTdHJpbmc+IHJlY29yZCA6IHJlY29yZHMpIHsKICAgICAgICBwcm9jZXNzKHJlY29yZCk7CiAgICAgICAgY29uc3VtZXIuY29tbWl0U3luYyhDb2xsZWN0aW9ucy5zaW5nbGV0b25NYXAobmV3IFRvcGljUGFydGl0aW9uKHJlY29yZC50b3BpYygpLCByZWNvcmQucGFydGl0aW9uKCkpLCBuZXcgT2Zmc2V0QW5kTWV0YWRhdGEocmVjb3JkLm9mZnNldCgpICsgMSkpKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Pseudo-codi per a un consumidor de Kafka que llegeix missatges i commet offsets
+while (true) {
+    ConsumerRecords&lt;String, String&gt; records = consumer.poll(Duration.ofMillis(100));
+    for (ConsumerRecord&lt;String, String&gt; record : records) {
+        process(record);
+        consumer.commitSync(Collections.singletonMap(new TopicPartition(record.topic(), record.partition()), new OffsetAndMetadata(record.offset() + 1)));
+    }
+}</pre></div><div class='content'><p>En aquest exemple, el consumidor llegeix missatges, els processa i després commet l'offset del següent missatge a ser llegit.</p>
+</div><h1>Estratègies de Gestió d'Offsets</h1>
+<div class='content'><p>Hi ha diferents estratègies per gestionar offsets a Kafka:</p>
+<ul>
+<li><strong>Commit Automàtic d'Offsets</strong>: Kafka commet automàticament els offsets a intervals regulars.</li>
+<li><strong>Commit Manual d'Offsets</strong>: El consumidor commet manualment els offsets després de processar els missatges.</li>
+</ul>
+</div><h2>Commit Automàtic d'Offsets</h2>
+<div class='content'><p>Aquest és l'enfocament més senzill on Kafka gestiona el commit d'offsets. No obstant això, pot conduir a pèrdua o duplicació de missatges en cas de fallades del consumidor.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UHJvcGVydGllcyBwcm9wcyA9IG5ldyBQcm9wZXJ0aWVzKCk7CnByb3BzLnB1dCgiZW5hYmxlLmF1dG8uY29tbWl0IiwgInRydWUiKTsKcHJvcHMucHV0KCJhdXRvLmNvbW1pdC5pbnRlcnZhbC5tcyIsICIxMDAwIik7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Properties props = new Properties();
+props.put(&quot;enable.auto.commit&quot;, &quot;true&quot;);
+props.put(&quot;auto.commit.interval.ms&quot;, &quot;1000&quot;);</pre></div><div class='content'></div><h2>Commit Manual d'Offsets</h2>
+<div class='content'><p>Aquest enfocament dóna més control al consumidor, permetent-li commetre offsets només després de processar correctament els missatges.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UHJvcGVydGllcyBwcm9wcyA9IG5ldyBQcm9wZXJ0aWVzKCk7CnByb3BzLnB1dCgiZW5hYmxlLmF1dG8uY29tbWl0IiwgImZhbHNlIik7CgovLyBDb21taXQgZCdvZmZzZXRzIG1hbnVhbG1lbnQKY29uc3VtZXIuY29tbWl0U3luYygpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Properties props = new Properties();
+props.put(&quot;enable.auto.commit&quot;, &quot;false&quot;);
+
+// Commit d'offsets manualment
+consumer.commitSync();</pre></div><div class='content'></div><h1>Gestió Avançada d'Offsets</h1>
+<div class='content'><p>La gestió avançada d'offsets implica manejar escenaris com el reequilibri, la retenció d'offsets i les polítiques de reset d'offsets.</p>
+<ul>
+<li><strong>Reequilibri</strong>: Quan un consumidor s'uneix o deixa un grup, Kafka reassigna les particions entre els consumidors.</li>
+<li><strong>Retenció d'Offsets</strong>: Kafka reté els offsets committed durant un període configurable.</li>
+<li><strong>Polítiques de Reset d'Offsets</strong>: Polítiques per manejar casos on l'offset del consumidor és invàlid (per exemple, <code>earliest</code>, <code>latest</code>).</li>
+</ul>
+</div><h2>Exemple de Reequilibri</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3VtZXIuc3Vic2NyaWJlKEFycmF5cy5hc0xpc3QoIm9yZGVycyIpLCBuZXcgQ29uc3VtZXJSZWJhbGFuY2VMaXN0ZW5lcigpIHsKICAgIEBPdmVycmlkZQogICAgcHVibGljIHZvaWQgb25QYXJ0aXRpb25zUmV2b2tlZChDb2xsZWN0aW9uPFRvcGljUGFydGl0aW9uPiBwYXJ0aXRpb25zKSB7CiAgICAgICAgLy8gQ29tbWl0IGQnb2Zmc2V0cyBhYmFucyBkZWwgcmVlcXVpbGlicmkKICAgICAgICBjb25zdW1lci5jb21taXRTeW5jKCk7CiAgICB9CgogICAgQE92ZXJyaWRlCiAgICBwdWJsaWMgdm9pZCBvblBhcnRpdGlvbnNBc3NpZ25lZChDb2xsZWN0aW9uPFRvcGljUGFydGl0aW9uPiBwYXJ0aXRpb25zKSB7CiAgICAgICAgLy8gTWFuZWphciBsJ2Fzc2lnbmFjacOzIGRlIHBhcnRpY2lvbnMKICAgIH0KfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>consumer.subscribe(Arrays.asList(&quot;orders&quot;), new ConsumerRebalanceListener() {
+    @Override
+    public void onPartitionsRevoked(Collection&lt;TopicPartition&gt; partitions) {
+        // Commit d'offsets abans del reequilibri
+        consumer.commitSync();
+    }
+
+    @Override
+    public void onPartitionsAssigned(Collection&lt;TopicPartition&gt; partitions) {
+        // Manejar l'assignaci&oacute; de particions
+    }
+});</pre></div><div class='content'></div><h2>Política de Reset d'Offsets</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UHJvcGVydGllcyBwcm9wcyA9IG5ldyBQcm9wZXJ0aWVzKCk7CnByb3BzLnB1dCgiYXV0by5vZmZzZXQucmVzZXQiLCAiZWFybGllc3QiKTsgLy8gT3BjaW9uczogZWFybGllc3QsIGxhdGVzdCwgbm9uZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Properties props = new Properties();
+props.put(&quot;auto.offset.reset&quot;, &quot;earliest&quot;); // Opcions: earliest, latest, none</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>La gestió d'offsets és un aspecte fonamental de treballar amb Apache Kafka. Entendre com gestionar els offsets de manera efectiva assegura un processament fiable de missatges i tolerància a fallades. Tant si utilitzes el commit automàtic o manual d'offsets, com si maneges escenaris avançats com el reequilibri, dominar la gestió d'offsets és clau per construir aplicacions robustes amb Kafka.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='consumer-groups'>&#x25C4;Grups de consumidors</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió d'Offsets a Apache Kafka</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-kafka-streams'>Introducció als fluxos de Kafka &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

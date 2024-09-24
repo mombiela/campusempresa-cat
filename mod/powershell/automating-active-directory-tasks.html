@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automatització de Tasques d'Active Directory amb PowerShell</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/powershell/automating-active-directory-tasks" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/powershell/automating-active-directory-tasks" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/powershell/automating-active-directory-tasks" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/powershell/automating-active-directory-tasks" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/powershell/automating-active-directory-tasks" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='active-directory-queries'>&#x25C4;Consultes d'Active Directory</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Automatització de Tasques d'Active Directory amb PowerShell</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-devops'>Introducció a DevOps &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Active Directory (AD) és un servei crític per gestionar usuaris, ordinadors i altres recursos en un entorn Windows. PowerShell proporciona una manera poderosa d'automatitzar moltes de les tasques associades amb Active Directory, fent l'administració més eficient i menys propensa a errors.</p>
+<p>En aquest tema, cobrirem:</p>
+<ul>
+<li>Connexió a Active Directory</li>
+<li>Gestió d'Usuaris</li>
+<li>Gestió de Grups</li>
+<li>Gestió d'Ordinadors</li>
+<li>Tècniques Avançades d'Automatització</li>
+</ul>
+</div><h1>Connexió a Active Directory</h1>
+<div class='content'><p>Abans de poder gestionar objectes d'Active Directory, necessites establir una connexió amb el teu entorn AD.</p>
+</div><h2>Instal·lació del Mòdul d'Active Directory</h2>
+<div class='content'><p>Primer, assegura't que el mòdul d'Active Directory per PowerShell està instal·lat. Pots instal·lar-lo utilitzant la següent comanda:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("SW5zdGFsbC1XaW5kb3dzRmVhdHVyZSAtTmFtZSBSU0FULUFELVBvd2VyU2hlbGw="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Install-WindowsFeature -Name RSAT-AD-PowerShell</pre></div><div class='content'></div><h2>Importació del Mòdul d'Active Directory</h2>
+<div class='content'><p>Un cop instal·lat, importa el mòdul a la teva sessió de PowerShell:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("SW1wb3J0LU1vZHVsZSBBY3RpdmVEaXJlY3Rvcnk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Import-Module ActiveDirectory</pre></div><div class='content'></div><h2>Connexió a un Controlador de Domini</h2>
+<div class='content'><p>Per connectar-te a un controlador de domini específic, utilitza el cmdlet <code>Get-ADDomainController</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("JGRvbWFpbkNvbnRyb2xsZXIgPSBHZXQtQUREb21haW5Db250cm9sbGVyIC1EaXNjb3ZlciAtU2VydmljZSAiUHJpbWFyeURDIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>$domainController = Get-ADDomainController -Discover -Service &quot;PrimaryDC&quot;</pre></div><div class='content'></div><h1>Gestió d'Usuaris</h1>
+<div class='content'><p>La gestió d'usuaris és una tasca comuna a Active Directory. PowerShell fa que sigui fàcil crear, modificar i eliminar comptes d'usuari.</p>
+</div><h2>Creació d'un Nou Usuari</h2>
+<div class='content'><p>Per crear un nou usuari, utilitza el cmdlet <code>New-ADUser</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("TmV3LUFEVXNlciAtTmFtZSAiSm9obiBEb2UiIC1HaXZlbk5hbWUgIkpvaG4iIC1TdXJuYW1lICJEb2UiIC1TYW1BY2NvdW50TmFtZSAiamRvZSIgLVVzZXJQcmluY2lwYWxOYW1lICJqZG9lQGRvbWFpbi5jb20iIC1QYXRoICJPVT1Vc2VycyxEQz1kb21haW4sREM9Y29tIiAtQWNjb3VudFBhc3N3b3JkIChDb252ZXJ0VG8tU2VjdXJlU3RyaW5nICJQQHNzdzByZCIgLUFzUGxhaW5UZXh0IC1Gb3JjZSkgLUVuYWJsZWQgJHRydWU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>New-ADUser -Name &quot;John Doe&quot; -GivenName &quot;John&quot; -Surname &quot;Doe&quot; -SamAccountName &quot;jdoe&quot; -UserPrincipalName &quot;jdoe@domain.com&quot; -Path &quot;OU=Users,DC=domain,DC=com&quot; -AccountPassword (ConvertTo-SecureString &quot;P@ssw0rd&quot; -AsPlainText -Force) -Enabled $true</pre></div><div class='content'></div><h2>Modificació d'un Usuari Existent</h2>
+<div class='content'><p>Per modificar un usuari existent, utilitza el cmdlet <code>Set-ADUser</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U2V0LUFEVXNlciAtSWRlbnRpdHkgImpkb2UiIC1UaXRsZSAiU2VuaW9yIERldmVsb3BlciIgLURlcGFydG1lbnQgIklUIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Set-ADUser -Identity &quot;jdoe&quot; -Title &quot;Senior Developer&quot; -Department &quot;IT&quot;</pre></div><div class='content'></div><h2>Eliminació d'un Usuari</h2>
+<div class='content'><p>Per eliminar un usuari, utilitza el cmdlet <code>Remove-ADUser</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UmVtb3ZlLUFEVXNlciAtSWRlbnRpdHkgImpkb2Ui"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Remove-ADUser -Identity &quot;jdoe&quot;</pre></div><div class='content'></div><h1>Gestió de Grups</h1>
+<div class='content'><p>Els grups són essencials per gestionar permisos i control d'accés. PowerShell proporciona cmdlets per crear, modificar i eliminar grups.</p>
+</div><h2>Creació d'un Nou Grup</h2>
+<div class='content'><p>Per crear un nou grup, utilitza el cmdlet <code>New-ADGroup</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("TmV3LUFER3JvdXAgLU5hbWUgIkRldmVsb3BlcnMiIC1Hcm91cFNjb3BlIEdsb2JhbCAtUGF0aCAiT1U9R3JvdXBzLERDPWRvbWFpbixEQz1jb20i"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>New-ADGroup -Name &quot;Developers&quot; -GroupScope Global -Path &quot;OU=Groups,DC=domain,DC=com&quot;</pre></div><div class='content'></div><h2>Afegir un Usuari a un Grup</h2>
+<div class='content'><p>Per afegir un usuari a un grup, utilitza el cmdlet <code>Add-ADGroupMember</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QWRkLUFER3JvdXBNZW1iZXIgLUlkZW50aXR5ICJEZXZlbG9wZXJzIiAtTWVtYmVycyAiamRvZSI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Add-ADGroupMember -Identity &quot;Developers&quot; -Members &quot;jdoe&quot;</pre></div><div class='content'></div><h2>Eliminar un Usuari d'un Grup</h2>
+<div class='content'><p>Per eliminar un usuari d'un grup, utilitza el cmdlet <code>Remove-ADGroupMember</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UmVtb3ZlLUFER3JvdXBNZW1iZXIgLUlkZW50aXR5ICJEZXZlbG9wZXJzIiAtTWVtYmVycyAiamRvZSIgLUNvbmZpcm06JGZhbHNl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Remove-ADGroupMember -Identity &quot;Developers&quot; -Members &quot;jdoe&quot; -Confirm:$false</pre></div><div class='content'></div><h1>Gestió d'Ordinadors</h1>
+<div class='content'><p>La gestió de comptes d'ordinador és una altra tasca crítica a Active Directory.</p>
+</div><h2>Creació d'un Nou Ordinador</h2>
+<div class='content'><p>Per crear un nou compte d'ordinador, utilitza el cmdlet <code>New-ADComputer</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("TmV3LUFEQ29tcHV0ZXIgLU5hbWUgIlBDMDEiIC1QYXRoICJPVT1Db21wdXRlcnMsREM9ZG9tYWluLERDPWNvbSIgLUVuYWJsZWQgJHRydWU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>New-ADComputer -Name &quot;PC01&quot; -Path &quot;OU=Computers,DC=domain,DC=com&quot; -Enabled $true</pre></div><div class='content'></div><h2>Restabliment d'un Compte d'Ordinador</h2>
+<div class='content'><p>Per restablir un compte d'ordinador, utilitza el cmdlet <code>Reset-ADComputer</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UmVzZXQtQURDb21wdXRlciAtSWRlbnRpdHkgIlBDMDEi"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Reset-ADComputer -Identity &quot;PC01&quot;</pre></div><div class='content'></div><h2>Eliminació d'un Ordinador</h2>
+<div class='content'><p>Per eliminar un compte d'ordinador, utilitza el cmdlet <code>Remove-ADComputer</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UmVtb3ZlLUFEQ29tcHV0ZXIgLUlkZW50aXR5ICJQQzAxIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Remove-ADComputer -Identity &quot;PC01&quot;</pre></div><div class='content'></div><h1>Tècniques Avançades d'Automatització</h1>
+<div class='content'><p>Per a una automatització més avançada, pots combinar múltiples cmdlets i utilitzar tècniques de scripting per realitzar tasques complexes.</p>
+</div><h2>Creació Massiva d'Usuaris</h2>
+<div class='content'><p>Pots crear múltiples usuaris a partir d'un fitxer CSV utilitzant un script:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("JHVzZXJzID0gSW1wb3J0LUNzdiAtUGF0aCAiQzpcVXNlcnNcbmV3X3VzZXJzLmNzdiIKZm9yZWFjaCAoJHVzZXIgaW4gJHVzZXJzKSB7CiAgICBOZXctQURVc2VyIC1OYW1lICR1c2VyLk5hbWUgLUdpdmVuTmFtZSAkdXNlci5HaXZlbk5hbWUgLVN1cm5hbWUgJHVzZXIuU3VybmFtZSAtU2FtQWNjb3VudE5hbWUgJHVzZXIuU2FtQWNjb3VudE5hbWUgLVVzZXJQcmluY2lwYWxOYW1lICR1c2VyLlVzZXJQcmluY2lwYWxOYW1lIC1QYXRoICR1c2VyLlBhdGggLUFjY291bnRQYXNzd29yZCAoQ29udmVydFRvLVNlY3VyZVN0cmluZyAkdXNlci5QYXNzd29yZCAtQXNQbGFpblRleHQgLUZvcmNlKSAtRW5hYmxlZCAkdHJ1ZQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>$users = Import-Csv -Path &quot;C:\Users\new_users.csv&quot;
+foreach ($user in $users) {
+    New-ADUser -Name $user.Name -GivenName $user.GivenName -Surname $user.Surname -SamAccountName $user.SamAccountName -UserPrincipalName $user.UserPrincipalName -Path $user.Path -AccountPassword (ConvertTo-SecureString $user.Password -AsPlainText -Force) -Enabled $true
+}</pre></div><div class='content'></div><h2>Tasques Programades</h2>
+<div class='content'><p>Pots programar scripts de PowerShell per executar-se en moments específics utilitzant el Programador de Tasques.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("JGFjdGlvbiA9IE5ldy1TY2hlZHVsZWRUYXNrQWN0aW9uIC1FeGVjdXRlICJQb3dlclNoZWxsLmV4ZSIgLUFyZ3VtZW50ICItRmlsZSBDOlxTY3JpcHRzXERhaWx5VXNlclJlcG9ydC5wczEiCiR0cmlnZ2VyID0gTmV3LVNjaGVkdWxlZFRhc2tUcmlnZ2VyIC1EYWlseSAtQXQgNmFtClJlZ2lzdGVyLVNjaGVkdWxlZFRhc2sgLUFjdGlvbiAkYWN0aW9uIC1UcmlnZ2VyICR0cmlnZ2VyIC1UYXNrTmFtZSAiRGFpbHlVc2VyUmVwb3J0IiAtRGVzY3JpcHRpb24gIkdlbmVyYXRlcyBhIGRhaWx5IHJlcG9ydCBvZiB1c2VyIGFjdGl2aXRpZXMi"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>$action = New-ScheduledTaskAction -Execute &quot;PowerShell.exe&quot; -Argument &quot;-File C:\Scripts\DailyUserReport.ps1&quot;
+$trigger = New-ScheduledTaskTrigger -Daily -At 6am
+Register-ScheduledTask -Action $action -Trigger $trigger -TaskName &quot;DailyUserReport&quot; -Description &quot;Generates a daily report of user activities&quot;</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>PowerShell és una eina poderosa per automatitzar tasques d'Active Directory. Dominant els cmdlets i tècniques cobertes en aquest tema, pots agilitzar significativament els teus processos de gestió d'AD. Ja sigui creant usuaris, gestionant grups o automatitzant fluxos de treball complexos, PowerShell proporciona la flexibilitat i el control necessaris per gestionar eficientment el teu entorn d'Active Directory.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='active-directory-queries'>&#x25C4;Consultes d'Active Directory</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Automatització de Tasques d'Active Directory amb PowerShell</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-devops'>Introducció a DevOps &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carregant i Preprocessant Dades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/tensorflow/loading-and-preprocessing-data" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/tensorflow/loading-and-preprocessing-data" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/tensorflow/loading-and-preprocessing-data" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/tensorflow/loading-and-preprocessing-data" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/tensorflow/loading-and-preprocessing-data" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='eager-execution'>&#x25C4;Execució immediata</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Carregant i Preprocessant Dades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='datasets-and-iterators'>Datasets i iteradors &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquesta secció, cobrirem com carregar i preprocessar dades utilitzant TensorFlow. Aquest és un pas crucial en qualsevol pipeline d'aprenentatge automàtic, ja que la qualitat i el format de les teves dades poden afectar significativament el rendiment dels teus models.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Carregant Dades</strong>: Importar dades de diverses fonts com fitxers CSV, imatges o bases de dades.</li>
+<li><strong>Preprocessant Dades</strong>: Transformar dades en brut en un format adequat per entrenar models d'aprenentatge automàtic. Això inclou normalització, augmentació i divisió de dades en conjunts d'entrenament, validació i prova.</li>
+</ul>
+</div><h1>Carregant Dades</h1>
+<div class='content'></div><h2>Carregant Dades des de Fitxers CSV</h2>
+<div class='content'><p>TensorFlow proporciona diverses utilitats per carregar dades des de fitxers CSV. L'API <code>tf.data</code> és particularment útil per a aquest propòsit.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKCiMgRGVmaW5laXggbGEgcnV0YSBkZWwgZml0eGVyCmZpbGVfcGF0aCA9ICdwYXRoL3RvL3lvdXIvZGF0YS5jc3YnCgojIENyZWEgdW4gZGF0YXNldCBkZXMgZGVsIGZpdHhlciBDU1YKZGF0YXNldCA9IHRmLmRhdGEuZXhwZXJpbWVudGFsLm1ha2VfY3N2X2RhdGFzZXQoCiAgICBmaWxlX3BhdGgsCiAgICBiYXRjaF9zaXplPTMyLCAgIyBOb21icmUgZGUgbW9zdHJlcyBwZXIgbG90CiAgICBsYWJlbF9uYW1lPSd0YXJnZXRfY29sdW1uJywgICMgTGEgY29sdW1uYSBhIHV0aWxpdHphciBjb20gYSBldGlxdWV0ZXMKICAgIG5hX3ZhbHVlPSI/IiwgICMgVmFsb3IgYSBjb25zaWRlcmFyIGNvbSBhIGZhbHRhbnQKICAgIG51bV9lcG9jaHM9MSwgICMgTm9tYnJlIGRlIHZlZ2FkZXMgYSBpdGVyYXIgc29icmUgZWwgZGF0YXNldAogICAgaWdub3JlX2Vycm9ycz1UcnVlICAjIElnbm9yYXIgZXJyb3JzIGR1cmFudCBsYSBjw6BycmVnYQopCgojIEluc3BlY2Npb25hIGVsIGRhdGFzZXQKZm9yIGZlYXR1cmVzLCBsYWJlbCBpbiBkYXRhc2V0LnRha2UoMSk6CiAgICBwcmludCgiQ2FyYWN0ZXLDrXN0aXF1ZXM6ICIsIGZlYXR1cmVzKQogICAgcHJpbnQoIkV0aXF1ZXRhOiAiLCBsYWJlbCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+
+# Defineix la ruta del fitxer
+file_path = 'path/to/your/data.csv'
+
+# Crea un dataset des del fitxer CSV
+dataset = tf.data.experimental.make_csv_dataset(
+    file_path,
+    batch_size=32,  # Nombre de mostres per lot
+    label_name='target_column',  # La columna a utilitzar com a etiquetes
+    na_value=&quot;?&quot;,  # Valor a considerar com a faltant
+    num_epochs=1,  # Nombre de vegades a iterar sobre el dataset
+    ignore_errors=True  # Ignorar errors durant la c&agrave;rrega
+)
+
+# Inspecciona el dataset
+for features, label in dataset.take(1):
+    print(&quot;Caracter&iacute;stiques: &quot;, features)
+    print(&quot;Etiqueta: &quot;, label)</pre></div><div class='content'></div><h2>Carregant Dades d'Imatges</h2>
+<div class='content'><p>TensorFlow també proporciona utilitats per carregar i preprocessar dades d'imatges. La funció <code>tf.keras.preprocessing.image_dataset_from_directory</code> és molt útil per a això.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKCiMgRGVmaW5laXggbGEgcnV0YSBkZWwgZGlyZWN0b3JpCmRpcmVjdG9yeV9wYXRoID0gJ3BhdGgvdG8veW91ci9pbWFnZXMnCgojIENyZWEgdW4gZGF0YXNldCBkZXMgZGVsIGRpcmVjdG9yaQpkYXRhc2V0ID0gdGYua2VyYXMucHJlcHJvY2Vzc2luZy5pbWFnZV9kYXRhc2V0X2Zyb21fZGlyZWN0b3J5KAogICAgZGlyZWN0b3J5X3BhdGgsCiAgICBpbWFnZV9zaXplPSgyNTYsIDI1NiksICAjIFJlZGltZW5zaW9uYSBsZXMgaW1hdGdlcyBhIDI1NngyNTYKICAgIGJhdGNoX3NpemU9MzIsICAjIE5vbWJyZSBkZSBtb3N0cmVzIHBlciBsb3QKICAgIGxhYmVsX21vZGU9J2ludCcgICMgTGVzIGV0aXF1ZXRlcyBlcyByZXRvcm5lbiBjb20gYSBlbnRlcnMKKQoKIyBJbnNwZWNjaW9uYSBlbCBkYXRhc2V0CmZvciBpbWFnZXMsIGxhYmVscyBpbiBkYXRhc2V0LnRha2UoMSk6CiAgICBwcmludCgiSW1hdGdlczogIiwgaW1hZ2VzLnNoYXBlKQogICAgcHJpbnQoIkV0aXF1ZXRlczogIiwgbGFiZWxzKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+
+# Defineix la ruta del directori
+directory_path = 'path/to/your/images'
+
+# Crea un dataset des del directori
+dataset = tf.keras.preprocessing.image_dataset_from_directory(
+    directory_path,
+    image_size=(256, 256),  # Redimensiona les imatges a 256x256
+    batch_size=32,  # Nombre de mostres per lot
+    label_mode='int'  # Les etiquetes es retornen com a enters
+)
+
+# Inspecciona el dataset
+for images, labels in dataset.take(1):
+    print(&quot;Imatges: &quot;, images.shape)
+    print(&quot;Etiquetes: &quot;, labels)</pre></div><div class='content'></div><h1>Preprocessant Dades</h1>
+<div class='content'></div><h2>Normalització</h2>
+<div class='content'><p>La normalització és un pas comú de preprocessament que escala les característiques a un rang estàndard, normalment [0, 1] o [-1, 1].</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIG5vcm1hbGl6ZShpbWFnZSwgbGFiZWwpOgogICAgaW1hZ2UgPSB0Zi5jYXN0KGltYWdlLCB0Zi5mbG9hdDMyKSAvIDI1NS4wCiAgICByZXR1cm4gaW1hZ2UsIGxhYmVsCgojIEFwbGljYSBsYSBub3JtYWxpdHphY2nDsyBhbCBkYXRhc2V0Cm5vcm1hbGl6ZWRfZGF0YXNldCA9IGRhdGFzZXQubWFwKG5vcm1hbGl6ZSkKCiMgSW5zcGVjY2lvbmEgZWwgZGF0YXNldCBub3JtYWxpdHphdApmb3IgaW1hZ2VzLCBsYWJlbHMgaW4gbm9ybWFsaXplZF9kYXRhc2V0LnRha2UoMSk6CiAgICBwcmludCgiSW1hdGdlcyBOb3JtYWxpdHphZGVzOiAiLCBpbWFnZXNbMF0pCiAgICBwcmludCgiRXRpcXVldGVzOiAiLCBsYWJlbHMp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def normalize(image, label):
+    image = tf.cast(image, tf.float32) / 255.0
+    return image, label
+
+# Aplica la normalitzaci&oacute; al dataset
+normalized_dataset = dataset.map(normalize)
+
+# Inspecciona el dataset normalitzat
+for images, labels in normalized_dataset.take(1):
+    print(&quot;Imatges Normalitzades: &quot;, images[0])
+    print(&quot;Etiquetes: &quot;, labels)</pre></div><div class='content'></div><h2>Augmentació de Dades</h2>
+<div class='content'><p>L'augmentació de dades és una tècnica per augmentar artificialment la mida del conjunt d'entrenament creant versions modificades de les imatges en el dataset.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGF0YV9hdWdtZW50YXRpb24gPSB0Zi5rZXJhcy5TZXF1ZW50aWFsKFsKICAgIHRmLmtlcmFzLmxheWVycy5SYW5kb21GbGlwKCJob3Jpem9udGFsX2FuZF92ZXJ0aWNhbCIpLAogICAgdGYua2VyYXMubGF5ZXJzLlJhbmRvbVJvdGF0aW9uKDAuMiksCl0pCgojIEFwbGljYSBsJ2F1Z21lbnRhY2nDsyBkZSBkYWRlcyBhbCBkYXRhc2V0CmF1Z21lbnRlZF9kYXRhc2V0ID0gbm9ybWFsaXplZF9kYXRhc2V0Lm1hcChsYW1iZGEgeCwgeTogKGRhdGFfYXVnbWVudGF0aW9uKHgsIHRyYWluaW5nPVRydWUpLCB5KSkKCiMgSW5zcGVjY2lvbmEgZWwgZGF0YXNldCBhdWdtZW50YXQKZm9yIGltYWdlcywgbGFiZWxzIGluIGF1Z21lbnRlZF9kYXRhc2V0LnRha2UoMSk6CiAgICBwcmludCgiSW1hdGdlcyBBdWdtZW50YWRlczogIiwgaW1hZ2VzWzBdKQogICAgcHJpbnQoIkV0aXF1ZXRlczogIiwgbGFiZWxzKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>data_augmentation = tf.keras.Sequential([
+    tf.keras.layers.RandomFlip(&quot;horizontal_and_vertical&quot;),
+    tf.keras.layers.RandomRotation(0.2),
+])
+
+# Aplica l'augmentaci&oacute; de dades al dataset
+augmented_dataset = normalized_dataset.map(lambda x, y: (data_augmentation(x, training=True), y))
+
+# Inspecciona el dataset augmentat
+for images, labels in augmented_dataset.take(1):
+    print(&quot;Imatges Augmentades: &quot;, images[0])
+    print(&quot;Etiquetes: &quot;, labels)</pre></div><div class='content'></div><h2>Dividint Dades</h2>
+<div class='content'><p>Dividir el dataset en conjunts d'entrenament, validació i prova és essencial per avaluar el rendiment del teu model.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBEZWZpbmVpeCBsZXMgbWlkZXMgZGUgbGVzIGRpdmlzaW9ucwp0cmFpbl9zaXplID0gMC43CnZhbF9zaXplID0gMC4xNQp0ZXN0X3NpemUgPSAwLjE1CgojIENhbGN1bGEgZWwgbm9tYnJlIGRlIG1vc3RyZXMKdG90YWxfc2FtcGxlcyA9IGxlbihsaXN0KGRhdGFzZXQpKQp0cmFpbl9zYW1wbGVzID0gaW50KHRyYWluX3NpemUgKiB0b3RhbF9zYW1wbGVzKQp2YWxfc2FtcGxlcyA9IGludCh2YWxfc2l6ZSAqIHRvdGFsX3NhbXBsZXMpCgojIERpdmlkZWl4IGVsIGRhdGFzZXQKdHJhaW5fZGF0YXNldCA9IGRhdGFzZXQudGFrZSh0cmFpbl9zYW1wbGVzKQp2YWxfZGF0YXNldCA9IGRhdGFzZXQuc2tpcCh0cmFpbl9zYW1wbGVzKS50YWtlKHZhbF9zYW1wbGVzKQp0ZXN0X2RhdGFzZXQgPSBkYXRhc2V0LnNraXAodHJhaW5fc2FtcGxlcyArIHZhbF9zYW1wbGVzKQoKIyBJbnNwZWNjaW9uYSBsZXMgZGl2aXNpb25zCnByaW50KGYiTW9zdHJlcyBkJ2VudHJlbmFtZW50OiB7bGVuKGxpc3QodHJhaW5fZGF0YXNldCkpfSIpCnByaW50KGYiTW9zdHJlcyBkZSB2YWxpZGFjacOzOiB7bGVuKGxpc3QodmFsX2RhdGFzZXQpKX0iKQpwcmludChmIk1vc3RyZXMgZGUgcHJvdmE6IHtsZW4obGlzdCh0ZXN0X2RhdGFzZXQpKX0iKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Defineix les mides de les divisions
+train_size = 0.7
+val_size = 0.15
+test_size = 0.15
+
+# Calcula el nombre de mostres
+total_samples = len(list(dataset))
+train_samples = int(train_size * total_samples)
+val_samples = int(val_size * total_samples)
+
+# Divideix el dataset
+train_dataset = dataset.take(train_samples)
+val_dataset = dataset.skip(train_samples).take(val_samples)
+test_dataset = dataset.skip(train_samples + val_samples)
+
+# Inspecciona les divisions
+print(f&quot;Mostres d'entrenament: {len(list(train_dataset))}&quot;)
+print(f&quot;Mostres de validaci&oacute;: {len(list(val_dataset))}&quot;)
+print(f&quot;Mostres de prova: {len(list(test_dataset))}&quot;)</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem cobert els passos essencials per carregar i preprocessar dades en TensorFlow. Hem après a:</p>
+<ul>
+<li>Carregar dades des de fitxers CSV i directoris d'imatges.</li>
+<li>Normalitzar i augmentar dades.</li>
+<li>Dividir dades en conjunts d'entrenament, validació i prova.</li>
+</ul>
+<p>Aquests passos són fonamentals per preparar les teves dades per a tasques d'aprenentatge automàtic. Una correcta càrrega i preprocessament de dades pot millorar significativament el rendiment i la fiabilitat dels teus models.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='eager-execution'>&#x25C4;Execució immediata</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Carregant i Preprocessant Dades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='datasets-and-iterators'>Datasets i iteradors &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

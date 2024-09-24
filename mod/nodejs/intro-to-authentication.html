@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducció a l'Autenticació</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nodejs/intro-to-authentication" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nodejs/intro-to-authentication" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nodejs/intro-to-authentication" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nodejs/intro-to-authentication" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nodejs/intro-to-authentication" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='error-handling-express'>&#x25C4;Gestió d'Errors a Express</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Introducció a l'Autenticació</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='passport-js'>Utilitzant Passport.js &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>L'autenticació és un aspecte crucial del desenvolupament web, assegurant que els usuaris són qui diuen ser. En aquest mòdul, explorarem com implementar l'autenticació en una aplicació Node.js, cobrint tant conceptes bàsics com avançats.</p>
+</div><h1>Què és l'Autenticació?</h1>
+<div class='content'><p>L'autenticació és el procés de verificar la identitat d'un usuari o sistema. És una part fonamental per assegurar aplicacions i serveis web.</p>
+</div><h2>Conceptes Clau:</h2>
+<div class='content'><ul>
+<li><strong>Credencials d'Usuari</strong>: Normalment una combinació d'un nom d'usuari i una contrasenya.</li>
+<li><strong>Tokens</strong>: Utilitzats per mantenir sessions d'usuari sense emmagatzemar informació sensible al costat del client.</li>
+<li><strong>Sessions</strong>: Emmagatzematge al servidor de dades d'usuari per mantenir l'estat a través de múltiples sol·licituds.</li>
+<li><strong>OAuth</strong>: Un estàndard obert per a la delegació d'accés, comunament utilitzat per a l'autenticació basada en tokens.</li>
+</ul>
+</div><h1>Configuració d'un Projecte Node.js</h1>
+<div class='content'><p>Abans d'endinsar-nos en l'autenticació, configurem un projecte bàsic de Node.js.</p>
+<ol>
+<li>
+<p><strong>Inicialitzar un Projecte Node.js</strong>:</p>
+<pre><code class="language-bash">mkdir auth-demo
+cd auth-demo
+npm init -y
+</code></pre>
+</li>
+<li>
+<p><strong>Instal·lar Paquets Necessaris</strong>:</p>
+<pre><code class="language-bash">npm install express body-parser bcryptjs jsonwebtoken
+</code></pre>
+</li>
+<li>
+<p><strong>Crear un Servidor Bàsic</strong>:</p>
+<pre><code class="language-javascript">const express = require('express');
+const bodyParser = require('body-parser');
+
+const app = express();
+app.use(bodyParser.json());
+
+app.get('/', (req, res) =&gt; {
+    res.send('Benvingut a la Demostració d'Autenticació!');
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () =&gt; {
+    console.log(`El servidor està funcionant al port ${PORT}`);
+});
+</code></pre>
+</li>
+</ol>
+</div><h1>Autenticació Bàsica</h1>
+<div class='content'></div><h2>Registre d'Usuari</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Hashing de Contrasenyes</strong>: Utilitza <code>bcryptjs</code> per fer hashing de les contrasenyes abans de desar-les a la base de dades.</p>
+<pre><code class="language-javascript">const bcrypt = require('bcryptjs');
+
+const hashPassword = async (password) =&gt; {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    return hashedPassword;
+};
+</code></pre>
+</li>
+<li>
+<p><strong>Endpoint de Registre</strong>:</p>
+<pre><code class="language-javascript">app.post('/register', async (req, res) =&gt; {
+    const { username, password } = req.body;
+    const hashedPassword = await hashPassword(password);
+    // Desa l'usuari a la base de dades (simulat aquí)
+    const user = { id: Date.now(), username, password: hashedPassword };
+    res.status(201).send(user);
+});
+</code></pre>
+</li>
+</ol>
+</div><h2>Inici de Sessió d'Usuari</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Verificació de Contrasenyes</strong>: Compara la contrasenya amb hash amb el hash emmagatzemat.</p>
+<pre><code class="language-javascript">const verifyPassword = async (password, hashedPassword) =&gt; {
+    return await bcrypt.compare(password, hashedPassword);
+};
+</code></pre>
+</li>
+<li>
+<p><strong>Endpoint d'Inici de Sessió</strong>:</p>
+<pre><code class="language-javascript">app.post('/login', async (req, res) =&gt; {
+    const { username, password } = req.body;
+    // Recupera l'usuari de la base de dades (simulat aquí)
+    const user = { id: 1, username, password: '$2a$10$...' }; // contrasenya amb hash
+    const isMatch = await verifyPassword(password, user.password);
+    if (isMatch) {
+        res.status(200).send('Inici de sessió exitós');
+    } else {
+        res.status(400).send('Credencials invàlides');
+    }
+});
+</code></pre>
+</li>
+</ol>
+</div><h1>Autenticació Basada en Tokens</h1>
+<div class='content'></div><h2>Generació de Tokens</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Instal·lar <code>jsonwebtoken</code></strong>:</p>
+<pre><code class="language-bash">npm install jsonwebtoken
+</code></pre>
+</li>
+<li>
+<p><strong>Generar JWT</strong>:</p>
+<pre><code class="language-javascript">const jwt = require('jsonwebtoken');
+
+const generateToken = (user) =&gt; {
+    const token = jwt.sign({ id: user.id, username: user.username }, 'secretKey', { expiresIn: '1h' });
+    return token;
+};
+</code></pre>
+</li>
+<li>
+<p><strong>Endpoint d'Inici de Sessió amb Token</strong>:</p>
+<pre><code class="language-javascript">app.post('/login', async (req, res) =&gt; {
+    const { username, password } = req.body;
+    const user = { id: 1, username, password: '$2a$10$...' };
+    const isMatch = await verifyPassword(password, user.password);
+    if (isMatch) {
+        const token = generateToken(user);
+        res.status(200).send({ token });
+    } else {
+        res.status(400).send('Credencials invàlides');
+    }
+});
+</code></pre>
+</li>
+</ol>
+</div><h2>Protecció de Rutes</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Middleware per Verificar el Token</strong>:</p>
+<pre><code class="language-javascript">const authenticateToken = (req, res, next) =&gt; {
+    const token = req.header('Authorization').replace('Bearer ', '');
+    if (!token) {
+        return res.status(401).send('Accés Denegat');
+    }
+    try {
+        const verified = jwt.verify(token, 'secretKey');
+        req.user = verified;
+        next();
+    } catch (err) {
+        res.status(400).send('Token Invàlid');
+    }
+};
+</code></pre>
+</li>
+<li>
+<p><strong>Ruta Protegida</strong>:</p>
+<pre><code class="language-javascript">app.get('/protected', authenticateToken, (req, res) =&gt; {
+    res.send('Aquesta és una ruta protegida');
+});
+</code></pre>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest mòdul, hem cobert els conceptes bàsics de l'autenticació en una aplicació Node.js. Hem començat configurant un projecte Node.js, després hem implementat l'autenticació bàsica amb contrasenyes amb hash. També hem explorat l'autenticació basada en tokens utilitzant JSON Web Tokens (JWT) i com protegir rutes utilitzant middleware.</p>
+<p>Entenent aquests conceptes, pots construir aplicacions Node.js més segures i assegurar-te que només els usuaris autenticats poden accedir a certs recursos.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='error-handling-express'>&#x25C4;Gestió d'Errors a Express</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Introducció a l'Autenticació</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='passport-js'>Utilitzant Passport.js &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operacions d'escriptura massiva</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/mongodb/bulk-write-operations" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/mongodb/bulk-write-operations" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/mongodb/bulk-write-operations" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/mongodb/bulk-write-operations" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/mongodb/bulk-write-operations" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='deleting-documents'>&#x25C4;Eliminant Documents</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Operacions d'escriptura massiva</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='indexes-in-mongodb'>Índexs a MongoDB &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Les operacions d'escriptura massiva a MongoDB permeten realitzar múltiples operacions d'escriptura (insercions, actualitzacions, eliminacions) en una sola sol·licitud. Això pot millorar significativament el rendiment i l'eficiència de les operacions de la teva base de dades, especialment quan es treballa amb grans conjunts de dades.</p>
+</div><h1>Conceptes clau</h1>
+<div class='content'><ul>
+<li><strong>Escriptura massiva</strong>: Un mètode per executar múltiples operacions d'escriptura en una sola comanda.</li>
+<li><strong>Escriptura massiva ordenada</strong>: Les operacions s'executen en l'ordre en què s'afegeixen. Si es produeix un error, l'execució s'atura.</li>
+<li><strong>Escriptura massiva desordenada</strong>: Les operacions s'executen en paral·lel, i els errors no aturen l'execució de les operacions restants.</li>
+<li><strong>Nivell d'escriptura</strong>: Especifica el nivell de reconeixement sol·licitat a MongoDB per a les operacions d'escriptura.</li>
+</ul>
+</div><h1>Per què utilitzar operacions d'escriptura massiva?</h1>
+<div class='content'><ul>
+<li><strong>Rendiment</strong>: Redueix el nombre de viatges de xarxa entre el client i el servidor.</li>
+<li><strong>Atomicitat</strong>: Assegura que totes les operacions tinguin èxit o cap, mantenint la integritat de les dades.</li>
+<li><strong>Gestió d'errors</strong>: Proporciona informació detallada dels errors per a cada operació.</li>
+</ul>
+</div><h1>Sintaxi bàsica</h1>
+<div class='content'><p>El mètode <code>bulkWrite</code> s'utilitza per realitzar operacions d'escriptura massiva. Aquí tens la sintaxi bàsica:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGIuY29sbGVjdGlvbi5idWxrV3JpdGUoWwogIHsgaW5zZXJ0T25lOiB7ICJkb2N1bWVudCI6IHsgLyogZG9jdW1lbnQgYSBpbnNlcmlyICovIH0gfSB9LAogIHsgdXBkYXRlT25lOiB7ICJmaWx0ZXIiOiB7IC8qIGNyaXRlcmlzIGRlIGNvbnN1bHRhICovIH0sICJ1cGRhdGUiOiB7IC8qIG9wZXJhY2lvbnMgZCdhY3R1YWxpdHphY2nDsyAqLyB9IH0gfSwKICB7IGRlbGV0ZU9uZTogeyAiZmlsdGVyIjogeyAvKiBjcml0ZXJpcyBkZSBjb25zdWx0YSAqLyB9IH0gfSwKICAvLyBNw6lzIG9wZXJhY2lvbnMuLi4KXSwgeyBvcmRlcmVkOiB0cnVlL2ZhbHNlLCB3cml0ZUNvbmNlcm46IHsgLyogb3BjaW9ucyBkZSBuaXZlbGwgZCdlc2NyaXB0dXJhICovIH0gfSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>db.collection.bulkWrite([
+  { insertOne: { &quot;document&quot;: { /* document a inserir */ } } },
+  { updateOne: { &quot;filter&quot;: { /* criteris de consulta */ }, &quot;update&quot;: { /* operacions d'actualitzaci&oacute; */ } } },
+  { deleteOne: { &quot;filter&quot;: { /* criteris de consulta */ } } },
+  // M&eacute;s operacions...
+], { ordered: true/false, writeConcern: { /* opcions de nivell d'escriptura */ } })</pre></div><div class='content'></div><h1>Exemples</h1>
+<div class='content'></div><h2>Inserir múltiples documents</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGIuc3R1ZGVudHMuYnVsa1dyaXRlKFsKICB7IGluc2VydE9uZTogeyAiZG9jdW1lbnQiOiB7IG5hbWU6ICJBbGljZSIsIGFnZTogMjEsIG1ham9yOiAiQ29tcHV0ZXIgU2NpZW5jZSIgfSB9IH0sCiAgeyBpbnNlcnRPbmU6IHsgImRvY3VtZW50IjogeyBuYW1lOiAiQm9iIiwgYWdlOiAyMiwgbWFqb3I6ICJNYXRoZW1hdGljcyIgfSB9IH0sCiAgeyBpbnNlcnRPbmU6IHsgImRvY3VtZW50IjogeyBuYW1lOiAiQ2hhcmxpZSIsIGFnZTogMjMsIG1ham9yOiAiUGh5c2ljcyIgfSB9IH0KXSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>db.students.bulkWrite([
+  { insertOne: { &quot;document&quot;: { name: &quot;Alice&quot;, age: 21, major: &quot;Computer Science&quot; } } },
+  { insertOne: { &quot;document&quot;: { name: &quot;Bob&quot;, age: 22, major: &quot;Mathematics&quot; } } },
+  { insertOne: { &quot;document&quot;: { name: &quot;Charlie&quot;, age: 23, major: &quot;Physics&quot; } } }
+])</pre></div><div class='content'></div><h2>Actualitzar múltiples documents</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGIuc3R1ZGVudHMuYnVsa1dyaXRlKFsKICB7IHVwZGF0ZU9uZTogeyAiZmlsdGVyIjogeyBuYW1lOiAiQWxpY2UiIH0sICJ1cGRhdGUiOiB7ICRzZXQ6IHsgYWdlOiAyMiB9IH0gfSB9LAogIHsgdXBkYXRlT25lOiB7ICJmaWx0ZXIiOiB7IG5hbWU6ICJCb2IiIH0sICJ1cGRhdGUiOiB7ICRzZXQ6IHsgbWFqb3I6ICJTdGF0aXN0aWNzIiB9IH0gfSB9Cl0p"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>db.students.bulkWrite([
+  { updateOne: { &quot;filter&quot;: { name: &quot;Alice&quot; }, &quot;update&quot;: { $set: { age: 22 } } } },
+  { updateOne: { &quot;filter&quot;: { name: &quot;Bob&quot; }, &quot;update&quot;: { $set: { major: &quot;Statistics&quot; } } } }
+])</pre></div><div class='content'></div><h2>Eliminar múltiples documents</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGIuc3R1ZGVudHMuYnVsa1dyaXRlKFsKICB7IGRlbGV0ZU9uZTogeyAiZmlsdGVyIjogeyBuYW1lOiAiQ2hhcmxpZSIgfSB9IH0sCiAgeyBkZWxldGVPbmU6IHsgImZpbHRlciI6IHsgYWdlOiB7ICRsdDogMjIgfSB9IH0gfQpdKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>db.students.bulkWrite([
+  { deleteOne: { &quot;filter&quot;: { name: &quot;Charlie&quot; } } },
+  { deleteOne: { &quot;filter&quot;: { age: { $lt: 22 } } } }
+])</pre></div><div class='content'></div><h2>Operacions mixtes</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGIuc3R1ZGVudHMuYnVsa1dyaXRlKFsKICB7IGluc2VydE9uZTogeyAiZG9jdW1lbnQiOiB7IG5hbWU6ICJEYXZpZCIsIGFnZTogMjQsIG1ham9yOiAiQmlvbG9neSIgfSB9IH0sCiAgeyB1cGRhdGVPbmU6IHsgImZpbHRlciI6IHsgbmFtZTogIkFsaWNlIiB9LCAidXBkYXRlIjogeyAkc2V0OiB7IG1ham9yOiAiRGF0YSBTY2llbmNlIiB9IH0gfSB9LAogIHsgZGVsZXRlT25lOiB7ICJmaWx0ZXIiOiB7IG5hbWU6ICJCb2IiIH0gfSB9Cl0sIHsgb3JkZXJlZDogZmFsc2UgfSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>db.students.bulkWrite([
+  { insertOne: { &quot;document&quot;: { name: &quot;David&quot;, age: 24, major: &quot;Biology&quot; } } },
+  { updateOne: { &quot;filter&quot;: { name: &quot;Alice&quot; }, &quot;update&quot;: { $set: { major: &quot;Data Science&quot; } } } },
+  { deleteOne: { &quot;filter&quot;: { name: &quot;Bob&quot; } } }
+], { ordered: false })</pre></div><div class='content'></div><h1>Escriptures massives ordenades vs desordenades</h1>
+<div class='content'><p>| Característica         | Escriptura massiva ordenada | Escriptura massiva desordenada |
+|------------------------|-----------------------------|--------------------------------|
+| Ordre d'execució       | Seqüencial                  | Paral·lel                      |
+| S'atura en cas d'error | Sí                          | No                             |
+| Rendiment              | Més lent                    | Més ràpid                      |
+| Cas d'ús               | Quan l'ordre importa        | Quan l'ordre no importa        |</p>
+</div><h1>Nivell d'escriptura</h1>
+<div class='content'><p>El nivell d'escriptura descriu el nivell de reconeixement sol·licitat a MongoDB per a les operacions d'escriptura. Pots especificar el nivell d'escriptura en les operacions d'escriptura massiva per assegurar la durabilitat i consistència de les dades.</p>
+</div><h2>Exemple amb nivell d'escriptura</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGIuc3R1ZGVudHMuYnVsa1dyaXRlKFsKICB7IGluc2VydE9uZTogeyAiZG9jdW1lbnQiOiB7IG5hbWU6ICJFdmUiLCBhZ2U6IDI1LCBtYWpvcjogIkNoZW1pc3RyeSIgfSB9IH0sCiAgeyB1cGRhdGVPbmU6IHsgImZpbHRlciI6IHsgbmFtZTogIkRhdmlkIiB9LCAidXBkYXRlIjogeyAkc2V0OiB7IGFnZTogMjUgfSB9IH0gfQpdLCB7IHdyaXRlQ29uY2VybjogeyB3OiAibWFqb3JpdHkiLCBqOiB0cnVlLCB3dGltZW91dDogNTAwMCB9IH0p"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>db.students.bulkWrite([
+  { insertOne: { &quot;document&quot;: { name: &quot;Eve&quot;, age: 25, major: &quot;Chemistry&quot; } } },
+  { updateOne: { &quot;filter&quot;: { name: &quot;David&quot; }, &quot;update&quot;: { $set: { age: 25 } } } }
+], { writeConcern: { w: &quot;majority&quot;, j: true, wtimeout: 5000 } })</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Les operacions d'escriptura massiva a MongoDB són una eina poderosa per realitzar múltiples operacions d'escriptura de manera eficient. Entenent les diferències entre operacions ordenades i desordenades i com utilitzar els nivells d'escriptura, pots optimitzar les teves interaccions amb la base de dades per obtenir un millor rendiment i fiabilitat. Practica utilitzant operacions d'escriptura massiva amb diferents escenaris per convertir-te en un expert en la gestió de manipulacions de dades a gran escala a MongoDB.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='deleting-documents'>&#x25C4;Eliminant Documents</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Operacions d'escriptura massiva</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='indexes-in-mongodb'>Índexs a MongoDB &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

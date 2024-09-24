@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ús d'APIs i Llibreries de Clients</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/bigquery/using-apis-and-client-libraries" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/bigquery/using-apis-and-client-libraries" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/bigquery/using-apis-and-client-libraries" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/bigquery/using-apis-and-client-libraries" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/bigquery/using-apis-and-client-libraries" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='scheduling-queries'>&#x25C4;Programació de consultes</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Ús d'APIs i Llibreries de Clients</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='understanding-bigquery-security'>Comprendre la seguretat de BigQuery &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>BigQuery és un magatzem de dades totalment gestionat i sense servidor que permet una anàlisi escalable de petabytes de dades. Per interactuar amb BigQuery programàticament, pots utilitzar APIs i llibreries de clients. Aquest tema et guiarà a través de l'ús de les APIs i llibreries de clients de BigQuery des de nivells principiants fins a avançats.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>API (Interfície de Programació d'Aplicacions):</strong> Un conjunt de regles que permeten que diferents entitats de programari es comuniquin entre elles.</li>
+<li><strong>Llibreria de Clients:</strong> Una col·lecció de codi preescrit que els desenvolupadors poden utilitzar per interactuar amb APIs més fàcilment.</li>
+<li><strong>API de BigQuery:</strong> Proporciona accés programàtic a les funcions de BigQuery.</li>
+<li><strong>Autenticació:</strong> El procés de verificar la identitat d'un usuari o aplicació.</li>
+</ul>
+</div><h1>Configuració</h1>
+<div class='content'><p>Abans de poder utilitzar l'API de BigQuery o les llibreries de clients, has de configurar el teu entorn.</p>
+</div><h2>Prerequisits</h2>
+<div class='content'><ul>
+<li>Un compte de Google Cloud Platform (GCP).</li>
+<li>Un projecte de GCP amb BigQuery habilitat.</li>
+<li>Credencials de compte de servei per a l'autenticació.</li>
+</ul>
+</div><h2>Autenticació</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear un Compte de Servei:</strong></p>
+<ul>
+<li>Ves a la Consola de GCP.</li>
+<li>Navega a IAM &amp; Admin &gt; Comptes de Servei.</li>
+<li>Fes clic a &quot;Crear Compte de Servei&quot; i segueix les instruccions.</li>
+<li>Descarrega el fitxer de clau JSON.</li>
+</ul>
+</li>
+<li>
+<p><strong>Configura la Variable d'Entorn:</strong></p>
+<pre><code class="language-bash">export GOOGLE_APPLICATION_CREDENTIALS=&quot;/path/to/your/service-account-file.json&quot;
+</code></pre>
+</li>
+</ol>
+</div><h1>Ús de l'API de BigQuery</h1>
+<div class='content'><p>L'API de BigQuery et permet interactuar amb BigQuery programàticament. A continuació es mostren els passos per realitzar operacions bàsiques utilitzant l'API.</p>
+</div><h2>Fer Sol·licituds API</h2>
+<div class='content'><p>Pots utilitzar eines com <code>curl</code> o Postman per fer sol·licituds HTTP a l'API de BigQuery.</p>
+<h4>Exemple: Llistar Conjunts de Dades</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y3VybCAtWCBHRVQgXAogIC1IICJBdXRob3JpemF0aW9uOiBCZWFyZXIgJChnY2xvdWQgYXV0aCBhcHBsaWNhdGlvbi1kZWZhdWx0IHByaW50LWFjY2Vzcy10b2tlbikiIFwKICAiaHR0cHM6Ly9iaWdxdWVyeS5nb29nbGVhcGlzLmNvbS9iaWdxdWVyeS92Mi9wcm9qZWN0cy95b3VyLXByb2plY3QtaWQvZGF0YXNldHMi"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>curl -X GET \
+  -H &quot;Authorization: Bearer $(gcloud auth application-default print-access-token)&quot; \
+  &quot;https://bigquery.googleapis.com/bigquery/v2/projects/your-project-id/datasets&quot;</pre></div><div class='content'></div><h2>Analitzar Respostes API</h2>
+<div class='content'><p>Les respostes API solen estar en format JSON. Pots utilitzar eines com <code>jq</code> per analitzar respostes JSON.</p>
+<h4>Exemple: Analitzar Resposta JSON</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y3VybCAtWCBHRVQgXAogIC1IICJBdXRob3JpemF0aW9uOiBCZWFyZXIgJChnY2xvdWQgYXV0aCBhcHBsaWNhdGlvbi1kZWZhdWx0IHByaW50LWFjY2Vzcy10b2tlbikiIFwKICAiaHR0cHM6Ly9iaWdxdWVyeS5nb29nbGVhcGlzLmNvbS9iaWdxdWVyeS92Mi9wcm9qZWN0cy95b3VyLXByb2plY3QtaWQvZGF0YXNldHMiIHwganEgLg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>curl -X GET \
+  -H &quot;Authorization: Bearer $(gcloud auth application-default print-access-token)&quot; \
+  &quot;https://bigquery.googleapis.com/bigquery/v2/projects/your-project-id/datasets&quot; | jq .</pre></div><div class='content'></div><h1>Ús de Llibreries de Clients</h1>
+<div class='content'><p>Les llibreries de clients proporcionen una manera més convenient d'interactuar amb BigQuery. Google proporciona llibreries de clients per a diversos llenguatges de programació.</p>
+</div><h2>Llibreria de Clients de Python</h2>
+<div class='content'><p>Python és un dels llenguatges més populars per a l'anàlisi de dades. A continuació es mostren els passos per utilitzar la llibreria de clients de BigQuery per a Python.</p>
+<h4>Instal·lació</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgZ29vZ2xlLWNsb3VkLWJpZ3F1ZXJ5"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install google-cloud-bigquery</pre></div><div class='content'><h4>Operacions Bàsiques</h4>
+<ol>
+<li>
+<p><strong>Inicialitzar el Client:</strong></p>
+<pre><code class="language-python">from google.cloud import bigquery
+
+client = bigquery.Client()
+</code></pre>
+</li>
+<li>
+<p><strong>Llistar Conjunts de Dades:</strong></p>
+<pre><code class="language-python">datasets = list(client.list_datasets())
+for dataset in datasets:
+    print(dataset.dataset_id)
+</code></pre>
+</li>
+<li>
+<p><strong>Executar una Consulta:</strong></p>
+<pre><code class="language-python">query = &quot;&quot;&quot;
+SELECT name, SUM(number) as total
+FROM `bigquery-public-data.usa_names.usa_1910_2013`
+WHERE state = 'TX'
+GROUP BY name
+ORDER BY total DESC
+LIMIT 10
+&quot;&quot;&quot;
+query_job = client.query(query)
+
+for row in query_job:
+    print(f&quot;name: {row['name']}, total: {row['total']}&quot;)
+</code></pre>
+</li>
+</ol>
+</div><h2>Llibreria de Clients de JavaScript</h2>
+<div class='content'><p>JavaScript és àmpliament utilitzat per a aplicacions web. A continuació es mostren els passos per utilitzar la llibreria de clients de BigQuery per a JavaScript.</p>
+<h4>Instal·lació</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnBtIGluc3RhbGwgLS1zYXZlIEBnb29nbGUtY2xvdWQvYmlncXVlcnk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npm install --save @google-cloud/bigquery</pre></div><div class='content'><h4>Operacions Bàsiques</h4>
+<ol>
+<li>
+<p><strong>Inicialitzar el Client:</strong></p>
+<pre><code class="language-javascript">const {BigQuery} = require('@google-cloud/bigquery');
+const bigquery = new BigQuery();
+</code></pre>
+</li>
+<li>
+<p><strong>Llistar Conjunts de Dades:</strong></p>
+<pre><code class="language-javascript">async function listDatasets() {
+  const [datasets] = await bigquery.getDatasets();
+  datasets.forEach(dataset =&gt; console.log(dataset.id));
+}
+
+listDatasets();
+</code></pre>
+</li>
+<li>
+<p><strong>Executar una Consulta:</strong></p>
+<pre><code class="language-javascript">async function runQuery() {
+  const query = `
+  SELECT name, SUM(number) as total
+  FROM \`bigquery-public-data.usa_names.usa_1910_2013\`
+  WHERE state = 'TX'
+  GROUP BY name
+  ORDER BY total DESC
+  LIMIT 10
+  `;
+  const [rows] = await bigquery.query(query);
+  rows.forEach(row =&gt; console.log(`name: ${row.name}, total: ${row.total}`));
+}
+
+runQuery();
+</code></pre>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Utilitzar APIs i llibreries de clients per interactuar amb BigQuery permet realitzar operacions de dades potents i flexibles. Tant si utilitzes Python, JavaScript, o un altre llenguatge, entendre com autenticar-se, fer sol·licituds i gestionar respostes és crucial. En dominar aquestes habilitats, pots aprofitar tot el potencial de BigQuery per a les teves necessitats d'anàlisi de dades.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='scheduling-queries'>&#x25C4;Programació de consultes</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Ús d'APIs i Llibreries de Clients</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='understanding-bigquery-security'>Comprendre la seguretat de BigQuery &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

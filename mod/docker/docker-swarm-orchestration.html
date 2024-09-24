@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker Swarm i Orquestració</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/docker/docker-swarm-orchestration" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/docker/docker-swarm-orchestration" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/docker/docker-swarm-orchestration" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/docker/docker-swarm-orchestration" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/docker/docker-swarm-orchestration" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='managing-docker-compose-projects'>&#x25C4;Gestionant projectes de Docker Compose</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Docker Swarm i Orquestració</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='scaling-services-docker-swarm'>Escalant serveis amb Docker Swarm &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a Docker Swarm</h1>
+<div class='content'><p>Docker Swarm és una eina nativa de clustering i orquestració per a contenidors Docker. Et permet gestionar un clúster de nodes Docker com un sistema virtual únic.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Swarm</strong>: Un grup de màquines que executen Docker i s'han unit en un clúster.</li>
+<li><strong>Node</strong>: Una màquina individual en un Swarm.
+<ul>
+<li><strong>Node Manager</strong>: Responsable de gestionar el Swarm i els seus recursos.</li>
+<li><strong>Node Worker</strong>: Executa tasques assignades pel Manager.</li>
+</ul>
+</li>
+<li><strong>Servei</strong>: Una definició de com executar un contenidor, incloent la imatge, ports i rèpliques.</li>
+<li><strong>Tasca</strong>: Una instància única d'un contenidor en execució que forma part d'un servei.</li>
+<li><strong>Xarxa Overlay</strong>: Una xarxa que s'estén per tots els nodes del Swarm, permetent que els contenidors es comuniquin de manera segura.</li>
+</ul>
+</div><h1>Configuració d'un Docker Swarm</h1>
+<div class='content'><p>Per configurar un Docker Swarm, necessites almenys una màquina per actuar com a Node Manager i una o més Nodes Worker.</p>
+</div><h2>Guia Pas a Pas</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Inicialitza el Swarm al Node Manager</strong>:</p>
+<pre><code class="language-sh">docker swarm init --advertise-addr &lt;MANAGER-IP&gt;
+</code></pre>
+<p>Substitueix <code>&lt;MANAGER-IP&gt;</code> per l'adreça IP del teu Node Manager.</p>
+</li>
+<li>
+<p><strong>Uneix Nodes Worker al Swarm</strong>:
+En cada Node Worker, executa:</p>
+<pre><code class="language-sh">docker swarm join --token &lt;SWARM-TOKEN&gt; &lt;MANAGER-IP&gt;:2377
+</code></pre>
+<p>Substitueix <code>&lt;SWARM-TOKEN&gt;</code> pel token proporcionat per la comanda <code>docker swarm init</code> i <code>&lt;MANAGER-IP&gt;</code> per l'adreça IP del Node Manager.</p>
+</li>
+</ol>
+</div><h1>Gestió de Serveis en Docker Swarm</h1>
+<div class='content'><p>Un cop el teu Swarm està configurat, pots començar a crear i gestionar serveis.</p>
+</div><h2>Creació d'un Servei</h2>
+<div class='content'><p>Per crear un servei, utilitza la comanda <code>docker service create</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIHNlcnZpY2UgY3JlYXRlIC0tbmFtZSBteS1zZXJ2aWNlIC0tcmVwbGljYXMgMyAtcCA4MDo4MCBuZ2lueA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker service create --name my-service --replicas 3 -p 80:80 nginx</pre></div><div class='content'><p>Aquesta comanda crea un servei anomenat <code>my-service</code> amb 3 rèpliques del contenidor <code>nginx</code>, exposant el port 80.</p>
+</div><h2>Llistat de Serveis</h2>
+<div class='content'><p>Per llistar tots els serveis en el Swarm:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIHNlcnZpY2UgbHM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker service ls</pre></div><div class='content'></div><h2>Escalat d'un Servei</h2>
+<div class='content'><p>Per escalar un servei cap amunt o cap avall:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIHNlcnZpY2Ugc2NhbGUgbXktc2VydmljZT01"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker service scale my-service=5</pre></div><div class='content'><p>Aquesta comanda escala <code>my-service</code> a 5 rèpliques.</p>
+</div><h2>Actualització d'un Servei</h2>
+<div class='content'><p>Per actualitzar un servei (per exemple, canviar la versió de la imatge):</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIHNlcnZpY2UgdXBkYXRlIC0taW1hZ2Ugbmdpbng6bGF0ZXN0IG15LXNlcnZpY2U="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker service update --image nginx:latest my-service</pre></div><div class='content'></div><h1>Monitorització i Resolució de Problemes</h1>
+<div class='content'><p>La monitorització i resolució de problemes són crucials per mantenir un Swarm saludable.</p>
+</div><h2>Visualització de Registres de Servei</h2>
+<div class='content'><p>Per veure els registres d'un servei específic:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIHNlcnZpY2UgbG9ncyBteS1zZXJ2aWNl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker service logs my-service</pre></div><div class='content'></div><h2>Inspecció de Nodes</h2>
+<div class='content'><p>Per inspeccionar els detalls d'un node:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIG5vZGUgaW5zcGVjdCA8Tk9ERS1JRD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker node inspect &lt;NODE-ID&gt;</pre></div><div class='content'></div><h2>Eliminació d'un Node</h2>
+<div class='content'><p>Per eliminar un node del Swarm:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIG5vZGUgcm0gPE5PREUtSUQ+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker node rm &lt;NODE-ID&gt;</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Docker Swarm proporciona una manera potent i senzilla de gestionar aplicacions contenidoritzades a escala. Entenent els conceptes clau i les comandes, pots orquestrar i gestionar efectivament els teus contenidors Docker a través de múltiples nodes. Tant si estàs desplegant un servei web senzill com una arquitectura complexa de microserveis, Docker Swarm ofereix les eines que necessites per assegurar que les teves aplicacions funcionin de manera suau i eficient.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='managing-docker-compose-projects'>&#x25C4;Gestionant projectes de Docker Compose</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Docker Swarm i Orquestració</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='scaling-services-docker-swarm'>Escalant serveis amb Docker Swarm &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

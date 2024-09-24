@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducció a HTTP en NGINX</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nginx/http-in-nginx" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nginx/http-in-nginx" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nginx/http-in-nginx" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nginx/http-in-nginx" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nginx/http-in-nginx" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='serving-static-content'>&#x25C4;Servir Contingut Estàtic</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Introducció a HTTP en NGINX</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='setting-up-reverse-proxy'>Configurar un Proxy Invers &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Visió general</h1>
+<div class='content'><p>NGINX és un servidor web potent que també es pot utilitzar com a proxy invers, equilibrador de càrrega i memòria cau HTTP. Entendre com NGINX gestiona les sol·licituds HTTP és fonamental per configurar i optimitzar el teu servidor web.</p>
+</div><h1>Conceptes clau</h1>
+<div class='content'><ul>
+<li><strong>Protocol HTTP</strong>: La base de la comunicació de dades a la web.</li>
+<li><strong>Fitxer de configuració de NGINX</strong>: El fitxer principal on defineixes com NGINX gestiona les sol·licituds HTTP.</li>
+<li><strong>Directives</strong>: Instruccions en el fitxer de configuració que controlen el comportament de NGINX.</li>
+<li><strong>Contextos</strong>: Seccions en el fitxer de configuració que agrupen directives relacionades.</li>
+</ul>
+</div><h1>Estructura del fitxer de configuració de NGINX</h1>
+<div class='content'><p>El fitxer de configuració de NGINX es troba típicament a <code>/etc/nginx/nginx.conf</code>. Consisteix en directives i contextos.</p>
+</div><h2>Exemple de fitxer de configuració</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlciB3d3ctZGF0YTsKd29ya2VyX3Byb2Nlc3NlcyBhdXRvOwpwaWQgL3J1bi9uZ2lueC5waWQ7CgpldmVudHMgewogICAgd29ya2VyX2Nvbm5lY3Rpb25zIDEwMjQ7Cn0KCmh0dHAgewogICAgaW5jbHVkZSAvZXRjL25naW54L21pbWUudHlwZXM7CiAgICBkZWZhdWx0X3R5cGUgYXBwbGljYXRpb24vb2N0ZXQtc3RyZWFtOwoKICAgIHNlbmRmaWxlIG9uOwogICAga2VlcGFsaXZlX3RpbWVvdXQgNjU7CgogICAgc2VydmVyIHsKICAgICAgICBsaXN0ZW4gODA7CiAgICAgICAgc2VydmVyX25hbWUgZXhhbXBsZS5jb207CgogICAgICAgIGxvY2F0aW9uIC8gewogICAgICAgICAgICByb290IC92YXIvd3d3L2h0bWw7CiAgICAgICAgICAgIGluZGV4IGluZGV4Lmh0bWwgaW5kZXguaHRtOwogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    sendfile on;
+    keepalive_timeout 65;
+
+    server {
+        listen 80;
+        server_name example.com;
+
+        location / {
+            root /var/www/html;
+            index index.html index.htm;
+        }
+    }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Directives globals</strong>: <code>user</code>, <code>worker_processes</code>, i <code>pid</code> són configuracions globals.</li>
+<li><strong>Context events</strong>: Conté directives relacionades amb connexions de xarxa.</li>
+<li><strong>Context http</strong>: Conté directives per gestionar el tràfic HTTP.</li>
+<li><strong>Bloc server</strong>: Defineix un servidor virtual.</li>
+<li><strong>Bloc location</strong>: Especifica com processar sol·licituds per a una ubicació específica.</li>
+</ul>
+</div><h1>Gestió de sol·licituds HTTP</h1>
+<div class='content'><p>NGINX processa les sol·licituds HTTP en una sèrie de fases, incloent:</p>
+<ol>
+<li><strong>Fase de connexió</strong>: Establiment d'una connexió amb el client.</li>
+<li><strong>Fase de sol·licitud</strong>: Recepció i anàlisi de la sol·licitud HTTP.</li>
+<li><strong>Fase de resposta</strong>: Generació i enviament de la resposta HTTP.</li>
+</ol>
+</div><h2>Exemple: Configuració bàsica d'un servidor HTTP</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmVyIHsKICAgIGxpc3RlbiA4MDsKICAgIHNlcnZlcl9uYW1lIG15d2Vic2l0ZS5jb207CgogICAgbG9jYXRpb24gLyB7CiAgICAgICAgcm9vdCAvdXNyL3NoYXJlL25naW54L2h0bWw7CiAgICAgICAgaW5kZXggaW5kZXguaHRtbDsKICAgIH0KCiAgICBsb2NhdGlvbiAvaW1hZ2VzLyB7CiAgICAgICAgcm9vdCAvZGF0YTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>server {
+    listen 80;
+    server_name mywebsite.com;
+
+    location / {
+        root /usr/share/nginx/html;
+        index index.html;
+    }
+
+    location /images/ {
+        root /data;
+    }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>listen</strong>: Especifica el port en què NGINX escolta.</li>
+<li><strong>server_name</strong>: Defineix el nom de domini.</li>
+<li><strong>location /</strong>: Gestiona les sol·licituds a l'URL arrel.</li>
+<li><strong>location /images/</strong>: Gestiona les sol·licituds a la ruta d'URL <code>/images/</code>.</li>
+</ul>
+</div><h1>Directives comunes</h1>
+<div class='content'><ul>
+<li><strong>listen</strong>: Especifica l'adreça IP i el port.</li>
+<li><strong>server_name</strong>: Defineix els noms de domini.</li>
+<li><strong>root</strong>: Estableix el directori arrel per a les sol·licituds.</li>
+<li><strong>index</strong>: Especifica el fitxer d'índex.</li>
+</ul>
+</div><h2>Exemple: Ús de directives</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmVyIHsKICAgIGxpc3RlbiA4MDgwOwogICAgc2VydmVyX25hbWUgZXhhbXBsZS5vcmc7CgogICAgbG9jYXRpb24gLyB7CiAgICAgICAgcm9vdCAvdmFyL3d3dy9leGFtcGxlOwogICAgICAgIGluZGV4IGluZGV4Lmh0bWwgaW5kZXguaHRtOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>server {
+    listen 8080;
+    server_name example.org;
+
+    location / {
+        root /var/www/example;
+        index index.html index.htm;
+    }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>listen 8080</strong>: NGINX escolta al port 8080.</li>
+<li><strong>server_name example.org</strong>: El servidor respon a les sol·licituds per <code>example.org</code>.</li>
+<li><strong>root /var/www/example</strong>: El directori arrel per a les sol·licituds és <code>/var/www/example</code>.</li>
+<li><strong>index index.html index.htm</strong>: Els fitxers d'índex són <code>index.html</code> i <code>index.htm</code>.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Entendre com NGINX gestiona les sol·licituds HTTP i com configurar-lo utilitzant directives i contextos és crucial per configurar un servidor web fiable i eficient. Dominant aquests conceptes bàsics, podràs avançar cap a configuracions i optimitzacions més avançades.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='serving-static-content'>&#x25C4;Servir Contingut Estàtic</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Introducció a HTTP en NGINX</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='setting-up-reverse-proxy'>Configurar un Proxy Invers &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

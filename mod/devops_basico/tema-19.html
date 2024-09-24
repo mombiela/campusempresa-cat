@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orquestració de contenidors: Kubernetes</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/devops_basico/tema-19" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/devops_basico/tema-19" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/devops_basico/tema-19" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/devops_basico/tema-19" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/devops_basico/tema-19" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='tema-18'>&#x25C4;Creació i gestió de contenidors</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Orquestració de contenidors: Kubernetes</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='tema-20'>Desplegament d'aplicacions en Kubernetes &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a Kubernetes</h1>
+<div class='content'><p>Kubernetes és una plataforma d'orquestració de contenidors de codi obert que automatitza la implementació, l'escalat i la gestió d'aplicacions en contenidors. Va ser desenvolupat originalment per Google i ara és mantingut per la Cloud Native Computing Foundation (CNCF).</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Node</strong>: Una màquina (física o virtual) en el clúster de Kubernetes.</li>
+<li><strong>Clúster</strong>: Conjunt de nodes gestionats per Kubernetes.</li>
+<li><strong>Pod</strong>: Unitat mínima de desplegament en Kubernetes, que pot contenir un o més contenidors.</li>
+<li><strong>Servei</strong>: Abstracció que defineix un conjunt lògic de Pods i una política per accedir a ells.</li>
+<li><strong>Namespace</strong>: Mecanisme per aïllar recursos dins d'un clúster.</li>
+<li><strong>ConfigMap i Secret</strong>: Mecanismes per injectar configuracions i dades sensibles en els Pods.</li>
+</ul>
+</div><h1>Arquitectura de Kubernetes</h1>
+<div class='content'><p>Kubernetes segueix una arquitectura mestre-esclau:</p>
+<ul>
+<li>
+<p><strong>Master Node</strong>: Gestiona el clúster i coordina les activitats.</p>
+<ul>
+<li><strong>API Server</strong>: Punt d'entrada per a totes les operacions d'administració del clúster.</li>
+<li><strong>etcd</strong>: Magatzem de dades distribuït que guarda la configuració del clúster.</li>
+<li><strong>Controller Manager</strong>: Executa els controladors que regulen l'estat del clúster.</li>
+<li><strong>Scheduler</strong>: Assigna Pods als nodes disponibles.</li>
+</ul>
+</li>
+<li>
+<p><strong>Worker Nodes</strong>: Executen les aplicacions en contenidors.</p>
+<ul>
+<li><strong>Kubelet</strong>: Agent que assegura que els contenidors estan corrent en un Pod.</li>
+<li><strong>Kube-proxy</strong>: Gestiona les regles de xarxa en els nodes.</li>
+<li><strong>Container Runtime</strong>: Programari que executa els contenidors (per exemple, Docker).</li>
+</ul>
+</li>
+</ul>
+</div><h1>Desplegament d'Aplicacions en Kubernetes</h1>
+<div class='content'></div><h2>Creació d'un Pod</h2>
+<div class='content'><p>Un Pod és la unitat bàsica d'execució en Kubernetes. A continuació es mostra un exemple d'un fitxer YAML per crear un Pod:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUG9kCm1ldGFkYXRhOgogIG5hbWU6IG15LXBvZApzcGVjOgogIGNvbnRhaW5lcnM6CiAgLSBuYW1lOiBteS1jb250YWluZXIKICAgIGltYWdlOiBuZ2lueDpsYXRlc3QKICAgIHBvcnRzOgogICAgLSBjb250YWluZXJQb3J0OiA4MA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - name: my-container
+    image: nginx:latest
+    ports:
+    - containerPort: 80</pre></div><div class='content'><p>Per desplegar aquest Pod, s'utilitza el comandament <code>kubectl</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a3ViZWN0bCBhcHBseSAtZiBteS1wb2QueWFtbA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>kubectl apply -f my-pod.yaml</pre></div><div class='content'></div><h2>Creació d'un Deployment</h2>
+<div class='content'><p>Un Deployment proporciona actualitzacions declaratives per a Pods i ReplicaSets. Aquí hi ha un exemple d'un fitxer YAML per a un Deployment:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogYXBwcy92MQpraW5kOiBEZXBsb3ltZW50Cm1ldGFkYXRhOgogIG5hbWU6IG15LWRlcGxveW1lbnQKc3BlYzoKICByZXBsaWNhczogMwogIHNlbGVjdG9yOgogICAgbWF0Y2hMYWJlbHM6CiAgICAgIGFwcDogbXktYXBwCiAgdGVtcGxhdGU6CiAgICBtZXRhZGF0YToKICAgICAgbGFiZWxzOgogICAgICAgIGFwcDogbXktYXBwCiAgICBzcGVjOgogICAgICBjb250YWluZXJzOgogICAgICAtIG5hbWU6IG15LWNvbnRhaW5lcgogICAgICAgIGltYWdlOiBuZ2lueDpsYXRlc3QKICAgICAgICBwb3J0czoKICAgICAgICAtIGNvbnRhaW5lclBvcnQ6IDgw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-container
+        image: nginx:latest
+        ports:
+        - containerPort: 80</pre></div><div class='content'><p>Per desplegar aquest Deployment, s'utilitza el comandament:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a3ViZWN0bCBhcHBseSAtZiBteS1kZXBsb3ltZW50LnlhbWw="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>kubectl apply -f my-deployment.yaml</pre></div><div class='content'></div><h2>Serveis en Kubernetes</h2>
+<div class='content'><p>Un Servei en Kubernetes exposa un o més Pods a través d'una adreça IP única. Aquí hi ha un exemple d'un fitxer YAML per a un Servei:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogU2VydmljZQptZXRhZGF0YToKICBuYW1lOiBteS1zZXJ2aWNlCnNwZWM6CiAgc2VsZWN0b3I6CiAgICBhcHA6IG15LWFwcAogIHBvcnRzOgogIC0gcHJvdG9jb2w6IFRDUAogICAgcG9ydDogODAKICAgIHRhcmdldFBvcnQ6IDgwCiAgdHlwZTogQ2x1c3RlcklQ"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+spec:
+  selector:
+    app: my-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: ClusterIP</pre></div><div class='content'><p>Per crear aquest Servei, s'utilitza el comandament:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a3ViZWN0bCBhcHBseSAtZiBteS1zZXJ2aWNlLnlhbWw="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>kubectl apply -f my-service.yaml</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'><ol>
+<li><strong>Crear un Pod</strong>: Escriu un fitxer YAML per crear un Pod que executi una aplicació simple (per exemple, un servidor web Nginx) i desplega el Pod en el teu clúster.</li>
+<li><strong>Crear un Deployment</strong>: Escriu un fitxer YAML per a un Deployment que desplegui tres rèpliques d'una aplicació i desplega el Deployment en el teu clúster.</li>
+<li><strong>Exposar un Servei</strong>: Escriu un fitxer YAML per a un Servei que exposi el Deployment creat anteriorment i desplega el Servei en el teu clúster.</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Kubernetes és una eina poderosa per a l'orquestració de contenidors, que facilita la gestió d'aplicacions en contenidors a gran escala. Comprendre els conceptes bàsics i l'arquitectura de Kubernetes és essencial per a qualsevol professional de DevOps. Amb la pràctica, podràs desplegar, escalar i gestionar aplicacions de manera eficient en un entorn de producció.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='tema-18'>&#x25C4;Creació i gestió de contenidors</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Orquestració de contenidors: Kubernetes</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='tema-20'>Desplegament d'aplicacions en Kubernetes &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

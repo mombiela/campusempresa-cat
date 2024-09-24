@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canals en Go</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/go/channels" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/go/channels" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/go/channels" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/go/channels" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/go/channels" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='goroutines'>&#x25C4;Goroutines</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Canals en Go</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='select-statement'>Instrucció Select &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Els canals són una característica poderosa en Go que permeten que les goroutines es comuniquin entre elles i sincronitzin la seva execució. Proporcionen una manera d'enviar i rebre valors entre goroutines, fent que la programació concurrent sigui més manejable i menys propensa a errors.</p>
+</div><h1>Introducció als Canals</h1>
+<div class='content'><ul>
+<li><strong>Definició</strong>: Els canals són conductes tipats a través dels quals pots enviar i rebre valors amb l'operador de canal, <code>&lt;-</code>.</li>
+<li><strong>Propòsit</strong>: S'utilitzen per sincronitzar goroutines i passar dades entre elles.</li>
+</ul>
+</div><h2>Creació de Canals</h2>
+<div class='content'><p>Els canals es creen utilitzant la funció <code>make</code>. La sintaxi és:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2ggOj0gbWFrZShjaGFuIGludCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ch := make(chan int)</pre></div><div class='content'><ul>
+<li><strong>Canals Sense Búfer</strong>: Aquests canals no tenen cap capacitat per emmagatzemar valors. Bloquegen l'emissor fins que el receptor rep el valor.</li>
+<li><strong>Canals Amb Búfer</strong>: Aquests canals tenen una capacitat per emmagatzemar valors. Bloquegen l'emissor només quan el búfer està ple.</li>
+</ul>
+<p>Exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gQ2FuYWwgc2Vuc2UgYsO6ZmVyCmNoIDo9IG1ha2UoY2hhbiBpbnQpCgovLyBDYW5hbCBhbWIgYsO6ZmVyIGFtYiBjYXBhY2l0YXQgZGUgMgpjaCA6PSBtYWtlKGNoYW4gaW50LCAyKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Canal sense b&uacute;fer
+ch := make(chan int)
+
+// Canal amb b&uacute;fer amb capacitat de 2
+ch := make(chan int, 2)</pre></div><div class='content'></div><h2>Enviament i Recepció de Valors</h2>
+<div class='content'><ul>
+<li><strong>Enviament</strong>: Utilitza l'operador <code>&lt;-</code> per enviar un valor a un canal.</li>
+<li><strong>Recepció</strong>: Utilitza l'operador <code>&lt;-</code> per rebre un valor d'un canal.</li>
+</ul>
+<p>Exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgImZtdCIKCmZ1bmMgbWFpbigpIHsKICAgIGNoIDo9IG1ha2UoY2hhbiBpbnQpCgogICAgLy8gRW52aWFtZW50IGQndW4gdmFsb3IgYWwgY2FuYWwKICAgIGdvIGZ1bmMoKSB7CiAgICAgICAgY2ggPC0gNDIKICAgIH0oKQoKICAgIC8vIFJlY2VwY2nDsyBkJ3VuIHZhbG9yIGRlbCBjYW5hbAogICAgdmFsdWUgOj0gPC1jaAogICAgZm10LlByaW50bG4odmFsdWUpIC8vIFNvcnRpZGE6IDQyCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import &quot;fmt&quot;
+
+func main() {
+    ch := make(chan int)
+
+    // Enviament d'un valor al canal
+    go func() {
+        ch &lt;- 42
+    }()
+
+    // Recepci&oacute; d'un valor del canal
+    value := &lt;-ch
+    fmt.Println(value) // Sortida: 42
+}</pre></div><div class='content'></div><h2>Direcció del Canal</h2>
+<div class='content'><p>Els canals poden ser direccionals, és a dir, poden estar restringits a només enviar o només rebre.</p>
+<ul>
+<li><strong>Canal Només d'Enviament</strong>: <code>chan&lt;- int</code></li>
+<li><strong>Canal Només de Recepció</strong>: <code>&lt;-chan int</code></li>
+</ul>
+<p>Exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgImZtdCIKCmZ1bmMgc2VuZChjaCBjaGFuPC0gaW50LCB2YWx1ZSBpbnQpIHsKICAgIGNoIDwtIHZhbHVlCn0KCmZ1bmMgcmVjZWl2ZShjaCA8LWNoYW4gaW50KSBpbnQgewogICAgcmV0dXJuIDwtY2gKfQoKZnVuYyBtYWluKCkgewogICAgY2ggOj0gbWFrZShjaGFuIGludCkKCiAgICBnbyBzZW5kKGNoLCA0MikKICAgIHZhbHVlIDo9IHJlY2VpdmUoY2gpCiAgICBmbXQuUHJpbnRsbih2YWx1ZSkgLy8gU29ydGlkYTogNDIKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import &quot;fmt&quot;
+
+func send(ch chan&lt;- int, value int) {
+    ch &lt;- value
+}
+
+func receive(ch &lt;-chan int) int {
+    return &lt;-ch
+}
+
+func main() {
+    ch := make(chan int)
+
+    go send(ch, 42)
+    value := receive(ch)
+    fmt.Println(value) // Sortida: 42
+}</pre></div><div class='content'></div><h2>Tancament de Canals</h2>
+<div class='content'><p>Els canals es poden tancar per indicar que no s'enviaran més valors. Això es fa utilitzant la funció <code>close</code>.</p>
+<p>Exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgImZtdCIKCmZ1bmMgbWFpbigpIHsKICAgIGNoIDo9IG1ha2UoY2hhbiBpbnQpCgogICAgZ28gZnVuYygpIHsKICAgICAgICBmb3IgaSA6PSAwOyBpIDwgNTsgaSsrIHsKICAgICAgICAgICAgY2ggPC0gaQogICAgICAgIH0KICAgICAgICBjbG9zZShjaCkKICAgIH0oKQoKICAgIGZvciB2YWx1ZSA6PSByYW5nZSBjaCB7CiAgICAgICAgZm10LlByaW50bG4odmFsdWUpCiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import &quot;fmt&quot;
+
+func main() {
+    ch := make(chan int)
+
+    go func() {
+        for i := 0; i &lt; 5; i++ {
+            ch &lt;- i
+        }
+        close(ch)
+    }()
+
+    for value := range ch {
+        fmt.Println(value)
+    }
+}</pre></div><div class='content'></div><h2>Sentència Select</h2>
+<div class='content'><p>La sentència <code>select</code> permet que una goroutine esperi en múltiples operacions de comunicació.</p>
+<p>Exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgImZtdCIKCmZ1bmMgbWFpbigpIHsKICAgIGNoMSA6PSBtYWtlKGNoYW4gaW50KQogICAgY2gyIDo9IG1ha2UoY2hhbiBpbnQpCgogICAgZ28gZnVuYygpIHsKICAgICAgICBjaDEgPC0gNDIKICAgIH0oKQoKICAgIGdvIGZ1bmMoKSB7CiAgICAgICAgY2gyIDwtIDQzCiAgICB9KCkKCiAgICBzZWxlY3QgewogICAgY2FzZSB2YWx1ZTEgOj0gPC1jaDE6CiAgICAgICAgZm10LlByaW50bG4oIlJlYnV0IiwgdmFsdWUxLCAiZGUgY2gxIikKICAgIGNhc2UgdmFsdWUyIDo9IDwtY2gyOgogICAgICAgIGZtdC5QcmludGxuKCJSZWJ1dCIsIHZhbHVlMiwgImRlIGNoMiIpCiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import &quot;fmt&quot;
+
+func main() {
+    ch1 := make(chan int)
+    ch2 := make(chan int)
+
+    go func() {
+        ch1 &lt;- 42
+    }()
+
+    go func() {
+        ch2 &lt;- 43
+    }()
+
+    select {
+    case value1 := &lt;-ch1:
+        fmt.Println(&quot;Rebut&quot;, value1, &quot;de ch1&quot;)
+    case value2 := &lt;-ch2:
+        fmt.Println(&quot;Rebut&quot;, value2, &quot;de ch2&quot;)
+    }
+}</pre></div><div class='content'></div><h1>Conceptes Avançats de Canals</h1>
+<div class='content'></div><h2>Canals Amb Búfer vs Sense Búfer</h2>
+<div class='content'><p>| Característica        | Canals Amb Búfer                   | Canals Sense Búfer                 |
+|-----------------------|------------------------------------|------------------------------------|
+| Comportament de Blocatge | Bloquegen només quan el búfer està ple | Bloquegen fins que el receptor està llest |
+| Cas d'Ús              | Quan necessites emmagatzemar valors | Quan necessites sincronització     |
+| Rendiment             | Pot ser més rendible en alguns casos | Pot conduir a bloquejos si no es gestiona correctament |</p>
+</div><h2>Patrons de Canals</h2>
+<div class='content'><ul>
+<li><strong>Fan-out</strong>: Distribuir treball entre múltiples goroutines.</li>
+<li><strong>Fan-in</strong>: Multiplexar resultats de múltiples goroutines en un sol canal.</li>
+</ul>
+<p>Exemple de Fan-out:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImZtdCIKICAgICJzeW5jIgopCgpmdW5jIHdvcmtlcihpZCBpbnQsIGpvYnMgPC1jaGFuIGludCwgcmVzdWx0cyBjaGFuPC0gaW50KSB7CiAgICBmb3IgaiA6PSByYW5nZSBqb2JzIHsKICAgICAgICBmbXQuUHJpbnRmKCJUcmViYWxsYWRvciAlZCBoYSBjb21lbsOnYXQgbGEgZmVpbmEgJWRcbiIsIGlkLCBqKQogICAgICAgIHJlc3VsdHMgPC0gaiAqIDIKICAgIH0KfQoKZnVuYyBtYWluKCkgewogICAgam9icyA6PSBtYWtlKGNoYW4gaW50LCA1KQogICAgcmVzdWx0cyA6PSBtYWtlKGNoYW4gaW50LCA1KQoKICAgIGZvciB3IDo9IDE7IHcgPCAzOyB3KysgewogICAgICAgIGdvIHdvcmtlcih3LCBqb2JzLCByZXN1bHRzKQogICAgfQoKICAgIGZvciBqIDo9IDE7IGogPD0gNTsgaisrIHsKICAgICAgICBqb2JzIDwtIGoKICAgIH0KICAgIGNsb3NlKGpvYnMpCgogICAgZm9yIGEgOj0gMTsgYSA8PSA1OyBhKysgewogICAgICAgIGZtdC5QcmludGxuKDwtcmVzdWx0cykKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;fmt&quot;
+    &quot;sync&quot;
+)
+
+func worker(id int, jobs &lt;-chan int, results chan&lt;- int) {
+    for j := range jobs {
+        fmt.Printf(&quot;Treballador %d ha comen&ccedil;at la feina %d\n&quot;, id, j)
+        results &lt;- j * 2
+    }
+}
+
+func main() {
+    jobs := make(chan int, 5)
+    results := make(chan int, 5)
+
+    for w := 1; w &lt; 3; w++ {
+        go worker(w, jobs, results)
+    }
+
+    for j := 1; j &lt;= 5; j++ {
+        jobs &lt;- j
+    }
+    close(jobs)
+
+    for a := 1; a &lt;= 5; a++ {
+        fmt.Println(&lt;-results)
+    }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Els canals són una part fonamental del model de concurrència de Go, proporcionant una manera simple i poderosa de comunicar-se entre goroutines. Entenent com crear, utilitzar i gestionar canals, pots escriure programes concurrents més eficients i efectius. Recorda utilitzar canals amb búfer quan necessitis emmagatzemar valors i canals sense búfer per a la sincronització. La sentència <code>select</code> és una eina poderosa per gestionar múltiples operacions de canal, i patrons com fan-out i fan-in poden ajudar-te a gestionar fluxos de treball complexos.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='goroutines'>&#x25C4;Goroutines</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Canals en Go</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='select-statement'>Instrucció Select &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

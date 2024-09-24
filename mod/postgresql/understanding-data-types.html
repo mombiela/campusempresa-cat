@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprendre els tipus de dades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/postgresql/understanding-data-types" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/postgresql/understanding-data-types" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/postgresql/understanding-data-types" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/postgresql/understanding-data-types" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/postgresql/understanding-data-types" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='full-text-search'>&#x25C4;Cerca de text complet</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Comprendre els tipus de dades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='using-arrays-and-json'>Ús d'arrays i JSON &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Els tipus de dades són fonamentals per a qualsevol sistema de bases de dades, incloent PostgreSQL. Defineixen el tipus de dades que es poden emmagatzemar en una columna de taula. Comprendre els tipus de dades és crucial per dissenyar bases de dades eficients i escriure consultes efectives.</p>
+</div><h1>Conceptes clau</h1>
+<div class='content'><ul>
+<li><strong>Tipus de dades</strong>: Una classificació que especifica quin tipus de valor pot contenir una columna.</li>
+<li><strong>Categories de tipus</strong>: PostgreSQL admet diverses categories de tipus de dades, incloent numèric, de caràcter, data/hora i més.</li>
+<li><strong>Restriccions de tipus</strong>: Regles que limiten el tipus de dades que es poden emmagatzemar en una columna.</li>
+</ul>
+</div><h1>Tipus numèrics</h1>
+<div class='content'><p>Els tipus de dades numèrics s'utilitzen per emmagatzemar números. PostgreSQL admet diversos tipus numèrics:</p>
+<p>| Tipus de dades | Descripció | Mida d'emmagatzematge |
+|----------------|------------|-----------------------|
+| <code>smallint</code> | Enter de rang petit | 2 bytes |
+| <code>integer</code> o <code>int</code> | Elecció típica per a enters | 4 bytes |
+| <code>bigint</code> | Enter de rang gran | 8 bytes |
+| <code>decimal</code> o <code>numeric</code> | Precisió especificada per l'usuari | Variable |
+| <code>real</code> | Punt flotant de precisió simple | 4 bytes |
+| <code>double precision</code> | Punt flotant de doble precisió | 8 bytes |
+| <code>serial</code> | Enter auto-incremental | 4 bytes |
+| <code>bigserial</code> | Enter auto-incremental gran | 8 bytes |</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIG51bWJlcnNfZXhhbXBsZSAoCiAgICBzbWFsbF9udW0gc21hbGxpbnQsCiAgICBtZWRpdW1fbnVtIGludGVnZXIsCiAgICBsYXJnZV9udW0gYmlnaW50LAogICAgcHJlY2lzZV9udW0gbnVtZXJpYygxMCwgMiksCiAgICBmbG9hdF9udW0gcmVhbCwKICAgIGRvdWJsZV9udW0gZG91YmxlIHByZWNpc2lvbgopOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE numbers_example (
+    small_num smallint,
+    medium_num integer,
+    large_num bigint,
+    precise_num numeric(10, 2),
+    float_num real,
+    double_num double precision
+);</pre></div><div class='content'><p>Explicació:</p>
+<ul>
+<li><code>small_num</code> pot emmagatzemar enters petits.</li>
+<li><code>medium_num</code> és adequat per a valors enters típics.</li>
+<li><code>large_num</code> pot emmagatzemar enters molt grans.</li>
+<li><code>precise_num</code> emmagatzema números amb fins a 10 dígits, 2 dels quals són després del punt decimal.</li>
+<li><code>float_num</code> i <code>double_num</code> emmagatzemen números de punt flotant amb precisió simple i doble, respectivament.</li>
+</ul>
+</div><h1>Tipus de caràcter</h1>
+<div class='content'><p>Els tipus de dades de caràcter s'utilitzen per emmagatzemar text. PostgreSQL proporciona diverses opcions:</p>
+<p>| Tipus de dades | Descripció | Mida d'emmagatzematge |
+|----------------|------------|-----------------------|
+| <code>char(n)</code> | Tipus de caràcter de longitud fixa | n bytes |
+| <code>varchar(n)</code> | Tipus de caràcter de longitud variable | Fins a n bytes |
+| <code>text</code> | Tipus de caràcter de longitud variable sense límit | Variable |</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIHRleHRfZXhhbXBsZSAoCiAgICBmaXhlZF9jaGFyIGNoYXIoMTApLAogICAgdmFyaWFibGVfY2hhciB2YXJjaGFyKDUwKSwKICAgIHVubGltaXRlZF90ZXh0IHRleHQKKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE text_example (
+    fixed_char char(10),
+    variable_char varchar(50),
+    unlimited_text text
+);</pre></div><div class='content'><p>Explicació:</p>
+<ul>
+<li><code>fixed_char</code> emmagatzema una cadena de longitud fixa de 10 caràcters.</li>
+<li><code>variable_char</code> pot emmagatzemar una cadena de fins a 50 caràcters.</li>
+<li><code>unlimited_text</code> pot emmagatzemar una cadena de qualsevol longitud.</li>
+</ul>
+</div><h1>Tipus de data/hora</h1>
+<div class='content'><p>Els tipus de dades de data i hora s'utilitzen per emmagatzemar dates, hores i marques de temps.</p>
+<p>| Tipus de dades | Descripció | Mida d'emmagatzematge |
+|----------------|------------|-----------------------|
+| <code>date</code> | Data del calendari (any, mes, dia) | 4 bytes |
+| <code>time</code> | Hora del dia (sense fus horari) | 8 bytes |
+| <code>timestamp</code> | Data i hora (sense fus horari) | 8 bytes |
+| <code>timestamptz</code> | Data i hora amb fus horari | 8 bytes |
+| <code>interval</code> | Interval de temps | 16 bytes |</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIGRhdGV0aW1lX2V4YW1wbGUgKAogICAgZXZlbnRfZGF0ZSBkYXRlLAogICAgZXZlbnRfdGltZSB0aW1lLAogICAgZXZlbnRfdGltZXN0YW1wIHRpbWVzdGFtcCwKICAgIGV2ZW50X3RpbWVzdGFtcHR6IHRpbWVzdGFtcHR6LAogICAgZHVyYXRpb24gaW50ZXJ2YWwKKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE datetime_example (
+    event_date date,
+    event_time time,
+    event_timestamp timestamp,
+    event_timestamptz timestamptz,
+    duration interval
+);</pre></div><div class='content'><p>Explicació:</p>
+<ul>
+<li><code>event_date</code> emmagatzema una data.</li>
+<li><code>event_time</code> emmagatzema una hora del dia.</li>
+<li><code>event_timestamp</code> emmagatzema una data i hora.</li>
+<li><code>event_timestamptz</code> emmagatzema una data i hora amb informació de fus horari.</li>
+<li><code>duration</code> emmagatzema un interval de temps.</li>
+</ul>
+</div><h1>Tipus booleà</h1>
+<div class='content'><p>El tipus de dades booleà s'utilitza per emmagatzemar valors vertader/fals.</p>
+<p>| Tipus de dades | Descripció | Mida d'emmagatzematge |
+|----------------|------------|-----------------------|
+| <code>boolean</code> | Booleà lògic (vertader/fals) | 1 byte |</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIGJvb2xlYW5fZXhhbXBsZSAoCiAgICBpc19hY3RpdmUgYm9vbGVhbgopOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE boolean_example (
+    is_active boolean
+);</pre></div><div class='content'><p>Explicació:</p>
+<ul>
+<li><code>is_active</code> pot emmagatzemar un valor vertader o fals.</li>
+</ul>
+</div><h1>Tipus d'array</h1>
+<div class='content'><p>PostgreSQL permet definir columnes com a arrays de longitud variable.</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIGFycmF5X2V4YW1wbGUgKAogICAgaW50ZWdlcl9hcnJheSBpbnRlZ2VyW10sCiAgICB0ZXh0X2FycmF5IHRleHRbXQopOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE array_example (
+    integer_array integer[],
+    text_array text[]
+);</pre></div><div class='content'><p>Explicació:</p>
+<ul>
+<li><code>integer_array</code> pot emmagatzemar un array d'enters.</li>
+<li><code>text_array</code> pot emmagatzemar un array de cadenes de text.</li>
+</ul>
+</div><h1>Tipus JSON</h1>
+<div class='content'><p>PostgreSQL admet tipus de dades JSON per emmagatzemar dades JSON.</p>
+<p>| Tipus de dades | Descripció | Mida d'emmagatzematge |
+|----------------|------------|-----------------------|
+| <code>json</code> | Dades JSON textuals | Variable |
+| <code>jsonb</code> | Dades JSON binàries, més eficients per a l'indexació | Variable |</p>
+</div><h2>Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIGpzb25fZXhhbXBsZSAoCiAgICBqc29uX2RhdGEganNvbiwKICAgIGpzb25iX2RhdGEganNvbmIKKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE json_example (
+    json_data json,
+    jsonb_data jsonb
+);</pre></div><div class='content'><p>Explicació:</p>
+<ul>
+<li><code>json_data</code> emmagatzema dades JSON en format de text.</li>
+<li><code>jsonb_data</code> emmagatzema dades JSON en format binari, que és més eficient per a l'indexació i les consultes.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Comprendre els tipus de dades en PostgreSQL és essencial per dissenyar bases de dades eficients i efectives. Triant el tipus de dades adequat per a cada columna, pots assegurar la integritat de les dades, optimitzar l'emmagatzematge i millorar el rendiment de les consultes. Aquest tema ha cobert els tipus de dades més utilitzats, incloent numèrics, de caràcter, data/hora, booleans, arrays i tipus JSON. A mesura que progressis en el teu viatge amb PostgreSQL, trobaràs tipus de dades més especialitzats i aprendràs a utilitzar-los de manera efectiva.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='full-text-search'>&#x25C4;Cerca de text complet</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Comprendre els tipus de dades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='using-arrays-and-json'>Ús d'arrays i JSON &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

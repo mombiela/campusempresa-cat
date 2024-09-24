@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel a Redis</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/redis/sentinel" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/redis/sentinel" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/redis/sentinel" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/redis/sentinel" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/redis/sentinel" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='replication'>&#x25C4;Replicació</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Sentinel a Redis</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='cluster-mode'>Mode Clúster &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Redis Sentinel és un sistema dissenyat per ajudar a gestionar instàncies de Redis, proporcionant alta disponibilitat i capacitats de monitorització. Aquest tema cobrirà els conceptes bàsics de Sentinel, la seva configuració i com utilitzar-lo per assegurar que les teves instàncies de Redis siguin resilients i altament disponibles.</p>
+</div><h1>Introducció a Redis Sentinel</h1>
+<div class='content'><p>Redis Sentinel proporciona diverses característiques clau:</p>
+<ul>
+<li><strong>Monitorització</strong>: Sentinel comprova constantment si les teves instàncies mestre i rèplica funcionen com s'espera.</li>
+<li><strong>Notificació</strong>: Sentinel pot notificar els administradors del sistema o altres sistemes via una API quan alguna cosa no va bé amb una de les instàncies de Redis monitoritzades.</li>
+<li><strong>Failover Automàtic</strong>: Si un mestre no funciona com s'espera, Sentinel pot iniciar un procés de failover on una rèplica és promoguda a mestre.</li>
+<li><strong>Proveïdor de Configuració</strong>: Sentinel actua com una font d'autoritat perquè els clients descobreixin el mestre i les rèpliques actuals.</li>
+</ul>
+</div><h1>Configuració de Redis Sentinel</h1>
+<div class='content'><p>Per configurar Redis Sentinel, necessites configurar instàncies de Sentinel i assegurar-te que poden comunicar-se entre elles i amb les instàncies de Redis que estan monitoritzant.</p>
+</div><h2>Fitxer de Configuració de Sentinel</h2>
+<div class='content'><p>Un fitxer de configuració típic de Sentinel (<code>sentinel.conf</code>) inclou els següents paràmetres clau:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBFeGVtcGxlIGRlIHNlbnRpbmVsLmNvbmYKCiMgTm9tIGRlbCBtZXN0cmUgbW9uaXRvcml0emF0CnNlbnRpbmVsIG1vbml0b3IgbXltYXN0ZXIgMTI3LjAuMC4xIDYzNzkgMgoKIyBBdXRlbnRpY2FjacOzIHBlciBhbCBtZXN0cmUKc2VudGluZWwgYXV0aC1wYXNzIG15bWFzdGVyIHlvdXJfcGFzc3dvcmQKCiMgQ29tIGRlIHNvdmludCBmZXIgcGluZyBhbCBtZXN0cmUgaSBhIGxlcyByw6hwbGlxdWVzCnNlbnRpbmVsIGRvd24tYWZ0ZXItbWlsbGlzZWNvbmRzIG15bWFzdGVyIDUwMDAKCiMgUXVhbnQgZGUgdGVtcHMgZXNwZXJhciBhYmFucyBkZSBmZXIgZmFpbG92ZXIKc2VudGluZWwgZmFpbG92ZXItdGltZW91dCBteW1hc3RlciA2MDAwMAoKIyBOb21icmUgZGUgcsOocGxpcXVlcyBhIHJlY29uZmlndXJhciBkZXNwcsOpcyBkJ3VuIGZhaWxvdmVyCnNlbnRpbmVsIHBhcmFsbGVsLXN5bmNzIG15bWFzdGVyIDE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Exemple de sentinel.conf
+
+# Nom del mestre monitoritzat
+sentinel monitor mymaster 127.0.0.1 6379 2
+
+# Autenticaci&oacute; per al mestre
+sentinel auth-pass mymaster your_password
+
+# Com de sovint fer ping al mestre i a les r&egrave;pliques
+sentinel down-after-milliseconds mymaster 5000
+
+# Quant de temps esperar abans de fer failover
+sentinel failover-timeout mymaster 60000
+
+# Nombre de r&egrave;pliques a reconfigurar despr&eacute;s d'un failover
+sentinel parallel-syncs mymaster 1</pre></div><div class='content'><ul>
+<li><code>sentinel monitor &lt;master-name&gt; &lt;ip&gt; &lt;port&gt; &lt;quorum&gt;</code>: Defineix el mestre a monitoritzar. El quòrum és el nombre de Sentinels que han d'estar d'acord abans d'iniciar un failover.</li>
+<li><code>sentinel auth-pass &lt;master-name&gt; &lt;password&gt;</code>: Estableix la contrasenya per autenticar-se amb el mestre.</li>
+<li><code>sentinel down-after-milliseconds &lt;master-name&gt; &lt;milliseconds&gt;</code>: Temps d'espera abans de considerar el mestre com a caigut.</li>
+<li><code>sentinel failover-timeout &lt;master-name&gt; &lt;milliseconds&gt;</code>: Temps d'espera abans d'iniciar un nou failover.</li>
+<li><code>sentinel parallel-syncs &lt;master-name&gt; &lt;number&gt;</code>: Nombre de rèpliques a reconfigurar en paral·lel durant un failover.</li>
+</ul>
+</div><h2>Executar Sentinel</h2>
+<div class='content'><p>Per iniciar una instància de Sentinel, utilitza la següent comanda:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVkaXMtc2VydmVyIC9wYXRoL3RvL3NlbnRpbmVsLmNvbmYgLS1zZW50aW5lbA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>redis-server /path/to/sentinel.conf --sentinel</pre></div><div class='content'></div><h1>Monitorització i Notificació</h1>
+<div class='content'><p>Sentinel monitoritza contínuament la salut de les instàncies de Redis. Si una instància mestre es considera caiguda, Sentinel notificarà els administradors i altres sistemes configurats per rebre notificacions.</p>
+</div><h2>Exemple de Monitorització</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBTb3J0aWRhIGRlbCBsb2cgZGUgU2VudGluZWwKWzEyMzQ1XSAwMSBKYW4gMDE6MDA6MDAuMDAwICogK21vbml0b3IgbWFzdGVyIG15bWFzdGVyIDEyNy4wLjAuMSA2Mzc5IHF1b3J1bSAyClsxMjM0NV0gMDEgSmFuIDAxOjAwOjA1LjAwMCAqICtzZG93biBtYXN0ZXIgbXltYXN0ZXIgMTI3LjAuMC4xIDYzNzkKWzEyMzQ1XSAwMSBKYW4gMDE6MDA6MTAuMDAwICogK29kb3duIG1hc3RlciBteW1hc3RlciAxMjcuMC4wLjEgNjM3OSAjcXVvcnVtIDIKWzEyMzQ1XSAwMSBKYW4gMDE6MDA6MTUuMDAwICogK25ldy1lcG9jaCAxClsxMjM0NV0gMDEgSmFuIDAxOjAwOjIwLjAwMCAqICt0cnktZmFpbG92ZXIgbWFzdGVyIG15bWFzdGVyIDEyNy4wLjAuMSA2Mzc5"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Sortida del log de Sentinel
+[12345] 01 Jan 01:00:00.000 * +monitor master mymaster 127.0.0.1 6379 quorum 2
+[12345] 01 Jan 01:00:05.000 * +sdown master mymaster 127.0.0.1 6379
+[12345] 01 Jan 01:00:10.000 * +odown master mymaster 127.0.0.1 6379 #quorum 2
+[12345] 01 Jan 01:00:15.000 * +new-epoch 1
+[12345] 01 Jan 01:00:20.000 * +try-failover master mymaster 127.0.0.1 6379</pre></div><div class='content'></div><h1>Failover Automàtic</h1>
+<div class='content'><p>Quan un mestre es considera caigut, Sentinel iniciarà un procés de failover. Això implica promoure una de les rèpliques a mestre i reconfigurar les altres rèpliques per replicar des del nou mestre.</p>
+</div><h2>Exemple de Failover</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBTb3J0aWRhIGRlbCBsb2cgZGUgU2VudGluZWwgZHVyYW50IGVsIGZhaWxvdmVyClsxMjM0NV0gMDEgSmFuIDAxOjAwOjIwLjAwMCAqICtmYWlsb3Zlci1zdGF0ZS1zZWxlY3Qtc2xhdmUgbWFzdGVyIG15bWFzdGVyIDEyNy4wLjAuMSA2Mzc5ClsxMjM0NV0gMDEgSmFuIDAxOjAwOjI1LjAwMCAqICtzZWxlY3RlZC1zbGF2ZSBzbGF2ZSAxMjcuMC4wLjE6NjM4MApbMTIzNDVdIDAxIEphbiAwMTowMDozMC4wMDAgKiArZmFpbG92ZXItc3RhdGUtc2VuZC1zbGF2ZW9mLW5vb25lIHNsYXZlIDEyNy4wLjAuMTo2MzgwClsxMjM0NV0gMDEgSmFuIDAxOjAwOjM1LjAwMCAqICtmYWlsb3Zlci1lbmQgbWFzdGVyIG15bWFzdGVyIDEyNy4wLjAuMSA2Mzc5ClsxMjM0NV0gMDEgSmFuIDAxOjAwOjQwLjAwMCAqICtzd2l0Y2gtbWFzdGVyIG15bWFzdGVyIDEyNy4wLjAuMSA2Mzc5IDEyNy4wLjAuMSA2Mzgw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Sortida del log de Sentinel durant el failover
+[12345] 01 Jan 01:00:20.000 * +failover-state-select-slave master mymaster 127.0.0.1 6379
+[12345] 01 Jan 01:00:25.000 * +selected-slave slave 127.0.0.1:6380
+[12345] 01 Jan 01:00:30.000 * +failover-state-send-slaveof-noone slave 127.0.0.1:6380
+[12345] 01 Jan 01:00:35.000 * +failover-end master mymaster 127.0.0.1 6379
+[12345] 01 Jan 01:00:40.000 * +switch-master mymaster 127.0.0.1 6379 127.0.0.1 6380</pre></div><div class='content'></div><h1>Proveïdor de Configuració</h1>
+<div class='content'><p>Els clients poden utilitzar Sentinel per descobrir el mestre i les rèpliques actuals. Això és particularment útil per a aplicacions que necessiten connectar-se al mestre per a operacions d'escriptura i a les rèpliques per a operacions de lectura.</p>
+</div><h2>Exemple d'Ús de Sentinel per Descobrir el Mestre</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHJlZGlzCmZyb20gcmVkaXMuc2VudGluZWwgaW1wb3J0IFNlbnRpbmVsCgpzZW50aW5lbCA9IFNlbnRpbmVsKFsoJ2xvY2FsaG9zdCcsIDI2Mzc5KV0sIHNvY2tldF90aW1lb3V0PTAuMSkKbWFzdGVyID0gc2VudGluZWwubWFzdGVyX2ZvcignbXltYXN0ZXInLCBzb2NrZXRfdGltZW91dD0wLjEpCnNsYXZlID0gc2VudGluZWwuc2xhdmVfZm9yKCdteW1hc3RlcicsIHNvY2tldF90aW1lb3V0PTAuMSkKCiMgRXNjcml1cmUgYWwgbWVzdHJlCm1hc3Rlci5zZXQoJ2ZvbycsICdiYXInKQoKIyBMbGVnaXIgZGUgbGEgcsOocGxpY2EKcHJpbnQoc2xhdmUuZ2V0KCdmb28nKSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import redis
+from redis.sentinel import Sentinel
+
+sentinel = Sentinel([('localhost', 26379)], socket_timeout=0.1)
+master = sentinel.master_for('mymaster', socket_timeout=0.1)
+slave = sentinel.slave_for('mymaster', socket_timeout=0.1)
+
+# Escriure al mestre
+master.set('foo', 'bar')
+
+# Llegir de la r&egrave;plica
+print(slave.get('foo'))</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Redis Sentinel és una eina poderosa per assegurar alta disponibilitat i monitorització d'instàncies de Redis. Entenent la seva configuració i capacitats, pots configurar un entorn Redis resilient que pugui gestionar fallades de manera elegant. La capacitat de Sentinel per monitoritzar, notificar i fer failover automàticament el converteix en un component essencial per a qualsevol desplegament de Redis en producció.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='replication'>&#x25C4;Replicació</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Sentinel a Redis</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='cluster-mode'>Mode Clúster &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

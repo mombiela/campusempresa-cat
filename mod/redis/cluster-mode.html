@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mode Clúster</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/redis/cluster-mode" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/redis/cluster-mode" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/redis/cluster-mode" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/redis/cluster-mode" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/redis/cluster-mode" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='sentinel'>&#x25C4;Sentinel</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Mode Clúster</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='scaling-redis'>Escalant Redis &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció al Mode Clúster de Redis</h1>
+<div class='content'><p>El Mode Clúster de Redis és una manera d'executar una instal·lació de Redis on les dades es distribueixen automàticament entre múltiples nodes de Redis. Això permet que Redis escali horitzontalment i gestioni conjunts de dades més grans i un major rendiment.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Sharding</strong>: Dividir les dades entre múltiples nodes.</li>
+<li><strong>Node Mestre</strong>: Un node que conté les dades reals i gestiona les operacions de lectura/escriptura.</li>
+<li><strong>Node Replica</strong>: Un node que conté una còpia de les dades d'un node mestre per a redundància i recuperació.</li>
+<li><strong>Slots</strong>: Redis Cluster utilitza 16.384 slots de hash per distribuir les claus a través del clúster.</li>
+</ul>
+</div><h1>Configuració d'un Clúster de Redis</h1>
+<div class='content'><p>Configurar un Clúster de Redis implica configurar múltiples nodes de Redis per treballar junts. Aquí teniu una guia pas a pas:</p>
+</div><h2>Prerequisits</h2>
+<div class='content'><ul>
+<li>Redis instal·lat en múltiples servidors o instàncies.</li>
+<li>Comprensió bàsica de les comandes i la configuració de Redis.</li>
+</ul>
+</div><h2>Fitxers de Configuració</h2>
+<div class='content'><p>Cada node de Redis necessita un fitxer de configuració. Aquí teniu un exemple de configuració per a un node de Redis:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cG9ydCA3MDAwCmNsdXN0ZXItZW5hYmxlZCB5ZXMKY2x1c3Rlci1jb25maWctZmlsZSBub2Rlcy5jb25mCmNsdXN0ZXItbm9kZS10aW1lb3V0IDUwMDAKYXBwZW5kb25seSB5ZXM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>port 7000
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 5000
+appendonly yes</pre></div><div class='content'></div><h2>Iniciar Nodes de Redis</h2>
+<div class='content'><p>Inicieu cada instància de Redis amb el seu fitxer de configuració:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVkaXMtc2VydmVyIC9wYXRoL3RvL3JlZGlzLTcwMDAuY29uZgpyZWRpcy1zZXJ2ZXIgL3BhdGgvdG8vcmVkaXMtNzAwMS5jb25mCnJlZGlzLXNlcnZlciAvcGF0aC90by9yZWRpcy03MDAyLmNvbmY="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>redis-server /path/to/redis-7000.conf
+redis-server /path/to/redis-7001.conf
+redis-server /path/to/redis-7002.conf</pre></div><div class='content'></div><h2>Crear el Clúster</h2>
+<div class='content'><p>Utilitzeu el <code>redis-cli</code> per crear el clúster. Necessiteu almenys tres nodes mestres:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVkaXMtY2xpIC0tY2x1c3RlciBjcmVhdGUgMTI3LjAuMC4xOjcwMDAgMTI3LjAuMC4xOjcwMDEgMTI3LjAuMC4xOjcwMDIgLS1jbHVzdGVyLXJlcGxpY2FzIDE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 --cluster-replicas 1</pre></div><div class='content'><p>Aquesta comanda crearà un clúster amb tres nodes mestres i una rèplica per a cada mestre.</p>
+</div><h1>Gestió d'un Clúster de Redis</h1>
+<div class='content'><p>Un cop el clúster està configurat, necessiteu gestionar-lo. Això inclou afegir/eliminar nodes, gestionar recuperacions i monitoritzar el clúster.</p>
+</div><h2>Afegir un Node</h2>
+<div class='content'><p>Per afegir un nou node al clúster:</p>
+<ol>
+<li>Inicieu la nova instància de Redis.</li>
+<li>Afegiu el node al clúster utilitzant <code>redis-cli</code>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVkaXMtY2xpIC0tY2x1c3RlciBhZGQtbm9kZSAxMjcuMC4wLjE6NzAwMyAxMjcuMC4wLjE6NzAwMA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>redis-cli --cluster add-node 127.0.0.1:7003 127.0.0.1:7000</pre></div><div class='content'></div><h2>Eliminar un Node</h2>
+<div class='content'><p>Per eliminar un node del clúster:</p>
+<ol>
+<li>Assegureu-vos que el node està buit o migreu les seves dades.</li>
+<li>Utilitzeu <code>redis-cli</code> per eliminar el node:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVkaXMtY2xpIC0tY2x1c3RlciBkZWwtbm9kZSAxMjcuMC4wLjE6NzAwMCA8bm9kZS1pZD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>redis-cli --cluster del-node 127.0.0.1:7000 &lt;node-id&gt;</pre></div><div class='content'></div><h2>Gestionar la Recuperació</h2>
+<div class='content'><p>Redis Cluster gestiona la recuperació automàticament. Si un node mestre falla, una de les seves rèpliques es promou a mestre. També podeu desencadenar una recuperació manualment:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVkaXMtY2xpIC1jIC1wIDcwMDEgY2x1c3RlciBmYWlsb3Zlcg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>redis-cli -c -p 7001 cluster failover</pre></div><div class='content'></div><h1>Exemples de Codi</h1>
+<div class='content'><p>Aquí teniu alguns exemples de com interactuar amb un Clúster de Redis utilitzant Python i la biblioteca <code>redis-py</code>:</p>
+</div><h2>Connectar-se a un Clúster de Redis</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHJlZGlzY2x1c3RlcgoKc3RhcnR1cF9ub2RlcyA9IFt7Imhvc3QiOiAiMTI3LjAuMC4xIiwgInBvcnQiOiAiNzAwMCJ9XQpyYyA9IHJlZGlzY2x1c3Rlci5SZWRpc0NsdXN0ZXIoc3RhcnR1cF9ub2Rlcz1zdGFydHVwX25vZGVzLCBkZWNvZGVfcmVzcG9uc2VzPVRydWUpCgojIEVzdGFibGlyIHVuYSBjbGF1CnJjLnNldCgiZm9vIiwgImJhciIpCgojIE9idGVuaXIgdW5hIGNsYXUKdmFsdWUgPSByYy5nZXQoImZvbyIpCnByaW50KHZhbHVlKSAgIyBTb3J0aWRhOiBiYXI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import rediscluster
+
+startup_nodes = [{&quot;host&quot;: &quot;127.0.0.1&quot;, &quot;port&quot;: &quot;7000&quot;}]
+rc = rediscluster.RedisCluster(startup_nodes=startup_nodes, decode_responses=True)
+
+# Establir una clau
+rc.set(&quot;foo&quot;, &quot;bar&quot;)
+
+# Obtenir una clau
+value = rc.get(&quot;foo&quot;)
+print(value)  # Sortida: bar</pre></div><div class='content'></div><h2>Gestionar la Recuperació en el Codi</h2>
+<div class='content'><p>La biblioteca <code>redis-py</code> gestiona la recuperació automàticament. Si un node mestre cau, la biblioteca redirigirà la sol·licitud al nou mestre.</p>
+</div><h1>Resum</h1>
+<div class='content'><p>El Mode Clúster de Redis permet que Redis escali horitzontalment distribuint les dades entre múltiples nodes. Configurar un Clúster de Redis implica configurar múltiples instàncies de Redis, crear el clúster i gestionar-lo mitjançant l'afegit/eliminació de nodes i la gestió de recuperacions. Utilitzant biblioteques com <code>redis-py</code>, podeu interactuar fàcilment amb un Clúster de Redis en les vostres aplicacions.</p>
+<p>Comprenent i implementant el Mode Clúster de Redis, podeu assegurar alta disponibilitat, tolerància a fallades i escalabilitat per a les vostres aplicacions basades en Redis.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='sentinel'>&#x25C4;Sentinel</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Mode Clúster</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='scaling-redis'>Escalant Redis &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

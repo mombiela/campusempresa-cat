@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registre d'Auditoria a Elasticsearch</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/elasticsearch/audit-logging" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/elasticsearch/audit-logging" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/elasticsearch/audit-logging" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/elasticsearch/audit-logging" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/elasticsearch/audit-logging" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='user-role-management'>&#x25C4;Gestió d'Usuaris i Rols</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Registre d'Auditoria a Elasticsearch</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='elasticsearch-in-production'>Elasticsearch en Producció &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció al Registre d'Auditoria</h1>
+<div class='content'><p>El registre d'auditoria és una característica crítica per monitoritzar i rastrejar les activitats dels usuaris dins d'un clúster d'Elasticsearch. Ajuda a mantenir la seguretat, el compliment i la supervisió operativa registrant esdeveniments com ara inici de sessió d'usuaris, accés a dades i canvis de configuració.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Registres d'Auditoria</strong>: Registres d'esdeveniments que capturen accions d'usuaris i canvis del sistema.</li>
+<li><strong>Compliment</strong>: Assegurar que el sistema s'adhereix als requisits normatius.</li>
+<li><strong>Seguretat</strong>: Monitoritzar l'accés no autoritzat i possibles violacions de seguretat.</li>
+<li><strong>Supervisió Operativa</strong>: Rastrejar canvis i activitats per a la resolució de problemes i la gestió del sistema.</li>
+</ul>
+</div><h1>Configuració del Registre d'Auditoria</h1>
+<div class='content'><p>Per habilitar el registre d'auditoria a Elasticsearch, cal configurar el fitxer <code>elasticsearch.yml</code>. Aquí tens una guia pas a pas:</p>
+</div><h2>Passos de Configuració</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Habilitar el Registre d'Auditoria</strong>:</p>
+<pre><code class="language-yaml">xpack.security.audit.enabled: true
+</code></pre>
+</li>
+<li>
+<p><strong>Especificar la Destinació de Sortida</strong>:</p>
+<ul>
+<li><strong>Fitxer de Registre</strong>:
+<pre><code class="language-yaml">xpack.security.audit.outputs: [file]
+xpack.security.audit.logfile.events.emit_request_body: true
+xpack.security.audit.logfile.prefix: &quot;audit&quot;
+xpack.security.audit.logfile.events.include: [&quot;access_granted&quot;, &quot;access_denied&quot;]
+</code></pre>
+</li>
+<li><strong>Índex</strong>:
+<pre><code class="language-yaml">xpack.security.audit.outputs: [index]
+xpack.security.audit.index.events.emit_request_body: true
+xpack.security.audit.index.events.include: [&quot;access_granted&quot;, &quot;access_denied&quot;]
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Filtrar Esdeveniments</strong>:</p>
+<ul>
+<li>Incloure esdeveniments específics:
+<pre><code class="language-yaml">xpack.security.audit.logfile.events.include: [&quot;access_granted&quot;, &quot;access_denied&quot;]
+</code></pre>
+</li>
+<li>Excloure esdeveniments específics:
+<pre><code class="language-yaml">xpack.security.audit.logfile.events.exclude: [&quot;authentication_success&quot;]
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+</div><h2>Exemple de Configuració</h2>
+<div class='content'><p>Aquí tens un exemple complet d'una configuració <code>elasticsearch.yml</code> per al registre d'auditoria:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("eHBhY2suc2VjdXJpdHkuYXVkaXQuZW5hYmxlZDogdHJ1ZQp4cGFjay5zZWN1cml0eS5hdWRpdC5vdXRwdXRzOiBbZmlsZSwgaW5kZXhdCnhwYWNrLnNlY3VyaXR5LmF1ZGl0LmxvZ2ZpbGUuZXZlbnRzLmVtaXRfcmVxdWVzdF9ib2R5OiB0cnVlCnhwYWNrLnNlY3VyaXR5LmF1ZGl0LmxvZ2ZpbGUucHJlZml4OiAiYXVkaXQiCnhwYWNrLnNlY3VyaXR5LmF1ZGl0LmxvZ2ZpbGUuZXZlbnRzLmluY2x1ZGU6IFsiYWNjZXNzX2dyYW50ZWQiLCAiYWNjZXNzX2RlbmllZCJdCnhwYWNrLnNlY3VyaXR5LmF1ZGl0LmluZGV4LmV2ZW50cy5lbWl0X3JlcXVlc3RfYm9keTogdHJ1ZQp4cGFjay5zZWN1cml0eS5hdWRpdC5pbmRleC5ldmVudHMuaW5jbHVkZTogWyJhY2Nlc3NfZ3JhbnRlZCIsICJhY2Nlc3NfZGVuaWVkIl0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>xpack.security.audit.enabled: true
+xpack.security.audit.outputs: [file, index]
+xpack.security.audit.logfile.events.emit_request_body: true
+xpack.security.audit.logfile.prefix: &quot;audit&quot;
+xpack.security.audit.logfile.events.include: [&quot;access_granted&quot;, &quot;access_denied&quot;]
+xpack.security.audit.index.events.emit_request_body: true
+xpack.security.audit.index.events.include: [&quot;access_granted&quot;, &quot;access_denied&quot;]</pre></div><div class='content'></div><h1>Anàlisi dels Registres d'Auditoria</h1>
+<div class='content'><p>Un cop habilitat el registre d'auditoria, pots analitzar els registres per monitoritzar les activitats dels usuaris i els canvis del sistema.</p>
+</div><h2>Accés als Fitxers de Registre</h2>
+<div class='content'><p>Els registres d'auditoria es guarden al fitxer de registre o índex especificat. Per exemple, si els registres es guarden en un fitxer, pots accedir-hi a la ubicació configurada:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("L3Zhci9sb2cvZWxhc3RpY3NlYXJjaC9hdWRpdC5sb2c="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>/var/log/elasticsearch/audit.log</pre></div><div class='content'></div><h2>Consultar els Registres d'Auditoria a Kibana</h2>
+<div class='content'><p>Si els registres d'auditoria es guarden en un índex, pots utilitzar Kibana per consultar i visualitzar els registres:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0VUIC9fc2VhcmNoCnsKICAicXVlcnkiOiB7CiAgICAibWF0Y2giOiB7CiAgICAgICJldmVudC50eXBlIjogImFjY2Vzc19ncmFudGVkIgogICAgfQogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GET /_search
+{
+  &quot;query&quot;: {
+    &quot;match&quot;: {
+      &quot;event.type&quot;: &quot;access_granted&quot;
+    }
+  }
+}</pre></div><div class='content'></div><h2>Exemple d'Entrada de Registre</h2>
+<div class='content'><p>Aquí tens un exemple d'una entrada de registre d'auditoria:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJ0aW1lc3RhbXAiOiAiMjAyMy0xMC0wMVQxMjozNDo1NloiLAogICJwcmluY2lwYWwiOiAidXNlcjEiLAogICJhY3Rpb24iOiAiYWNjZXNzX2dyYW50ZWQiLAogICJpbmRpY2VzIjogWyJpbmRleDEiXSwKICAicmVxdWVzdCI6IHsKICAgICJtZXRob2QiOiAiR0VUIiwKICAgICJ1cmkiOiAiL2luZGV4MS9fc2VhcmNoIgogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;timestamp&quot;: &quot;2023-10-01T12:34:56Z&quot;,
+  &quot;principal&quot;: &quot;user1&quot;,
+  &quot;action&quot;: &quot;access_granted&quot;,
+  &quot;indices&quot;: [&quot;index1&quot;],
+  &quot;request&quot;: {
+    &quot;method&quot;: &quot;GET&quot;,
+    &quot;uri&quot;: &quot;/index1/_search&quot;
+  }
+}</pre></div><div class='content'></div><h1>Millors Pràctiques</h1>
+<div class='content'><ul>
+<li><strong>Monitorització Regular</strong>: Revisa regularment els registres d'auditoria per detectar qualsevol activitat inusual.</li>
+<li><strong>Polítiques de Retenció</strong>: Implementa polítiques de retenció de registres per gestionar l'emmagatzematge i el compliment.</li>
+<li><strong>Alertes</strong>: Configura alertes per a esdeveniments crítics com ara access_denied o authentication_failures.</li>
+<li><strong>Emmagatzematge Segur</strong>: Assegura't que els registres d'auditoria es guarden de manera segura per evitar manipulacions.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>El registre d'auditoria a Elasticsearch és una característica essencial per mantenir la seguretat, el compliment i la supervisió operativa. En habilitar i configurar correctament el registre d'auditoria, pots monitoritzar les activitats dels usuaris, detectar accessos no autoritzats i assegurar-te que el teu clúster d'Elasticsearch opera dins dels requisits normatius. L'anàlisi regular i les millors pràctiques t'ajudaran a treure el màxim profit de les capacitats del registre d'auditoria.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='user-role-management'>&#x25C4;Gestió d'Usuaris i Rols</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Registre d'Auditoria a Elasticsearch</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='elasticsearch-in-production'>Elasticsearch en Producció &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

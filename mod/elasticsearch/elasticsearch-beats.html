@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elasticsearch amb Beats</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/elasticsearch/elasticsearch-beats" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/elasticsearch/elasticsearch-beats" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/elasticsearch/elasticsearch-beats" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/elasticsearch/elasticsearch-beats" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/elasticsearch/elasticsearch-beats" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='elasticsearch-kibana'>&#x25C4;Elasticsearch amb Kibana</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Elasticsearch amb Beats</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='elasticsearch-hadoop'>Elasticsearch amb Hadoop &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció als Beats</h1>
+<div class='content'><p>Els Beats són enviadors de dades lleugers que instal·les als teus servidors per enviar dades operacionals a Elasticsearch. Estan dissenyats per ser simples i eficients, facilitant la recollida i l'enviament de dades des de diverses fonts.</p>
+<ul>
+<li><strong>Filebeat</strong>: Envia fitxers de registre.</li>
+<li><strong>Metricbeat</strong>: Recull mètriques del sistema operatiu i serveis.</li>
+<li><strong>Packetbeat</strong>: Monitora el trànsit de xarxa.</li>
+<li><strong>Winlogbeat</strong>: Envia registres d'esdeveniments de Windows.</li>
+<li><strong>Auditbeat</strong>: Recull dades d'auditoria del marc d'auditoria de Linux.</li>
+<li><strong>Heartbeat</strong>: Monitora la disponibilitat dels serveis.</li>
+</ul>
+</div><h1>Instal·lació i Configuració dels Beats</h1>
+<h2>Instal·lació de Filebeat</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Descarrega i instal·la Filebeat</strong>:</p>
+<pre><code class="language-bash">curl -L -O https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-7.10.0-amd64.deb
+sudo dpkg -i filebeat-7.10.0-amd64.deb
+</code></pre>
+</li>
+<li>
+<p><strong>Configura Filebeat</strong>:
+Edita el fitxer de configuració <code>filebeat.yml</code> per especificar els fitxers de registre a monitorar i la instància d'Elasticsearch a la qual enviar les dades:</p>
+<pre><code class="language-yaml">filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/*.log
+
+output.elasticsearch:
+  hosts: [&quot;localhost:9200&quot;]
+</code></pre>
+</li>
+<li>
+<p><strong>Inicia Filebeat</strong>:</p>
+<pre><code class="language-bash">sudo service filebeat start
+</code></pre>
+</li>
+</ol>
+</div><h2>Instal·lació de Metricbeat</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Descarrega i instal·la Metricbeat</strong>:</p>
+<pre><code class="language-bash">curl -L -O https://artifacts.elastic.co/downloads/beats/metricbeat/metricbeat-7.10.0-amd64.deb
+sudo dpkg -i metricbeat-7.10.0-amd64.deb
+</code></pre>
+</li>
+<li>
+<p><strong>Configura Metricbeat</strong>:
+Edita el fitxer de configuració <code>metricbeat.yml</code> per especificar els mòduls a habilitar i la instància d'Elasticsearch a la qual enviar les dades:</p>
+<pre><code class="language-yaml">metricbeat.modules:
+- module: system
+  metricsets:
+    - cpu
+    - memory
+    - network
+  enabled: true
+  period: 10s
+  processes: ['.*']
+
+output.elasticsearch:
+  hosts: [&quot;localhost:9200&quot;]
+</code></pre>
+</li>
+<li>
+<p><strong>Inicia Metricbeat</strong>:</p>
+<pre><code class="language-bash">sudo service metricbeat start
+</code></pre>
+</li>
+</ol>
+</div><h1>Ús dels Beats amb Elasticsearch</h1>
+<h2>Enviament de Dades a Elasticsearch</h2>
+<div class='content'><p>Els Beats es poden configurar per enviar dades directament a Elasticsearch o a través de Logstash per a un processament addicional.</p>
+<ul>
+<li><strong>Directament a Elasticsearch</strong>: Aquesta és la configuració més senzilla on els Beats envien dades directament a Elasticsearch.</li>
+<li><strong>A través de Logstash</strong>: Aquesta configuració permet un processament i transformació de dades més complex abans que les dades siguin indexades a Elasticsearch.</li>
+</ul>
+</div><h2>Exemple: Filebeat a Elasticsearch</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Configura Filebeat</strong>:</p>
+<pre><code class="language-yaml">filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /var/log/*.log
+
+output.elasticsearch:
+  hosts: [&quot;localhost:9200&quot;]
+</code></pre>
+</li>
+<li>
+<p><strong>Inicia Filebeat</strong>:</p>
+<pre><code class="language-bash">sudo service filebeat start
+</code></pre>
+</li>
+</ol>
+</div><h2>Exemple: Metricbeat a Elasticsearch</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Configura Metricbeat</strong>:</p>
+<pre><code class="language-yaml">metricbeat.modules:
+- module: system
+  metricsets:
+    - cpu
+    - memory
+    - network
+  enabled: true
+  period: 10s
+  processes: ['.*']
+
+output.elasticsearch:
+  hosts: [&quot;localhost:9200&quot;]
+</code></pre>
+</li>
+<li>
+<p><strong>Inicia Metricbeat</strong>:</p>
+<pre><code class="language-bash">sudo service metricbeat start
+</code></pre>
+</li>
+</ol>
+</div><h1>Monitorització i Visualització de Dades</h1>
+<h2>Ús de Kibana</h2>
+<div class='content'><p>Kibana és l'eina de visualització per a Elasticsearch. Et permet crear quadres de comandament i visualitzacions basades en les dades recollides pels Beats.</p>
+<ol>
+<li>
+<p><strong>Accedeix a Kibana</strong>:
+Obre el teu navegador i navega a <code>http://localhost:5601</code>.</p>
+</li>
+<li>
+<p><strong>Crea Patrons d'Índex</strong>:</p>
+<ul>
+<li>Ves a la secció &quot;Management&quot;.</li>
+<li>Crea un patró d'índex per a les dades recollides pels Beats (per exemple, <code>filebeat-*</code>, <code>metricbeat-*</code>).</li>
+</ul>
+</li>
+<li>
+<p><strong>Crea Visualitzacions</strong>:</p>
+<ul>
+<li>Utilitza la secció &quot;Visualize&quot; per crear visualitzacions basades en les dades.</li>
+<li>Combina visualitzacions en quadres de comandament per a una monitorització completa.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Exemple: Creació d'un Quadre de Comandament</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crea Visualitzacions</strong>:</p>
+<ul>
+<li>Crea visualitzacions per a l'ús de la CPU, l'ús de la memòria i el trànsit de xarxa utilitzant dades de Metricbeat.</li>
+</ul>
+</li>
+<li>
+<p><strong>Combina Visualitzacions en un Quadre de Comandament</strong>:</p>
+<ul>
+<li>Ves a la secció &quot;Dashboard&quot;.</li>
+<li>Afegeix les visualitzacions creades en el pas anterior a un nou quadre de comandament.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Els Beats són eines potents per recollir i enviar dades a Elasticsearch. Són lleugers i fàcils de configurar, cosa que els fa ideals per monitoritzar diversos aspectes de la teva infraestructura. Integrant Beats amb Elasticsearch i Kibana, pots crear solucions de monitorització completes que proporcionen informació valuosa sobre els teus sistemes i aplicacions.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='elasticsearch-kibana'>&#x25C4;Elasticsearch amb Kibana</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Elasticsearch amb Beats</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='elasticsearch-hadoop'>Elasticsearch amb Hadoop &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

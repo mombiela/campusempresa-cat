@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaccions i Concurrència</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/postgresql/transactions-and-concurrency" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/postgresql/transactions-and-concurrency" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/postgresql/transactions-and-concurrency" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/postgresql/transactions-and-concurrency" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/postgresql/transactions-and-concurrency" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='vacuuming-and-maintenance'>&#x25C4;Vacuuming i manteniment</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Transaccions i Concurrència</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='views-and-materialized-views'>Vistes i vistes materialitzades &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a les Transaccions</h1>
+<div class='content'><p>Les transaccions són un concepte fonamental en les bases de dades, assegurant que una sèrie d'operacions es completin amb èxit conjuntament o fallin conjuntament, mantenint la integritat de les dades.</p>
+<ul>
+<li><strong>Atomicitat</strong>: Assegura que totes les operacions dins d'una transacció es completin; si no, la transacció s'aborta.</li>
+<li><strong>Consistència</strong>: Assegura que una transacció porta la base de dades d'un estat vàlid a un altre.</li>
+<li><strong>Aïllament</strong>: Assegura que les transaccions es processen de manera segura i independent al mateix temps sense interferències.</li>
+<li><strong>Durabilitat</strong>: Assegura que una vegada una transacció ha estat compromesa, romandrà així, fins i tot en cas de fallada del sistema.</li>
+</ul>
+</div><h2>Comandes Bàsiques de Transacció</h2>
+<div class='content'><ul>
+<li><code>BEGIN</code>: Comença una nova transacció.</li>
+<li><code>COMMIT</code>: Desa tots els canvis fets durant la transacció.</li>
+<li><code>ROLLBACK</code>: Reverteix tots els canvis fets durant la transacció.</li>
+</ul>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QkVHSU47CgpJTlNFUlQgSU5UTyBhY2NvdW50cyAodXNlcl9pZCwgYmFsYW5jZSkgVkFMVUVTICgxLCAxMDAwKTsKVVBEQVRFIGFjY291bnRzIFNFVCBiYWxhbmNlID0gYmFsYW5jZSAtIDEwMCBXSEVSRSB1c2VyX2lkID0gMTsKCkNPTU1JVDs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>BEGIN;
+
+INSERT INTO accounts (user_id, balance) VALUES (1, 1000);
+UPDATE accounts SET balance = balance - 100 WHERE user_id = 1;
+
+COMMIT;</pre></div><div class='content'><p>En aquest exemple:</p>
+<ol>
+<li>Es comença una transacció amb <code>BEGIN</code>.</li>
+<li>S'insereix un nou compte.</li>
+<li>Es modifica el saldo del compte.</li>
+<li>La transacció es compromet, fent tots els canvis permanents.</li>
+</ol>
+</div><h1>Control de Concurrència</h1>
+<div class='content'><p>El control de concurrència és essencial per assegurar que les transaccions de la base de dades es realitzin simultàniament sense violar la integritat de les dades.</p>
+</div><h2>Nivells d'Aïllament</h2>
+<div class='content'><p>PostgreSQL suporta diversos nivells d'aïllament que controlen la visibilitat dels canvis fets per transaccions concurrents.</p>
+<ul>
+<li><strong>Read Uncommitted</strong>: Les transaccions poden veure canvis no compromesos fets per altres transaccions.</li>
+<li><strong>Read Committed</strong>: Una transacció només veu canvis compromesos fets per altres transaccions.</li>
+<li><strong>Repeatable Read</strong>: Assegura que si una transacció llegeix un valor, veurà el mateix valor si el torna a llegir.</li>
+<li><strong>Serializable</strong>: Assegura un aïllament complet d'altres transaccions, proporcionant el nivell més alt d'aïllament.</li>
+</ul>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VUIFRSQU5TQUNUSU9OIElTT0xBVElPTiBMRVZFTCBSRVBFQVRBQkxFIFJFQUQ7CgpCRUdJTjsKClNFTEVDVCBiYWxhbmNlIEZST00gYWNjb3VudHMgV0hFUkUgdXNlcl9pZCA9IDE7CgotLSBSZWFsaXR6YXIgYWxndW5lcyBvcGVyYWNpb25zCgpDT01NSVQ7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+
+BEGIN;
+
+SELECT balance FROM accounts WHERE user_id = 1;
+
+-- Realitzar algunes operacions
+
+COMMIT;</pre></div><div class='content'><p>En aquest exemple:</p>
+<ol>
+<li>El nivell d'aïllament de la transacció es configura a <code>REPEATABLE READ</code>.</li>
+<li>Es comença una transacció.</li>
+<li>Es llegeix el saldo de la taula <code>accounts</code>.</li>
+<li>La transacció es compromet.</li>
+</ol>
+</div><h2>Mecanismes de Bloqueig</h2>
+<div class='content'><p>PostgreSQL utilitza bloquejos per gestionar l'accés concurrent a les dades.</p>
+<ul>
+<li><strong>Bloquejos a nivell de fila</strong>: Bloquegen files individuals.</li>
+<li><strong>Bloquejos a nivell de taula</strong>: Bloquegen taules senceres.</li>
+</ul>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QkVHSU47CgpTRUxFQ1QgKiBGUk9NIGFjY291bnRzIFdIRVJFIHVzZXJfaWQgPSAxIEZPUiBVUERBVEU7CgotLSBSZWFsaXR6YXIgYWxndW5lcyBvcGVyYWNpb25zCgpDT01NSVQ7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>BEGIN;
+
+SELECT * FROM accounts WHERE user_id = 1 FOR UPDATE;
+
+-- Realitzar algunes operacions
+
+COMMIT;</pre></div><div class='content'><p>En aquest exemple:</p>
+<ol>
+<li>Es comença una transacció.</li>
+<li>S'adquireix un bloqueig a nivell de fila en la fila seleccionada utilitzant <code>FOR UPDATE</code>.</li>
+<li>Es realitzen operacions.</li>
+<li>La transacció es compromet.</li>
+</ol>
+</div><h2>Interbloquejos</h2>
+<div class='content'><p>Els interbloquejos es produeixen quan dues o més transaccions estan esperant que l'altra alliberi bloquejos, causant un cicle de dependències.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gVHJhbnNhY2Npw7MgMQpCRUdJTjsKVVBEQVRFIGFjY291bnRzIFNFVCBiYWxhbmNlID0gYmFsYW5jZSAtIDEwMCBXSEVSRSB1c2VyX2lkID0gMTsKCi0tIFRyYW5zYWNjacOzIDIKQkVHSU47ClVQREFURSBhY2NvdW50cyBTRVQgYmFsYW5jZSA9IGJhbGFuY2UgKyAxMDAgV0hFUkUgdXNlcl9pZCA9IDI7CgotLSBUcmFuc2FjY2nDsyAxClVQREFURSBhY2NvdW50cyBTRVQgYmFsYW5jZSA9IGJhbGFuY2UgKyAxMDAgV0hFUkUgdXNlcl9pZCA9IDI7IC0tIGVzcGVyYSBwZXIgVHJhbnNhY2Npw7MgMgoKLS0gVHJhbnNhY2Npw7MgMgpVUERBVEUgYWNjb3VudHMgU0VUIGJhbGFuY2UgPSBiYWxhbmNlIC0gMTAwIFdIRVJFIHVzZXJfaWQgPSAxOyAtLSBlc3BlcmEgcGVyIFRyYW5zYWNjacOzIDE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Transacci&oacute; 1
+BEGIN;
+UPDATE accounts SET balance = balance - 100 WHERE user_id = 1;
+
+-- Transacci&oacute; 2
+BEGIN;
+UPDATE accounts SET balance = balance + 100 WHERE user_id = 2;
+
+-- Transacci&oacute; 1
+UPDATE accounts SET balance = balance + 100 WHERE user_id = 2; -- espera per Transacci&oacute; 2
+
+-- Transacci&oacute; 2
+UPDATE accounts SET balance = balance - 100 WHERE user_id = 1; -- espera per Transacci&oacute; 1</pre></div><div class='content'><p>En aquest exemple:</p>
+<ol>
+<li>La Transacció 1 bloqueja una fila.</li>
+<li>La Transacció 2 bloqueja una altra fila.</li>
+<li>Ambdues transaccions esperen que l'altra alliberi els seus bloquejos, causant un interbloqueig.</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Entendre les transaccions i el control de concurrència és crucial per mantenir la integritat de les dades i el rendiment en PostgreSQL. Dominant les comandes de transacció, els nivells d'aïllament, els mecanismes de bloqueig i la gestió d'interbloquejos, pots assegurar que les teves operacions de base de dades siguin fiables i eficients.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='vacuuming-and-maintenance'>&#x25C4;Vacuuming i manteniment</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Transaccions i Concurrència</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='views-and-materialized-views'>Vistes i vistes materialitzades &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

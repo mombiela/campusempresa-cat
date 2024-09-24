@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobreescriure Paràmetres en Procediments</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/jcl/overriding-parameters-in-procedures" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/jcl/overriding-parameters-in-procedures" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/jcl/overriding-parameters-in-procedures" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/jcl/overriding-parameters-in-procedures" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/jcl/overriding-parameters-in-procedures" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='symbolic-parameters'>&#x25C4;Paràmetres Simbòlics</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Sobreescriure Paràmetres en Procediments</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='conditional-processing'>Processament Condicional &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En Job Control Language (JCL), els procediments (PROCs) són conjunts reutilitzables de declaracions JCL que es poden incloure en múltiples treballs. Una de les característiques poderoses del JCL és la capacitat de sobreescriure paràmetres en aquests procediments, permetent flexibilitat i personalització sense modificar el PROC original.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Procediment (PROC):</strong> Un conjunt de declaracions JCL que es poden reutilitzar en múltiples treballs.</li>
+<li><strong>Sobreescriure Paràmetres:</strong> El procés de canviar els valors dels paràmetres definits en un PROC quan s'invoca en un treball.</li>
+</ul>
+</div><h1>Definició d'un Procediment</h1>
+<div class='content'><p>Un procediment es defineix en una biblioteca JCL i es pot invocar en un treball. Aquí teniu un exemple d'un PROC senzill:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly9NWVBST0MgUFJPQwovL1NURVAxICBFWEVDIFBHTT1NWVBST0cKLy9ERDEgICAgREQgICBEU049JkRBVEFTRVQsRElTUD1TSFIKLy9ERDIgICAgREQgICBEU049T1VUUFVULkZJTEUsRElTUD0oTkVXLENBVExHLERFTEVURSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>//MYPROC PROC
+//STEP1  EXEC PGM=MYPROG
+//DD1    DD   DSN=&amp;DATASET,DISP=SHR
+//DD2    DD   DSN=OUTPUT.FILE,DISP=(NEW,CATLG,DELETE)</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li><code>MYPROC</code> és el nom del procediment.</li>
+<li><code>STEP1</code> és un pas dins del procediment que executa el programa <code>MYPROG</code>.</li>
+<li><code>DD1</code> i <code>DD2</code> són declaracions de definició de dades (DD). <code>DD1</code> utilitza un paràmetre simbòlic <code>&amp;DATASET</code>.</li>
+</ul>
+</div><h1>Invocar un Procediment</h1>
+<div class='content'><p>Per invocar el procediment en un treball, utilitzeu la declaració <code>EXEC</code> amb el nom del procediment:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly9NWUpPQiAgSk9CICAoQUNDVCksJ01ZIEpPQicKLy9TVEVQMSAgRVhFQyBNWVBST0MsREFUQVNFVD1JTlBVVC5GSUxF"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>//MYJOB  JOB  (ACCT),'MY JOB'
+//STEP1  EXEC MYPROC,DATASET=INPUT.FILE</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li><code>MYJOB</code> és el nom del treball.</li>
+<li><code>STEP1</code> és el pas que invoca <code>MYPROC</code>.</li>
+<li>El paràmetre simbòlic <code>&amp;DATASET</code> es sobreescriu amb el valor <code>INPUT.FILE</code>.</li>
+</ul>
+</div><h1>Sobreescriure Paràmetres</h1>
+<div class='content'><p>Podeu sobreescriure paràmetres dins d'un procediment especificant nous valors en el treball que invoca el procediment. Això us permet personalitzar el comportament del procediment sense modificar la seva definició.</p>
+</div><h2>Sobreescriure Declaracions DD</h2>
+<div class='content'><p>Podeu sobreescriure declaracions DD senceres o paràmetres específics dins d'una declaració DD. Aquí teniu alguns exemples:</p>
+<h4>Sobreescriure Declaració DD Completa</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly9NWUpPQiAgSk9CICAoQUNDVCksJ01ZIEpPQicKLy9TVEVQMSAgRVhFQyBNWVBST0MsREFUQVNFVD1JTlBVVC5GSUxFCi8vU1RFUDEuREQyIEREIERTTj1ORVcuT1VUUFVULkZJTEUsRElTUD0oTkVXLENBVExHLERFTEVURSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>//MYJOB  JOB  (ACCT),'MY JOB'
+//STEP1  EXEC MYPROC,DATASET=INPUT.FILE
+//STEP1.DD2 DD DSN=NEW.OUTPUT.FILE,DISP=(NEW,CATLG,DELETE)</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li>La declaració <code>DD2</code> en <code>MYPROC</code> es sobreescriu completament amb un nou nom de conjunt de dades <code>NEW.OUTPUT.FILE</code>.</li>
+</ul>
+<h4>Sobreescriure Paràmetres Específics</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly9NWUpPQiAgSk9CICAoQUNDVCksJ01ZIEpPQicKLy9TVEVQMSAgRVhFQyBNWVBST0MsREFUQVNFVD1JTlBVVC5GSUxFCi8vU1RFUDEuREQyIERJU1A9KE1PRCxDQVRMRyxERUxFVEUp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>//MYJOB  JOB  (ACCT),'MY JOB'
+//STEP1  EXEC MYPROC,DATASET=INPUT.FILE
+//STEP1.DD2 DISP=(MOD,CATLG,DELETE)</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li>Només el paràmetre <code>DISP</code> de <code>DD2</code> es sobreescriu, canviant-lo a <code>MOD</code>.</li>
+</ul>
+</div><h2>Sobreescriure Paràmetres EXEC</h2>
+<div class='content'><p>També podeu sobreescriure paràmetres en la declaració <code>EXEC</code> d'un procediment:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly9NWUpPQiAgSk9CICAoQUNDVCksJ01ZIEpPQicKLy9TVEVQMSAgRVhFQyBNWVBST0MsREFUQVNFVD1JTlBVVC5GSUxFCi8vU1RFUDEgIEVYRUMgUEdNPU5FV1BST0c="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>//MYJOB  JOB  (ACCT),'MY JOB'
+//STEP1  EXEC MYPROC,DATASET=INPUT.FILE
+//STEP1  EXEC PGM=NEWPROG</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li>El paràmetre <code>PGM</code> en la declaració <code>EXEC</code> de <code>STEP1</code> es sobreescriu per executar <code>NEWPROG</code> en lloc de <code>MYPROG</code>.</li>
+</ul>
+</div><h1>Exemples i Exercicis</h1>
+<div class='content'></div><h2>Exemple 1: Sobreescriure Paràmetre Bàsic</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly9NWVBST0MgUFJPQwovL1NURVAxICBFWEVDIFBHTT1NWVBST0cKLy9ERDEgICAgREQgICBEU049JkRBVEFTRVQsRElTUD1TSFIKLy9ERDIgICAgREQgICBEU049T1VUUFVULkZJTEUsRElTUD0oTkVXLENBVExHLERFTEVURSkKCi8vTVlKT0IgIEpPQiAgKEFDQ1QpLCdNWSBKT0InCi8vU1RFUDEgIEVYRUMgTVlQUk9DLERBVEFTRVQ9SU5QVVQuRklMRQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>//MYPROC PROC
+//STEP1  EXEC PGM=MYPROG
+//DD1    DD   DSN=&amp;DATASET,DISP=SHR
+//DD2    DD   DSN=OUTPUT.FILE,DISP=(NEW,CATLG,DELETE)
+
+//MYJOB  JOB  (ACCT),'MY JOB'
+//STEP1  EXEC MYPROC,DATASET=INPUT.FILE</pre></div><div class='content'></div><h2>Exercici 1: Sobreescriure el Paràmetre DISP</h2>
+<div class='content'><p>Modifiqueu el treball per sobreescriure el paràmetre <code>DISP</code> de <code>DD2</code> a <code>MOD</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly9NWUpPQiAgSk9CICAoQUNDVCksJ01ZIEpPQicKLy9TVEVQMSAgRVhFQyBNWVBST0MsREFUQVNFVD1JTlBVVC5GSUxFCi8vU1RFUDEuREQyIERJU1A9KE1PRCxDQVRMRyxERUxFVEUp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>//MYJOB  JOB  (ACCT),'MY JOB'
+//STEP1  EXEC MYPROC,DATASET=INPUT.FILE
+//STEP1.DD2 DISP=(MOD,CATLG,DELETE)</pre></div><div class='content'></div><h2>Exemple 2: Sobreescriure Paràmetres EXEC</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly9NWVBST0MgUFJPQwovL1NURVAxICBFWEVDIFBHTT1NWVBST0cKLy9ERDEgICAgREQgICBEU049JkRBVEFTRVQsRElTUD1TSFIKCi8vTVlKT0IgIEpPQiAgKEFDQ1QpLCdNWSBKT0InCi8vU1RFUDEgIEVYRUMgTVlQUk9DLERBVEFTRVQ9SU5QVVQuRklMRQovL1NURVAxICBFWEVDIFBHTT1ORVdQUk9H"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>//MYPROC PROC
+//STEP1  EXEC PGM=MYPROG
+//DD1    DD   DSN=&amp;DATASET,DISP=SHR
+
+//MYJOB  JOB  (ACCT),'MY JOB'
+//STEP1  EXEC MYPROC,DATASET=INPUT.FILE
+//STEP1  EXEC PGM=NEWPROG</pre></div><div class='content'></div><h2>Exercici 2: Sobreescriure el Nom del Conjunt de Dades</h2>
+<div class='content'><p>Modifiqueu el treball per sobreescriure el nom del conjunt de dades en <code>DD1</code> a <code>NEW.INPUT.FILE</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly9NWUpPQiAgSk9CICAoQUNDVCksJ01ZIEpPQicKLy9TVEVQMSAgRVhFQyBNWVBST0MsREFUQVNFVD1ORVcuSU5QVVQuRklMRQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>//MYJOB  JOB  (ACCT),'MY JOB'
+//STEP1  EXEC MYPROC,DATASET=NEW.INPUT.FILE</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Sobreescriure paràmetres en procediments és una característica poderosa en JCL que permet flexibilitat i reutilització. Entenent com sobreescriure declaracions DD i paràmetres EXEC, podeu personalitzar el comportament dels procediments per satisfer les necessitats específiques dels vostres treballs sense modificar les definicions originals dels procediments. Practiqueu aquests conceptes amb els exemples i exercicis proporcionats per obtenir una comprensió més profunda de la sobreescriptura de paràmetres en JCL.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='symbolic-parameters'>&#x25C4;Paràmetres Simbòlics</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Sobreescriure Paràmetres en Procediments</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='conditional-processing'>Processament Condicional &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Càmera i Gestió de Fitxers en Ionic</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/ionic/camera-and-file-handling" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/ionic/camera-and-file-handling" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/ionic/camera-and-file-handling" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/ionic/camera-and-file-handling" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/ionic/camera-and-file-handling" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='geolocation-and-maps'>&#x25C4;Geolocalització i Mapes</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Càmera i Gestió de Fitxers en Ionic</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-testing-in-ionic'>Introducció a les Proves en Ionic &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquesta secció, explorarem com utilitzar la càmera i gestionar fitxers en una aplicació Ionic. Això inclou capturar imatges, accedir a la biblioteca de fotos del dispositiu i gestionar fitxers dins de l'aplicació. Al final d'aquesta secció, seràs capaç d'integrar la funcionalitat de la càmera i les capacitats de gestió de fitxers a les teves aplicacions Ionic.</p>
+</div><h1>Configuració de l'Entorn</h1>
+<div class='content'><p>Abans de submergir-nos en el codi, assegura't de tenir els següents requisits previs:</p>
+<ul>
+<li>Node.js instal·lat</li>
+<li>Ionic CLI instal·lat (<code>npm install -g @ionic/cli</code>)</li>
+<li>Un projecte Ionic nou o existent</li>
+</ul>
+</div><h1>Instal·lació dels Plugins Necessaris</h1>
+<div class='content'><p>Per treballar amb la càmera i el sistema de fitxers, necessitem instal·lar els següents plugins de Cordova:</p>
+<ul>
+<li><code>@ionic-native/camera</code></li>
+<li><code>@ionic-native/file</code></li>
+</ul>
+<p>Executa les següents comandes per instal·lar aquests plugins:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW9uaWMgY29yZG92YSBwbHVnaW4gYWRkIGNvcmRvdmEtcGx1Z2luLWNhbWVyYQpucG0gaW5zdGFsbCBAaW9uaWMtbmF0aXZlL2NhbWVyYQoKaW9uaWMgY29yZG92YSBwbHVnaW4gYWRkIGNvcmRvdmEtcGx1Z2luLWZpbGUKbnBtIGluc3RhbGwgQGlvbmljLW5hdGl2ZS9maWxl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ionic cordova plugin add cordova-plugin-camera
+npm install @ionic-native/camera
+
+ionic cordova plugin add cordova-plugin-file
+npm install @ionic-native/file</pre></div><div class='content'></div><h1>Integració de la Càmera</h1>
+<h2>Captura d'Imatges</h2>
+<div class='content'><p>Per capturar imatges utilitzant la càmera del dispositiu, segueix aquests passos:</p>
+<ol>
+<li>
+<p><strong>Importa el Mòdul de la Càmera:</strong></p>
+<pre><code class="language-typescript">import { Camera, CameraOptions } from '@ionic-native/camera/ngx';
+</code></pre>
+</li>
+<li>
+<p><strong>Injecció del Servei de la Càmera:</strong></p>
+<pre><code class="language-typescript">constructor(private camera: Camera) { }
+</code></pre>
+</li>
+<li>
+<p><strong>Defineix les Opcions de la Càmera:</strong></p>
+<pre><code class="language-typescript">const options: CameraOptions = {
+  quality: 100,
+  destinationType: this.camera.DestinationType.FILE_URI,
+  encodingType: this.camera.EncodingType.JPEG,
+  mediaType: this.camera.MediaType.PICTURE
+};
+</code></pre>
+</li>
+<li>
+<p><strong>Captura d'Imatge:</strong></p>
+<pre><code class="language-typescript">this.camera.getPicture(options).then((imageData) =&gt; {
+  let capturedImage = imageData;
+  // Fes alguna cosa amb la imatge capturada
+}, (err) =&gt; {
+  // Gestiona l'error
+  console.log(&quot;Problema amb la càmera:&quot; + err);
+});
+</code></pre>
+</li>
+</ol>
+</div><h2>Accés a la Biblioteca de Fotos</h2>
+<div class='content'><p>Per accedir a les imatges de la biblioteca de fotos del dispositiu, modifica el <code>sourceType</code> a les opcions de la càmera:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3Qgb3B0aW9uczogQ2FtZXJhT3B0aW9ucyA9IHsKICBxdWFsaXR5OiAxMDAsCiAgZGVzdGluYXRpb25UeXBlOiB0aGlzLmNhbWVyYS5EZXN0aW5hdGlvblR5cGUuRklMRV9VUkksCiAgc291cmNlVHlwZTogdGhpcy5jYW1lcmEuUGljdHVyZVNvdXJjZVR5cGUuUEhPVE9MSUJSQVJZLAogIGVuY29kaW5nVHlwZTogdGhpcy5jYW1lcmEuRW5jb2RpbmdUeXBlLkpQRUcsCiAgbWVkaWFUeXBlOiB0aGlzLmNhbWVyYS5NZWRpYVR5cGUuUElDVFVSRQp9Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const options: CameraOptions = {
+  quality: 100,
+  destinationType: this.camera.DestinationType.FILE_URI,
+  sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
+  encodingType: this.camera.EncodingType.JPEG,
+  mediaType: this.camera.MediaType.PICTURE
+};</pre></div><div class='content'></div><h1>Gestió de Fitxers</h1>
+<h2>Desar Fitxers</h2>
+<div class='content'><p>Per desar fitxers dins de l'aplicació, segueix aquests passos:</p>
+<ol>
+<li>
+<p><strong>Importa el Mòdul de Fitxers:</strong></p>
+<pre><code class="language-typescript">import { File } from '@ionic-native/file/ngx';
+</code></pre>
+</li>
+<li>
+<p><strong>Injecció del Servei de Fitxers:</strong></p>
+<pre><code class="language-typescript">constructor(private file: File) { }
+</code></pre>
+</li>
+<li>
+<p><strong>Escriure en un Fitxer:</strong></p>
+<pre><code class="language-typescript">this.file.writeFile(this.file.dataDirectory, 'myFile.txt', 'Hello World', { replace: true }).then(() =&gt; {
+  console.log('Fitxer escrit correctament');
+}).catch((err) =&gt; {
+  console.log('Error en escriure el fitxer', err);
+});
+</code></pre>
+</li>
+</ol>
+</div><h2>Llegir Fitxers</h2>
+<div class='content'><p>Per llegir fitxers, utilitza el següent codi:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGhpcy5maWxlLnJlYWRBc1RleHQodGhpcy5maWxlLmRhdGFEaXJlY3RvcnksICdteUZpbGUudHh0JykudGhlbigodGV4dCkgPT4gewogIGNvbnNvbGUubG9nKCdDb250aW5ndXQgZGVsIGZpdHhlcjonLCB0ZXh0KTsKfSkuY2F0Y2goKGVycikgPT4gewogIGNvbnNvbGUubG9nKCdFcnJvciBlbiBsbGVnaXIgZWwgZml0eGVyJywgZXJyKTsKfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>this.file.readAsText(this.file.dataDirectory, 'myFile.txt').then((text) =&gt; {
+  console.log('Contingut del fitxer:', text);
+}).catch((err) =&gt; {
+  console.log('Error en llegir el fitxer', err);
+});</pre></div><div class='content'></div><h2>Esborrar Fitxers</h2>
+<div class='content'><p>Per esborrar fitxers, utilitza el següent codi:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGhpcy5maWxlLnJlbW92ZUZpbGUodGhpcy5maWxlLmRhdGFEaXJlY3RvcnksICdteUZpbGUudHh0JykudGhlbigoKSA9PiB7CiAgY29uc29sZS5sb2coJ0ZpdHhlciBlbGltaW5hdCBjb3JyZWN0YW1lbnQnKTsKfSkuY2F0Y2goKGVycikgPT4gewogIGNvbnNvbGUubG9nKCdFcnJvciBlbiBlbGltaW5hciBlbCBmaXR4ZXInLCBlcnIpOwp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>this.file.removeFile(this.file.dataDirectory, 'myFile.txt').then(() =&gt; {
+  console.log('Fitxer eliminat correctament');
+}).catch((err) =&gt; {
+  console.log('Error en eliminar el fitxer', err);
+});</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem cobert els conceptes bàsics d'integrar la funcionalitat de la càmera i gestionar fitxers en una aplicació Ionic. Has après com capturar imatges, accedir a la biblioteca de fotos i realitzar operacions bàsiques de fitxers com desar, llegir i esborrar fitxers. Aquestes habilitats són essencials per construir aplicacions mòbils robustes que interactuen amb el maquinari del dispositiu i el sistema de fitxers. Continua practicant aquests conceptes per convertir-te en un expert en la gestió de mitjans i fitxers en els teus projectes Ionic.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='geolocation-and-maps'>&#x25C4;Geolocalització i Mapes</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Càmera i Gestió de Fitxers en Ionic</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-testing-in-ionic'>Introducció a les Proves en Ionic &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

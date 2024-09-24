@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaluació i Ajust del Model</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/apachespark/model-evaluation-and-tuning" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/apachespark/model-evaluation-and-tuning" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/apachespark/model-evaluation-and-tuning" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/apachespark/model-evaluation-and-tuning" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/apachespark/model-evaluation-and-tuning" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='collaborative-filtering'>&#x25C4;Filtratge Col·laboratiu</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Avaluació i Ajust del Model</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-graphx'>Introducció a GraphX &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>L'avaluació i l'ajust del model són passos crítics en el pipeline d'aprenentatge automàtic. Asseguren que els models que construeixes no només siguin precisos, sinó que també es generalitzin bé a dades no vistes. En aquesta secció, explorarem com avaluar i ajustar models d'aprenentatge automàtic utilitzant MLlib d'Apache Spark.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Avaluació del Model</strong>: El procés d'avaluar com de bé funciona un model.</li>
+<li><strong>Ajust del Model</strong>: El procés d'optimitzar els paràmetres del model per millorar el rendiment.</li>
+<li><strong>Validació Creuada</strong>: Una tècnica per avaluar el rendiment del model dividint les dades en conjunts d'entrenament i prova múltiples vegades.</li>
+<li><strong>Hiperparàmetres</strong>: Paràmetres que es configuren abans que comenci el procés d'aprenentatge i controlen el procés d'aprenentatge.</li>
+</ul>
+</div><h1>Avaluació del Model</h1>
+<div class='content'></div><h2>Mètriques</h2>
+<div class='content'><p>Spark MLlib proporciona diverses mètriques per avaluar el rendiment dels models d'aprenentatge automàtic:</p>
+<ul>
+<li><strong>Mètriques de Classificació</strong>: Precisió, Precisió, Record, F1 Score, etc.</li>
+<li><strong>Mètriques de Regressió</strong>: Error Quadràtic Mitjà (MSE), Arrel de l'Error Quadràtic Mitjà (RMSE), Error Absolut Mitjà (MAE), R-quadrat, etc.</li>
+</ul>
+</div><h2>Exemple: Avaluació d'un Model de Classificació</h2>
+<div class='content'><p>Avaluem un model de regressió logística utilitzant la precisió com a mètrica.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBweXNwYXJrLm1sLmNsYXNzaWZpY2F0aW9uIGltcG9ydCBMb2dpc3RpY1JlZ3Jlc3Npb24KZnJvbSBweXNwYXJrLm1sLmV2YWx1YXRpb24gaW1wb3J0IE11bHRpY2xhc3NDbGFzc2lmaWNhdGlvbkV2YWx1YXRvcgpmcm9tIHB5c3Bhcmsuc3FsIGltcG9ydCBTcGFya1Nlc3Npb24KCiMgSW5pY2lhbGl0emFyIGxhIHNlc3Npw7MgZGUgU3BhcmsKc3BhcmsgPSBTcGFya1Nlc3Npb24uYnVpbGRlci5hcHBOYW1lKCJNb2RlbEV2YWx1YXRpb24iKS5nZXRPckNyZWF0ZSgpCgojIENhcnJlZ2FyIGRhZGVzCmRhdGEgPSBzcGFyay5yZWFkLmZvcm1hdCgibGlic3ZtIikubG9hZCgiZGF0YS9tbGxpYi9zYW1wbGVfbGlic3ZtX2RhdGEudHh0IikKCiMgRGl2aWRpciBsZXMgZGFkZXMgZW4gY29uanVudHMgZCdlbnRyZW5hbWVudCBpIHByb3ZhCnRyYWluX2RhdGEsIHRlc3RfZGF0YSA9IGRhdGEucmFuZG9tU3BsaXQoWzAuNywgMC4zXSkKCiMgRW50cmVuYXIgdW4gbW9kZWwgZGUgcmVncmVzc2nDsyBsb2fDrXN0aWNhCmxyID0gTG9naXN0aWNSZWdyZXNzaW9uKCkKbW9kZWwgPSBsci5maXQodHJhaW5fZGF0YSkKCiMgRmVyIHByZWRpY2Npb25zCnByZWRpY3Rpb25zID0gbW9kZWwudHJhbnNmb3JtKHRlc3RfZGF0YSkKCiMgQXZhbHVhciBlbCBtb2RlbApldmFsdWF0b3IgPSBNdWx0aWNsYXNzQ2xhc3NpZmljYXRpb25FdmFsdWF0b3IobWV0cmljTmFtZT0iYWNjdXJhY3kiKQphY2N1cmFjeSA9IGV2YWx1YXRvci5ldmFsdWF0ZShwcmVkaWN0aW9ucykKcHJpbnQoZiJQcmVjaXNpw7MgZGUgUHJvdmE6IHthY2N1cmFjeX0iKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from pyspark.ml.classification import LogisticRegression
+from pyspark.ml.evaluation import MulticlassClassificationEvaluator
+from pyspark.sql import SparkSession
+
+# Inicialitzar la sessi&oacute; de Spark
+spark = SparkSession.builder.appName(&quot;ModelEvaluation&quot;).getOrCreate()
+
+# Carregar dades
+data = spark.read.format(&quot;libsvm&quot;).load(&quot;data/mllib/sample_libsvm_data.txt&quot;)
+
+# Dividir les dades en conjunts d'entrenament i prova
+train_data, test_data = data.randomSplit([0.7, 0.3])
+
+# Entrenar un model de regressi&oacute; log&iacute;stica
+lr = LogisticRegression()
+model = lr.fit(train_data)
+
+# Fer prediccions
+predictions = model.transform(test_data)
+
+# Avaluar el model
+evaluator = MulticlassClassificationEvaluator(metricName=&quot;accuracy&quot;)
+accuracy = evaluator.evaluate(predictions)
+print(f&quot;Precisi&oacute; de Prova: {accuracy}&quot;)</pre></div><div class='content'></div><h2>Exemple: Avaluació d'un Model de Regressió</h2>
+<div class='content'><p>Avaluem un model de regressió lineal utilitzant RMSE com a mètrica.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBweXNwYXJrLm1sLnJlZ3Jlc3Npb24gaW1wb3J0IExpbmVhclJlZ3Jlc3Npb24KZnJvbSBweXNwYXJrLm1sLmV2YWx1YXRpb24gaW1wb3J0IFJlZ3Jlc3Npb25FdmFsdWF0b3IKCiMgQ2FycmVnYXIgZGFkZXMKZGF0YSA9IHNwYXJrLnJlYWQuZm9ybWF0KCJsaWJzdm0iKS5sb2FkKCJkYXRhL21sbGliL3NhbXBsZV9saW5lYXJfcmVncmVzc2lvbl9kYXRhLnR4dCIpCgojIERpdmlkaXIgbGVzIGRhZGVzIGVuIGNvbmp1bnRzIGQnZW50cmVuYW1lbnQgaSBwcm92YQp0cmFpbl9kYXRhLCB0ZXN0X2RhdGEgPSBkYXRhLnJhbmRvbVNwbGl0KFswLjcsIDAuM10pCgojIEVudHJlbmFyIHVuIG1vZGVsIGRlIHJlZ3Jlc3Npw7MgbGluZWFsCmxyID0gTGluZWFyUmVncmVzc2lvbigpCm1vZGVsID0gbHIuZml0KHRyYWluX2RhdGEpCgojIEZlciBwcmVkaWNjaW9ucwpwcmVkaWN0aW9ucyA9IG1vZGVsLnRyYW5zZm9ybSh0ZXN0X2RhdGEpCgojIEF2YWx1YXIgZWwgbW9kZWwKZXZhbHVhdG9yID0gUmVncmVzc2lvbkV2YWx1YXRvcihtZXRyaWNOYW1lPSJybXNlIikKcm1zZSA9IGV2YWx1YXRvci5ldmFsdWF0ZShwcmVkaWN0aW9ucykKcHJpbnQoZiJSTVNFIGRlIFByb3ZhOiB7cm1zZX0iKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from pyspark.ml.regression import LinearRegression
+from pyspark.ml.evaluation import RegressionEvaluator
+
+# Carregar dades
+data = spark.read.format(&quot;libsvm&quot;).load(&quot;data/mllib/sample_linear_regression_data.txt&quot;)
+
+# Dividir les dades en conjunts d'entrenament i prova
+train_data, test_data = data.randomSplit([0.7, 0.3])
+
+# Entrenar un model de regressi&oacute; lineal
+lr = LinearRegression()
+model = lr.fit(train_data)
+
+# Fer prediccions
+predictions = model.transform(test_data)
+
+# Avaluar el model
+evaluator = RegressionEvaluator(metricName=&quot;rmse&quot;)
+rmse = evaluator.evaluate(predictions)
+print(f&quot;RMSE de Prova: {rmse}&quot;)</pre></div><div class='content'></div><h1>Ajust del Model</h1>
+<div class='content'></div><h2>Ajust d'Hiperparàmetres</h2>
+<div class='content'><p>L'ajust d'hiperparàmetres implica trobar el millor conjunt d'hiperparàmetres per a un model. Spark MLlib proporciona eines com <code>ParamGridBuilder</code> i <code>CrossValidator</code> per facilitar aquest procés.</p>
+</div><h2>Exemple: Ajust d'Hiperparàmetres amb Validació Creuada</h2>
+<div class='content'><p>Ajustem els hiperparàmetres d'un model de regressió logística utilitzant validació creuada.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBweXNwYXJrLm1sLnR1bmluZyBpbXBvcnQgUGFyYW1HcmlkQnVpbGRlciwgQ3Jvc3NWYWxpZGF0b3IKCiMgRGVmaW5pciBsYSBncmFlbGxhIGRlIHBhcsOgbWV0cmVzCnBhcmFtR3JpZCA9IFBhcmFtR3JpZEJ1aWxkZXIoKSBcCiAgICAuYWRkR3JpZChsci5yZWdQYXJhbSwgWzAuMSwgMC4wMV0pIFwKICAgIC5hZGRHcmlkKGxyLmVsYXN0aWNOZXRQYXJhbSwgWzAuMCwgMC41LCAxLjBdKSBcCiAgICAuYnVpbGQoKQoKIyBEZWZpbmlyIGVsIHZhbGlkYWRvciBjcmV1YXQKY3Jvc3N2YWwgPSBDcm9zc1ZhbGlkYXRvcihlc3RpbWF0b3I9bHIsCiAgICAgICAgICAgICAgICAgICAgICAgICAgZXN0aW1hdG9yUGFyYW1NYXBzPXBhcmFtR3JpZCwKICAgICAgICAgICAgICAgICAgICAgICAgICBldmFsdWF0b3I9ZXZhbHVhdG9yLAogICAgICAgICAgICAgICAgICAgICAgICAgIG51bUZvbGRzPTMpCgojIEV4ZWN1dGFyIGxhIHZhbGlkYWNpw7MgY3JldWFkYSBpIHRyaWFyIGVsIG1pbGxvciBjb25qdW50IGRlIHBhcsOgbWV0cmVzCmN2TW9kZWwgPSBjcm9zc3ZhbC5maXQodHJhaW5fZGF0YSkKCiMgRmVyIHByZWRpY2Npb25zIHNvYnJlIGxlcyBkYWRlcyBkZSBwcm92YQpwcmVkaWN0aW9ucyA9IGN2TW9kZWwudHJhbnNmb3JtKHRlc3RfZGF0YSkKCiMgQXZhbHVhciBlbCBtb2RlbCBhanVzdGF0CmFjY3VyYWN5ID0gZXZhbHVhdG9yLmV2YWx1YXRlKHByZWRpY3Rpb25zKQpwcmludChmIlByZWNpc2nDsyBkZSBQcm92YSBBanVzdGFkYToge2FjY3VyYWN5fSIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from pyspark.ml.tuning import ParamGridBuilder, CrossValidator
+
+# Definir la graella de par&agrave;metres
+paramGrid = ParamGridBuilder() \
+    .addGrid(lr.regParam, [0.1, 0.01]) \
+    .addGrid(lr.elasticNetParam, [0.0, 0.5, 1.0]) \
+    .build()
+
+# Definir el validador creuat
+crossval = CrossValidator(estimator=lr,
+                          estimatorParamMaps=paramGrid,
+                          evaluator=evaluator,
+                          numFolds=3)
+
+# Executar la validaci&oacute; creuada i triar el millor conjunt de par&agrave;metres
+cvModel = crossval.fit(train_data)
+
+# Fer prediccions sobre les dades de prova
+predictions = cvModel.transform(test_data)
+
+# Avaluar el model ajustat
+accuracy = evaluator.evaluate(predictions)
+print(f&quot;Precisi&oacute; de Prova Ajustada: {accuracy}&quot;)</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>L'avaluació i l'ajust del model són essencials per construir models d'aprenentatge automàtic robustos. Apache Spark MLlib proporciona un conjunt complet d'eines per avaluar i ajustar models de manera eficient. Comprenent i aplicant aquestes tècniques, pots millorar significativament el rendiment i la fiabilitat de les teves aplicacions d'aprenentatge automàtic.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='collaborative-filtering'>&#x25C4;Filtratge Col·laboratiu</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Avaluació i Ajust del Model</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='introduction-to-graphx'>Introducció a GraphX &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

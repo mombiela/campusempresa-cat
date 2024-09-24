@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducció als WebSockets</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nodejs/intro-to-websockets" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nodejs/intro-to-websockets" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nodejs/intro-to-websockets" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nodejs/intro-to-websockets" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nodejs/intro-to-websockets" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='role-based-access-control'>&#x25C4;Control d'Accés Basat en Rols</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Introducció als WebSockets</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='socket-io'>Utilitzant Socket.io &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Els WebSockets proporcionen un canal de comunicació de doble sentit sobre una connexió única i de llarga durada. Això és particularment útil per a aplicacions en temps real com aplicacions de xat, notificacions en viu i jocs en línia. En aquesta secció, explorarem els WebSockets en el context de Node.js, des dels conceptes bàsics fins als més avançats.</p>
+</div><h1>Què són els WebSockets?</h1>
+<div class='content'><p>Els WebSockets són un protocol que permet la comunicació bidireccional entre un client i un servidor. A diferència de l'HTTP, que es basa en petició-resposta, els WebSockets permeten connexions persistents, permetent que les dades es puguin enviar i rebre en qualsevol moment.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Comunicació de Doble Sentit</strong>: Tant el client com el servidor poden enviar i rebre missatges simultàniament.</li>
+<li><strong>Connexió Persistent</strong>: La connexió roman oberta, reduint la sobrecàrrega d'establir múltiples connexions HTTP.</li>
+<li><strong>Baixa Latència</strong>: Ideal per a aplicacions en temps real gràcies a la latència reduïda.</li>
+</ul>
+</div><h1>Configuració dels WebSockets en Node.js</h1>
+<div class='content'><p>Per utilitzar WebSockets en Node.js, utilitzarem la biblioteca <code>ws</code>, una implementació popular de WebSocket.</p>
+</div><h2>Instal·lació de la Biblioteca `ws`</h2>
+<div class='content'><p>Primer, instal·la la biblioteca <code>ws</code> utilitzant npm:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnBtIGluc3RhbGwgd3M="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npm install ws</pre></div><div class='content'></div><h2>Creació d'un Servidor WebSocket Bàsic</h2>
+<div class='content'><p>Creem un servidor WebSocket senzill que escolti connexions i retorni qualsevol missatge que rebi.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgV2ViU29ja2V0ID0gcmVxdWlyZSgnd3MnKTsKCmNvbnN0IHNlcnZlciA9IG5ldyBXZWJTb2NrZXQuU2VydmVyKHsgcG9ydDogODA4MCB9KTsKCnNlcnZlci5vbignY29ubmVjdGlvbicsIChzb2NrZXQpID0+IHsKICBjb25zb2xlLmxvZygnQ2xpZW50IGNvbm5lY3RlZCcpOwoKICBzb2NrZXQub24oJ21lc3NhZ2UnLCAobWVzc2FnZSkgPT4gewogICAgY29uc29sZS5sb2coYFJlY2VpdmVkOiAke21lc3NhZ2V9YCk7CiAgICBzb2NrZXQuc2VuZChgRWNobzogJHttZXNzYWdlfWApOwogIH0pOwoKICBzb2NrZXQub24oJ2Nsb3NlJywgKCkgPT4gewogICAgY29uc29sZS5sb2coJ0NsaWVudCBkaXNjb25uZWN0ZWQnKTsKICB9KTsKfSk7Cgpjb25zb2xlLmxvZygnV2ViU29ja2V0IHNlcnZlciBpcyBydW5uaW5nIG9uIHdzOi8vbG9jYWxob3N0OjgwODAnKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const WebSocket = require('ws');
+
+const server = new WebSocket.Server({ port: 8080 });
+
+server.on('connection', (socket) =&gt; {
+  console.log('Client connected');
+
+  socket.on('message', (message) =&gt; {
+    console.log(`Received: ${message}`);
+    socket.send(`Echo: ${message}`);
+  });
+
+  socket.on('close', () =&gt; {
+    console.log('Client disconnected');
+  });
+});
+
+console.log('WebSocket server is running on ws://localhost:8080');</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>WebSocket.Server</strong>: Crea un nou servidor WebSocket escoltant al port 8080.</li>
+<li><strong>server.on('connection')</strong>: Oient d'esdeveniments per a noves connexions de clients.</li>
+<li><strong>socket.on('message')</strong>: Oient d'esdeveniments per a missatges del client.</li>
+<li><strong>socket.send()</strong>: Envia un missatge de tornada al client.</li>
+<li><strong>socket.on('close')</strong>: Oient d'esdeveniments per quan el client es desconnecta.</li>
+</ul>
+</div><h1>Creació d'un Client WebSocket</h1>
+<div class='content'><p>Ara, creem un client WebSocket senzill que es connecti al nostre servidor i enviï un missatge.</p>
+</div><h2>Codi del Client</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImNhIj4KPGhlYWQ+CiAgPG1ldGEgY2hhcnNldD0iVVRGLTgiPgogIDx0aXRsZT5DbGllbnQgV2ViU29ja2V0PC90aXRsZT4KPC9oZWFkPgo8Ym9keT4KICA8c2NyaXB0PgogICAgY29uc3Qgc29ja2V0ID0gbmV3IFdlYlNvY2tldCgnd3M6Ly9sb2NhbGhvc3Q6ODA4MCcpOwoKICAgIHNvY2tldC5vbm9wZW4gPSAoKSA9PiB7CiAgICAgIGNvbnNvbGUubG9nKCdDb25uZWN0ZWQgdG8gc2VydmVyJyk7CiAgICAgIHNvY2tldC5zZW5kKCdIZWxsbyBTZXJ2ZXIhJyk7CiAgICB9OwoKICAgIHNvY2tldC5vbm1lc3NhZ2UgPSAoZXZlbnQpID0+IHsKICAgICAgY29uc29sZS5sb2coYFJlY2VpdmVkIGZyb20gc2VydmVyOiAke2V2ZW50LmRhdGF9YCk7CiAgICB9OwoKICAgIHNvY2tldC5vbmNsb3NlID0gKCkgPT4gewogICAgICBjb25zb2xlLmxvZygnRGlzY29ubmVjdGVkIGZyb20gc2VydmVyJyk7CiAgICB9OwogIDwvc2NyaXB0Pgo8L2JvZHk+CjwvaHRtbD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;ca&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;UTF-8&quot;&gt;
+  &lt;title&gt;Client WebSocket&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;script&gt;
+    const socket = new WebSocket('ws://localhost:8080');
+
+    socket.onopen = () =&gt; {
+      console.log('Connected to server');
+      socket.send('Hello Server!');
+    };
+
+    socket.onmessage = (event) =&gt; {
+      console.log(`Received from server: ${event.data}`);
+    };
+
+    socket.onclose = () =&gt; {
+      console.log('Disconnected from server');
+    };
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>new WebSocket('ws://localhost:8080')</strong>: Crea una nova connexió WebSocket al servidor.</li>
+<li><strong>socket.onopen</strong>: Oient d'esdeveniments per quan la connexió s'estableix.</li>
+<li><strong>socket.send()</strong>: Envia un missatge al servidor.</li>
+<li><strong>socket.onmessage</strong>: Oient d'esdeveniments per a missatges del servidor.</li>
+<li><strong>socket.onclose</strong>: Oient d'esdeveniments per quan la connexió es tanca.</li>
+</ul>
+</div><h1>Funcionalitats Avançades de WebSocket</h1>
+<div class='content'></div><h2>Emissió de Missatges</h2>
+<div class='content'><p>Per emetre un missatge a tots els clients connectats, itera sobre els clients i envia el missatge.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmVyLm9uKCdjb25uZWN0aW9uJywgKHNvY2tldCkgPT4gewogIHNvY2tldC5vbignbWVzc2FnZScsIChtZXNzYWdlKSA9PiB7CiAgICBzZXJ2ZXIuY2xpZW50cy5mb3JFYWNoKChjbGllbnQpID0+IHsKICAgICAgaWYgKGNsaWVudC5yZWFkeVN0YXRlID09PSBXZWJTb2NrZXQuT1BFTikgewogICAgICAgIGNsaWVudC5zZW5kKGBCcm9hZGNhc3Q6ICR7bWVzc2FnZX1gKTsKICAgICAgfQogICAgfSk7CiAgfSk7Cn0pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>server.on('connection', (socket) =&gt; {
+  socket.on('message', (message) =&gt; {
+    server.clients.forEach((client) =&gt; {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(`Broadcast: ${message}`);
+      }
+    });
+  });
+});</pre></div><div class='content'></div><h2>Gestió de Dades Binàries</h2>
+<div class='content'><p>Els WebSockets també poden gestionar dades binàries. Aquí tens un exemple d'enviament i recepció de dades binàries.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gQ29zdGF0IGRlbCBzZXJ2aWRvcgpzb2NrZXQub24oJ21lc3NhZ2UnLCAoZGF0YSkgPT4gewogIGlmIChkYXRhIGluc3RhbmNlb2YgQnVmZmVyKSB7CiAgICBjb25zb2xlLmxvZygnUmVjZWl2ZWQgYmluYXJ5IGRhdGEnKTsKICAgIC8vIFByb2Nlc3NhIGxlcyBkYWRlcyBiaW7DoHJpZXMKICB9Cn0pOwoKLy8gQ29zdGF0IGRlbCBjbGllbnQKY29uc3QgYnVmZmVyID0gbmV3IEFycmF5QnVmZmVyKDgpOwpjb25zdCB2aWV3ID0gbmV3IERhdGFWaWV3KGJ1ZmZlcik7CnZpZXcuc2V0SW50MzIoMCwgMTIzNDU2NzgsIHRydWUpOwpzb2NrZXQuc2VuZChidWZmZXIpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Costat del servidor
+socket.on('message', (data) =&gt; {
+  if (data instanceof Buffer) {
+    console.log('Received binary data');
+    // Processa les dades bin&agrave;ries
+  }
+});
+
+// Costat del client
+const buffer = new ArrayBuffer(8);
+const view = new DataView(buffer);
+view.setInt32(0, 12345678, true);
+socket.send(buffer);</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Els WebSockets proporcionen una manera poderosa de construir aplicacions en temps real amb Node.js. Entenent els conceptes bàsics i explorant les funcionalitats avançades, pots crear aplicacions eficients i responsives. Practica construint petits projectes i incorporant gradualment funcionalitats més complexes per dominar els WebSockets en Node.js.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='role-based-access-control'>&#x25C4;Control d'Accés Basat en Rols</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Introducció als WebSockets</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='socket-io'>Utilitzant Socket.io &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construint una Aplicació CLI</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/go/building-a-cli-application" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/go/building-a-cli-application" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/go/building-a-cli-application" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/go/building-a-cli-application" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/go/building-a-cli-application" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='performance-optimization'>&#x25C4;Optimització del Rendiment</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Construint una Aplicació CLI</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='creating-a-restful-api'>Creació d'una API RESTful &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Les aplicacions d'Interfície de Línia de Comandes (CLI) són eines poderoses que permeten als usuaris interactuar amb el programari mitjançant comandes de text. En aquesta secció, aprendrem a construir una aplicació CLI utilitzant Go. Cobrirem els conceptes bàsics, explorarem biblioteques populars i construirem una eina CLI simple des de zero.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Aplicació CLI</strong>: Un programa que processa comandes introduïdes pels usuaris en un terminal o símbol del sistema.</li>
+<li><strong>Flags</strong>: Arguments de línia de comandes que modifiquen el comportament de l'aplicació CLI.</li>
+<li><strong>Subcomandes</strong>: Comandes dins d'una aplicació CLI que realitzen tasques específiques.</li>
+<li><strong>Biblioteques</strong>: Paquets que proporcionen utilitats per simplificar la creació d'aplicacions CLI.</li>
+</ul>
+</div><h1>Configurant el Teu Entorn</h1>
+<div class='content'><p>Abans de començar a construir la nostra aplicació CLI, assegura't de tenir Go instal·lat a la teva màquina. Pots descarregar-lo des del <a href="https://golang.org/dl/">lloc web oficial de Go</a>.</p>
+</div><h1>Aplicació CLI Bàsica</h1>
+<div class='content'><p>Comencem amb una aplicació CLI simple que accepta un nom com a argument i imprimeix una salutació.</p>
+</div><h2>Exemple: Hello World CLI</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImZsYWciCiAgICAiZm10IgopCgpmdW5jIG1haW4oKSB7CiAgICBuYW1lIDo9IGZsYWcuU3RyaW5nKCJuYW1lIiwgIldvcmxkIiwgImEgbmFtZSB0byBzYXkgaGVsbG8gdG8iKQogICAgZmxhZy5QYXJzZSgpCiAgICBmbXQuUHJpbnRmKCJIZWxsbywgJXMhXG4iLCAqbmFtZSkKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;flag&quot;
+    &quot;fmt&quot;
+)
+
+func main() {
+    name := flag.String(&quot;name&quot;, &quot;World&quot;, &quot;a name to say hello to&quot;)
+    flag.Parse()
+    fmt.Printf(&quot;Hello, %s!\n&quot;, *name)
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>flag.String</strong>: Defineix una flag de cadena amb un valor per defecte (&quot;World&quot;) i una descripció.</li>
+<li><strong>flag.Parse</strong>: Analitza les flags de la línia de comandes.</li>
+<li><strong>fmt.Printf</strong>: Imprimeix la cadena formatada a la consola.</li>
+</ul>
+</div><h1>Utilitzant una Biblioteca CLI</h1>
+<div class='content'><p>Tot i que el paquet <code>flag</code> de la biblioteca estàndard és útil, hi ha biblioteques més poderoses com <code>cobra</code> i <code>urfave/cli</code> que proporcionen funcions addicionals i una millor estructura per a aplicacions CLI complexes.</p>
+</div><h2>Exemple: Utilitzant Cobra</h2>
+<div class='content'><p>Primer, instal·la el paquet <code>cobra</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z28gZ2V0IC11IGdpdGh1Yi5jb20vc3BmMTMvY29icmEvY29icmE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>go get -u github.com/spf13/cobra/cobra</pre></div><div class='content'><p>Ara, creem una aplicació CLI simple utilitzant <code>cobra</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImZtdCIKICAgICJnaXRodWIuY29tL3NwZjEzL2NvYnJhIgopCgpmdW5jIG1haW4oKSB7CiAgICB2YXIgcm9vdENtZCA9ICZjb2JyYS5Db21tYW5kewogICAgICAgIFVzZTogICAiZ3JlZXQiLAogICAgICAgIFNob3J0OiAiR3JlZXQgw6lzIHVuYSBlaW5hIENMSSBwZXIgc2FsdWRhciBsYSBnZW50IiwKICAgICAgICBSdW46IGZ1bmMoY21kICpjb2JyYS5Db21tYW5kLCBhcmdzIFtdc3RyaW5nKSB7CiAgICAgICAgICAgIGZtdC5QcmludGxuKCJIZWxsbywgV29ybGQhIikKICAgICAgICB9LAogICAgfQoKICAgIHZhciBuYW1lIHN0cmluZwogICAgdmFyIGdyZWV0Q21kID0gJmNvYnJhLkNvbW1hbmR7CiAgICAgICAgVXNlOiAgICJoZWxsbyIsCiAgICAgICAgU2hvcnQ6ICJJbXByaW1laXggdW4gbWlzc2F0Z2UgZGUgc2FsdXRhY2nDsyIsCiAgICAgICAgUnVuOiBmdW5jKGNtZCAqY29icmEuQ29tbWFuZCwgYXJncyBbXXN0cmluZykgewogICAgICAgICAgICBmbXQuUHJpbnRmKCJIZWxsbywgJXMhXG4iLCBuYW1lKQogICAgICAgIH0sCiAgICB9CgogICAgZ3JlZXRDbWQuRmxhZ3MoKS5TdHJpbmdWYXJQKCZuYW1lLCAibmFtZSIsICJuIiwgIldvcmxkIiwgIm5vbSBwZXIgc2FsdWRhciIpCiAgICByb290Q21kLkFkZENvbW1hbmQoZ3JlZXRDbWQpCiAgICByb290Q21kLkV4ZWN1dGUoKQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;fmt&quot;
+    &quot;github.com/spf13/cobra&quot;
+)
+
+func main() {
+    var rootCmd = &amp;cobra.Command{
+        Use:   &quot;greet&quot;,
+        Short: &quot;Greet &eacute;s una eina CLI per saludar la gent&quot;,
+        Run: func(cmd *cobra.Command, args []string) {
+            fmt.Println(&quot;Hello, World!&quot;)
+        },
+    }
+
+    var name string
+    var greetCmd = &amp;cobra.Command{
+        Use:   &quot;hello&quot;,
+        Short: &quot;Imprimeix un missatge de salutaci&oacute;&quot;,
+        Run: func(cmd *cobra.Command, args []string) {
+            fmt.Printf(&quot;Hello, %s!\n&quot;, name)
+        },
+    }
+
+    greetCmd.Flags().StringVarP(&amp;name, &quot;name&quot;, &quot;n&quot;, &quot;World&quot;, &quot;nom per saludar&quot;)
+    rootCmd.AddCommand(greetCmd)
+    rootCmd.Execute()
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>cobra.Command</strong>: Defineix una comanda amb ús, descripció i una funció per executar.</li>
+<li><strong>Flags().StringVarP</strong>: Afegeix una flag de cadena a la comanda.</li>
+<li><strong>AddCommand</strong>: Afegeix una subcomanda a la comanda arrel.</li>
+<li><strong>Execute</strong>: Executa la comanda arrel.</li>
+</ul>
+</div><h1>Construint una Aplicació CLI Més Complexa</h1>
+<div class='content'><p>Construïm una aplicació CLI més complexa amb múltiples subcomandes i flags.</p>
+</div><h2>Exemple: Gestor de Tasques CLI</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImZtdCIKICAgICJnaXRodWIuY29tL3NwZjEzL2NvYnJhIgopCgp2YXIgdGFza3MgPSBbXXN0cmluZ3t9CgpmdW5jIG1haW4oKSB7CiAgICB2YXIgcm9vdENtZCA9ICZjb2JyYS5Db21tYW5ke1VzZTogInRhc2sifQoKICAgIHZhciBhZGRDbWQgPSAmY29icmEuQ29tbWFuZHsKICAgICAgICBVc2U6ICAgImFkZCBbdGFza10iLAogICAgICAgIFNob3J0OiAiQWZlZ2VpeCB1bmEgbm92YSB0YXNjYSIsCiAgICAgICAgQXJnczogIGNvYnJhLk1pbmltdW1OQXJncygxKSwKICAgICAgICBSdW46IGZ1bmMoY21kICpjb2JyYS5Db21tYW5kLCBhcmdzIFtdc3RyaW5nKSB7CiAgICAgICAgICAgIHRhc2sgOj0gYXJnc1swXQogICAgICAgICAgICB0YXNrcyA9IGFwcGVuZCh0YXNrcywgdGFzaykKICAgICAgICAgICAgZm10LlByaW50ZigiQWZlZ2lkYSB0YXNjYTogJXNcbiIsIHRhc2spCiAgICAgICAgfSwKICAgIH0KCiAgICB2YXIgbGlzdENtZCA9ICZjb2JyYS5Db21tYW5kewogICAgICAgIFVzZTogICAibGlzdCIsCiAgICAgICAgU2hvcnQ6ICJMbGlzdGEgdG90ZXMgbGVzIHRhc3F1ZXMiLAogICAgICAgIFJ1bjogZnVuYyhjbWQgKmNvYnJhLkNvbW1hbmQsIGFyZ3MgW11zdHJpbmcpIHsKICAgICAgICAgICAgZm10LlByaW50bG4oIlRhc3F1ZXM6IikKICAgICAgICAgICAgZm9yIGksIHRhc2sgOj0gcmFuZ2UgdGFza3MgewogICAgICAgICAgICAgICAgZm10LlByaW50ZigiJWQ6ICVzXG4iLCBpKzEsIHRhc2spCiAgICAgICAgICAgIH0KICAgICAgICB9LAogICAgfQoKICAgIHJvb3RDbWQuQWRkQ29tbWFuZChhZGRDbWQsIGxpc3RDbWQpCiAgICByb290Q21kLkV4ZWN1dGUoKQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;fmt&quot;
+    &quot;github.com/spf13/cobra&quot;
+)
+
+var tasks = []string{}
+
+func main() {
+    var rootCmd = &amp;cobra.Command{Use: &quot;task&quot;}
+
+    var addCmd = &amp;cobra.Command{
+        Use:   &quot;add [task]&quot;,
+        Short: &quot;Afegeix una nova tasca&quot;,
+        Args:  cobra.MinimumNArgs(1),
+        Run: func(cmd *cobra.Command, args []string) {
+            task := args[0]
+            tasks = append(tasks, task)
+            fmt.Printf(&quot;Afegida tasca: %s\n&quot;, task)
+        },
+    }
+
+    var listCmd = &amp;cobra.Command{
+        Use:   &quot;list&quot;,
+        Short: &quot;Llista totes les tasques&quot;,
+        Run: func(cmd *cobra.Command, args []string) {
+            fmt.Println(&quot;Tasques:&quot;)
+            for i, task := range tasks {
+                fmt.Printf(&quot;%d: %s\n&quot;, i+1, task)
+            }
+        },
+    }
+
+    rootCmd.AddCommand(addCmd, listCmd)
+    rootCmd.Execute()
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Args: cobra.MinimumNArgs(1)</strong>: Assegura que la comanda rebi almenys un argument.</li>
+<li><strong>tasks</strong>: Un slice per emmagatzemar tasques.</li>
+<li><strong>addCmd</strong>: Afegeix una nova tasca a la llista.</li>
+<li><strong>listCmd</strong>: Llista totes les tasques.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Construir aplicacions CLI en Go pot ser senzill amb les eines i biblioteques adequades. Hem començat amb un exemple bàsic utilitzant la biblioteca estàndard i després hem explorat la biblioteca <code>cobra</code> per construir aplicacions més complexes. Entenent les flags, subcomandes i com estructurar la teva aplicació, pots crear eines CLI poderoses i fàcils d'utilitzar.</p>
+<p>En les properes seccions, aprofundirem en temes avançats com provar aplicacions CLI, gestionar errors i empaquetar la teva eina CLI per a la distribució.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='performance-optimization'>&#x25C4;Optimització del Rendiment</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Construint una Aplicació CLI</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='creating-a-restful-api'>Creació d'una API RESTful &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

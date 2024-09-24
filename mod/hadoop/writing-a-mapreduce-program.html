@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escriure un Programa MapReduce</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/hadoop/writing-a-mapreduce-program" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/hadoop/writing-a-mapreduce-program" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/hadoop/writing-a-mapreduce-program" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/hadoop/writing-a-mapreduce-program" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/hadoop/writing-a-mapreduce-program" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='mapreduce-programming-model'>&#x25C4;Model de Programació MapReduce</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Escriure un Programa MapReduce</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='mapreduce-job-execution'>Execució de Treballs MapReduce &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a MapReduce</h1>
+<div class='content'><p>MapReduce és un model de programació dissenyat per processar grans conjunts de dades amb un algorisme distribuït en un clúster de Hadoop. Simplifica el processament de dades a través de conjunts de dades massius dividint el procés en dues funcions principals: Map i Reduce.</p>
+<ul>
+<li><strong>Funció Map</strong>: Processa les dades d'entrada i produeix un conjunt de parelles clau-valor intermèdies.</li>
+<li><strong>Funció Reduce</strong>: Fusiona tots els valors intermedis associats amb la mateixa clau intermèdia.</li>
+</ul>
+</div><h1>Conceptes Clau de MapReduce</h1>
+<div class='content'><ul>
+<li><strong>Divisions d'Entrada</strong>: Les dades es divideixen en trossos anomenats divisions, que són processats per la funció Map.</li>
+<li><strong>Mapper</strong>: Pren les divisions d'entrada i les processa per generar parelles clau-valor.</li>
+<li><strong>Shuffle i Sort</strong>: El marc ordena la sortida dels Mappers i la transfereix als Reducers.</li>
+<li><strong>Reducer</strong>: Processa les parelles clau-valor ordenades per generar la sortida final.</li>
+</ul>
+</div><h1>Escriure un Programa Bàsic MapReduce</h1>
+<div class='content'></div><h2>Configurar l'Entorn</h2>
+<div class='content'><p>Abans d'escriure un programa MapReduce, assegura't de tenir Hadoop instal·lat i configurat al teu sistema.</p>
+</div><h2>Escriure la Classe Mapper</h2>
+<div class='content'><p>La classe Mapper processa les dades d'entrada i genera parelles clau-valor.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmlvLkludFdyaXRhYmxlOwppbXBvcnQgb3JnLmFwYWNoZS5oYWRvb3AuaW8uVGV4dDsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLm1hcHJlZHVjZS5NYXBwZXI7CgppbXBvcnQgamF2YS5pby5JT0V4Y2VwdGlvbjsKCnB1YmxpYyBjbGFzcyBUb2tlbml6ZXJNYXBwZXIgZXh0ZW5kcyBNYXBwZXI8T2JqZWN0LCBUZXh0LCBUZXh0LCBJbnRXcml0YWJsZT4gewogICAgcHJpdmF0ZSBmaW5hbCBzdGF0aWMgSW50V3JpdGFibGUgb25lID0gbmV3IEludFdyaXRhYmxlKDEpOwogICAgcHJpdmF0ZSBUZXh0IHdvcmQgPSBuZXcgVGV4dCgpOwoKICAgIHB1YmxpYyB2b2lkIG1hcChPYmplY3Qga2V5LCBUZXh0IHZhbHVlLCBDb250ZXh0IGNvbnRleHQpIHRocm93cyBJT0V4Y2VwdGlvbiwgSW50ZXJydXB0ZWRFeGNlcHRpb24gewogICAgICAgIFN0cmluZ1tdIHRva2VucyA9IHZhbHVlLnRvU3RyaW5nKCkuc3BsaXQoIlxccysiKTsKICAgICAgICBmb3IgKFN0cmluZyB0b2tlbiA6IHRva2VucykgewogICAgICAgICAgICB3b3JkLnNldCh0b2tlbik7CiAgICAgICAgICAgIGNvbnRleHQud3JpdGUod29yZCwgb25lKTsKICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+import java.io.IOException;
+
+public class TokenizerMapper extends Mapper&lt;Object, Text, Text, IntWritable&gt; {
+    private final static IntWritable one = new IntWritable(1);
+    private Text word = new Text();
+
+    public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+        String[] tokens = value.toString().split(&quot;\\s+&quot;);
+        for (String token : tokens) {
+            word.set(token);
+            context.write(word, one);
+        }
+    }
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>TokenizerMapper</code> extén la classe <code>Mapper</code>.</li>
+<li>El mètode <code>map</code> divideix el text d'entrada en tokens (paraules) i escriu cada paraula amb un compte d'un.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Escriure la Classe Reducer</h2>
+<div class='content'><p>La classe Reducer processa les parelles clau-valor intermèdies per generar la sortida final.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmlvLkludFdyaXRhYmxlOwppbXBvcnQgb3JnLmFwYWNoZS5oYWRvb3AuaW8uVGV4dDsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLm1hcHJlZHVjZS5SZWR1Y2VyOwoKaW1wb3J0IGphdmEuaW8uSU9FeGNlcHRpb247CgpwdWJsaWMgY2xhc3MgSW50U3VtUmVkdWNlciBleHRlbmRzIFJlZHVjZXI8VGV4dCwgSW50V3JpdGFibGUsIFRleHQsIEludFdyaXRhYmxlPiB7CiAgICBwcml2YXRlIEludFdyaXRhYmxlIHJlc3VsdCA9IG5ldyBJbnRXcml0YWJsZSgpOwoKICAgIHB1YmxpYyB2b2lkIHJlZHVjZShUZXh0IGtleSwgSXRlcmFibGU8SW50V3JpdGFibGU+IHZhbHVlcywgQ29udGV4dCBjb250ZXh0KSB0aHJvd3MgSU9FeGNlcHRpb24sIEludGVycnVwdGVkRXhjZXB0aW9uIHsKICAgICAgICBpbnQgc3VtID0gMDsKICAgICAgICBmb3IgKEludFdyaXRhYmxlIHZhbCA6IHZhbHVlcykgewogICAgICAgICAgICBzdW0gKz0gdmFsLmdldCgpOwogICAgICAgIH0KICAgICAgICByZXN1bHQuc2V0KHN1bSk7CiAgICAgICAgY29udGV4dC53cml0ZShrZXksIHJlc3VsdCk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
+import java.io.IOException;
+
+public class IntSumReducer extends Reducer&lt;Text, IntWritable, Text, IntWritable&gt; {
+    private IntWritable result = new IntWritable();
+
+    public void reduce(Text key, Iterable&lt;IntWritable&gt; values, Context context) throws IOException, InterruptedException {
+        int sum = 0;
+        for (IntWritable val : values) {
+            sum += val.get();
+        }
+        result.set(sum);
+        context.write(key, result);
+    }
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>IntSumReducer</code> extén la classe <code>Reducer</code>.</li>
+<li>El mètode <code>reduce</code> suma els valors per a cada clau i escriu el resultat.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Escriure la Classe Driver</h2>
+<div class='content'><p>La classe Driver configura i executa la feina MapReduce.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmNvbmYuQ29uZmlndXJhdGlvbjsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmZzLlBhdGg7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5pby5JbnRXcml0YWJsZTsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmlvLlRleHQ7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5tYXByZWR1Y2UuSm9iOwppbXBvcnQgb3JnLmFwYWNoZS5oYWRvb3AubWFwcmVkdWNlLmxpYi5pbnB1dC5GaWxlSW5wdXRGb3JtYXQ7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5tYXByZWR1Y2UubGliLm91dHB1dC5GaWxlT3V0cHV0Rm9ybWF0OwoKcHVibGljIGNsYXNzIFdvcmRDb3VudCB7CiAgICBwdWJsaWMgc3RhdGljIHZvaWQgbWFpbihTdHJpbmdbXSBhcmdzKSB0aHJvd3MgRXhjZXB0aW9uIHsKICAgICAgICBDb25maWd1cmF0aW9uIGNvbmYgPSBuZXcgQ29uZmlndXJhdGlvbigpOwogICAgICAgIEpvYiBqb2IgPSBKb2IuZ2V0SW5zdGFuY2UoY29uZiwgIndvcmQgY291bnQiKTsKICAgICAgICBqb2Iuc2V0SmFyQnlDbGFzcyhXb3JkQ291bnQuY2xhc3MpOwogICAgICAgIGpvYi5zZXRNYXBwZXJDbGFzcyhUb2tlbml6ZXJNYXBwZXIuY2xhc3MpOwogICAgICAgIGpvYi5zZXRDb21iaW5lckNsYXNzKEludFN1bVJlZHVjZXIuY2xhc3MpOwogICAgICAgIGpvYi5zZXRSZWR1Y2VyQ2xhc3MoSW50U3VtUmVkdWNlci5jbGFzcyk7CiAgICAgICAgam9iLnNldE91dHB1dEtleUNsYXNzKFRleHQuY2xhc3MpOwogICAgICAgIGpvYi5zZXRPdXRwdXRWYWx1ZUNsYXNzKEludFdyaXRhYmxlLmNsYXNzKTsKICAgICAgICBGaWxlSW5wdXRGb3JtYXQuYWRkSW5wdXRQYXRoKGpvYiwgbmV3IFBhdGgoYXJnc1swXSkpOwogICAgICAgIEZpbGVPdXRwdXRGb3JtYXQuc2V0T3V0cHV0UGF0aChqb2IsIG5ldyBQYXRoKGFyZ3NbMV0pKTsKICAgICAgICBTeXN0ZW0uZXhpdChqb2Iud2FpdEZvckNvbXBsZXRpb24odHJ1ZSkgPyAwIDogMSk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class WordCount {
+    public static void main(String[] args) throws Exception {
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, &quot;word count&quot;);
+        job.setJarByClass(WordCount.class);
+        job.setMapperClass(TokenizerMapper.class);
+        job.setCombinerClass(IntSumReducer.class);
+        job.setReducerClass(IntSumReducer.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
+    }
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li>Configura la feina amb les classes Mapper, Reducer i Combiner.</li>
+<li>Estableix les rutes d'entrada i sortida per a la feina.</li>
+<li>Envia la feina al clúster de Hadoop i espera la seva finalització.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Executar el Programa MapReduce</h1>
+<div class='content'><ol>
+<li><strong>Compilar el codi Java</strong>:
+<pre><code class="language-sh">javac -classpath `hadoop classpath` -d wordcount_classes TokenizerMapper.java IntSumReducer.java WordCount.java
+</code></pre>
+</li>
+<li><strong>Crear un fitxer JAR</strong>:
+<pre><code class="language-sh">jar -cvf wordcount.jar -C wordcount_classes/ .
+</code></pre>
+</li>
+<li><strong>Executar la feina MapReduce</strong>:
+<pre><code class="language-sh">hadoop jar wordcount.jar WordCount /input/path /output/path
+</code></pre>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Escriure un programa MapReduce implica crear una classe Mapper per processar les dades d'entrada, una classe Reducer per agregar els resultats, i una classe Driver per configurar i executar la feina. Entenent aquests components, pots processar efectivament grans conjunts de dades utilitzant les capacitats de computació distribuïda de Hadoop.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='mapreduce-programming-model'>&#x25C4;Model de Programació MapReduce</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Escriure un Programa MapReduce</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='mapreduce-job-execution'>Execució de Treballs MapReduce &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joins i Subconsultes</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/postgresql/joins-and-subqueries" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/postgresql/joins-and-subqueries" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/postgresql/joins-and-subqueries" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/postgresql/joins-and-subqueries" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/postgresql/joins-and-subqueries" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='updating-and-deleting-data'>&#x25C4;Actualització i eliminació de dades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Joins i Subconsultes</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='aggregate-functions'>Funcions agregades &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquesta secció, explorarem dos conceptes fonamentals en SQL: Joins i Subconsultes. Aquests conceptes són crucials per consultar dades de múltiples taules i realitzar operacions complexes de recuperació de dades en PostgreSQL.</p>
+</div><h1>Joins</h1>
+<div class='content'><p>Els Joins s'utilitzen per combinar files de dues o més taules basades en una columna relacionada entre elles.</p>
+</div><h2>Tipus de Joins</h2>
+<div class='content'><ul>
+<li><strong>Inner Join</strong>: Retorna registres que tenen valors coincidents en ambdues taules.</li>
+<li><strong>Left (Outer) Join</strong>: Retorna tots els registres de la taula esquerra i els registres coincidents de la taula dreta. El resultat és NULL del costat dret si no hi ha coincidència.</li>
+<li><strong>Right (Outer) Join</strong>: Retorna tots els registres de la taula dreta i els registres coincidents de la taula esquerra. El resultat és NULL del costat esquerre quan no hi ha coincidència.</li>
+<li><strong>Full (Outer) Join</strong>: Retorna tots els registres quan hi ha una coincidència en qualsevol de les taules esquerra o dreta. Els registres que no coincideixen en cap de les taules tindran NULLs.</li>
+</ul>
+</div><h2>Exemple d'Inner Join</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGVtcGxveWVlcy5uYW1lLCBkZXBhcnRtZW50cy5kZXBhcnRtZW50X25hbWUKRlJPTSBlbXBsb3llZXMKSU5ORVIgSk9JTiBkZXBhcnRtZW50cyBPTiBlbXBsb3llZXMuZGVwYXJ0bWVudF9pZCA9IGRlcGFydG1lbnRzLmlkOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT employees.name, departments.department_name
+FROM employees
+INNER JOIN departments ON employees.department_id = departments.id;</pre></div><div class='content'><ul>
+<li>Aquesta consulta selecciona els noms dels empleats i els noms dels departaments corresponents on hi ha una coincidència entre <code>employees.department_id</code> i <code>departments.id</code>.</li>
+</ul>
+</div><h2>Exemple de Left Join</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGVtcGxveWVlcy5uYW1lLCBkZXBhcnRtZW50cy5kZXBhcnRtZW50X25hbWUKRlJPTSBlbXBsb3llZXMKTEVGVCBKT0lOIGRlcGFydG1lbnRzIE9OIGVtcGxveWVlcy5kZXBhcnRtZW50X2lkID0gZGVwYXJ0bWVudHMuaWQ7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT employees.name, departments.department_name
+FROM employees
+LEFT JOIN departments ON employees.department_id = departments.id;</pre></div><div class='content'><ul>
+<li>Aquesta consulta selecciona tots els empleats i els noms dels departaments corresponents. Si un empleat no pertany a cap departament, el nom del departament serà NULL.</li>
+</ul>
+</div><h2>Exemple de Right Join</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGVtcGxveWVlcy5uYW1lLCBkZXBhcnRtZW50cy5kZXBhcnRtZW50X25hbWUKRlJPTSBlbXBsb3llZXMKUklHSFQgSk9JTiBkZXBhcnRtZW50cyBPTiBlbXBsb3llZXMuZGVwYXJ0bWVudF9pZCA9IGRlcGFydG1lbnRzLmlkOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT employees.name, departments.department_name
+FROM employees
+RIGHT JOIN departments ON employees.department_id = departments.id;</pre></div><div class='content'><ul>
+<li>Aquesta consulta selecciona tots els departaments i els empleats corresponents. Si un departament no té empleats, el nom de l'empleat serà NULL.</li>
+</ul>
+</div><h2>Exemple de Full Join</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGVtcGxveWVlcy5uYW1lLCBkZXBhcnRtZW50cy5kZXBhcnRtZW50X25hbWUKRlJPTSBlbXBsb3llZXMKRlVMTCBKT0lOIGRlcGFydG1lbnRzIE9OIGVtcGxveWVlcy5kZXBhcnRtZW50X2lkID0gZGVwYXJ0bWVudHMuaWQ7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT employees.name, departments.department_name
+FROM employees
+FULL JOIN departments ON employees.department_id = departments.id;</pre></div><div class='content'><ul>
+<li>Aquesta consulta selecciona tots els empleats i tots els departaments. Si un empleat no pertany a cap departament o un departament no té empleats, els camps corresponents seran NULL.</li>
+</ul>
+</div><h1>Subconsultes</h1>
+<div class='content'><p>Les subconsultes, també conegudes com a consultes internes o consultes niades, són consultes dins d'una altra consulta SQL. Es poden utilitzar en diverses parts d'una instrucció SQL, incloent les claus SELECT, FROM, WHERE i HAVING.</p>
+</div><h2>Subconsulta en la clàusula SELECT</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIG5hbWUsIAogICAgICAgKFNFTEVDVCBkZXBhcnRtZW50X25hbWUgCiAgICAgICAgRlJPTSBkZXBhcnRtZW50cyAKICAgICAgICBXSEVSRSBkZXBhcnRtZW50cy5pZCA9IGVtcGxveWVlcy5kZXBhcnRtZW50X2lkKSBBUyBkZXBhcnRtZW50X25hbWUKRlJPTSBlbXBsb3llZXM7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT name, 
+       (SELECT department_name 
+        FROM departments 
+        WHERE departments.id = employees.department_id) AS department_name
+FROM employees;</pre></div><div class='content'><ul>
+<li>Aquesta consulta selecciona el nom de cada empleat i utilitza una subconsulta per trobar el nom del departament corresponent.</li>
+</ul>
+</div><h2>Subconsulta en la clàusula WHERE</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIG5hbWUKRlJPTSBlbXBsb3llZXMKV0hFUkUgZGVwYXJ0bWVudF9pZCA9IChTRUxFQ1QgaWQgCiAgICAgICAgICAgICAgICAgICAgICAgRlJPTSBkZXBhcnRtZW50cyAKICAgICAgICAgICAgICAgICAgICAgICBXSEVSRSBkZXBhcnRtZW50X25hbWUgPSAnU2FsZXMnKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT name
+FROM employees
+WHERE department_id = (SELECT id 
+                       FROM departments 
+                       WHERE department_name = 'Sales');</pre></div><div class='content'><ul>
+<li>Aquesta consulta selecciona els noms dels empleats que pertanyen al departament de 'Sales'.</li>
+</ul>
+</div><h2>Subconsulta en la clàusula FROM</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGRlcGFydG1lbnRfbmFtZSwgYXZnX3NhbGFyeQpGUk9NIChTRUxFQ1QgZGVwYXJ0bWVudF9pZCwgQVZHKHNhbGFyeSkgQVMgYXZnX3NhbGFyeQogICAgICBGUk9NIGVtcGxveWVlcwogICAgICBHUk9VUCBCWSBkZXBhcnRtZW50X2lkKSBBUyBkZXB0X2F2ZwpKT0lOIGRlcGFydG1lbnRzIE9OIGRlcHRfYXZnLmRlcGFydG1lbnRfaWQgPSBkZXBhcnRtZW50cy5pZDs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT department_name, avg_salary
+FROM (SELECT department_id, AVG(salary) AS avg_salary
+      FROM employees
+      GROUP BY department_id) AS dept_avg
+JOIN departments ON dept_avg.department_id = departments.id;</pre></div><div class='content'><ul>
+<li>Aquesta consulta calcula el salari mitjà per a cada departament i després uneix el resultat amb la taula de departaments per obtenir els noms dels departaments.</li>
+</ul>
+</div><h2>Subconsulta en la clàusula HAVING</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGRlcGFydG1lbnRfaWQsIEFWRyhzYWxhcnkpIEFTIGF2Z19zYWxhcnkKRlJPTSBlbXBsb3llZXMKR1JPVVAgQlkgZGVwYXJ0bWVudF9pZApIQVZJTkcgQVZHKHNhbGFyeSkgPiAoU0VMRUNUIEFWRyhzYWxhcnkpIEZST00gZW1wbG95ZWVzKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT department_id, AVG(salary) AS avg_salary
+FROM employees
+GROUP BY department_id
+HAVING AVG(salary) &gt; (SELECT AVG(salary) FROM employees);</pre></div><div class='content'><ul>
+<li>Aquesta consulta selecciona els departaments on el salari mitjà és superior al salari mitjà global de tots els empleats.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Els Joins i les subconsultes són eines poderoses en PostgreSQL que et permeten realitzar operacions complexes de recuperació de dades. Els Joins s'utilitzen per combinar dades de múltiples taules, mentre que les subconsultes et permeten niar consultes dins d'altres consultes per aconseguir resultats més refinats. Entendre i dominar aquests conceptes millorarà significativament la teva capacitat per treballar amb bases de dades relacionals i realitzar anàlisis de dades sofisticades.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='updating-and-deleting-data'>&#x25C4;Actualització i eliminació de dades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Joins i Subconsultes</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='aggregate-functions'>Funcions agregades &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ús de Git Hooks</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/git/using-git-hooks" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/git/using-git-hooks" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/git/using-git-hooks" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/git/using-git-hooks" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/git/using-git-hooks" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='tagging'>&#x25C4;Etiquetatge</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Ús de Git Hooks</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='forking-a-repository'>Forking un Repositori &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Els hooks de Git són scripts que Git executa abans o després d'esdeveniments com commit, push i receive. Et permeten automatitzar tasques i aplicar polítiques en el teu flux de treball de desenvolupament.</p>
+</div><h1>Què són els Git Hooks?</h1>
+<div class='content'><ul>
+<li><strong>Definició</strong>: Els hooks de Git són scripts personalitzats que s'executen automàticament en punts específics del flux de treball de Git.</li>
+<li><strong>Tipus</strong>: Hi ha dos tipus de hooks de Git:
+<ul>
+<li><strong>Hooks del costat del client</strong>: S'executen en operacions com commit i merge.</li>
+<li><strong>Hooks del costat del servidor</strong>: S'executen en operacions de xarxa com rebre commits pujats.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Configuració dels Git Hooks</h1>
+<div class='content'></div><h2>Localització del Directori de Hooks</h2>
+<div class='content'><ul>
+<li>Els hooks de Git es guarden al directori <code>.git/hooks</code> del teu repositori.</li>
+<li>Per defecte, aquest directori conté scripts de mostra que estan desactivats (els seus noms de fitxer acaben en <code>.sample</code>).</li>
+</ul>
+</div><h2>Creació d'un Hook</h2>
+<div class='content'><ol>
+<li><strong>Navega al directori de hooks</strong>:
+<pre><code class="language-sh">cd .git/hooks
+</code></pre>
+</li>
+<li><strong>Crea un nou script de hook</strong>:
+<ul>
+<li>Per exemple, per crear un hook pre-commit:
+<pre><code class="language-sh">touch pre-commit
+</code></pre>
+</li>
+</ul>
+</li>
+<li><strong>Fes l'script executable</strong>:
+<pre><code class="language-sh">chmod +x pre-commit
+</code></pre>
+</li>
+</ol>
+</div><h2>Exemple: Hook Pre-commit</h2>
+<div class='content'><p>Un hook pre-commit es pot utilitzar per comprovar problemes d'estil de codi abans de permetre un commit.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyEvYmluL3NoCiMgRXhlbXBsZSBkJ3NjcmlwdCBkZSBob29rIHByZS1jb21taXQKCiMgRXhlY3V0YSB1biBsaW50ZXIgKHBlciBleGVtcGxlLCBFU0xpbnQgcGVyIEphdmFTY3JpcHQpCmVzbGludCAuCgppZiBbICQ/IC1uZSAwIF07IHRoZW4KICBlY2hvICJMYSBjb21wcm92YWNpw7MgZGUgbCdlc3RpbCBkZSBjb2RpIGhhIGZhbGxhdC4gQ29tbWl0IGFib3J0YXQuIgogIGV4aXQgMQpmaQoKZWNobyAiTGEgY29tcHJvdmFjacOzIGRlIGwnZXN0aWwgZGUgY29kaSBoYSBwYXNzYXQuIENvbW1pdCBwZXJtw6hzLiIKZXhpdCAw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#!/bin/sh
+# Exemple d'script de hook pre-commit
+
+# Executa un linter (per exemple, ESLint per JavaScript)
+eslint .
+
+if [ $? -ne 0 ]; then
+  echo &quot;La comprovaci&oacute; de l'estil de codi ha fallat. Commit abortat.&quot;
+  exit 1
+fi
+
+echo &quot;La comprovaci&oacute; de l'estil de codi ha passat. Commit perm&egrave;s.&quot;
+exit 0</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>#!/bin/sh</code>: Especifica l'intèrpret de l'script.</li>
+<li><code>eslint .</code>: Executa el linter ESLint al directori actual.</li>
+<li><code>if [ $? -ne 0 ]; then ... fi</code>: Comprova l'estat de sortida del linter. Si és diferent de zero (indicant un error), el commit s'aborta.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Hooks de Git Comuns</h1>
+<div class='content'><p>| Nom del Hook    | Esdeveniment que el desencadena        | Cas d'ús típic                                |
+|-----------------|----------------------------------------|-----------------------------------------------|
+| <code>pre-commit</code>    | Abans de fer un commit                 | Comprovació d'estil de codi, execució de tests|
+| <code>commit-msg</code>    | Després d'introduir el missatge de commit | Aplicació del format del missatge de commit   |
+| <code>post-commit</code>   | Després de fer un commit               | Notificacions, registre                      |
+| <code>pre-push</code>      | Abans de fer un push a un repositori remot | Execució de tests, comprovació de polítiques de branques |
+| <code>post-receive</code>  | Després de rebre un push per part d'un remot | Desplegament de codi, tasques d'integració contínua |</p>
+</div><h1>Ús Avançat</h1>
+<div class='content'></div><h2>Compartir Hooks Entre Projectes</h2>
+<div class='content'><ul>
+<li><strong>Git no suporta nativament compartir hooks</strong> entre repositoris. No obstant això, pots:
+<ul>
+<li><strong>Utilitzar un directori versionat</strong> per als hooks i enllaçar-los simbòlicament a <code>.git/hooks</code>.</li>
+<li><strong>Utilitzar una eina</strong> com <code>husky</code> (per a projectes JavaScript) per gestionar els hooks.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Exemple: Ús de Husky</h2>
+<div class='content'><ol>
+<li><strong>Instal·la Husky</strong>:
+<pre><code class="language-sh">npm install husky --save-dev
+</code></pre>
+</li>
+<li><strong>Afegeix un hook</strong>:
+<pre><code class="language-sh">npx husky add .husky/pre-commit &quot;npm test&quot;
+</code></pre>
+</li>
+<li><strong>Fes executable el directori de Husky</strong>:
+<pre><code class="language-sh">chmod +x .husky/pre-commit
+</code></pre>
+</li>
+</ol>
+<ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li>Husky simplifica el procés d'afegir i gestionar hooks en projectes JavaScript.</li>
+<li>El hook <code>pre-commit</code> executa <code>npm test</code> abans de permetre un commit.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Els hooks de Git són eines poderoses que poden ajudar a automatitzar i aplicar polítiques en el teu flux de treball de desenvolupament. Entenent com configurar i utilitzar els hooks de Git, pots millorar la qualitat del codi i agilitzar els processos. Tant si estàs comprovant l'estil de codi, executant tests o aplicant formats de missatges de commit, els hooks de Git proporcionen una manera flexible d'integrar aquestes tasques en el teu flux de treball de Git.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='tagging'>&#x25C4;Etiquetatge</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Ús de Git Hooks</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='forking-a-repository'>Forking un Repositori &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

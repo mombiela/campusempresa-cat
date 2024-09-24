@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utilitzant Axios per a Peticions de Xarxa</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/reactnative/using-axios" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/reactnative/using-axios" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/reactnative/using-axios" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/reactnative/using-axios" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/reactnative/using-axios" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='fetching-data-fetch-api'>&#x25C4;Obtenció de dades amb Fetch API</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Utilitzant Axios per a Peticions de Xarxa</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='handling-api-responses'>Gestió de respostes d'API &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a Axios</h1>
+<div class='content'><p>Axios és una biblioteca de JavaScript popular utilitzada per fer peticions HTTP des del navegador i Node.js. És àmpliament utilitzada en aplicacions React Native per la seva simplicitat i facilitat d'ús.</p>
+</div><h2>Característiques Clau d'Axios</h2>
+<div class='content'><ul>
+<li><strong>Basat en Promeses</strong>: Axios utilitza Promeses, fent que sigui fàcil treballar amb peticions asíncrones.</li>
+<li><strong>Interceptors</strong>: Et permet interceptar peticions o respostes abans que siguin gestionades.</li>
+<li><strong>Transformació automàtica de dades JSON</strong>: Transforma automàticament les dades JSON.</li>
+<li><strong>Gestió d'errors</strong>: Proporciona una manera senzilla de gestionar errors.</li>
+<li><strong>Cancel·lació de peticions</strong>: Suporta la cancel·lació de peticions.</li>
+</ul>
+</div><h1>Instal·lant Axios en un Projecte React Native</h1>
+<div class='content'><p>Per utilitzar Axios en un projecte React Native, cal instal·lar-lo via npm o yarn.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnBtIGluc3RhbGwgYXhpb3MKIyBvCnlhcm4gYWRkIGF4aW9z"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npm install axios
+# o
+yarn add axios</pre></div><div class='content'></div><h1>Fent una Petició GET Bàsica</h1>
+<div class='content'><p>Per fer una petició GET utilitzant Axios, pots utilitzar el mètode <code>axios.get</code>. A continuació es mostra un exemple senzill de com obtenir dades d'una API.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGF4aW9zIGZyb20gJ2F4aW9zJzsKaW1wb3J0IFJlYWN0LCB7IHVzZUVmZmVjdCwgdXNlU3RhdGUgfSBmcm9tICdyZWFjdCc7CmltcG9ydCB7IFZpZXcsIFRleHQgfSBmcm9tICdyZWFjdC1uYXRpdmUnOwoKY29uc3QgQXBwID0gKCkgPT4gewogIGNvbnN0IFtkYXRhLCBzZXREYXRhXSA9IHVzZVN0YXRlKG51bGwpOwogIGNvbnN0IFtsb2FkaW5nLCBzZXRMb2FkaW5nXSA9IHVzZVN0YXRlKHRydWUpOwoKICB1c2VFZmZlY3QoKCkgPT4gewogICAgYXhpb3MuZ2V0KCdodHRwczovL2pzb25wbGFjZWhvbGRlci50eXBpY29kZS5jb20vcG9zdHMvMScpCiAgICAgIC50aGVuKHJlc3BvbnNlID0+IHsKICAgICAgICBzZXREYXRhKHJlc3BvbnNlLmRhdGEpOwogICAgICAgIHNldExvYWRpbmcoZmFsc2UpOwogICAgICB9KQogICAgICAuY2F0Y2goZXJyb3IgPT4gewogICAgICAgIGNvbnNvbGUuZXJyb3IoJ0Vycm9yIGZldGNoaW5nIGRhdGE6JywgZXJyb3IpOwogICAgICAgIHNldExvYWRpbmcoZmFsc2UpOwogICAgICB9KTsKICB9LCBbXSk7CgogIGlmIChsb2FkaW5nKSB7CiAgICByZXR1cm4gPFRleHQ+TG9hZGluZy4uLjwvVGV4dD47CiAgfQoKICByZXR1cm4gKAogICAgPFZpZXc+CiAgICAgIDxUZXh0PntkYXRhLnRpdGxlfTwvVGV4dD4KICAgICAgPFRleHQ+e2RhdGEuYm9keX08L1RleHQ+CiAgICA8L1ZpZXc+CiAgKTsKfTsKCmV4cG9ydCBkZWZhdWx0IEFwcDs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { View, Text } from 'react-native';
+
+const App = () =&gt; {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() =&gt; {
+    axios.get('https://jsonplaceholder.typicode.com/posts/1')
+      .then(response =&gt; {
+        setData(response.data);
+        setLoading(false);
+      })
+      .catch(error =&gt; {
+        console.error('Error fetching data:', error);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return &lt;Text&gt;Loading...&lt;/Text&gt;;
+  }
+
+  return (
+    &lt;View&gt;
+      &lt;Text&gt;{data.title}&lt;/Text&gt;
+      &lt;Text&gt;{data.body}&lt;/Text&gt;
+    &lt;/View&gt;
+  );
+};
+
+export default App;</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Importació d'Axios</strong>: <code>import axios from 'axios';</code></li>
+<li><strong>Gestió d'Estat</strong>: Utilitzant <code>useState</code> per gestionar les dades obtingudes i l'estat de càrrega.</li>
+<li><strong>Hook d'Efecte</strong>: Utilitzant <code>useEffect</code> per obtenir dades quan el component es munta.</li>
+<li><strong>Petició GET</strong>: <code>axios.get</code> per obtenir dades de l'API.</li>
+<li><strong>Gestió de la Resposta</strong>: Actualitzant l'estat amb les dades obtingudes.</li>
+<li><strong>Gestió d'Errors</strong>: Registrant errors a la consola.</li>
+</ul>
+</div><h1>Fent una Petició POST</h1>
+<div class='content'><p>Per enviar dades a una API, pots utilitzar el mètode <code>axios.post</code>. A continuació es mostra un exemple de com enviar dades a una API.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGF4aW9zIGZyb20gJ2F4aW9zJzsKaW1wb3J0IFJlYWN0LCB7IHVzZVN0YXRlIH0gZnJvbSAncmVhY3QnOwppbXBvcnQgeyBWaWV3LCBUZXh0LCBCdXR0b24sIFRleHRJbnB1dCB9IGZyb20gJ3JlYWN0LW5hdGl2ZSc7Cgpjb25zdCBBcHAgPSAoKSA9PiB7CiAgY29uc3QgW3RpdGxlLCBzZXRUaXRsZV0gPSB1c2VTdGF0ZSgnJyk7CiAgY29uc3QgW2JvZHksIHNldEJvZHldID0gdXNlU3RhdGUoJycpOwogIGNvbnN0IFtyZXNwb25zZSwgc2V0UmVzcG9uc2VdID0gdXNlU3RhdGUobnVsbCk7CgogIGNvbnN0IGhhbmRsZVN1Ym1pdCA9ICgpID0+IHsKICAgIGF4aW9zLnBvc3QoJ2h0dHBzOi8vanNvbnBsYWNlaG9sZGVyLnR5cGljb2RlLmNvbS9wb3N0cycsIHsKICAgICAgdGl0bGUsCiAgICAgIGJvZHksCiAgICAgIHVzZXJJZDogMSwKICAgIH0pCiAgICAudGhlbihyZXNwb25zZSA9PiB7CiAgICAgIHNldFJlc3BvbnNlKHJlc3BvbnNlLmRhdGEpOwogICAgfSkKICAgIC5jYXRjaChlcnJvciA9PiB7CiAgICAgIGNvbnNvbGUuZXJyb3IoJ0Vycm9yIHBvc3RpbmcgZGF0YTonLCBlcnJvcik7CiAgICB9KTsKICB9OwoKICByZXR1cm4gKAogICAgPFZpZXc+CiAgICAgIDxUZXh0SW5wdXQKICAgICAgICBwbGFjZWhvbGRlcj0iVGl0bGUiCiAgICAgICAgdmFsdWU9e3RpdGxlfQogICAgICAgIG9uQ2hhbmdlVGV4dD17c2V0VGl0bGV9CiAgICAgIC8+CiAgICAgIDxUZXh0SW5wdXQKICAgICAgICBwbGFjZWhvbGRlcj0iQm9keSIKICAgICAgICB2YWx1ZT17Ym9keX0KICAgICAgICBvbkNoYW5nZVRleHQ9e3NldEJvZHl9CiAgICAgIC8+CiAgICAgIDxCdXR0b24gdGl0bGU9IlN1Ym1pdCIgb25QcmVzcz17aGFuZGxlU3VibWl0fSAvPgogICAgICB7cmVzcG9uc2UgJiYgKAogICAgICAgIDxWaWV3PgogICAgICAgICAgPFRleHQ+UmVzcG9uc2U6PC9UZXh0PgogICAgICAgICAgPFRleHQ+e3Jlc3BvbnNlLnRpdGxlfTwvVGV4dD4KICAgICAgICAgIDxUZXh0PntyZXNwb25zZS5ib2R5fTwvVGV4dD4KICAgICAgICA8L1ZpZXc+CiAgICAgICl9CiAgICA8L1ZpZXc+CiAgKTsKfTsKCmV4cG9ydCBkZWZhdWx0IEFwcDs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import axios from 'axios';
+import React, { useState } from 'react';
+import { View, Text, Button, TextInput } from 'react-native';
+
+const App = () =&gt; {
+  const [title, setTitle] = useState('');
+  const [body, setBody] = useState('');
+  const [response, setResponse] = useState(null);
+
+  const handleSubmit = () =&gt; {
+    axios.post('https://jsonplaceholder.typicode.com/posts', {
+      title,
+      body,
+      userId: 1,
+    })
+    .then(response =&gt; {
+      setResponse(response.data);
+    })
+    .catch(error =&gt; {
+      console.error('Error posting data:', error);
+    });
+  };
+
+  return (
+    &lt;View&gt;
+      &lt;TextInput
+        placeholder=&quot;Title&quot;
+        value={title}
+        onChangeText={setTitle}
+      /&gt;
+      &lt;TextInput
+        placeholder=&quot;Body&quot;
+        value={body}
+        onChangeText={setBody}
+      /&gt;
+      &lt;Button title=&quot;Submit&quot; onPress={handleSubmit} /&gt;
+      {response &amp;&amp; (
+        &lt;View&gt;
+          &lt;Text&gt;Response:&lt;/Text&gt;
+          &lt;Text&gt;{response.title}&lt;/Text&gt;
+          &lt;Text&gt;{response.body}&lt;/Text&gt;
+        &lt;/View&gt;
+      )}
+    &lt;/View&gt;
+  );
+};
+
+export default App;</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Gestió d'Estat</strong>: Utilitzant <code>useState</code> per gestionar les entrades del formulari i les dades de resposta.</li>
+<li><strong>Petició POST</strong>: <code>axios.post</code> per enviar dades a l'API.</li>
+<li><strong>Gestió de la Resposta</strong>: Actualitzant l'estat amb les dades de resposta.</li>
+<li><strong>Gestió d'Errors</strong>: Registrant errors a la consola.</li>
+</ul>
+</div><h1>Utilitzant Interceptors d'Axios</h1>
+<div class='content'><p>Els interceptors et permeten executar el teu codi o modificar la petició/resposta abans que sigui gestionada per <code>then</code> o <code>catch</code>.</p>
+</div><h2>Afegint un Interceptor de Petició</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXhpb3MuaW50ZXJjZXB0b3JzLnJlcXVlc3QudXNlKAogIGNvbmZpZyA9PiB7CiAgICAvLyBGZXIgYWxndW5hIGNvc2EgYWJhbnMgcXVlIGxhIHBldGljacOzIHNpZ3VpIGVudmlhZGEKICAgIGNvbnNvbGUubG9nKCdSZXF1ZXN0IEludGVyY2VwdG9yOicsIGNvbmZpZyk7CiAgICByZXR1cm4gY29uZmlnOwogIH0sCiAgZXJyb3IgPT4gewogICAgLy8gRmVyIGFsZ3VuYSBjb3NhIGFtYiBsJ2Vycm9yIGRlIGxhIHBldGljacOzCiAgICByZXR1cm4gUHJvbWlzZS5yZWplY3QoZXJyb3IpOwogIH0KKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>axios.interceptors.request.use(
+  config =&gt; {
+    // Fer alguna cosa abans que la petici&oacute; sigui enviada
+    console.log('Request Interceptor:', config);
+    return config;
+  },
+  error =&gt; {
+    // Fer alguna cosa amb l'error de la petici&oacute;
+    return Promise.reject(error);
+  }
+);</pre></div><div class='content'></div><h2>Afegint un Interceptor de Resposta</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXhpb3MuaW50ZXJjZXB0b3JzLnJlc3BvbnNlLnVzZSgKICByZXNwb25zZSA9PiB7CiAgICAvLyBGZXIgYWxndW5hIGNvc2EgYW1iIGxlcyBkYWRlcyBkZSBsYSByZXNwb3N0YQogICAgY29uc29sZS5sb2coJ1Jlc3BvbnNlIEludGVyY2VwdG9yOicsIHJlc3BvbnNlKTsKICAgIHJldHVybiByZXNwb25zZTsKICB9LAogIGVycm9yID0+IHsKICAgIC8vIEZlciBhbGd1bmEgY29zYSBhbWIgbCdlcnJvciBkZSBsYSByZXNwb3N0YQogICAgcmV0dXJuIFByb21pc2UucmVqZWN0KGVycm9yKTsKICB9Cik7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>axios.interceptors.response.use(
+  response =&gt; {
+    // Fer alguna cosa amb les dades de la resposta
+    console.log('Response Interceptor:', response);
+    return response;
+  },
+  error =&gt; {
+    // Fer alguna cosa amb l'error de la resposta
+    return Promise.reject(error);
+  }
+);</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Interceptor de Petició</strong>: Et permet modificar la petició abans que sigui enviada.</li>
+<li><strong>Interceptor de Resposta</strong>: Et permet modificar la resposta abans que sigui gestionada.</li>
+</ul>
+</div><h1>Gestió d'Errors en Axios</h1>
+<div class='content'><p>La gestió d'errors és crucial per a una aplicació robusta. Axios proporciona una manera senzilla de gestionar errors.</p>
+</div><h2>Exemple de Gestió d'Errors</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXhpb3MuZ2V0KCdodHRwczovL2pzb25wbGFjZWhvbGRlci50eXBpY29kZS5jb20vcG9zdHMvMScpCiAgLnRoZW4ocmVzcG9uc2UgPT4gewogICAgY29uc29sZS5sb2coJ0RhdGE6JywgcmVzcG9uc2UuZGF0YSk7CiAgfSkKICAuY2F0Y2goZXJyb3IgPT4gewogICAgaWYgKGVycm9yLnJlc3BvbnNlKSB7CiAgICAgIC8vIEVsIHNlcnZpZG9yIHZhIHJlc3BvbmRyZSBhbWIgdW4gZXN0YXQgZGlmZXJlbnQgZGVsIHJhbmcgMjAwCiAgICAgIGNvbnNvbGUuZXJyb3IoJ1Jlc3BvbnNlIEVycm9yOicsIGVycm9yLnJlc3BvbnNlLmRhdGEpOwogICAgfSBlbHNlIGlmIChlcnJvci5yZXF1ZXN0KSB7CiAgICAgIC8vIExhIHBldGljacOzIGVzIHZhIGZlciBwZXLDsiBubyBlcyB2YSByZWJyZSBjYXAgcmVzcG9zdGEKICAgICAgY29uc29sZS5lcnJvcignUmVxdWVzdCBFcnJvcjonLCBlcnJvci5yZXF1ZXN0KTsKICAgIH0gZWxzZSB7CiAgICAgIC8vIEFsZ3VuYSBhbHRyYSBjb3NhIHZhIHBhc3NhcgogICAgICBjb25zb2xlLmVycm9yKCdFcnJvcjonLCBlcnJvci5tZXNzYWdlKTsKICAgIH0KICB9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>axios.get('https://jsonplaceholder.typicode.com/posts/1')
+  .then(response =&gt; {
+    console.log('Data:', response.data);
+  })
+  .catch(error =&gt; {
+    if (error.response) {
+      // El servidor va respondre amb un estat diferent del rang 200
+      console.error('Response Error:', error.response.data);
+    } else if (error.request) {
+      // La petici&oacute; es va fer per&ograve; no es va rebre cap resposta
+      console.error('Request Error:', error.request);
+    } else {
+      // Alguna altra cosa va passar
+      console.error('Error:', error.message);
+    }
+  });</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Tipus d'Errors</strong>:
+<ul>
+<li><strong>Error de Resposta</strong>: Error de resposta del servidor.</li>
+<li><strong>Error de Petició</strong>: No es va rebre cap resposta del servidor.</li>
+<li><strong>Altres Errors</strong>: Qualsevol altre error.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Axios és una biblioteca potent i fàcil d'utilitzar per fer peticions HTTP en aplicacions React Native. Simplifica el procés d'obtenir i enviar dades, gestionar errors i administrar interceptors de petició/resposta. Entenent i utilitzant Axios, pots millorar les capacitats de xarxa de les teves aplicacions React Native, fent-les més robustes i eficients.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='fetching-data-fetch-api'>&#x25C4;Obtenció de dades amb Fetch API</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Utilitzant Axios per a Peticions de Xarxa</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='handling-api-responses'>Gestió de respostes d'API &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

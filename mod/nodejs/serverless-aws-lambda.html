@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Computació sense servidor amb AWS Lambda</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nodejs/serverless-aws-lambda" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nodejs/serverless-aws-lambda" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nodejs/serverless-aws-lambda" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nodejs/serverless-aws-lambda" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nodejs/serverless-aws-lambda" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='microservices-architecture'>&#x25C4;Arquitectura de Microserveis</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Computació sense servidor amb AWS Lambda</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='project-overview-setup'>Visió General del Projecte i Configuració &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a la Computació sense servidor</h1>
+<div class='content'><ul>
+<li><strong>Definició</strong>: La computació sense servidor et permet construir i executar aplicacions i serveis sense pensar en servidors. AWS Lambda és un servei de computació sense servidor que et permet executar codi sense aprovisionar ni gestionar servidors.</li>
+<li><strong>Beneficis</strong>:
+<ul>
+<li>Sense gestió de servidors</li>
+<li>Escalabilitat flexible</li>
+<li>Alta disponibilitat</li>
+<li>Rendible</li>
+</ul>
+</li>
+</ul>
+</div><h1>Configuració d'AWS Lambda</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Prerequisits</strong>:</p>
+<ul>
+<li>Compte d'AWS</li>
+<li>Coneixements bàsics de la Consola de Gestió d'AWS</li>
+<li>Node.js instal·lat a la teva màquina local</li>
+</ul>
+</li>
+<li>
+<p><strong>Passos per configurar</strong>:</p>
+<ol>
+<li><strong>Crear un compte d'AWS</strong>: Si encara no en tens un, registra't a <a href="https://aws.amazon.com/">AWS</a>.</li>
+<li><strong>Instal·lar AWS CLI</strong>: Segueix les instruccions <a href="https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html">aquí</a>.</li>
+<li><strong>Configurar AWS CLI</strong>: Executa <code>aws configure</code> i introdueix el teu AWS Access Key ID, Secret Access Key, regió i format de sortida.</li>
+</ol>
+</li>
+</ul>
+</div><h1>Creació de la teva primera funció Lambda</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Creació d'una funció Lambda mitjançant la consola d'AWS</strong>:</p>
+<ol>
+<li>Ves a la Consola de Gestió d'AWS.</li>
+<li>Navega al servei Lambda.</li>
+<li>Fes clic a &quot;Create function&quot;.</li>
+<li>Tria &quot;Author from scratch&quot;.</li>
+<li>Introdueix un nom per a la funció.</li>
+<li>Tria &quot;Node.js&quot; com a runtime.</li>
+<li>Fes clic a &quot;Create function&quot;.</li>
+</ol>
+</li>
+<li>
+<p><strong>Codi d'exemple</strong>:</p>
+<pre><code class="language-javascript">exports.handler = async (event) =&gt; {
+    const response = {
+        statusCode: 200,
+        body: JSON.stringify('Hello from Lambda!'),
+    };
+    return response;
+};
+</code></pre>
+</li>
+<li>
+<p><strong>Desplegament de la funció</strong>:</p>
+<ol>
+<li>A l'editor de funcions, enganxa el codi d'exemple.</li>
+<li>Fes clic a &quot;Deploy&quot;.</li>
+</ol>
+</li>
+</ul>
+</div><h1>Invocació de funcions Lambda</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Invocació manual</strong>:</p>
+<ul>
+<li>Utilitza el botó &quot;Test&quot; a la consola d'AWS per invocar manualment la funció.</li>
+</ul>
+</li>
+<li>
+<p><strong>Invocació automàtica</strong>:</p>
+<ul>
+<li>Configura triggers com API Gateway, esdeveniments S3, streams de DynamoDB, etc.</li>
+</ul>
+</li>
+<li>
+<p><strong>Exemple amb API Gateway</strong>:</p>
+<ol>
+<li>Crea una API a API Gateway.</li>
+<li>Crea un recurs i un mètode.</li>
+<li>Integra el mètode amb la funció Lambda.</li>
+</ol>
+</li>
+</ul>
+</div><h1>Conceptes avançats de Lambda</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Variables d'entorn</strong>:</p>
+<ul>
+<li>Emmagatzema configuracions i secrets.</li>
+<li>Exemple:
+<pre><code class="language-javascript">const apiKey = process.env.API_KEY;
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Capes</strong>:</p>
+<ul>
+<li>Llibreries de codi reutilitzables que es poden compartir entre diverses funcions Lambda.</li>
+<li>Exemple: Empaquetar funcions utilitàries comunes.</li>
+</ul>
+</li>
+<li>
+<p><strong>Concurrència i escalabilitat</strong>:</p>
+<ul>
+<li>Configura la concurrència reservada per controlar el nombre d'instàncies.</li>
+<li>Entén el comportament i els límits d'escalabilitat.</li>
+</ul>
+</li>
+<li>
+<p><strong>Gestió d'errors</strong>:</p>
+<ul>
+<li>Utilitza blocs try-catch en el teu codi.</li>
+<li>Configura Dead Letter Queues (DLQ) per a invocacions fallides.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Monitorització i registre</h1>
+<div class='content'><ul>
+<li>
+<p><strong>CloudWatch Logs</strong>:</p>
+<ul>
+<li>Captura automàticament registres de les funcions Lambda.</li>
+<li>Exemple de registre en Lambda:
+<pre><code class="language-javascript">console.log('This is a log message');
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Mètriques</strong>:</p>
+<ul>
+<li>Monitoritza el recompte d'invocacions, durada, recompte d'errors, etc.</li>
+<li>Configura CloudWatch Alarms per a mètriques crítiques.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Millors pràctiques</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Optimització del codi</strong>:</p>
+<ul>
+<li>Minimitza la mida del paquet.</li>
+<li>Utilitza pràctiques de codificació eficients per reduir el temps d'execució.</li>
+</ul>
+</li>
+<li>
+<p><strong>Seguretat</strong>:</p>
+<ul>
+<li>Utilitza rols IAM amb el menor privilegi.</li>
+<li>Xifra variables d'entorn i dades sensibles.</li>
+</ul>
+</li>
+<li>
+<p><strong>Gestió de costos</strong>:</p>
+<ul>
+<li>Monitoritza l'ús i configura alertes de facturació.</li>
+<li>Optimitza el temps d'execució de les funcions per reduir costos.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La computació sense servidor amb AWS Lambda proporciona una manera potent i flexible de construir i desplegar aplicacions sense la càrrega de gestionar servidors. Aprofitant AWS Lambda amb Node.js, pots crear solucions escalables i rendibles que són fàcils de mantenir i desplegar. Aquest curs ha cobert els conceptes bàsics de configuració i ús d'AWS Lambda, conceptes avançats i millors pràctiques per assegurar-te que pots utilitzar efectivament la computació sense servidor en els teus projectes.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='microservices-architecture'>&#x25C4;Arquitectura de Microserveis</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Computació sense servidor amb AWS Lambda</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='project-overview-setup'>Visió General del Projecte i Configuració &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

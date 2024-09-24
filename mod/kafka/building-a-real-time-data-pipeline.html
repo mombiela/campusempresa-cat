@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construir una Canalització de Dades en Temps Real</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kafka/building-a-real-time-data-pipeline" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kafka/building-a-real-time-data-pipeline" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kafka/building-a-real-time-data-pipeline" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kafka/building-a-real-time-data-pipeline" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kafka/building-a-real-time-data-pipeline" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='future-trends-in-kafka'>&#x25C4;Tendències futures en Kafka</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Construir una Canalització de Dades en Temps Real</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='implementing-a-stream-processing-application'>Implementació d'una aplicació de processament de fluxos &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a les Canalitzacions de Dades en Temps Real</h1>
+<div class='content'><ul>
+<li><strong>Definició</strong>: Una canalització de dades en temps real és un sistema que processa dades en temps real, permetent obtenir informació i accions immediates.</li>
+<li><strong>Importància</strong>: El processament de dades en temps real és crucial per a aplicacions que requereixen anàlisi de dades oportuna, com la detecció de fraus, sistemes de recomanació i sistemes de monitoratge.</li>
+</ul>
+</div><h1>Visió General d'Apache Kafka</h1>
+<div class='content'><ul>
+<li><strong>Què és Kafka?</strong>: Kafka és una plataforma de streaming distribuïda capaç de gestionar fluxos de dades en temps real.</li>
+<li><strong>Conceptes Bàsics</strong>:
+<ul>
+<li><strong>Producer</strong>: Envia dades als temes de Kafka.</li>
+<li><strong>Consumer</strong>: Llegeix dades dels temes de Kafka.</li>
+<li><strong>Topic</strong>: Una categoria o nom de feed al qual s'envien registres.</li>
+<li><strong>Partition</strong>: Un tema es divideix en particions per a l'escalabilitat.</li>
+<li><strong>Broker</strong>: Un servidor de Kafka que emmagatzema dades i serveix als clients.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Configuració de Kafka</h1>
+<div class='content'><ul>
+<li><strong>Instal·lació</strong>:
+<ul>
+<li>Descarrega Kafka des del lloc web oficial.</li>
+<li>Extreu l'arxiu descarregat.</li>
+<li>Inicia el servidor ZooKeeper:
+<pre><code class="language-sh">bin/zookeeper-server-start.sh config/zookeeper.properties
+</code></pre>
+</li>
+<li>Inicia el servidor Kafka:
+<pre><code class="language-sh">bin/kafka-server-start.sh config/server.properties
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</div><h1>Creació d'un Productor de Kafka</h1>
+<div class='content'><ul>
+<li><strong>Configuració del Productor</strong>:
+<ul>
+<li>Defineix propietats com <code>bootstrap.servers</code>, <code>key.serializer</code> i <code>value.serializer</code>.</li>
+</ul>
+</li>
+<li><strong>Codi d'Exemple</strong>:
+<pre><code class="language-java">import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import java.util.Properties;
+
+public class SimpleProducer {
+    public static void main(String[] args) {
+        Properties props = new Properties();
+        props.put(&quot;bootstrap.servers&quot;, &quot;localhost:9092&quot;);
+        props.put(&quot;key.serializer&quot;, &quot;org.apache.kafka.common.serialization.StringSerializer&quot;);
+        props.put(&quot;value.serializer&quot;, &quot;org.apache.kafka.common.serialization.StringSerializer&quot;);
+
+        KafkaProducer&lt;String, String&gt; producer = new KafkaProducer&lt;&gt;(props);
+        producer.send(new ProducerRecord&lt;&gt;(&quot;my-topic&quot;, &quot;key&quot;, &quot;value&quot;));
+        producer.close();
+    }
+}
+</code></pre>
+</li>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>bootstrap.servers</code>: Especifica les adreces dels brokers de Kafka.</li>
+<li><code>key.serializer</code> i <code>value.serializer</code>: Serialitzadors per a la clau i el valor.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Creació d'un Consumidor de Kafka</h1>
+<div class='content'><ul>
+<li><strong>Configuració del Consumidor</strong>:
+<ul>
+<li>Defineix propietats com <code>bootstrap.servers</code>, <code>group.id</code>, <code>key.deserializer</code> i <code>value.deserializer</code>.</li>
+</ul>
+</li>
+<li><strong>Codi d'Exemple</strong>:
+<pre><code class="language-java">import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import java.util.Collections;
+import java.util.Properties;
+
+public class SimpleConsumer {
+    public static void main(String[] args) {
+        Properties props = new Properties();
+        props.put(&quot;bootstrap.servers&quot;, &quot;localhost:9092&quot;);
+        props.put(&quot;group.id&quot;, &quot;test-group&quot;);
+        props.put(&quot;key.deserializer&quot;, &quot;org.apache.kafka.common.serialization.StringDeserializer&quot;);
+        props.put(&quot;value.deserializer&quot;, &quot;org.apache.kafka.common.serialization.StringDeserializer&quot;);
+
+        KafkaConsumer&lt;String, String&gt; consumer = new KafkaConsumer&lt;&gt;(props);
+        consumer.subscribe(Collections.singletonList(&quot;my-topic&quot;));
+
+        while (true) {
+            ConsumerRecords&lt;String, String&gt; records = consumer.poll(100);
+            for (ConsumerRecord&lt;String, String&gt; record : records) {
+                System.out.printf(&quot;offset = %d, key = %s, value = %s%n&quot;, record.offset(), record.key(), record.value());
+            }
+        }
+    }
+}
+</code></pre>
+</li>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>group.id</code>: Identifica el grup de consumidors.</li>
+<li><code>key.deserializer</code> i <code>value.deserializer</code>: Deserialitzadors per a la clau i el valor.</li>
+<li><code>subscribe</code>: Subscriu al tema especificat.</li>
+<li><code>poll</code>: Recupera dades del tema.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Funcions Avançades de Kafka</h1>
+<div class='content'><ul>
+<li><strong>Particionament</strong>:
+<ul>
+<li>Assegura que les dades es distribueixin entre múltiples brokers.</li>
+<li>Permet el processament en paral·lel.</li>
+</ul>
+</li>
+<li><strong>Replicació</strong>:
+<ul>
+<li>Proporciona tolerància a fallades replicant dades entre múltiples brokers.</li>
+</ul>
+</li>
+<li><strong>Kafka Streams</strong>:
+<ul>
+<li>Una biblioteca client per construir aplicacions en temps real.</li>
+<li>Exemple:
+<pre><code class="language-java">import org.apache.kafka.streams.KafkaStreams;
+import org.apache.kafka.streams.StreamsBuilder;
+import org.apache.kafka.streams.kstream.KStream;
+
+public class SimpleStream {
+    public static void main(String[] args) {
+        StreamsBuilder builder = new StreamsBuilder();
+        KStream&lt;String, String&gt; source = builder.stream(&quot;source-topic&quot;);
+        source.to(&quot;sink-topic&quot;);
+
+        KafkaStreams streams = new KafkaStreams(builder.build(), new Properties());
+        streams.start();
+    }
+}
+</code></pre>
+</li>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>StreamsBuilder</code>: Utilitzat per construir la topologia de processament de fluxos.</li>
+<li><code>KStream</code>: Representa un flux de registres.</li>
+<li><code>to</code>: Envia les dades processades a un altre tema.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div><h1>Monitoratge i Gestió de Kafka</h1>
+<div class='content'><ul>
+<li><strong>Eines de Gestió de Kafka</strong>:
+<ul>
+<li><strong>Kafka Manager</strong>: Una eina web per gestionar clústers de Kafka.</li>
+<li><strong>Prometheus i Grafana</strong>: Per monitorar les mètriques de Kafka.</li>
+</ul>
+</li>
+<li><strong>Mètriques Clau</strong>:
+<ul>
+<li><strong>Throughput</strong>: Nombre de registres processats per segon.</li>
+<li><strong>Latency</strong>: Temps necessari per processar un registre.</li>
+<li><strong>Consumer Lag</strong>: Diferència entre l'últim offset i l'offset actual del consumidor.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Construir una canalització de dades en temps real amb Kafka implica configurar Kafka, crear productors i consumidors, i aprofitar funcions avançades com el particionament, la replicació i Kafka Streams. Un monitoratge i una gestió adequats són essencials per assegurar l'eficiència i la fiabilitat de la canalització. Entenent aquests conceptes i practicant amb els exemples proporcionats, pots construir canalitzacions de dades en temps real robustes per a diverses aplicacions.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='future-trends-in-kafka'>&#x25C4;Tendències futures en Kafka</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Construir una Canalització de Dades en Temps Real</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='implementing-a-stream-processing-application'>Implementació d'una aplicació de processament de fluxos &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Durades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/rust/lifetimes" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/rust/lifetimes" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/rust/lifetimes" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/rust/lifetimes" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/rust/lifetimes" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='using-external-crates'>&#x25C4;Ús de Crates Externs</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Durades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='traits'>Traits &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Les durades a Rust són una manera d'assegurar que les referències siguin vàlides mentre siguin necessàries, prevenint referències penjants i assegurant la seguretat de la memòria sense necessitat d'un col·lector d'escombraries. Aquest tema et guiarà des dels conceptes bàsics fins a l'ús avançat de les durades a Rust.</p>
+</div><h1>Introducció a les Durades</h1>
+<div class='content'><ul>
+<li><strong>Definició</strong>: Les durades són anotacions que indiquen al compilador de Rust quant de temps han de ser vàlides les referències.</li>
+<li><strong>Propòsit</strong>: Ajuden a prevenir referències penjants i a assegurar la seguretat de la memòria.</li>
+<li><strong>Sintaxi</strong>: Les durades es denoten amb un apòstrof seguit d'un nom, per exemple, <code>'a</code>.</li>
+</ul>
+</div><h2>Anotacions Bàsiques de Durades</h2>
+<div class='content'><p>Quan tens una funció que pren referències com a paràmetres, has d'especificar les durades per dir al compilador com es relacionen les durades d'aquestes referències entre elles.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zm4gbG9uZ2VzdDwnYT4oeDogJidhIHN0ciwgeTogJidhIHN0cikgLT4gJidhIHN0ciB7CiAgICBpZiB4LmxlbigpID4geS5sZW4oKSB7CiAgICAgICAgeAogICAgfSBlbHNlIHsKICAgICAgICB5CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>fn longest&lt;'a&gt;(x: &amp;'a str, y: &amp;'a str) -&gt; &amp;'a str {
+    if x.len() &gt; y.len() {
+        x
+    } else {
+        y
+    }
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>'a</code> és un paràmetre de durada.</li>
+<li><code>&amp;'a str</code> significa una referència a un slice de cadena que viu almenys tant com <code>'a</code>.</li>
+<li>La funció <code>longest</code> pren dos slices de cadena amb la mateixa durada <code>'a</code> i retorna un slice de cadena amb la mateixa durada <code>'a</code>.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Eliminació de Durades</h2>
+<div class='content'><p>Rust té una característica anomenada eliminació de durades, que permet al compilador inferir les durades en certes situacions, reduint la necessitat d'anotacions explícites.</p>
+<ul>
+<li><strong>Tres regles de l'eliminació de durades</strong>:
+<ol>
+<li>Cada paràmetre que és una referència obté el seu propi paràmetre de durada.</li>
+<li>Si hi ha exactament un paràmetre de durada d'entrada, aquesta durada s'assigna a tots els paràmetres de durada de sortida.</li>
+<li>Si hi ha múltiples paràmetres de durada d'entrada, però un d'ells és <code>&amp;self</code> o <code>&amp;mut self</code>, la durada de <code>self</code> s'assigna a tots els paràmetres de durada de sortida.</li>
+</ol>
+</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zm4gZmlyc3Rfd29yZChzOiAmc3RyKSAtPiAmc3RyIHsKICAgIGxldCBieXRlcyA9IHMuYXNfYnl0ZXMoKTsKICAgIGZvciAoaSwgJml0ZW0pIGluIGJ5dGVzLml0ZXIoKS5lbnVtZXJhdGUoKSB7CiAgICAgICAgaWYgaXRlbSA9PSBiJyAnIHsKICAgICAgICAgICAgcmV0dXJuICZzWzAuLmldOwogICAgICAgIH0KICAgIH0KICAgICZzWy4uXQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>fn first_word(s: &amp;str) -&gt; &amp;str {
+    let bytes = s.as_bytes();
+    for (i, &amp;item) in bytes.iter().enumerate() {
+        if item == b' ' {
+            return &amp;s[0..i];
+        }
+    }
+    &amp;s[..]
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li>La funció <code>first_word</code> pren un slice de cadena i retorna un slice de cadena.</li>
+<li>El compilador infereix les durades basant-se en les regles d'eliminació.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Durades Avançades</h1>
+<div class='content'></div><h2>Structs amb Durades</h2>
+<div class='content'><p>Quan defineixes una struct que conté referències, has d'especificar les durades per a aquestes referències.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RydWN0IEltcG9ydGFudEV4Y2VycHQ8J2E+IHsKICAgIHBhcnQ6ICYnYSBzdHIsCn0KCmltcGw8J2E+IEltcG9ydGFudEV4Y2VycHQ8J2E+IHsKICAgIGZuIGxldmVsKCZzZWxmKSAtPiBpMzIgewogICAgICAgIDMKICAgIH0KCiAgICBmbiBhbm5vdW5jZV9hbmRfcmV0dXJuX3BhcnQoJnNlbGYsIGFubm91bmNlbWVudDogJnN0cikgLT4gJnN0ciB7CiAgICAgICAgcHJpbnRsbiEoIkF0ZW5jacOzLCBzaSB1cyBwbGF1OiB7fSIsIGFubm91bmNlbWVudCk7CiAgICAgICAgc2VsZi5wYXJ0CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>struct ImportantExcerpt&lt;'a&gt; {
+    part: &amp;'a str,
+}
+
+impl&lt;'a&gt; ImportantExcerpt&lt;'a&gt; {
+    fn level(&amp;self) -&gt; i32 {
+        3
+    }
+
+    fn announce_and_return_part(&amp;self, announcement: &amp;str) -&gt; &amp;str {
+        println!(&quot;Atenci&oacute;, si us plau: {}&quot;, announcement);
+        self.part
+    }
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li>La struct <code>ImportantExcerpt</code> té un paràmetre de durada <code>'a</code>.</li>
+<li>El camp <code>part</code> és una referència que ha de viure almenys tant com <code>'a</code>.</li>
+<li>Els mètodes dins del bloc <code>impl</code> poden utilitzar la durada <code>'a</code> per assegurar-se que les referències siguin vàlides.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Límits de Durades</h2>
+<div class='content'><p>Pots especificar que un paràmetre de tipus ha de viure almenys tant com una certa durada.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zm4gbG9uZ2VzdF93aXRoX2FuX2Fubm91bmNlbWVudDwnYSwgVD4oeDogJidhIHN0ciwgeTogJidhIHN0ciwgYW5uOiBUKSAtPiAmJ2Egc3RyCndoZXJlCiAgICBUOiBzdGQ6OmZtdDo6RGlzcGxheSwKewogICAgcHJpbnRsbiEoIkFudW5jaSEge30iLCBhbm4pOwogICAgaWYgeC5sZW4oKSA+IHkubGVuKCkgewogICAgICAgIHgKICAgIH0gZWxzZSB7CiAgICAgICAgeQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>fn longest_with_an_announcement&lt;'a, T&gt;(x: &amp;'a str, y: &amp;'a str, ann: T) -&gt; &amp;'a str
+where
+    T: std::fmt::Display,
+{
+    println!(&quot;Anunci! {}&quot;, ann);
+    if x.len() &gt; y.len() {
+        x
+    } else {
+        y
+    }
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li>La funció <code>longest_with_an_announcement</code> té un paràmetre de durada <code>'a</code> i un tipus genèric <code>T</code>.</li>
+<li>La clàusula <code>where</code> especifica que <code>T</code> ha d'implementar el trait <code>Display</code>.</li>
+<li>La funció imprimeix un anunci i retorna el més llarg de dos slices de cadena.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Les durades són una característica poderosa a Rust que ajuden a assegurar la seguretat de la memòria prevenint referències penjants. Entenent i utilitzant les durades, pots escriure codi Rust més robust i segur. Recorda:</p>
+<ul>
+<li>Utilitza anotacions de durades per especificar quant de temps han de ser vàlides les referències.</li>
+<li>Aprofita l'eliminació de durades per reduir el codi redundant.</li>
+<li>Utilitza durades en structs i funcions genèriques per assegurar que les referències siguin vàlides a través de diferents àmbits.</li>
+</ul>
+<p>Dominant les durades, pots aprofitar el potent sistema de tipus de Rust per escriure programes eficients i segurs.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='using-external-crates'>&#x25C4;Ús de Crates Externs</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Durades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='traits'>Traits &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

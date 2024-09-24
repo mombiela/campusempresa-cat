@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Implementació de la Base de Dades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/postgresql/implementing-the-database" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/postgresql/implementing-the-database" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/postgresql/implementing-the-database" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/postgresql/implementing-the-database" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/postgresql/implementing-the-database" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='designing-the-database'>&#x25C4;Disseny de la base de dades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Implementació de la Base de Dades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='presenting-your-project'>Presentació del teu projecte &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquesta secció, cobrirem els passos necessaris per implementar una base de dades utilitzant PostgreSQL. Això inclou crear bases de dades, definir esquemes i omplir taules amb dades. Al final d'aquesta secció, tindràs una comprensió sòlida de com configurar i gestionar una base de dades PostgreSQL.</p>
+</div><h1>Creació d'una Base de Dades</h1>
+<div class='content'><p>Per començar a utilitzar PostgreSQL, primer has de crear una base de dades. Aquí tens com fer-ho:</p>
+</div><h2>Utilitzant el Comandament `createdb`</h2>
+<div class='content'><p>El comandament <code>createdb</code> és una manera convenient de crear una nova base de dades des de la línia de comandaments.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y3JlYXRlZGIgbXlkYXRhYmFzZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>createdb mydatabase</pre></div><div class='content'></div><h2>Utilitzant Comandaments SQL</h2>
+<div class='content'><p>També pots crear una base de dades utilitzant comandaments SQL dins de la interfície <code>psql</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIERBVEFCQVNFIG15ZGF0YWJhc2U7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE DATABASE mydatabase;</pre></div><div class='content'><ul>
+<li><strong>Nota:</strong> Assegura't de tenir els permisos necessaris per crear una base de dades.</li>
+</ul>
+</div><h1>Connexió a una Base de Dades</h1>
+<div class='content'><p>Un cop la base de dades està creada, has de connectar-t'hi per començar a treballar-hi.</p>
+</div><h2>Utilitzant el Comandament `psql`</h2>
+<div class='content'><p>Pots connectar-te a la teva base de dades utilitzant l'eina de línia de comandaments <code>psql</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHNxbCBteWRhdGFiYXNl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>psql mydatabase</pre></div><div class='content'></div><h2>Utilitzant Comandaments SQL</h2>
+<div class='content'><p>Dins de <code>psql</code>, pots connectar-te a una base de dades utilitzant el comandament <code>\c</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("XGMgbXlkYXRhYmFzZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>\c mydatabase</pre></div><div class='content'></div><h1>Definició d'Esquemes</h1>
+<div class='content'><p>Els esquemes són una manera d'organitzar i gestionar els objectes de la teva base de dades. Per defecte, PostgreSQL crea un esquema anomenat <code>public</code>.</p>
+</div><h2>Creació d'un Esquema</h2>
+<div class='content'><p>Pots crear un nou esquema utilitzant el comandament <code>CREATE SCHEMA</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFNDSEVNQSBteXNjaGVtYTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE SCHEMA myschema;</pre></div><div class='content'></div><h2>Configuració del Camí de Cerca</h2>
+<div class='content'><p>Pots configurar el camí de cerca per especificar en quins esquemes PostgreSQL ha de buscar primer.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VUIHNlYXJjaF9wYXRoIFRPIG15c2NoZW1hLCBwdWJsaWM7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SET search_path TO myschema, public;</pre></div><div class='content'></div><h1>Creació de Taules</h1>
+<div class='content'><p>Les taules són els blocs fonamentals d'una base de dades. Emmagatzemen dades en files i columnes.</p>
+</div><h2>Creació Bàsica de Taules</h2>
+<div class='content'><p>Aquí tens com pots crear una taula simple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIHVzZXJzICgKICAgIGlkIFNFUklBTCBQUklNQVJZIEtFWSwKICAgIHVzZXJuYW1lIFZBUkNIQVIoNTApIE5PVCBOVUxMLAogICAgZW1haWwgVkFSQ0hBUigxMDApIE5PVCBOVUxMLAogICAgY3JlYXRlZF9hdCBUSU1FU1RBTVAgREVGQVVMVCBDVVJSRU5UX1RJTUVTVEFNUAopOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);</pre></div><div class='content'><ul>
+<li><strong>Explicació:</strong>
+<ul>
+<li><code>id SERIAL PRIMARY KEY</code>: Crea una clau primària auto-incremental.</li>
+<li><code>username VARCHAR(50) NOT NULL</code>: Defineix una columna de nom d'usuari que no pot ser nul·la.</li>
+<li><code>email VARCHAR(100) NOT NULL</code>: Defineix una columna de correu electrònic que no pot ser nul·la.</li>
+<li><code>created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP</code>: Estableix un segell de temps per defecte per quan es crea la fila.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Omplir Taules amb Dades</h1>
+<div class='content'><p>Un cop les teves taules estan creades, pots començar a inserir-hi dades.</p>
+</div><h2>Inserció de Dades</h2>
+<div class='content'><p>Utilitza el comandament <code>INSERT INTO</code> per afegir dades a la teva taula.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("SU5TRVJUIElOVE8gdXNlcnMgKHVzZXJuYW1lLCBlbWFpbCkgVkFMVUVTICgnam9obl9kb2UnLCAnam9obkBleGFtcGxlLmNvbScpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>INSERT INTO users (username, email) VALUES ('john_doe', 'john@example.com');</pre></div><div class='content'></div><h2>Inserció Massiva</h2>
+<div class='content'><p>Per inserir múltiples files alhora, pots utilitzar múltiples claus <code>VALUES</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("SU5TRVJUIElOVE8gdXNlcnMgKHVzZXJuYW1lLCBlbWFpbCkgVkFMVUVTIAooJ2phbmVfZG9lJywgJ2phbmVAZXhhbXBsZS5jb20nKSwKKCdhbGljZScsICdhbGljZUBleGFtcGxlLmNvbScpLAooJ2JvYicsICdib2JAZXhhbXBsZS5jb20nKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>INSERT INTO users (username, email) VALUES 
+('jane_doe', 'jane@example.com'),
+('alice', 'alice@example.com'),
+('bob', 'bob@example.com');</pre></div><div class='content'></div><h1>Consultar Dades</h1>
+<div class='content'><p>Recuperar dades de les teves taules es fa utilitzant la sentència <code>SELECT</code>.</p>
+</div><h2>Consulta Bàsica</h2>
+<div class='content'><p>Aquí tens una consulta simple per recuperar tots els usuaris:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUICogRlJPTSB1c2Vyczs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT * FROM users;</pre></div><div class='content'></div><h2>Filtrar Dades</h2>
+<div class='content'><p>Utilitza la clàusula <code>WHERE</code> per filtrar resultats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUICogRlJPTSB1c2VycyBXSEVSRSB1c2VybmFtZSA9ICdqb2huX2RvZSc7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT * FROM users WHERE username = 'john_doe';</pre></div><div class='content'></div><h2>Ordenar Dades</h2>
+<div class='content'><p>Utilitza la clàusula <code>ORDER BY</code> per ordenar resultats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUICogRlJPTSB1c2VycyBPUkRFUiBCWSBjcmVhdGVkX2F0IERFU0M7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT * FROM users ORDER BY created_at DESC;</pre></div><div class='content'></div><h1>Actualitzar Dades</h1>
+<div class='content'><p>Per modificar dades existents, utilitza la sentència <code>UPDATE</code>.</p>
+</div><h2>Actualització Bàsica</h2>
+<div class='content'><p>Aquí tens com pots actualitzar el correu electrònic d'un usuari:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("VVBEQVRFIHVzZXJzIFNFVCBlbWFpbCA9ICduZXdfZW1haWxAZXhhbXBsZS5jb20nIFdIRVJFIHVzZXJuYW1lID0gJ2pvaG5fZG9lJzs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>UPDATE users SET email = 'new_email@example.com' WHERE username = 'john_doe';</pre></div><div class='content'></div><h1>Esborrar Dades</h1>
+<div class='content'><p>Per eliminar dades de la teva taula, utilitza la sentència <code>DELETE</code>.</p>
+</div><h2>Esborrat Bàsic</h2>
+<div class='content'><p>Aquí tens com pots esborrar un usuari:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("REVMRVRFIEZST00gdXNlcnMgV0hFUkUgdXNlcm5hbWUgPSAnam9obl9kb2UnOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>DELETE FROM users WHERE username = 'john_doe';</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem cobert els passos essencials per implementar una base de dades en PostgreSQL. Has après com crear i connectar-te a una base de dades, definir esquemes, crear i omplir taules, i realitzar operacions bàsiques de manipulació de dades. Amb aquestes habilitats, ara estàs equipat per configurar i gestionar una base de dades PostgreSQL de manera efectiva.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='designing-the-database'>&#x25C4;Disseny de la base de dades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Implementació de la Base de Dades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='presenting-your-project'>Presentació del teu projecte &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

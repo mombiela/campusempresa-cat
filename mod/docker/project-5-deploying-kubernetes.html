@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project 5: Desplegament a Kubernetes</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/docker/project-5-deploying-kubernetes" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/docker/project-5-deploying-kubernetes" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/docker/project-5-deploying-kubernetes" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/docker/project-5-deploying-kubernetes" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/docker/project-5-deploying-kubernetes" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='project-4-scaling-docker-swarm'>&#x25C4;Projecte 4: Escalant amb Docker Swarm</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Project 5: Desplegament a Kubernetes</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='official-docker-documentation'>Documentació oficial de Docker &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest projecte, explorarem com desplegar contenidors Docker a un clúster de Kubernetes. Kubernetes és una eina d'orquestració potent que automatitza el desplegament, l'escalat i la gestió d'aplicacions contenidoritzades. Al final d'aquest projecte, tindràs una comprensió sòlida de com desplegar i gestionar contenidors Docker utilitzant Kubernetes.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Clúster de Kubernetes</strong>: Un conjunt de nodes (màquines) que executen aplicacions contenidoritzades gestionades per Kubernetes.</li>
+<li><strong>Pods</strong>: Les unitats desplegables més petites a Kubernetes, que poden contenir un o més contenidors.</li>
+<li><strong>Serveis</strong>: Abstraccions que defineixen un conjunt lògic de Pods i una política per accedir-hi.</li>
+<li><strong>Desplegaments</strong>: Proporcionen actualitzacions declaratives a les aplicacions i gestionen el desplegament de Pods.</li>
+<li><strong>ConfigMaps i Secrets</strong>: Mecanismes per injectar dades de configuració als Pods.</li>
+</ul>
+</div><h1>Prerequisits</h1>
+<div class='content'><p>Abans de començar aquest projecte, assegura't de tenir:</p>
+<ul>
+<li>Una comprensió bàsica de Docker i la contenidorització.</li>
+<li>Docker instal·lat a la teva màquina local.</li>
+<li>Minikube o un clúster de Kubernetes configurat.</li>
+</ul>
+</div><h1>Guia Pas a Pas</h1>
+<div class='content'></div><h2>Pas 1: Configurar Minikube</h2>
+<div class='content'><p>Minikube és una eina que et permet executar Kubernetes localment. Crea un clúster de Kubernetes d'un sol node a la teva màquina local.</p>
+<ol>
+<li>
+<p><strong>Instal·lar Minikube</strong>:</p>
+<ul>
+<li>Segueix les instruccions d'instal·lació per al teu sistema operatiu a la <a href="https://minikube.sigs.k8s.io/docs/start/">documentació oficial de Minikube</a>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Iniciar Minikube</strong>:</p>
+<pre><code class="language-bash">minikube start
+</code></pre>
+</li>
+<li>
+<p><strong>Verificar l'Estat de Minikube</strong>:</p>
+<pre><code class="language-bash">minikube status
+</code></pre>
+</li>
+</ol>
+</div><h2>Pas 2: Crear una Imatge Docker</h2>
+<div class='content'><p>Crea una imatge Docker senzilla per desplegar a Kubernetes.</p>
+<ol>
+<li>
+<p><strong>Dockerfile</strong>:</p>
+<pre><code class="language-Dockerfile">FROM nginx:alpine
+COPY index.html /usr/share/nginx/html
+</code></pre>
+</li>
+<li>
+<p><strong>Construir la Imatge Docker</strong>:</p>
+<pre><code class="language-bash">docker build -t my-nginx .
+</code></pre>
+</li>
+<li>
+<p><strong>Verificar la Imatge</strong>:</p>
+<pre><code class="language-bash">docker images
+</code></pre>
+</li>
+</ol>
+</div><h2>Pas 3: Desplegar a Kubernetes</h2>
+<div class='content'><p>Desplega la imatge Docker al clúster de Kubernetes.</p>
+<ol>
+<li>
+<p><strong>Crear un Desplegament</strong>:</p>
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: my-nginx:latest
+        ports:
+        - containerPort: 80
+</code></pre>
+</li>
+<li>
+<p><strong>Aplicar el Desplegament</strong>:</p>
+<pre><code class="language-bash">kubectl apply -f deployment.yaml
+</code></pre>
+</li>
+<li>
+<p><strong>Verificar el Desplegament</strong>:</p>
+<pre><code class="language-bash">kubectl get deployments
+kubectl get pods
+</code></pre>
+</li>
+</ol>
+</div><h2>Pas 4: Exposar el Desplegament</h2>
+<div class='content'><p>Exposa el desplegament per fer-lo accessible des de fora del clúster.</p>
+<ol>
+<li>
+<p><strong>Crear un Servei</strong>:</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
+</code></pre>
+</li>
+<li>
+<p><strong>Aplicar el Servei</strong>:</p>
+<pre><code class="language-bash">kubectl apply -f service.yaml
+</code></pre>
+</li>
+<li>
+<p><strong>Obtenir l'URL del Servei</strong>:</p>
+<pre><code class="language-bash">minikube service nginx-service --url
+</code></pre>
+</li>
+</ol>
+</div><h2>Pas 5: Gestionar Configuracions</h2>
+<div class='content'><p>Utilitza ConfigMaps i Secrets per gestionar configuracions.</p>
+<ol>
+<li>
+<p><strong>Crear un ConfigMap</strong>:</p>
+<pre><code class="language-bash">kubectl create configmap nginx-config --from-file=nginx.conf
+</code></pre>
+</li>
+<li>
+<p><strong>Crear un Secret</strong>:</p>
+<pre><code class="language-bash">kubectl create secret generic my-secret --from-literal=password=my-password
+</code></pre>
+</li>
+<li>
+<p><strong>Utilitzar ConfigMap i Secret en el Desplegament</strong>:</p>
+<pre><code class="language-yaml">spec:
+  containers:
+  - name: nginx
+    image: my-nginx:latest
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: config-volume
+      mountPath: /etc/nginx/nginx.conf
+      subPath: nginx.conf
+  volumes:
+  - name: config-volume
+    configMap:
+      name: nginx-config
+</code></pre>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest projecte, hem cobert els passos essencials per desplegar contenidors Docker a un clúster de Kubernetes. Hem començat configurant Minikube, creat una imatge Docker, desplegat-la a Kubernetes, exposat-la mitjançant un servei i gestionat configuracions utilitzant ConfigMaps i Secrets. Seguint aquests passos, ara tens els coneixements fonamentals per desplegar i gestionar aplicacions contenidoritzades utilitzant Kubernetes.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='project-4-scaling-docker-swarm'>&#x25C4;Projecte 4: Escalant amb Docker Swarm</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Project 5: Desplegament a Kubernetes</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='official-docker-documentation'>Documentació oficial de Docker &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

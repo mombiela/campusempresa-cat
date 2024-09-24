@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desplegant NGINX</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nginx/deploying-nginx" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nginx/deploying-nginx" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nginx/deploying-nginx" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nginx/deploying-nginx" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nginx/deploying-nginx" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='debugging-nginx'>&#x25C4;Depuració de NGINX</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Desplegant NGINX</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='high-availability-with-nginx'>Alta Disponibilitat amb NGINX &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Desplegar NGINX és un pas crucial en la configuració d'un servidor web o un proxy invers. Aquesta secció et guiarà a través del procés de desplegar NGINX, des de la instal·lació fins a la configuració i, finalment, executar-lo en un entorn de producció.</p>
+</div><h1>Instal·lació</h1>
+<div class='content'></div><h2>Instal·lant NGINX en Diferents Sistemes Operatius</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Ubuntu/Debian:</strong></p>
+<pre><code class="language-bash">sudo apt update
+sudo apt install nginx
+</code></pre>
+</li>
+<li>
+<p><strong>CentOS/RHEL:</strong></p>
+<pre><code class="language-bash">sudo yum install epel-release
+sudo yum install nginx
+</code></pre>
+</li>
+<li>
+<p><strong>Windows:</strong></p>
+<ol>
+<li>Descarrega el fitxer zip de NGINX des del <a href="https://nginx.org/en/download.html">lloc web oficial</a>.</li>
+<li>Extreu el fitxer zip a un directori de la teva elecció.</li>
+<li>Obre el Command Prompt i navega fins al directori extret.</li>
+<li>Executa <code>nginx.exe</code> per iniciar el servidor.</li>
+</ol>
+</li>
+</ul>
+</div><h2>Verificant la Instal·lació</h2>
+<div class='content'><p>Després de la instal·lació, verifica que NGINX està en funcionament visitant <code>http://localhost</code> al teu navegador web. Hauries de veure la pàgina de benvinguda per defecte de NGINX.</p>
+</div><h1>Configuració Bàsica</h1>
+<div class='content'></div><h2>Entenent el Fitxer de Configuració</h2>
+<div class='content'><p>El fitxer de configuració principal de NGINX es troba típicament a <code>/etc/nginx/nginx.conf</code> en sistemes Linux. Aquí tens un exemple bàsic de com podria ser aquest fitxer:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("d29ya2VyX3Byb2Nlc3NlcyAgMTsKCmV2ZW50cyB7CiAgICB3b3JrZXJfY29ubmVjdGlvbnMgIDEwMjQ7Cn0KCmh0dHAgewogICAgaW5jbHVkZSAgICAgICBtaW1lLnR5cGVzOwogICAgZGVmYXVsdF90eXBlICBhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW07CgogICAgc2VuZGZpbGUgICAgICAgIG9uOwogICAga2VlcGFsaXZlX3RpbWVvdXQgIDY1OwoKICAgIHNlcnZlciB7CiAgICAgICAgbGlzdGVuICAgICAgIDgwOwogICAgICAgIHNlcnZlcl9uYW1lICBsb2NhbGhvc3Q7CgogICAgICAgIGxvY2F0aW9uIC8gewogICAgICAgICAgICByb290ICAgL3Vzci9zaGFyZS9uZ2lueC9odG1sOwogICAgICAgICAgICBpbmRleCAgaW5kZXguaHRtbCBpbmRleC5odG07CiAgICAgICAgfQoKICAgICAgICBlcnJvcl9wYWdlICA1MDAgNTAyIDUwMyA1MDQgIC81MHguaHRtbDsKICAgICAgICBsb2NhdGlvbiA9IC81MHguaHRtbCB7CiAgICAgICAgICAgIHJvb3QgICAvdXNyL3NoYXJlL25naW54L2h0bWw7CiAgICAgICAgfQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>worker_processes  1;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    sendfile        on;
+    keepalive_timeout  65;
+
+    server {
+        listen       80;
+        server_name  localhost;
+
+        location / {
+            root   /usr/share/nginx/html;
+            index  index.html index.htm;
+        }
+
+        error_page  500 502 503 504  /50x.html;
+        location = /50x.html {
+            root   /usr/share/nginx/html;
+        }
+    }
+}</pre></div><div class='content'></div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>worker_processes</strong>: Defineix el nombre de processos de treball.</li>
+<li><strong>events</strong>: Conté directives que afecten el processament de connexions.</li>
+<li><strong>http</strong>: Context principal per gestionar el tràfic HTTP.</li>
+<li><strong>server</strong>: Defineix un servidor virtual.</li>
+<li><strong>location</strong>: Especifica com processar les sol·licituds per a una ubicació específica.</li>
+</ul>
+</div><h1>Configuració Avançada</h1>
+<div class='content'></div><h2>Configurant un Proxy Invers</h2>
+<div class='content'><p>Es pot configurar un proxy invers per reenviar les sol·licituds dels clients a un altre servidor. Aquí tens un exemple de configuració:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmVyIHsKICAgIGxpc3RlbiA4MDsKICAgIHNlcnZlcl9uYW1lIGV4YW1wbGUuY29tOwoKICAgIGxvY2F0aW9uIC8gewogICAgICAgIHByb3h5X3Bhc3MgaHR0cDovL2JhY2tlbmRfc2VydmVyOwogICAgICAgIHByb3h5X3NldF9oZWFkZXIgSG9zdCAkaG9zdDsKICAgICAgICBwcm94eV9zZXRfaGVhZGVyIFgtUmVhbC1JUCAkcmVtb3RlX2FkZHI7CiAgICAgICAgcHJveHlfc2V0X2hlYWRlciBYLUZvcndhcmRlZC1Gb3IgJHByb3h5X2FkZF94X2ZvcndhcmRlZF9mb3I7CiAgICAgICAgcHJveHlfc2V0X2hlYWRlciBYLUZvcndhcmRlZC1Qcm90byAkc2NoZW1lOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>server {
+    listen 80;
+    server_name example.com;
+
+    location / {
+        proxy_pass http://backend_server;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}</pre></div><div class='content'></div><h2>Balanceig de Càrrega</h2>
+<div class='content'><p>NGINX també es pot utilitzar per al balanceig de càrrega. Aquí tens un exemple de configuració:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aHR0cCB7CiAgICB1cHN0cmVhbSBiYWNrZW5kIHsKICAgICAgICBzZXJ2ZXIgYmFja2VuZDEuZXhhbXBsZS5jb207CiAgICAgICAgc2VydmVyIGJhY2tlbmQyLmV4YW1wbGUuY29tOwogICAgfQoKICAgIHNlcnZlciB7CiAgICAgICAgbGlzdGVuIDgwOwogICAgICAgIHNlcnZlcl9uYW1lIGV4YW1wbGUuY29tOwoKICAgICAgICBsb2NhdGlvbiAvIHsKICAgICAgICAgICAgcHJveHlfcGFzcyBodHRwOi8vYmFja2VuZDsKICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>http {
+    upstream backend {
+        server backend1.example.com;
+        server backend2.example.com;
+    }
+
+    server {
+        listen 80;
+        server_name example.com;
+
+        location / {
+            proxy_pass http://backend;
+        }
+    }
+}</pre></div><div class='content'></div><h2>Configuració SSL/TLS</h2>
+<div class='content'><p>Per assegurar el teu servidor NGINX amb SSL/TLS, necessites obtenir un certificat i configurar NGINX per utilitzar-lo:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmVyIHsKICAgIGxpc3RlbiA0NDMgc3NsOwogICAgc2VydmVyX25hbWUgZXhhbXBsZS5jb207CgogICAgc3NsX2NlcnRpZmljYXRlIC9ldGMvbmdpbngvc3NsL25naW54LmNydDsKICAgIHNzbF9jZXJ0aWZpY2F0ZV9rZXkgL2V0Yy9uZ2lueC9zc2wvbmdpbngua2V5OwoKICAgIGxvY2F0aW9uIC8gewogICAgICAgIHJvb3QgICAvdXNyL3NoYXJlL25naW54L2h0bWw7CiAgICAgICAgaW5kZXggIGluZGV4Lmh0bWwgaW5kZXguaHRtOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>server {
+    listen 443 ssl;
+    server_name example.com;
+
+    ssl_certificate /etc/nginx/ssl/nginx.crt;
+    ssl_certificate_key /etc/nginx/ssl/nginx.key;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+}</pre></div><div class='content'></div><h1>Executant NGINX en Producció</h1>
+<div class='content'></div><h2>Iniciant i Aturant NGINX</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Iniciar NGINX:</strong></p>
+<pre><code class="language-bash">sudo systemctl start nginx
+</code></pre>
+</li>
+<li>
+<p><strong>Aturar NGINX:</strong></p>
+<pre><code class="language-bash">sudo systemctl stop nginx
+</code></pre>
+</li>
+<li>
+<p><strong>Reiniciar NGINX:</strong></p>
+<pre><code class="language-bash">sudo systemctl restart nginx
+</code></pre>
+</li>
+</ul>
+</div><h2>Activant NGINX per Iniciar-se en l'Arrencada</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Activar:</strong></p>
+<pre><code class="language-bash">sudo systemctl enable nginx
+</code></pre>
+</li>
+<li>
+<p><strong>Desactivar:</strong></p>
+<pre><code class="language-bash">sudo systemctl disable nginx
+</code></pre>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Desplegar NGINX implica diversos passos, des de la instal·lació fins a la configuració i executar-lo en un entorn de producció. Entenent les configuracions bàsiques i avançades, pots utilitzar efectivament NGINX com a servidor web, proxy invers o balancejador de càrrega. Practica aquests passos i configuracions per convertir-te en un expert en desplegar NGINX en diverses situacions.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='debugging-nginx'>&#x25C4;Depuració de NGINX</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Desplegant NGINX</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='high-availability-with-nginx'>Alta Disponibilitat amb NGINX &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

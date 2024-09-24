@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuració de la Missatgeria al Núvol</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/firebase/setting-up-cloud-messaging" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/firebase/setting-up-cloud-messaging" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/firebase/setting-up-cloud-messaging" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/firebase/setting-up-cloud-messaging" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/firebase/setting-up-cloud-messaging" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='introduction-to-cloud-messaging'>&#x25C4;Introducció a Cloud Messaging</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Configuració de la Missatgeria al Núvol</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='sending-notifications'>Enviar Notificacions &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Firebase Cloud Messaging (FCM) és una solució de missatgeria multiplataforma que et permet enviar missatges de manera fiable i sense cost. Aquest tema et guiarà a través de la configuració de FCM des d'un nivell principiant fins a un nivell avançat.</p>
+</div><h1>Introducció a Firebase Cloud Messaging</h1>
+<div class='content'><ul>
+<li><strong>Què és FCM?</strong>
+<ul>
+<li>Un servei per enviar notificacions i missatges als usuaris a través de diferents plataformes.</li>
+<li>Suporta tant missatges directes com missatges basats en temes.</li>
+</ul>
+</li>
+<li><strong>Per què utilitzar FCM?</strong>
+<ul>
+<li>Gratuït i escalable.</li>
+<li>Fàcil integració amb els serveis de Firebase.</li>
+<li>Suporta diversos tipus de missatges (notificació, dades, etc.).</li>
+</ul>
+</li>
+</ul>
+</div><h1>Prerequisits</h1>
+<div class='content'><ul>
+<li>Coneixement bàsic de Firebase.</li>
+<li>Projecte de Firebase configurat a la Consola de Firebase.</li>
+<li>Coneixement bàsic del desenvolupament d'Android/iOS.</li>
+</ul>
+</div><h1>Configuració de FCM per a Android</h1>
+<div class='content'></div><h2>Pas 1: Afegeix Firebase al Teu Projecte d'Android</h2>
+<div class='content'><ol>
+<li><strong>Crea un projecte de Firebase</strong> a la Consola de Firebase.</li>
+<li><strong>Registra la teva aplicació</strong> amb Firebase:
+<ul>
+<li>Afegeix el nom del paquet de la teva aplicació d'Android.</li>
+<li>Descarrega el fitxer <code>google-services.json</code>.</li>
+</ul>
+</li>
+<li><strong>Afegeix el fitxer <code>google-services.json</code></strong> al teu projecte:
+<ul>
+<li>Col·loca'l al directori <code>app</code>.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Pas 2: Afegeix el SDK de Firebase al Teu Projecte</h2>
+<div class='content'><ol>
+<li>Obre el teu fitxer <code>build.gradle</code> (a nivell de projecte) i afegeix el següent:
+<pre><code class="language-gradle">buildscript {
+    dependencies {
+        // Afegeix aquesta línia
+        classpath 'com.google.gms:google-services:4.3.10'
+    }
+}
+</code></pre>
+</li>
+<li>Obre el teu fitxer <code>build.gradle</code> (a nivell d'aplicació) i afegeix el següent:
+<pre><code class="language-gradle">dependencies {
+    // Afegeix el SDK de Firebase per a FCM
+    implementation 'com.google.firebase:firebase-messaging:23.0.0'
+}
+
+// Afegeix aquesta línia al final del fitxer
+apply plugin: 'com.google.gms.google-services'
+</code></pre>
+</li>
+</ol>
+</div><h2>Pas 3: Configura FCM a la Teva Aplicació</h2>
+<div class='content'><ol>
+<li><strong>Inicialitza Firebase</strong> al teu <code>MainActivity.java</code>:
+<pre><code class="language-java">import com.google.firebase.messaging.FirebaseMessaging;
+
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Inicialitza Firebase
+        FirebaseMessaging.getInstance().subscribeToTopic(&quot;news&quot;)
+            .addOnCompleteListener(task -&gt; {
+                String msg = &quot;Subscribed to news topic&quot;;
+                if (!task.isSuccessful()) {
+                    msg = &quot;Subscription failed&quot;;
+                }
+                Log.d(&quot;FCM&quot;, msg);
+            });
+    }
+}
+</code></pre>
+</li>
+</ol>
+</div><h1>Configuració de FCM per a iOS</h1>
+<div class='content'></div><h2>Pas 1: Afegeix Firebase al Teu Projecte d'iOS</h2>
+<div class='content'><ol>
+<li><strong>Crea un projecte de Firebase</strong> a la Consola de Firebase.</li>
+<li><strong>Registra la teva aplicació</strong> amb Firebase:
+<ul>
+<li>Afegeix l'ID del paquet de la teva aplicació d'iOS.</li>
+<li>Descarrega el fitxer <code>GoogleService-Info.plist</code>.</li>
+</ul>
+</li>
+<li><strong>Afegeix el fitxer <code>GoogleService-Info.plist</code></strong> al teu projecte:
+<ul>
+<li>Arrossega i deixa'l anar al teu projecte d'Xcode.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Pas 2: Afegeix el SDK de Firebase al Teu Projecte</h2>
+<div class='content'><ol>
+<li>Obre el teu <code>Podfile</code> i afegeix el següent:
+<pre><code class="language-ruby">pod 'Firebase/Messaging'
+</code></pre>
+</li>
+<li>Executa <code>pod install</code> per instal·lar el SDK de Firebase.</li>
+</ol>
+</div><h2>Pas 3: Configura FCM a la Teva Aplicació</h2>
+<div class='content'><ol>
+<li><strong>Inicialitza Firebase</strong> al teu <code>AppDelegate.swift</code>:
+<pre><code class="language-swift">import Firebase
+
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    var window: UIWindow?
+
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -&gt; Bool {
+        // Inicialitza Firebase
+        FirebaseApp.configure()
+
+        // Subscriu-te a un tema
+        Messaging.messaging().subscribe(toTopic: &quot;news&quot;) { error in
+            print(&quot;Subscribed to news topic&quot;)
+        }
+
+        return true
+    }
+}
+</code></pre>
+</li>
+</ol>
+</div><h1>Enviament de Missatges amb FCM</h1>
+<div class='content'></div><h2>Enviament d'un Missatge de Notificació</h2>
+<div class='content'><ul>
+<li><strong>Via Consola de Firebase</strong>:
+<ul>
+<li>Navega a la Consola de Firebase.</li>
+<li>Selecciona el teu projecte i ves a la secció de Cloud Messaging.</li>
+<li>Fes clic a &quot;Send your first message&quot;.</li>
+<li>Omple els detalls del missatge i l'objectiu (per exemple, tema &quot;news&quot;).</li>
+<li>Fes clic a &quot;Send&quot;.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Enviament d'un Missatge de Dades</h2>
+<div class='content'><ul>
+<li><strong>Via Firebase Admin SDK</strong>:
+<pre><code class="language-javascript">const admin = require('firebase-admin');
+admin.initializeApp();
+
+const message = {
+  data: {
+    score: '850',
+    time: '2:45'
+  },
+  topic: 'news'
+};
+
+admin.messaging().send(message)
+  .then((response) =&gt; {
+    console.log('Successfully sent message:', response);
+  })
+  .catch((error) =&gt; {
+    console.log('Error sending message:', error);
+  });
+</code></pre>
+</li>
+</ul>
+</div><h1>Temes Avançats</h1>
+<div class='content'></div><h2>Gestió de les Càrregues de Missatges</h2>
+<div class='content'><ul>
+<li><strong>Missatges de Notificació</strong>: Mostrats automàticament pel sistema.</li>
+<li><strong>Missatges de Dades</strong>: Gestionats per l'aplicació en segon pla o en primer pla.</li>
+</ul>
+</div><h2>Personalització de les Notificacions</h2>
+<div class='content'><ul>
+<li><strong>So Personalitzat</strong>: Especifica un fitxer de so personalitzat en la càrrega de la notificació.</li>
+<li><strong>Accions Personalitzades</strong>: Afegeix botons d'acció a les notificacions.</li>
+</ul>
+</div><h2>Gestió d'Errors</h2>
+<div class='content'><ul>
+<li><strong>Errors Comuns</strong>:
+<ul>
+<li>Token de registre invàlid.</li>
+<li>Taxa de missatges excedida.</li>
+</ul>
+</li>
+<li><strong>Consells de Depuració</strong>:
+<ul>
+<li>Revisa els registres de la Consola de Firebase.</li>
+<li>Utilitza el Firebase DebugView.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Configurar Firebase Cloud Messaging implica integrar el SDK de Firebase al teu projecte d'Android o iOS, configurar la teva aplicació per rebre missatges i enviar missatges via la Consola de Firebase o l'Admin SDK. Amb FCM, pots enviar tant missatges de notificació com de dades, personalitzar notificacions i gestionar errors de manera efectiva. Aquesta configuració proporciona una base sòlida per implementar missatgeria en temps real a les teves aplicacions.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='introduction-to-cloud-messaging'>&#x25C4;Introducció a Cloud Messaging</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Configuració de la Missatgeria al Núvol</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='sending-notifications'>Enviar Notificacions &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

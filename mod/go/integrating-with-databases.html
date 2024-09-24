@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integració amb Bases de Dades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/go/integrating-with-databases" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/go/integrating-with-databases" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/go/integrating-with-databases" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/go/integrating-with-databases" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/go/integrating-with-databases" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='microservices-with-go'>&#x25C4;Microserveis amb Go</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Integració amb Bases de Dades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='project-overview'>Visió General del Projecte &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Integrar-se amb bases de dades és una habilitat crucial per a qualsevol desenvolupador de Go. Aquesta secció cobrirà com connectar-se a bases de dades, realitzar operacions CRUD (Crear, Llegir, Actualitzar, Esborrar) i utilitzar eines ORM (Mapatge Objecte-Relacional) en Go. Al final d'aquesta secció, seràs capaç d'interactuar eficientment amb bases de dades en les teves aplicacions Go.</p>
+</div><h1>Connectar-se a una Base de Dades</h1>
+<div class='content'><p>Per interactuar amb una base de dades en Go, normalment utilitzes el paquet <code>database/sql</code> juntament amb un controlador de base de dades.</p>
+</div><h2>Instal·lar un Controlador de Base de Dades</h2>
+<div class='content'><p>Primer, necessites instal·lar un controlador de base de dades. Per exemple, per connectar-te a una base de dades MySQL, pots utilitzar el paquet <code>go-sql-driver/mysql</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z28gZ2V0IC11IGdpdGh1Yi5jb20vZ28tc3FsLWRyaXZlci9teXNxbA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>go get -u github.com/go-sql-driver/mysql</pre></div><div class='content'></div><h2>Establir una Connexió</h2>
+<div class='content'><p>Aquí tens com pots establir una connexió a una base de dades MySQL:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImRhdGFiYXNlL3NxbCIKICAgICJmbXQiCiAgICBfICJnaXRodWIuY29tL2dvLXNxbC1kcml2ZXIvbXlzcWwiCikKCmZ1bmMgbWFpbigpIHsKICAgIGRzbiA6PSAidXNlcm5hbWU6cGFzc3dvcmRAdGNwKDEyNy4wLjAuMTozMzA2KS9kYm5hbWUiCiAgICBkYiwgZXJyIDo9IHNxbC5PcGVuKCJteXNxbCIsIGRzbikKICAgIGlmIGVyciAhPSBuaWwgewogICAgICAgIHBhbmljKGVycikKICAgIH0KICAgIGRlZmVyIGRiLkNsb3NlKCkKCiAgICAvLyBDb21wcm92YXIgc2kgbGEgY29ubmV4acOzIMOpcyBleGl0b3NhCiAgICBlcnIgPSBkYi5QaW5nKCkKICAgIGlmIGVyciAhPSBuaWwgewogICAgICAgIHBhbmljKGVycikKICAgIH0KCiAgICBmbXQuUHJpbnRsbigiQ29ubmVjdGF0IGEgbGEgYmFzZSBkZSBkYWRlcyBhbWIgw6h4aXQhIikKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;database/sql&quot;
+    &quot;fmt&quot;
+    _ &quot;github.com/go-sql-driver/mysql&quot;
+)
+
+func main() {
+    dsn := &quot;username:password@tcp(127.0.0.1:3306)/dbname&quot;
+    db, err := sql.Open(&quot;mysql&quot;, dsn)
+    if err != nil {
+        panic(err)
+    }
+    defer db.Close()
+
+    // Comprovar si la connexi&oacute; &eacute;s exitosa
+    err = db.Ping()
+    if err != nil {
+        panic(err)
+    }
+
+    fmt.Println(&quot;Connectat a la base de dades amb &egrave;xit!&quot;)
+}</pre></div><div class='content'><ul>
+<li><strong>dsn</strong>: Nom de la Font de Dades, que inclou el nom d'usuari, contrasenya, host, port i nom de la base de dades.</li>
+<li><strong>sql.Open</strong>: Obre una connexió a la base de dades.</li>
+<li><strong>db.Ping</strong>: Verifica la connexió a la base de dades.</li>
+</ul>
+</div><h1>Realitzar Operacions CRUD</h1>
+<div class='content'><p>Les operacions CRUD són fonamentals quan es treballa amb bases de dades. Exploreu com realitzar aquestes operacions en Go.</p>
+</div><h2>Crear</h2>
+<div class='content'><p>Per inserir dades en una base de dades, utilitzes el mètode <code>Exec</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuYyBjcmVhdGVVc2VyKGRiICpzcWwuREIsIG5hbWUgc3RyaW5nLCBhZ2UgaW50KSBlcnJvciB7CiAgICBxdWVyeSA6PSAiSU5TRVJUIElOVE8gdXNlcnMgKG5hbWUsIGFnZSkgVkFMVUVTICg/LCA/KSIKICAgIF8sIGVyciA6PSBkYi5FeGVjKHF1ZXJ5LCBuYW1lLCBhZ2UpCiAgICByZXR1cm4gZXJyCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>func createUser(db *sql.DB, name string, age int) error {
+    query := &quot;INSERT INTO users (name, age) VALUES (?, ?)&quot;
+    _, err := db.Exec(query, name, age)
+    return err
+}</pre></div><div class='content'></div><h2>Llegir</h2>
+<div class='content'><p>Per llegir dades d'una base de dades, utilitzes el mètode <code>Query</code> o <code>QueryRow</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuYyBnZXRVc2VyKGRiICpzcWwuREIsIGlkIGludCkgKHN0cmluZywgaW50LCBlcnJvcikgewogICAgdmFyIG5hbWUgc3RyaW5nCiAgICB2YXIgYWdlIGludAogICAgcXVlcnkgOj0gIlNFTEVDVCBuYW1lLCBhZ2UgRlJPTSB1c2VycyBXSEVSRSBpZCA9ID8iCiAgICBlcnIgOj0gZGIuUXVlcnlSb3cocXVlcnksIGlkKS5TY2FuKCZuYW1lLCAmYWdlKQogICAgcmV0dXJuIG5hbWUsIGFnZSwgZXJyCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>func getUser(db *sql.DB, id int) (string, int, error) {
+    var name string
+    var age int
+    query := &quot;SELECT name, age FROM users WHERE id = ?&quot;
+    err := db.QueryRow(query, id).Scan(&amp;name, &amp;age)
+    return name, age, err
+}</pre></div><div class='content'></div><h2>Actualitzar</h2>
+<div class='content'><p>Per actualitzar dades existents, utilitzes el mètode <code>Exec</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuYyB1cGRhdGVVc2VyKGRiICpzcWwuREIsIGlkIGludCwgbmFtZSBzdHJpbmcsIGFnZSBpbnQpIGVycm9yIHsKICAgIHF1ZXJ5IDo9ICJVUERBVEUgdXNlcnMgU0VUIG5hbWUgPSA/LCBhZ2UgPSA/IFdIRVJFIGlkID0gPyIKICAgIF8sIGVyciA6PSBkYi5FeGVjKHF1ZXJ5LCBuYW1lLCBhZ2UsIGlkKQogICAgcmV0dXJuIGVycgp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>func updateUser(db *sql.DB, id int, name string, age int) error {
+    query := &quot;UPDATE users SET name = ?, age = ? WHERE id = ?&quot;
+    _, err := db.Exec(query, name, age, id)
+    return err
+}</pre></div><div class='content'></div><h2>Esborrar</h2>
+<div class='content'><p>Per esborrar dades, també utilitzes el mètode <code>Exec</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuYyBkZWxldGVVc2VyKGRiICpzcWwuREIsIGlkIGludCkgZXJyb3IgewogICAgcXVlcnkgOj0gIkRFTEVURSBGUk9NIHVzZXJzIFdIRVJFIGlkID0gPyIKICAgIF8sIGVyciA6PSBkYi5FeGVjKHF1ZXJ5LCBpZCkKICAgIHJldHVybiBlcnIKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>func deleteUser(db *sql.DB, id int) error {
+    query := &quot;DELETE FROM users WHERE id = ?&quot;
+    _, err := db.Exec(query, id)
+    return err
+}</pre></div><div class='content'></div><h1>Utilitzar ORM amb Go</h1>
+<div class='content'><p>Les eines de Mapeig Objecte-Relacional (ORM) poden simplificar les interaccions amb la base de dades permetent-te treballar amb objectes en lloc de consultes SQL crues. Un ORM popular per a Go és GORM.</p>
+</div><h2>Instal·lar GORM</h2>
+<div class='content'><p>Primer, instal·la GORM i el controlador de base de dades.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z28gZ2V0IC11IGdvcm0uaW8vZ29ybQpnbyBnZXQgLXUgZ29ybS5pby9kcml2ZXIvbXlzcWw="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>go get -u gorm.io/gorm
+go get -u gorm.io/driver/mysql</pre></div><div class='content'></div><h2>Connectar-se amb GORM</h2>
+<div class='content'><p>Aquí tens com establir una connexió utilitzant GORM:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImdvcm0uaW8vZHJpdmVyL215c3FsIgogICAgImdvcm0uaW8vZ29ybSIKICAgICJmbXQiCikKCmZ1bmMgbWFpbigpIHsKICAgIGRzbiA6PSAidXNlcm5hbWU6cGFzc3dvcmRAdGNwKDEyNy4wLjAuMTozMzA2KS9kYm5hbWUiCiAgICBkYiwgZXJyIDo9IGdvcm0uT3BlbihteXNxbC5PcGVuKGRzbiksICZnb3JtLkNvbmZpZ3t9KQogICAgaWYgKGVyciAhPSBuaWwpIHsKICAgICAgICBwYW5pYyhlcnIpCiAgICB9CgogICAgZm10LlByaW50bG4oIkNvbm5lY3RhdCBhIGxhIGJhc2UgZGUgZGFkZXMgYW1iIMOoeGl0IGFtYiBHT1JNISIpCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;gorm.io/driver/mysql&quot;
+    &quot;gorm.io/gorm&quot;
+    &quot;fmt&quot;
+)
+
+func main() {
+    dsn := &quot;username:password@tcp(127.0.0.1:3306)/dbname&quot;
+    db, err := gorm.Open(mysql.Open(dsn), &amp;gorm.Config{})
+    if (err != nil) {
+        panic(err)
+    }
+
+    fmt.Println(&quot;Connectat a la base de dades amb &egrave;xit amb GORM!&quot;)
+}</pre></div><div class='content'></div><h2>Definir Models</h2>
+<div class='content'><p>Defineix un model per representar una taula a la base de dades.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHlwZSBVc2VyIHN0cnVjdCB7CiAgICBJRCAgIHVpbnQgICBgZ29ybToicHJpbWFyeUtleSJgCiAgICBOYW1lIHN0cmluZwogICAgQWdlICBpbnQKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>type User struct {
+    ID   uint   `gorm:&quot;primaryKey&quot;`
+    Name string
+    Age  int
+}</pre></div><div class='content'></div><h2>Realitzar Operacions CRUD amb GORM</h2>
+<div class='content'><p>GORM fa que les operacions CRUD siguin senzilles.</p>
+<h4>Crear</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuYyBjcmVhdGVVc2VyKGRiICpnb3JtLkRCLCB1c2VyIFVzZXIpIGVycm9yIHsKICAgIHJldHVybiBkYi5DcmVhdGUoJnVzZXIpLkVycm9yCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>func createUser(db *gorm.DB, user User) error {
+    return db.Create(&amp;user).Error
+}</pre></div><div class='content'><h4>Llegir</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuYyBnZXRVc2VyKGRiICpnb3JtLkRCLCBpZCB1aW50KSAoVXNlciwgZXJyb3IpIHsKICAgIHZhciB1c2VyIFVzZXIKICAgIGVyciA6PSBkYi5GaXJzdCgmdXNlciwgaWQpLkVycm9yCiAgICByZXR1cm4gdXNlciwgZXJyCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>func getUser(db *gorm.DB, id uint) (User, error) {
+    var user User
+    err := db.First(&amp;user, id).Error
+    return user, err
+}</pre></div><div class='content'><h4>Actualitzar</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuYyB1cGRhdGVVc2VyKGRiICpnb3JtLkRCLCB1c2VyIFVzZXIpIGVycm9yIHsKICAgIHJldHVybiBkYi5TYXZlKCZ1c2VyKS5FcnJvcgp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>func updateUser(db *gorm.DB, user User) error {
+    return db.Save(&amp;user).Error
+}</pre></div><div class='content'><h4>Esborrar</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuYyBkZWxldGVVc2VyKGRiICpnb3JtLkRCLCBpZCB1aW50KSBlcnJvciB7CiAgICByZXR1cm4gZGIuRGVsZXRlKCZVc2Vye30sIGlkKS5FcnJvcgp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>func deleteUser(db *gorm.DB, id uint) error {
+    return db.Delete(&amp;User{}, id).Error
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Integrar-se amb bases de dades en Go implica entendre com connectar-se a una base de dades, realitzar operacions CRUD i, opcionalment, utilitzar un ORM per a aplicacions més complexes. Amb el paquet <code>database/sql</code> i eines com GORM, pots gestionar eficientment les interaccions amb la base de dades en les teves aplicacions Go. Practica aquests conceptes amb diferents bases de dades i escenaris per solidificar la teva comprensió i convertir-te en un expert en integració de bases de dades amb Go.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='microservices-with-go'>&#x25C4;Microserveis amb Go</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Integració amb Bases de Dades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='project-overview'>Visió General del Projecte &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

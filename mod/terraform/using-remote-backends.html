@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ús de Backends Remots</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/terraform/using-remote-backends" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/terraform/using-remote-backends" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/terraform/using-remote-backends" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/terraform/using-remote-backends" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/terraform/using-remote-backends" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='setting-up-terraform-cloud'>&#x25C4;Configurant Terraform Cloud</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Ús de Backends Remots</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='terraform-enterprise-features'>Funcionalitats de Terraform Enterprise &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció als Backends Remots</h1>
+<div class='content'><p>Els backends remots a Terraform s'utilitzen per emmagatzemar el fitxer d'estat de manera remota, en lloc de localment a la teva màquina. Això és crucial per a la col·laboració i assegura que el fitxer d'estat estigui sempre actualitzat i accessible per tots els membres de l'equip.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Fitxer d'Estat</strong>: Un fitxer que fa un seguiment dels recursos gestionats per Terraform.</li>
+<li><strong>Backend</strong>: Una configuració que defineix on i com s'emmagatzema el fitxer d'estat.</li>
+<li><strong>Backend Remot</strong>: Un backend que emmagatzema el fitxer d'estat en una ubicació remota, com AWS S3, Azure Blob Storage o Terraform Cloud de HashiCorp.</li>
+</ul>
+</div><h1>Beneficis d'Utilitzar Backends Remots</h1>
+<div class='content'><ul>
+<li><strong>Col·laboració</strong>: Diversos membres de l'equip poden treballar en la mateixa infraestructura.</li>
+<li><strong>Seguretat</strong>: Els fitxers d'estat poden ser xifrats i controlats per accés.</li>
+<li><strong>Fiabilitat</strong>: Les solucions d'emmagatzematge remot sovint proporcionen alta disponibilitat i durabilitat.</li>
+</ul>
+</div><h1>Configuració de Backends Remots</h1>
+<div class='content'><p>Per configurar un backend remot, cal especificar el tipus de backend i la seva configuració al teu fitxer de configuració de Terraform.</p>
+</div><h2>Exemple: Ús d'AWS S3 com a Backend Remot</h2>
+<div class='content'><p>A continuació es mostra un exemple de com configurar AWS S3 com a backend remot.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHsKICBiYWNrZW5kICJzMyIgewogICAgYnVja2V0ICAgICAgICAgPSAibXktdGVycmFmb3JtLXN0YXRlLWJ1Y2tldCIKICAgIGtleSAgICAgICAgICAgID0gInBhdGgvdG8vbXkva2V5IgogICAgcmVnaW9uICAgICAgICAgPSAidXMtd2VzdC0yIgogICAgZW5jcnlwdCAgICAgICAgPSB0cnVlCiAgICBkeW5hbW9kYl90YWJsZSA9ICJteS1sb2NrLXRhYmxlIgogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform {
+  backend &quot;s3&quot; {
+    bucket         = &quot;my-terraform-state-bucket&quot;
+    key            = &quot;path/to/my/key&quot;
+    region         = &quot;us-west-2&quot;
+    encrypt        = true
+    dynamodb_table = &quot;my-lock-table&quot;
+  }
+}</pre></div><div class='content'><h4>Explicació</h4>
+<ul>
+<li><strong>bucket</strong>: El nom del bucket S3 on s'emmagatzemarà el fitxer d'estat.</li>
+<li><strong>key</strong>: El camí dins del bucket on s'emmagatzemarà el fitxer d'estat.</li>
+<li><strong>region</strong>: La regió d'AWS on es troba el bucket S3.</li>
+<li><strong>encrypt</strong>: Si s'ha d'habilitar el xifratge del fitxer d'estat al servidor.</li>
+<li><strong>dynamodb_table</strong>: La taula DynamoDB utilitzada per al bloqueig d'estat i la verificació de consistència.</li>
+</ul>
+</div><h2>Exemple: Ús de Terraform Cloud com a Backend Remot</h2>
+<div class='content'><p>A continuació es mostra un exemple de com configurar Terraform Cloud com a backend remot.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHsKICBiYWNrZW5kICJyZW1vdGUiIHsKICAgIGhvc3RuYW1lICAgICA9ICJhcHAudGVycmFmb3JtLmlvIgogICAgb3JnYW5pemF0aW9uID0gIm15LW9yZ2FuaXphdGlvbiIKCiAgICB3b3Jrc3BhY2VzIHsKICAgICAgbmFtZSA9ICJteS13b3Jrc3BhY2UiCiAgICB9CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform {
+  backend &quot;remote&quot; {
+    hostname     = &quot;app.terraform.io&quot;
+    organization = &quot;my-organization&quot;
+
+    workspaces {
+      name = &quot;my-workspace&quot;
+    }
+  }
+}</pre></div><div class='content'><h4>Explicació</h4>
+<ul>
+<li><strong>hostname</strong>: El nom de l'host de la instància de Terraform Cloud.</li>
+<li><strong>organization</strong>: El nom de la teva organització a Terraform Cloud.</li>
+<li><strong>workspaces</strong>: Especifica l'espai de treball dins de l'organització.</li>
+</ul>
+</div><h1>Migració de l'Estat a un Backend Remot</h1>
+<div class='content'><p>Si ja tens un fitxer d'estat local, pots migrar-lo a un backend remot seguint els passos següents:</p>
+<ol>
+<li><strong>Inicialitza el Backend</strong>: Executa <code>terraform init</code> per inicialitzar la configuració del backend.</li>
+<li><strong>Migra l'Estat</strong>: Executa <code>terraform init -migrate-state</code> per migrar el fitxer d'estat existent al backend remot.</li>
+</ol>
+</div><h2>Comandes d'Exemple</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIGluaXQKdGVycmFmb3JtIGluaXQgLW1pZ3JhdGUtc3RhdGU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform init
+terraform init -migrate-state</pre></div><div class='content'></div><h1>Millors Pràctiques</h1>
+<div class='content'><ul>
+<li><strong>Bloqueig d'Estat</strong>: Sempre habilita el bloqueig d'estat per evitar modificacions concurrents. Per AWS S3, això es pot aconseguir utilitzant DynamoDB.</li>
+<li><strong>Xifratge</strong>: Assegura't que el teu fitxer d'estat estigui xifrat, especialment quan utilitzes backends remots.</li>
+<li><strong>Control d'Accés</strong>: Utilitza rols i polítiques IAM per controlar l'accés al fitxer d'estat.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Utilitzar backends remots a Terraform és essencial per a la col·laboració, la seguretat i la fiabilitat. Configurant backends remots com AWS S3 o Terraform Cloud, pots assegurar-te que el teu fitxer d'estat estigui sempre accessible i actualitzat. Recorda seguir les millors pràctiques com habilitar el bloqueig d'estat i el xifratge per protegir l'estat de la teva infraestructura.</p>
+<p>Dominant els backends remots, pots aprofitar al màxim les capacitats de Terraform en un entorn d'equip, assegurant una gestió d'infraestructura fluida i segura.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='setting-up-terraform-cloud'>&#x25C4;Configurant Terraform Cloud</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Ús de Backends Remots</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='terraform-enterprise-features'>Funcionalitats de Terraform Enterprise &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

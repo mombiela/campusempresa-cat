@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projecte 2: Sistema de Col·lisions</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/fisica_videojuegos/proyecto-2-sistema-de-colisiones" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/fisica_videojuegos/proyecto-2-sistema-de-colisiones" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/fisica_videojuegos/proyecto-2-sistema-de-colisiones" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/fisica_videojuegos/proyecto-2-sistema-de-colisiones" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/fisica_videojuegos/proyecto-2-sistema-de-colisiones" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='proyecto-1-simulacion-de-movimiento'>&#x25C4;Projecte 1: Simulació de Moviment</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Projecte 2: Sistema de Col·lisions</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='proyecto-3-simulacion-de-fluidos'>Projecte 3: Simulació de Fluids &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest projecte, desenvoluparem un sistema de col·lisions per a un videojoc. La detecció i maneig de col·lisions és fonamental per a la física de videojocs, ja que permet que els objectes interactuïn de manera realista. Aprendrem a implementar col·lisions bàsiques entre diferents tipus d'objectes i com respondre a aquestes col·lisions de manera adequada.</p>
+</div><h1>Objectius del Projecte</h1>
+<div class='content'><ul>
+<li>Implementar detecció de col·lisions entre diferents tipus d'objectes.</li>
+<li>Manejar les respostes a les col·lisions de manera realista.</li>
+<li>Optimitzar el sistema de col·lisions per millorar el rendiment del joc.</li>
+</ul>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Col·lisió</strong>: Ocorre quan dos o més objectes en el joc es toquen o se superposen.</li>
+<li><strong>Bounding Box</strong>: Un rectangle (o caixa) que envolta un objecte, utilitzat per simplificar la detecció de col·lisions.</li>
+<li><strong>Bounding Circle</strong>: Un cercle que envolta un objecte, una altra forma de simplificar la detecció de col·lisions.</li>
+<li><strong>Resposta a la Col·lisió</strong>: L'acció que es pren quan es detecta una col·lisió, com rebotar, aturar-se o lliscar-se.</li>
+</ul>
+</div><h1>Tipus de Col·lisions</h1>
+<div class='content'></div><h2>Col·lisions AABB (Axis-Aligned Bounding Box)</h2>
+<div class='content'><p>Les col·lisions AABB són una forma simple i eficient de detectar col·lisions entre objectes rectangulars.</p>
+<ul>
+<li>
+<p><strong>Avantatges</strong>:</p>
+<ul>
+<li>Fàcil d'implementar.</li>
+<li>Ràpid en termes de càlcul.</li>
+</ul>
+</li>
+<li>
+<p><strong>Desavantatges</strong>:</p>
+<ul>
+<li>No és adequat per a objectes rotats o formes complexes.</li>
+</ul>
+</li>
+</ul>
+<h4>Exemple de Codi: Detecció de Col·lisions AABB</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgQm91bmRpbmdCb3g6CiAgICBkZWYgX19pbml0X18oc2VsZiwgeCwgeSwgd2lkdGgsIGhlaWdodCk6CiAgICAgICAgc2VsZi54ID0geAogICAgICAgIHNlbGYueSA9IHkKICAgICAgICBzZWxmLndpZHRoID0gd2lkdGgKICAgICAgICBzZWxmLmhlaWdodCA9IGhlaWdodAoKZGVmIGNoZWNrX2NvbGxpc2lvbihib3gxLCBib3gyKToKICAgIHJldHVybiAoYm94MS54IDwgYm94Mi54ICsgYm94Mi53aWR0aCBhbmQKICAgICAgICAgICAgYm94MS54ICsgYm94MS53aWR0aCA+IGJveDIueCBhbmQKICAgICAgICAgICAgYm94MS55IDwgYm94Mi55ICsgYm94Mi5oZWlnaHQgYW5kCiAgICAgICAgICAgIGJveDEueSArIGJveDEuaGVpZ2h0ID4gYm94Mi55KQoKIyBFeGVtcGxlIGQnw7pzCmJveDEgPSBCb3VuZGluZ0JveCgwLCAwLCA1MCwgNTApCmJveDIgPSBCb3VuZGluZ0JveCgyNSwgMjUsIDUwLCA1MCkKCmlmIGNoZWNrX2NvbGxpc2lvbihib3gxLCBib3gyKToKICAgIHByaW50KCJDb2zCt2xpc2nDsyBkZXRlY3RhZGEiKQplbHNlOgogICAgcHJpbnQoIk5vIGhpIGhhIGNvbMK3bGlzacOzIik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class BoundingBox:
+    def __init__(self, x, y, width, height):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+
+def check_collision(box1, box2):
+    return (box1.x &lt; box2.x + box2.width and
+            box1.x + box1.width &gt; box2.x and
+            box1.y &lt; box2.y + box2.height and
+            box1.y + box1.height &gt; box2.y)
+
+# Exemple d'&uacute;s
+box1 = BoundingBox(0, 0, 50, 50)
+box2 = BoundingBox(25, 25, 50, 50)
+
+if check_collision(box1, box2):
+    print(&quot;Col&middot;lisi&oacute; detectada&quot;)
+else:
+    print(&quot;No hi ha col&middot;lisi&oacute;&quot;)</pre></div><div class='content'></div><h2>Col·lisions de Cercles</h2>
+<div class='content'><p>Les col·lisions de cercles són útils per a objectes rodons o quan es necessita una detecció de col·lisions més precisa que AABB.</p>
+<ul>
+<li>
+<p><strong>Avantatges</strong>:</p>
+<ul>
+<li>Més precís per a objectes rodons.</li>
+<li>Adequat per a objectes rotats.</li>
+</ul>
+</li>
+<li>
+<p><strong>Desavantatges</strong>:</p>
+<ul>
+<li>Més costós en termes de càlcul comparat amb AABB.</li>
+</ul>
+</li>
+</ul>
+<h4>Exemple de Codi: Detecció de Col·lisions de Cercles</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG1hdGgKCmNsYXNzIEJvdW5kaW5nQ2lyY2xlOgogICAgZGVmIF9faW5pdF9fKHNlbGYsIHgsIHksIHJhZGl1cyk6CiAgICAgICAgc2VsZi54ID0geAogICAgICAgIHNlbGYueSA9IHkKICAgICAgICBzZWxmLnJhZGl1cyA9IHJhZGl1cwoKZGVmIGNoZWNrX2NvbGxpc2lvbihjaXJjbGUxLCBjaXJjbGUyKToKICAgIGRpc3RhbmNlID0gbWF0aC5zcXJ0KChjaXJjbGUxLnggLSBjaXJjbGUyLngpKioyICsgKGNpcmNsZTEueSAtIGNpcmNsZTIueSkqKjIpCiAgICByZXR1cm4gZGlzdGFuY2UgPCAoY2lyY2xlMS5yYWRpdXMgKyBjaXJjbGUyLnJhZGl1cykKCiMgRXhlbXBsZSBkJ8O6cwpjaXJjbGUxID0gQm91bmRpbmdDaXJjbGUoMCwgMCwgMjUpCmNpcmNsZTIgPSBCb3VuZGluZ0NpcmNsZSgzMCwgMzAsIDI1KQoKaWYgY2hlY2tfY29sbGlzaW9uKGNpcmNsZTEsIGNpcmNsZTIpOgogICAgcHJpbnQoIkNvbMK3bGlzacOzIGRldGVjdGFkYSIpCmVsc2U6CiAgICBwcmludCgiTm8gaGkgaGEgY29swrdsaXNpw7MiKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import math
+
+class BoundingCircle:
+    def __init__(self, x, y, radius):
+        self.x = x
+        self.y = y
+        self.radius = radius
+
+def check_collision(circle1, circle2):
+    distance = math.sqrt((circle1.x - circle2.x)**2 + (circle1.y - circle2.y)**2)
+    return distance &lt; (circle1.radius + circle2.radius)
+
+# Exemple d'&uacute;s
+circle1 = BoundingCircle(0, 0, 25)
+circle2 = BoundingCircle(30, 30, 25)
+
+if check_collision(circle1, circle2):
+    print(&quot;Col&middot;lisi&oacute; detectada&quot;)
+else:
+    print(&quot;No hi ha col&middot;lisi&oacute;&quot;)</pre></div><div class='content'></div><h1>Resposta a la Col·lisió</h1>
+<div class='content'><p>Una vegada detectada una col·lisió, és crucial manejar la resposta de manera adequada. Les respostes poden variar depenent del tipus de joc i dels objectes involucrats.</p>
+<ul>
+<li><strong>Rebot</strong>: Els objectes reboten un contra l'altre.</li>
+<li><strong>Aturada</strong>: Els objectes s'aturen en col·lidir.</li>
+<li><strong>Lliscar-se</strong>: Els objectes es llisquen un sobre l'altre.</li>
+</ul>
+</div><h2>Exemple de Codi: Resposta de Rebot</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIGhhbmRsZV9jb2xsaXNpb25fcmVib3VuZChvYmoxLCBvYmoyKToKICAgICMgSW52ZXJ0aXIgbGEgdmVsb2NpdGF0IGRlbHMgb2JqZWN0ZXMKICAgIG9iajEudnggPSAtb2JqMS52eAogICAgb2JqMS52eSA9IC1vYmoxLnZ5CiAgICBvYmoyLnZ4ID0gLW9iajIudngKICAgIG9iajIudnkgPSAtb2JqMi52eQoKIyBFeGVtcGxlIGQnw7pzCmNsYXNzIEdhbWVPYmplY3Q6CiAgICBkZWYgX19pbml0X18oc2VsZiwgeCwgeSwgdngsIHZ5KToKICAgICAgICBzZWxmLnggPSB4CiAgICAgICAgc2VsZi55ID0geQogICAgICAgIHNlbGYudnggPSB2eAogICAgICAgIHNlbGYudnkgPSB2eQoKb2JqMSA9IEdhbWVPYmplY3QoMCwgMCwgMSwgMSkKb2JqMiA9IEdhbWVPYmplY3QoMjUsIDI1LCAtMSwgLTEpCgppZiBjaGVja19jb2xsaXNpb24oYm94MSwgYm94Mik6CiAgICBoYW5kbGVfY29sbGlzaW9uX3JlYm91bmQob2JqMSwgb2JqMik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def handle_collision_rebound(obj1, obj2):
+    # Invertir la velocitat dels objectes
+    obj1.vx = -obj1.vx
+    obj1.vy = -obj1.vy
+    obj2.vx = -obj2.vx
+    obj2.vy = -obj2.vy
+
+# Exemple d'&uacute;s
+class GameObject:
+    def __init__(self, x, y, vx, vy):
+        self.x = x
+        self.y = y
+        self.vx = vx
+        self.vy = vy
+
+obj1 = GameObject(0, 0, 1, 1)
+obj2 = GameObject(25, 25, -1, -1)
+
+if check_collision(box1, box2):
+    handle_collision_rebound(obj1, obj2)</pre></div><div class='content'></div><h1>Optimització del Sistema de Col·lisions</h1>
+<div class='content'><p>Per millorar el rendiment del sistema de col·lisions, especialment en jocs amb molts objectes, es poden utilitzar tècniques d'optimització com:</p>
+<ul>
+<li><strong>Quadrícula Espacial</strong>: Dividir l'espai del joc en una quadrícula i només comprovar col·lisions entre objectes en la mateixa cel·la o cel·les adjacents.</li>
+<li><strong>Arbres de Col·lisió</strong>: Utilitzar estructures de dades com Quadtrees o BSP Trees per organitzar els objectes i reduir el nombre de comprovacions de col·lisió.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest projecte, hem après a implementar un sistema de col·lisions bàsic utilitzant Bounding Boxes i Bounding Circles. També hem explorat diferents respostes a les col·lisions i discutit tècniques d'optimització per millorar el rendiment. La detecció i maneig de col·lisions és una habilitat essencial en el desenvolupament de videojocs i proporciona una base sòlida per crear interaccions realistes entre els objectes del joc.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='proyecto-1-simulacion-de-movimiento'>&#x25C4;Projecte 1: Simulació de Moviment</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Projecte 2: Sistema de Col·lisions</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='proyecto-3-simulacion-de-fluidos'>Projecte 3: Simulació de Fluids &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

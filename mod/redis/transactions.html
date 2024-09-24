@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaccions a Redis</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/redis/transactions" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/redis/transactions" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/redis/transactions" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/redis/transactions" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/redis/transactions" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='advanced-commands'>&#x25C4;Comandes Avançades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Transaccions a Redis</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='pipelining'>Pipelining &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a les Transaccions</h1>
+<div class='content'><p>Les transaccions de Redis permeten executar una sèrie de comandes en una única operació atòmica. Això assegura que o bé totes les comandes s'executen, o cap, mantenint la integritat de les dades.</p>
+<ul>
+<li><strong>Atomicitat</strong>: Totes les comandes d'una transacció s'executen com una única unitat.</li>
+<li><strong>Aïllament</strong>: Cap altra comanda s'executa simultàniament amb una transacció.</li>
+</ul>
+</div><h1>Comandes Bàsiques per a Transaccions</h1>
+<div class='content'><p>Redis proporciona algunes comandes clau per gestionar transaccions:</p>
+<ul>
+<li><code>MULTI</code>: Marca l'inici d'un bloc de transacció.</li>
+<li><code>EXEC</code>: Executa totes les comandes emeses després de <code>MULTI</code>.</li>
+<li><code>DISCARD</code>: Cancel·la la transacció.</li>
+<li><code>WATCH</code>: Monitoritza una o més claus per determinar si la transacció s'ha d'avortar.</li>
+</ul>
+</div><h2>Exemple: Transacció Bàsica</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("TVVMVEkKU0VUIGtleTEgInZhbHVlMSIKU0VUIGtleTIgInZhbHVlMiIKRVhFQw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>MULTI
+SET key1 &quot;value1&quot;
+SET key2 &quot;value2&quot;
+EXEC</pre></div><div class='content'><p>En aquest exemple:</p>
+<ol>
+<li><code>MULTI</code> inicia la transacció.</li>
+<li><code>SET key1 &quot;value1&quot;</code> i <code>SET key2 &quot;value2&quot;</code> es posen en cua.</li>
+<li><code>EXEC</code> executa ambdues comandes atòmicament.</li>
+</ol>
+</div><h1>Gestió d'Errors en Transaccions</h1>
+<div class='content'><p>Les transaccions de Redis gestionen errors de dues maneres:</p>
+<ul>
+<li><strong>Errors de Posada en Cua de Comandes</strong>: Si una comanda és sintàcticament incorrecta, es detectarà i es reportarà quan es posi en cua.</li>
+<li><strong>Errors d'Execució</strong>: Els errors que es produeixen durant l'execució de les comandes es reporten, però la transacció encara executarà totes les comandes.</li>
+</ul>
+</div><h2>Exemple: Gestió d'Errors</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("TVVMVEkKU0VUIGtleTEgInZhbHVlMSIKSU5DUiBrZXkxICAjIEFpeMOyIGNhdXNhcsOgIHVuIGVycm9yIHBlcnF1w6gga2V5MSBubyDDqXMgdW4gZW50ZXIKRVhFQw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>MULTI
+SET key1 &quot;value1&quot;
+INCR key1  # Aix&ograve; causar&agrave; un error perqu&egrave; key1 no &eacute;s un enter
+EXEC</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li>La comanda <code>INCR key1</code> causarà un error d'execució.</li>
+<li>Malgrat l'error, <code>SET key1 &quot;value1&quot;</code> encara s'executarà.</li>
+</ul>
+</div><h1>Bloqueig Optimista amb WATCH</h1>
+<div class='content'><p>La comanda <code>WATCH</code> s'utilitza per implementar el bloqueig optimista. Monitoritza les claus especificades i avorta la transacció si alguna d'elles es modifica abans que la transacció s'executi.</p>
+</div><h2>Exemple: Bloqueig Optimista</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("V0FUQ0gga2V5MQpNVUxUSQpTRVQga2V5MSAibmV3X3ZhbHVlIgpFWEVD"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>WATCH key1
+MULTI
+SET key1 &quot;new_value&quot;
+EXEC</pre></div><div class='content'><p>En aquest exemple:</p>
+<ol>
+<li><code>WATCH key1</code> monitoritza <code>key1</code>.</li>
+<li>Si <code>key1</code> és modificada per un altre client abans de <code>EXEC</code>, la transacció s'avortarà.</li>
+</ol>
+</div><h1>Usos Pràctics</h1>
+<div class='content'><ul>
+<li><strong>Operacions Atòmiques</strong>: Assegurar que una sèrie de comandes s'executin com una única unitat.</li>
+<li><strong>Comptadors i Seqüències</strong>: Incrementar comptadors de manera segura.</li>
+<li><strong>Actualitzacions Condicionals</strong>: Utilitzar <code>WATCH</code> per assegurar la consistència de les dades.</li>
+</ul>
+</div><h2>Exemple: Increment de Comptador</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("V0FUQ0ggY291bnRlcgp2YWwgPSBHRVQgY291bnRlcgp2YWwgPSB2YWwgKyAxCk1VTFRJClNFVCBjb3VudGVyIHZhbApFWEVD"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>WATCH counter
+val = GET counter
+val = val + 1
+MULTI
+SET counter val
+EXEC</pre></div><div class='content'><p>En aquest exemple:</p>
+<ol>
+<li><code>WATCH counter</code> assegura que el comptador no sigui modificat per un altre client.</li>
+<li>El comptador es llegeix, s'incrementa i es configura dins d'una transacció.</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Les transaccions de Redis proporcionen un mecanisme potent per assegurar l'atomicitat i la consistència en les teves operacions de dades. Entenent i utilitzant comandes com <code>MULTI</code>, <code>EXEC</code>, <code>DISCARD</code> i <code>WATCH</code>, pots gestionar efectivament manipulacions de dades complexes i mantenir la integritat de les dades en les teves aplicacions Redis.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='advanced-commands'>&#x25C4;Comandes Avançades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Transaccions a Redis</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='pipelining'>Pipelining &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

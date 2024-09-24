@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguretat de Formularis en PHP</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/php/form-security" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/php/form-security" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/php/form-security" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/php/form-security" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/php/form-security" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='form-validation'>&#x25C4;Validació de Formularis</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Seguretat de Formularis en PHP</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='working-with-arrays'>Treballant amb Arrays &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>La seguretat dels formularis és un aspecte crucial del desenvolupament web, especialment quan es tracta d'entrada d'usuaris. En PHP, assegurar que els formularis siguin segurs pot prevenir una àmplia gamma d'atacs, com ara la injecció SQL, Cross-Site Scripting (XSS) i Cross-Site Request Forgery (CSRF). Aquesta secció et guiarà a través de les pràctiques i tècniques essencials per assegurar formularis en PHP, des de nivells bàsics fins a avançats.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Validació i Sanitització d'Entrades</strong></li>
+<li><strong>Prevenció de la Injecció SQL</strong></li>
+<li><strong>Prevenció de Cross-Site Scripting (XSS)</strong></li>
+<li><strong>Protecció contra Cross-Site Request Forgery (CSRF)</strong></li>
+<li><strong>Hashing i Emmagatzematge de Contrasenyes</strong></li>
+</ul>
+</div><h1>Validació i Sanitització d'Entrades</h1>
+<div class='content'><p>La validació d'entrades assegura que les dades rebudes dels usuaris estiguin en el format esperat, mentre que la sanitització neteja les dades per prevenir entrades malicioses.</p>
+</div><h2>Exemple: Validació i Sanitització Bàsica d'Entrades</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKaWYgKCRfU0VSVkVSWyJSRVFVRVNUX01FVEhPRCJdID09ICJQT1NUIikgewogICAgJG5hbWUgPSBzYW5pdGl6ZV9pbnB1dCgkX1BPU1RbIm5hbWUiXSk7CiAgICAkZW1haWwgPSBzYW5pdGl6ZV9pbnB1dCgkX1BPU1RbImVtYWlsIl0pOwogICAgLy8gUHJvY2Vzc2FtZW50IGFkZGljaW9uYWwKfQoKZnVuY3Rpb24gc2FuaXRpemVfaW5wdXQoJGRhdGEpIHsKICAgICRkYXRhID0gdHJpbSgkZGF0YSk7IC8vIEVsaW1pbmEgZXNwYWlzIGVuIGJsYW5jIGRlbHMgZG9zIGNvc3RhdHMKICAgICRkYXRhID0gc3RyaXBzbGFzaGVzKCRkYXRhKTsgLy8gRWxpbWluYSBiYXJyZXMgaW52ZXJ0aWRlcwogICAgJGRhdGEgPSBodG1sc3BlY2lhbGNoYXJzKCRkYXRhKTsgLy8gQ29udmVydGVpeCBjYXLDoGN0ZXJzIGVzcGVjaWFscyBlbiBlbnRpdGF0cyBIVE1MCiAgICByZXR1cm4gJGRhdGE7Cn0KPz4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+if ($_SERVER[&quot;REQUEST_METHOD&quot;] == &quot;POST&quot;) {
+    $name = sanitize_input($_POST[&quot;name&quot;]);
+    $email = sanitize_input($_POST[&quot;email&quot;]);
+    // Processament addicional
+}
+
+function sanitize_input($data) {
+    $data = trim($data); // Elimina espais en blanc dels dos costats
+    $data = stripslashes($data); // Elimina barres invertides
+    $data = htmlspecialchars($data); // Converteix car&agrave;cters especials en entitats HTML
+    return $data;
+}
+?&gt;</pre></div><div class='content'><ul>
+<li><code>trim()</code>: Elimina espais en blanc del començament i final d'una cadena.</li>
+<li><code>stripslashes()</code>: Elimina barres invertides d'una cadena.</li>
+<li><code>htmlspecialchars()</code>: Converteix caràcters especials en entitats HTML per prevenir XSS.</li>
+</ul>
+</div><h1>Prevenció de la Injecció SQL</h1>
+<div class='content'><p>La injecció SQL és una tècnica on els atacants poden executar codi SQL arbitrari a la teva base de dades. Utilitzar sentències preparades amb consultes parametritzades és la millor manera de prevenir la injecció SQL.</p>
+</div><h2>Exemple: Utilitzant Sentències Preparades</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKJHNlcnZlcm5hbWUgPSAibG9jYWxob3N0IjsKJHVzZXJuYW1lID0gInVzZXJuYW1lIjsKJHBhc3N3b3JkID0gInBhc3N3b3JkIjsKJGRibmFtZSA9ICJkYXRhYmFzZSI7CgokY29ubiA9IG5ldyBteXNxbGkoJHNlcnZlcm5hbWUsICR1c2VybmFtZSwgJHBhc3N3b3JkLCAkZGJuYW1lKTsKCmlmICgkY29ubi0+Y29ubmVjdF9lcnJvcikgewogICAgZGllKCJDb25uZXhpw7MgZmFsbGlkYTogIiAuICRjb25uLT5jb25uZWN0X2Vycm9yKTsKfQoKaWYgKCRfU0VSVkVSWyJSRVFVRVNUX01FVEhPRCJdID09ICJQT1NUIikgewogICAgJG5hbWUgPSAkX1BPU1RbIm5hbWUiXTsKICAgICRlbWFpbCA9ICRfUE9TVFsiZW1haWwiXTsKCiAgICAkc3RtdCA9ICRjb25uLT5wcmVwYXJlKCJJTlNFUlQgSU5UTyB1c2VycyAobmFtZSwgZW1haWwpIFZBTFVFUyAoPywgPykiKTsKICAgICRzdG10LT5iaW5kX3BhcmFtKCJzcyIsICRuYW1lLCAkZW1haWwpOwogICAgJHN0bXQtPmV4ZWN1dGUoKTsKICAgICRzdG10LT5jbG9zZSgpOwp9CgokY29ubi0+Y2xvc2UoKTsKPz4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+$servername = &quot;localhost&quot;;
+$username = &quot;username&quot;;
+$password = &quot;password&quot;;
+$dbname = &quot;database&quot;;
+
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+if ($conn-&gt;connect_error) {
+    die(&quot;Connexi&oacute; fallida: &quot; . $conn-&gt;connect_error);
+}
+
+if ($_SERVER[&quot;REQUEST_METHOD&quot;] == &quot;POST&quot;) {
+    $name = $_POST[&quot;name&quot;];
+    $email = $_POST[&quot;email&quot;];
+
+    $stmt = $conn-&gt;prepare(&quot;INSERT INTO users (name, email) VALUES (?, ?)&quot;);
+    $stmt-&gt;bind_param(&quot;ss&quot;, $name, $email);
+    $stmt-&gt;execute();
+    $stmt-&gt;close();
+}
+
+$conn-&gt;close();
+?&gt;</pre></div><div class='content'><ul>
+<li><code>prepare()</code>: Prepara una sentència SQL per a l'execució.</li>
+<li><code>bind_param()</code>: Lliga variables a la sentència preparada com a paràmetres.</li>
+<li><code>execute()</code>: Executa la sentència preparada.</li>
+</ul>
+</div><h1>Prevenció de Cross-Site Scripting (XSS)</h1>
+<div class='content'><p>Els atacs XSS ocorren quan els atacants injecten scripts maliciosos en pàgines web vistes per altres usuaris. Utilitzar <code>htmlspecialchars()</code> és una manera comuna de prevenir XSS.</p>
+</div><h2>Exemple: Prevenint XSS</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKaWYgKCRfU0VSVkVSWyJSRVFVRVNUX01FVEhPRCJdID09ICJQT1NUIikgewogICAgJGNvbW1lbnQgPSBodG1sc3BlY2lhbGNoYXJzKCRfUE9TVFsiY29tbWVudCJdKTsKICAgIGVjaG8gIkVsIHRldSBjb21lbnRhcmk6ICIgLiAkY29tbWVudDsKfQo/Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+if ($_SERVER[&quot;REQUEST_METHOD&quot;] == &quot;POST&quot;) {
+    $comment = htmlspecialchars($_POST[&quot;comment&quot;]);
+    echo &quot;El teu comentari: &quot; . $comment;
+}
+?&gt;</pre></div><div class='content'><ul>
+<li><code>htmlspecialchars()</code>: Converteix caràcters especials en entitats HTML, prevenint l'execució de scripts maliciosos.</li>
+</ul>
+</div><h1>Protecció contra Cross-Site Request Forgery (CSRF)</h1>
+<div class='content'><p>Els atacs CSRF enganyen els usuaris perquè realitzin accions que no tenien intenció de fer. Utilitzar tokens és un mètode comú per protegir-se contra CSRF.</p>
+</div><h2>Exemple: Implementació de Token CSRF</h2>
+<div class='content'><h4>Generant un Token</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKc2Vzc2lvbl9zdGFydCgpOwppZiAoZW1wdHkoJF9TRVNTSU9OWyd0b2tlbiddKSkgewogICAgJF9TRVNTSU9OWyd0b2tlbiddID0gYmluMmhleChyYW5kb21fYnl0ZXMoMzIpKTsKfQo/Pgo8Zm9ybSBtZXRob2Q9InBvc3QiIGFjdGlvbj0icHJvY2Vzcy5waHAiPgogICAgPGlucHV0IHR5cGU9ImhpZGRlbiIgbmFtZT0idG9rZW4iIHZhbHVlPSI8P3BocCBlY2hvICRfU0VTU0lPTlsndG9rZW4nXTsgPz4iPgogICAgPCEtLSBBbHRyZXMgY2FtcHMgZGVsIGZvcm11bGFyaSAtLT4KICAgIDxpbnB1dCB0eXBlPSJzdWJtaXQiIHZhbHVlPSJFbnZpYXIiPgo8L2Zvcm0+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+session_start();
+if (empty($_SESSION['token'])) {
+    $_SESSION['token'] = bin2hex(random_bytes(32));
+}
+?&gt;
+&lt;form method=&quot;post&quot; action=&quot;process.php&quot;&gt;
+    &lt;input type=&quot;hidden&quot; name=&quot;token&quot; value=&quot;&lt;?php echo $_SESSION['token']; ?&gt;&quot;&gt;
+    &lt;!-- Altres camps del formulari --&gt;
+    &lt;input type=&quot;submit&quot; value=&quot;Enviar&quot;&gt;
+&lt;/form&gt;</pre></div><div class='content'><h4>Validant el Token</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKc2Vzc2lvbl9zdGFydCgpOwppZiAoJF9TRVJWRVJbIlJFUVVFU1RfTUVUSE9EIl0gPT0gIlBPU1QiKSB7CiAgICBpZiAoIWhhc2hfZXF1YWxzKCRfU0VTU0lPTlsndG9rZW4nXSwgJF9QT1NUWyd0b2tlbiddKSkgewogICAgICAgIGRpZSgiTGEgdmFsaWRhY2nDsyBkZWwgdG9rZW4gQ1NSRiBoYSBmYWxsYXQiKTsKICAgIH0KICAgIC8vIFByb2Nlc3NhciBsZXMgZGFkZXMgZGVsIGZvcm11bGFyaQp9Cj8+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+session_start();
+if ($_SERVER[&quot;REQUEST_METHOD&quot;] == &quot;POST&quot;) {
+    if (!hash_equals($_SESSION['token'], $_POST['token'])) {
+        die(&quot;La validaci&oacute; del token CSRF ha fallat&quot;);
+    }
+    // Processar les dades del formulari
+}
+?&gt;</pre></div><div class='content'><ul>
+<li><code>bin2hex()</code>: Converteix dades binàries en representació hexadecimal.</li>
+<li><code>random_bytes()</code>: Genera bytes pseudo-aleatoris criptogràficament segurs.</li>
+<li><code>hash_equals()</code>: Compara dues cadenes de manera segura contra atacs de temporització.</li>
+</ul>
+</div><h1>Hashing i Emmagatzematge de Contrasenyes</h1>
+<div class='content'><p>Emmagatzemar contrasenyes de manera segura és essencial per protegir els comptes d'usuari. PHP proporciona les funcions <code>password_hash()</code> i <code>password_verify()</code> per a aquest propòsit.</p>
+</div><h2>Exemple: Hashing i Verificació de Contrasenyes</h2>
+<div class='content'><h4>Hashing d'una Contrasenya</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKJHBhc3N3b3JkID0gInVzZXJfcGFzc3dvcmQiOwokaGFzaGVkX3Bhc3N3b3JkID0gcGFzc3dvcmRfaGFzaCgkcGFzc3dvcmQsIFBBU1NXT1JEX0RFRkFVTFQpOwplY2hvICRoYXNoZWRfcGFzc3dvcmQ7Cj8+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+$password = &quot;user_password&quot;;
+$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+echo $hashed_password;
+?&gt;</pre></div><div class='content'><h4>Verificant una Contrasenya</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKJGVudGVyZWRfcGFzc3dvcmQgPSAidXNlcl9wYXNzd29yZCI7CiRzdG9yZWRfaGFzaGVkX3Bhc3N3b3JkID0gJyQyeSQxMCRFOU4xLi4uJzsgLy8gRXhlbXBsZSBkZSBjb250cmFzZW55YSBoYXNoYWRhIGRlIGxhIGJhc2UgZGUgZGFkZXMKCmlmIChwYXNzd29yZF92ZXJpZnkoJGVudGVyZWRfcGFzc3dvcmQsICRzdG9yZWRfaGFzaGVkX3Bhc3N3b3JkKSkgewogICAgZWNobyAiTGEgY29udHJhc2VueWEgw6lzIHbDoGxpZGEhIjsKfSBlbHNlIHsKICAgIGVjaG8gIkNvbnRyYXNlbnlhIGludsOgbGlkYS4iOwp9Cj8+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+$entered_password = &quot;user_password&quot;;
+$stored_hashed_password = '$2y$10$E9N1...'; // Exemple de contrasenya hashada de la base de dades
+
+if (password_verify($entered_password, $stored_hashed_password)) {
+    echo &quot;La contrasenya &eacute;s v&agrave;lida!&quot;;
+} else {
+    echo &quot;Contrasenya inv&agrave;lida.&quot;;
+}
+?&gt;</pre></div><div class='content'><ul>
+<li><code>password_hash()</code>: Crea un hash de contrasenya.</li>
+<li><code>password_verify()</code>: Verifica que una contrasenya coincideixi amb un hash.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La seguretat dels formularis en PHP implica múltiples capes de protecció, incloent la validació i sanitització d'entrades, la prevenció de la injecció SQL, la prevenció de XSS, la protecció contra CSRF i la gestió segura de contrasenyes. Implementant aquestes pràctiques, pots millorar significativament la seguretat de les teves aplicacions web i protegir tant les teves dades com els teus usuaris.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='form-validation'>&#x25C4;Validació de Formularis</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Seguretat de Formularis en PHP</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='working-with-arrays'>Treballant amb Arrays &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estudi de Cas 2: Escalar Aplicacions</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kubernetes/case-study-2" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kubernetes/case-study-2" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kubernetes/case-study-2" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kubernetes/case-study-2" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kubernetes/case-study-2" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='case-study-1'>&#x25C4;Estudi de Cas 1: Migració a Kubernetes</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Estudi de Cas 2: Escalar Aplicacions</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='case-study-3'>Estudi de Cas 3: Implementació de CI/CD &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest estudi de cas, explorarem com escalar aplicacions utilitzant Kubernetes. L'escalabilitat és un aspecte crític de la gestió d'aplicacions en producció, assegurant que la teva aplicació pugui manejar càrregues variables de manera eficient. Cobrirem tant l'escalabilitat horitzontal com la vertical, i proporcionarem exemples pràctics per ajudar-te a entendre els conceptes.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Escalabilitat Horitzontal</strong>: Afegir més instàncies de la teva aplicació per manejar una càrrega augmentada.</li>
+<li><strong>Escalabilitat Vertical</strong>: Augmentar els recursos (CPU, memòria) de les instàncies existents per manejar una càrrega augmentada.</li>
+<li><strong>Kubernetes Horizontal Pod Autoscaler (HPA)</strong>: Escala automàticament el nombre de pods en un desplegament basat en la utilització de CPU observada o altres mètriques seleccionades.</li>
+<li><strong>Sol·licituds i Límits de Recursos</strong>: Definir els recursos mínims i màxims que un contenidor pot utilitzar.</li>
+</ul>
+</div><h1>Escalabilitat Horitzontal</h1>
+<div class='content'></div><h2>Entendre l'Escalabilitat Horitzontal</h2>
+<div class='content'><p>L'escalabilitat horitzontal implica afegir més instàncies (pods) de la teva aplicació per distribuir la càrrega. Sovint és més rendible i proporciona una millor tolerància a fallades en comparació amb l'escalabilitat vertical.</p>
+</div><h2>Exemple: Configurar Horizontal Pod Autoscaler (HPA)</h2>
+<div class='content'><p>Creem un desplegament i configurem HPA per escalar-lo basat en l'ús de la CPU.</p>
+<ol>
+<li>
+<p><strong>Crear un Desplegament</strong>:</p>
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app
+        image: my-app-image
+        resources:
+          requests:
+            cpu: &quot;100m&quot;
+          limits:
+            cpu: &quot;500m&quot;
+</code></pre>
+</li>
+<li>
+<p><strong>Aplicar el Desplegament</strong>:</p>
+<pre><code class="language-sh">kubectl apply -f deployment.yaml
+</code></pre>
+</li>
+<li>
+<p><strong>Crear un HPA</strong>:</p>
+<pre><code class="language-yaml">apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-app-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: my-app
+  minReplicas: 1
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 50
+</code></pre>
+</li>
+<li>
+<p><strong>Aplicar el HPA</strong>:</p>
+<pre><code class="language-sh">kubectl apply -f hpa.yaml
+</code></pre>
+</li>
+</ol>
+</div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Desplegament</strong>: Defineix una única rèplica de <code>my-app</code> amb sol·licituds i límits de CPU.</li>
+<li><strong>HPA</strong>: Monitora la utilització de la CPU del desplegament <code>my-app</code> i escala el nombre de pods entre 1 i 10 per mantenir una utilització mitjana de la CPU del 50%.</li>
+</ul>
+</div><h1>Escalabilitat Vertical</h1>
+<div class='content'></div><h2>Entendre l'Escalabilitat Vertical</h2>
+<div class='content'><p>L'escalabilitat vertical implica augmentar els límits de recursos dels pods existents. Això pot ser útil quan la teva aplicació necessita més recursos per manejar una càrrega augmentada.</p>
+</div><h2>Exemple: Ajustar els Límits de Recursos</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Actualitzar el Desplegament</strong>:</p>
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app
+        image: my-app-image
+        resources:
+          requests:
+            cpu: &quot;200m&quot;
+            memory: &quot;256Mi&quot;
+          limits:
+            cpu: &quot;1&quot;
+            memory: &quot;512Mi&quot;
+</code></pre>
+</li>
+<li>
+<p><strong>Aplicar el Desplegament Actualitzat</strong>:</p>
+<pre><code class="language-sh">kubectl apply -f deployment.yaml
+</code></pre>
+</li>
+</ol>
+</div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Sol·licituds de Recursos</strong>: Els recursos mínims garantits per al contenidor.</li>
+<li><strong>Límits de Recursos</strong>: Els recursos màxims que el contenidor pot utilitzar.</li>
+</ul>
+</div><h1>Comparació de l'Escalabilitat Horitzontal i Vertical</h1>
+<div class='content'><p>| Aspecte               | Escalabilitat Horitzontal                | Escalabilitat Vertical                    |
+|-----------------------|------------------------------------------|-------------------------------------------|
+| Enfocament            | Afegir més instàncies (pods)             | Augmentar els recursos de les instàncies existents |
+| Cost                  | Generalment més rendible                 | Pot ser car                               |
+| Tolerància a Fallades | Més alta                                  | Més baixa                                 |
+| Complexitat           | Requereix equilibrament de càrrega       | Més simple                                |
+| Cas d'Ús              | Manejar tràfic augmentat                 | Manejar tasques intensives en recursos    |</p>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Escalar aplicacions en Kubernetes és essencial per mantenir el rendiment i la fiabilitat sota càrregues variables. L'escalabilitat horitzontal, aconseguida a través d'eines com el Horizontal Pod Autoscaler, és generalment més rendible i proporciona una millor tolerància a fallades. L'escalabilitat vertical, d'altra banda, és útil per a aplicacions intensives en recursos però pot ser més cara. Entendre quan i com utilitzar aquestes estratègies d'escalabilitat t'ajudarà a gestionar les teves aplicacions de manera més efectiva en un entorn Kubernetes.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='case-study-1'>&#x25C4;Estudi de Cas 1: Migració a Kubernetes</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Estudi de Cas 2: Escalar Aplicacions</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='case-study-3'>Estudi de Cas 3: Implementació de CI/CD &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtratge Col·laboratiu a Apache Spark</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/apachespark/collaborative-filtering" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/apachespark/collaborative-filtering" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/apachespark/collaborative-filtering" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/apachespark/collaborative-filtering" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/apachespark/collaborative-filtering" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='clustering'>&#x25C4;Clustering</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Filtratge Col·laboratiu a Apache Spark</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='model-evaluation-and-tuning'>Avaluació i Optimització de Models &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>El Filtratge Col·laboratiu és una tècnica popular utilitzada en sistemes de recomanació. Fa prediccions automàtiques sobre els interessos d'un usuari recopilant preferències de molts usuaris. En aquest tema, explorarem com implementar el Filtratge Col·laboratiu utilitzant Apache Spark, des de nivells bàsics fins a avançats.</p>
+</div><h1>Introducció al Filtratge Col·laboratiu</h1>
+<div class='content'><ul>
+<li><strong>Definició</strong>: El Filtratge Col·laboratiu és un mètode utilitzat per predir les preferències d'un usuari analitzant les preferències d'un gran nombre d'usuaris.</li>
+<li><strong>Aplicacions</strong>: Comunament utilitzat en sistemes de recomanació per a pel·lícules, música, productes, etc.</li>
+<li><strong>Tipus</strong>:
+<ul>
+<li><strong>Filtratge Col·laboratiu basat en l'usuari</strong>: Recomana elements trobant usuaris similars.</li>
+<li><strong>Filtratge Col·laboratiu basat en l'element</strong>: Recomana elements trobant elements similars.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Configuració d'Apache Spark</h1>
+<div class='content'><p>Abans d'endinsar-nos en el Filtratge Col·laboratiu, assegureu-vos que teniu Apache Spark configurat a la vostra màquina.</p>
+<ul>
+<li><strong>Instal·lació</strong>: Seguiu la <a href="https://spark.apache.org/docs/latest/">documentació oficial d'Apache Spark</a> per a les instruccions d'instal·lació.</li>
+<li><strong>Entorn</strong>: Assegureu-vos que teniu Java i Scala instal·lats, ja que són requisits previs per executar Spark.</li>
+</ul>
+</div><h1>Conceptes Bàsics del Filtratge Col·laboratiu a Spark</h1>
+<div class='content'></div><h2>Alternating Least Squares (ALS)</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: ALS és un algorisme utilitzat a MLlib de Spark per al Filtratge Col·laboratiu.</li>
+<li><strong>Funcionalitat</strong>: Funciona factoritzant la matriu d'interacció usuari-element en dues matrius de menor dimensió.</li>
+</ul>
+</div><h2>Exemple de Conjunt de Dades</h2>
+<div class='content'><p>Per a aquest exemple, utilitzarem un conjunt de dades senzill de valoracions d'usuaris per a pel·lícules.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("VXNlcklELCBNb3ZpZUlELCBSYXRpbmcKMSwgMTAxLCA1CjEsIDEwMiwgMwoyLCAxMDEsIDQKMiwgMTAzLCAyCjMsIDEwMiwgNAozLCAxMDMsIDU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>UserID, MovieID, Rating
+1, 101, 5
+1, 102, 3
+2, 101, 4
+2, 103, 2
+3, 102, 4
+3, 103, 5</pre></div><div class='content'></div><h1>Implementació del Filtratge Col·laboratiu a Spark</h1>
+<div class='content'></div><h2>Pas 1: Carregar Dades</h2>
+<div class='content'><p>Primer, carregueu les dades en un DataFrame de Spark.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBweXNwYXJrLnNxbCBpbXBvcnQgU3BhcmtTZXNzaW9uCgpzcGFyayA9IFNwYXJrU2Vzc2lvbi5idWlsZGVyLmFwcE5hbWUoIkNvbGxhYm9yYXRpdmVGaWx0ZXJpbmciKS5nZXRPckNyZWF0ZSgpCgojIENhcnJlZ2FyIGRhZGVzCmRhdGEgPSBbCiAgICAoMSwgMTAxLCA1KSwKICAgICgxLCAxMDIsIDMpLAogICAgKDIsIDEwMSwgNCksCiAgICAoMiwgMTAzLCAyKSwKICAgICgzLCAxMDIsIDQpLAogICAgKDMsIDEwMywgNSkKXQoKY29sdW1ucyA9IFsiVXNlcklEIiwgIk1vdmllSUQiLCAiUmF0aW5nIl0KZGYgPSBzcGFyay5jcmVhdGVEYXRhRnJhbWUoZGF0YSwgY29sdW1ucykKZGYuc2hvdygp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.appName(&quot;CollaborativeFiltering&quot;).getOrCreate()
+
+# Carregar dades
+data = [
+    (1, 101, 5),
+    (1, 102, 3),
+    (2, 101, 4),
+    (2, 103, 2),
+    (3, 102, 4),
+    (3, 103, 5)
+]
+
+columns = [&quot;UserID&quot;, &quot;MovieID&quot;, &quot;Rating&quot;]
+df = spark.createDataFrame(data, columns)
+df.show()</pre></div><div class='content'></div><h2>Pas 2: Preparar Dades per a ALS</h2>
+<div class='content'><p>Converteix el DataFrame en un RDD i prepara'l per a l'algorisme ALS.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBweXNwYXJrLm1sLmV2YWx1YXRpb24gaW1wb3J0IFJlZ3Jlc3Npb25FdmFsdWF0b3IKZnJvbSBweXNwYXJrLm1sLnJlY29tbWVuZGF0aW9uIGltcG9ydCBBTFMKCiMgQ29udmVydGlyIERhdGFGcmFtZSBhIFJERApyYXRpbmdzID0gZGYucmRkLm1hcChsYW1iZGEgcm93OiAocm93WzBdLCByb3dbMV0sIHJvd1syXSkpCgojIERpdmlkaXIgZGFkZXMgZW4gY29uanVudHMgZCdlbnRyZW5hbWVudCBpIHByb3ZhCih0cmFpbmluZywgdGVzdCkgPSBkZi5yYW5kb21TcGxpdChbMC44LCAwLjJdKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from pyspark.ml.evaluation import RegressionEvaluator
+from pyspark.ml.recommendation import ALS
+
+# Convertir DataFrame a RDD
+ratings = df.rdd.map(lambda row: (row[0], row[1], row[2]))
+
+# Dividir dades en conjunts d'entrenament i prova
+(training, test) = df.randomSplit([0.8, 0.2])</pre></div><div class='content'></div><h2>Pas 3: Entrenar el Model ALS</h2>
+<div class='content'><p>Entrena el model ALS utilitzant les dades d'entrenament.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDb25zdHJ1aXIgZWwgbW9kZWwgZGUgcmVjb21hbmFjacOzIHV0aWxpdHphbnQgQUxTCmFscyA9IEFMUyhtYXhJdGVyPTEwLCByZWdQYXJhbT0wLjAxLCB1c2VyQ29sPSJVc2VySUQiLCBpdGVtQ29sPSJNb3ZpZUlEIiwgcmF0aW5nQ29sPSJSYXRpbmciKQptb2RlbCA9IGFscy5maXQodHJhaW5pbmcp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Construir el model de recomanaci&oacute; utilitzant ALS
+als = ALS(maxIter=10, regParam=0.01, userCol=&quot;UserID&quot;, itemCol=&quot;MovieID&quot;, ratingCol=&quot;Rating&quot;)
+model = als.fit(training)</pre></div><div class='content'></div><h2>Pas 4: Fer Prediccions</h2>
+<div class='content'><p>Utilitza el model entrenat per fer prediccions sobre les dades de prova.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBGZXIgcHJlZGljY2lvbnMKcHJlZGljdGlvbnMgPSBtb2RlbC50cmFuc2Zvcm0odGVzdCkKcHJlZGljdGlvbnMuc2hvdygp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Fer prediccions
+predictions = model.transform(test)
+predictions.show()</pre></div><div class='content'></div><h2>Pas 5: Avaluar el Model</h2>
+<div class='content'><p>Avaluar el model utilitzant l'Error Quadràtic Mitjà (RMSE).</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBBdmFsdWFyIGVsIG1vZGVsCmV2YWx1YXRvciA9IFJlZ3Jlc3Npb25FdmFsdWF0b3IobWV0cmljTmFtZT0icm1zZSIsIGxhYmVsQ29sPSJSYXRpbmciLCBwcmVkaWN0aW9uQ29sPSJwcmVkaWN0aW9uIikKcm1zZSA9IGV2YWx1YXRvci5ldmFsdWF0ZShwcmVkaWN0aW9ucykKcHJpbnQoZiJSb290LW1lYW4tc3F1YXJlIGVycm9yID0ge3Jtc2V9Iik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Avaluar el model
+evaluator = RegressionEvaluator(metricName=&quot;rmse&quot;, labelCol=&quot;Rating&quot;, predictionCol=&quot;prediction&quot;)
+rmse = evaluator.evaluate(predictions)
+print(f&quot;Root-mean-square error = {rmse}&quot;)</pre></div><div class='content'></div><h1>Temes Avançats en Filtratge Col·laboratiu</h1>
+<div class='content'></div><h2>Ajust de Hiperparàmetres</h2>
+<div class='content'><ul>
+<li><strong>Cerca en Graella</strong>: Realitza una cerca en graella per trobar els millors hiperparàmetres per al model ALS.</li>
+<li><strong>Validació Creuada</strong>: Utilitza la validació creuada per assegurar la robustesa del model.</li>
+</ul>
+</div><h2>Maneig del Problema de Fredor Inicial</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: El problema de fredor inicial ocorre quan el sistema no pot fer recomanacions precises a causa de la manca de dades.</li>
+<li><strong>Solució</strong>: Utilitza tècniques com valoracions per defecte o models híbrids per mitigar aquest problema.</li>
+</ul>
+</div><h2>Retroalimentació Implícita</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: La retroalimentació implícita es refereix a senyals indirectes de preferències dels usuaris, com clics o visualitzacions.</li>
+<li><strong>Implementació</strong>: L'ALS de Spark pot manejar retroalimentació implícita establint el paràmetre <code>implicitPrefs</code> a <code>True</code>.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem cobert els aspectes bàsics i avançats de la implementació del Filtratge Col·laboratiu utilitzant Apache Spark. Hem començat amb la configuració de Spark, la càrrega de dades i la implementació de l'algorisme ALS. També hem discutit temes avançats com l'ajust de hiperparàmetres i el maneig del problema de fredor inicial. Al final d'aquest tema, hauríeu de tenir una comprensió sòlida de com construir i avaluar un sistema de recomanació utilitzant el Filtratge Col·laboratiu a Spark.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='clustering'>&#x25C4;Clustering</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Filtratge Col·laboratiu a Apache Spark</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='model-evaluation-and-tuning'>Avaluació i Optimització de Models &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

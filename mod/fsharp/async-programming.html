@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programació Async en F#</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/fsharp/async-programming" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/fsharp/async-programming" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/fsharp/async-programming" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/fsharp/async-programming" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/fsharp/async-programming" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='option-types-and-error-handling'>&#x25C4;Tipus Opció i Gestió d'Errors</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Programació Async en F#</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='lazy-evaluation'>Avaluació Mandrosa &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La programació async és una característica potent en F# que et permet escriure codi no bloquejant, fent que les teves aplicacions siguin més responsives i eficients. Aquest tema et guiarà des dels conceptes bàsics fins als avançats de la programació async en F#.</p>
+</div><h1>Introducció a la Programació Async</h1>
+<div class='content'><p>La programació async és essencial per realitzar tasques que impliquen espera, com ara operacions d'I/O, sense bloquejar el fil principal. Això és particularment útil en aplicacions que requereixen alta responsivitat, com ara servidors web o aplicacions GUI.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Fluxos de Treball Asíncrons</strong>: F# proporciona una manera d'escriure codi asíncron utilitzant fluxos de treball.</li>
+<li><strong>Tasques i Promeses</strong>: Entendre com funcionen les tasques i les promeses en F#.</li>
+<li><strong>I/O No Bloquejant</strong>: Realitzar operacions d'I/O sense bloquejar el fil principal.</li>
+</ul>
+</div><h1>Fluxos de Treball Asíncrons</h1>
+<div class='content'><p>Els fluxos de treball asíncrons en F# es creen utilitzant la paraula clau <code>async</code>. Això et permet escriure codi que pot realitzar operacions asíncrones de manera seqüencial.</p>
+</div><h2>Exemple Bàsic</h2>
+<div class='content'><p>Aquí tens un exemple senzill d'un flux de treball asíncron:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBTeXN0ZW0Kb3BlbiBTeXN0ZW0uVGhyZWFkaW5nLlRhc2tzCgpsZXQgYXN5bmNXb3JrZmxvdyA9IGFzeW5jIHsKICAgIHByaW50Zm4gIlN0YXJ0aW5nIGFzeW5jIHdvcmtmbG93Li4uIgogICAgZG8hIEFzeW5jLlNsZWVwIDEwMDAgLy8gRXNwZXJhIGFzw61uY3JvbmFtZW50IGR1cmFudCAxIHNlZ29uCiAgICBwcmludGZuICJGaW5pc2hlZCBhc3luYyB3b3JrZmxvdyEiCn0KCkFzeW5jLlN0YXJ0IGFzeW5jV29ya2Zsb3c="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open System
+open System.Threading.Tasks
+
+let asyncWorkflow = async {
+    printfn &quot;Starting async workflow...&quot;
+    do! Async.Sleep 1000 // Espera as&iacute;ncronament durant 1 segon
+    printfn &quot;Finished async workflow!&quot;
+}
+
+Async.Start asyncWorkflow</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li><code>async { ... }</code> defineix un flux de treball asíncron.</li>
+<li><code>do! Async.Sleep 1000</code> espera asíncronament durant 1 segon sense bloquejar el fil principal.</li>
+<li><code>Async.Start asyncWorkflow</code> inicia el flux de treball asíncron.</li>
+</ul>
+</div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><code>async { ... }</code>: Aquest bloc defineix un càlcul asíncron.</li>
+<li><code>do!</code>: Aquesta paraula clau s'utilitza per realitzar una operació asíncrona dins del flux de treball.</li>
+<li><code>Async.Sleep</code>: Aquesta funció espera asíncronament durant el temps especificat.</li>
+</ul>
+</div><h1>Tasques i Promeses</h1>
+<div class='content'><p>F# s'integra bé amb el tipus <code>Task</code> de .NET, que representa una operació asíncrona. Pots convertir entre fluxos de treball asíncrons de F# i tasques de .NET.</p>
+</div><h2>Convertir Async a Task</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bGV0IGFzeW5jVG9UYXNrICh3b3JrZmxvdzogQXN5bmM8J1Q+KSA6IFRhc2s8J1Q+ID0KICAgIEFzeW5jLlN0YXJ0QXNUYXNrIHdvcmtmbG93"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>let asyncToTask (workflow: Async&lt;'T&gt;) : Task&lt;'T&gt; =
+    Async.StartAsTask workflow</pre></div><div class='content'></div><h2>Convertir Task a Async</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bGV0IHRhc2tUb0FzeW5jICh0YXNrOiBUYXNrPCdUPikgOiBBc3luYzwnVD4gPQogICAgQXN5bmMuQXdhaXRUYXNrIHRhc2s="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>let taskToAsync (task: Task&lt;'T&gt;) : Async&lt;'T&gt; =
+    Async.AwaitTask task</pre></div><div class='content'></div><h2>Exemple amb Tasques</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bGV0IGFzeW5jV29ya2Zsb3cgPSBhc3luYyB7CiAgICBwcmludGZuICJTdGFydGluZyBhc3luYyB3b3JrZmxvdy4uLiIKICAgIGRvISBBc3luYy5TbGVlcCAxMDAwCiAgICBwcmludGZuICJGaW5pc2hlZCBhc3luYyB3b3JrZmxvdyEiCn0KCmxldCB0YXNrID0gQXN5bmMuU3RhcnRBc1Rhc2sgYXN5bmNXb3JrZmxvdwp0YXNrLldhaXQoKSAvLyBFc3BlcmEgcXVlIGxhIHRhc2NhIGVzIGNvbXBsZXRp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>let asyncWorkflow = async {
+    printfn &quot;Starting async workflow...&quot;
+    do! Async.Sleep 1000
+    printfn &quot;Finished async workflow!&quot;
+}
+
+let task = Async.StartAsTask asyncWorkflow
+task.Wait() // Espera que la tasca es completi</pre></div><div class='content'></div><h1>I/O No Bloquejant</h1>
+<div class='content'><p>Realitzar operacions d'I/O asíncronament és crucial per construir aplicacions responsives. F# proporciona diverses funcions per realitzar I/O no bloquejant.</p>
+</div><h2>Exemple: Llegir un Fitxer Asíncronament</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBTeXN0ZW0uSU8KCmxldCByZWFkRmlsZUFzeW5jIChwYXRoOiBzdHJpbmcpID0gYXN5bmMgewogICAgdXNlIHJlYWRlciA9IG5ldyBTdHJlYW1SZWFkZXIocGF0aCkKICAgIGxldCEgY29udGVudCA9IHJlYWRlci5SZWFkVG9FbmRBc3luYygpIHw+IEFzeW5jLkF3YWl0VGFzawogICAgcmV0dXJuIGNvbnRlbnQKfQoKbGV0IGZpbGVQYXRoID0gImV4YW1wbGUudHh0IgpsZXQgY29udGVudCA9IEFzeW5jLlJ1blN5bmNocm9ub3VzbHkgKHJlYWRGaWxlQXN5bmMgZmlsZVBhdGgpCnByaW50Zm4gIkZpbGUgY29udGVudDogJXMiIGNvbnRlbnQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open System.IO
+
+let readFileAsync (path: string) = async {
+    use reader = new StreamReader(path)
+    let! content = reader.ReadToEndAsync() |&gt; Async.AwaitTask
+    return content
+}
+
+let filePath = &quot;example.txt&quot;
+let content = Async.RunSynchronously (readFileAsync filePath)
+printfn &quot;File content: %s&quot; content</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><code>use reader = new StreamReader(path)</code>: Obre el fitxer per llegir.</li>
+<li><code>let! content = reader.ReadToEndAsync() |&gt; Async.AwaitTask</code>: Llegeix el contingut del fitxer asíncronament.</li>
+<li><code>Async.RunSynchronously</code>: Executa el flux de treball asíncron de manera síncrona i espera el resultat.</li>
+</ul>
+</div><h1>Conceptes Avançats</h1>
+<div class='content'></div><h2>Fluxos de Treball Asíncrons en Paral·lel</h2>
+<div class='content'><p>Pots executar múltiples fluxos de treball asíncrons en paral·lel utilitzant <code>Async.Parallel</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bGV0IHdvcmtmbG93MSA9IGFzeW5jIHsKICAgIGRvISBBc3luYy5TbGVlcCAxMDAwCiAgICByZXR1cm4gIldvcmtmbG93IDEiCn0KCmxldCB3b3JrZmxvdzIgPSBhc3luYyB7CiAgICBkbyEgQXN5bmMuU2xlZXAgMjAwMAogICAgcmV0dXJuICJXb3JrZmxvdyAyIgp9CgpsZXQgcGFyYWxsZWxXb3JrZmxvd3MgPSBbd29ya2Zsb3cxOyB3b3JrZmxvdzJdIHw+IEFzeW5jLlBhcmFsbGVsCgpsZXQgcmVzdWx0cyA9IEFzeW5jLlJ1blN5bmNocm9ub3VzbHkgcGFyYWxsZWxXb3JrZmxvd3MKcHJpbnRmbiAiUmVzdWx0czogJUEiIHJlc3VsdHM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>let workflow1 = async {
+    do! Async.Sleep 1000
+    return &quot;Workflow 1&quot;
+}
+
+let workflow2 = async {
+    do! Async.Sleep 2000
+    return &quot;Workflow 2&quot;
+}
+
+let parallelWorkflows = [workflow1; workflow2] |&gt; Async.Parallel
+
+let results = Async.RunSynchronously parallelWorkflows
+printfn &quot;Results: %A&quot; results</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><code>Async.Parallel</code>: Executa múltiples fluxos de treball asíncrons en paral·lel.</li>
+<li><code>Async.RunSynchronously</code>: Espera que tots els fluxos de treball es completin i retorna els seus resultats.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La programació async en F# et permet escriure aplicacions eficients i responsives realitzant operacions no bloquejants. Començant amb fluxos de treball asíncrons bàsics, pots progressar cap a conceptes més avançats com fluxos de treball en paral·lel i la integració amb tasques de .NET. En dominar aquestes tècniques, pots millorar significativament el rendiment i la responsivitat de les teves aplicacions en F#.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='option-types-and-error-handling'>&#x25C4;Tipus Opció i Gestió d'Errors</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Programació Async en F#</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='lazy-evaluation'>Avaluació Mandrosa &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

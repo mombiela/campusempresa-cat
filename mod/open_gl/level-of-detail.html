@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nivell de Detall (LOD) en OpenGL</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/open_gl/level-of-detail" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/open_gl/level-of-detail" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/open_gl/level-of-detail" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/open_gl/level-of-detail" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/open_gl/level-of-detail" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='optimizing-rendering-performance'>&#x25C4;Optimitzant el Rendiment de la Renderització</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Nivell de Detall (LOD) en OpenGL</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='efficient-memory-management'>Gestió Eficient de la Memòria &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció al Nivell de Detall (LOD)</h1>
+<div class='content'><p>El Nivell de Detall (LOD) és una tècnica utilitzada en gràfics per ordinador per gestionar la complexitat del renderitzat d'objectes en funció de la seva mida, distància o importància en l'escena. Ajustant el nivell de detall, podem optimitzar el rendiment sense comprometre significativament la qualitat visual.</p>
+<ul>
+<li><strong>Propòsit del LOD</strong>: Millorar el rendiment del renderitzat reduint el nombre de polígons i detalls de textura per a objectes distants.</li>
+<li><strong>Aplicacions</strong>: Comunament utilitzat en videojocs, simulacions i qualsevol aplicació de renderitzat en temps real.</li>
+</ul>
+</div><h1>Conceptes Bàsics del LOD</h1>
+<div class='content'><p>Abans d'entrar en la implementació, és important entendre els conceptes bàsics:</p>
+<ul>
+<li><strong>Models LOD</strong>: Diferents versions d'un model 3D amb nivells de detall variables.</li>
+<li><strong>LOD Basat en la Distància</strong>: Ajusta el nivell de detall en funció de la distància de la càmera.</li>
+<li><strong>LOD Basat en l'Espai de Pantalla</strong>: Ajusta el detall en funció de la mida de l'objecte a la pantalla.</li>
+<li><strong>LOD Basat en la Importància</strong>: Ajusta el detall en funció de la importància de l'objecte en l'escena.</li>
+</ul>
+</div><h1>Implementació del LOD en OpenGL</h1>
+<div class='content'></div><h2>Creació de Models LOD</h2>
+<div class='content'><p>Per implementar LOD, necessites múltiples versions del teu model 3D. Aquests es poden crear utilitzant programari de modelatge 3D o programàticament.</p>
+<ul>
+<li><strong>Model d'Alt Detall</strong>: Utilitzat quan l'objecte està a prop de la càmera.</li>
+<li><strong>Model de Detall Mitjà</strong>: Utilitzat quan l'objecte està a una distància moderada.</li>
+<li><strong>Model de Baix Detall</strong>: Utilitzat quan l'objecte està lluny de la càmera.</li>
+</ul>
+</div><h2>Exemple de LOD Basat en la Distància</h2>
+<div class='content'><p>Aquí tens un exemple bàsic de com implementar LOD basat en la distància en OpenGL:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gUHNldWRvLWNvZGkgcGVyIGEgbGEgaW1wbGVtZW50YWNpw7MgZGUgTE9ECnZvaWQgcmVuZGVyT2JqZWN0KGdsbTo6dmVjMyBjYW1lcmFQb3NpdGlvbiwgZ2xtOjp2ZWMzIG9iamVjdFBvc2l0aW9uKSB7CiAgICBmbG9hdCBkaXN0YW5jZSA9IGdsbTo6ZGlzdGFuY2UoY2FtZXJhUG9zaXRpb24sIG9iamVjdFBvc2l0aW9uKTsKCiAgICBpZiAoZGlzdGFuY2UgPCAxMC4wZikgewogICAgICAgIC8vIFJlbmRlcml0emFyIG1vZGVsIGQnYWx0IGRldGFsbAogICAgICAgIHJlbmRlckhpZ2hEZXRhaWxNb2RlbCgpOwogICAgfSBlbHNlIGlmIChkaXN0YW5jZSA8IDUwLjBmKSB7CiAgICAgICAgLy8gUmVuZGVyaXR6YXIgbW9kZWwgZGUgZGV0YWxsIG1pdGrDoAogICAgICAgIHJlbmRlck1lZGl1bURldGFpbE1vZGVsKCk7CiAgICB9IGVsc2UgewogICAgICAgIC8vIFJlbmRlcml0emFyIG1vZGVsIGRlIGJhaXggZGV0YWxsCiAgICAgICAgcmVuZGVyTG93RGV0YWlsTW9kZWwoKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Pseudo-codi per a la implementaci&oacute; de LOD
+void renderObject(glm::vec3 cameraPosition, glm::vec3 objectPosition) {
+    float distance = glm::distance(cameraPosition, objectPosition);
+
+    if (distance &lt; 10.0f) {
+        // Renderitzar model d'alt detall
+        renderHighDetailModel();
+    } else if (distance &lt; 50.0f) {
+        // Renderitzar model de detall mitj&agrave;
+        renderMediumDetailModel();
+    } else {
+        // Renderitzar model de baix detall
+        renderLowDetailModel();
+    }
+}</pre></div><div class='content'></div><h2>Exemple de LOD Basat en l'Espai de Pantalla</h2>
+<div class='content'><p>El LOD basat en l'espai de pantalla ajusta el detall en funció de la mida de l'objecte a la pantalla:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gUHNldWRvLWNvZGkgcGVyIGEgbGEgaW1wbGVtZW50YWNpw7MgZGUgTE9EIGJhc2F0IGVuIGwnZXNwYWkgZGUgcGFudGFsbGEKdm9pZCByZW5kZXJPYmplY3QoZ2xtOjp2ZWMzIGNhbWVyYVBvc2l0aW9uLCBnbG06OnZlYzMgb2JqZWN0UG9zaXRpb24sIGZsb2F0IHNjcmVlblNpemUpIHsKICAgIGZsb2F0IG9iamVjdFNpemUgPSBjYWxjdWxhdGVTY3JlZW5TaXplKGNhbWVyYVBvc2l0aW9uLCBvYmplY3RQb3NpdGlvbiwgc2NyZWVuU2l6ZSk7CgogICAgaWYgKG9iamVjdFNpemUgPiAxMDAuMGYpIHsKICAgICAgICAvLyBSZW5kZXJpdHphciBtb2RlbCBkJ2FsdCBkZXRhbGwKICAgICAgICByZW5kZXJIaWdoRGV0YWlsTW9kZWwoKTsKICAgIH0gZWxzZSBpZiAob2JqZWN0U2l6ZSA+IDUwLjBmKSB7CiAgICAgICAgLy8gUmVuZGVyaXR6YXIgbW9kZWwgZGUgZGV0YWxsIG1pdGrDoAogICAgICAgIHJlbmRlck1lZGl1bURldGFpbE1vZGVsKCk7CiAgICB9IGVsc2UgewogICAgICAgIC8vIFJlbmRlcml0emFyIG1vZGVsIGRlIGJhaXggZGV0YWxsCiAgICAgICAgcmVuZGVyTG93RGV0YWlsTW9kZWwoKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Pseudo-codi per a la implementaci&oacute; de LOD basat en l'espai de pantalla
+void renderObject(glm::vec3 cameraPosition, glm::vec3 objectPosition, float screenSize) {
+    float objectSize = calculateScreenSize(cameraPosition, objectPosition, screenSize);
+
+    if (objectSize &gt; 100.0f) {
+        // Renderitzar model d'alt detall
+        renderHighDetailModel();
+    } else if (objectSize &gt; 50.0f) {
+        // Renderitzar model de detall mitj&agrave;
+        renderMediumDetailModel();
+    } else {
+        // Renderitzar model de baix detall
+        renderLowDetailModel();
+    }
+}</pre></div><div class='content'></div><h2>Exemple de LOD Basat en la Importància</h2>
+<div class='content'><p>El LOD basat en la importància ajusta el detall en funció de la importància de l'objecte:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gUHNldWRvLWNvZGkgcGVyIGEgbGEgaW1wbGVtZW50YWNpw7MgZGUgTE9EIGJhc2F0IGVuIGxhIGltcG9ydMOgbmNpYQp2b2lkIHJlbmRlck9iamVjdChpbnQgaW1wb3J0YW5jZUxldmVsKSB7CiAgICBzd2l0Y2ggKGltcG9ydGFuY2VMZXZlbCkgewogICAgICAgIGNhc2UgSElHSF9JTVBPUlRBTkNFOgogICAgICAgICAgICByZW5kZXJIaWdoRGV0YWlsTW9kZWwoKTsKICAgICAgICAgICAgYnJlYWs7CiAgICAgICAgY2FzZSBNRURJVU1fSU1QT1JUQU5DRToKICAgICAgICAgICAgcmVuZGVyTWVkaXVtRGV0YWlsTW9kZWwoKTsKICAgICAgICAgICAgYnJlYWs7CiAgICAgICAgY2FzZSBMT1dfSU1QT1JUQU5DRToKICAgICAgICAgICAgcmVuZGVyTG93RGV0YWlsTW9kZWwoKTsKICAgICAgICAgICAgYnJlYWs7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Pseudo-codi per a la implementaci&oacute; de LOD basat en la import&agrave;ncia
+void renderObject(int importanceLevel) {
+    switch (importanceLevel) {
+        case HIGH_IMPORTANCE:
+            renderHighDetailModel();
+            break;
+        case MEDIUM_IMPORTANCE:
+            renderMediumDetailModel();
+            break;
+        case LOW_IMPORTANCE:
+            renderLowDetailModel();
+            break;
+    }
+}</pre></div><div class='content'></div><h1>Tècniques Avançades de LOD</h1>
+<div class='content'><p>Per a implementacions de LOD més avançades, considera les següents tècniques:</p>
+<ul>
+<li><strong>LOD Continu</strong>: Transicions suaus entre diferents nivells de detall.</li>
+<li><strong>Shaders de Geometria</strong>: Utilitza shaders de geometria per ajustar dinàmicament el nivell de detall.</li>
+<li><strong>LOD de Textura</strong>: Ajusta el nivell de detall per a textures utilitzant mipmaps.</li>
+</ul>
+</div><h2>Exemple de LOD Continu</h2>
+<div class='content'><p>El LOD continu proporciona una transició més suau entre diferents nivells de detall:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gUHNldWRvLWNvZGkgcGVyIGEgbGEgaW1wbGVtZW50YWNpw7MgZGUgTE9EIGNvbnRpbnUKdm9pZCByZW5kZXJPYmplY3QoZ2xtOjp2ZWMzIGNhbWVyYVBvc2l0aW9uLCBnbG06OnZlYzMgb2JqZWN0UG9zaXRpb24pIHsKICAgIGZsb2F0IGRpc3RhbmNlID0gZ2xtOjpkaXN0YW5jZShjYW1lcmFQb3NpdGlvbiwgb2JqZWN0UG9zaXRpb24pOwogICAgZmxvYXQgbG9kRmFjdG9yID0gY2FsY3VsYXRlTE9ERmFjdG9yKGRpc3RhbmNlKTsKCiAgICAvLyBJbnRlcnBvbGFyIGVudHJlIG1vZGVscyBlbiBmdW5jacOzIGRlbCBsb2RGYWN0b3IKICAgIHJlbmRlckludGVycG9sYXRlZE1vZGVsKGxvZEZhY3Rvcik7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Pseudo-codi per a la implementaci&oacute; de LOD continu
+void renderObject(glm::vec3 cameraPosition, glm::vec3 objectPosition) {
+    float distance = glm::distance(cameraPosition, objectPosition);
+    float lodFactor = calculateLODFactor(distance);
+
+    // Interpolar entre models en funci&oacute; del lodFactor
+    renderInterpolatedModel(lodFactor);
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>El Nivell de Detall (LOD) és una tècnica crucial en OpenGL per optimitzar el rendiment del renderitzat. Entenent i implementant diverses estratègies de LOD, pots millorar significativament l'eficiència de les teves aplicacions gràfiques. Ja sigui que utilitzis LOD basat en la distància, l'espai de pantalla o la importància, la clau és equilibrar el rendiment i la qualitat visual de manera efectiva.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='optimizing-rendering-performance'>&#x25C4;Optimitzant el Rendiment de la Renderització</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Nivell de Detall (LOD) en OpenGL</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='efficient-memory-management'>Gestió Eficient de la Memòria &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

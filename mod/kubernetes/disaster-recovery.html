@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperació de desastres en Kubernetes</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kubernetes/disaster-recovery" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kubernetes/disaster-recovery" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kubernetes/disaster-recovery" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kubernetes/disaster-recovery" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kubernetes/disaster-recovery" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='high-availability'>&#x25C4;Alta Disponibilitat</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Recuperació de desastres en Kubernetes</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='cost-management'>Gestió de Costos &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La recuperació de desastres és un aspecte crític de la gestió de clústers de Kubernetes, assegurant que les teves aplicacions puguin recuperar-se de fallades i continuar operant sense problemes. Aquest tema et guiarà a través dels conceptes essencials, estratègies i eines per implementar la recuperació de desastres en Kubernetes, des de nivells bàsics fins a avançats.</p>
+</div><h1>Introducció a la Recuperació de Desastres</h1>
+<div class='content'><p>La recuperació de desastres implica preparar-se per i recuperar-se d'esdeveniments inesperats que poden causar interrupcions significatives als teus clústers de Kubernetes. Aquests esdeveniments poden incloure fallades de maquinari, talls de xarxa, errors de programari i fins i tot desastres naturals.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Alta Disponibilitat (HA):</strong> Assegurar que les teves aplicacions i serveis estiguin sempre disponibles, fins i tot en cas de fallada.</li>
+<li><strong>Còpia de seguretat i restauració:</strong> Guardar còpies regulars de les teves dades i configuracions perquè es puguin restaurar si cal.</li>
+<li><strong>Failover:</strong> Canviar automàticament a un sistema de reserva quan el sistema principal falla.</li>
+<li><strong>Replicació:</strong> Mantenir múltiples còpies de les teves dades en diferents ubicacions per evitar la pèrdua de dades.</li>
+</ul>
+</div><h1>Còpia de seguretat i restauració</h1>
+<div class='content'><p>Fer còpies de seguretat del teu clúster de Kubernetes és essencial per a la recuperació de desastres. Aquesta secció cobreix els conceptes bàsics de crear i restaurar còpies de seguretat.</p>
+</div><h2>Fer còpies de seguretat d'etcd</h2>
+<div class='content'><p><code>etcd</code> és el magatzem de claus-valor utilitzat per Kubernetes per emmagatzemar totes les dades del clúster. Fer còpies de seguretat d'<code>etcd</code> és crucial per a la recuperació de desastres.</p>
+<h4>Exemple: Fer còpies de seguretat d'etcd</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RVRDRENUTF9BUEk9MyBldGNkY3RsIHNuYXBzaG90IHNhdmUgc25hcHNob3QuZGIgXAogIC0tZW5kcG9pbnRzPWh0dHBzOi8vMTI3LjAuMC4xOjIzNzkgXAogIC0tY2FjZXJ0PS9ldGMva3ViZXJuZXRlcy9wa2kvZXRjZC9jYS5jcnQgXAogIC0tY2VydD0vZXRjL2t1YmVybmV0ZXMvcGtpL2V0Y2Qvc2VydmVyLmNydCBcCiAgLS1rZXk9L2V0Yy9rdWJlcm5ldGVzL3BraS9ldGNkL3NlcnZlci5rZXk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ETCDCTL_API=3 etcdctl snapshot save snapshot.db \
+  --endpoints=https://127.0.0.1:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key</pre></div><div class='content'><h4>Explicació:</h4>
+<ul>
+<li><code>ETCDCTL_API=3</code>: Especifica la versió de l'API d'etcd.</li>
+<li><code>etcdctl snapshot save snapshot.db</code>: Comanda per guardar la instantània en un fitxer anomenat <code>snapshot.db</code>.</li>
+<li><code>--endpoints</code>: Els punts finals del servidor etcd.</li>
+<li><code>--cacert</code>, <code>--cert</code>, <code>--key</code>: Rutes als fitxers de certificat per a la comunicació segura.</li>
+</ul>
+</div><h2>Restaurar etcd</h2>
+<div class='content'><p>Per restaurar una còpia de seguretat d'etcd, cal aturar el servei etcd, restaurar la instantània i després reiniciar el servei.</p>
+<h4>Exemple: Restaurar etcd</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RVRDRENUTF9BUEk9MyBldGNkY3RsIHNuYXBzaG90IHJlc3RvcmUgc25hcHNob3QuZGIgXAogIC0tZGF0YS1kaXI9L3Zhci9saWIvZXRjZC1mcm9tLWJhY2t1cA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ETCDCTL_API=3 etcdctl snapshot restore snapshot.db \
+  --data-dir=/var/lib/etcd-from-backup</pre></div><div class='content'><h4>Explicació:</h4>
+<ul>
+<li><code>etcdctl snapshot restore snapshot.db</code>: Comanda per restaurar la instantània des del fitxer <code>snapshot.db</code>.</li>
+<li><code>--data-dir</code>: Directori on s'emmagatzemaran les dades restaurades.</li>
+</ul>
+</div><h1>Alta Disponibilitat (HA)</h1>
+<div class='content'><p>L'alta disponibilitat assegura que el teu clúster de Kubernetes segueixi operatiu fins i tot si alguns components fallen. Aquesta secció cobreix estratègies per aconseguir HA.</p>
+</div><h2>Configuració Multi-Master</h2>
+<div class='content'><p>Una configuració multi-master implica executar múltiples nodes master per evitar un punt únic de fallada.</p>
+<h4>Exemple: Configuració de Nodes Multi-Master</h4>
+<ol>
+<li>
+<p><strong>Provisió de múltiples nodes master:</strong></p>
+<ul>
+<li>Crea almenys tres nodes master per assegurar el quòrum.</li>
+</ul>
+</li>
+<li>
+<p><strong>Configura un equilibrador de càrrega:</strong></p>
+<ul>
+<li>Utilitza un equilibrador de càrrega per distribuir el trànsit entre els nodes master.</li>
+</ul>
+</li>
+<li>
+<p><strong>Uneix els nodes worker:</strong></p>
+<ul>
+<li>Uneix els nodes worker al clúster utilitzant l'adreça de l'equilibrador de càrrega.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Exemple de Configuració</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjoga3ViZWFkbS5rOHMuaW8vdjFiZXRhMgpraW5kOiBDbHVzdGVyQ29uZmlndXJhdGlvbgpjb250cm9sUGxhbmVFbmRwb2ludDogIkxPQURfQkFMQU5DRVJfRE5TOkxPQURfQkFMQU5DRVJfUE9SVCI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+controlPlaneEndpoint: &quot;LOAD_BALANCER_DNS:LOAD_BALANCER_PORT&quot;</pre></div><div class='content'><h4>Explicació:</h4>
+<ul>
+<li><code>controlPlaneEndpoint</code>: Especifica l'adreça de l'equilibrador de càrrega que distribueix el trànsit als nodes master.</li>
+</ul>
+</div><h1>Failover i Replicació</h1>
+<div class='content'><p>El failover i la replicació són essencials per assegurar que les teves aplicacions puguin continuar funcionant en cas de fallada.</p>
+</div><h2>StatefulSets per a la Replicació</h2>
+<div class='content'><p>Els StatefulSets gestionen el desplegament i l'escalat d'un conjunt de Pods, proporcionant garanties sobre l'ordre i la unicitat d'aquests Pods.</p>
+<h4>Exemple: Configuració de StatefulSet</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogYXBwcy92MQpraW5kOiBTdGF0ZWZ1bFNldAptZXRhZGF0YToKICBuYW1lOiB3ZWIKc3BlYzoKICBzZXJ2aWNlTmFtZTogIm5naW54IgogIHJlcGxpY2FzOiAzCiAgc2VsZWN0b3I6CiAgICBtYXRjaExhYmVsczoKICAgICAgYXBwOiBuZ2lueAogIHRlbXBsYXRlOgogICAgbWV0YWRhdGE6CiAgICAgIGxhYmVsczoKICAgICAgICBhcHA6IG5naW54CiAgICBzcGVjOgogICAgICBjb250YWluZXJzOgogICAgICAtIG5hbWU6IG5naW54CiAgICAgICAgaW1hZ2U6IG5naW54OjEuMTQuMgogICAgICAgIHBvcnRzOgogICAgICAgIC0gY29udGFpbmVyUG9ydDogODAKICB2b2x1bWVDbGFpbVRlbXBsYXRlczoKICAtIG1ldGFkYXRhOgogICAgICBuYW1lOiB3d3cKICAgIHNwZWM6CiAgICAgIGFjY2Vzc01vZGVzOiBbICJSZWFkV3JpdGVPbmNlIiBdCiAgICAgIHJlc291cmNlczoKICAgICAgICByZXF1ZXN0czoKICAgICAgICAgIHN0b3JhZ2U6IDFHaQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: web
+spec:
+  serviceName: &quot;nginx&quot;
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+  volumeClaimTemplates:
+  - metadata:
+      name: www
+    spec:
+      accessModes: [ &quot;ReadWriteOnce&quot; ]
+      resources:
+        requests:
+          storage: 1Gi</pre></div><div class='content'><h4>Explicació:</h4>
+<ul>
+<li><code>replicas</code>: Nombre de Pods desitjats.</li>
+<li><code>volumeClaimTemplates</code>: Defineix els requisits d'emmagatzematge per a cada Pod.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La recuperació de desastres en Kubernetes implica una combinació d'estratègies i eines per assegurar que les teves aplicacions puguin recuperar-se de fallades i continuar operant. Comprenent i implementant procediments de còpia de seguretat i restauració, configuracions d'alta disponibilitat i mecanismes de failover, pots construir clústers de Kubernetes resilients capaços de suportar diversos tipus de disrupcions.</p>
+</div><h2>Resum</h2>
+<div class='content'><ul>
+<li><strong>Còpia de seguretat i restauració:</strong> Fes còpies de seguretat regulars d'<code>etcd</code> i sap com restaurar-les.</li>
+<li><strong>Alta Disponibilitat:</strong> Utilitza configuracions multi-master i equilibradors de càrrega per evitar punts únics de fallada.</li>
+<li><strong>Failover i Replicació:</strong> Utilitza StatefulSets i altres característiques de Kubernetes per assegurar la replicació de dades i el failover automàtic.</li>
+</ul>
+<p>Seguint aquestes pràctiques, pots millorar significativament la resiliència i la fiabilitat de les teves implementacions de Kubernetes.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='high-availability'>&#x25C4;Alta Disponibilitat</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Recuperació de desastres en Kubernetes</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='cost-management'>Gestió de Costos &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

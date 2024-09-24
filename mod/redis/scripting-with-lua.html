@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scripting amb Lua a Redis</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/redis/scripting-with-lua" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/redis/scripting-with-lua" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/redis/scripting-with-lua" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/redis/scripting-with-lua" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/redis/scripting-with-lua" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='pipelining'>&#x25C4;Pipelining</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Scripting amb Lua a Redis</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='snapshots-rdb'>Snapshots (RDB) &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Redis no és només un magatzem clau-valor; també admet scripts del costat del servidor utilitzant Lua. Això permet operacions més complexes i transaccions atòmiques. Aquesta secció et guiarà des dels conceptes bàsics de l'scripting amb Lua a Redis fins a tècniques avançades.</p>
+</div><h1>Introducció a l'Scripting amb Lua a Redis</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Què és Lua?</strong></p>
+<ul>
+<li>Lua és un llenguatge de programació lleuger, d'alt nivell i multi-paradigma dissenyat principalment per a ús incrustat en aplicacions.</li>
+</ul>
+</li>
+<li>
+<p><strong>Per què utilitzar Lua a Redis?</strong></p>
+<ul>
+<li>Atomicitat: Totes les comandes en un script s'executen com una única operació atòmica.</li>
+<li>Rendiment: Redueix el nombre de viatges d'anada i tornada entre el client i el servidor.</li>
+<li>Flexibilitat: Permet operacions complexes que no són possibles amb les comandes estàndard de Redis.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Scripting Bàsic amb Lua</h1>
+<div class='content'></div><h2>Escriure el teu Primer Script</h2>
+<div class='content'><p>Per executar un script Lua a Redis, utilitzes la comanda <code>EVAL</code>. Aquí tens un exemple senzill:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gU2NyaXB0IEx1YSBwZXIgcmV0b3JuYXIgdW5hIGNhZGVuYSBzaW1wbGUKcmV0dXJuICJIb2xhLCBSZWRpcyEi"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Script Lua per retornar una cadena simple
+return &quot;Hola, Redis!&quot;</pre></div><div class='content'><p>Per executar aquest script a Redis:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RVZBTCAicmV0dXJuICdIb2xhLCBSZWRpcyEnIiAw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>EVAL &quot;return 'Hola, Redis!'&quot; 0</pre></div><div class='content'></div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Execució d'Scripts:</strong></p>
+<ul>
+<li><code>EVAL script numkeys key [key ...] arg [arg ...]</code></li>
+<li><code>script</code>: L'script Lua a executar.</li>
+<li><code>numkeys</code>: El nombre de claus que l'script accedirà.</li>
+<li><code>key [key ...]</code>: Les claus que l'script accedirà.</li>
+<li><code>arg [arg ...]</code>: Arguments addicionals passats a l'script.</li>
+</ul>
+</li>
+<li>
+<p><strong>Accés a Claus i Arguments:</strong></p>
+<ul>
+<li><code>KEYS</code>: Una taula (array) que conté les claus.</li>
+<li><code>ARGV</code>: Una taula (array) que conté els arguments.</li>
+</ul>
+</li>
+</ul>
+<p>Exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gU2NyaXB0IEx1YSBwZXIgb2J0ZW5pciBpIGVzdGFibGlyIHVuYSBjbGF1CmxvY2FsIGtleSA9IEtFWVNbMV0KbG9jYWwgdmFsdWUgPSBBUkdWWzFdCnJlZGlzLmNhbGwoIlNFVCIsIGtleSwgdmFsdWUpCnJldHVybiByZWRpcy5jYWxsKCJHRVQiLCBrZXkp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Script Lua per obtenir i establir una clau
+local key = KEYS[1]
+local value = ARGV[1]
+redis.call(&quot;SET&quot;, key, value)
+return redis.call(&quot;GET&quot;, key)</pre></div><div class='content'><p>Per executar aquest script:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RVZBTCAibG9jYWwga2V5ID0gS0VZU1sxXTsgbG9jYWwgdmFsdWUgPSBBUkdWWzFdOyByZWRpcy5jYWxsKCdTRVQnLCBrZXksIHZhbHVlKTsgcmV0dXJuIHJlZGlzLmNhbGwoJ0dFVCcsIGtleSk7IiAxIG15a2V5IG15dmFsdWU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>EVAL &quot;local key = KEYS[1]; local value = ARGV[1]; redis.call('SET', key, value); return redis.call('GET', key);&quot; 1 mykey myvalue</pre></div><div class='content'></div><h1>Scripting Intermedi amb Lua</h1>
+<div class='content'></div><h2>Lògica Condicional</h2>
+<div class='content'><p>Els scripts Lua poden incloure lògica condicional per realitzar operacions més complexes.</p>
+<p>Exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gU2NyaXB0IEx1YSBwZXIgZXN0YWJsaXIgdW5hIGNsYXUgY29uZGljaW9uYWxtZW50CmxvY2FsIGtleSA9IEtFWVNbMV0KbG9jYWwgdmFsdWUgPSBBUkdWWzFdCmlmIHJlZGlzLmNhbGwoIkVYSVNUUyIsIGtleSkgPT0gMCB0aGVuCiAgICByZWRpcy5jYWxsKCJTRVQiLCBrZXksIHZhbHVlKQogICAgcmV0dXJuICJDbGF1IGVzdGFibGVydGEiCmVsc2UKICAgIHJldHVybiAiTGEgY2xhdSBqYSBleGlzdGVpeCIKZW5k"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Script Lua per establir una clau condicionalment
+local key = KEYS[1]
+local value = ARGV[1]
+if redis.call(&quot;EXISTS&quot;, key) == 0 then
+    redis.call(&quot;SET&quot;, key, value)
+    return &quot;Clau establerta&quot;
+else
+    return &quot;La clau ja existeix&quot;
+end</pre></div><div class='content'></div><h2>Bucles</h2>
+<div class='content'><p>Pots utilitzar bucles per iterar sobre claus o arguments.</p>
+<p>Exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gU2NyaXB0IEx1YSBwZXIgaW5jcmVtZW50YXIgbcO6bHRpcGxlcyBjbGF1cwpmb3IgaSwga2V5IGluIGlwYWlycyhLRVlTKSBkbwogICAgcmVkaXMuY2FsbCgiSU5DUiIsIGtleSkKZW5kCnJldHVybiAiVG90ZXMgbGVzIGNsYXVzIGluY3JlbWVudGFkZXMi"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Script Lua per incrementar m&uacute;ltiples claus
+for i, key in ipairs(KEYS) do
+    redis.call(&quot;INCR&quot;, key)
+end
+return &quot;Totes les claus incrementades&quot;</pre></div><div class='content'></div><h1>Scripting Avançat amb Lua</h1>
+<div class='content'></div><h2>Gestió d'Errors</h2>
+<div class='content'><p>Els scripts Lua poden gestionar errors utilitzant <code>pcall</code> (crida protegida).</p>
+<p>Exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gU2NyaXB0IEx1YSBhbWIgZ2VzdGnDsyBkJ2Vycm9ycwpsb2NhbCBzdGF0dXMsIGVyciA9IHBjYWxsKGZ1bmN0aW9uKCkKICAgIGxvY2FsIGtleSA9IEtFWVNbMV0KICAgIHJlZGlzLmNhbGwoIklOQ1IiLCBrZXkpCmVuZCkKaWYgbm90IHN0YXR1cyB0aGVuCiAgICByZXR1cm4gIkVycm9yOiAiIC4uIGVycgplbHNlCiAgICByZXR1cm4gIsOIeGl0IgplbmQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Script Lua amb gesti&oacute; d'errors
+local status, err = pcall(function()
+    local key = KEYS[1]
+    redis.call(&quot;INCR&quot;, key)
+end)
+if not status then
+    return &quot;Error: &quot; .. err
+else
+    return &quot;&Egrave;xit&quot;
+end</pre></div><div class='content'></div><h2>Optimització del Rendiment</h2>
+<div class='content'><ul>
+<li><strong>Minimitza el nombre de crides a Redis:</strong> Combina múltiples operacions en un únic script.</li>
+<li><strong>Utilitza variables locals:</strong> Accedir a variables locals és més ràpid que accedir a variables globals o taules.</li>
+</ul>
+<p>Exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gU2NyaXB0IEx1YSBvcHRpbWl0emF0CmxvY2FsIGtleSA9IEtFWVNbMV0KbG9jYWwgdmFsdWUgPSB0b251bWJlcihyZWRpcy5jYWxsKCJHRVQiLCBrZXkpKQppZiB2YWx1ZSB0aGVuCiAgICByZWRpcy5jYWxsKCJTRVQiLCBrZXksIHZhbHVlICsgMSkKZWxzZQogICAgcmVkaXMuY2FsbCgiU0VUIiwga2V5LCAxKQplbmQKcmV0dXJuIHJlZGlzLmNhbGwoIkdFVCIsIGtleSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Script Lua optimitzat
+local key = KEYS[1]
+local value = tonumber(redis.call(&quot;GET&quot;, key))
+if value then
+    redis.call(&quot;SET&quot;, key, value + 1)
+else
+    redis.call(&quot;SET&quot;, key, 1)
+end
+return redis.call(&quot;GET&quot;, key)</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>L'scripting amb Lua a Redis és una característica potent que et permet realitzar operacions complexes de manera atòmica i eficient. Entenent els conceptes bàsics, intermedis i avançats, pots aprofitar Lua per millorar significativament les teves aplicacions Redis. Practica escrivint i optimitzant scripts per convertir-te en un expert en l'ús de Lua amb Redis.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='pipelining'>&#x25C4;Pipelining</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Scripting amb Lua a Redis</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='snapshots-rdb'>Snapshots (RDB) &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

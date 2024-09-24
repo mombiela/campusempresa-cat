@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construcció i Execució d'Aplicacions Multi-Contenidor</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/docker/building-running-multi-container-applications" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/docker/building-running-multi-container-applications" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/docker/building-running-multi-container-applications" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/docker/building-running-multi-container-applications" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/docker/building-running-multi-container-applications" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='defining-services-docker-compose'>&#x25C4;Definint serveis a Docker Compose</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Construcció i Execució d'Aplicacions Multi-Contenidor</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='networking-docker-compose'>Xarxes amb Docker Compose &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquesta secció, explorarem com construir i executar aplicacions multi-contenidor utilitzant Docker. Això és essencial per crear aplicacions escalables i mantenibles que consisteixen en múltiples serveis treballant junts.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Arquitectura de Microserveis</strong>: Descomposició d'aplicacions en serveis més petits i independents.</li>
+<li><strong>Docker Compose</strong>: Una eina per definir i executar aplicacions Docker multi-contenidor.</li>
+<li><strong>Dependències de Serveis</strong>: Gestió de com els serveis interactuen i depenen els uns dels altres.</li>
+<li><strong>Xarxes</strong>: Assegurar que els contenidors puguin comunicar-se entre ells.</li>
+</ul>
+</div><h1>Conceptes Bàsics de Docker Compose</h1>
+<div class='content'><p>Docker Compose és una eina que et permet definir i gestionar aplicacions Docker multi-contenidor. Utilitza un fitxer YAML per configurar els serveis, xarxes i volums de l'aplicació.</p>
+</div><h2>Instal·lació de Docker Compose</h2>
+<div class='content'><p>Docker Compose està inclòs a Docker Desktop per a Windows i Mac. Per a Linux, pots instal·lar-lo utilitzant la següent comanda:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3VkbyBjdXJsIC1MICJodHRwczovL2dpdGh1Yi5jb20vZG9ja2VyL2NvbXBvc2UvcmVsZWFzZXMvZG93bmxvYWQvMS4yOS4yL2RvY2tlci1jb21wb3NlLSQodW5hbWUgLXMpLSQodW5hbWUgLW0pIiAtbyAvdXNyL2xvY2FsL2Jpbi9kb2NrZXItY29tcG9zZQpzdWRvIGNobW9kICt4IC91c3IvbG9jYWwvYmluL2RvY2tlci1jb21wb3Nl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>sudo curl -L &quot;https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)&quot; -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose</pre></div><div class='content'></div><h2>Creació d'un Fitxer `docker-compose.yml`</h2>
+<div class='content'><p>Un fitxer <code>docker-compose.yml</code> defineix els serveis que componen la teva aplicació. Aquí tens un exemple per a una aplicació web senzilla amb un servei de frontend i un de backend:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmVyc2lvbjogJzMnCnNlcnZpY2VzOgogIGZyb250ZW5kOgogICAgaW1hZ2U6IG5naW54OmxhdGVzdAogICAgcG9ydHM6CiAgICAgIC0gIjgwOjgwIgogICAgdm9sdW1lczoKICAgICAgLSAuL2Zyb250ZW5kOi91c3Ivc2hhcmUvbmdpbngvaHRtbAogIGJhY2tlbmQ6CiAgICBpbWFnZTogbm9kZToxNAogICAgd29ya2luZ19kaXI6IC9hcHAKICAgIHZvbHVtZXM6CiAgICAgIC0gLi9iYWNrZW5kOi9hcHAKICAgIGNvbW1hbmQ6IG5wbSBzdGFydA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>version: '3'
+services:
+  frontend:
+    image: nginx:latest
+    ports:
+      - &quot;80:80&quot;
+    volumes:
+      - ./frontend:/usr/share/nginx/html
+  backend:
+    image: node:14
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    command: npm start</pre></div><div class='content'></div><h2>Execució de Docker Compose</h2>
+<div class='content'><p>Per iniciar l'aplicació, navega al directori que conté el teu fitxer <code>docker-compose.yml</code> i executa:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyLWNvbXBvc2UgdXA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker-compose up</pre></div><div class='content'><p>Aquesta comanda iniciarà tots els serveis definits al fitxer <code>docker-compose.yml</code>.</p>
+</div><h1>Dependències de Serveis</h1>
+<div class='content'><p>En una aplicació multi-contenidor, els serveis sovint depenen els uns dels altres. Docker Compose et permet especificar dependències utilitzant l'opció <code>depends_on</code>.</p>
+</div><h2>Exemple amb Dependències</h2>
+<div class='content'><p>Aquí tens un exemple on el servei de backend depèn d'un servei de base de dades:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmVyc2lvbjogJzMnCnNlcnZpY2VzOgogIGRiOgogICAgaW1hZ2U6IHBvc3RncmVzOmxhdGVzdAogICAgZW52aXJvbm1lbnQ6CiAgICAgIFBPU1RHUkVTX1VTRVI6IHVzZXIKICAgICAgUE9TVEdSRVNfUEFTU1dPUkQ6IHBhc3N3b3JkCiAgICAgIFBPU1RHUkVTX0RCOiBteWRiCiAgYmFja2VuZDoKICAgIGltYWdlOiBub2RlOjE0CiAgICB3b3JraW5nX2RpcjogL2FwcAogICAgdm9sdW1lczoKICAgICAgLSAuL2JhY2tlbmQ6L2FwcAogICAgY29tbWFuZDogbnBtIHN0YXJ0CiAgICBkZXBlbmRzX29uOgogICAgICAtIGRi"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>version: '3'
+services:
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+  backend:
+    image: node:14
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    command: npm start
+    depends_on:
+      - db</pre></div><div class='content'></div><h1>Xarxes</h1>
+<div class='content'><p>Docker Compose crea automàticament una xarxa per a la teva aplicació, permetent que els serveis es comuniquin entre ells pels seus noms de servei.</p>
+</div><h2>Exemple amb Xarxes</h2>
+<div class='content'><p>En l'exemple anterior, el servei de backend pot connectar-se al servei de base de dades utilitzant el nom de servei <code>db</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgeyBDbGllbnQgfSA9IHJlcXVpcmUoJ3BnJyk7CmNvbnN0IGNsaWVudCA9IG5ldyBDbGllbnQoewogIGhvc3Q6ICdkYicsCiAgdXNlcjogJ3VzZXInLAogIHBhc3N3b3JkOiAncGFzc3dvcmQnLAogIGRhdGFiYXNlOiAnbXlkYicKfSk7CmNsaWVudC5jb25uZWN0KCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const { Client } = require('pg');
+const client = new Client({
+  host: 'db',
+  user: 'user',
+  password: 'password',
+  database: 'mydb'
+});
+client.connect();</pre></div><div class='content'></div><h1>Funcions Avançades de Docker Compose</h1>
+<div class='content'><p>Docker Compose ofereix diverses funcions avançades per gestionar aplicacions complexes.</p>
+</div><h2>Variables d'Entorn</h2>
+<div class='content'><p>Pots utilitzar variables d'entorn per configurar els teus serveis dinàmicament.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmVyc2lvbjogJzMnCnNlcnZpY2VzOgogIGJhY2tlbmQ6CiAgICBpbWFnZTogbm9kZToxNAogICAgd29ya2luZ19kaXI6IC9hcHAKICAgIHZvbHVtZXM6CiAgICAgIC0gLi9iYWNrZW5kOi9hcHAKICAgIGNvbW1hbmQ6IG5wbSBzdGFydAogICAgZW52aXJvbm1lbnQ6CiAgICAgIC0gTk9ERV9FTlY9cHJvZHVjdGlvbg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>version: '3'
+services:
+  backend:
+    image: node:14
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+    command: npm start
+    environment:
+      - NODE_ENV=production</pre></div><div class='content'></div><h2>Volums</h2>
+<div class='content'><p>Els volums et permeten persistir dades i compartir-les entre serveis.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmVyc2lvbjogJzMnCnNlcnZpY2VzOgogIGRiOgogICAgaW1hZ2U6IHBvc3RncmVzOmxhdGVzdAogICAgdm9sdW1lczoKICAgICAgLSBkYi1kYXRhOi92YXIvbGliL3Bvc3RncmVzcWwvZGF0YQp2b2x1bWVzOgogIGRiLWRhdGE6"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>version: '3'
+services:
+  db:
+    image: postgres:latest
+    volumes:
+      - db-data:/var/lib/postgresql/data
+volumes:
+  db-data:</pre></div><div class='content'></div><h2>Escalar Serveis</h2>
+<div class='content'><p>Pots escalar serveis per gestionar més càrrega especificant el nombre d'instàncies.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyLWNvbXBvc2UgdXAgLS1zY2FsZSBiYWNrZW5kPTM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker-compose up --scale backend=3</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Construir i executar aplicacions multi-contenidor amb Docker Compose simplifica la gestió d'aplicacions complexes. Descomponent les aplicacions en serveis més petits, pots aconseguir millor escalabilitat i mantenibilitat. Docker Compose proporciona funcions potents per gestionar dependències de serveis, xarxes i escalabilitat, fent-lo una eina essencial per al desenvolupament d'aplicacions modernes.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='defining-services-docker-compose'>&#x25C4;Definint serveis a Docker Compose</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Construcció i Execució d'Aplicacions Multi-Contenidor</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='networking-docker-compose'>Xarxes amb Docker Compose &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

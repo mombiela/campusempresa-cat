@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemple Pràctic: Desplegament d'una Aplicació Web en Google App Engine</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/iaas_paas_saas/ejemplo-practico-despliegue-aplicacion-web-google-app-engine" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/iaas_paas_saas/ejemplo-practico-despliegue-aplicacion-web-google-app-engine" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/iaas_paas_saas/ejemplo-practico-despliegue-aplicacion-web-google-app-engine" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/iaas_paas_saas/ejemplo-practico-despliegue-aplicacion-web-google-app-engine" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/iaas_paas_saas/ejemplo-practico-despliegue-aplicacion-web-google-app-engine" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Exemple Pràctic: Desplegament d'una Aplicació Web en Google App Engine</a>
+	</div>
+	<div class='col-4 text-end'>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquesta secció, aprendrem a desplegar una aplicació web en Google App Engine (GAE), una plataforma com a servei (PaaS) que permet als desenvolupadors construir i desplegar aplicacions sense preocupar-se per la infraestructura subjacent. Aquest exemple pràctic és ideal per entendre com funciona una PaaS i com pot facilitar el procés de desplegament i escalabilitat d'aplicacions web.</p>
+</div><h1>Requisits Previs</h1>
+<div class='content'><p>Abans de començar, assegura't de tenir el següent:</p>
+<ul>
+<li>Un compte de Google Cloud Platform (GCP).</li>
+<li>Google Cloud SDK instal·lat a la teva màquina.</li>
+<li>Coneixements bàsics de Python i Flask (per a aquest exemple utilitzarem una aplicació web senzilla en Flask).</li>
+</ul>
+</div><h1>Pas 1: Configuració de l'Entorn</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Instal·lar Google Cloud SDK</strong>:</p>
+<ul>
+<li>Descarrega i instal·la el SDK des de <a href="https://cloud.google.com/sdk/docs/install">Google Cloud SDK</a>.</li>
+<li>Inicialitza el SDK amb el comandament:
+<pre><code class="language-bash">gcloud init
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Crear un Projecte en GCP</strong>:</p>
+<ul>
+<li>Ves a la <a href="https://console.cloud.google.com/">Consola de Google Cloud</a>.</li>
+<li>Crea un nou projecte i pren nota de l'ID del projecte.</li>
+</ul>
+</li>
+<li>
+<p><strong>Configurar el Projecte en el SDK</strong>:</p>
+<ul>
+<li>Configura el projecte en el SDK amb el comandament:
+<pre><code class="language-bash">gcloud config set project [YOUR_PROJECT_ID]
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+</div><h1>Pas 2: Crear una Aplicació Web Senzilla</h1>
+<div class='content'><p>Anem a crear una aplicació web senzilla utilitzant Flask.</p>
+<ol>
+<li>
+<p><strong>Instal·lar Flask</strong>:</p>
+<ul>
+<li>Assegura't de tenir <code>pip</code> instal·lat i executa:
+<pre><code class="language-bash">pip install Flask
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Crear l'Aplicació</strong>:</p>
+<ul>
+<li>Crea un fitxer anomenat <code>main.py</code> amb el següent contingut:
+<pre><code class="language-python">from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello():
+    return 'Hello, World!'
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080)
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+</div><h1>Pas 3: Configurar Google App Engine</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Crear el Fitxer <code>app.yaml</code></strong>:</p>
+<ul>
+<li>Aquest fitxer li diu a GAE com configurar i desplegar l'aplicació.</li>
+<li>Crea un fitxer <code>app.yaml</code> amb el següent contingut:
+<pre><code class="language-yaml">runtime: python39
+
+handlers:
+- url: /.*
+  script: auto
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Estructura del Projecte</strong>:</p>
+<ul>
+<li>Assegura't que el teu projecte tingui la següent estructura:
+<pre><code>my-flask-app/
+├── app.yaml
+└── main.py
+</code></pre>
+</li>
+</ul>
+</li>
+</ol>
+</div><h1>Pas 4: Desplegar l'Aplicació</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Desplegar en Google App Engine</strong>:</p>
+<ul>
+<li>Executa el següent comandament per desplegar la teva aplicació:
+<pre><code class="language-bash">gcloud app deploy
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Verificar el Desplegament</strong>:</p>
+<ul>
+<li>Una vegada completat el desplegament, pots accedir a la teva aplicació a la URL proporcionada per GAE. Generalment, serà alguna cosa com <code>https://[YOUR_PROJECT_ID].appspot.com</code>.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest exemple pràctic, hem cobert els passos necessaris per desplegar una aplicació web senzilla en Google App Engine. Aquest procés il·lustra com una PaaS com GAE pot simplificar el desplegament i la gestió d'aplicacions web, permetent als desenvolupadors centrar-se en el codi i la funcionalitat en lloc de la infraestructura.</p>
+<p>Recorda que GAE ofereix moltes més funcionalitats avançades, com l'escalabilitat automàtica, la integració amb altres serveis de Google Cloud i opcions de configuració més detallades. Explorar aquestes característiques pot ajudar-te a aprofitar al màxim aquesta poderosa plataforma.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Exemple Pràctic: Desplegament d'una Aplicació Web en Google App Engine</a>
+	</div>
+	<div class='col-4 text-end'>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

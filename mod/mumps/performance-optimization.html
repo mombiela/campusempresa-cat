@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimització del Rendiment en MUMPS (M)</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/mumps/performance-optimization" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/mumps/performance-optimization" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/mumps/performance-optimization" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/mumps/performance-optimization" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/mumps/performance-optimization" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='interfacing-other-languages'>&#x25C4;Interfície amb Altres Llenguatges</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització del Rendiment en MUMPS (M)</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='building-simple-application'>Construcció d'una Aplicació Simple &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>L'optimització del rendiment és crucial en la programació de MUMPS (M) per assegurar que les aplicacions funcionin de manera eficient i efectiva. Aquesta secció cobrirà diverses tècniques i millors pràctiques per optimitzar el codi MUMPS, des de nivells bàsics fins a avançats.</p>
+</div><h1>Comprensió dels Colls d'Ampolla del Rendiment</h1>
+<div class='content'><ul>
+<li><strong>Identificar Colls d'Ampolla</strong>: Utilitza eines de perfilatge i tècniques per identificar parts del codi que són lentes o que consumeixen molts recursos.</li>
+<li><strong>Colls d'Ampolla Comuns</strong>: Busca problemes comuns de rendiment com bucles ineficients, operacions d'E/S excessives i estructures de dades subòptimes.</li>
+</ul>
+</div><h1>Tècniques Bàsiques d'Optimització</h1>
+<h2>Bucles Eficients</h2>
+<div class='content'><ul>
+<li><strong>Evitar la Profunditat Excessiva</strong>: Minimitza la profunditat dels bucles imbricats per reduir la complexitat.</li>
+<li><strong>Utilitza $ORDER</strong>: Utilitza la funció <code>$ORDER</code> per recórrer arrays de manera eficient.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("OyBCdWNsZSBJbmVmaWNpZW50ClNFVCBpPTAKRk9SICBTRVQgaT0kT1JERVIoXkRBVEEoaSkpIFFVSVQ6aT0iIiAgRE8KLiBXUklURSBeREFUQShpKSwhCgo7IEJ1Y2xlIEVmaWNpZW50ClNFVCBpPSIiCkZPUiAgU0VUIGk9JE9SREVSKF5EQVRBKGkpKSBRVUlUOmk9IiIgIERPCi4gV1JJVEUgXkRBVEEoaSksIQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>; Bucle Ineficient
+SET i=0
+FOR  SET i=$ORDER(^DATA(i)) QUIT:i=&quot;&quot;  DO
+. WRITE ^DATA(i),!
+
+; Bucle Eficient
+SET i=&quot;&quot;
+FOR  SET i=$ORDER(^DATA(i)) QUIT:i=&quot;&quot;  DO
+. WRITE ^DATA(i),!</pre></div><div class='content'></div><h2>Minimitzar les Operacions d'E/S</h2>
+<div class='content'><ul>
+<li><strong>Processament per Lots</strong>: Processa dades en lots per reduir el nombre d'operacions d'E/S.</li>
+<li><strong>Variables Locals</strong>: Utilitza variables locals per emmagatzemar resultats intermedis en lloc d'accedir repetidament a variables globals.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("OyBFL1MgSW5lZmljaWVudApGT1IgaT0xOjE6MTAwMCBETwouIFdSSVRFIF5HTE9CQUwoaSksIQoKOyBFL1MgRWZpY2llbnQKTkVXIHRlbXAKU0VUIHRlbXA9IiIKRk9SIGk9MToxOjEwMDAgRE8KLiBTRVQgdGVtcD10ZW1wX15HTE9CQUwoaSkKV1JJVEUgdGVtcCwh"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>; E/S Ineficient
+FOR i=1:1:1000 DO
+. WRITE ^GLOBAL(i),!
+
+; E/S Eficient
+NEW temp
+SET temp=&quot;&quot;
+FOR i=1:1:1000 DO
+. SET temp=temp_^GLOBAL(i)
+WRITE temp,!</pre></div><div class='content'></div><h1>Tècniques d'Optimització Intermèdies</h1>
+<h2>Indexació</h2>
+<div class='content'><ul>
+<li><strong>Crear Índexs</strong>: Utilitza índexs per accelerar les operacions de recuperació de dades.</li>
+<li><strong>Mantenir Índexs</strong>: Assegura't que els índexs es mantinguin actualitzats per evitar la degradació del rendiment.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("OyBDcmVhY2nDsyBkJ3VuIMONbmRleApTRVQgXklOREVYKCJuYW1lIixuYW1lKT1pZAoKOyDDmnMgZCd1biDDjW5kZXgKU0VUIG5hbWU9IiIKRk9SICBTRVQgbmFtZT0kT1JERVIoXklOREVYKCJuYW1lIixuYW1lKSkgUVVJVDpuYW1lPSIiICBETwouIFNFVCBpZD1eSU5ERVgoIm5hbWUiLG5hbWUpCi4gV1JJVEUgXkRBVEEoaWQpLCE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>; Creaci&oacute; d'un &Iacute;ndex
+SET ^INDEX(&quot;name&quot;,name)=id
+
+; &Uacute;s d'un &Iacute;ndex
+SET name=&quot;&quot;
+FOR  SET name=$ORDER(^INDEX(&quot;name&quot;,name)) QUIT:name=&quot;&quot;  DO
+. SET id=^INDEX(&quot;name&quot;,name)
+. WRITE ^DATA(id),!</pre></div><div class='content'></div><h2>Gestió de Memòria</h2>
+<div class='content'><ul>
+<li><strong>Optimitzar l'Ús de Memòria</strong>: Utilitza la memòria de manera eficient desallotjant variables que ja no són necessàries.</li>
+<li><strong>Variables Globals vs. Locals</strong>: Prefereix les variables locals sobre les globals per a l'emmagatzematge temporal de dades.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("OyDDmnMgSW5lZmljaWVudCBkZSBsYSBNZW3DsnJpYQpTRVQgXlRFTVAoImRhdGEiKT0ic29tZSBsYXJnZSBkYXRhIgoKOyDDmnMgRWZpY2llbnQgZGUgbGEgTWVtw7JyaWEKTkVXIHRlbXAKU0VUIHRlbXA9InNvbWUgbGFyZ2UgZGF0YSI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>; &Uacute;s Ineficient de la Mem&ograve;ria
+SET ^TEMP(&quot;data&quot;)=&quot;some large data&quot;
+
+; &Uacute;s Eficient de la Mem&ograve;ria
+NEW temp
+SET temp=&quot;some large data&quot;</pre></div><div class='content'></div><h1>Tècniques d'Optimització Avançades</h1>
+<h2>Processament Paral·lel</h2>
+<div class='content'><ul>
+<li><strong>Multi-threading</strong>: Implementa multi-threading per realitzar processament paral·lel quan sigui aplicable.</li>
+<li><strong>Planificació de Tasques</strong>: Utilitza la planificació de tasques per gestionar i optimitzar l'execució de tasques concurrents.</li>
+</ul>
+</div><h2>Estratègies Avançades d'Indexació</h2>
+<div class='content'><ul>
+<li><strong>Índexs Compostos</strong>: Utilitza índexs compostos per a cerques multi-camp.</li>
+<li><strong>Índexs Escassos</strong>: Implementa índexs escassos per optimitzar l'emmagatzematge i la recuperació per a conjunts de dades amb molts valors nuls o buits.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("OyDDjW5kZXggQ29tcG9zdApTRVQgXklOREVYKCJuYW1lIixuYW1lLCJkYXRlIixkYXRlKT1pZAoKOyDDmnMgZCd1biDDjW5kZXggQ29tcG9zdApTRVQgbmFtZT0iIiwgZGF0ZT0iIgpGT1IgIFNFVCBuYW1lPSRPUkRFUiheSU5ERVgoIm5hbWUiLG5hbWUpKSBRVUlUOm5hbWU9IiIgIERPCi4gRk9SICBTRVQgZGF0ZT0kT1JERVIoXklOREVYKCJuYW1lIixuYW1lLCJkYXRlIixkYXRlKSkgUVVJVDpkYXRlPSIiICBETwouIC4gU0VUIGlkPV5JTkRFWCgibmFtZSIsbmFtZSwiZGF0ZSIsZGF0ZSkKLiAuIFdSSVRFIF5EQVRBKGlkKSwh"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>; &Iacute;ndex Compost
+SET ^INDEX(&quot;name&quot;,name,&quot;date&quot;,date)=id
+
+; &Uacute;s d'un &Iacute;ndex Compost
+SET name=&quot;&quot;, date=&quot;&quot;
+FOR  SET name=$ORDER(^INDEX(&quot;name&quot;,name)) QUIT:name=&quot;&quot;  DO
+. FOR  SET date=$ORDER(^INDEX(&quot;name&quot;,name,&quot;date&quot;,date)) QUIT:date=&quot;&quot;  DO
+. . SET id=^INDEX(&quot;name&quot;,name,&quot;date&quot;,date)
+. . WRITE ^DATA(id),!</pre></div><div class='content'></div><h1>Perfilatge i Monitoratge</h1>
+<div class='content'><ul>
+<li><strong>Eines de Perfilatge</strong>: Utilitza eines de perfilatge per mesurar el rendiment del teu codi MUMPS.</li>
+<li><strong>Monitoratge Continu</strong>: Implementa un monitoratge continu per detectar i abordar problemes de rendiment en temps real.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>L'optimització del rendiment en MUMPS implica una combinació d'identificació de colls d'ampolla, aplicació de pràctiques de codificació eficients i aprofitament de tècniques avançades com la indexació i el processament paral·lel. Seguint aquestes directrius, pots assegurar que les teves aplicacions MUMPS funcionin de manera eficient i efectiva, proporcionant una millor experiència per als usuaris i reduint el consum de recursos.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='interfacing-other-languages'>&#x25C4;Interfície amb Altres Llenguatges</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització del Rendiment en MUMPS (M)</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='building-simple-application'>Construcció d'una Aplicació Simple &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear un servidor web en Lua</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/lua/creating-a-web-server" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/lua/creating-a-web-server" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/lua/creating-a-web-server" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/lua/creating-a-web-server" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/lua/creating-a-web-server" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='building-a-simple-game'>&#x25C4;Construir un Joc Simple</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Crear un servidor web en Lua</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='developing-a-gui-application'>Desenvolupar una Aplicació GUI &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, explorarem com crear un servidor web utilitzant Lua. Començarem amb els conceptes bàsics i gradualment passarem a conceptes més avançats. Al final d'aquest tema, seràs capaç de crear un servidor web funcional en Lua, gestionar sol·licituds HTTP i servir contingut dinàmic.</p>
+</div><h1>Prerequisits</h1>
+<div class='content'><p>Abans d'endinsar-nos en la creació d'un servidor web, assegura't de tenir:</p>
+<ul>
+<li>Comprensió bàsica de la programació en Lua.</li>
+<li>Lua instal·lat al teu sistema.</li>
+<li>Familiaritat amb els conceptes bàsics del protocol HTTP.</li>
+</ul>
+</div><h1>Configurant l'entorn</h1>
+<div class='content'><p>Per crear un servidor web en Lua, utilitzarem la biblioteca <code>luasocket</code>, que proporciona suport de xarxa per al llenguatge Lua.</p>
+</div><h2>Instal·lant LuaSocket</h2>
+<div class='content'><p>Per instal·lar LuaSocket, pots utilitzar LuaRocks, el gestor de paquets per a Lua.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bHVhcm9ja3MgaW5zdGFsbCBsdWFzb2NrZXQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>luarocks install luasocket</pre></div><div class='content'></div><h1>Servidor web bàsic</h1>
+<div class='content'><p>Comencem creant un servidor web senzill que escolta en un port específic i respon amb un missatge estàtic.</p>
+</div><h2>Exemple de codi: Servidor web senzill</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgc29ja2V0ID0gcmVxdWlyZSgic29ja2V0IikKCi0tIENyZWFyIHVuIHNvY2tldCBUQ1AgaSB2aW5jdWxhci1sbyBhIGwnYW1maXRyacOzIGxvY2FsLCBlbiBxdWFsc2V2b2wgcG9ydApsb2NhbCBzZXJ2ZXIgPSBhc3NlcnQoc29ja2V0LmJpbmQoIioiLCA4MDgwKSkKCi0tIEltcHJpbWlyIGVsIG7Dum1lcm8gZGUgcG9ydApsb2NhbCBpcCwgcG9ydCA9IHNlcnZlcjpnZXRzb2NrbmFtZSgpCnByaW50KCJTaSB1cyBwbGF1LCBjb25uZWN0YSd0IGEgbG9jYWxob3N0IGVuIGVsIHBvcnQgIiAuLiBwb3J0KQoKLS0gQnVjbGUgaW5maW5pdCBlc3BlcmFudCBjb25uZXhpb25zIGRlIGNsaWVudHMKd2hpbGUgdHJ1ZSBkbwogICAgLS0gRXNwZXJhciB1bmEgY29ubmV4acOzIGRlIHF1YWxzZXZvbCBjbGllbnQKICAgIGxvY2FsIGNsaWVudCA9IHNlcnZlcjphY2NlcHQoKQogICAgCiAgICAtLSBBc3NlZ3VyYXItbm9zIHF1ZSBubyBibG9xdWVnZW0gZXNwZXJhbnQgbGEgbMOtbmlhIGQnYXF1ZXN0IGNsaWVudAogICAgY2xpZW50OnNldHRpbWVvdXQoMTApCiAgICAKICAgIC0tIFJlYnJlIGxhIHNvbMK3bGljaXR1ZAogICAgbG9jYWwgcmVxdWVzdCwgZXJyID0gY2xpZW50OnJlY2VpdmUoKQogICAgCiAgICAtLSBTaSBubyBoaSBoYSBoYWd1dCBjYXAgZXJyb3IsIGVudmlhciB1bmEgcmVzcG9zdGEKICAgIGlmIG5vdCBlcnIgdGhlbgogICAgICAgIHByaW50KCJTb2zCt2xpY2l0dWQgcmVidWRhOiAiIC4uIHJlcXVlc3QpCiAgICAgICAgbG9jYWwgcmVzcG9uc2UgPSAiSFRUUC8xLjEgMjAwIE9LXHJcbkNvbnRlbnQtVHlwZTogdGV4dC9wbGFpblxyXG5cclxuSGVsbG8sIFdvcmxkISIKICAgICAgICBjbGllbnQ6c2VuZChyZXNwb25zZSkKICAgIGVuZAogICAgCiAgICAtLSBBY2FiYXIgYW1iIGVsIGNsaWVudCwgdGFuY2FyIGwnb2JqZWN0ZQogICAgY2xpZW50OmNsb3NlKCkKZW5k"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local socket = require(&quot;socket&quot;)
+
+-- Crear un socket TCP i vincular-lo a l'amfitri&oacute; local, en qualsevol port
+local server = assert(socket.bind(&quot;*&quot;, 8080))
+
+-- Imprimir el n&uacute;mero de port
+local ip, port = server:getsockname()
+print(&quot;Si us plau, connecta't a localhost en el port &quot; .. port)
+
+-- Bucle infinit esperant connexions de clients
+while true do
+    -- Esperar una connexi&oacute; de qualsevol client
+    local client = server:accept()
+    
+    -- Assegurar-nos que no bloquegem esperant la l&iacute;nia d'aquest client
+    client:settimeout(10)
+    
+    -- Rebre la sol&middot;licitud
+    local request, err = client:receive()
+    
+    -- Si no hi ha hagut cap error, enviar una resposta
+    if not err then
+        print(&quot;Sol&middot;licitud rebuda: &quot; .. request)
+        local response = &quot;HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nHello, World!&quot;
+        client:send(response)
+    end
+    
+    -- Acabar amb el client, tancar l'objecte
+    client:close()
+end</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>socket.bind(&quot;*&quot;, 8080)</strong>: Vincula el servidor a totes les adreces IP disponibles en el port 8080.</li>
+<li><strong>server:accept()</strong>: Espera que un client es connecti.</li>
+<li><strong>client:receive()</strong>: Rep la sol·licitud HTTP del client.</li>
+<li><strong>client:send(response)</strong>: Envia una resposta HTTP al client.</li>
+<li><strong>client:close()</strong>: Tanca la connexió amb el client.</li>
+</ul>
+</div><h1>Gestionant sol·licituds HTTP</h1>
+<div class='content'><p>Per gestionar diferents tipus de sol·licituds HTTP (GET, POST, etc.), necessitem analitzar la sol·licitud i respondre en conseqüència.</p>
+</div><h2>Exemple de codi: Gestionant sol·licituds GET</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgc29ja2V0ID0gcmVxdWlyZSgic29ja2V0IikKCmxvY2FsIHNlcnZlciA9IGFzc2VydChzb2NrZXQuYmluZCgiKiIsIDgwODApKQpsb2NhbCBpcCwgcG9ydCA9IHNlcnZlcjpnZXRzb2NrbmFtZSgpCnByaW50KCJTaSB1cyBwbGF1LCBjb25uZWN0YSd0IGEgbG9jYWxob3N0IGVuIGVsIHBvcnQgIiAuLiBwb3J0KQoKd2hpbGUgdHJ1ZSBkbwogICAgbG9jYWwgY2xpZW50ID0gc2VydmVyOmFjY2VwdCgpCiAgICBjbGllbnQ6c2V0dGltZW91dCgxMCkKICAgIAogICAgbG9jYWwgcmVxdWVzdCwgZXJyID0gY2xpZW50OnJlY2VpdmUoKQogICAgCiAgICBpZiBub3QgZXJyIHRoZW4KICAgICAgICBwcmludCgiU29swrdsaWNpdHVkIHJlYnVkYTogIiAuLiByZXF1ZXN0KQogICAgICAgIGxvY2FsIG1ldGhvZCwgcGF0aCA9IHJlcXVlc3Q6bWF0Y2goIl4oJXcrKSVzKC8lUyopJXNIVFRQIikKICAgICAgICAKICAgICAgICBpZiBtZXRob2QgPT0gIkdFVCIgdGhlbgogICAgICAgICAgICBsb2NhbCByZXNwb25zZSA9ICJIVFRQLzEuMSAyMDAgT0tcclxuQ29udGVudC1UeXBlOiB0ZXh0L3BsYWluXHJcblxyXG5Zb3UgcmVxdWVzdGVkOiAiIC4uIHBhdGgKICAgICAgICAgICAgY2xpZW50OnNlbmQocmVzcG9uc2UpCiAgICAgICAgZWxzZQogICAgICAgICAgICBsb2NhbCByZXNwb25zZSA9ICJIVFRQLzEuMSA0MDUgTWV0aG9kIE5vdCBBbGxvd2VkXHJcbkNvbnRlbnQtVHlwZTogdGV4dC9wbGFpblxyXG5cclxuTWV0aG9kIG5vdCBhbGxvd2VkIgogICAgICAgICAgICBjbGllbnQ6c2VuZChyZXNwb25zZSkKICAgICAgICBlbmQKICAgIGVuZAogICAgCiAgICBjbGllbnQ6Y2xvc2UoKQplbmQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local socket = require(&quot;socket&quot;)
+
+local server = assert(socket.bind(&quot;*&quot;, 8080))
+local ip, port = server:getsockname()
+print(&quot;Si us plau, connecta't a localhost en el port &quot; .. port)
+
+while true do
+    local client = server:accept()
+    client:settimeout(10)
+    
+    local request, err = client:receive()
+    
+    if not err then
+        print(&quot;Sol&middot;licitud rebuda: &quot; .. request)
+        local method, path = request:match(&quot;^(%w+)%s(/%S*)%sHTTP&quot;)
+        
+        if method == &quot;GET&quot; then
+            local response = &quot;HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\n\r\nYou requested: &quot; .. path
+            client:send(response)
+        else
+            local response = &quot;HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/plain\r\n\r\nMethod not allowed&quot;
+            client:send(response)
+        end
+    end
+    
+    client:close()
+end</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><em><em>request:match(&quot;^(%w+)%s(/%S</em>)%sHTTP&quot;)</em>*: Analitza el mètode HTTP i el camí de la sol·licitud.</li>
+<li><strong>method == &quot;GET&quot;</strong>: Comprova si el mètode de la sol·licitud és GET i respon en conseqüència.</li>
+</ul>
+</div><h1>Servint contingut dinàmic</h1>
+<div class='content'><p>Per servir contingut dinàmic, podem utilitzar les capacitats de manipulació de cadenes de Lua per generar HTML o altres tipus de contingut sobre la marxa.</p>
+</div><h2>Exemple de codi: Contingut dinàmic</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9jYWwgc29ja2V0ID0gcmVxdWlyZSgic29ja2V0IikKCmxvY2FsIHNlcnZlciA9IGFzc2VydChzb2NrZXQuYmluZCgiKiIsIDgwODApKQpsb2NhbCBpcCwgcG9ydCA9IHNlcnZlcjpnZXRzb2NrbmFtZSgpCnByaW50KCJTaSB1cyBwbGF1LCBjb25uZWN0YSd0IGEgbG9jYWxob3N0IGVuIGVsIHBvcnQgIiAuLiBwb3J0KQoKd2hpbGUgdHJ1ZSBkbwogICAgbG9jYWwgY2xpZW50ID0gc2VydmVyOmFjY2VwdCgpCiAgICBjbGllbnQ6c2V0dGltZW91dCgxMCkKICAgIAogICAgbG9jYWwgcmVxdWVzdCwgZXJyID0gY2xpZW50OnJlY2VpdmUoKQogICAgCiAgICBpZiBub3QgZXJyIHRoZW4KICAgICAgICBwcmludCgiU29swrdsaWNpdHVkIHJlYnVkYTogIiAuLiByZXF1ZXN0KQogICAgICAgIGxvY2FsIG1ldGhvZCwgcGF0aCA9IHJlcXVlc3Q6bWF0Y2goIl4oJXcrKSVzKC8lUyopJXNIVFRQIikKICAgICAgICAKICAgICAgICBpZiBtZXRob2QgPT0gIkdFVCIgdGhlbgogICAgICAgICAgICBsb2NhbCBjb250ZW50ID0gIjxodG1sPjxib2R5PjxoMT5IZWxsbywgTHVhITwvaDE+PHA+WW91IHJlcXVlc3RlZDogIiAuLiBwYXRoIC4uICI8L3A+PC9ib2R5PjwvaHRtbD4iCiAgICAgICAgICAgIGxvY2FsIHJlc3BvbnNlID0gIkhUVFAvMS4xIDIwMCBPS1xyXG5Db250ZW50LVR5cGU6IHRleHQvaHRtbFxyXG5cclxuIiAuLiBjb250ZW50CiAgICAgICAgICAgIGNsaWVudDpzZW5kKHJlc3BvbnNlKQogICAgICAgIGVsc2UKICAgICAgICAgICAgbG9jYWwgcmVzcG9uc2UgPSAiSFRUUC8xLjEgNDA1IE1ldGhvZCBOb3QgQWxsb3dlZFxyXG5Db250ZW50LVR5cGU6IHRleHQvcGxhaW5cclxuXHJcbk1ldGhvZCBub3QgYWxsb3dlZCIKICAgICAgICAgICAgY2xpZW50OnNlbmQocmVzcG9uc2UpCiAgICAgICAgZW5kCiAgICBlbmQKICAgIAogICAgY2xpZW50OmNsb3NlKCkKZW5k"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>local socket = require(&quot;socket&quot;)
+
+local server = assert(socket.bind(&quot;*&quot;, 8080))
+local ip, port = server:getsockname()
+print(&quot;Si us plau, connecta't a localhost en el port &quot; .. port)
+
+while true do
+    local client = server:accept()
+    client:settimeout(10)
+    
+    local request, err = client:receive()
+    
+    if not err then
+        print(&quot;Sol&middot;licitud rebuda: &quot; .. request)
+        local method, path = request:match(&quot;^(%w+)%s(/%S*)%sHTTP&quot;)
+        
+        if method == &quot;GET&quot; then
+            local content = &quot;&lt;html&gt;&lt;body&gt;&lt;h1&gt;Hello, Lua!&lt;/h1&gt;&lt;p&gt;You requested: &quot; .. path .. &quot;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;&quot;
+            local response = &quot;HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n&quot; .. content
+            client:send(response)
+        else
+            local response = &quot;HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/plain\r\n\r\nMethod not allowed&quot;
+            client:send(response)
+        end
+    end
+    
+    client:close()
+end</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>content</strong>: Genera una cadena HTML dinàmicament basada en el camí sol·licitat.</li>
+<li><strong>Content-Type: text/html</strong>: Estableix el tipus de contingut a HTML en la capçalera de la resposta HTTP.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem cobert els conceptes bàsics de la creació d'un servidor web en Lua utilitzant la biblioteca LuaSocket. Hem començat amb un servidor web senzill que respon amb un missatge estàtic, després hem passat a gestionar diferents mètodes de sol·licitud HTTP, i finalment hem servit contingut dinàmic. Amb aquests fonaments, ara pots expandir el teu servidor web per gestionar escenaris més complexos i servir diversos tipus de contingut.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='building-a-simple-game'>&#x25C4;Construir un Joc Simple</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Crear un servidor web en Lua</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='developing-a-gui-application'>Desenvolupar una Aplicació GUI &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

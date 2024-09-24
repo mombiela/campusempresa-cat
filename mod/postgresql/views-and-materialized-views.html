@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vistes i Vistes Materialitzades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/postgresql/views-and-materialized-views" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/postgresql/views-and-materialized-views" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/postgresql/views-and-materialized-views" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/postgresql/views-and-materialized-views" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/postgresql/views-and-materialized-views" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='transactions-and-concurrency'>&#x25C4;Transaccions i concurrència</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Vistes i Vistes Materialitzades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='stored-procedures-and-triggers'>Procediments emmagatzemats i triggers &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>A PostgreSQL, les vistes i les vistes materialitzades són eines poderoses que et permeten simplificar consultes complexes, millorar la seguretat i augmentar el rendiment. Aquesta secció cobrirà els conceptes bàsics de les vistes i les vistes materialitzades, les seves diferències i com utilitzar-les de manera efectiva.</p>
+</div><h1>Vistes</h1>
+<div class='content'></div><h2>Què és una Vista?</h2>
+<div class='content'><ul>
+<li>Una vista és una taula virtual basada en el conjunt de resultats d'una consulta SQL.</li>
+<li>No emmagatzema dades físicament; en canvi, proporciona una manera de veure dades d'una o més taules.</li>
+<li>Les vistes poden simplificar consultes complexes encapsulant-les en un sol objecte.</li>
+</ul>
+</div><h2>Crear una Vista</h2>
+<div class='content'><p>Per crear una vista, utilitza la instrucció <code>CREATE VIEW</code> seguida del nom de la vista i la consulta que defineix la vista.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFZJRVcgdmlld19uYW1lIEFTClNFTEVDVCBjb2x1bW4xLCBjb2x1bW4yLCAuLi4KRlJPTSB0YWJsZV9uYW1lCldIRVJFIGNvbmRpdGlvbjs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE VIEW view_name AS
+SELECT column1, column2, ...
+FROM table_name
+WHERE condition;</pre></div><div class='content'><h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFZJRVcgZW1wbG95ZWVfdmlldyBBUwpTRUxFQ1QgaWQsIGZpcnN0X25hbWUsIGxhc3RfbmFtZSwgZGVwYXJ0bWVudApGUk9NIGVtcGxveWVlcwpXSEVSRSBhY3RpdmUgPSB0cnVlOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE VIEW employee_view AS
+SELECT id, first_name, last_name, department
+FROM employees
+WHERE active = true;</pre></div><div class='content'><p>Aquesta vista, <code>employee_view</code>, mostra només els empleats actius.</p>
+</div><h2>Utilitzar una Vista</h2>
+<div class='content'><p>Pots consultar una vista igual que una taula regular.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUICogRlJPTSBlbXBsb3llZV92aWV3Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT * FROM employee_view;</pre></div><div class='content'></div><h2>Actualitzar Dades a través d'una Vista</h2>
+<div class='content'><ul>
+<li>Les vistes poden ser actualitzables si compleixen certs criteris (per exemple, referencien una sola taula base).</li>
+<li>Utilitza les instruccions <code>INSERT</code>, <code>UPDATE</code> o <code>DELETE</code> sobre les vistes per modificar la taula subjacent.</li>
+</ul>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("VVBEQVRFIGVtcGxveWVlX3ZpZXcKU0VUIGRlcGFydG1lbnQgPSAnSFInCldIRVJFIGlkID0gMTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>UPDATE employee_view
+SET department = 'HR'
+WHERE id = 1;</pre></div><div class='content'></div><h2>Avantatges de les Vistes</h2>
+<div class='content'><ul>
+<li>Simplifiquen consultes complexes.</li>
+<li>Milloren la seguretat restringint l'accés a dades específiques.</li>
+<li>Proporcionen un nivell d'abstracció.</li>
+</ul>
+</div><h2>Limitacions de les Vistes</h2>
+<div class='content'><ul>
+<li>El rendiment pot ser un problema per a vistes complexes.</li>
+<li>No totes les vistes són actualitzables.</li>
+</ul>
+</div><h1>Vistes Materialitzades</h1>
+<div class='content'></div><h2>Què és una Vista Materialitzada?</h2>
+<div class='content'><ul>
+<li>Una vista materialitzada emmagatzema el resultat d'una consulta físicament.</li>
+<li>Es pot actualitzar per reflectir les dades.</li>
+<li>Útil per millorar el rendiment en consultes complexes.</li>
+</ul>
+</div><h2>Crear una Vista Materialitzada</h2>
+<div class='content'><p>Per crear una vista materialitzada, utilitza la instrucció <code>CREATE MATERIALIZED VIEW</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIE1BVEVSSUFMSVpFRCBWSUVXIG1hdF92aWV3X25hbWUgQVMKU0VMRUNUIGNvbHVtbjEsIGNvbHVtbjIsIC4uLgpGUk9NIHRhYmxlX25hbWUKV0hFUkUgY29uZGl0aW9uOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE MATERIALIZED VIEW mat_view_name AS
+SELECT column1, column2, ...
+FROM table_name
+WHERE condition;</pre></div><div class='content'><h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIE1BVEVSSUFMSVpFRCBWSUVXIGFjdGl2ZV9lbXBsb3llZXMgQVMKU0VMRUNUIGlkLCBmaXJzdF9uYW1lLCBsYXN0X25hbWUsIGRlcGFydG1lbnQKRlJPTSBlbXBsb3llZXMKV0hFUkUgYWN0aXZlID0gdHJ1ZTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE MATERIALIZED VIEW active_employees AS
+SELECT id, first_name, last_name, department
+FROM employees
+WHERE active = true;</pre></div><div class='content'><p>Aquesta vista materialitzada, <code>active_employees</code>, emmagatzema les dades dels empleats actius.</p>
+</div><h2>Actualitzar una Vista Materialitzada</h2>
+<div class='content'><ul>
+<li>Les vistes materialitzades necessiten ser actualitzades per reflectir els canvis en les taules subjacents.</li>
+<li>Utilitza la instrucció <code>REFRESH MATERIALIZED VIEW</code>.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UkVGUkVTSCBNQVRFUklBTElaRUQgVklFVyBhY3RpdmVfZW1wbG95ZWVzOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>REFRESH MATERIALIZED VIEW active_employees;</pre></div><div class='content'></div><h2>Utilitzar una Vista Materialitzada</h2>
+<div class='content'><p>Consulta una vista materialitzada igual que una taula regular.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUICogRlJPTSBhY3RpdmVfZW1wbG95ZWVzOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT * FROM active_employees;</pre></div><div class='content'></div><h2>Avantatges de les Vistes Materialitzades</h2>
+<div class='content'><ul>
+<li>Millora del rendiment per a consultes complexes.</li>
+<li>Les dades s'emmagatzemen físicament, reduint la necessitat de càlculs repetits.</li>
+</ul>
+</div><h2>Limitacions de les Vistes Materialitzades</h2>
+<div class='content'><ul>
+<li>Requereix espai d'emmagatzematge.</li>
+<li>Necessita ser actualitzada per mantenir-se al dia.</li>
+</ul>
+</div><h1>Comparació de Vistes i Vistes Materialitzades</h1>
+<div class='content'><p>| Característica          | Vista                          | Vista Materialitzada            |
+|-------------------------|--------------------------------|---------------------------------|
+| Emmagatzematge          | Virtual, sense emmagatzematge físic | Emmagatzematge físic de dades   |
+| Rendiment               | Pot ser més lent per a consultes complexes | Més ràpid per a consultes complexes |
+| Actualització de Dades  | Sempre al dia                  | Necessita ser actualitzada      |
+| Actualitzabilitat       | Pot ser actualitzable          | No actualitzable directament    |
+| Cas d'Ús                | Simplificar consultes, millorar la seguretat | Millorar el rendiment en consultes complexes |</p>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Les vistes i les vistes materialitzades són eines essencials a PostgreSQL per gestionar i optimitzar l'accés a les dades. Les vistes proporcionen una manera de simplificar consultes complexes i millorar la seguretat, mentre que les vistes materialitzades ofereixen beneficis de rendiment per a consultes complexes a costa d'emmagatzematge i la necessitat d'actualització. Entendre quan i com utilitzar cadascuna pot millorar significativament l'eficiència i mantenibilitat de les teves aplicacions de base de dades.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='transactions-and-concurrency'>&#x25C4;Transaccions i concurrència</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Vistes i Vistes Materialitzades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='stored-procedures-and-triggers'>Procediments emmagatzemats i triggers &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

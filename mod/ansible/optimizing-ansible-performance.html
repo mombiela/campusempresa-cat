@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimització del Rendiment d'Ansible</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/ansible/optimizing-ansible-performance" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/ansible/optimizing-ansible-performance" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/ansible/optimizing-ansible-performance" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/ansible/optimizing-ansible-performance" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/ansible/optimizing-ansible-performance" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='error-handling-and-debugging'>&#x25C4;Gestió d'Errors i Depuració</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització del Rendiment d'Ansible</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='managing-linux-servers'>Gestió de Servidors Linux &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Optimitzar el rendiment d'Ansible és crucial per assegurar processos d'automatització eficients i ràpids. Aquest tema cobrirà diverses tècniques i millors pràctiques per millorar el rendiment dels vostres playbooks i rols d'Ansible.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Paral·lelisme i Forks</strong>: Executar tasques en paral·lel per accelerar l'execució.</li>
+<li><strong>Caché de Fets</strong>: Emmagatzemar els fets recollits per evitar la seva recollida repetida.</li>
+<li><strong>Disseny Eficient de Playbooks</strong>: Estructurar els playbooks per minimitzar tasques innecessàries.</li>
+<li><strong>Delegació de Tasques</strong>: Descarregar tasques a altres hosts per distribuir la càrrega.</li>
+<li><strong>Ús Eficient dels Mòduls d'Ansible</strong>: Triar els mòduls adequats per a la tasca.</li>
+<li><strong>Reducció de la Sobrecàrrega SSH</strong>: Optimitzar les connexions SSH per a un millor rendiment.</li>
+<li><strong>Evitar Handlers Innecessaris</strong>: Minimitzar l'ús de handlers per reduir la sobrecàrrega.</li>
+<li><strong>Perfilat i Benchmarking</strong>: Mesurar el rendiment per identificar colls d'ampolla.</li>
+</ul>
+</div><h1>Paral·lelisme i Forks</h1>
+<div class='content'><p>Ansible pot executar múltiples tasques en paral·lel ajustant el nombre de forks. El nombre per defecte de forks és 5, però es pot augmentar per millorar el rendiment.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhbnNpYmxlLmNmZwpbZGVmYXVsdHNdCmZvcmtzID0gMTA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># ansible.cfg
+[defaults]
+forks = 10</pre></div><div class='content'><ul>
+<li>Augmentar el nombre de forks pot accelerar significativament l'execució dels playbooks, especialment en entorns grans.</li>
+<li>Tingueu cura amb valors molt alts, ja que poden saturar la màquina de control o la xarxa.</li>
+</ul>
+</div><h1>Caché de Fets</h1>
+<div class='content'><p>El caché de fets permet a Ansible emmagatzemar els fets recollits dels hosts, reduint la necessitat de recollir-los repetidament.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhbnNpYmxlLmNmZwpbZGVmYXVsdHNdCmdhdGhlcmluZyA9IHNtYXJ0CmZhY3RfY2FjaGluZyA9IGpzb25maWxlCmZhY3RfY2FjaGluZ19jb25uZWN0aW9uID0gL3BhdGgvdG8vZmFjdF9jYWNoZQpmYWN0X2NhY2hpbmdfdGltZW91dCA9IDg2NDAwICAjIEVtbWFnYXR6ZW1hciBlbHMgZmV0cyBkdXJhbnQgMjQgaG9yZXM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># ansible.cfg
+[defaults]
+gathering = smart
+fact_caching = jsonfile
+fact_caching_connection = /path/to/fact_cache
+fact_caching_timeout = 86400  # Emmagatzemar els fets durant 24 hores</pre></div><div class='content'><ul>
+<li>El caché de fets pot reduir dràsticament el temps dedicat a recollir fets, especialment en entorns grans.</li>
+<li>Trieu un backend de caché adequat (per exemple, fitxer JSON, Redis, etc.) segons les vostres necessitats.</li>
+</ul>
+</div><h1>Disseny Eficient de Playbooks</h1>
+<div class='content'><p>Dissenyar playbooks eficients implica minimitzar tasques innecessàries i optimitzar l'execució de tasques.</p>
+<ul>
+<li><strong>Utilitzeu declaracions <code>when</code></strong> per executar tasques condicionalment només quan sigui necessari.</li>
+<li><strong>Combineu tasques</strong> quan sigui possible per reduir el nombre de connexions SSH.</li>
+<li><strong>Eviteu utilitzar els mòduls <code>command</code> o <code>shell</code></strong> quan existeixi un mòdul dedicat.</li>
+</ul>
+<p>Exemple de combinació de tasques:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LSBuYW1lOiBJbnN0YWzCt2xhciBpIGluaWNpYXIgQXBhY2hlCiAgaG9zdHM6IHdlYnNlcnZlcnMKICB0YXNrczoKICAgIC0gbmFtZTogSW5zdGFswrdsYXIgQXBhY2hlCiAgICAgIGFwdDoKICAgICAgICBuYW1lOiBhcGFjaGUyCiAgICAgICAgc3RhdGU6IHByZXNlbnQKICAgIC0gbmFtZTogSW5pY2lhciBBcGFjaGUKICAgICAgc2VydmljZToKICAgICAgICBuYW1lOiBhcGFjaGUyCiAgICAgICAgc3RhdGU6IHN0YXJ0ZWQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>- name: Instal&middot;lar i iniciar Apache
+  hosts: webservers
+  tasks:
+    - name: Instal&middot;lar Apache
+      apt:
+        name: apache2
+        state: present
+    - name: Iniciar Apache
+      service:
+        name: apache2
+        state: started</pre></div><div class='content'></div><h1>Delegació de Tasques</h1>
+<div class='content'><p>Delegar tasques a altres hosts pot ajudar a distribuir la càrrega i millorar el rendiment.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LSBuYW1lOiBEZWxlZ2FyIHRhc2NhIGEgdW4gYWx0cmUgaG9zdAogIGhvc3RzOiB3ZWJzZXJ2ZXJzCiAgdGFza3M6CiAgICAtIG5hbWU6IEV4ZWN1dGFyIHRhc2NhIGVuIHVuIGhvc3QgZGlmZXJlbnQKICAgICAgY29tbWFuZDogL3Vzci9iaW4vc29tZV9jb21tYW5kCiAgICAgIGRlbGVnYXRlX3RvOiBvdGhlcl9ob3N0"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>- name: Delegar tasca a un altre host
+  hosts: webservers
+  tasks:
+    - name: Executar tasca en un host diferent
+      command: /usr/bin/some_command
+      delegate_to: other_host</pre></div><div class='content'><ul>
+<li>La delegació de tasques és útil per a tasques que es poden descarregar a altres hosts, com ara actualitzacions de bases de dades o transferències de fitxers.</li>
+</ul>
+</div><h1>Ús Eficient dels Mòduls d'Ansible</h1>
+<div class='content'><p>Triar els mòduls adequats per a les vostres tasques pot millorar el rendiment.</p>
+<ul>
+<li>Preferiu utilitzar mòduls integrats en lloc dels mòduls <code>command</code> o <code>shell</code>.</li>
+<li>Utilitzeu mòduls que admetin operacions en lot per reduir el nombre de tasques.</li>
+</ul>
+<p>Exemple d'ús d'una operació en lot:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LSBuYW1lOiBDcmVhciBtw7psdGlwbGVzIHVzdWFyaXMKICBob3N0czogYWxsCiAgdGFza3M6CiAgICAtIG5hbWU6IEFmZWdpciB1c3VhcmlzCiAgICAgIHVzZXI6CiAgICAgICAgbmFtZTogInt7IGl0ZW0ubmFtZSB9fSIKICAgICAgICBzdGF0ZTogcHJlc2VudAogICAgICB3aXRoX2l0ZW1zOgogICAgICAgIC0geyBuYW1lOiAndXNlcjEnIH0KICAgICAgICAtIHsgbmFtZTogJ3VzZXIyJyB9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>- name: Crear m&uacute;ltiples usuaris
+  hosts: all
+  tasks:
+    - name: Afegir usuaris
+      user:
+        name: &quot;{{ item.name }}&quot;
+        state: present
+      with_items:
+        - { name: 'user1' }
+        - { name: 'user2' }</pre></div><div class='content'></div><h1>Reducció de la Sobrecàrrega SSH</h1>
+<div class='content'><p>Optimitzar les connexions SSH pot reduir la sobrecàrrega i millorar el rendiment.</p>
+<ul>
+<li>Utilitzeu connexions SSH persistents amb <code>ControlPersist</code>.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhbnNpYmxlLmNmZwpbc3NoX2Nvbm5lY3Rpb25dCnNzaF9hcmdzID0gLW8gQ29udHJvbE1hc3Rlcj1hdXRvIC1vIENvbnRyb2xQZXJzaXN0PTYwcw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># ansible.cfg
+[ssh_connection]
+ssh_args = -o ControlMaster=auto -o ControlPersist=60s</pre></div><div class='content'><ul>
+<li>Ajusteu la configuració de connexió SSH per reduir la latència.</li>
+</ul>
+</div><h1>Evitar Handlers Innecessaris</h1>
+<div class='content'><p>Els handlers poden introduir sobrecàrrega si s'utilitzen excessivament. Minimitzeu el seu ús combinant tasques o utilitzant handlers condicionals.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LSBuYW1lOiBSZWluaWNpYXIgQXBhY2hlIG5vbcOpcyBzaSBjYW52aWEgbGEgY29uZmlndXJhY2nDswogIGhvc3RzOiB3ZWJzZXJ2ZXJzCiAgdGFza3M6CiAgICAtIG5hbWU6IEFjdHVhbGl0emFyIGxhIGNvbmZpZ3VyYWNpw7MgZCdBcGFjaGUKICAgICAgdGVtcGxhdGU6CiAgICAgICAgc3JjOiBhcGFjaGUuY29uZi5qMgogICAgICAgIGRlc3Q6IC9ldGMvYXBhY2hlMi9hcGFjaGUyLmNvbmYKICAgICAgbm90aWZ5OiBSZWluaWNpYXIgQXBhY2hlCgogIGhhbmRsZXJzOgogICAgLSBuYW1lOiBSZWluaWNpYXIgQXBhY2hlCiAgICAgIHNlcnZpY2U6CiAgICAgICAgbmFtZTogYXBhY2hlMgogICAgICAgIHN0YXRlOiByZXN0YXJ0ZWQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>- name: Reiniciar Apache nom&eacute;s si canvia la configuraci&oacute;
+  hosts: webservers
+  tasks:
+    - name: Actualitzar la configuraci&oacute; d'Apache
+      template:
+        src: apache.conf.j2
+        dest: /etc/apache2/apache2.conf
+      notify: Reiniciar Apache
+
+  handlers:
+    - name: Reiniciar Apache
+      service:
+        name: apache2
+        state: restarted</pre></div><div class='content'></div><h1>Perfilat i Benchmarking</h1>
+<div class='content'><p>El perfilat i benchmarking ajuden a identificar colls d'ampolla de rendiment.</p>
+<ul>
+<li>Utilitzeu el comandament <code>ansible-playbook</code> amb l'opció <code>--profile</code> per recollir dades de rendiment.</li>
+<li>Analitzeu la sortida per identificar tasques lentes i optimitzar-les.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YW5zaWJsZS1wbGF5Ym9vayBwbGF5Ym9vay55bWwgLS1wcm9maWxl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ansible-playbook playbook.yml --profile</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Optimitzar el rendiment d'Ansible implica una combinació de tècniques i millors pràctiques. Ajustant el paral·lelisme, utilitzant caché de fets, dissenyant playbooks eficients, delegant tasques, triant els mòduls adequats, reduint la sobrecàrrega SSH, minimitzant handlers i perfilant playbooks, podeu millorar significativament el rendiment de la vostra automatització amb Ansible. Implementar aquestes estratègies per assegurar que els vostres playbooks d'Ansible s'executin de manera eficient i efectiva.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='error-handling-and-debugging'>&#x25C4;Gestió d'Errors i Depuració</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització del Rendiment d'Ansible</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='managing-linux-servers'>Gestió de Servidors Linux &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

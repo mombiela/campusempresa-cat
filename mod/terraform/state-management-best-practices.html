@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Millors Pràctiques per a la Gestió de l'Estat</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/terraform/state-management-best-practices" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/terraform/state-management-best-practices" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/terraform/state-management-best-practices" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/terraform/state-management-best-practices" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/terraform/state-management-best-practices" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='managing-multiple-environments'>&#x25C4;Gestionant Múltiples Entorns</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Millors Pràctiques per a la Gestió de l'Estat</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='writing-and-organizing-configuration'>Escriure i Organitzar la Configuració &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La gestió de l'estat és un aspecte crucial quan es treballa amb Terraform. Una gestió adequada de l'estat garanteix que la teva infraestructura sigui consistent, fiable i fàcil de mantenir. Aquest tema cobrirà les millors pràctiques per gestionar l'estat de Terraform des de nivells bàsics fins a avançats.</p>
+</div><h1>Introducció a l'Estat de Terraform</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Què és l'Estat de Terraform?</strong></p>
+<ul>
+<li>L'estat de Terraform és un fitxer que fa un seguiment de l'estat actual de la teva infraestructura.</li>
+<li>Mapeja la teva configuració als recursos del món real.</li>
+</ul>
+</li>
+<li>
+<p><strong>Per què és Important la Gestió de l'Estat?</strong></p>
+<ul>
+<li>Garanteix la consistència entre la teva configuració i els recursos desplegats.</li>
+<li>Permet que funcions com <code>terraform plan</code> i <code>terraform apply</code> funcionin correctament.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Emmagatzematge de Fitxers d'Estat</h1>
+<div class='content'></div><h2>Estat Local</h2>
+<div class='content'><ul>
+<li><strong>Emmagatzematge d'Estat Local</strong>
+<ul>
+<li>Per defecte, Terraform emmagatzema els fitxers d'estat localment a la teva màquina.</li>
+<li>Adequat per a projectes petits o per a finalitats d'aprenentatge.</li>
+</ul>
+</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHsKICBiYWNrZW5kICJsb2NhbCIgewogICAgcGF0aCA9ICJ0ZXJyYWZvcm0udGZzdGF0ZSIKICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform {
+  backend &quot;local&quot; {
+    path = &quot;terraform.tfstate&quot;
+  }
+}</pre></div><div class='content'><ul>
+<li><strong>Inconvenients de l'Estat Local</strong>
+<ul>
+<li>No és adequat per a entorns d'equip.</li>
+<li>Risc de perdre el fitxer d'estat si la màquina local falla.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Estat Remot</h2>
+<div class='content'><ul>
+<li><strong>Emmagatzematge d'Estat Remot</strong>
+<ul>
+<li>Recomanat per a entorns de producció i d'equip.</li>
+<li>Emmagatzema els fitxers d'estat en un backend remot com AWS S3, Azure Blob Storage o Terraform Cloud.</li>
+</ul>
+</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHsKICBiYWNrZW5kICJzMyIgewogICAgYnVja2V0ID0gIm15LXRlcnJhZm9ybS1zdGF0ZSIKICAgIGtleSAgICA9ICJwYXRoL3RvL215L2tleSIKICAgIHJlZ2lvbiA9ICJ1cy13ZXN0LTIiCiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform {
+  backend &quot;s3&quot; {
+    bucket = &quot;my-terraform-state&quot;
+    key    = &quot;path/to/my/key&quot;
+    region = &quot;us-west-2&quot;
+  }
+}</pre></div><div class='content'><ul>
+<li><strong>Beneficis de l'Estat Remot</strong>
+<ul>
+<li>Gestió centralitzada de l'estat.</li>
+<li>Seguretat i control d'accés millorats.</li>
+<li>Suporta bloqueig d'estat per prevenir modificacions concurrents.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Bloqueig de l'Estat</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Què és el Bloqueig de l'Estat?</strong></p>
+<ul>
+<li>Prevé que múltiples usuaris facin canvis concurrents al fitxer d'estat.</li>
+<li>Garanteix que només una operació de <code>terraform apply</code> o <code>terraform plan</code> pugui executar-se a la vegada.</li>
+</ul>
+</li>
+<li>
+<p><strong>Implementació del Bloqueig de l'Estat</strong></p>
+<ul>
+<li>La majoria de backends remots suporten el bloqueig d'estat de manera nativa.</li>
+<li>Per exemple, el backend d'AWS S3 utilitza DynamoDB per al bloqueig d'estat.</li>
+</ul>
+</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHsKICBiYWNrZW5kICJzMyIgewogICAgYnVja2V0ICAgICAgICAgPSAibXktdGVycmFmb3JtLXN0YXRlIgogICAga2V5ICAgICAgICAgICAgPSAicGF0aC90by9teS9rZXkiCiAgICByZWdpb24gICAgICAgICA9ICJ1cy13ZXN0LTIiCiAgICBkeW5hbW9kYl90YWJsZSA9ICJ0ZXJyYWZvcm0tbG9jay10YWJsZSIKICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform {
+  backend &quot;s3&quot; {
+    bucket         = &quot;my-terraform-state&quot;
+    key            = &quot;path/to/my/key&quot;
+    region         = &quot;us-west-2&quot;
+    dynamodb_table = &quot;terraform-lock-table&quot;
+  }
+}</pre></div><div class='content'></div><h1>Seguretat del Fitxer d'Estat</h1>
+<div class='content'><ul>
+<li><strong>Encriptació dels Fitxers d'Estat</strong>
+<ul>
+<li>Sempre encripta els fitxers d'estat, especialment quan s'emmagatzemen remotament.</li>
+<li>Utilitza opcions d'encriptació específiques del backend (per exemple, encriptació del costat del servidor de S3).</li>
+</ul>
+</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHsKICBiYWNrZW5kICJzMyIgewogICAgYnVja2V0ICAgICAgICAgPSAibXktdGVycmFmb3JtLXN0YXRlIgogICAga2V5ICAgICAgICAgICAgPSAicGF0aC90by9teS9rZXkiCiAgICByZWdpb24gICAgICAgICA9ICJ1cy13ZXN0LTIiCiAgICBlbmNyeXB0ICAgICAgICA9IHRydWUKICAgIGR5bmFtb2RiX3RhYmxlID0gInRlcnJhZm9ybS1sb2NrLXRhYmxlIgogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform {
+  backend &quot;s3&quot; {
+    bucket         = &quot;my-terraform-state&quot;
+    key            = &quot;path/to/my/key&quot;
+    region         = &quot;us-west-2&quot;
+    encrypt        = true
+    dynamodb_table = &quot;terraform-lock-table&quot;
+  }
+}</pre></div><div class='content'><ul>
+<li><strong>Control d'Accés</strong>
+<ul>
+<li>Restringeix l'accés als fitxers d'estat utilitzant polítiques IAM o mecanismes de control d'accés equivalents.</li>
+<li>Assegura't que només els usuaris autoritzats puguin llegir o modificar l'estat.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Comandes de Gestió de l'Estat</h1>
+<div class='content'><ul>
+<li><strong>terraform state list</strong>
+<ul>
+<li>Llista tots els recursos en el fitxer d'estat.</li>
+</ul>
+</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHN0YXRlIGxpc3Q="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform state list</pre></div><div class='content'><ul>
+<li><strong>terraform state show</strong>
+<ul>
+<li>Mostra informació detallada sobre un recurs específic en el fitxer d'estat.</li>
+</ul>
+</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHN0YXRlIHNob3cgYXdzX2luc3RhbmNlLm15X2luc3RhbmNl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform state show aws_instance.my_instance</pre></div><div class='content'><ul>
+<li><strong>terraform state mv</strong>
+<ul>
+<li>Mou un recurs a una adreça diferent en el fitxer d'estat.</li>
+</ul>
+</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHN0YXRlIG12IGF3c19pbnN0YW5jZS5vbGRfaW5zdGFuY2UgYXdzX2luc3RhbmNlLm5ld19pbnN0YW5jZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform state mv aws_instance.old_instance aws_instance.new_instance</pre></div><div class='content'><ul>
+<li><strong>terraform state rm</strong>
+<ul>
+<li>Elimina un recurs del fitxer d'estat.</li>
+</ul>
+</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHN0YXRlIHJtIGF3c19pbnN0YW5jZS5teV9pbnN0YW5jZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform state rm aws_instance.my_instance</pre></div><div class='content'></div><h1>Estratègies de Gestió del Fitxer d'Estat</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Control de Versions per als Fitxers d'Estat</strong></p>
+<ul>
+<li>No emmagatzemis els fitxers d'estat en sistemes de control de versions com Git.</li>
+<li>Utilitza backends remots per a l'emmagatzematge i la versió dels fitxers d'estat.</li>
+</ul>
+</li>
+<li>
+<p><strong>Còpies de Seguretat dels Fitxers d'Estat</strong></p>
+<ul>
+<li>Fes còpies de seguretat regulars dels teus fitxers d'estat.</li>
+<li>La majoria de backends remots proporcionen versionat i còpies de seguretat automàtiques.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Una gestió adequada de l'estat és essencial per mantenir la integritat i la fiabilitat de la teva infraestructura gestionada amb Terraform. Seguint les millors pràctiques com utilitzar emmagatzematge remot per a l'estat, implementar el bloqueig de l'estat, assegurar els fitxers d'estat i utilitzar les comandes de gestió de l'estat de manera efectiva, pots garantir que la teva infraestructura es mantingui consistent i manejable.</p>
+<p>Recorda:</p>
+<ul>
+<li>Utilitza emmagatzematge remot per a entorns d'equip.</li>
+<li>Implementa el bloqueig de l'estat per prevenir modificacions concurrents.</li>
+<li>Assegura els teus fitxers d'estat amb encriptació i control d'accés.</li>
+<li>Fes còpies de seguretat regulars dels teus fitxers d'estat i evita emmagatzemar-los en sistemes de control de versions.</li>
+</ul>
+<p>Seguint aquestes millors pràctiques, pots evitar errors comuns i assegurar una gestió de l'estat suau i eficient en els teus projectes de Terraform.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='managing-multiple-environments'>&#x25C4;Gestionant Múltiples Entorns</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Millors Pràctiques per a la Gestió de l'Estat</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='writing-and-organizing-configuration'>Escriure i Organitzar la Configuració &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

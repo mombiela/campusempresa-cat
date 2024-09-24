@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utilitzar R amb Spark</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/r/using-r-with-spark" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/r/using-r-with-spark" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/r/using-r-with-spark" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/r/using-r-with-spark" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/r/using-r-with-spark" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='using-r-with-hadoop'>&#x25C4;Utilitzant R amb Hadoop</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Utilitzar R amb Spark</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='project-data-analysis'>Projecte: Anàlisi de Dades &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a la Integració de Spark i R</h1>
+<div class='content'><p>Apache Spark és un sistema de computació distribuïda de codi obert que proporciona una interfície per programar clústers sencers amb paral·lelisme de dades implícit i tolerància a fallades. Integrar Spark amb R permet als científics de dades aprofitar el poder de Spark per al processament de grans volums de dades mentre utilitzen el llenguatge de programació R, que els és familiar.</p>
+<ul>
+<li><strong>Apache Spark</strong>: Un potent motor de processament de codi obert construït al voltant de la velocitat, la facilitat d'ús i l'analítica sofisticada.</li>
+<li><strong>R</strong>: Un llenguatge i entorn per a la computació estadística i gràfics.</li>
+</ul>
+</div><h1>Configuració de Spark amb R</h1>
+<div class='content'><p>Per utilitzar Spark amb R, cal instal·lar el paquet <code>sparklyr</code>, que proporciona una interfície a Spark.</p>
+</div><h2>Instal·lació de `sparklyr`</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW5zdGFsbC5wYWNrYWdlcygic3BhcmtseXIiKQpsaWJyYXJ5KHNwYXJrbHlyKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>install.packages(&quot;sparklyr&quot;)
+library(sparklyr)</pre></div><div class='content'></div><h2>Connexió a Spark</h2>
+<div class='content'><p>Podeu connectar-vos a una instància local de Spark o a un clúster remot de Spark.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDb25uZWN0YXItc2UgYSB1bmEgaW5zdMOgbmNpYSBsb2NhbCBkZSBTcGFyawpzYyA8LSBzcGFya19jb25uZWN0KG1hc3RlciA9ICJsb2NhbCIpCgojIENvbm5lY3Rhci1zZSBhIHVuIGNsw7pzdGVyIHJlbW90IGRlIFNwYXJrCnNjIDwtIHNwYXJrX2Nvbm5lY3QobWFzdGVyID0gInNwYXJrOi8vSE9TVDpQT1JUIik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Connectar-se a una inst&agrave;ncia local de Spark
+sc &lt;- spark_connect(master = &quot;local&quot;)
+
+# Connectar-se a un cl&uacute;ster remot de Spark
+sc &lt;- spark_connect(master = &quot;spark://HOST:PORT&quot;)</pre></div><div class='content'></div><h1>Manipulació de Dades amb Spark i R</h1>
+<div class='content'><p>Un cop connectat a Spark, podeu utilitzar la sintaxi de <code>dplyr</code> per manipular dades.</p>
+</div><h2>Carregar Dades a Spark</h2>
+<div class='content'><p>Podeu carregar dades de diverses fonts a Spark.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDYXJyZWdhciB1biBmaXR4ZXIgQ1NWIGEgU3BhcmsKc3BhcmtfcmVhZF9jc3Yoc2MsIG5hbWUgPSAiaXJpc19zcGFyayIsIHBhdGggPSAicGF0aC90by9pcmlzLmNzdiIpCgojIENhcnJlZ2FyIHVuIERhdGFGcmFtZSBkZSBSIGEgU3BhcmsKaXJpc190YmwgPC0gY29weV90byhzYywgaXJpcywgImlyaXNfc3BhcmsiLCBvdmVyd3JpdGUgPSBUUlVFKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Carregar un fitxer CSV a Spark
+spark_read_csv(sc, name = &quot;iris_spark&quot;, path = &quot;path/to/iris.csv&quot;)
+
+# Carregar un DataFrame de R a Spark
+iris_tbl &lt;- copy_to(sc, iris, &quot;iris_spark&quot;, overwrite = TRUE)</pre></div><div class='content'></div><h2>Manipulació de Dades amb `dplyr`</h2>
+<div class='content'><p>Podeu utilitzar funcions familiars de <code>dplyr</code> per manipular DataFrames de Spark.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBTZWxlY2Npb25hciBjb2x1bW5lcwppcmlzX3RibCAlPiUKICBzZWxlY3QoU2VwYWxfTGVuZ3RoLCBTcGVjaWVzKQoKIyBGaWx0cmFyIGZpbGVzCmlyaXNfdGJsICU+JQogIGZpbHRlcihTZXBhbF9MZW5ndGggPiA1LjApCgojIEFncnVwYXIgcGVyIGkgcmVzdW1pcgppcmlzX3RibCAlPiUKICBncm91cF9ieShTcGVjaWVzKSAlPiUKICBzdW1tYXJpemUobWVhbl9zZXBhbF9sZW5ndGggPSBtZWFuKFNlcGFsX0xlbmd0aCkp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Seleccionar columnes
+iris_tbl %&gt;%
+  select(Sepal_Length, Species)
+
+# Filtrar files
+iris_tbl %&gt;%
+  filter(Sepal_Length &gt; 5.0)
+
+# Agrupar per i resumir
+iris_tbl %&gt;%
+  group_by(Species) %&gt;%
+  summarize(mean_sepal_length = mean(Sepal_Length))</pre></div><div class='content'></div><h1>Aprenentatge Automàtic amb Spark i R</h1>
+<div class='content'><p>El paquet <code>sparklyr</code> proporciona una interfície d'alt nivell per a l'aprenentatge automàtic amb Spark.</p>
+</div><h2>Construcció d'un Model d'Aprenentatge Automàtic</h2>
+<div class='content'><p>Podeu utilitzar Spark MLlib per construir models d'aprenentatge automàtic.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBQYXJ0aWNpb25hciBsZXMgZGFkZXMgZW4gY29uanVudHMgZCdlbnRyZW5hbWVudCBpIHByb3ZhCnBhcnRpdGlvbnMgPC0gaXJpc190YmwgJT4lCiAgc2RmX3BhcnRpdGlvbih0cmFpbmluZyA9IDAuNywgdGVzdCA9IDAuMywgc2VlZCA9IDEyMykKCiMgQWp1c3RhciB1biBtb2RlbCBkZSByZWdyZXNzacOzIGxvZ8Otc3RpY2EKbWxfbW9kZWwgPC0gcGFydGl0aW9ucyR0cmFpbmluZyAlPiUKICBtbF9sb2dpc3RpY19yZWdyZXNzaW9uKFNwZWNpZXMgfiBTZXBhbF9MZW5ndGggKyBTZXBhbF9XaWR0aCArIFBldGFsX0xlbmd0aCArIFBldGFsX1dpZHRoKQoKIyBJbXByaW1pciBlbCByZXN1bSBkZWwgbW9kZWwKc3VtbWFyeShtbF9tb2RlbCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Particionar les dades en conjunts d'entrenament i prova
+partitions &lt;- iris_tbl %&gt;%
+  sdf_partition(training = 0.7, test = 0.3, seed = 123)
+
+# Ajustar un model de regressi&oacute; log&iacute;stica
+ml_model &lt;- partitions$training %&gt;%
+  ml_logistic_regression(Species ~ Sepal_Length + Sepal_Width + Petal_Length + Petal_Width)
+
+# Imprimir el resum del model
+summary(ml_model)</pre></div><div class='content'></div><h2>Fer Prediccions</h2>
+<div class='content'><p>Podeu utilitzar el model entrenat per fer prediccions sobre noves dades.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBGZXIgcHJlZGljY2lvbnMgc29icmUgZWwgY29uanVudCBkZSBwcm92YQpwcmVkaWN0aW9ucyA8LSBtbF9tb2RlbCAlPiUKICBtbF9wcmVkaWN0KHBhcnRpdGlvbnMkdGVzdCkKCiMgTW9zdHJhciBsZXMgcHJlZGljY2lvbnMKcHJlZGljdGlvbnMgJT4lCiAgc2VsZWN0KFNwZWNpZXMsIHByZWRpY3Rpb24p"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Fer prediccions sobre el conjunt de prova
+predictions &lt;- ml_model %&gt;%
+  ml_predict(partitions$test)
+
+# Mostrar les prediccions
+predictions %&gt;%
+  select(Species, prediction)</pre></div><div class='content'></div><h1>Temes Avançats</h1>
+<div class='content'><p>Per a usuaris avançats, <code>sparklyr</code> proporciona funcionalitats addicionals com transformacions personalitzades i integració amb altres biblioteques de Spark.</p>
+</div><h2>Transformacions Personalitzades</h2>
+<div class='content'><p>Podeu definir funcions personalitzades en R i aplicar-les a DataFrames de Spark.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBEZWZpbmlyIHVuYSBmdW5jacOzIHBlcnNvbmFsaXR6YWRhIGVuIFIKY3VzdG9tX2Z1bmN0aW9uIDwtIGZ1bmN0aW9uKGRmKSB7CiAgZGYgJT4lCiAgICBtdXRhdGUoU2VwYWxfUmF0aW8gPSBTZXBhbF9MZW5ndGggLyBTZXBhbF9XaWR0aCkKfQoKIyBBcGxpY2FyIGxhIGZ1bmNpw7MgcGVyc29uYWxpdHphZGEgYSB1biBEYXRhRnJhbWUgZGUgU3BhcmsKaXJpc19jdXN0b20gPC0gaXJpc190YmwgJT4lCiAgc2RmX3dpdGhfc2VwYXJhdGUoY3VzdG9tX2Z1bmN0aW9uKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Definir una funci&oacute; personalitzada en R
+custom_function &lt;- function(df) {
+  df %&gt;%
+    mutate(Sepal_Ratio = Sepal_Length / Sepal_Width)
+}
+
+# Aplicar la funci&oacute; personalitzada a un DataFrame de Spark
+iris_custom &lt;- iris_tbl %&gt;%
+  sdf_with_separate(custom_function)</pre></div><div class='content'></div><h2>Integració amb Altres Biblioteques de Spark</h2>
+<div class='content'><p>Podeu integrar <code>sparklyr</code> amb altres biblioteques de Spark com GraphFrames i SparkR.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBFeGVtcGxlIGQnw7pzIGRlIEdyYXBoRnJhbWVzCmxpYnJhcnkoZ3JhcGhmcmFtZXMpCmcgPC0gZ2ZfZ3JhcGhmcmFtZSh2ZXJ0aWNlcywgZWRnZXMp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Exemple d'&uacute;s de GraphFrames
+library(graphframes)
+g &lt;- gf_graphframe(vertices, edges)</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Integrar R amb Spark utilitzant el paquet <code>sparklyr</code> permet als científics de dades aprofitar el poder de Spark per al processament de grans volums de dades mentre utilitzen el llenguatge de programació R, que els és familiar. Aquesta integració proporciona una experiència sense interrupcions per a la manipulació de dades, l'aprenentatge automàtic i les tasques avançades de processament de dades. Seguint els passos descrits en aquest tema, podeu configurar Spark amb R, realitzar manipulació de dades, construir models d'aprenentatge automàtic i explorar funcionalitats avançades.</p>
+<p>Recordeu practicar els exemples proporcionats i explorar la documentació de <code>sparklyr</code> per a casos d'ús i funcionalitats més avançades.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='using-r-with-hadoop'>&#x25C4;Utilitzant R amb Hadoop</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Utilitzar R amb Spark</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='project-data-analysis'>Projecte: Anàlisi de Dades &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integració amb codi natiu</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/flutter/integrating-with-native-code" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/flutter/integrating-with-native-code" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/flutter/integrating-with-native-code" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/flutter/integrating-with-native-code" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/flutter/integrating-with-native-code" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='advanced-state-management'>&#x25C4;Gestió d'Estat Avançada</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Integració amb codi natiu</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='using-firebase-with-flutter'>Utilitzant Firebase amb Flutter &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Integrar-se amb codi natiu és un aspecte crucial del desenvolupament de Flutter, ja que et permet aprofitar la funcionalitat específica de la plataforma i les biblioteques que no estan disponibles en Dart. Aquesta secció et guiarà a través del procés d'integració de Flutter amb codi natiu tant en plataformes Android com iOS.</p>
+</div><h1>Per què integrar-se amb codi natiu?</h1>
+<div class='content'><ul>
+<li><strong>Accedir a funcions específiques de la plataforma</strong>: Utilitza funcions com la càmera, GPS i sensors que són específics d'Android o iOS.</li>
+<li><strong>Aprofitar biblioteques existents</strong>: Utilitza biblioteques natives i SDKs que no estan disponibles en Dart.</li>
+<li><strong>Optimització del rendiment</strong>: Executa codi crític per al rendiment de manera nativa per obtenir una millor eficiència.</li>
+</ul>
+</div><h1>Canals de mètodes</h1>
+<div class='content'><p>Els canals de mètodes proporcionen una manera perquè el teu codi Dart es comuniqui amb codi específic de la plataforma utilitzant el pas de missatges asíncrons.</p>
+</div><h2>Configuració dels canals de mètodes</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Defineix un canal de mètodes en Dart</strong>:</p>
+<pre><code class="language-dart">import 'package:flutter/services.dart';
+
+class NativeIntegration {
+  static const platform = MethodChannel('com.example/native');
+
+  Future&lt;String&gt; getNativeMessage() async {
+    try {
+      final String result = await platform.invokeMethod('getNativeMessage');
+      return result;
+    } on PlatformException catch (e) {
+      return &quot;Failed to get native message: '${e.message}'.&quot;;
+    }
+  }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Gestiona el canal de mètodes en Android (Kotlin)</strong>:</p>
+<pre><code class="language-kotlin">import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.MethodChannel
+
+class MainActivity: FlutterActivity() {
+    private val CHANNEL = &quot;com.example/native&quot;
+
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
+            call, result -&gt;
+            if (call.method == &quot;getNativeMessage&quot;) {
+                val message = getNativeMessage()
+                if (message != null) {
+                    result.success(message)
+                } else {
+                    result.error(&quot;UNAVAILABLE&quot;, &quot;Message not available.&quot;, null)
+                }
+            } else {
+                result.notImplemented()
+            }
+        }
+    }
+
+    private fun getNativeMessage(): String {
+        return &quot;Hello from Android Native Code!&quot;
+    }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Gestiona el canal de mètodes en iOS (Swift)</strong>:</p>
+<pre><code class="language-swift">import Flutter
+import UIKit
+
+@UIApplicationMain
+@objc class AppDelegate: FlutterAppDelegate {
+    override func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -&gt; Bool {
+        let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
+        let nativeChannel = FlutterMethodChannel(name: &quot;com.example/native&quot;,
+                                                  binaryMessenger: controller.binaryMessenger)
+        nativeChannel.setMethodCallHandler({
+            (call: FlutterMethodCall, result: @escaping FlutterResult) -&gt; Void in
+            if call.method == &quot;getNativeMessage&quot; {
+                result(&quot;Hello from iOS Native Code!&quot;)
+            } else {
+                result(FlutterMethodNotImplemented)
+            }
+        })
+
+        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    }
+}
+</code></pre>
+</li>
+</ol>
+</div><h1>Canals de plataforma</h1>
+<div class='content'><p>Els canals de plataforma són una altra manera de comunicar-se entre Dart i codi natiu, però són més flexibles i poden gestionar tipus de dades més complexos.</p>
+</div><h2>Configuració dels canals de plataforma</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Defineix un canal de plataforma en Dart</strong>:</p>
+<pre><code class="language-dart">import 'package:flutter/services.dart';
+
+class NativeIntegration {
+  static const platform = BasicMessageChannel&lt;String&gt;('com.example/native', StringCodec());
+
+  Future&lt;String&gt; getNativeMessage() async {
+    final String result = await platform.send('getNativeMessage');
+    return result;
+  }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Gestiona el canal de plataforma en Android (Kotlin)</strong>:</p>
+<pre><code class="language-kotlin">import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.BasicMessageChannel
+import io.flutter.plugin.common.StringCodec
+
+class MainActivity: FlutterActivity() {
+    private val CHANNEL = &quot;com.example/native&quot;
+
+    override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
+        super.configureFlutterEngine(flutterEngine)
+        BasicMessageChannel&lt;String&gt;(flutterEngine.dartExecutor.binaryMessenger, CHANNEL, StringCodec.INSTANCE)
+            .setMessageHandler { message, reply -&gt;
+                if (message == &quot;getNativeMessage&quot;) {
+                    reply.reply(&quot;Hello from Android Native Code!&quot;)
+                } else {
+                    reply.reply(null)
+                }
+            }
+    }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Gestiona el canal de plataforma en iOS (Swift)</strong>:</p>
+<pre><code class="language-swift">import Flutter
+import UIKit
+
+@UIApplicationMain
+@objc class AppDelegate: FlutterAppDelegate {
+    override func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
+    ) -&gt; Bool {
+        let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
+        let nativeChannel = FlutterBasicMessageChannel(name: &quot;com.example/native&quot;,
+                                                       binaryMessenger: controller.binaryMessenger,
+                                                       codec: FlutterStringCodec.sharedInstance())
+        nativeChannel.setMessageHandler { (message, reply) in
+            if message == &quot;getNativeMessage&quot; {
+                reply(&quot;Hello from iOS Native Code!&quot;)
+            } else {
+                reply(nil)
+            }
+        }
+
+        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    }
+}
+</code></pre>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Integrar-se amb codi natiu en Flutter et permet estendre la funcionalitat de la teva aplicació aprofitant funcions i biblioteques específiques de la plataforma. Utilitzant canals de mètodes i canals de plataforma, pots comunicar-te de manera eficient entre Dart i codi natiu, assegurant que la teva aplicació pugui utilitzar totes les capacitats de la plataforma subjacent.</p>
+<p>Entendre aquestes tècniques d'integració és essencial per al desenvolupament avançat de Flutter, permetent-te crear aplicacions més potents i riques en funcions.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='advanced-state-management'>&#x25C4;Gestió d'Estat Avançada</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Integració amb codi natiu</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='using-firebase-with-flutter'>Utilitzant Firebase amb Flutter &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

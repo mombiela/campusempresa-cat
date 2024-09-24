@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estudis de Cas</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/redis/case-studies" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/redis/case-studies" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/redis/case-studies" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/redis/case-studies" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/redis/case-studies" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='upgrading-redis'>&#x25C4;Actualitzant Redis</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Estudis de Cas</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='project-overview'>Visió General del Projecte &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquesta secció, explorarem diversos estudis de cas per entendre com s'utilitza Redis en aplicacions del món real. Examinant aquests exemples, obtindreu informació sobre implementacions pràctiques i millors pràctiques per utilitzar Redis de manera efectiva.</p>
+</div><h1>Estudi de Cas 1: Emmagatzematge en Memòria Cau en una Aplicació Web</h1>
+<div class='content'></div><h2>Visió General</h2>
+<div class='content'><p>L'emmagatzematge en memòria cau és un dels casos d'ús més comuns per a Redis. En aquest estudi de cas, veurem com es pot utilitzar Redis per emmagatzemar en memòria cau dades accedides freqüentment en una aplicació web per millorar el rendiment.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Cache Hit</strong>: Quan les dades sol·licitades es troben a la memòria cau.</li>
+<li><strong>Cache Miss</strong>: Quan les dades sol·licitades no es troben a la memòria cau i s'han de recuperar de l'emmagatzematge de dades principal.</li>
+<li><strong>TTL (Time to Live)</strong>: La durada durant la qual un element emmagatzemat en memòria cau roman a la memòria cau.</li>
+</ul>
+</div><h2>Implementació</h2>
+<div class='content'><p>Considerem una aplicació web senzilla que recupera perfils d'usuari d'una base de dades. Utilitzarem Redis per emmagatzemar en memòria cau aquests perfils.</p>
+<h4>Exemple Pas a Pas</h4>
+<ol>
+<li>
+<p><strong>Connexió a Redis</strong>:</p>
+<pre><code class="language-python">import redis
+
+r = redis.Redis(host='localhost', port=6379, db=0)
+</code></pre>
+</li>
+<li>
+<p><strong>Recuperació de Dades amb Emmagatzematge en Memòria Cau</strong>:</p>
+<pre><code class="language-python">def get_user_profile(user_id):
+    # Intentar obtenir el perfil d'usuari de la memòria cau de Redis
+    profile = r.get(f&quot;user:{user_id}&quot;)
+
+    if profile:
+        print(&quot;Cache hit&quot;)
+        return profile
+    else:
+        print(&quot;Cache miss&quot;)
+        # Simular la recuperació de la base de dades
+        profile = fetch_from_database(user_id)
+        # Emmagatzemar el perfil a Redis amb un TTL d'1 hora
+        r.setex(f&quot;user:{user_id}&quot;, 3600, profile)
+        return profile
+
+def fetch_from_database(user_id):
+    # Simular una trucada a la base de dades
+    return f&quot;Dades del perfil d'usuari per a {user_id}&quot;
+</code></pre>
+</li>
+<li>
+<p><strong>Prova de la Funció</strong>:</p>
+<pre><code class="language-python">user_id = 1
+print(get_user_profile(user_id))  # Cache miss, recupera de la BD
+print(get_user_profile(user_id))  # Cache hit, recupera de Redis
+</code></pre>
+</li>
+</ol>
+</div><h2>Resum</h2>
+<div class='content'><p>En aquest estudi de cas, hem demostrat com es pot utilitzar Redis per emmagatzemar en memòria cau perfils d'usuari en una aplicació web, reduint la càrrega a la base de dades principal i millorant els temps de resposta.</p>
+</div><h1>Estudi de Cas 2: Analítica en Temps Real</h1>
+<div class='content'></div><h2>Visió General</h2>
+<div class='content'><p>Redis també s'utilitza àmpliament per a l'analítica en temps real gràcies al seu accés ràpid a les dades i el suport per a diverses estructures de dades com llistes, conjunts i conjunts ordenats.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Conjunts Ordenats</strong>: Una estructura de dades de Redis que manté els elements en un ordre ordenat.</li>
+<li><strong>Processament de Dades en Temps Real</strong>: La capacitat de processar dades a mesura que arriben.</li>
+</ul>
+</div><h2>Implementació</h2>
+<div class='content'><p>Construirem un sistema d'analítica en temps real senzill per fer un seguiment de les visualitzacions de pàgines en un lloc web.</p>
+<h4>Exemple Pas a Pas</h4>
+<ol>
+<li>
+<p><strong>Connexió a Redis</strong>:</p>
+<pre><code class="language-python">import redis
+
+r = redis.Redis(host='localhost', port=6379, db=0)
+</code></pre>
+</li>
+<li>
+<p><strong>Seguiment de Visualitzacions de Pàgines</strong>:</p>
+<pre><code class="language-python">def track_page_view(page):
+    # Incrementar el recompte de visualitzacions de pàgina
+    r.zincrby('page_views', 1, page)
+
+def get_top_pages(n):
+    # Obtenir les n pàgines principals per recompte de visualitzacions
+    return r.zrevrange('page_views', 0, n-1, withscores=True)
+</code></pre>
+</li>
+<li>
+<p><strong>Prova de les Funcions</strong>:</p>
+<pre><code class="language-python">track_page_view('home')
+track_page_view('about')
+track_page_view('home')
+
+print(get_top_pages(2))  # [('home', 2.0), ('about', 1.0)]
+</code></pre>
+</li>
+</ol>
+</div><h2>Resum</h2>
+<div class='content'><p>En aquest estudi de cas, hem utilitzat conjunts ordenats de Redis per fer un seguiment i recuperar les pàgines més vistes en un lloc web en temps real, demostrant la capacitat de Redis per a l'analítica en temps real.</p>
+</div><h1>Estudi de Cas 3: Gestió de Sessions</h1>
+<div class='content'></div><h2>Visió General</h2>
+<div class='content'><p>Redis s'utilitza sovint per a la gestió de sessions en aplicacions web gràcies a la seva velocitat i suport per a TTL, que ajuda a gestionar l'expiració de sessions.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Emmagatzematge de Sessions</strong>: Emmagatzemar dades de sessió d'usuari.</li>
+<li><strong>Expiració de Sessions</strong>: Eliminar automàticament les sessions després d'un cert període d'inactivitat.</li>
+</ul>
+</div><h2>Implementació</h2>
+<div class='content'><p>Crearem un sistema de gestió de sessions senzill utilitzant Redis.</p>
+<h4>Exemple Pas a Pas</h4>
+<ol>
+<li>
+<p><strong>Connexió a Redis</strong>:</p>
+<pre><code class="language-python">import redis
+
+r = redis.Redis(host='localhost', port=6379, db=0)
+</code></pre>
+</li>
+<li>
+<p><strong>Gestió de Sessions</strong>:</p>
+<pre><code class="language-python">def create_session(user_id, session_data):
+    # Emmagatzemar dades de sessió amb un TTL de 30 minuts
+    r.setex(f&quot;session:{user_id}&quot;, 1800, session_data)
+
+def get_session(user_id):
+    # Recuperar dades de sessió
+    return r.get(f&quot;session:{user_id}&quot;)
+
+def delete_session(user_id):
+    # Eliminar dades de sessió
+    r.delete(f&quot;session:{user_id}&quot;)
+</code></pre>
+</li>
+<li>
+<p><strong>Prova de les Funcions</strong>:</p>
+<pre><code class="language-python">user_id = 1
+session_data = &quot;Dades de sessió d'usuari&quot;
+
+create_session(user_id, session_data)
+print(get_session(user_id))  # Hauria d'imprimir les dades de sessió
+delete_session(user_id)
+print(get_session(user_id))  # Hauria d'imprimir None
+</code></pre>
+</li>
+</ol>
+</div><h2>Resum</h2>
+<div class='content'><p>En aquest estudi de cas, hem demostrat com es pot utilitzar Redis per a la gestió de sessions en una aplicació web, proporcionant una manera ràpida i eficient de gestionar sessions d'usuari amb expiració automàtica.</p>
+</div><h1>Conclusió</h1>
+<div class='content'><p>A través d'aquests estudis de cas, hem explorat diverses aplicacions pràctiques de Redis, incloent l'emmagatzematge en memòria cau, l'analítica en temps real i la gestió de sessions. Aquests exemples destaquen la versatilitat i els beneficis de rendiment d'utilitzar Redis en diferents escenaris. Entenent aquests casos d'ús, podeu aprofitar millor Redis en els vostres propis projectes per aconseguir resultats òptims.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='upgrading-redis'>&#x25C4;Actualitzant Redis</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Estudis de Cas</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='project-overview'>Visió General del Projecte &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

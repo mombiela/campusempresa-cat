@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear plugins personalitzats de Cordova</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/apache_cordova/creating-custom-cordova-plugins" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/apache_cordova/creating-custom-cordova-plugins" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/apache_cordova/creating-custom-cordova-plugins" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/apache_cordova/creating-custom-cordova-plugins" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/apache_cordova/creating-custom-cordova-plugins" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='best-practices-for-cordova-development'>&#x25C4;Millors Pràctiques per al Desenvolupament amb Cordova</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Crear plugins personalitzats de Cordova</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='integrating-native-code'>Integració de Codi Natiu &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Crear plugins personalitzats de Cordova permet als desenvolupadors ampliar la funcionalitat de les seves aplicacions Cordova integrant codi natiu. Aquest tema et guiarà a través del procés de creació, implementació i ús de plugins personalitzats de Cordova des de nivells principiants fins a avançats.</p>
+</div><h1>Prerequisits</h1>
+<div class='content'><p>Abans de submergir-te en la creació de plugins personalitzats de Cordova, assegura't de tenir:</p>
+<ul>
+<li>Coneixements bàsics d'Apache Cordova.</li>
+<li>Familiaritat amb JavaScript.</li>
+<li>Comprensió bàsica del desenvolupament natiu (Java per a Android, Swift/Objective-C per a iOS).</li>
+</ul>
+</div><h1>Configuració del teu entorn</h1>
+<div class='content'><p>Per crear un plugin personalitzat de Cordova, necessites configurar el teu entorn de desenvolupament.</p>
+<ol>
+<li>
+<p><strong>Instal·la Node.js i npm</strong>: Cordova requereix Node.js i npm.</p>
+<pre><code class="language-sh"># Instal·la Node.js i npm
+sudo apt-get install nodejs npm
+</code></pre>
+</li>
+<li>
+<p><strong>Instal·la Cordova CLI</strong>:</p>
+<pre><code class="language-sh"># Instal·la Cordova globalment
+npm install -g cordova
+</code></pre>
+</li>
+<li>
+<p><strong>Crea un projecte Cordova</strong>:</p>
+<pre><code class="language-sh"># Crea un nou projecte Cordova
+cordova create MyCordovaApp com.example.mycordovaapp MyCordovaApp
+cd MyCordovaApp
+</code></pre>
+</li>
+</ol>
+</div><h1>Creació d'un plugin personalitzat</h1>
+<h2>Pas 1: Estructura del plugin</h2>
+<div class='content'><p>Un plugin de Cordova típicament té la següent estructura:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bXktcGx1Z2luLwrilJzilIDilIAgc3JjLwrilIIgICDilJzilIDilIAgYW5kcm9pZC8K4pSCICAg4pSCICAg4pSU4pSA4pSAIE15UGx1Z2luLmphdmEK4pSCICAg4pSc4pSA4pSAIGlvcy8K4pSCICAg4pSCICAg4pSU4pSA4pSAIE15UGx1Z2luLnN3aWZ0CuKUnOKUgOKUgCB3d3cvCuKUgiAgIOKUlOKUgOKUgCBteXBsdWdpbi5qcwrilJzilIDilIAgcGx1Z2luLnhtbArilJTilIDilIAgcGFja2FnZS5qc29u"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>my-plugin/
+├── src/
+│   ├── android/
+│   │   └── MyPlugin.java
+│   ├── ios/
+│   │   └── MyPlugin.swift
+├── www/
+│   └── myplugin.js
+├── plugin.xml
+└── package.json</pre></div><div class='content'></div><h2>Pas 2: Defineix el plugin a `plugin.xml`</h2>
+<div class='content'><p>El fitxer <code>plugin.xml</code> és el fitxer de configuració del teu plugin. Defineix les metadades del plugin, el codi específic de la plataforma i la interfície JavaScript.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PHBsdWdpbiBpZD0iY29tLmV4YW1wbGUubXlwbHVnaW4iIHZlcnNpb249IjEuMC4wIiB4bWxucz0iaHR0cDovL2FwYWNoZS5vcmcvY29yZG92YS9ucy9wbHVnaW5zLzEuMCIgeG1sbnM6YW5kcm9pZD0iaHR0cDovL3NjaGVtYXMuYW5kcm9pZC5jb20vYXBrL3Jlcy9hbmRyb2lkIj4KICAgIDxuYW1lPk15UGx1Z2luPC9uYW1lPgogICAgPGRlc2NyaXB0aW9uPlVuIHBsdWdpbiBkJ2V4ZW1wbGUgc2VuemlsbDwvZGVzY3JpcHRpb24+CiAgICA8bGljZW5zZT5BcGFjaGUgMi4wPC9saWNlbnNlPgogICAgPGtleXdvcmRzPmNvcmRvdmEscGx1Z2luPC9rZXl3b3Jkcz4KICAgIDxlbmdpbmVzPgogICAgICAgIDxlbmdpbmUgbmFtZT0iY29yZG92YSIgdmVyc2lvbj0iPj05LjAuMCIvPgogICAgPC9lbmdpbmVzPgogICAgPGpzLW1vZHVsZSBzcmM9Ind3dy9teXBsdWdpbi5qcyIgbmFtZT0iTXlQbHVnaW4iPgogICAgICAgIDxjbG9iYmVycyB0YXJnZXQ9ImNvcmRvdmEucGx1Z2lucy5NeVBsdWdpbiIvPgogICAgPC9qcy1tb2R1bGU+CiAgICA8cGxhdGZvcm0gbmFtZT0iYW5kcm9pZCI+CiAgICAgICAgPHNvdXJjZS1maWxlIHNyYz0ic3JjL2FuZHJvaWQvTXlQbHVnaW4uamF2YSIgdGFyZ2V0LWRpcj0ic3JjL2NvbS9leGFtcGxlL215cGx1Z2luIi8+CiAgICA8L3BsYXRmb3JtPgogICAgPHBsYXRmb3JtIG5hbWU9ImlvcyI+CiAgICAgICAgPHNvdXJjZS1maWxlIHNyYz0ic3JjL2lvcy9NeVBsdWdpbi5zd2lmdCIgLz4KICAgIDwvcGxhdGZvcm0+CjwvcGx1Z2luPg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;plugin id=&quot;com.example.myplugin&quot; version=&quot;1.0.0&quot; xmlns=&quot;http://apache.org/cordova/ns/plugins/1.0&quot; xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;&gt;
+    &lt;name&gt;MyPlugin&lt;/name&gt;
+    &lt;description&gt;Un plugin d'exemple senzill&lt;/description&gt;
+    &lt;license&gt;Apache 2.0&lt;/license&gt;
+    &lt;keywords&gt;cordova,plugin&lt;/keywords&gt;
+    &lt;engines&gt;
+        &lt;engine name=&quot;cordova&quot; version=&quot;&gt;=9.0.0&quot;/&gt;
+    &lt;/engines&gt;
+    &lt;js-module src=&quot;www/myplugin.js&quot; name=&quot;MyPlugin&quot;&gt;
+        &lt;clobbers target=&quot;cordova.plugins.MyPlugin&quot;/&gt;
+    &lt;/js-module&gt;
+    &lt;platform name=&quot;android&quot;&gt;
+        &lt;source-file src=&quot;src/android/MyPlugin.java&quot; target-dir=&quot;src/com/example/myplugin&quot;/&gt;
+    &lt;/platform&gt;
+    &lt;platform name=&quot;ios&quot;&gt;
+        &lt;source-file src=&quot;src/ios/MyPlugin.swift&quot; /&gt;
+    &lt;/platform&gt;
+&lt;/plugin&gt;</pre></div><div class='content'></div><h2>Pas 3: Implementa la interfície JavaScript</h2>
+<div class='content'><p>Crea el fitxer <code>www/myplugin.js</code> per definir la interfície JavaScript del teu plugin.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFyIGV4ZWMgPSByZXF1aXJlKCdjb3Jkb3ZhL2V4ZWMnKTsKCnZhciBNeVBsdWdpbiA9IHsKICAgIGNvb2xNZXRob2Q6IGZ1bmN0aW9uKGFyZzAsIHN1Y2Nlc3MsIGVycm9yKSB7CiAgICAgICAgZXhlYyhzdWNjZXNzLCBlcnJvciwgJ015UGx1Z2luJywgJ2Nvb2xNZXRob2QnLCBbYXJnMF0pOwogICAgfQp9OwoKbW9kdWxlLmV4cG9ydHMgPSBNeVBsdWdpbjs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>var exec = require('cordova/exec');
+
+var MyPlugin = {
+    coolMethod: function(arg0, success, error) {
+        exec(success, error, 'MyPlugin', 'coolMethod', [arg0]);
+    }
+};
+
+module.exports = MyPlugin;</pre></div><div class='content'></div><h2>Pas 4: Implementa el codi natiu</h2>
+<div class='content'><h4>Android (Java)</h4>
+<p>Crea el fitxer <code>src/android/MyPlugin.java</code> per implementar la funcionalitat nativa per a Android.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBjb20uZXhhbXBsZS5teXBsdWdpbjsKCmltcG9ydCBvcmcuYXBhY2hlLmNvcmRvdmEuQ29yZG92YVBsdWdpbjsKaW1wb3J0IG9yZy5hcGFjaGUuY29yZG92YS5DYWxsYmFja0NvbnRleHQ7CmltcG9ydCBvcmcuanNvbi5KU09OQXJyYXk7CmltcG9ydCBvcmcuanNvbi5KU09ORXhjZXB0aW9uOwoKcHVibGljIGNsYXNzIE15UGx1Z2luIGV4dGVuZHMgQ29yZG92YVBsdWdpbiB7CiAgICBAT3ZlcnJpZGUKICAgIHB1YmxpYyBib29sZWFuIGV4ZWN1dGUoU3RyaW5nIGFjdGlvbiwgSlNPTkFycmF5IGFyZ3MsIENhbGxiYWNrQ29udGV4dCBjYWxsYmFja0NvbnRleHQpIHRocm93cyBKU09ORXhjZXB0aW9uIHsKICAgICAgICBpZiAoYWN0aW9uLmVxdWFscygiY29vbE1ldGhvZCIpKSB7CiAgICAgICAgICAgIFN0cmluZyBtZXNzYWdlID0gYXJncy5nZXRTdHJpbmcoMCk7CiAgICAgICAgICAgIHRoaXMuY29vbE1ldGhvZChtZXNzYWdlLCBjYWxsYmFja0NvbnRleHQpOwogICAgICAgICAgICByZXR1cm4gdHJ1ZTsKICAgICAgICB9CiAgICAgICAgcmV0dXJuIGZhbHNlOwogICAgfQoKICAgIHByaXZhdGUgdm9pZCBjb29sTWV0aG9kKFN0cmluZyBtZXNzYWdlLCBDYWxsYmFja0NvbnRleHQgY2FsbGJhY2tDb250ZXh0KSB7CiAgICAgICAgaWYgKG1lc3NhZ2UgIT0gbnVsbCAmJiBtZXNzYWdlLmxlbmd0aCgpID4gMCkgewogICAgICAgICAgICBjYWxsYmFja0NvbnRleHQuc3VjY2VzcyhtZXNzYWdlKTsKICAgICAgICB9IGVsc2UgewogICAgICAgICAgICBjYWxsYmFja0NvbnRleHQuZXJyb3IoIkV4cGVjdGVkIG9uZSBub24tZW1wdHkgc3RyaW5nIGFyZ3VtZW50LiIpOwogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package com.example.myplugin;
+
+import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.CallbackContext;
+import org.json.JSONArray;
+import org.json.JSONException;
+
+public class MyPlugin extends CordovaPlugin {
+    @Override
+    public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
+        if (action.equals(&quot;coolMethod&quot;)) {
+            String message = args.getString(0);
+            this.coolMethod(message, callbackContext);
+            return true;
+        }
+        return false;
+    }
+
+    private void coolMethod(String message, CallbackContext callbackContext) {
+        if (message != null &amp;&amp; message.length() &gt; 0) {
+            callbackContext.success(message);
+        } else {
+            callbackContext.error(&quot;Expected one non-empty string argument.&quot;);
+        }
+    }
+}</pre></div><div class='content'><h4>iOS (Swift)</h4>
+<p>Crea el fitxer <code>src/ios/MyPlugin.swift</code> per implementar la funcionalitat nativa per a iOS.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IEZvdW5kYXRpb24KaW1wb3J0IENvcmRvdmEKCkBvYmpjKE15UGx1Z2luKSBjbGFzcyBNeVBsdWdpbjogQ0RWUGx1Z2luIHsKICAgIEBvYmpjKGNvb2xNZXRob2Q6KQogICAgZnVuYyBjb29sTWV0aG9kKGNvbW1hbmQ6IENEVkludm9rZWRVcmxDb21tYW5kKSB7CiAgICAgICAgbGV0IG1lc3NhZ2UgPSBjb21tYW5kLmFyZ3VtZW50c1swXSBhcz8gU3RyaW5nID8/ICIiCiAgICAgICAgbGV0IHBsdWdpblJlc3VsdCA9IENEVlBsdWdpblJlc3VsdChzdGF0dXM6IENEVkNvbW1hbmRTdGF0dXNfT0ssIG1lc3NhZ2VBczogbWVzc2FnZSkKICAgICAgICBzZWxmLmNvbW1hbmREZWxlZ2F0ZS5zZW5kKHBsdWdpblJlc3VsdCwgY2FsbGJhY2tJZDogY29tbWFuZC5jYWxsYmFja0lkKQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import Foundation
+import Cordova
+
+@objc(MyPlugin) class MyPlugin: CDVPlugin {
+    @objc(coolMethod:)
+    func coolMethod(command: CDVInvokedUrlCommand) {
+        let message = command.arguments[0] as? String ?? &quot;&quot;
+        let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: message)
+        self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
+    }
+}</pre></div><div class='content'></div><h1>Ús del plugin personalitzat</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Afegeix el plugin al teu projecte</strong>:</p>
+<pre><code class="language-sh"># Afegeix el plugin personalitzat al teu projecte Cordova
+cordova plugin add path/to/my-plugin
+</code></pre>
+</li>
+<li>
+<p><strong>Crida el plugin des de JavaScript</strong>:</p>
+<pre><code class="language-javascript">document.addEventListener('deviceready', function() {
+    cordova.plugins.MyPlugin.coolMethod('Hello, Cordova!', function(success) {
+        console.log('Success:', success);
+    }, function(error) {
+        console.error('Error:', error);
+    });
+}, false);
+</code></pre>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Crear plugins personalitzats de Cordova et permet aprofitar les capacitats natives del dispositiu i ampliar la funcionalitat de les teves aplicacions Cordova. Seguint els passos descrits en aquest tema, pots crear, implementar i utilitzar plugins personalitzats de manera efectiva. Recorda provar els teus plugins a fons tant en plataformes Android com iOS per assegurar la compatibilitat i el rendiment.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='best-practices-for-cordova-development'>&#x25C4;Millors Pràctiques per al Desenvolupament amb Cordova</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Crear plugins personalitzats de Cordova</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='integrating-native-code'>Integració de Codi Natiu &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

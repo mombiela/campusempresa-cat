@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Directives personalitzades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/angular/custom-directives" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/angular/custom-directives" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/angular/custom-directives" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/angular/custom-directives" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/angular/custom-directives" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='built-in-directives'>&#x25C4;Directives integrades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Directives personalitzades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='built-in-pipes'>Pipes integrats &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a les directives</h1>
+<div class='content'><p>Les directives a Angular són classes que afegeixen comportament addicional als elements de les teves aplicacions Angular. Amb directives, pots gestionar formularis, llistes, estils i el que els usuaris veuen. Hi ha tres tipus de directives a Angular:</p>
+<ul>
+<li><strong>Directives de component</strong>: Aquestes són les directives més comunes i s'utilitzen per crear components.</li>
+<li><strong>Directives d'atribut</strong>: Aquestes canvien l'aparença o el comportament d'un element, component o una altra directiva.</li>
+<li><strong>Directives estructurals</strong>: Aquestes canvien el disseny del DOM afegint i eliminant elements del DOM.</li>
+</ul>
+<p>En aquest tema, ens centrarem en crear directives d'atribut i estructurals personalitzades.</p>
+</div><h1>Creació de directives d'atribut personalitzades</h1>
+<div class='content'><p>Les directives d'atribut s'utilitzen per canviar l'aparença o el comportament dels elements del DOM. Creem una simple directiva d'atribut que canvia el color de fons d'un element quan es passa el ratolí per sobre.</p>
+</div><h2>Guia pas a pas</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Generar la directiva</strong>: Utilitza Angular CLI per generar una nova directiva.</p>
+<pre><code class="language-bash">ng generate directive highlight
+</code></pre>
+</li>
+<li>
+<p><strong>Implementar la directiva</strong>: Modifica la directiva generada per canviar el color de fons en passar el ratolí per sobre.</p>
+<pre><code class="language-typescript">import { Directive, ElementRef, HostListener, Input } from '@angular/core';
+
+@Directive({
+  selector: '[appHighlight]'
+})
+export class HighlightDirective {
+  @Input() defaultColor: string = 'yellow';
+  @Input('appHighlight') highlightColor: string;
+
+  constructor(private el: ElementRef) {}
+
+  @HostListener('mouseenter') onMouseEnter() {
+    this.highlight(this.highlightColor || this.defaultColor);
+  }
+
+  @HostListener('mouseleave') onMouseLeave() {
+    this.highlight(null);
+  }
+
+  private highlight(color: string) {
+    this.el.nativeElement.style.backgroundColor = color;
+  }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Utilitzar la directiva en un component</strong>: Aplica la directiva a un element en la teva plantilla.</p>
+<pre><code class="language-html">&lt;p appHighlight=&quot;lightblue&quot;&gt;Passa el ratolí per sobre d'aquest text per veure un efecte de ressaltat.&lt;/p&gt;
+</code></pre>
+</li>
+</ol>
+</div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>ElementRef</strong>: Un servei que proporciona accés directe a l'element del DOM.</li>
+<li><strong>@HostListener</strong>: Decorador que escolta esdeveniments del DOM i desencadena el mètode especificat.</li>
+<li><strong>@Input</strong>: Decorador que permet que la directiva accepti valors d'entrada.</li>
+</ul>
+</div><h1>Creació de directives estructurals personalitzades</h1>
+<div class='content'><p>Les directives estructurals canvien el disseny del DOM afegint o eliminant elements. Creem una directiva estructural personalitzada que inclou condicionalment una plantilla basada en un valor booleà.</p>
+</div><h2>Guia pas a pas</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Generar la directiva</strong>: Utilitza Angular CLI per generar una nova directiva.</p>
+<pre><code class="language-bash">ng generate directive unless
+</code></pre>
+</li>
+<li>
+<p><strong>Implementar la directiva</strong>: Modifica la directiva generada per incloure condicionalment una plantilla.</p>
+<pre><code class="language-typescript">import { Directive, Input, TemplateRef, ViewContainerRef } from '@angular/core';
+
+@Directive({
+  selector: '[appUnless]'
+})
+export class UnlessDirective {
+  private hasView = false;
+
+  constructor(
+    private templateRef: TemplateRef&lt;any&gt;,
+    private viewContainer: ViewContainerRef
+  ) {}
+
+  @Input() set appUnless(condition: boolean) {
+    if (!condition &amp;&amp; !this.hasView) {
+      this.viewContainer.createEmbeddedView(this.templateRef);
+      this.hasView = true;
+    } else if (condition &amp;&amp; this.hasView) {
+      this.viewContainer.clear();
+      this.hasView = false;
+    }
+  }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Utilitzar la directiva en un component</strong>: Aplica la directiva a un element en la teva plantilla.</p>
+<pre><code class="language-html">&lt;div *appUnless=&quot;isVisible&quot;&gt;Aquest text es mostra només quan isVisible és fals.&lt;/div&gt;
+</code></pre>
+</li>
+</ol>
+</div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>TemplateRef</strong>: Representa una plantilla incrustada que es pot utilitzar per instanciar vistes incrustades.</li>
+<li><strong>ViewContainerRef</strong>: Representa un contenidor on es poden adjuntar una o més vistes.</li>
+<li><strong>@Input</strong>: Decorador que permet que la directiva accepti valors d'entrada.</li>
+</ul>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem cobert com crear directives d'atribut i estructurals personalitzades a Angular. Les directives d'atribut s'utilitzen per canviar l'aparença o el comportament dels elements, mentre que les directives estructurals s'utilitzen per canviar el disseny del DOM afegint o eliminant elements. Entenent i utilitzant aquestes directives, pots crear aplicacions Angular més dinàmiques i interactives.</p>
+</div><h2>Punts clau</h2>
+<div class='content'><ul>
+<li>Les directives són classes que afegeixen comportament als elements en aplicacions Angular.</li>
+<li>Les directives d'atribut canvien l'aparença o el comportament dels elements.</li>
+<li>Les directives estructurals canvien el disseny del DOM afegint o eliminant elements.</li>
+<li>Utilitza Angular CLI per generar directives i modificar-les segons les teves necessitats.</li>
+<li>Decoradors com <code>@Input</code> i <code>@HostListener</code> són essencials per crear directives personalitzades.</li>
+</ul>
+<p>Dominant les directives personalitzades, pots millorar significativament la funcionalitat i l'experiència d'usuari de les teves aplicacions Angular.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='built-in-directives'>&#x25C4;Directives integrades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Directives personalitzades</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='built-in-pipes'>Pipes integrats &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

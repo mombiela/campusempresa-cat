@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS CodePipeline</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/aws/aws-codepipeline" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/aws/aws-codepipeline" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/aws/aws-codepipeline" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/aws/aws-codepipeline" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/aws/aws-codepipeline" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='aws-elastic-beanstalk'>&#x25C4;AWS Elastic Beanstalk</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">AWS CodePipeline</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='amazon-redshift'>Amazon Redshift &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a AWS CodePipeline</h1>
+<div class='content'><p>AWS CodePipeline és un servei d'integració contínua i lliurament continu (CI/CD) per a actualitzacions ràpides i fiables d'aplicacions i infraestructures. CodePipeline automatitza les fases de construcció, prova i desplegament del teu procés de llançament cada vegada que hi ha un canvi de codi, basat en el model de llançament que defineixes.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Pipeline</strong>: Un flux de treball que defineix les etapes i accions per construir, provar i desplegar el teu codi.</li>
+<li><strong>Stage</strong>: Una unitat lògica en una pipeline on es realitzen accions.</li>
+<li><strong>Action</strong>: Una tasca realitzada sobre el codi, com ara la recuperació de la font, la construcció, la prova o el desplegament.</li>
+<li><strong>Artifact</strong>: Fitxers o dades produïts per accions i passats entre etapes.</li>
+</ul>
+</div><h1>Configuració d'AWS CodePipeline</h1>
+<h2>Prerequisits</h2>
+<div class='content'><ul>
+<li>Un compte d'AWS.</li>
+<li>Coneixements bàsics dels serveis d'AWS com S3, IAM i CodeCommit.</li>
+<li>AWS CLI instal·lat i configurat amb les teves credencials.</li>
+</ul>
+</div><h2>Creació d'una Pipeline Simple</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear una Etapa de Font</strong>:</p>
+<ul>
+<li>Utilitza AWS CodeCommit, GitHub o S3 com a repositori de fonts.</li>
+<li>Exemple: Utilitzant CodeCommit com a font.</li>
+</ul>
+<pre><code class="language-yaml">Source:
+  Name: MySource
+  Actions:
+    - Name: SourceAction
+      ActionTypeId:
+        Category: Source
+        Owner: AWS
+        Provider: CodeCommit
+        Version: 1
+      OutputArtifacts:
+        - Name: SourceOutput
+      Configuration:
+        RepositoryName: MyRepository
+        BranchName: master
+</code></pre>
+</li>
+<li>
+<p><strong>Afegir una Etapa de Construcció</strong>:</p>
+<ul>
+<li>Utilitza AWS CodeBuild per compilar el teu codi font.</li>
+<li>Exemple: Utilitzant CodeBuild.</li>
+</ul>
+<pre><code class="language-yaml">Build:
+  Name: MyBuild
+  Actions:
+    - Name: BuildAction
+      ActionTypeId:
+        Category: Build
+        Owner: AWS
+        Provider: CodeBuild
+        Version: 1
+      InputArtifacts:
+        - Name: SourceOutput
+      OutputArtifacts:
+        - Name: BuildOutput
+      Configuration:
+        ProjectName: MyCodeBuildProject
+</code></pre>
+</li>
+<li>
+<p><strong>Afegir una Etapa de Desplegament</strong>:</p>
+<ul>
+<li>Utilitza AWS CodeDeploy, ECS o S3 per al desplegament.</li>
+<li>Exemple: Utilitzant S3 per al desplegament.</li>
+</ul>
+<pre><code class="language-yaml">Deploy:
+  Name: MyDeploy
+  Actions:
+    - Name: DeployAction
+      ActionTypeId:
+        Category: Deploy
+        Owner: AWS
+        Provider: S3
+        Version: 1
+      InputArtifacts:
+        - Name: BuildOutput
+      Configuration:
+        BucketName: MyDeploymentBucket
+        Extract: true
+</code></pre>
+</li>
+</ol>
+</div><h2>Exemple complet de Pipeline</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UGlwZWxpbmU6CiAgTmFtZTogTXlQaXBlbGluZQogIFJvbGVBcm46IGFybjphd3M6aWFtOjoxMjM0NTY3ODkwMTI6cm9sZS9BV1NDb2RlUGlwZWxpbmVTZXJ2aWNlUm9sZQogIEFydGlmYWN0U3RvcmU6CiAgICBUeXBlOiBTMwogICAgTG9jYXRpb246IE15UGlwZWxpbmVCdWNrZXQKICBTdGFnZXM6CiAgICAtIE5hbWU6IFNvdXJjZQogICAgICBBY3Rpb25zOgogICAgICAgIC0gTmFtZTogU291cmNlQWN0aW9uCiAgICAgICAgICBBY3Rpb25UeXBlSWQ6CiAgICAgICAgICAgIENhdGVnb3J5OiBTb3VyY2UKICAgICAgICAgICAgT3duZXI6IEFXUwogICAgICAgICAgICBQcm92aWRlcjogQ29kZUNvbW1pdAogICAgICAgICAgICBWZXJzaW9uOiAxCiAgICAgICAgICBPdXRwdXRBcnRpZmFjdHM6CiAgICAgICAgICAgIC0gTmFtZTogU291cmNlT3V0cHV0CiAgICAgICAgICBDb25maWd1cmF0aW9uOgogICAgICAgICAgICBSZXBvc2l0b3J5TmFtZTogTXlSZXBvc2l0b3J5CiAgICAgICAgICAgIEJyYW5jaE5hbWU6IG1hc3RlcgogICAgLSBOYW1lOiBCdWlsZAogICAgICBBY3Rpb25zOgogICAgICAgIC0gTmFtZTogQnVpbGRBY3Rpb24KICAgICAgICAgIEFjdGlvblR5cGVJZDoKICAgICAgICAgICAgQ2F0ZWdvcnk6IEJ1aWxkCiAgICAgICAgICAgIE93bmVyOiBBV1MKICAgICAgICAgICAgUHJvdmlkZXI6IENvZGVCdWlsZAogICAgICAgICAgICBWZXJzaW9uOiAxCiAgICAgICAgICBJbnB1dEFydGlmYWN0czoKICAgICAgICAgICAgLSBOYW1lOiBTb3VyY2VPdXRwdXQKICAgICAgICAgIE91dHB1dEFydGlmYWN0czoKICAgICAgICAgICAgLSBOYW1lOiBCdWlsZE91dHB1dAogICAgICAgICAgQ29uZmlndXJhdGlvbjoKICAgICAgICAgICAgUHJvamVjdE5hbWU6IE15Q29kZUJ1aWxkUHJvamVjdAogICAgLSBOYW1lOiBEZXBsb3kKICAgICAgQWN0aW9uczoKICAgICAgICAtIE5hbWU6IERlcGxveUFjdGlvbgogICAgICAgICAgQWN0aW9uVHlwZUlkOgogICAgICAgICAgICBDYXRlZ29yeTogRGVwbG95CiAgICAgICAgICAgIE93bmVyOiBBV1MKICAgICAgICAgICAgUHJvdmlkZXI6IFMzCiAgICAgICAgICAgIFZlcnNpb246IDEKICAgICAgICAgIElucHV0QXJ0aWZhY3RzOgogICAgICAgICAgICAtIE5hbWU6IEJ1aWxkT3V0cHV0CiAgICAgICAgICBDb25maWd1cmF0aW9uOgogICAgICAgICAgICBCdWNrZXROYW1lOiBNeURlcGxveW1lbnRCdWNrZXQKICAgICAgICAgICAgRXh0cmFjdDogdHJ1ZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Pipeline:
+  Name: MyPipeline
+  RoleArn: arn:aws:iam::123456789012:role/AWSCodePipelineServiceRole
+  ArtifactStore:
+    Type: S3
+    Location: MyPipelineBucket
+  Stages:
+    - Name: Source
+      Actions:
+        - Name: SourceAction
+          ActionTypeId:
+            Category: Source
+            Owner: AWS
+            Provider: CodeCommit
+            Version: 1
+          OutputArtifacts:
+            - Name: SourceOutput
+          Configuration:
+            RepositoryName: MyRepository
+            BranchName: master
+    - Name: Build
+      Actions:
+        - Name: BuildAction
+          ActionTypeId:
+            Category: Build
+            Owner: AWS
+            Provider: CodeBuild
+            Version: 1
+          InputArtifacts:
+            - Name: SourceOutput
+          OutputArtifacts:
+            - Name: BuildOutput
+          Configuration:
+            ProjectName: MyCodeBuildProject
+    - Name: Deploy
+      Actions:
+        - Name: DeployAction
+          ActionTypeId:
+            Category: Deploy
+            Owner: AWS
+            Provider: S3
+            Version: 1
+          InputArtifacts:
+            - Name: BuildOutput
+          Configuration:
+            BucketName: MyDeploymentBucket
+            Extract: true</pre></div><div class='content'></div><h1>Funcions Avançades d'AWS CodePipeline</h1>
+<h2>Integració amb Eines de Tercers</h2>
+<div class='content'><ul>
+<li><strong>Jenkins</strong>: Utilitza Jenkins per a passos de construcció personalitzats.</li>
+<li><strong>GitHub</strong>: Integra amb GitHub per al control de versions.</li>
+<li><strong>Slack</strong>: Envia notificacions als canals de Slack.</li>
+</ul>
+</div><h2>Accions Personalitzades</h2>
+<div class='content'><ul>
+<li>
+<p>Defineix accions personalitzades per realitzar tasques no suportades nativament per CodePipeline.</p>
+</li>
+<li>
+<p>Exemple: Acció personalitzada per executar una anàlisi de seguretat.</p>
+<pre><code class="language-json">{
+  &quot;category&quot;: &quot;Test&quot;,
+  &quot;owner&quot;: &quot;Custom&quot;,
+  &quot;provider&quot;: &quot;SecurityScan&quot;,
+  &quot;version&quot;: &quot;1&quot;,
+  &quot;configurationProperties&quot;: [
+    {
+      &quot;name&quot;: &quot;ScanType&quot;,
+      &quot;required&quot;: true,
+      &quot;key&quot;: true,
+      &quot;secret&quot;: false,
+      &quot;queryable&quot;: false,
+      &quot;description&quot;: &quot;Type of security scan to perform&quot;
+    }
+  ]
+}
+</code></pre>
+</li>
+</ul>
+</div><h2>Execució Condicional</h2>
+<div class='content'><ul>
+<li>
+<p>Utilitza condicions per controlar el flux d'execució de la teva pipeline.</p>
+</li>
+<li>
+<p>Exemple: Només desplegar si les proves passen.</p>
+<pre><code class="language-yaml">Deploy:
+  Name: MyDeploy
+  Actions:
+    - Name: DeployAction
+      ActionTypeId:
+        Category: Deploy
+        Owner: AWS
+        Provider: S3
+        Version: 1
+      InputArtifacts:
+        - Name: BuildOutput
+      Configuration:
+        BucketName: MyDeploymentBucket
+        Extract: true
+      RunOrder: 2
+</code></pre>
+</li>
+</ul>
+</div><h1>Millors Pràctiques</h1>
+<div class='content'><ul>
+<li><strong>Seguretat</strong>: Utilitza rols i polítiques IAM per restringir l'accés.</li>
+<li><strong>Monitorització</strong>: Activa mètriques i alarmes de CloudWatch.</li>
+<li><strong>Control de Versions</strong>: Utilitza el control de versions per a les definicions de pipeline.</li>
+<li><strong>Automatització</strong>: Automatitza la creació i actualitzacions de pipelines utilitzant AWS CloudFormation o AWS CDK.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>AWS CodePipeline és una eina poderosa per automatitzar el procés de CI/CD, permetent un lliurament de programari més ràpid i fiable. Comprenent els seus conceptes bàsics, configurant pipelines simples i aprofitant les funcions avançades, pots optimitzar el teu flux de treball de desenvolupament i millorar l'eficiència dels teus processos de desplegament. Sempre segueix les millors pràctiques per assegurar la seguretat, mantenibilitat i escalabilitat de les teves pipelines.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='aws-elastic-beanstalk'>&#x25C4;AWS Elastic Beanstalk</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">AWS CodePipeline</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='amazon-redshift'>Amazon Redshift &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

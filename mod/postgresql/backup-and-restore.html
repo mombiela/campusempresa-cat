@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Còpia de seguretat i restauració</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/postgresql/backup-and-restore" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/postgresql/backup-and-restore" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/postgresql/backup-and-restore" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/postgresql/backup-and-restore" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/postgresql/backup-and-restore" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='securing-connections'>&#x25C4;Assegurant connexions</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Còpia de seguretat i restauració</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='data-encryption'>Xifrat de dades &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>La còpia de seguretat i la restauració són operacions crítiques per a la gestió de bases de dades. Asseguren la seguretat, integritat i disponibilitat de les dades en cas de fallades de maquinari, problemes de programari o errors humans. Aquesta secció cobrirà els conceptes bàsics de la creació de còpies de seguretat i la restauració de dades en PostgreSQL, progressant des de tècniques per a principiants fins a tècniques avançades.</p>
+</div><h1>Per què són importants la còpia de seguretat i la restauració</h1>
+<div class='content'><ul>
+<li><strong>Protecció de dades</strong>: Protegeix contra la pèrdua de dades.</li>
+<li><strong>Recuperació de desastres</strong>: Permet la recuperació de fallades catastròfiques.</li>
+<li><strong>Integritat de dades</strong>: Assegura la consistència i precisió de les dades.</li>
+<li><strong>Compliment</strong>: Compleix amb els requisits normatius per a la retenció i recuperació de dades.</li>
+</ul>
+</div><h1>Tipus de còpies de seguretat</h1>
+<div class='content'><ol>
+<li><strong>Còpies de seguretat lògiques</strong>:
+<ul>
+<li>Utilitza comandes SQL per a abocar el contingut de la base de dades.</li>
+<li>Adequat per a bases de dades més petites i més fàcil de gestionar.</li>
+</ul>
+</li>
+<li><strong>Còpies de seguretat físiques</strong>:
+<ul>
+<li>Copia els fitxers reals de la base de dades.</li>
+<li>Adequat per a bases de dades més grans i més ràpid de restaurar.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Còpies de seguretat lògiques amb `pg_dump`</h1>
+<h2>Ús bàsic</h2>
+<div class='content'><p><code>pg_dump</code> és una utilitat per a fer còpies de seguretat d'una base de dades PostgreSQL en un script o fitxer d'arxiu.</p>
+<h4>Exemple: Fer una còpia de seguretat d'una base de dades</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGdfZHVtcCAtVSB1c2VybmFtZSAtVyAtRiBjIC1iIC12IC1mIG15ZGIuYmFja3VwIG15ZGI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pg_dump -U username -W -F c -b -v -f mydb.backup mydb</pre></div><div class='content'><ul>
+<li><code>-U username</code>: Especifica l'usuari de la base de dades.</li>
+<li><code>-W</code>: Demana la contrasenya.</li>
+<li><code>-F c</code>: Especifica el format (personalitzat).</li>
+<li><code>-b</code>: Inclou objectes grans.</li>
+<li><code>-v</code>: Mode verbós.</li>
+<li><code>-f mydb.backup</code>: Fitxer de sortida.</li>
+<li><code>mydb</code>: Nom de la base de dades.</li>
+</ul>
+</div><h2>Restauració d'una còpia de seguretat lògica</h2>
+<div class='content'><p><code>pg_restore</code> s'utilitza per a restaurar una base de dades PostgreSQL des d'un arxiu creat per <code>pg_dump</code>.</p>
+<h4>Exemple: Restaurar una base de dades</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGdfcmVzdG9yZSAtVSB1c2VybmFtZSAtVyAtZCBteWRiIC12IG15ZGIuYmFja3Vw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pg_restore -U username -W -d mydb -v mydb.backup</pre></div><div class='content'><ul>
+<li><code>-U username</code>: Especifica l'usuari de la base de dades.</li>
+<li><code>-W</code>: Demana la contrasenya.</li>
+<li><code>-d mydb</code>: Base de dades de destinació.</li>
+<li><code>-v</code>: Mode verbós.</li>
+<li><code>mydb.backup</code>: Fitxer de còpia de seguretat.</li>
+</ul>
+</div><h1>Còpies de seguretat físiques amb `pg_basebackup`</h1>
+<h2>Ús bàsic</h2>
+<div class='content'><p><code>pg_basebackup</code> és una utilitat per a fer còpies de seguretat base d'un clúster de bases de dades PostgreSQL en funcionament.</p>
+<h4>Exemple: Fer una còpia de seguretat física</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGdfYmFzZWJhY2t1cCAtVSB1c2VybmFtZSAtVyAtRCAvcGF0aC90by9iYWNrdXAgLUZwIC1YcyAtUA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pg_basebackup -U username -W -D /path/to/backup -Fp -Xs -P</pre></div><div class='content'><ul>
+<li><code>-U username</code>: Especifica l'usuari de la base de dades.</li>
+<li><code>-W</code>: Demana la contrasenya.</li>
+<li><code>-D /path/to/backup</code>: Directori de destinació.</li>
+<li><code>-Fp</code>: Format pla.</li>
+<li><code>-Xs</code>: Inclou fitxers WAL.</li>
+<li><code>-P</code>: Mostra el progrés.</li>
+</ul>
+</div><h2>Restauració d'una còpia de seguretat física</h2>
+<div class='content'><p>Per a restaurar una còpia de seguretat física, cal aturar el servidor PostgreSQL, substituir el directori de dades per la còpia de seguretat i tornar a iniciar el servidor.</p>
+<h4>Exemple: Restaurar una còpia de seguretat física</h4>
+<ol>
+<li><strong>Aturar el servidor PostgreSQL</strong>:
+<pre><code class="language-sh">pg_ctl stop -D /path/to/data
+</code></pre>
+</li>
+<li><strong>Substituir el directori de dades</strong>:
+<pre><code class="language-sh">rm -rf /path/to/data/*
+cp -r /path/to/backup/* /path/to/data/
+</code></pre>
+</li>
+<li><strong>Iniciar el servidor PostgreSQL</strong>:
+<pre><code class="language-sh">pg_ctl start -D /path/to/data
+</code></pre>
+</li>
+</ol>
+</div><h1>Tècniques avançades de còpia de seguretat i restauració</h1>
+<h2>Recuperació a un punt en el temps (PITR)</h2>
+<div class='content'><p>PITR permet restaurar la base de dades a un punt específic en el temps.</p>
+<h4>Passos per a PITR</h4>
+<ol>
+<li><strong>Fer una còpia de seguretat base</strong>:
+<pre><code class="language-sh">pg_basebackup -U username -W -D /path/to/backup -Fp -Xs -P
+</code></pre>
+</li>
+<li><strong>Activar l'arxivament WAL</strong> en <code>postgresql.conf</code>:
+<pre><code class="language-conf">archive_mode = on
+archive_command = 'cp %p /path/to/archive/%f'
+</code></pre>
+</li>
+<li><strong>Restaurar la còpia de seguretat base</strong>:
+<pre><code class="language-sh">rm -rf /path/to/data/*
+cp -r /path/to/backup/* /path/to/data/
+</code></pre>
+</li>
+<li><strong>Restaurar els fitxers WAL</strong>:
+<pre><code class="language-sh">cp /path/to/archive/* /path/to/data/pg_wal/
+</code></pre>
+</li>
+<li><strong>Crear un fitxer <code>recovery.conf</code></strong> en el directori de dades:
+<pre><code class="language-conf">restore_command = 'cp /path/to/archive/%f %p'
+recovery_target_time = 'YYYY-MM-DD HH:MM:SS'
+</code></pre>
+</li>
+<li><strong>Iniciar el servidor PostgreSQL</strong>:
+<pre><code class="language-sh">pg_ctl start -D /path/to/data
+</code></pre>
+</li>
+</ol>
+</div><h1>Resum</h1>
+<div class='content'><ul>
+<li><strong>Còpies de seguretat lògiques</strong>: Utilitza <code>pg_dump</code> i <code>pg_restore</code> per a bases de dades més petites.</li>
+<li><strong>Còpies de seguretat físiques</strong>: Utilitza <code>pg_basebackup</code> per a bases de dades més grans.</li>
+<li><strong>Tècniques avançades</strong>: Implementa PITR per a necessitats de recuperació precises.</li>
+</ul>
+<p>En dominar aquestes tècniques de còpia de seguretat i restauració, pots assegurar la seguretat i integritat de les teves bases de dades PostgreSQL, estant ben preparat per a manejar qualsevol emergència relacionada amb les dades.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='securing-connections'>&#x25C4;Assegurant connexions</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Còpia de seguretat i restauració</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='data-encryption'>Xifrat de dades &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

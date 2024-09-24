@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió de Fitxers a Firebase</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/firebase/managing-files" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/firebase/managing-files" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/firebase/managing-files" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/firebase/managing-files" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/firebase/managing-files" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='downloading-files'>&#x25C4;Descarregar Fitxers</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió de Fitxers a Firebase</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='storage-security-rules'>Regles de Seguretat de Storage &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a Firebase Storage</h1>
+<div class='content'><p>Firebase Storage és un servei d'emmagatzematge d'objectes potent, senzill i rendible construït per a l'escala de Google. Et permet emmagatzemar i servir contingut generat per l'usuari, com ara fotos o vídeos.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Buckets</strong>: Contenidors d'emmagatzematge per als teus fitxers.</li>
+<li><strong>Objects</strong>: Fitxers emmagatzemats en buckets.</li>
+<li><strong>References</strong>: Punts de referència als fitxers en el teu bucket d'emmagatzematge.</li>
+<li><strong>Metadata</strong>: Informació sobre els teus fitxers, com ara mida, tipus de contingut, etc.</li>
+</ul>
+</div><h1>Configuració de Firebase Storage</h1>
+<div class='content'><p>Abans de poder gestionar fitxers, has de configurar Firebase Storage en el teu projecte.</p>
+</div><h2>Passos per Configurar Firebase Storage</h2>
+<div class='content'><ol>
+<li><strong>Crea un Projecte Firebase</strong>: Si encara no ho has fet, crea un projecte Firebase a la consola de Firebase.</li>
+<li><strong>Afegeix Firebase a la Teva Aplicació</strong>: Segueix les instruccions per afegir Firebase a la teva aplicació web, Android o iOS.</li>
+<li><strong>Habilita Firebase Storage</strong>: A la consola de Firebase, navega a la secció d'Emmagatzematge i fes clic a &quot;Comença&quot;.</li>
+</ol>
+</div><h2>Exemple: Configuració de Firebase Storage en una Aplicació Web</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sPgo8aGVhZD4KICA8dGl0bGU+RXhlbXBsZSBkZSBGaXJlYmFzZSBTdG9yYWdlPC90aXRsZT4KICA8c2NyaXB0IHNyYz0iaHR0cHM6Ly93d3cuZ3N0YXRpYy5jb20vZmlyZWJhc2Vqcy85LjAuMC9maXJlYmFzZS1hcHAuanMiPjwvc2NyaXB0PgogIDxzY3JpcHQgc3JjPSJodHRwczovL3d3dy5nc3RhdGljLmNvbS9maXJlYmFzZWpzLzkuMC4wL2ZpcmViYXNlLXN0b3JhZ2UuanMiPjwvc2NyaXB0Pgo8L2hlYWQ+Cjxib2R5PgogIDxzY3JpcHQ+CiAgICAvLyBMYSBjb25maWd1cmFjacOzIGRlIEZpcmViYXNlIGRlIGxhIHRldmEgYXBsaWNhY2nDsyB3ZWIKICAgIGNvbnN0IGZpcmViYXNlQ29uZmlnID0gewogICAgICBhcGlLZXk6ICJZT1VSX0FQSV9LRVkiLAogICAgICBhdXRoRG9tYWluOiAiWU9VUl9BVVRIX0RPTUFJTiIsCiAgICAgIHByb2plY3RJZDogIllPVVJfUFJPSkVDVF9JRCIsCiAgICAgIHN0b3JhZ2VCdWNrZXQ6ICJZT1VSX1NUT1JBR0VfQlVDS0VUIiwKICAgICAgbWVzc2FnaW5nU2VuZGVySWQ6ICJZT1VSX01FU1NBR0lOR19TRU5ERVJfSUQiLAogICAgICBhcHBJZDogIllPVVJfQVBQX0lEIgogICAgfTsKCiAgICAvLyBJbmljaWFsaXR6YSBGaXJlYmFzZQogICAgY29uc3QgYXBwID0gZmlyZWJhc2UuaW5pdGlhbGl6ZUFwcChmaXJlYmFzZUNvbmZpZyk7CiAgICBjb25zdCBzdG9yYWdlID0gZmlyZWJhc2Uuc3RvcmFnZSgpOwogIDwvc2NyaXB0Pgo8L2JvZHk+CjwvaHRtbD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+  &lt;title&gt;Exemple de Firebase Storage&lt;/title&gt;
+  &lt;script src=&quot;https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js&quot;&gt;&lt;/script&gt;
+  &lt;script src=&quot;https://www.gstatic.com/firebasejs/9.0.0/firebase-storage.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;script&gt;
+    // La configuraci&oacute; de Firebase de la teva aplicaci&oacute; web
+    const firebaseConfig = {
+      apiKey: &quot;YOUR_API_KEY&quot;,
+      authDomain: &quot;YOUR_AUTH_DOMAIN&quot;,
+      projectId: &quot;YOUR_PROJECT_ID&quot;,
+      storageBucket: &quot;YOUR_STORAGE_BUCKET&quot;,
+      messagingSenderId: &quot;YOUR_MESSAGING_SENDER_ID&quot;,
+      appId: &quot;YOUR_APP_ID&quot;
+    };
+
+    // Inicialitza Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const storage = firebase.storage();
+  &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'></div><h1>Pujada de Fitxers</h1>
+<div class='content'><p>Pujar fitxers a Firebase Storage és senzill. Pots pujar fitxers des d'una aplicació web, aplicació Android o aplicació iOS.</p>
+</div><h2>Exemple: Pujada d'un Fitxer des d'una Aplicació Web</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PGlucHV0IHR5cGU9ImZpbGUiIGlkPSJmaWxlSW5wdXQiIC8+CjxidXR0b24gb25jbGljaz0idXBsb2FkRmlsZSgpIj5QdWphPC9idXR0b24+Cgo8c2NyaXB0PgogIGZ1bmN0aW9uIHVwbG9hZEZpbGUoKSB7CiAgICBjb25zdCBmaWxlID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2ZpbGVJbnB1dCcpLmZpbGVzWzBdOwogICAgY29uc3Qgc3RvcmFnZVJlZiA9IGZpcmViYXNlLnN0b3JhZ2UoKS5yZWYoKTsKICAgIGNvbnN0IGZpbGVSZWYgPSBzdG9yYWdlUmVmLmNoaWxkKGZpbGUubmFtZSk7CgogICAgZmlsZVJlZi5wdXQoZmlsZSkudGhlbigoc25hcHNob3QpID0+IHsKICAgICAgY29uc29sZS5sb2coJ0ZpdHhlciBwdWphdCEnKTsKICAgIH0pOwogIH0KPC9zY3JpcHQ+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;input type=&quot;file&quot; id=&quot;fileInput&quot; /&gt;
+&lt;button onclick=&quot;uploadFile()&quot;&gt;Puja&lt;/button&gt;
+
+&lt;script&gt;
+  function uploadFile() {
+    const file = document.getElementById('fileInput').files[0];
+    const storageRef = firebase.storage().ref();
+    const fileRef = storageRef.child(file.name);
+
+    fileRef.put(file).then((snapshot) =&gt; {
+      console.log('Fitxer pujat!');
+    });
+  }
+&lt;/script&gt;</pre></div><div class='content'></div><h2>Exemple: Pujada d'un Fitxer des d'una Aplicació Android</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("VXJpIGZpbGUgPSBVcmkuZnJvbUZpbGUobmV3IEZpbGUoInBhdGgvdG8vaW1hZ2VzL3JpdmVycy5qcGciKSk7ClN0b3JhZ2VSZWZlcmVuY2Ugc3RvcmFnZVJlZiA9IEZpcmViYXNlU3RvcmFnZS5nZXRJbnN0YW5jZSgpLmdldFJlZmVyZW5jZSgpOwpTdG9yYWdlUmVmZXJlbmNlIHJpdmVyc1JlZiA9IHN0b3JhZ2VSZWYuY2hpbGQoImltYWdlcy9yaXZlcnMuanBnIik7CgpyaXZlcnNSZWYucHV0RmlsZShmaWxlKQogICAgLmFkZE9uU3VjY2Vzc0xpc3RlbmVyKHRhc2tTbmFwc2hvdCAtPiB7CiAgICAgICAgLy8gRml0eGVyIHB1amF0IGFtYiDDqHhpdAogICAgfSkKICAgIC5hZGRPbkZhaWx1cmVMaXN0ZW5lcihleGNlcHRpb24gLT4gewogICAgICAgIC8vIEdlc3Rpw7MgZGUgcHVqYWRlcyBubyByZWVpeGlkZXMKICAgIH0pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Uri file = Uri.fromFile(new File(&quot;path/to/images/rivers.jpg&quot;));
+StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+StorageReference riversRef = storageRef.child(&quot;images/rivers.jpg&quot;);
+
+riversRef.putFile(file)
+    .addOnSuccessListener(taskSnapshot -&gt; {
+        // Fitxer pujat amb &egrave;xit
+    })
+    .addOnFailureListener(exception -&gt; {
+        // Gesti&oacute; de pujades no reeixides
+    });</pre></div><div class='content'></div><h1>Descàrrega de Fitxers</h1>
+<div class='content'><p>Descarregar fitxers de Firebase Storage també és senzill. Pots obtenir l'URL de descàrrega i utilitzar-lo per obtenir el fitxer.</p>
+</div><h2>Exemple: Descàrrega d'un Fitxer des d'una Aplicació Web</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PGJ1dHRvbiBvbmNsaWNrPSJkb3dubG9hZEZpbGUoKSI+RGVzY2FycmVnYTwvYnV0dG9uPgoKPHNjcmlwdD4KICBmdW5jdGlvbiBkb3dubG9hZEZpbGUoKSB7CiAgICBjb25zdCBzdG9yYWdlUmVmID0gZmlyZWJhc2Uuc3RvcmFnZSgpLnJlZigpOwogICAgY29uc3QgZmlsZVJlZiA9IHN0b3JhZ2VSZWYuY2hpbGQoJ3BhdGgvdG8vZmlsZS5qcGcnKTsKCiAgICBmaWxlUmVmLmdldERvd25sb2FkVVJMKCkudGhlbigodXJsKSA9PiB7CiAgICAgIHdpbmRvdy5vcGVuKHVybCk7CiAgICB9KS5jYXRjaCgoZXJyb3IpID0+IHsKICAgICAgY29uc29sZS5lcnJvcignRXJyb3IgZW4gZGVzY2FycmVnYXIgZWwgZml0eGVyOicsIGVycm9yKTsKICAgIH0pOwogIH0KPC9zY3JpcHQ+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;button onclick=&quot;downloadFile()&quot;&gt;Descarrega&lt;/button&gt;
+
+&lt;script&gt;
+  function downloadFile() {
+    const storageRef = firebase.storage().ref();
+    const fileRef = storageRef.child('path/to/file.jpg');
+
+    fileRef.getDownloadURL().then((url) =&gt; {
+      window.open(url);
+    }).catch((error) =&gt; {
+      console.error('Error en descarregar el fitxer:', error);
+    });
+  }
+&lt;/script&gt;</pre></div><div class='content'></div><h2>Exemple: Descàrrega d'un Fitxer des d'una Aplicació Android</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U3RvcmFnZVJlZmVyZW5jZSBzdG9yYWdlUmVmID0gRmlyZWJhc2VTdG9yYWdlLmdldEluc3RhbmNlKCkuZ2V0UmVmZXJlbmNlKCk7ClN0b3JhZ2VSZWZlcmVuY2UgZmlsZVJlZiA9IHN0b3JhZ2VSZWYuY2hpbGQoInBhdGgvdG8vZmlsZS5qcGciKTsKCmZpbGVSZWYuZ2V0RG93bmxvYWRVcmwoKS5hZGRPblN1Y2Nlc3NMaXN0ZW5lcih1cmkgLT4gewogICAgLy8gVXRpbGl0emEgbCdVUkwgZGUgZGVzY8OgcnJlZ2EKfSkuYWRkT25GYWlsdXJlTGlzdGVuZXIoZXhjZXB0aW9uIC0+IHsKICAgIC8vIEdlc3Rpw7MgZCdlcnJvcnMKfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+StorageReference fileRef = storageRef.child(&quot;path/to/file.jpg&quot;);
+
+fileRef.getDownloadUrl().addOnSuccessListener(uri -&gt; {
+    // Utilitza l'URL de desc&agrave;rrega
+}).addOnFailureListener(exception -&gt; {
+    // Gesti&oacute; d'errors
+});</pre></div><div class='content'></div><h1>Gestió de Metadades de Fitxers</h1>
+<div class='content'><p>Pots establir i recuperar metadades per als teus fitxers a Firebase Storage.</p>
+</div><h2>Exemple: Establir Metadades</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZmlsZVJlZiA9IGZpcmViYXNlLnN0b3JhZ2UoKS5yZWYoKS5jaGlsZCgncGF0aC90by9maWxlLmpwZycpOwpjb25zdCBuZXdNZXRhZGF0YSA9IHsKICBjb250ZW50VHlwZTogJ2ltYWdlL2pwZWcnLAogIGN1c3RvbU1ldGFkYXRhOiB7CiAgICAndXBsb2FkZWRCeSc6ICdVc2VyMTIzJywKICAgICdkZXNjcmlwdGlvbic6ICdGb3RvIGRlIHBlcmZpbCcKICB9Cn07CgpmaWxlUmVmLnVwZGF0ZU1ldGFkYXRhKG5ld01ldGFkYXRhKS50aGVuKChtZXRhZGF0YSkgPT4gewogIGNvbnNvbGUubG9nKCdNZXRhZGFkZXMgYWN0dWFsaXR6YWRlczonLCBtZXRhZGF0YSk7Cn0pLmNhdGNoKChlcnJvcikgPT4gewogIGNvbnNvbGUuZXJyb3IoJ0Vycm9yIGVuIGFjdHVhbGl0emFyIGxlcyBtZXRhZGFkZXM6JywgZXJyb3IpOwp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const fileRef = firebase.storage().ref().child('path/to/file.jpg');
+const newMetadata = {
+  contentType: 'image/jpeg',
+  customMetadata: {
+    'uploadedBy': 'User123',
+    'description': 'Foto de perfil'
+  }
+};
+
+fileRef.updateMetadata(newMetadata).then((metadata) =&gt; {
+  console.log('Metadades actualitzades:', metadata);
+}).catch((error) =&gt; {
+  console.error('Error en actualitzar les metadades:', error);
+});</pre></div><div class='content'></div><h2>Exemple: Recuperar Metadades</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZmlsZVJlZiA9IGZpcmViYXNlLnN0b3JhZ2UoKS5yZWYoKS5jaGlsZCgncGF0aC90by9maWxlLmpwZycpOwoKZmlsZVJlZi5nZXRNZXRhZGF0YSgpLnRoZW4oKG1ldGFkYXRhKSA9PiB7CiAgY29uc29sZS5sb2coJ01ldGFkYWRlcyBkZWwgZml0eGVyOicsIG1ldGFkYXRhKTsKfSkuY2F0Y2goKGVycm9yKSA9PiB7CiAgY29uc29sZS5lcnJvcignRXJyb3IgZW4gcmVjdXBlcmFyIGxlcyBtZXRhZGFkZXM6JywgZXJyb3IpOwp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const fileRef = firebase.storage().ref().child('path/to/file.jpg');
+
+fileRef.getMetadata().then((metadata) =&gt; {
+  console.log('Metadades del fitxer:', metadata);
+}).catch((error) =&gt; {
+  console.error('Error en recuperar les metadades:', error);
+});</pre></div><div class='content'></div><h1>Eliminació de Fitxers</h1>
+<div class='content'><p>Eliminar fitxers de Firebase Storage es fa utilitzant el mètode <code>delete</code>.</p>
+</div><h2>Exemple: Eliminació d'un Fitxer</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZmlsZVJlZiA9IGZpcmViYXNlLnN0b3JhZ2UoKS5yZWYoKS5jaGlsZCgncGF0aC90by9maWxlLmpwZycpOwoKZmlsZVJlZi5kZWxldGUoKS50aGVuKCgpID0+IHsKICBjb25zb2xlLmxvZygnRml0eGVyIGVsaW1pbmF0IGFtYiDDqHhpdCcpOwp9KS5jYXRjaCgoZXJyb3IpID0+IHsKICBjb25zb2xlLmVycm9yKCdFcnJvciBlbiBlbGltaW5hciBlbCBmaXR4ZXI6JywgZXJyb3IpOwp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const fileRef = firebase.storage().ref().child('path/to/file.jpg');
+
+fileRef.delete().then(() =&gt; {
+  console.log('Fitxer eliminat amb &egrave;xit');
+}).catch((error) =&gt; {
+  console.error('Error en eliminar el fitxer:', error);
+});</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Gestionar fitxers a Firebase Storage implica configurar el teu emmagatzematge, pujar i descarregar fitxers, gestionar metadades i eliminar fitxers. Firebase Storage proporciona una solució robusta i escalable per gestionar contingut generat per l'usuari, convertint-lo en una eina essencial per a aplicacions web i mòbils modernes. En dominar aquests conceptes, podràs gestionar eficientment fitxers en els teus projectes Firebase.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='downloading-files'>&#x25C4;Descarregar Fitxers</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió de Fitxers a Firebase</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='storage-security-rules'>Regles de Seguretat de Storage &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Passarel·la VPN d'Azure</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/azure/azure-vpn-gateway" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/azure/azure-vpn-gateway" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/azure/azure-vpn-gateway" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/azure/azure-vpn-gateway" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/azure/azure-vpn-gateway" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='azure-load-balancer'>&#x25C4;Equilibrador de Càrrega d'Azure</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Passarel·la VPN d'Azure</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='azure-dns'>DNS d'Azure &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>La passarel·la VPN d'Azure és un component crític en la xarxa d'Azure que et permet connectar de manera segura les teves xarxes locals amb els recursos d'Azure. Aquesta secció cobrirà els conceptes bàsics de la passarel·la VPN d'Azure, els seus tipus, configuracions i funcions avançades.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Passarel·la de Xarxa Virtual</strong>: Una passarel·la de xarxa virtual està composta per dues o més màquines virtuals que es configuren i es despleguen automàticament a una subxarxa específica anomenada subxarxa de passarel·la.</li>
+<li><strong>Subxarxa de Passarel·la</strong>: Una subxarxa específica a la teva xarxa virtual que conté els recursos de la passarel·la de xarxa virtual.</li>
+<li><strong>Tipus de Passarel·la VPN</strong>: Hi ha dos tipus de passarel·les VPN: Basada en Rutes i Basada en Polítiques.</li>
+<li><strong>Tipus de Connexió</strong>: Connexions Site-to-Site (S2S), Point-to-Site (P2S) i VNet-to-VNet.</li>
+</ul>
+</div><h1>Configuració d'una Passarel·la VPN</h1>
+<div class='content'></div><h2>Prerequisits</h2>
+<div class='content'><ul>
+<li>Una subscripció d'Azure.</li>
+<li>Una xarxa virtual amb una subxarxa de passarel·la.</li>
+<li>Una adreça IP pública per a la passarel·la VPN.</li>
+</ul>
+</div><h2>Passos per Crear una Passarel·la VPN</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear una Xarxa Virtual</strong>:</p>
+<pre><code class="language-azurecli">az network vnet create --name MyVNet --resource-group MyResourceGroup --address-prefix 10.1.0.0/16 --subnet-name MySubnet --subnet-prefix 10.1.0.0/24
+</code></pre>
+</li>
+<li>
+<p><strong>Crear una Subxarxa de Passarel·la</strong>:</p>
+<pre><code class="language-azurecli">az network vnet subnet create --address-prefix 10.1.255.0/27 --name GatewaySubnet --resource-group MyResourceGroup --vnet-name MyVNet
+</code></pre>
+</li>
+<li>
+<p><strong>Crear una Adreça IP Pública</strong>:</p>
+<pre><code class="language-azurecli">az network public-ip create --name MyGatewayIP --resource-group MyResourceGroup --allocation-method Dynamic
+</code></pre>
+</li>
+<li>
+<p><strong>Crear la Passarel·la VPN</strong>:</p>
+<pre><code class="language-azurecli">az network vnet-gateway create --name MyVPNGateway --public-ip-address MyGatewayIP --resource-group MyResourceGroup --vnet MyVNet --gateway-type Vpn --vpn-type RouteBased --sku VpnGw1 --no-wait
+</code></pre>
+</li>
+</ol>
+</div><h1>Configuració de Connexions VPN</h1>
+<div class='content'></div><h2>VPN Site-to-Site (S2S)</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: Connecta la teva xarxa local amb una xarxa virtual d'Azure a través d'un túnel VPN IPsec/IKE.</li>
+<li><strong>Cas d'Ús</strong>: Ideal per estendre la teva xarxa local a Azure.</li>
+</ul>
+</div><h2>VPN Point-to-Site (P2S)</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: Permet que clients individuals es connectin a la teva xarxa virtual d'Azure des de qualsevol lloc a través d'internet.</li>
+<li><strong>Cas d'Ús</strong>: Adequat per a treballadors remots que necessiten accés segur als recursos d'Azure.</li>
+</ul>
+</div><h2>VPN VNet-to-VNet</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: Connecta dues xarxes virtuals d'Azure.</li>
+<li><strong>Cas d'Ús</strong>: Útil per connectar xarxes virtuals en diferents regions o subscripcions.</li>
+</ul>
+</div><h2>Exemple: Configuració d'una VPN Site-to-Site</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear una Passarel·la de Xarxa Local</strong>:</p>
+<pre><code class="language-azurecli">az network local-gateway create --gateway-ip-address &lt;OnPremisesPublicIP&gt; --name MyLocalGateway --resource-group MyResourceGroup --local-address-prefixes 10.2.0.0/16
+</code></pre>
+</li>
+<li>
+<p><strong>Crear la Connexió VPN</strong>:</p>
+<pre><code class="language-azurecli">az network vpn-connection create --name MyS2SConnection --resource-group MyResourceGroup --vnet-gateway1 MyVPNGateway --local-gateway2 MyLocalGateway --shared-key 'MySharedKey'
+</code></pre>
+</li>
+</ol>
+</div><h1>Funcions Avançades</h1>
+<div class='content'></div><h2>Alta Disponibilitat</h2>
+<div class='content'><ul>
+<li><strong>Mode Actiu-Actiu</strong>: Desplega dues passarel·les VPN en una configuració activa-activa per a alta disponibilitat.</li>
+<li><strong>Mode Actiu-Passiu</strong>: Configuració per defecte on una passarel·la està activa i l'altra està passiva.</li>
+</ul>
+</div><h2>BGP (Border Gateway Protocol)</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: BGP s'utilitza per intercanviar informació de rutes entre xarxes.</li>
+<li><strong>Cas d'Ús</strong>: Útil per a topologies de xarxa complexes i rutes dinàmiques.</li>
+</ul>
+</div><h2>Integració amb ExpressRoute</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: ExpressRoute proporciona una connexió privada a Azure.</li>
+<li><strong>Cas d'Ús</strong>: Per a escenaris que requereixen més amplada de banda i menor latència que les connexions VPN típiques.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La passarel·la VPN d'Azure és una manera versàtil i segura de connectar les teves xarxes locals, clients remots i altres xarxes virtuals d'Azure. Comprenent els diferents tipus de passarel·les VPN i connexions, pots dissenyar una arquitectura de xarxa robusta i escalable a Azure. Tant si estàs configurant una simple VPN site-to-site com una connexió complexa VNet-to-VNet multi-regió, la passarel·la VPN d'Azure proporciona les eines i funcions necessàries per satisfer les teves necessitats de xarxa.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='azure-load-balancer'>&#x25C4;Equilibrador de Càrrega d'Azure</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Passarel·la VPN d'Azure</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='azure-dns'>DNS d'Azure &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

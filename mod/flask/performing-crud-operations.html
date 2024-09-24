@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Realització d'operacions CRUD</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/flask/performing-crud-operations" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/flask/performing-crud-operations" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/flask/performing-crud-operations" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/flask/performing-crud-operations" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/flask/performing-crud-operations" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='creating-models'>&#x25C4;Crear Models</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Realització d'operacions CRUD</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='user-authentication'>Autenticació d'Usuaris &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquesta secció, explorarem com realitzar operacions CRUD (Create, Read, Update, Delete) utilitzant Flask. Les operacions CRUD són fonamentals per a les aplicacions web, ja que permeten als usuaris interactuar amb la base de dades. Cobrirem cada operació pas a pas, proporcionant exemples de codi i explicacions per assegurar-nos que entens com implementar-les en la teva aplicació Flask.</p>
+</div><h1>Configuració de l'entorn</h1>
+<div class='content'><p>Abans d'endinsar-nos en les operacions CRUD, configurem el nostre entorn Flask.</p>
+<ol>
+<li>
+<p><strong>Instal·la Flask i SQLAlchemy</strong>:</p>
+<pre><code class="language-bash">pip install Flask SQLAlchemy
+</code></pre>
+</li>
+<li>
+<p><strong>Crea una aplicació bàsica de Flask</strong>:</p>
+<pre><code class="language-python">from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+db = SQLAlchemy(app)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+</code></pre>
+</li>
+</ol>
+</div><h1>Creació del model de base de dades</h1>
+<div class='content'><p>Defineix un model per a la base de dades. Per a aquest exemple, crearem un model senzill <code>User</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgVXNlcihkYi5Nb2RlbCk6CiAgICBpZCA9IGRiLkNvbHVtbihkYi5JbnRlZ2VyLCBwcmltYXJ5X2tleT1UcnVlKQogICAgbmFtZSA9IGRiLkNvbHVtbihkYi5TdHJpbmcoODApLCBudWxsYWJsZT1GYWxzZSkKICAgIGVtYWlsID0gZGIuQ29sdW1uKGRiLlN0cmluZygxMjApLCB1bmlxdWU9VHJ1ZSwgbnVsbGFibGU9RmFsc2UpCgogICAgZGVmIF9fcmVwcl9fKHNlbGYpOgogICAgICAgIHJldHVybiBmJzxVc2VyIHtzZWxmLm5hbWV9Pic="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+
+    def __repr__(self):
+        return f'&lt;User {self.name}&gt;'</pre></div><div class='content'><p>Executa les següents comandes per crear la base de dades:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSB5b3VyX2FwcGxpY2F0aW9uIGltcG9ydCBkYgpkYi5jcmVhdGVfYWxsKCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from your_application import db
+db.create_all()</pre></div><div class='content'></div><h1>Operació de creació</h1>
+<div class='content'><p>Per afegir nous usuaris a la base de dades, necessitem crear una ruta que gestioni la creació de noves instàncies de <code>User</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QGFwcC5yb3V0ZSgnL3VzZXInLCBtZXRob2RzPVsnUE9TVCddKQpkZWYgY3JlYXRlX3VzZXIoKToKICAgIG5hbWUgPSByZXF1ZXN0Lmpzb25bJ25hbWUnXQogICAgZW1haWwgPSByZXF1ZXN0Lmpzb25bJ2VtYWlsJ10KICAgIG5ld191c2VyID0gVXNlcihuYW1lPW5hbWUsIGVtYWlsPWVtYWlsKQoKICAgIHRyeToKICAgICAgICBkYi5zZXNzaW9uLmFkZChuZXdfdXNlcikKICAgICAgICBkYi5zZXNzaW9uLmNvbW1pdCgpCiAgICAgICAgcmV0dXJuIHsibWVzc2FnZSI6ICJVc2VyIGNyZWF0ZWQgc3VjY2Vzc2Z1bGx5In0sIDIwMQogICAgZXhjZXB0OgogICAgICAgIHJldHVybiB7Im1lc3NhZ2UiOiAiVGhlcmUgd2FzIGFuIGlzc3VlIGNyZWF0aW5nIHRoZSB1c2VyIn0sIDUwMA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@app.route('/user', methods=['POST'])
+def create_user():
+    name = request.json['name']
+    email = request.json['email']
+    new_user = User(name=name, email=email)
+
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+        return {&quot;message&quot;: &quot;User created successfully&quot;}, 201
+    except:
+        return {&quot;message&quot;: &quot;There was an issue creating the user&quot;}, 500</pre></div><div class='content'></div><h1>Operació de lectura</h1>
+<div class='content'><p>Per llegir o recuperar usuaris de la base de dades, podem crear rutes per obtenir tots els usuaris o un usuari específic per ID.</p>
+<ul>
+<li>
+<p><strong>Obtenir tots els usuaris</strong>:</p>
+<pre><code class="language-python">@app.route('/users', methods=['GET'])
+def get_users():
+    users = User.query.all()
+    return {&quot;users&quot;: [{&quot;id&quot;: user.id, &quot;name&quot;: user.name, &quot;email&quot;: user.email} for user in users]}
+</code></pre>
+</li>
+<li>
+<p><strong>Obtenir usuari per ID</strong>:</p>
+<pre><code class="language-python">@app.route('/user/&lt;int:id&gt;', methods=['GET'])
+def get_user(id):
+    user = User.query.get_or_404(id)
+    return {&quot;id&quot;: user.id, &quot;name&quot;: user.name, &quot;email&quot;: user.email}
+</code></pre>
+</li>
+</ul>
+</div><h1>Operació d'actualització</h1>
+<div class='content'><p>Per actualitzar un usuari existent, necessitem crear una ruta que gestioni la lògica d'actualització.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QGFwcC5yb3V0ZSgnL3VzZXIvPGludDppZD4nLCBtZXRob2RzPVsnUFVUJ10pCmRlZiB1cGRhdGVfdXNlcihpZCk6CiAgICB1c2VyID0gVXNlci5xdWVyeS5nZXRfb3JfNDA0KGlkKQogICAgbmFtZSA9IHJlcXVlc3QuanNvblsnbmFtZSddCiAgICBlbWFpbCA9IHJlcXVlc3QuanNvblsnZW1haWwnXQoKICAgIHRyeToKICAgICAgICB1c2VyLm5hbWUgPSBuYW1lCiAgICAgICAgdXNlci5lbWFpbCA9IGVtYWlsCiAgICAgICAgZGIuc2Vzc2lvbi5jb21taXQoKQogICAgICAgIHJldHVybiB7Im1lc3NhZ2UiOiAiVXNlciB1cGRhdGVkIHN1Y2Nlc3NmdWxseSJ9CiAgICBleGNlcHQ6CiAgICAgICAgcmV0dXJuIHsibWVzc2FnZSI6ICJUaGVyZSB3YXMgYW4gaXNzdWUgdXBkYXRpbmcgdGhlIHVzZXIifSwgNTAw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@app.route('/user/&lt;int:id&gt;', methods=['PUT'])
+def update_user(id):
+    user = User.query.get_or_404(id)
+    name = request.json['name']
+    email = request.json['email']
+
+    try:
+        user.name = name
+        user.email = email
+        db.session.commit()
+        return {&quot;message&quot;: &quot;User updated successfully&quot;}
+    except:
+        return {&quot;message&quot;: &quot;There was an issue updating the user&quot;}, 500</pre></div><div class='content'></div><h1>Operació d'eliminació</h1>
+<div class='content'><p>Per eliminar un usuari de la base de dades, necessitem crear una ruta que gestioni l'eliminació.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QGFwcC5yb3V0ZSgnL3VzZXIvPGludDppZD4nLCBtZXRob2RzPVsnREVMRVRFJ10pCmRlZiBkZWxldGVfdXNlcihpZCk6CiAgICB1c2VyID0gVXNlci5xdWVyeS5nZXRfb3JfNDA0KGlkKQoKICAgIHRyeToKICAgICAgICBkYi5zZXNzaW9uLmRlbGV0ZSh1c2VyKQogICAgICAgIGRiLnNlc3Npb24uY29tbWl0KCkKICAgICAgICByZXR1cm4geyJtZXNzYWdlIjogIlVzZXIgZGVsZXRlZCBzdWNjZXNzZnVsbHkifQogICAgZXhjZXB0OgogICAgICAgIHJldHVybiB7Im1lc3NhZ2UiOiAiVGhlcmUgd2FzIGFuIGlzc3VlIGRlbGV0aW5nIHRoZSB1c2VyIn0sIDUwMA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@app.route('/user/&lt;int:id&gt;', methods=['DELETE'])
+def delete_user(id):
+    user = User.query.get_or_404(id)
+
+    try:
+        db.session.delete(user)
+        db.session.commit()
+        return {&quot;message&quot;: &quot;User deleted successfully&quot;}
+    except:
+        return {&quot;message&quot;: &quot;There was an issue deleting the user&quot;}, 500</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem cobert com realitzar operacions CRUD en una aplicació Flask utilitzant SQLAlchemy. Hem après com:</p>
+<ul>
+<li>Configurar l'entorn Flask i la base de dades.</li>
+<li>Crear un model de base de dades.</li>
+<li>Implementar rutes per crear, llegir, actualitzar i eliminar registres.</li>
+</ul>
+<p>Entendre les operacions CRUD és essencial per construir aplicacions web dinàmiques. Practica aquests conceptes per consolidar la teva comprensió i aplicar-los als teus projectes.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='creating-models'>&#x25C4;Crear Models</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Realització d'operacions CRUD</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='user-authentication'>Autenticació d'Usuaris &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

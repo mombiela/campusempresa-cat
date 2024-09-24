@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desplegant l'Aplicació</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/go/deploying-the-application" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/go/deploying-the-application" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/go/deploying-the-application" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/go/deploying-the-application" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/go/deploying-the-application" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='testing-and-debugging'>&#x25C4;Proves i Depuració</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Desplegant l'Aplicació</a>
+	</div>
+	<div class='col-4 text-end'>
+			</div>
+</div>
+<div class='content'><p>Desplegar una aplicació Go implica diversos passos, des de construir l'executable fins a configurar l'entorn on l'aplicació s'executarà. Aquesta secció et guiarà a través del procés de desplegar una aplicació Go, cobrint tant estratègies de desplegament bàsiques com avançades.</p>
+</div><h1>Construint l'Aplicació Go</h1>
+<div class='content'><p>Abans de desplegar, necessites construir la teva aplicació Go en un binari executable.</p>
+<ul>
+<li>
+<p><strong>Construint per al sistema actual:</strong></p>
+<pre><code class="language-bash">go build -o myapp
+</code></pre>
+<p>Aquesta comanda compila el codi font de Go i produeix un executable anomenat <code>myapp</code> per al sistema operatiu i arquitectura actuals.</p>
+</li>
+<li>
+<p><strong>Compilant per a diferents sistemes:</strong></p>
+<pre><code class="language-bash">GOOS=linux GOARCH=amd64 go build -o myapp-linux
+</code></pre>
+<p>Aquesta comanda estableix el sistema operatiu objectiu a Linux i l'arquitectura a AMD64, produint un executable anomenat <code>myapp-linux</code>.</p>
+</li>
+</ul>
+</div><h1>Preparant l'Entorn</h1>
+<div class='content'><p>Assegura't que l'entorn objectiu està llest per executar la teva aplicació Go.</p>
+<ul>
+<li>
+<p><strong>Configurant el servidor:</strong></p>
+<ul>
+<li>Tria un servidor (per exemple, AWS, DigitalOcean, Google Cloud).</li>
+<li>Instal·la les dependències necessàries (per exemple, Docker, sistemes de bases de dades).</li>
+</ul>
+</li>
+<li>
+<p><strong>Variables d'entorn:</strong></p>
+<ul>
+<li>Emmagatzema informació sensible com claus d'API i credencials de bases de dades en variables d'entorn.</li>
+<li>Exemple en un fitxer <code>.env</code>:
+<pre><code>DB_HOST=localhost
+DB_USER=root
+DB_PASS=password
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</div><h1>Desplegant amb Docker</h1>
+<div class='content'><p>Docker simplifica el desplegament empaquetant la teva aplicació i les seves dependències en un contenidor.</p>
+<ul>
+<li>
+<p><strong>Creant un Dockerfile:</strong></p>
+<pre><code class="language-dockerfile"># Utilitza la imatge oficial de Golang com a imatge base
+FROM golang:1.19-alpine
+
+# Estableix el Directori de Treball Actual dins del contenidor
+WORKDIR /app
+
+# Copia els fitxers go mod i sum
+COPY go.mod go.sum ./
+
+# Descarrega totes les dependències. Les dependències es cachejaran si els fitxers go.mod i go.sum no canvien
+RUN go mod download
+
+# Copia el codi font des del directori actual al Directori de Treball dins del contenidor
+COPY . .
+
+# Construeix l'aplicació Go
+RUN go build -o myapp
+
+# Comanda per executar l'executable
+CMD [&quot;./myapp&quot;]
+</code></pre>
+</li>
+<li>
+<p><strong>Construint i executant el contenidor Docker:</strong></p>
+<pre><code class="language-bash">docker build -t myapp .
+docker run -p 8080:8080 myapp
+</code></pre>
+</li>
+</ul>
+</div><h1>Desplegant a un Servei al Núvol</h1>
+<div class='content'></div><h2>Desplegant a AWS Elastic Beanstalk</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Crea una aplicació Elastic Beanstalk:</strong></p>
+<ul>
+<li>Utilitza la Consola de Gestió d'AWS per crear una nova aplicació Elastic Beanstalk.</li>
+<li>Tria una plataforma (per exemple, Docker si utilitzes un contenidor Docker).</li>
+</ul>
+</li>
+<li>
+<p><strong>Desplega l'aplicació:</strong></p>
+<ul>
+<li>Empaqueta el codi de la teva aplicació i els fitxers de configuració.</li>
+<li>Utilitza el CLI d'Elastic Beanstalk per desplegar:
+<pre><code class="language-bash">eb init -p docker myapp
+eb create myapp-env
+eb deploy
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</div><h2>Desplegant a Google Cloud Run</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Containeritza l'aplicació:</strong></p>
+<ul>
+<li>Assegura't que tens un Dockerfile com es mostra anteriorment.</li>
+</ul>
+</li>
+<li>
+<p><strong>Desplega utilitzant el CLI de gcloud:</strong></p>
+<pre><code class="language-bash">gcloud builds submit --tag gcr.io/PROJECT-ID/myapp
+gcloud run deploy --image gcr.io/PROJECT-ID/myapp --platform managed
+</code></pre>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Desplegar una aplicació Go implica construir l'executable, preparar l'entorn i triar una estratègia de desplegament. Tant si utilitzes Docker, AWS Elastic Beanstalk, com Google Cloud Run, la clau és assegurar-te que la teva aplicació està empaquetada correctament i que l'entorn objectiu està configurat adequadament. Seguint aquests passos, pots desplegar les teves aplicacions Go de manera eficient i fiable.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='testing-and-debugging'>&#x25C4;Proves i Depuració</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Desplegant l'Aplicació</a>
+	</div>
+	<div class='col-4 text-end'>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

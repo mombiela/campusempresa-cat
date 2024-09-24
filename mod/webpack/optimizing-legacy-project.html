@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimització d'un Projecte Heretat</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/webpack/optimizing-legacy-project" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/webpack/optimizing-legacy-project" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/webpack/optimizing-legacy-project" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/webpack/optimizing-legacy-project" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/webpack/optimizing-legacy-project" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='creating-complex-single-page-application'>&#x25C4;Crear una aplicació d'una sola pàgina complexa</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització d'un Projecte Heretat</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='case-studies-best-practices'>Estudis de casos i millors pràctiques &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Optimitzar un projecte heretat pot millorar significativament el rendiment, la mantenibilitat i l'escalabilitat. Aquesta secció et guiarà a través del procés d'utilitzar Webpack per optimitzar un projecte existent, cobrint tant tècniques bàsiques com avançades.</p>
+</div><h1>Entendre el Projecte Heretat</h1>
+<div class='content'><p>Abans de submergir-te en l'optimització, és crucial entendre l'estat actual del projecte.</p>
+<ul>
+<li><strong>Analitza el procés de construcció actual</strong>: Identifica com es construeix i empaqueta actualment el projecte.</li>
+<li><strong>Identifica colls d'ampolla</strong>: Busca àrees on el rendiment és deficient.</li>
+<li><strong>Estableix objectius</strong>: Defineix què vols aconseguir amb l'optimització (per exemple, temps de construcció més ràpids, mides de paquet més petites).</li>
+</ul>
+</div><h1>Configuració de Webpack</h1>
+<div class='content'><p>Si el teu projecte heretat no utilitza ja Webpack, el primer pas és configurar-lo.</p>
+<ol>
+<li>
+<p><strong>Instal·la Webpack i Webpack CLI</strong>:</p>
+<pre><code class="language-bash">npm install --save-dev webpack webpack-cli
+</code></pre>
+</li>
+<li>
+<p><strong>Crea un fitxer de configuració bàsic de Webpack</strong> (<code>webpack.config.js</code>):</p>
+<pre><code class="language-javascript">const path = require('path');
+
+module.exports = {
+    entry: './src/index.js',
+    output: {
+        filename: 'bundle.js',
+        path: path.resolve(__dirname, 'dist')
+    },
+    mode: 'development'
+};
+</code></pre>
+</li>
+</ol>
+</div><h1>Divisió de Codi</h1>
+<div class='content'><p>La divisió de codi ajuda a descompondre el codi en trossos més petits, que es poden carregar sota demanda.</p>
+<ul>
+<li>
+<p><strong>Punts d'entrada</strong>: Defineix múltiples punts d'entrada per dividir el codi.</p>
+<pre><code class="language-javascript">module.exports = {
+    entry: {
+        app: './src/app.js',
+        vendor: './src/vendor.js'
+    },
+    output: {
+        filename: '[name].bundle.js',
+        path: path.resolve(__dirname, 'dist')
+    }
+};
+</code></pre>
+</li>
+<li>
+<p><strong>Imports dinàmics</strong>: Utilitza imports dinàmics per dividir el codi en punts específics.</p>
+<pre><code class="language-javascript">import(/* webpackChunkName: &quot;lodash&quot; */ 'lodash').then(_ =&gt; {
+    // Utilitza lodash aquí
+});
+</code></pre>
+</li>
+</ul>
+</div><h1>Carregadors i Connectors</h1>
+<div class='content'><p>Els carregadors i connectors són essencials per transformar i optimitzar el teu codi.</p>
+<ul>
+<li>
+<p><strong>Carregadors</strong>: Transformen fitxers en mòduls.</p>
+<ul>
+<li><strong>Babel Loader</strong>: Transpila JavaScript modern a versions més antigues per compatibilitat.
+<pre><code class="language-bash">npm install --save-dev babel-loader @babel/core @babel/preset-env
+</code></pre>
+<pre><code class="language-javascript">module: {
+    rules: [
+        {
+            test: /\.js$/,
+            exclude: /node_modules/,
+            use: {
+                loader: 'babel-loader',
+                options: {
+                    presets: ['@babel/preset-env']
+                }
+            }
+        }
+    ]
+}
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Connectors</strong>: Realitzen una gamma més àmplia de tasques com l'optimització de paquets, la gestió d'actius i la injecció de variables d'entorn.</p>
+<ul>
+<li><strong>HtmlWebpackPlugin</strong>: Simplifica la creació de fitxers HTML per servir els teus paquets.
+<pre><code class="language-bash">npm install --save-dev html-webpack-plugin
+</code></pre>
+<pre><code class="language-javascript">const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+module.exports = {
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: './src/index.html'
+        })
+    ]
+};
+</code></pre>
+</li>
+</ul>
+</li>
+</ul>
+</div><h1>Optimització de la Sortida</h1>
+<div class='content'><p>Optimitza la sortida per millorar el rendiment i reduir la mida del paquet.</p>
+<ul>
+<li>
+<p><strong>Minificació</strong>: Minifica JavaScript utilitzant TerserPlugin.</p>
+<pre><code class="language-bash">npm install --save-dev terser-webpack-plugin
+</code></pre>
+<pre><code class="language-javascript">const TerserPlugin = require('terser-webpack-plugin');
+
+module.exports = {
+    optimization: {
+        minimize: true,
+        minimizer: [new TerserPlugin()],
+    },
+};
+</code></pre>
+</li>
+<li>
+<p><strong>Tree Shaking</strong>: Elimina codi no utilitzat.</p>
+<pre><code class="language-javascript">module.exports = {
+    mode: 'production',
+    optimization: {
+        usedExports: true,
+    },
+};
+</code></pre>
+</li>
+</ul>
+</div><h1>Tècniques Avançades</h1>
+<div class='content'><p>Per a una optimització més avançada, considera les següents tècniques:</p>
+<ul>
+<li>
+<p><strong>Caché</strong>: Millora el rendiment de construcció emmagatzemant en caché els mòduls i trossos generats.</p>
+<pre><code class="language-javascript">module.exports = {
+    output: {
+        filename: '[name].[contenthash].js',
+    },
+    optimization: {
+        moduleIds: 'deterministic',
+        runtimeChunk: 'single',
+        splitChunks: {
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'vendors',
+                    chunks: 'all',
+                },
+            },
+        },
+    },
+};
+</code></pre>
+</li>
+<li>
+<p><strong>Perfilat</strong>: Utilitza les eines de perfilat integrades de Webpack per identificar colls d'ampolla de rendiment.</p>
+<pre><code class="language-bash">webpack --profile --json &gt; stats.json
+</code></pre>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Optimitzar un projecte heretat amb Webpack implica configurar Webpack, utilitzar la divisió de codi, carregadors i connectors, i aplicar tècniques avançades com la caché i el perfilat. Seguint aquests passos, pots millorar significativament el rendiment i la mantenibilitat del teu projecte. Recorda monitoritzar i refinar contínuament el teu procés de construcció per mantenir el teu projecte optimitzat.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='creating-complex-single-page-application'>&#x25C4;Crear una aplicació d'una sola pàgina complexa</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització d'un Projecte Heretat</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='case-studies-best-practices'>Estudis de casos i millors pràctiques &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

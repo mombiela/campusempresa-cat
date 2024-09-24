@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprendre la Seguretat de BigQuery</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/bigquery/understanding-bigquery-security" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/bigquery/understanding-bigquery-security" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/bigquery/understanding-bigquery-security" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/bigquery/understanding-bigquery-security" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/bigquery/understanding-bigquery-security" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='using-apis-and-client-libraries'>&#x25C4;Ús d'APIs i biblioteques de clients</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Comprendre la Seguretat de BigQuery</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='managing-access-control'>Gestió del control d'accés &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a la Seguretat de BigQuery</h1>
+<div class='content'><p>BigQuery és un magatzem de dades completament gestionat i sense servidor que permet una anàlisi escalable sobre petabytes de dades. La seguretat és un aspecte crític de la gestió i l'ús de BigQuery, assegurant que les teves dades estiguin protegides i l'accés estigui controlat.</p>
+</div><h1>Conceptes Clau en la Seguretat de BigQuery</h1>
+<div class='content'><ul>
+<li><strong>Gestió d'Identitat i Accés (IAM):</strong> Controla qui pot fer què en quins recursos.</li>
+<li><strong>Xifrat de Dades:</strong> Protegeix les dades en repòs i en trànsit.</li>
+<li><strong>Seguretat de Xarxa:</strong> Assegura la comunicació segura entre els clients i BigQuery.</li>
+<li><strong>Registre d'Auditoria:</strong> Fa un seguiment de l'accés i les modificacions als recursos de BigQuery.</li>
+</ul>
+</div><h1>Gestió d'Identitat i Accés (IAM)</h1>
+<div class='content'><p>IAM és un marc de polítiques i tecnologies per assegurar que els usuaris adequats tinguin l'accés apropiat als recursos tecnològics.</p>
+</div><h2>Rols IAM</h2>
+<div class='content'><p>BigQuery utilitza rols IAM per gestionar l'accés als recursos:</p>
+<ul>
+<li><strong>Rols Primitivus:</strong> Rols bàsics com <code>Viewer</code>, <code>Editor</code> i <code>Owner</code>.</li>
+<li><strong>Rols Predefinits:</strong> Rols més granulars com <code>bigquery.dataViewer</code>, <code>bigquery.dataEditor</code> i <code>bigquery.admin</code>.</li>
+<li><strong>Rols Personalitzats:</strong> Rols definits per l'usuari adaptats a necessitats específiques.</li>
+</ul>
+<h4>Exemple: Assignar un Rol a un Usuari</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2Nsb3VkIHByb2plY3RzIGFkZC1pYW0tcG9saWN5LWJpbmRpbmcgW1BST0pFQ1RfSURdIFwKICAgIC0tbWVtYmVyPSd1c2VyOltVU0VSX0VNQUlMXScgXAogICAgLS1yb2xlPSdyb2xlcy9iaWdxdWVyeS5kYXRhVmlld2VyJw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>gcloud projects add-iam-policy-binding [PROJECT_ID] \
+    --member='user:[USER_EMAIL]' \
+    --role='roles/bigquery.dataViewer'</pre></div><div class='content'><p>Explicació:</p>
+<ul>
+<li><code>[PROJECT_ID]</code>: El teu ID de projecte de Google Cloud.</li>
+<li><code>[USER_EMAIL]</code>: El correu electrònic de l'usuari al qual vols assignar el rol.</li>
+<li><code>roles/bigquery.dataViewer</code>: El rol que s'està assignant.</li>
+</ul>
+</div><h1>Xifrat de Dades</h1>
+<div class='content'><p>BigQuery xifra les dades en repòs i en trànsit per protegir-les de l'accés no autoritzat.</p>
+</div><h2>Xifrat en Repòs</h2>
+<div class='content'><ul>
+<li><strong>Claus de xifrat gestionades per Google:</strong> Xifrat per defecte gestionat per Google.</li>
+<li><strong>Claus de xifrat gestionades pel client (CMEK):</strong> Permet als clients gestionar les seves pròpies claus de xifrat utilitzant el servei de gestió de claus (KMS) de Google Cloud.</li>
+</ul>
+<h4>Exemple: Crear un Dataset amb CMEK</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFNDSEVNQSBteV9kYXRhc2V0Ck9QVElPTlMoCiAga21zX2tleV9uYW1lPSJwcm9qZWN0cy9bUFJPSkVDVF9JRF0vbG9jYXRpb25zL1tMT0NBVElPTl0va2V5UmluZ3MvW0tFWV9SSU5HXS9jcnlwdG9LZXlzL1tLRVldIgopOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE SCHEMA my_dataset
+OPTIONS(
+  kms_key_name=&quot;projects/[PROJECT_ID]/locations/[LOCATION]/keyRings/[KEY_RING]/cryptoKeys/[KEY]&quot;
+);</pre></div><div class='content'><p>Explicació:</p>
+<ul>
+<li><code>[PROJECT_ID]</code>, <code>[LOCATION]</code>, <code>[KEY_RING]</code>, <code>[KEY]</code>: Substitueix amb els detalls específics del teu projecte i informació de la clau.</li>
+</ul>
+</div><h2>Xifrat en Trànsit</h2>
+<div class='content'><p>BigQuery utilitza TLS (Transport Layer Security) per xifrar les dades mentre es mouen entre els teus dispositius i els servidors de Google.</p>
+</div><h1>Seguretat de Xarxa</h1>
+<div class='content'><p>La seguretat de xarxa a BigQuery implica assegurar els canals de comunicació i garantir que les dades només siguin accessibles per xarxes autoritzades.</p>
+</div><h2>Controls de Servei VPC</h2>
+<div class='content'><p>Els Controls de Servei de la Xarxa Privada Virtual (VPC) proporcionen seguretat addicional per a les dades definint un perímetre de seguretat al voltant dels recursos de Google Cloud.</p>
+<h4>Exemple: Configurar Controls de Servei VPC</h4>
+<ol>
+<li><strong>Crear un Perímetre de Servei:</strong>
+<pre><code class="language-shell">gcloud access-context-manager perimeters create [PERIMETER_NAME] <br>        --title=&quot;[PERIMETER_TITLE]&quot; <br>        --resources=&quot;projects/[PROJECT_ID]&quot;
+</code></pre>
+</li>
+<li><strong>Afegir BigQuery al Perímetre:</strong>
+<pre><code class="language-shell">gcloud access-context-manager perimeters update [PERIMETER_NAME] <br>        --add-restricted-services=&quot;bigquery.googleapis.com&quot;
+</code></pre>
+</li>
+</ol>
+</div><h1>Registre d'Auditoria</h1>
+<div class='content'><p>Els registres d'auditoria proporcionen un registre de les accions realitzades sobre els recursos de BigQuery, que és essencial per al monitoratge de la seguretat i el compliment normatiu.</p>
+</div><h2>Tipus de Registres d'Auditoria</h2>
+<div class='content'><ul>
+<li><strong>Registres d'Activitat Administrativa:</strong> Registren accions administratives.</li>
+<li><strong>Registres d'Accés a Dades:</strong> Registren operacions de lectura i escriptura de dades.</li>
+<li><strong>Registres d'Esdeveniments del Sistema:</strong> Registren esdeveniments del sistema.</li>
+</ul>
+<h4>Exemple: Activar Registres d'Auditoria</h4>
+<ol>
+<li><strong>Navega fins al Router de Registres a la Consola de Google Cloud.</strong></li>
+<li><strong>Crea un sink per redirigir els registres a una destinació (per exemple, Cloud Storage, BigQuery o Pub/Sub).</strong></li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2Nsb3VkIGxvZ2dpbmcgc2lua3MgY3JlYXRlIFtTSU5LX05BTUVdIGJpZ3F1ZXJ5Lmdvb2dsZWFwaXMuY29tL3Byb2plY3RzL1tQUk9KRUNUX0lEXS9kYXRhc2V0cy9bREFUQVNFVF9JRF0gXAogICAgLS1sb2ctZmlsdGVyPSdyZXNvdXJjZS50eXBlPSJiaWdxdWVyeV9yZXNvdXJjZSIn"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>gcloud logging sinks create [SINK_NAME] bigquery.googleapis.com/projects/[PROJECT_ID]/datasets/[DATASET_ID] \
+    --log-filter='resource.type=&quot;bigquery_resource&quot;'</pre></div><div class='content'><p>Explicació:</p>
+<ul>
+<li><code>[SINK_NAME]</code>: El nom del sink.</li>
+<li><code>[PROJECT_ID]</code>, <code>[DATASET_ID]</code>: Els teus IDs de projecte i dataset.</li>
+<li><code>--log-filter</code>: Filtra els registres per incloure només els registres de recursos de BigQuery.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Comprendre i implementar la seguretat de BigQuery és crucial per protegir les teves dades i assegurar el compliment amb els requisits organitzatius i normatius. Mitjançant l'ús de rols IAM, xifrat de dades, seguretat de xarxa i registre d'auditoria, pots crear una postura de seguretat robusta per al teu entorn de BigQuery.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='using-apis-and-client-libraries'>&#x25C4;Ús d'APIs i biblioteques de clients</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Comprendre la Seguretat de BigQuery</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='managing-access-control'>Gestió del control d'accés &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

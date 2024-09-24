@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoratge i registre amb Terraform</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/terraform/monitoring-and-logging-with-terraform" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/terraform/monitoring-and-logging-with-terraform" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/terraform/monitoring-and-logging-with-terraform" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/terraform/monitoring-and-logging-with-terraform" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/terraform/monitoring-and-logging-with-terraform" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='integrating-terraform-with-cicd'>&#x25C4;Integrant Terraform amb CI/CD</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Monitoratge i registre amb Terraform</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='custom-providers'>Proveïdors Personalitzats &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>El monitoratge i el registre són components essencials de la gestió d'infraestructura. Ajuden a fer un seguiment del rendiment, la disponibilitat i la salut dels teus recursos. Terraform, com a eina d'Infraestructura com a Codi (IaC), et permet automatitzar la configuració del monitoratge i el registre per a la teva infraestructura.</p>
+</div><h1>Conceptes clau</h1>
+<div class='content'><ul>
+<li><strong>Monitoratge</strong>: El procés de recollir, analitzar i utilitzar informació per fer un seguiment del rendiment i la salut de la teva infraestructura.</li>
+<li><strong>Registre</strong>: La pràctica de registrar esdeveniments que succeeixen dins de la teva infraestructura per ajudar a diagnosticar problemes i entendre el comportament del sistema.</li>
+<li><strong>Proveïdors de Terraform</strong>: Plugins que permeten a Terraform interactuar amb proveïdors de núvol i altres serveis.</li>
+<li><strong>Recursos de Terraform</strong>: Els blocs bàsics de les configuracions de Terraform, que representen components d'infraestructura.</li>
+</ul>
+</div><h1>Configuració del monitoratge amb Terraform</h1>
+<div class='content'></div><h2>Utilitzant AWS CloudWatch</h2>
+<div class='content'><p>AWS CloudWatch és un servei de monitoratge i observabilitat que proporciona dades i informació accionable per als recursos d'AWS.</p>
+<h4>Exemple: Creació d'una alarma de CloudWatch</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHJvdmlkZXIgImF3cyIgewogIHJlZ2lvbiA9ICJ1cy13ZXN0LTIiCn0KCnJlc291cmNlICJhd3NfY2xvdWR3YXRjaF9tZXRyaWNfYWxhcm0iICJjcHVfYWxhcm0iIHsKICBhbGFybV9uYW1lICAgICAgICAgID0gImhpZ2hfY3B1X3VzYWdlIgogIGNvbXBhcmlzb25fb3BlcmF0b3IgPSAiR3JlYXRlclRoYW5UaHJlc2hvbGQiCiAgZXZhbHVhdGlvbl9wZXJpb2RzICA9ICIyIgogIG1ldHJpY19uYW1lICAgICAgICAgPSAiQ1BVVXRpbGl6YXRpb24iCiAgbmFtZXNwYWNlICAgICAgICAgICA9ICJBV1MvRUMyIgogIHBlcmlvZCAgICAgICAgICAgICAgPSAiMTIwIgogIHN0YXRpc3RpYyAgICAgICAgICAgPSAiQXZlcmFnZSIKICB0aHJlc2hvbGQgICAgICAgICAgID0gIjgwIgogIGFsYXJtX2Rlc2NyaXB0aW9uICAgPSAiVGhpcyBtZXRyaWMgbW9uaXRvcnMgaGlnaCBDUFUgdXNhZ2UiCiAgZGltZW5zaW9ucyA9IHsKICAgIEluc3RhbmNlSWQgPSAiaS0xMjM0NTY3ODkwYWJjZGVmMCIKICB9CiAgYWxhcm1fYWN0aW9ucyA9IFsKICAgICJhcm46YXdzOnNuczp1cy13ZXN0LTI6MTIzNDU2Nzg5MDEyOm15LXNucy10b3BpYyIKICBdCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>provider &quot;aws&quot; {
+  region = &quot;us-west-2&quot;
+}
+
+resource &quot;aws_cloudwatch_metric_alarm&quot; &quot;cpu_alarm&quot; {
+  alarm_name          = &quot;high_cpu_usage&quot;
+  comparison_operator = &quot;GreaterThanThreshold&quot;
+  evaluation_periods  = &quot;2&quot;
+  metric_name         = &quot;CPUUtilization&quot;
+  namespace           = &quot;AWS/EC2&quot;
+  period              = &quot;120&quot;
+  statistic           = &quot;Average&quot;
+  threshold           = &quot;80&quot;
+  alarm_description   = &quot;This metric monitors high CPU usage&quot;
+  dimensions = {
+    InstanceId = &quot;i-1234567890abcdef0&quot;
+  }
+  alarm_actions = [
+    &quot;arn:aws:sns:us-west-2:123456789012:my-sns-topic&quot;
+  ]
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>provider &quot;aws&quot;</code>: Configura el proveïdor d'AWS.</li>
+<li><code>resource &quot;aws_cloudwatch_metric_alarm&quot;</code>: Defineix un recurs d'alarma de CloudWatch.</li>
+<li><code>alarm_name</code>: El nom de l'alarma.</li>
+<li><code>comparison_operator</code>: La condició per activar l'alarma.</li>
+<li><code>evaluation_periods</code>: El nombre de períodes durant els quals es compara la dada.</li>
+<li><code>metric_name</code>: El nom de la mètrica a monitoritzar.</li>
+<li><code>namespace</code>: L'espai de noms de la mètrica.</li>
+<li><code>period</code>: El període en segons durant el qual s'aplica l'estadística especificada.</li>
+<li><code>statistic</code>: L'estadística que s'aplica a la mètrica associada a l'alarma.</li>
+<li><code>threshold</code>: El valor contra el qual es compara l'estadística especificada.</li>
+<li><code>dimensions</code>: Parells clau-valor que defineixen les dimensions per a la mètrica.</li>
+<li><code>alarm_actions</code>: Les accions a executar quan aquesta alarma transita a un estat d'ALARMA.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Configuració del registre amb Terraform</h1>
+<div class='content'></div><h2>Utilitzant AWS CloudWatch Logs</h2>
+<div class='content'><p>AWS CloudWatch Logs et permet monitoritzar, emmagatzemar i accedir a fitxers de registre dels recursos d'AWS.</p>
+<h4>Exemple: Creació d'un grup de registres de CloudWatch i un flux de registres</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHJvdmlkZXIgImF3cyIgewogIHJlZ2lvbiA9ICJ1cy13ZXN0LTIiCn0KCnJlc291cmNlICJhd3NfY2xvdWR3YXRjaF9sb2dfZ3JvdXAiICJleGFtcGxlIiB7CiAgbmFtZSAgICAgICAgICAgICAgPSAiZXhhbXBsZS1sb2ctZ3JvdXAiCiAgcmV0ZW50aW9uX2luX2RheXMgPSAxNAp9CgpyZXNvdXJjZSAiYXdzX2Nsb3Vkd2F0Y2hfbG9nX3N0cmVhbSIgImV4YW1wbGUiIHsKICBuYW1lICAgICAgICAgICA9ICJleGFtcGxlLWxvZy1zdHJlYW0iCiAgbG9nX2dyb3VwX25hbWUgPSBhd3NfY2xvdWR3YXRjaF9sb2dfZ3JvdXAuZXhhbXBsZS5uYW1lCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>provider &quot;aws&quot; {
+  region = &quot;us-west-2&quot;
+}
+
+resource &quot;aws_cloudwatch_log_group&quot; &quot;example&quot; {
+  name              = &quot;example-log-group&quot;
+  retention_in_days = 14
+}
+
+resource &quot;aws_cloudwatch_log_stream&quot; &quot;example&quot; {
+  name           = &quot;example-log-stream&quot;
+  log_group_name = aws_cloudwatch_log_group.example.name
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>resource &quot;aws_cloudwatch_log_group&quot;</code>: Defineix un grup de registres de CloudWatch.</li>
+<li><code>name</code>: El nom del grup de registres.</li>
+<li><code>retention_in_days</code>: El nombre de dies per retenir els esdeveniments de registre en el grup de registres especificat.</li>
+<li><code>resource &quot;aws_cloudwatch_log_stream&quot;</code>: Defineix un flux de registres de CloudWatch.</li>
+<li><code>log_group_name</code>: El nom del grup de registres per associar amb el flux de registres.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Monitoratge i registre avançats</h1>
+<div class='content'></div><h2>Combinació de monitoratge i registre</h2>
+<div class='content'><p>La combinació de monitoratge i registre pot proporcionar una visió completa de la salut i el rendiment de la teva infraestructura.</p>
+<h4>Exemple: Creació d'un tema SNS per a notificacions d'alarma</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVzb3VyY2UgImF3c19zbnNfdG9waWMiICJleGFtcGxlIiB7CiAgbmFtZSA9ICJleGFtcGxlLXNucy10b3BpYyIKfQoKcmVzb3VyY2UgImF3c19zbnNfdG9waWNfc3Vic2NyaXB0aW9uIiAiZXhhbXBsZSIgewogIHRvcGljX2FybiA9IGF3c19zbnNfdG9waWMuZXhhbXBsZS5hcm4KICBwcm90b2NvbCAgPSAiZW1haWwiCiAgZW5kcG9pbnQgID0gImV4YW1wbGVAZXhhbXBsZS5jb20iCn0KCnJlc291cmNlICJhd3NfY2xvdWR3YXRjaF9tZXRyaWNfYWxhcm0iICJjcHVfYWxhcm0iIHsKICBhbGFybV9uYW1lICAgICAgICAgID0gImhpZ2hfY3B1X3VzYWdlIgogIGNvbXBhcmlzb25fb3BlcmF0b3IgPSAiR3JlYXRlclRoYW5UaHJlc2hvbGQiCiAgZXZhbHVhdGlvbl9wZXJpb2RzICA9ICIyIgogIG1ldHJpY19uYW1lICAgICAgICAgPSAiQ1BVVXRpbGl6YXRpb24iCiAgbmFtZXNwYWNlICAgICAgICAgICA9ICJBV1MvRUMyIgogIHBlcmlvZCAgICAgICAgICAgICAgPSAiMTIwIgogIHN0YXRpc3RpYyAgICAgICAgICAgPSAiQXZlcmFnZSIKICB0aHJlc2hvbGQgICAgICAgICAgID0gIjgwIgogIGFsYXJtX2Rlc2NyaXB0aW9uICAgPSAiVGhpcyBtZXRyaWMgbW9uaXRvcnMgaGlnaCBDUFUgdXNhZ2UiCiAgZGltZW5zaW9ucyA9IHsKICAgIEluc3RhbmNlSWQgPSAiaS0xMjM0NTY3ODkwYWJjZGVmMCIKICB9CiAgYWxhcm1fYWN0aW9ucyA9IFsKICAgIGF3c19zbnNfdG9waWMuZXhhbXBsZS5hcm4KICBdCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>resource &quot;aws_sns_topic&quot; &quot;example&quot; {
+  name = &quot;example-sns-topic&quot;
+}
+
+resource &quot;aws_sns_topic_subscription&quot; &quot;example&quot; {
+  topic_arn = aws_sns_topic.example.arn
+  protocol  = &quot;email&quot;
+  endpoint  = &quot;example@example.com&quot;
+}
+
+resource &quot;aws_cloudwatch_metric_alarm&quot; &quot;cpu_alarm&quot; {
+  alarm_name          = &quot;high_cpu_usage&quot;
+  comparison_operator = &quot;GreaterThanThreshold&quot;
+  evaluation_periods  = &quot;2&quot;
+  metric_name         = &quot;CPUUtilization&quot;
+  namespace           = &quot;AWS/EC2&quot;
+  period              = &quot;120&quot;
+  statistic           = &quot;Average&quot;
+  threshold           = &quot;80&quot;
+  alarm_description   = &quot;This metric monitors high CPU usage&quot;
+  dimensions = {
+    InstanceId = &quot;i-1234567890abcdef0&quot;
+  }
+  alarm_actions = [
+    aws_sns_topic.example.arn
+  ]
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>resource &quot;aws_sns_topic&quot;</code>: Defineix un tema SNS.</li>
+<li><code>resource &quot;aws_sns_topic_subscription&quot;</code>: Subscriu un punt final al tema SNS.</li>
+<li><code>alarm_actions</code>: Especifica l'ARN del tema SNS per notificar quan es desencadena l'estat de l'alarma.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>El monitoratge i el registre són crítics per mantenir la salut i el rendiment de la teva infraestructura. Terraform simplifica el procés de configuració d'aquests serveis permetent-te definir-los com a codi. Integrant el monitoratge i el registre a les teves configuracions de Terraform, pots assegurar-te que la teva infraestructura està ben monitoritzada i que els problemes es tracten ràpidament.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='integrating-terraform-with-cicd'>&#x25C4;Integrant Terraform amb CI/CD</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Monitoratge i registre amb Terraform</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='custom-providers'>Proveïdors Personalitzats &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

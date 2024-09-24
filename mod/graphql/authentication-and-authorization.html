@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticació i Autorització en GraphQL</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/graphql/authentication-and-authorization" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/graphql/authentication-and-authorization" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/graphql/authentication-and-authorization" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/graphql/authentication-and-authorization" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/graphql/authentication-and-authorization" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='rate-limiting'>&#x25C4;Limitació de velocitat</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Autenticació i Autorització en GraphQL</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='error-handling'>Gestió d'errors &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquesta secció, explorarem els conceptes d'autenticació i autorització en el context de GraphQL. Entendre aquests conceptes és crucial per construir aplicacions segures i robustes.</p>
+<ul>
+<li><strong>Autenticació</strong>: El procés de verificar la identitat d'un usuari o sistema.</li>
+<li><strong>Autorització</strong>: El procés de determinar què pot fer un usuari o sistema autenticat.</li>
+</ul>
+</div><h1>Autenticació</h1>
+<div class='content'></div><h2>Autenticació Bàsica</h2>
+<div class='content'><p>L'autenticació bàsica implica verificar la identitat d'un usuari mitjançant credencials com un nom d'usuari i una contrasenya.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bXV0YXRpb24gewogIGxvZ2luKHVzZXJuYW1lOiAidXNlciIsIHBhc3N3b3JkOiAicGFzc3dvcmQiKSB7CiAgICB0b2tlbgogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>mutation {
+  login(username: &quot;user&quot;, password: &quot;password&quot;) {
+    token
+  }
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Aquesta mutació pren un nom d'usuari i una contrasenya i retorna un token si les credencials són vàlides. El token s'utilitza per a les sol·licituds posteriors per autenticar l'usuari.</li>
+</ul>
+</div><h2>Autenticació Basada en Tokens</h2>
+<div class='content'><p>L'autenticació basada en tokens implica emetre un token després d'un inici de sessió exitós, que s'utilitza per autenticar les sol·licituds posteriors.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bXV0YXRpb24gewogIGxvZ2luKHVzZXJuYW1lOiAidXNlciIsIHBhc3N3b3JkOiAicGFzc3dvcmQiKSB7CiAgICB0b2tlbgogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>mutation {
+  login(username: &quot;user&quot;, password: &quot;password&quot;) {
+    token
+  }
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Similar a l'exemple d'autenticació bàsica, però el token es guarda al costat del client (per exemple, en l'emmagatzematge local) i s'envia amb cada sol·licitud.</li>
+</ul>
+<h4>Ús de Tokens en Sol·licituds</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cXVlcnkgewogIHVzZXIgewogICAgaWQKICAgIG5hbWUKICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>query {
+  user {
+    id
+    name
+  }
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: El token normalment s'envia en les capçaleres HTTP. Per exemple, en una sol·licitud HTTP, podríeu incloure el token així:
+<pre><code>Authorization: Bearer &lt;token&gt;
+</code></pre>
+</li>
+</ul>
+</div><h2>OAuth</h2>
+<div class='content'><p>OAuth és un estàndard obert per a la delegació d'accés, comunament utilitzat per a l'autenticació basada en tokens.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bXV0YXRpb24gewogIGxvZ2luV2l0aE9BdXRoKHByb3ZpZGVyOiAiZ29vZ2xlIiwgdG9rZW46ICJvYXV0aC10b2tlbiIpIHsKICAgIHRva2VuCiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>mutation {
+  loginWithOAuth(provider: &quot;google&quot;, token: &quot;oauth-token&quot;) {
+    token
+  }
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Aquesta mutació utilitza un token OAuth obtingut d'un proveïdor com Google per autenticar l'usuari i retornar un token per a les sol·licituds posteriors.</li>
+</ul>
+</div><h1>Autorització</h1>
+<div class='content'></div><h2>Control d'Accés Basat en Rols (RBAC)</h2>
+<div class='content'><p>RBAC restringeix l'accés basant-se en els rols assignats als usuaris.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHlwZSBRdWVyeSB7CiAgYWRtaW5EYXRhOiBBZG1pbkRhdGEgQGF1dGgocmVxdWlyZXM6IEFETUlOKQogIHVzZXJEYXRhOiBVc2VyRGF0YSBAYXV0aChyZXF1aXJlczogVVNFUikKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>type Query {
+  adminData: AdminData @auth(requires: ADMIN)
+  userData: UserData @auth(requires: USER)
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: La directiva <code>@auth</code> comprova si l'usuari té el rol requerit abans de resoldre el camp.</li>
+</ul>
+</div><h2>Autorització a Nivell de Camp</h2>
+<div class='content'><p>L'autorització a nivell de camp controla l'accés a camps específics dins d'un tipus.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHlwZSBVc2VyIHsKICBpZDogSUQhCiAgbmFtZTogU3RyaW5nIQogIGVtYWlsOiBTdHJpbmchIEBhdXRoKHJlcXVpcmVzOiBBRE1JTikKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>type User {
+  id: ID!
+  name: String!
+  email: String! @auth(requires: ADMIN)
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: La directiva <code>@auth</code> restringeix l'accés al camp <code>email</code> als usuaris amb el rol <code>ADMIN</code>.</li>
+</ul>
+</div><h2>Lògica d'Autorització Personalitzada</h2>
+<div class='content'><p>La lògica d'autorització personalitzada permet regles més complexes més enllà de les comprovacions basades en rols.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHlwZSBRdWVyeSB7CiAgc2Vuc2l0aXZlRGF0YTogU2Vuc2l0aXZlRGF0YSBAYXV0aChyZXF1aXJlczogImlzT3duZXIiKQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>type Query {
+  sensitiveData: SensitiveData @auth(requires: &quot;isOwner&quot;)
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: La directiva <code>@auth</code> es pot configurar per cridar una funció personalitzada com <code>isOwner</code> per determinar l'accés.</li>
+</ul>
+</div><h1>Implementació d'Autenticació i Autorització en GraphQL</h1>
+<div class='content'></div><h2>Middleware</h2>
+<div class='content'><p>El middleware es pot utilitzar per gestionar la lògica d'autenticació i autorització.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgeyBBcG9sbG9TZXJ2ZXIgfSA9IHJlcXVpcmUoJ2Fwb2xsby1zZXJ2ZXInKTsKY29uc3QgeyB2ZXJpZnlUb2tlbiB9ID0gcmVxdWlyZSgnLi9hdXRoJyk7Cgpjb25zdCBzZXJ2ZXIgPSBuZXcgQXBvbGxvU2VydmVyKHsKICB0eXBlRGVmcywKICByZXNvbHZlcnMsCiAgY29udGV4dDogKHsgcmVxIH0pID0+IHsKICAgIGNvbnN0IHRva2VuID0gcmVxLmhlYWRlcnMuYXV0aG9yaXphdGlvbiB8fCAnJzsKICAgIGNvbnN0IHVzZXIgPSB2ZXJpZnlUb2tlbih0b2tlbik7CiAgICByZXR1cm4geyB1c2VyIH07CiAgfSwKfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const { ApolloServer } = require('apollo-server');
+const { verifyToken } = require('./auth');
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req }) =&gt; {
+    const token = req.headers.authorization || '';
+    const user = verifyToken(token);
+    return { user };
+  },
+});</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: La funció <code>verifyToken</code> comprova el token i retorna l'usuari. L'usuari s'afegeix al context, fent-lo disponible en els resolvers.</li>
+</ul>
+</div><h2>Directives</h2>
+<div class='content'><p>Les directives personalitzades es poden utilitzar per implementar la lògica d'autorització directament en l'esquema.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgeyBTY2hlbWFEaXJlY3RpdmVWaXNpdG9yIH0gPSByZXF1aXJlKCdhcG9sbG8tc2VydmVyJyk7CmNvbnN0IHsgZGVmYXVsdEZpZWxkUmVzb2x2ZXIgfSA9IHJlcXVpcmUoJ2dyYXBocWwnKTsKCmNsYXNzIEF1dGhEaXJlY3RpdmUgZXh0ZW5kcyBTY2hlbWFEaXJlY3RpdmVWaXNpdG9yIHsKICB2aXNpdEZpZWxkRGVmaW5pdGlvbihmaWVsZCkgewogICAgY29uc3QgeyByZXNvbHZlID0gZGVmYXVsdEZpZWxkUmVzb2x2ZXIgfSA9IGZpZWxkOwogICAgY29uc3QgeyByZXF1aXJlcyB9ID0gdGhpcy5hcmdzOwoKICAgIGZpZWxkLnJlc29sdmUgPSBhc3luYyBmdW5jdGlvbiAoLi4uYXJncykgewogICAgICBjb25zdCBjb250ZXh0ID0gYXJnc1syXTsKICAgICAgaWYgKCFjb250ZXh0LnVzZXIgfHwgIWNvbnRleHQudXNlci5yb2xlcy5pbmNsdWRlcyhyZXF1aXJlcykpIHsKICAgICAgICB0aHJvdyBuZXcgRXJyb3IoJ05vdCBhdXRob3JpemVkJyk7CiAgICAgIH0KICAgICAgcmV0dXJuIHJlc29sdmUuYXBwbHkodGhpcywgYXJncyk7CiAgICB9OwogIH0KfQoKY29uc3QgdHlwZURlZnMgPSBgCiAgZGlyZWN0aXZlIEBhdXRoKHJlcXVpcmVzOiBSb2xlISkgb24gRklFTERfREVGSU5JVElPTgoKICBlbnVtIFJvbGUgewogICAgQURNSU4KICAgIFVTRVIKICB9CgogIHR5cGUgUXVlcnkgewogICAgYWRtaW5EYXRhOiBBZG1pbkRhdGEgQGF1dGgocmVxdWlyZXM6IEFETUlOKQogICAgdXNlckRhdGE6IFVzZXJEYXRhIEBhdXRoKHJlcXVpcmVzOiBVU0VSKQogIH0KYDsKCmNvbnN0IHNjaGVtYSA9IG1ha2VFeGVjdXRhYmxlU2NoZW1hKHsKICB0eXBlRGVmcywKICByZXNvbHZlcnMsCiAgc2NoZW1hRGlyZWN0aXZlczogewogICAgYXV0aDogQXV0aERpcmVjdGl2ZSwKICB9LAp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const { SchemaDirectiveVisitor } = require('apollo-server');
+const { defaultFieldResolver } = require('graphql');
+
+class AuthDirective extends SchemaDirectiveVisitor {
+  visitFieldDefinition(field) {
+    const { resolve = defaultFieldResolver } = field;
+    const { requires } = this.args;
+
+    field.resolve = async function (...args) {
+      const context = args[2];
+      if (!context.user || !context.user.roles.includes(requires)) {
+        throw new Error('Not authorized');
+      }
+      return resolve.apply(this, args);
+    };
+  }
+}
+
+const typeDefs = `
+  directive @auth(requires: Role!) on FIELD_DEFINITION
+
+  enum Role {
+    ADMIN
+    USER
+  }
+
+  type Query {
+    adminData: AdminData @auth(requires: ADMIN)
+    userData: UserData @auth(requires: USER)
+  }
+`;
+
+const schema = makeExecutableSchema({
+  typeDefs,
+  resolvers,
+  schemaDirectives: {
+    auth: AuthDirective,
+  },
+});</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: La <code>AuthDirective</code> comprova els rols de l'usuari abans de resoldre el camp. Si l'usuari no està autoritzat, es llança un error.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>L'autenticació i l'autorització són components crítics de qualsevol aplicació segura. En GraphQL, aquests es poden implementar utilitzant diverses estratègies com l'autenticació basada en tokens, el control d'accés basat en rols i les directives personalitzades. Entenent i aplicant aquests conceptes, podeu assegurar-vos que la vostra API GraphQL sigui segura i robusta.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='rate-limiting'>&#x25C4;Limitació de velocitat</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Autenticació i Autorització en GraphQL</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='error-handling'>Gestió d'errors &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

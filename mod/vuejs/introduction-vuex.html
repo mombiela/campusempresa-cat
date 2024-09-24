@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducció a Vuex</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/vuejs/introduction-vuex" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/vuejs/introduction-vuex" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/vuejs/introduction-vuex" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/vuejs/introduction-vuex" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/vuejs/introduction-vuex" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='navigation-guards'>&#x25C4;Guàrdies de navegació</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Introducció a Vuex</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='state-getters-mutations-actions'>Estat, getters, mutacions i accions &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Vuex és un patró de gestió d'estat + biblioteca per a aplicacions Vue.js. Serveix com a magatzem centralitzat per a tots els components d'una aplicació, amb regles que asseguren que l'estat només es pot mutar de manera previsible. Vuex també s'integra profundament amb el sistema de reactivitat de Vue per fer que la gestió de l'estat sigui senzilla i eficient.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Estat</strong>: La font única de veritat que conté les dades de l'aplicació.</li>
+<li><strong>Getters</strong>: Propietats computades per a l'estat del magatzem, permetent als components accedir a l'estat.</li>
+<li><strong>Mutacions</strong>: L'única manera de canviar l'estat en Vuex, i han de ser síncrones.</li>
+<li><strong>Accions</strong>: Similars a les mutacions, però poden ser asíncrones. Cometen mutacions.</li>
+<li><strong>Mòduls</strong>: Permeten que el magatzem es divideixi en peces més petites i manejables.</li>
+</ul>
+</div><h1>Configuració de Vuex</h1>
+<div class='content'><p>Per començar a utilitzar Vuex en el teu projecte Vue.js, primer l'has d'instal·lar:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnBtIGluc3RhbGwgdnVleCAtLXNhdmU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npm install vuex --save</pre></div><div class='content'><p>Després, pots crear un magatzem i integrar-lo en la teva instància de Vue:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IFZ1ZSBmcm9tICd2dWUnOwppbXBvcnQgVnVleCBmcm9tICd2dWV4JzsKClZ1ZS51c2UoVnVleCk7Cgpjb25zdCBzdG9yZSA9IG5ldyBWdWV4LlN0b3JlKHsKICBzdGF0ZTogewogICAgY291bnQ6IDAKICB9LAogIG11dGF0aW9uczogewogICAgaW5jcmVtZW50KHN0YXRlKSB7CiAgICAgIHN0YXRlLmNvdW50Kys7CiAgICB9CiAgfSwKICBhY3Rpb25zOiB7CiAgICBpbmNyZW1lbnQoY29udGV4dCkgewogICAgICBjb250ZXh0LmNvbW1pdCgnaW5jcmVtZW50Jyk7CiAgICB9CiAgfSwKICBnZXR0ZXJzOiB7CiAgICBjb3VudDogc3RhdGUgPT4gc3RhdGUuY291bnQKICB9Cn0pOwoKbmV3IFZ1ZSh7CiAgZWw6ICcjYXBwJywKICBzdG9yZSwKICByZW5kZXI6IGggPT4gaChBcHApCn0pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import Vue from 'vue';
+import Vuex from 'vuex';
+
+Vue.use(Vuex);
+
+const store = new Vuex.Store({
+  state: {
+    count: 0
+  },
+  mutations: {
+    increment(state) {
+      state.count++;
+    }
+  },
+  actions: {
+    increment(context) {
+      context.commit('increment');
+    }
+  },
+  getters: {
+    count: state =&gt; state.count
+  }
+});
+
+new Vue({
+  el: '#app',
+  store,
+  render: h =&gt; h(App)
+});</pre></div><div class='content'></div><h1>Estat</h1>
+<div class='content'><p>L'estat és la font de dades de la teva aplicació. És un objecte únic que conté tot l'estat a nivell d'aplicació i serveix com la &quot;font única de veritat.&quot;</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3Qgc3RvcmUgPSBuZXcgVnVleC5TdG9yZSh7CiAgc3RhdGU6IHsKICAgIGNvdW50OiAwCiAgfQp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const store = new Vuex.Store({
+  state: {
+    count: 0
+  }
+});</pre></div><div class='content'></div><h2>Accedir a l'Estat en Components</h2>
+<div class='content'><p>Pots accedir a l'estat en els teus components utilitzant <code>this.$store.state</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZXhwb3J0IGRlZmF1bHQgewogIGNvbXB1dGVkOiB7CiAgICBjb3VudCgpIHsKICAgICAgcmV0dXJuIHRoaXMuJHN0b3JlLnN0YXRlLmNvdW50OwogICAgfQogIH0KfTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>export default {
+  computed: {
+    count() {
+      return this.$store.state.count;
+    }
+  }
+};</pre></div><div class='content'></div><h1>Getters</h1>
+<div class='content'><p>Els getters són com propietats computades per als magatzems. Et permeten definir propietats que depenen de l'estat del magatzem.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3Qgc3RvcmUgPSBuZXcgVnVleC5TdG9yZSh7CiAgc3RhdGU6IHsKICAgIGNvdW50OiAwCiAgfSwKICBnZXR0ZXJzOiB7CiAgICBkb3VibGVDb3VudDogc3RhdGUgPT4gc3RhdGUuY291bnQgKiAyCiAgfQp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const store = new Vuex.Store({
+  state: {
+    count: 0
+  },
+  getters: {
+    doubleCount: state =&gt; state.count * 2
+  }
+});</pre></div><div class='content'></div><h2>Utilitzar Getters en Components</h2>
+<div class='content'><p>Pots utilitzar getters en els teus components de manera similar a com utilitzes l'estat:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZXhwb3J0IGRlZmF1bHQgewogIGNvbXB1dGVkOiB7CiAgICBkb3VibGVDb3VudCgpIHsKICAgICAgcmV0dXJuIHRoaXMuJHN0b3JlLmdldHRlcnMuZG91YmxlQ291bnQ7CiAgICB9CiAgfQp9Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>export default {
+  computed: {
+    doubleCount() {
+      return this.$store.getters.doubleCount;
+    }
+  }
+};</pre></div><div class='content'></div><h1>Mutacions</h1>
+<div class='content'><p>Les mutacions són l'única manera de canviar l'estat en Vuex. Han de ser síncrones.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3Qgc3RvcmUgPSBuZXcgVnVleC5TdG9yZSh7CiAgc3RhdGU6IHsKICAgIGNvdW50OiAwCiAgfSwKICBtdXRhdGlvbnM6IHsKICAgIGluY3JlbWVudChzdGF0ZSkgewogICAgICBzdGF0ZS5jb3VudCsrOwogICAgfQogIH0KfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const store = new Vuex.Store({
+  state: {
+    count: 0
+  },
+  mutations: {
+    increment(state) {
+      state.count++;
+    }
+  }
+});</pre></div><div class='content'></div><h2>Cometre Mutacions</h2>
+<div class='content'><p>Pots cometre mutacions utilitzant <code>this.$store.commit</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZXhwb3J0IGRlZmF1bHQgewogIG1ldGhvZHM6IHsKICAgIGluY3JlbWVudCgpIHsKICAgICAgdGhpcy4kc3RvcmUuY29tbWl0KCdpbmNyZW1lbnQnKTsKICAgIH0KICB9Cn07"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>export default {
+  methods: {
+    increment() {
+      this.$store.commit('increment');
+    }
+  }
+};</pre></div><div class='content'></div><h1>Accions</h1>
+<div class='content'><p>Les accions són similars a les mutacions, però poden ser asíncrones. Cometen mutacions.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3Qgc3RvcmUgPSBuZXcgVnVleC5TdG9yZSh7CiAgc3RhdGU6IHsKICAgIGNvdW50OiAwCiAgfSwKICBtdXRhdGlvbnM6IHsKICAgIGluY3JlbWVudChzdGF0ZSkgewogICAgICBzdGF0ZS5jb3VudCsrOwogICAgfQogIH0sCiAgYWN0aW9uczogewogICAgaW5jcmVtZW50QXN5bmMoeyBjb21taXQgfSkgewogICAgICBzZXRUaW1lb3V0KCgpID0+IHsKICAgICAgICBjb21taXQoJ2luY3JlbWVudCcpOwogICAgICB9LCAxMDAwKTsKICAgIH0KICB9Cn0pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const store = new Vuex.Store({
+  state: {
+    count: 0
+  },
+  mutations: {
+    increment(state) {
+      state.count++;
+    }
+  },
+  actions: {
+    incrementAsync({ commit }) {
+      setTimeout(() =&gt; {
+        commit('increment');
+      }, 1000);
+    }
+  }
+});</pre></div><div class='content'></div><h2>Despatxar Accions</h2>
+<div class='content'><p>Pots despatxar accions utilitzant <code>this.$store.dispatch</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZXhwb3J0IGRlZmF1bHQgewogIG1ldGhvZHM6IHsKICAgIGluY3JlbWVudEFzeW5jKCkgewogICAgICB0aGlzLiRzdG9yZS5kaXNwYXRjaCgnaW5jcmVtZW50QXN5bmMnKTsKICAgIH0KICB9Cn07"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>export default {
+  methods: {
+    incrementAsync() {
+      this.$store.dispatch('incrementAsync');
+    }
+  }
+};</pre></div><div class='content'></div><h1>Mòduls</h1>
+<div class='content'><p>Els mòduls permeten dividir el teu magatzem en peces més petites i manejables. Cada mòdul pot tenir el seu propi estat, mutacions, accions i getters.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgbW9kdWxlQSA9IHsKICBzdGF0ZTogKCkgPT4gKHsgY291bnQ6IDAgfSksCiAgbXV0YXRpb25zOiB7CiAgICBpbmNyZW1lbnQoc3RhdGUpIHsKICAgICAgc3RhdGUuY291bnQrKzsKICAgIH0KICB9LAogIGFjdGlvbnM6IHsKICAgIGluY3JlbWVudCh7IGNvbW1pdCB9KSB7CiAgICAgIGNvbW1pdCgnaW5jcmVtZW50Jyk7CiAgICB9CiAgfSwKICBnZXR0ZXJzOiB7CiAgICBkb3VibGVDb3VudDogc3RhdGUgPT4gc3RhdGUuY291bnQgKiAyCiAgfQp9OwoKY29uc3Qgc3RvcmUgPSBuZXcgVnVleC5TdG9yZSh7CiAgbW9kdWxlczogewogICAgYTogbW9kdWxlQQogIH0KfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const moduleA = {
+  state: () =&gt; ({ count: 0 }),
+  mutations: {
+    increment(state) {
+      state.count++;
+    }
+  },
+  actions: {
+    increment({ commit }) {
+      commit('increment');
+    }
+  },
+  getters: {
+    doubleCount: state =&gt; state.count * 2
+  }
+};
+
+const store = new Vuex.Store({
+  modules: {
+    a: moduleA
+  }
+});</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Vuex és una eina poderosa de gestió d'estat que s'integra perfectament amb Vue.js. Entenent i utilitzant els seus conceptes bàsics—estat, getters, mutacions, accions i mòduls—pots gestionar l'estat de la teva aplicació d'una manera més estructurada i previsible. Aquesta introducció hauria de donar-te una base sòlida per començar a utilitzar Vuex en els teus projectes Vue.js.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='navigation-guards'>&#x25C4;Guàrdies de navegació</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Introducció a Vuex</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='state-getters-mutations-actions'>Estat, getters, mutacions i accions &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multithreading i Programació Paral·lela en C#</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/csharp/multithreading-parallel" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/csharp/multithreading-parallel" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/csharp/multithreading-parallel" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/csharp/multithreading-parallel" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/csharp/multithreading-parallel" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='memory-management'>&#x25C4;Gestió de Memòria i Recollida d'Escombraries</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Multithreading i Programació Paral·lela en C#</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='design-patterns'>Patrons de Disseny &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció al Multithreading</h1>
+<div class='content'><p>El multithreading és una tècnica on múltiples fils són generats per un procés per executar tasques concurrentment. Això pot millorar significativament el rendiment de les aplicacions fent un millor ús dels recursos del sistema.</p>
+<ul>
+<li><strong>Fil</strong>: La unitat més petita de processament que pot ser programada per un sistema operatiu.</li>
+<li><strong>Procés</strong>: Un programa en execució, que pot contenir múltiples fils.</li>
+</ul>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Concurrència</strong>: La capacitat d'executar múltiples tasques o fils en períodes superposats.</li>
+<li><strong>Paral·lelisme</strong>: La capacitat d'executar múltiples tasques o fils exactament al mateix temps, típicament en múltiples processadors o nuclis.</li>
+<li><strong>Seguretat de Fil</strong>: Assegurar que les dades compartides siguin accedides per només un fil a la vegada per evitar la corrupció de dades.</li>
+</ul>
+</div><h2>Operacions Bàsiques amb Fils</h2>
+<div class='content'><p>En C#, el namespace <code>System.Threading</code> proporciona classes i mètodes per treballar amb fils.</p>
+<h4>Crear i Iniciar un Fil</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNpbmcgU3lzdGVtOwp1c2luZyBTeXN0ZW0uVGhyZWFkaW5nOwoKY2xhc3MgUHJvZ3JhbQp7CiAgICBzdGF0aWMgdm9pZCBNYWluKCkKICAgIHsKICAgICAgICBUaHJlYWQgdGhyZWFkID0gbmV3IFRocmVhZChuZXcgVGhyZWFkU3RhcnQoRG9Xb3JrKSk7CiAgICAgICAgdGhyZWFkLlN0YXJ0KCk7CiAgICB9CgogICAgc3RhdGljIHZvaWQgRG9Xb3JrKCkKICAgIHsKICAgICAgICBDb25zb2xlLldyaXRlTGluZSgiRWwgZmlsIGVzdMOgIHRyZWJhbGxhbnQuLi4iKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>using System;
+using System.Threading;
+
+class Program
+{
+    static void Main()
+    {
+        Thread thread = new Thread(new ThreadStart(DoWork));
+        thread.Start();
+    }
+
+    static void DoWork()
+    {
+        Console.WriteLine(&quot;El fil est&agrave; treballant...&quot;);
+    }
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li>El delegat <code>ThreadStart</code> apunta al mètode que serà executat pel fil.</li>
+<li><code>thread.Start()</code> comença l'execució del fil.</li>
+</ul>
+</li>
+</ul>
+<h4>Unir un Fil</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGhyZWFkLkpvaW4oKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>thread.Join();</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>thread.Join()</code> bloqueja el fil que crida fins que el fil representat per l'objecte <code>thread</code> finalitza.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Gestió Avançada de Fils</h1>
+<h2>Sincronització de Fils</h2>
+<div class='content'><p>Per evitar condicions de carrera i assegurar la seguretat de fil, s'utilitzen mecanismes de sincronització.</p>
+<h4>Instrucció Lock</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHJpdmF0ZSBzdGF0aWMgcmVhZG9ubHkgb2JqZWN0IF9sb2NrID0gbmV3IG9iamVjdCgpOwoKc3RhdGljIHZvaWQgU2FmZU1ldGhvZCgpCnsKICAgIGxvY2sgKF9sb2NrKQogICAgewogICAgICAgIC8vIFNlY2Npw7MgY3LDrXRpY2EKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>private static readonly object _lock = new object();
+
+static void SafeMethod()
+{
+    lock (_lock)
+    {
+        // Secci&oacute; cr&iacute;tica
+    }
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>lock</code> assegura que només un fil pot entrar a la secció crítica a la vegada.</li>
+</ul>
+</li>
+</ul>
+<h4>Classe Monitor</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("TW9uaXRvci5FbnRlcihfbG9jayk7CnRyeQp7CiAgICAvLyBTZWNjacOzIGNyw610aWNhCn0KZmluYWxseQp7CiAgICBNb25pdG9yLkV4aXQoX2xvY2spOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Monitor.Enter(_lock);
+try
+{
+    // Secci&oacute; cr&iacute;tica
+}
+finally
+{
+    Monitor.Exit(_lock);
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>Monitor.Enter</code> i <code>Monitor.Exit</code> proporcionen més control sobre el mecanisme de bloqueig.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Pooling de Fils</h2>
+<div class='content'><p>El pooling de fils ajuda a gestionar una col·lecció de fils reutilitzables, reduint la sobrecàrrega de crear i destruir fils.</p>
+<h4>Utilitzant ThreadPool</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("VGhyZWFkUG9vbC5RdWV1ZVVzZXJXb3JrSXRlbShuZXcgV2FpdENhbGxiYWNrKERvV29yaykpOwoKc3RhdGljIHZvaWQgRG9Xb3JrKG9iamVjdCBzdGF0ZSkKewogICAgQ29uc29sZS5Xcml0ZUxpbmUoIkVsIGZpbCBkZWwgcG9vbCBlc3TDoCB0cmViYWxsYW50Li4uIik7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ThreadPool.QueueUserWorkItem(new WaitCallback(DoWork));
+
+static void DoWork(object state)
+{
+    Console.WriteLine(&quot;El fil del pool est&agrave; treballant...&quot;);
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>ThreadPool.QueueUserWorkItem</code> posa en cua un mètode per a l'execució per un fil del pool de fils.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Programació Paral·lela</h1>
+<div class='content'><p>La programació paral·lela en C# és facilitada pel namespace <code>System.Threading.Tasks</code>, que proporciona la classe <code>Task</code> i Parallel LINQ (PLINQ).</p>
+</div><h2>Biblioteca de Tasques Paral·leles (TPL)</h2>
+<div class='content'><h4>Crear i Executar Tasques</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("VGFzayB0YXNrID0gVGFzay5SdW4oKCkgPT4gRG9Xb3JrKCkpOwoKc3RhdGljIHZvaWQgRG9Xb3JrKCkKewogICAgQ29uc29sZS5Xcml0ZUxpbmUoIkxhIHRhc2NhIGVzdMOgIHRyZWJhbGxhbnQuLi4iKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Task task = Task.Run(() =&gt; DoWork());
+
+static void DoWork()
+{
+    Console.WriteLine(&quot;La tasca est&agrave; treballant...&quot;);
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>Task.Run</code> programa el mètode <code>DoWork</code> per executar-se en un fil del pool de fils.</li>
+</ul>
+</li>
+</ul>
+<h4>Esperar Tasques</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGFzay5XYWl0KCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>task.Wait();</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>task.Wait()</code> bloqueja el fil que crida fins que la tasca es completa.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Classe Parallel</h2>
+<div class='content'><p>La classe <code>Parallel</code> proporciona mètodes per a l'execució paral·lela de bucles i regions de codi.</p>
+<h4>Parallel.For</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UGFyYWxsZWwuRm9yKDAsIDEwLCBpID0+CnsKICAgIENvbnNvbGUuV3JpdGVMaW5lKCQiUHJvY2Vzc2FudCB7aX0iKTsKfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Parallel.For(0, 10, i =&gt;
+{
+    Console.WriteLine($&quot;Processant {i}&quot;);
+});</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>Parallel.For</code> executa iteracions del bucle en paral·lel.</li>
+</ul>
+</li>
+</ul>
+<h4>Parallel.ForEach</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFyIGl0ZW1zID0gbmV3IExpc3Q8aW50PiB7IDEsIDIsIDMsIDQsIDUgfTsKUGFyYWxsZWwuRm9yRWFjaChpdGVtcywgaXRlbSA9Pgp7CiAgICBDb25zb2xlLldyaXRlTGluZSgkIlByb2Nlc3NhbnQge2l0ZW19Iik7Cn0pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>var items = new List&lt;int&gt; { 1, 2, 3, 4, 5 };
+Parallel.ForEach(items, item =&gt;
+{
+    Console.WriteLine($&quot;Processant {item}&quot;);
+});</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>Parallel.ForEach</code> executa iteracions del bucle en paral·lel per a cada element de la col·lecció.</li>
+</ul>
+</li>
+</ul>
+</div><h2>PLINQ (Parallel LINQ)</h2>
+<div class='content'><p>PLINQ amplia LINQ per suportar el processament paral·lel.</p>
+<h4>Utilitzant PLINQ</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFyIG51bWJlcnMgPSBFbnVtZXJhYmxlLlJhbmdlKDEsIDEwKTsKdmFyIHBhcmFsbGVsUXVlcnkgPSBudW1iZXJzLkFzUGFyYWxsZWwoKS5XaGVyZShuID0+IG4gJSAyID09IDApOwoKZm9yZWFjaCAodmFyIG51bWJlciBpbiBwYXJhbGxlbFF1ZXJ5KQp7CiAgICBDb25zb2xlLldyaXRlTGluZShudW1iZXIpOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>var numbers = Enumerable.Range(1, 10);
+var parallelQuery = numbers.AsParallel().Where(n =&gt; n % 2 == 0);
+
+foreach (var number in parallelQuery)
+{
+    Console.WriteLine(number);
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>AsParallel</code> permet el processament paral·lel de la consulta LINQ.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>El multithreading i la programació paral·lela són tècniques poderoses per millorar el rendiment i la capacitat de resposta de les aplicacions. Entenent i utilitzant fils, mecanismes de sincronització, pooling de fils, i constructes de programació paral·lela com TPL i PLINQ, els desenvolupadors poden crear aplicacions C# eficients i escalables. Recorda sempre manejar els problemes de concurrència amb cura per assegurar la seguretat de fil i evitar condicions de carrera.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='memory-management'>&#x25C4;Gestió de Memòria i Recollida d'Escombraries</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Multithreading i Programació Paral·lela en C#</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='design-patterns'>Patrons de Disseny &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

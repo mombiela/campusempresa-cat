@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creació d'una API RESTful en Go</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/go/creating-a-restful-api" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/go/creating-a-restful-api" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/go/creating-a-restful-api" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/go/creating-a-restful-api" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/go/creating-a-restful-api" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='building-a-cli-application'>&#x25C4;Construcció d'una Aplicació CLI</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Creació d'una API RESTful en Go</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='microservices-with-go'>Microserveis amb Go &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquesta secció, cobrirem els conceptes bàsics de la creació d'una API RESTful utilitzant el llenguatge de programació Go. Al final d'aquest tema, entendràs com configurar un projecte en Go, crear punts finals, gestionar sol·licituds HTTP i respondre amb dades JSON.</p>
+</div><h1>Configuració del teu entorn Go</h1>
+<div class='content'><p>Abans de començar a codificar, assegura't de tenir Go instal·lat a la teva màquina. Pots descarregar-lo des del <a href="https://golang.org/dl/">lloc web oficial de Go</a>.</p>
+<ol>
+<li><strong>Instal·la Go</strong>: Segueix les instruccions d'instal·lació per al teu sistema operatiu.</li>
+<li><strong>Verifica la instal·lació</strong>: Obre el teu terminal i executa:
+<pre><code class="language-sh">go version
+</code></pre>
+Hauries de veure la versió instal·lada de Go.</li>
+</ol>
+</div><h1>Creació d'un nou projecte en Go</h1>
+<div class='content'><ol>
+<li><strong>Crea un directori de projecte</strong>:
+<pre><code class="language-sh">mkdir go-rest-api
+cd go-rest-api
+</code></pre>
+</li>
+<li><strong>Inicialitza un mòdul Go</strong>:
+<pre><code class="language-sh">go mod init github.com/elteunomdusuari/go-rest-api
+</code></pre>
+</li>
+</ol>
+</div><h1>Construcció d'una API RESTful simple</h1>
+<h2>Importació dels paquets necessaris</h2>
+<div class='content'><p>Crea un fitxer anomenat <code>main.go</code> i comença importat els paquets necessaris:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImVuY29kaW5nL2pzb24iCiAgICAibG9nIgogICAgIm5ldC9odHRwIgop"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;encoding/json&quot;
+    &quot;log&quot;
+    &quot;net/http&quot;
+)</pre></div><div class='content'></div><h2>Configuració del servidor HTTP</h2>
+<div class='content'><p>Defineix un servidor HTTP simple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuYyBtYWluKCkgewogICAgaHR0cC5IYW5kbGVGdW5jKCIvaGVsbG8iLCBoZWxsb0hhbmRsZXIpCiAgICBsb2cuUHJpbnRsbigiSW5pY2lhbnQgc2Vydmlkb3IgYSA6ODA4MCIpCiAgICBsb2cuRmF0YWwoaHR0cC5MaXN0ZW5BbmRTZXJ2ZSgiOjgwODAiLCBuaWwpKQp9CgpmdW5jIGhlbGxvSGFuZGxlcih3IGh0dHAuUmVzcG9uc2VXcml0ZXIsIHIgKmh0dHAuUmVxdWVzdCkgewogICAgdy5IZWFkZXIoKS5TZXQoIkNvbnRlbnQtVHlwZSIsICJhcHBsaWNhdGlvbi9qc29uIikKICAgIGpzb24uTmV3RW5jb2Rlcih3KS5FbmNvZGUobWFwW3N0cmluZ11zdHJpbmd7Im1lc3NhZ2UiOiAiSG9sYSwgTcOzbiEifSkKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>func main() {
+    http.HandleFunc(&quot;/hello&quot;, helloHandler)
+    log.Println(&quot;Iniciant servidor a :8080&quot;)
+    log.Fatal(http.ListenAndServe(&quot;:8080&quot;, nil))
+}
+
+func helloHandler(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set(&quot;Content-Type&quot;, &quot;application/json&quot;)
+    json.NewEncoder(w).Encode(map[string]string{&quot;message&quot;: &quot;Hola, M&oacute;n!&quot;})
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>http.HandleFunc(&quot;/hello&quot;, helloHandler)</code>: Registra la funció <code>helloHandler</code> per gestionar les sol·licituds al punt final <code>/hello</code>.</li>
+<li><code>log.Fatal(http.ListenAndServe(&quot;:8080&quot;, nil))</code>: Inicia el servidor HTTP al port 8080.</li>
+<li><code>helloHandler</code>: Respon amb un missatge JSON.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Executar el servidor</h2>
+<div class='content'><p>Executa el teu servidor:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z28gcnVuIG1haW4uZ28="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>go run main.go</pre></div><div class='content'><p>Visita <code>http://localhost:8080/hello</code> al teu navegador o utilitza <code>curl</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y3VybCBodHRwOi8vbG9jYWxob3N0OjgwODAvaGVsbG8="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>curl http://localhost:8080/hello</pre></div><div class='content'></div><h1>Gestió de diferents mètodes HTTP</h1>
+<h2>Creació d'una API CRUD bàsica</h2>
+<div class='content'><p>Defineix un magatzem de dades en memòria simple i gestors per a les operacions CRUD:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImVuY29kaW5nL2pzb24iCiAgICAibG9nIgogICAgIm5ldC9odHRwIgogICAgInN0cmNvbnYiCiAgICAic3luYyIKKQoKdHlwZSBJdGVtIHN0cnVjdCB7CiAgICBJRCAgIGludCAgICBganNvbjoiaWQiYAogICAgTmFtZSBzdHJpbmcgYGpzb246Im5hbWUiYAp9Cgp2YXIgKAogICAgaXRlbXMgID0gW11JdGVte30KICAgIG5leHRJRCA9IDEKICAgIG11ICAgICBzeW5jLk11dGV4CikKCmZ1bmMgbWFpbigpIHsKICAgIGh0dHAuSGFuZGxlRnVuYygiL2l0ZW1zIiwgaXRlbXNIYW5kbGVyKQogICAgaHR0cC5IYW5kbGVGdW5jKCIvaXRlbXMvIiwgaXRlbUhhbmRsZXIpCiAgICBsb2cuUHJpbnRsbigiSW5pY2lhbnQgc2Vydmlkb3IgYSA6ODA4MCIpCiAgICBsb2cuRmF0YWwoaHR0cC5MaXN0ZW5BbmRTZXJ2ZSgiOjgwODAiLCBuaWwpKQp9CgpmdW5jIGl0ZW1zSGFuZGxlcih3IGh0dHAuUmVzcG9uc2VXcml0ZXIsIHIgKmh0dHAuUmVxdWVzdCkgewogICAgc3dpdGNoIHIuTWV0aG9kIHsKICAgIGNhc2UgIkdFVCI6CiAgICAgICAgZ2V0SXRlbXModywgcikKICAgIGNhc2UgIlBPU1QiOgogICAgICAgIGNyZWF0ZUl0ZW0odywgcikKICAgIGRlZmF1bHQ6CiAgICAgICAgaHR0cC5FcnJvcih3LCAiTcOodG9kZSBubyBwZXJtw6hzIiwgaHR0cC5TdGF0dXNNZXRob2ROb3RBbGxvd2VkKQogICAgfQp9CgpmdW5jIGl0ZW1IYW5kbGVyKHcgaHR0cC5SZXNwb25zZVdyaXRlciwgciAqaHR0cC5SZXF1ZXN0KSB7CiAgICBpZCwgZXJyIDo9IHN0cmNvbnYuQXRvaShyLlVSTC5QYXRoW2xlbigiL2l0ZW1zLyIpOl0pCiAgICBpZiBlcnIgIT0gbmlsIHsKICAgICAgICBodHRwLkVycm9yKHcsICJJRCBkZSBsJ2VsZW1lbnQgbm8gdsOgbGlkIiwgaHR0cC5TdGF0dXNCYWRSZXF1ZXN0KQogICAgICAgIHJldHVybgogICAgfQoKICAgIHN3aXRjaCByLk1ldGhvZCB7CiAgICBjYXNlICJHRVQiOgogICAgICAgIGdldEl0ZW0odywgciwgaWQpCiAgICBjYXNlICJQVVQiOgogICAgICAgIHVwZGF0ZUl0ZW0odywgciwgaWQpCiAgICBjYXNlICJERUxFVEUiOgogICAgICAgIGRlbGV0ZUl0ZW0odywgciwgaWQpCiAgICBkZWZhdWx0OgogICAgICAgIGh0dHAuRXJyb3IodywgIk3DqHRvZGUgbm8gcGVybcOocyIsIGh0dHAuU3RhdHVzTWV0aG9kTm90QWxsb3dlZCkKICAgIH0KfQoKZnVuYyBnZXRJdGVtcyh3IGh0dHAuUmVzcG9uc2VXcml0ZXIsIHIgKmh0dHAuUmVxdWVzdCkgewogICAgdy5IZWFkZXIoKS5TZXQoIkNvbnRlbnQtVHlwZSIsICJhcHBsaWNhdGlvbi9qc29uIikKICAgIGpzb24uTmV3RW5jb2Rlcih3KS5FbmNvZGUoaXRlbXMpCn0KCmZ1bmMgY3JlYXRlSXRlbSh3IGh0dHAuUmVzcG9uc2VXcml0ZXIsIHIgKmh0dHAuUmVxdWVzdCkgewogICAgdmFyIGl0ZW0gSXRlbQogICAgaWYgZXJyIDo9IGpzb24uTmV3RGVjb2RlcihyLkJvZHkpLkRlY29kZSgmaXRlbSk7IGVyciAhPSBuaWwgewogICAgICAgIGh0dHAuRXJyb3IodywgIlNvbMK3bGljaXR1ZCBpbmNvcnJlY3RhIiwgaHR0cC5TdGF0dXNCYWRSZXF1ZXN0KQogICAgICAgIHJldHVybgogICAgfQoKICAgIG11LkxvY2soKQogICAgaXRlbS5JRCA9IG5leHRJRAogICAgbmV4dElEKysKICAgIGl0ZW1zID0gYXBwZW5kKGl0ZW1zLCBpdGVtKQogICAgbXUuVW5sb2NrKCkKCiAgICB3LkhlYWRlcigpLlNldCgiQ29udGVudC1UeXBlIiwgImFwcGxpY2F0aW9uL2pzb24iKQogICAganNvbi5OZXdFbmNvZGVyKHcpLkVuY29kZShpdGVtKQp9CgpmdW5jIGdldEl0ZW0odyBodHRwLlJlc3BvbnNlV3JpdGVyLCByICpodHRwLlJlcXVlc3QsIGlkIGludCkgewogICAgZm9yIF8sIGl0ZW0gOj0gcmFuZ2UgaXRlbXMgewogICAgICAgIGlmIGl0ZW0uSUQgPT0gaWQgewogICAgICAgICAgICB3LkhlYWRlcigpLlNldCgiQ29udGVudC1UeXBlIiwgImFwcGxpY2F0aW9uL2pzb24iKQogICAgICAgICAgICBqc29uLk5ld0VuY29kZXIodykuRW5jb2RlKGl0ZW0pCiAgICAgICAgICAgIHJldHVybgogICAgICAgIH0KICAgIH0KICAgIGh0dHAuRXJyb3IodywgIkVsZW1lbnQgbm8gdHJvYmF0IiwgaHR0cC5TdGF0dXNOb3RGb3VuZCkKfQoKZnVuYyB1cGRhdGVJdGVtKHcgaHR0cC5SZXNwb25zZVdyaXRlciwgciAqaHR0cC5SZXF1ZXN0LCBpZCBpbnQpIHsKICAgIHZhciB1cGRhdGVkSXRlbSBJdGVtCiAgICBpZiBlcnIgOj0ganNvbi5OZXdEZWNvZGVyKHIuQm9keSkuRGVjb2RlKCZ1cGRhdGVkSXRlbSk7IGVyciAhPSBuaWwgewogICAgICAgIGh0dHAuRXJyb3IodywgIlNvbMK3bGljaXR1ZCBpbmNvcnJlY3RhIiwgaHR0cC5TdGF0dXNCYWRSZXF1ZXN0KQogICAgICAgIHJldHVybgogICAgfQoKICAgIG11LkxvY2soKQogICAgZGVmZXIgbXUuVW5sb2NrKCkKCiAgICBmb3IgaSwgaXRlbSA6PSByYW5nZSBpdGVtcyB7CiAgICAgICAgaWYgaXRlbS5JRCA9PSBpZCB7CiAgICAgICAgICAgIGl0ZW1zW2ldLk5hbWUgPSB1cGRhdGVkSXRlbS5OYW1lCiAgICAgICAgICAgIHcuSGVhZGVyKCkuU2V0KCJDb250ZW50LVR5cGUiLCAiYXBwbGljYXRpb24vanNvbiIpCiAgICAgICAgICAgIGpzb24uTmV3RW5jb2Rlcih3KS5FbmNvZGUoaXRlbXNbaV0pCiAgICAgICAgICAgIHJldHVybgogICAgICAgIH0KICAgIH0KICAgIGh0dHAuRXJyb3IodywgIkVsZW1lbnQgbm8gdHJvYmF0IiwgaHR0cC5TdGF0dXNOb3RGb3VuZCkKfQoKZnVuYyBkZWxldGVJdGVtKHcgaHR0cC5SZXNwb25zZVdyaXRlciwgciAqaHR0cC5SZXF1ZXN0LCBpZCBpbnQpIHsKICAgIG11LkxvY2soKQogICAgZGVmZXIgbXUuVW5sb2NrKCkKCiAgICBmb3IgaSwgaXRlbSA6PSByYW5nZSBpdGVtcyB7CiAgICAgICAgaWYgaXRlbS5JRCA9PSBpZCB7CiAgICAgICAgICAgIGl0ZW1zID0gYXBwZW5kKGl0ZW1zWzppXSwgaXRlbXNbaSsxOl0uLi4pCiAgICAgICAgICAgIHcuV3JpdGVIZWFkZXIoaHR0cC5TdGF0dXNOb0NvbnRlbnQpCiAgICAgICAgICAgIHJldHVybgogICAgICAgIH0KICAgIH0KICAgIGh0dHAuRXJyb3IodywgIkVsZW1lbnQgbm8gdHJvYmF0IiwgaHR0cC5TdGF0dXNOb3RGb3VuZCkKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;encoding/json&quot;
+    &quot;log&quot;
+    &quot;net/http&quot;
+    &quot;strconv&quot;
+    &quot;sync&quot;
+)
+
+type Item struct {
+    ID   int    `json:&quot;id&quot;`
+    Name string `json:&quot;name&quot;`
+}
+
+var (
+    items  = []Item{}
+    nextID = 1
+    mu     sync.Mutex
+)
+
+func main() {
+    http.HandleFunc(&quot;/items&quot;, itemsHandler)
+    http.HandleFunc(&quot;/items/&quot;, itemHandler)
+    log.Println(&quot;Iniciant servidor a :8080&quot;)
+    log.Fatal(http.ListenAndServe(&quot;:8080&quot;, nil))
+}
+
+func itemsHandler(w http.ResponseWriter, r *http.Request) {
+    switch r.Method {
+    case &quot;GET&quot;:
+        getItems(w, r)
+    case &quot;POST&quot;:
+        createItem(w, r)
+    default:
+        http.Error(w, &quot;M&egrave;tode no perm&egrave;s&quot;, http.StatusMethodNotAllowed)
+    }
+}
+
+func itemHandler(w http.ResponseWriter, r *http.Request) {
+    id, err := strconv.Atoi(r.URL.Path[len(&quot;/items/&quot;):])
+    if err != nil {
+        http.Error(w, &quot;ID de l'element no v&agrave;lid&quot;, http.StatusBadRequest)
+        return
+    }
+
+    switch r.Method {
+    case &quot;GET&quot;:
+        getItem(w, r, id)
+    case &quot;PUT&quot;:
+        updateItem(w, r, id)
+    case &quot;DELETE&quot;:
+        deleteItem(w, r, id)
+    default:
+        http.Error(w, &quot;M&egrave;tode no perm&egrave;s&quot;, http.StatusMethodNotAllowed)
+    }
+}
+
+func getItems(w http.ResponseWriter, r *http.Request) {
+    w.Header().Set(&quot;Content-Type&quot;, &quot;application/json&quot;)
+    json.NewEncoder(w).Encode(items)
+}
+
+func createItem(w http.ResponseWriter, r *http.Request) {
+    var item Item
+    if err := json.NewDecoder(r.Body).Decode(&amp;item); err != nil {
+        http.Error(w, &quot;Sol&middot;licitud incorrecta&quot;, http.StatusBadRequest)
+        return
+    }
+
+    mu.Lock()
+    item.ID = nextID
+    nextID++
+    items = append(items, item)
+    mu.Unlock()
+
+    w.Header().Set(&quot;Content-Type&quot;, &quot;application/json&quot;)
+    json.NewEncoder(w).Encode(item)
+}
+
+func getItem(w http.ResponseWriter, r *http.Request, id int) {
+    for _, item := range items {
+        if item.ID == id {
+            w.Header().Set(&quot;Content-Type&quot;, &quot;application/json&quot;)
+            json.NewEncoder(w).Encode(item)
+            return
+        }
+    }
+    http.Error(w, &quot;Element no trobat&quot;, http.StatusNotFound)
+}
+
+func updateItem(w http.ResponseWriter, r *http.Request, id int) {
+    var updatedItem Item
+    if err := json.NewDecoder(r.Body).Decode(&amp;updatedItem); err != nil {
+        http.Error(w, &quot;Sol&middot;licitud incorrecta&quot;, http.StatusBadRequest)
+        return
+    }
+
+    mu.Lock()
+    defer mu.Unlock()
+
+    for i, item := range items {
+        if item.ID == id {
+            items[i].Name = updatedItem.Name
+            w.Header().Set(&quot;Content-Type&quot;, &quot;application/json&quot;)
+            json.NewEncoder(w).Encode(items[i])
+            return
+        }
+    }
+    http.Error(w, &quot;Element no trobat&quot;, http.StatusNotFound)
+}
+
+func deleteItem(w http.ResponseWriter, r *http.Request, id int) {
+    mu.Lock()
+    defer mu.Unlock()
+
+    for i, item := range items {
+        if item.ID == id {
+            items = append(items[:i], items[i+1:]...)
+            w.WriteHeader(http.StatusNoContent)
+            return
+        }
+    }
+    http.Error(w, &quot;Element no trobat&quot;, http.StatusNotFound)
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><strong>Magatzem de dades</strong>: Una slice en memòria <code>items</code> per emmagatzemar elements i un mutex <code>mu</code> per gestionar l'accés concurrent.</li>
+<li><strong>Gestors</strong>: Funcions per gestionar diferents mètodes HTTP per als punts finals <code>/items</code> i <code>/items/{id}</code>.</li>
+<li><strong>Operacions CRUD</strong>: Funcions per crear, llegir, actualitzar i eliminar elements.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem cobert els conceptes bàsics de la creació d'una API RESTful en Go. Hem configurat un servidor HTTP simple, creat punts finals i implementat operacions CRUD. Aquesta base t'ajudarà a construir APIs més complexes i integrar-les amb bases de dades, autenticació i altres funcions avançades.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='building-a-cli-application'>&#x25C4;Construcció d'una Aplicació CLI</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Creació d'una API RESTful en Go</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='microservices-with-go'>Microserveis amb Go &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

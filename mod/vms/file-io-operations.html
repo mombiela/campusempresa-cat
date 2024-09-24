@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operacions d'entrada/sortida de fitxers a OpenVMS</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/vms/file-io-operations" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/vms/file-io-operations" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/vms/file-io-operations" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/vms/file-io-operations" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/vms/file-io-operations" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='interprocess-communication'>&#x25C4;Comunicació Interprocessos</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Operacions d'entrada/sortida de fitxers a OpenVMS</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='memory-management'>Gestió de Memòria &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Les operacions d'entrada/sortida (I/O) de fitxers són fonamentals per a qualsevol sistema operatiu, i OpenVMS no és una excepció. Aquest tema et guiarà a través dels conceptes bàsics de les operacions d'I/O de fitxers a OpenVMS, progressant cap a conceptes i tècniques més avançades.</p>
+</div><h1>Conceptes bàsics</h1>
+<div class='content'><p>Abans d'endinsar-nos en exemples de codi, és essencial entendre alguns conceptes bàsics relacionats amb l'I/O de fitxers a OpenVMS.</p>
+<ul>
+<li><strong>Fitxer</strong>: Una col·lecció de dades emmagatzemades en disc.</li>
+<li><strong>Registre</strong>: Una unitat de dades dins d'un fitxer.</li>
+<li><strong>Flux</strong>: Una seqüència d'elements de dades disponibles al llarg del temps.</li>
+<li><strong>Canal</strong>: Un camí a través del qual flueixen les dades entre el programa i el fitxer.</li>
+</ul>
+</div><h1>Obrir i tancar fitxers</h1>
+<div class='content'><p>Per realitzar qualsevol operació d'I/O, primer has d'obrir un fitxer. Un cop hagis acabat amb el fitxer, s'ha de tancar per alliberar els recursos del sistema.</p>
+</div><h2>Obrir un fitxer</h2>
+<div class='content'><p>A OpenVMS, els fitxers s'obren utilitzant el servei de sistema <code>SYS$OPEN</code>. Aquí tens un exemple bàsic:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPGRlc2NyaXAuaD4KI2luY2x1ZGUgPHJtcy5oPgojaW5jbHVkZSA8c3RzZGVmLmg+CiNpbmNsdWRlIDxzc2RlZi5oPgoKaW50IG1haW4oKSB7CiAgICBzdHJ1Y3QgRkFCIGZhYjsKICAgIHN0cnVjdCBSQUIgcmFiOwogICAgaW50IHN0YXR1czsKCiAgICAvLyBJbmljaWFsaXR6YXIgZWwgRkFCIGkgZWwgUkFCCiAgICBmYWIgPSBjYyRybXNfZmFiOwogICAgcmFiID0gY2Mkcm1zX3JhYjsKCiAgICAvLyBFc3BlY2lmaWNhciBlbCBub20gZGVsIGZpdHhlcgogICAgZmFiLmZhYiRsX2ZuYSA9ICJ0ZXN0ZmlsZS5kYXQiOwogICAgZmFiLmZhYiRiX2ZucyA9IHN0cmxlbihmYWIuZmFiJGxfZm5hKTsKCiAgICAvLyBPYnJpciBlbCBmaXR4ZXIKICAgIHN0YXR1cyA9IHN5cyRvcGVuKCZmYWIpOwogICAgaWYgKCEoc3RhdHVzICYgMSkpIHsKICAgICAgICBwcmludGYoIkVycm9yIG9icmludCBlbCBmaXR4ZXJcbiIpOwogICAgICAgIHJldHVybiBzdGF0dXM7CiAgICB9CgogICAgLy8gVGFuY2FyIGVsIGZpdHhlcgogICAgc3RhdHVzID0gc3lzJGNsb3NlKCZmYWIpOwogICAgaWYgKCEoc3RhdHVzICYgMSkpIHsKICAgICAgICBwcmludGYoIkVycm9yIHRhbmNhbnQgZWwgZml0eGVyXG4iKTsKICAgICAgICByZXR1cm4gc3RhdHVzOwogICAgfQoKICAgIHJldHVybiAwOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;descrip.h&gt;
+#include &lt;rms.h&gt;
+#include &lt;stsdef.h&gt;
+#include &lt;ssdef.h&gt;
+
+int main() {
+    struct FAB fab;
+    struct RAB rab;
+    int status;
+
+    // Inicialitzar el FAB i el RAB
+    fab = cc$rms_fab;
+    rab = cc$rms_rab;
+
+    // Especificar el nom del fitxer
+    fab.fab$l_fna = &quot;testfile.dat&quot;;
+    fab.fab$b_fns = strlen(fab.fab$l_fna);
+
+    // Obrir el fitxer
+    status = sys$open(&amp;fab);
+    if (!(status &amp; 1)) {
+        printf(&quot;Error obrint el fitxer\n&quot;);
+        return status;
+    }
+
+    // Tancar el fitxer
+    status = sys$close(&amp;fab);
+    if (!(status &amp; 1)) {
+        printf(&quot;Error tancant el fitxer\n&quot;);
+        return status;
+    }
+
+    return 0;
+}</pre></div><div class='content'></div><h2>Tancar un fitxer</h2>
+<div class='content'><p>Tancar un fitxer és senzill i es fa utilitzant el servei de sistema <code>SYS$CLOSE</code>, com es mostra en l'exemple anterior.</p>
+</div><h1>Llegir d'un fitxer</h1>
+<div class='content'><p>Llegir dades d'un fitxer implica obrir el fitxer, llegir les dades i després tancar el fitxer.</p>
+</div><h2>Exemple: Llegir un fitxer</h2>
+<div class='content'><p>Aquí tens un exemple de com llegir dades d'un fitxer a OpenVMS:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPGRlc2NyaXAuaD4KI2luY2x1ZGUgPHJtcy5oPgojaW5jbHVkZSA8c3RzZGVmLmg+CiNpbmNsdWRlIDxzc2RlZi5oPgoKaW50IG1haW4oKSB7CiAgICBzdHJ1Y3QgRkFCIGZhYjsKICAgIHN0cnVjdCBSQUIgcmFiOwogICAgaW50IHN0YXR1czsKICAgIGNoYXIgYnVmZmVyWzI1Nl07CgogICAgLy8gSW5pY2lhbGl0emFyIGVsIEZBQiBpIGVsIFJBQgogICAgZmFiID0gY2Mkcm1zX2ZhYjsKICAgIHJhYiA9IGNjJHJtc19yYWI7CgogICAgLy8gRXNwZWNpZmljYXIgZWwgbm9tIGRlbCBmaXR4ZXIKICAgIGZhYi5mYWIkbF9mbmEgPSAidGVzdGZpbGUuZGF0IjsKICAgIGZhYi5mYWIkYl9mbnMgPSBzdHJsZW4oZmFiLmZhYiRsX2ZuYSk7CgogICAgLy8gT2JyaXIgZWwgZml0eGVyCiAgICBzdGF0dXMgPSBzeXMkb3BlbigmZmFiKTsKICAgIGlmICghKHN0YXR1cyAmIDEpKSB7CiAgICAgICAgcHJpbnRmKCJFcnJvciBvYnJpbnQgZWwgZml0eGVyXG4iKTsKICAgICAgICByZXR1cm4gc3RhdHVzOwogICAgfQoKICAgIC8vIEFzc29jaWFyIGVsIFJBQiBhbWIgZWwgRkFCCiAgICByYWIucmFiJGxfZmFiID0gJmZhYjsKCiAgICAvLyBMbGVnaXIgZWwgZml0eGVyCiAgICByYWIucmFiJGxfdWJmID0gYnVmZmVyOwogICAgcmFiLnJhYiR3X3VzeiA9IHNpemVvZihidWZmZXIpOwogICAgc3RhdHVzID0gc3lzJGdldCgmcmFiKTsKICAgIGlmICghKHN0YXR1cyAmIDEpKSB7CiAgICAgICAgcHJpbnRmKCJFcnJvciBsbGVnaW50IGVsIGZpdHhlclxuIik7CiAgICAgICAgcmV0dXJuIHN0YXR1czsKICAgIH0KCiAgICBwcmludGYoIkRhZGVzIGxsZWdpZGVzOiAlc1xuIiwgYnVmZmVyKTsKCiAgICAvLyBUYW5jYXIgZWwgZml0eGVyCiAgICBzdGF0dXMgPSBzeXMkY2xvc2UoJmZhYik7CiAgICBpZiAoIShzdGF0dXMgJiAxKSkgewogICAgICAgIHByaW50ZigiRXJyb3IgdGFuY2FudCBlbCBmaXR4ZXJcbiIpOwogICAgICAgIHJldHVybiBzdGF0dXM7CiAgICB9CgogICAgcmV0dXJuIDA7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;descrip.h&gt;
+#include &lt;rms.h&gt;
+#include &lt;stsdef.h&gt;
+#include &lt;ssdef.h&gt;
+
+int main() {
+    struct FAB fab;
+    struct RAB rab;
+    int status;
+    char buffer[256];
+
+    // Inicialitzar el FAB i el RAB
+    fab = cc$rms_fab;
+    rab = cc$rms_rab;
+
+    // Especificar el nom del fitxer
+    fab.fab$l_fna = &quot;testfile.dat&quot;;
+    fab.fab$b_fns = strlen(fab.fab$l_fna);
+
+    // Obrir el fitxer
+    status = sys$open(&amp;fab);
+    if (!(status &amp; 1)) {
+        printf(&quot;Error obrint el fitxer\n&quot;);
+        return status;
+    }
+
+    // Associar el RAB amb el FAB
+    rab.rab$l_fab = &amp;fab;
+
+    // Llegir el fitxer
+    rab.rab$l_ubf = buffer;
+    rab.rab$w_usz = sizeof(buffer);
+    status = sys$get(&amp;rab);
+    if (!(status &amp; 1)) {
+        printf(&quot;Error llegint el fitxer\n&quot;);
+        return status;
+    }
+
+    printf(&quot;Dades llegides: %s\n&quot;, buffer);
+
+    // Tancar el fitxer
+    status = sys$close(&amp;fab);
+    if (!(status &amp; 1)) {
+        printf(&quot;Error tancant el fitxer\n&quot;);
+        return status;
+    }
+
+    return 0;
+}</pre></div><div class='content'></div><h1>Escriure a un fitxer</h1>
+<div class='content'><p>Escriure dades a un fitxer implica obrir el fitxer, escriure les dades i després tancar el fitxer.</p>
+</div><h2>Exemple: Escriure a un fitxer</h2>
+<div class='content'><p>Aquí tens un exemple de com escriure dades a un fitxer a OpenVMS:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPGRlc2NyaXAuaD4KI2luY2x1ZGUgPHJtcy5oPgojaW5jbHVkZSA8c3RzZGVmLmg+CiNpbmNsdWRlIDxzc2RlZi5oPgoKaW50IG1haW4oKSB7CiAgICBzdHJ1Y3QgRkFCIGZhYjsKICAgIHN0cnVjdCBSQUIgcmFiOwogICAgaW50IHN0YXR1czsKICAgIGNoYXIgYnVmZmVyW10gPSAiSGVsbG8sIE9wZW5WTVMhIjsKCiAgICAvLyBJbmljaWFsaXR6YXIgZWwgRkFCIGkgZWwgUkFCCiAgICBmYWIgPSBjYyRybXNfZmFiOwogICAgcmFiID0gY2Mkcm1zX3JhYjsKCiAgICAvLyBFc3BlY2lmaWNhciBlbCBub20gZGVsIGZpdHhlcgogICAgZmFiLmZhYiRsX2ZuYSA9ICJ0ZXN0ZmlsZS5kYXQiOwogICAgZmFiLmZhYiRiX2ZucyA9IHN0cmxlbihmYWIuZmFiJGxfZm5hKTsKCiAgICAvLyBPYnJpciBlbCBmaXR4ZXIKICAgIHN0YXR1cyA9IHN5cyRvcGVuKCZmYWIpOwogICAgaWYgKCEoc3RhdHVzICYgMSkpIHsKICAgICAgICBwcmludGYoIkVycm9yIG9icmludCBlbCBmaXR4ZXJcbiIpOwogICAgICAgIHJldHVybiBzdGF0dXM7CiAgICB9CgogICAgLy8gQXNzb2NpYXIgZWwgUkFCIGFtYiBlbCBGQUIKICAgIHJhYi5yYWIkbF9mYWIgPSAmZmFiOwoKICAgIC8vIEVzY3JpdXJlIGFsIGZpdHhlcgogICAgcmFiLnJhYiRsX3JiZiA9IGJ1ZmZlcjsKICAgIHJhYi5yYWIkd19yc3ogPSBzdHJsZW4oYnVmZmVyKTsKICAgIHN0YXR1cyA9IHN5cyRwdXQoJnJhYik7CiAgICBpZiAoIShzdGF0dXMgJiAxKSkgewogICAgICAgIHByaW50ZigiRXJyb3IgZXNjcml2aW50IGFsIGZpdHhlclxuIik7CiAgICAgICAgcmV0dXJuIHN0YXR1czsKICAgIH0KCiAgICAvLyBUYW5jYXIgZWwgZml0eGVyCiAgICBzdGF0dXMgPSBzeXMkY2xvc2UoJmZhYik7CiAgICBpZiAoIShzdGF0dXMgJiAxKSkgewogICAgICAgIHByaW50ZigiRXJyb3IgdGFuY2FudCBlbCBmaXR4ZXJcbiIpOwogICAgICAgIHJldHVybiBzdGF0dXM7CiAgICB9CgogICAgcmV0dXJuIDA7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;descrip.h&gt;
+#include &lt;rms.h&gt;
+#include &lt;stsdef.h&gt;
+#include &lt;ssdef.h&gt;
+
+int main() {
+    struct FAB fab;
+    struct RAB rab;
+    int status;
+    char buffer[] = &quot;Hello, OpenVMS!&quot;;
+
+    // Inicialitzar el FAB i el RAB
+    fab = cc$rms_fab;
+    rab = cc$rms_rab;
+
+    // Especificar el nom del fitxer
+    fab.fab$l_fna = &quot;testfile.dat&quot;;
+    fab.fab$b_fns = strlen(fab.fab$l_fna);
+
+    // Obrir el fitxer
+    status = sys$open(&amp;fab);
+    if (!(status &amp; 1)) {
+        printf(&quot;Error obrint el fitxer\n&quot;);
+        return status;
+    }
+
+    // Associar el RAB amb el FAB
+    rab.rab$l_fab = &amp;fab;
+
+    // Escriure al fitxer
+    rab.rab$l_rbf = buffer;
+    rab.rab$w_rsz = strlen(buffer);
+    status = sys$put(&amp;rab);
+    if (!(status &amp; 1)) {
+        printf(&quot;Error escrivint al fitxer\n&quot;);
+        return status;
+    }
+
+    // Tancar el fitxer
+    status = sys$close(&amp;fab);
+    if (!(status &amp; 1)) {
+        printf(&quot;Error tancant el fitxer\n&quot;);
+        return status;
+    }
+
+    return 0;
+}</pre></div><div class='content'></div><h1>Operacions avançades d'I/O de fitxers</h1>
+<div class='content'><p>Per a operacions avançades d'I/O de fitxers, pot ser necessari gestionar diferents formats de fitxer, administrar atributs de fitxer i realitzar I/O asíncron.</p>
+</div><h2>Gestió de diferents formats de fitxer</h2>
+<div class='content'><p>OpenVMS admet diversos formats de fitxer, com ara fitxers seqüencials, relatius i indexats. Cada format té el seu propi conjunt d'operacions i atributs.</p>
+</div><h2>Administració d'atributs de fitxer</h2>
+<div class='content'><p>Els atributs de fitxer a OpenVMS es poden gestionar utilitzant el servei de sistema <code>SYS$QIO</code>. Això et permet establir i obtenir atributs de fitxer dinàmicament.</p>
+</div><h2>I/O asíncron</h2>
+<div class='content'><p>Les operacions d'I/O asíncron permeten que el teu programa continuï executant-se mentre espera que es completin les operacions d'I/O. Això es pot aconseguir utilitzant el servei de sistema <code>SYS$QIOW</code>.</p>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Les operacions d'I/O de fitxers a OpenVMS són essencials per interactuar amb el sistema de fitxers. Aquest tema ha cobert els conceptes bàsics d'obrir, llegir, escriure i tancar fitxers, així com ha introduït alguns conceptes avançats. Entenent aquestes operacions, pots gestionar efectivament fitxers i dades en un entorn OpenVMS.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='interprocess-communication'>&#x25C4;Comunicació Interprocessos</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Operacions d'entrada/sortida de fitxers a OpenVMS</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='memory-management'>Gestió de Memòria &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

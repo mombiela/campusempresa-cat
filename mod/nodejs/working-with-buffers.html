@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treballant amb Buffers</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nodejs/working-with-buffers" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nodejs/working-with-buffers" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nodejs/working-with-buffers" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nodejs/working-with-buffers" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nodejs/working-with-buffers" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='file-system-operations'>&#x25C4;Operacions del Sistema de Fitxers</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Treballant amb Buffers</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='streams-and-events'>Fluxos i Esdeveniments &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Els buffers són una part fonamental de Node.js, especialment quan es tracta de dades binàries. Aquest tema et guiarà des dels conceptes bàsics dels buffers fins a un ús més avançat, assegurant que entenguis com utilitzar-los de manera efectiva en les teves aplicacions Node.js.</p>
+</div><h1>Introducció als Buffers</h1>
+<div class='content'><p>Els buffers s'utilitzen per gestionar dades binàries a Node.js. Són particularment útils quan es treballa amb sistemes de fitxers, protocols de xarxa o qualsevol altre flux de dades binàries.</p>
+<ul>
+<li><strong>Dades Binàries</strong>: Dades que no estan en un format llegible per humans, com imatges, vídeos o qualsevol altre fitxer no de text.</li>
+<li><strong>Classe Buffer</strong>: Una classe global a Node.js que proporciona una manera de gestionar dades binàries directament.</li>
+</ul>
+</div><h2>Creació de Buffers</h2>
+<div class='content'><p>Hi ha diverses maneres de crear buffers a Node.js:</p>
+<ol>
+<li><strong>Allocar un Buffer</strong>: Utilitza <code>Buffer.alloc(size)</code> per crear un buffer d'una mida especificada.</li>
+<li><strong>Des d'un Array</strong>: Utilitza <code>Buffer.from(array)</code> per crear un buffer a partir d'un array de bytes.</li>
+<li><strong>Des d'una Cadena</strong>: Utilitza <code>Buffer.from(string, encoding)</code> per crear un buffer a partir d'una cadena amb una codificació especificada.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gQWxsb2NhbnQgdW4gYnVmZmVyIGRlIDEwIGJ5dGVzCmNvbnN0IGJ1ZmZlcjEgPSBCdWZmZXIuYWxsb2MoMTApOwpjb25zb2xlLmxvZyhidWZmZXIxKTsKCi8vIENyZWFudCB1biBidWZmZXIgYSBwYXJ0aXIgZCd1biBhcnJheQpjb25zdCBidWZmZXIyID0gQnVmZmVyLmZyb20oWzEsIDIsIDMsIDRdKTsKY29uc29sZS5sb2coYnVmZmVyMik7CgovLyBDcmVhbnQgdW4gYnVmZmVyIGEgcGFydGlyIGQndW5hIGNhZGVuYQpjb25zdCBidWZmZXIzID0gQnVmZmVyLmZyb20oJ0hlbGxvLCBXb3JsZCEnLCAndXRmLTgnKTsKY29uc29sZS5sb2coYnVmZmVyMyk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Allocant un buffer de 10 bytes
+const buffer1 = Buffer.alloc(10);
+console.log(buffer1);
+
+// Creant un buffer a partir d'un array
+const buffer2 = Buffer.from([1, 2, 3, 4]);
+console.log(buffer2);
+
+// Creant un buffer a partir d'una cadena
+const buffer3 = Buffer.from('Hello, World!', 'utf-8');
+console.log(buffer3);</pre></div><div class='content'></div><h2>Escriure en Buffers</h2>
+<div class='content'><p>Pots escriure dades en un buffer utilitzant el mètode <code>write</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgYnVmZmVyID0gQnVmZmVyLmFsbG9jKDEwKTsKYnVmZmVyLndyaXRlKCdIZWxsbycpOwpjb25zb2xlLmxvZyhidWZmZXIudG9TdHJpbmcoJ3V0Zi04JykpOyAvLyBTb3J0aWRhOiBIZWxsbw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const buffer = Buffer.alloc(10);
+buffer.write('Hello');
+console.log(buffer.toString('utf-8')); // Sortida: Hello</pre></div><div class='content'></div><h2>Llegir de Buffers</h2>
+<div class='content'><p>Per llegir dades d'un buffer, pots utilitzar diversos mètodes com <code>toString</code>, <code>readUInt8</code>, <code>readUInt16LE</code>, etc.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgYnVmZmVyID0gQnVmZmVyLmZyb20oJ0hlbGxvLCBXb3JsZCEnLCAndXRmLTgnKTsKY29uc29sZS5sb2coYnVmZmVyLnRvU3RyaW5nKCd1dGYtOCcpKTsgLy8gU29ydGlkYTogSGVsbG8sIFdvcmxkIQpjb25zb2xlLmxvZyhidWZmZXIucmVhZFVJbnQ4KDApKTsgLy8gU29ydGlkYTogNzIgKGNvZGkgQVNDSUkgcGVyICdIJyk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const buffer = Buffer.from('Hello, World!', 'utf-8');
+console.log(buffer.toString('utf-8')); // Sortida: Hello, World!
+console.log(buffer.readUInt8(0)); // Sortida: 72 (codi ASCII per 'H')</pre></div><div class='content'></div><h1>Mètodes i Propietats del Buffer</h1>
+<div class='content'><p>Els buffers tenen una varietat de mètodes i propietats que et permeten manipular i inspeccionar les dades que contenen.</p>
+<ul>
+<li><strong>Length</strong>: La propietat <code>length</code> dóna la mida del buffer.</li>
+<li><strong>Slice</strong>: El mètode <code>slice</code> crea un nou buffer que fa referència a la mateixa memòria que el buffer original.</li>
+<li><strong>Copy</strong>: El mètode <code>copy</code> et permet copiar dades d'un buffer a un altre.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgYnVmZmVyID0gQnVmZmVyLmZyb20oJ0hlbGxvLCBXb3JsZCEnLCAndXRmLTgnKTsKY29uc29sZS5sb2coYnVmZmVyLmxlbmd0aCk7IC8vIFNvcnRpZGE6IDEzCgpjb25zdCBzbGljZWRCdWZmZXIgPSBidWZmZXIuc2xpY2UoMCwgNSk7CmNvbnNvbGUubG9nKHNsaWNlZEJ1ZmZlci50b1N0cmluZygndXRmLTgnKSk7IC8vIFNvcnRpZGE6IEhlbGxvCgpjb25zdCB0YXJnZXRCdWZmZXIgPSBCdWZmZXIuYWxsb2MoNSk7CmJ1ZmZlci5jb3B5KHRhcmdldEJ1ZmZlciwgMCwgMCwgNSk7CmNvbnNvbGUubG9nKHRhcmdldEJ1ZmZlci50b1N0cmluZygndXRmLTgnKSk7IC8vIFNvcnRpZGE6IEhlbGxv"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const buffer = Buffer.from('Hello, World!', 'utf-8');
+console.log(buffer.length); // Sortida: 13
+
+const slicedBuffer = buffer.slice(0, 5);
+console.log(slicedBuffer.toString('utf-8')); // Sortida: Hello
+
+const targetBuffer = Buffer.alloc(5);
+buffer.copy(targetBuffer, 0, 0, 5);
+console.log(targetBuffer.toString('utf-8')); // Sortida: Hello</pre></div><div class='content'></div><h1>Operacions Avançades amb Buffers</h1>
+<div class='content'></div><h2>Concatenació de Buffers</h2>
+<div class='content'><p>Pots concatenar múltiples buffers utilitzant <code>Buffer.concat</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgYnVmZmVyMSA9IEJ1ZmZlci5mcm9tKCdIZWxsbywgJyk7CmNvbnN0IGJ1ZmZlcjIgPSBCdWZmZXIuZnJvbSgnV29ybGQhJyk7CmNvbnN0IGNvbWJpbmVkQnVmZmVyID0gQnVmZmVyLmNvbmNhdChbYnVmZmVyMSwgYnVmZmVyMl0pOwpjb25zb2xlLmxvZyhjb21iaW5lZEJ1ZmZlci50b1N0cmluZygndXRmLTgnKSk7IC8vIFNvcnRpZGE6IEhlbGxvLCBXb3JsZCE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const buffer1 = Buffer.from('Hello, ');
+const buffer2 = Buffer.from('World!');
+const combinedBuffer = Buffer.concat([buffer1, buffer2]);
+console.log(combinedBuffer.toString('utf-8')); // Sortida: Hello, World!</pre></div><div class='content'></div><h2>Comparació de Buffers</h2>
+<div class='content'><p>Els buffers es poden comparar utilitzant el mètode <code>compare</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgYnVmZmVyMSA9IEJ1ZmZlci5mcm9tKCdBQkMnKTsKY29uc3QgYnVmZmVyMiA9IEJ1ZmZlci5mcm9tKCdBQkQnKTsKY29uc3QgcmVzdWx0ID0gYnVmZmVyMS5jb21wYXJlKGJ1ZmZlcjIpOwoKaWYgKHJlc3VsdCA8IDApIHsKICBjb25zb2xlLmxvZygnYnVmZmVyMSB2ZSBhYmFucyBkZSBidWZmZXIyJyk7Cn0gZWxzZSBpZiAocmVzdWx0ID4gMCkgewogIGNvbnNvbGUubG9nKCdidWZmZXIxIHZlIGRlc3Byw6lzIGRlIGJ1ZmZlcjInKTsKfSBlbHNlIHsKICBjb25zb2xlLmxvZygnYnVmZmVyMSDDqXMgaWd1YWwgYSBidWZmZXIyJyk7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const buffer1 = Buffer.from('ABC');
+const buffer2 = Buffer.from('ABD');
+const result = buffer1.compare(buffer2);
+
+if (result &lt; 0) {
+  console.log('buffer1 ve abans de buffer2');
+} else if (result &gt; 0) {
+  console.log('buffer1 ve despr&eacute;s de buffer2');
+} else {
+  console.log('buffer1 &eacute;s igual a buffer2');
+}</pre></div><div class='content'></div><h2>Codificació i Decodificació de Buffers</h2>
+<div class='content'><p>Els buffers es poden codificar i decodificar utilitzant diverses codificacions de caràcters com <code>utf-8</code>, <code>ascii</code>, <code>base64</code>, etc.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgYnVmZmVyID0gQnVmZmVyLmZyb20oJ0hlbGxvLCBXb3JsZCEnLCAndXRmLTgnKTsKY29uc3QgYmFzZTY0U3RyaW5nID0gYnVmZmVyLnRvU3RyaW5nKCdiYXNlNjQnKTsKY29uc29sZS5sb2coYmFzZTY0U3RyaW5nKTsgLy8gU29ydGlkYTogU0dWc2JHOHNJRmR2Y214a0lRPT0KCmNvbnN0IGRlY29kZWRCdWZmZXIgPSBCdWZmZXIuZnJvbShiYXNlNjRTdHJpbmcsICdiYXNlNjQnKTsKY29uc29sZS5sb2coZGVjb2RlZEJ1ZmZlci50b1N0cmluZygndXRmLTgnKSk7IC8vIFNvcnRpZGE6IEhlbGxvLCBXb3JsZCE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const buffer = Buffer.from('Hello, World!', 'utf-8');
+const base64String = buffer.toString('base64');
+console.log(base64String); // Sortida: SGVsbG8sIFdvcmxkIQ==
+
+const decodedBuffer = Buffer.from(base64String, 'base64');
+console.log(decodedBuffer.toString('utf-8')); // Sortida: Hello, World!</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>Els buffers són una característica poderosa a Node.js per gestionar dades binàries. Proporcionen una varietat de mètodes per crear, escriure, llegir i manipular dades binàries. Entendre com utilitzar els buffers de manera efectiva pot millorar enormement la teva capacitat per treballar amb dades binàries en les teves aplicacions Node.js.</p>
+<ul>
+<li><strong>Creació de Buffers</strong>: Aprèn les diferents maneres de crear buffers.</li>
+<li><strong>Escriure i Llegir</strong>: Entén com escriure i llegir de buffers.</li>
+<li><strong>Mètodes i Propietats</strong>: Familiaritza't amb els diversos mètodes i propietats disponibles per als buffers.</li>
+<li><strong>Operacions Avançades</strong>: Explora operacions avançades com la concatenació, comparació i codificació/decodificació.</li>
+</ul>
+<p>En dominar els buffers, estaràs ben preparat per gestionar dades binàries en els teus projectes Node.js.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='file-system-operations'>&#x25C4;Operacions del Sistema de Fitxers</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Treballant amb Buffers</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='streams-and-events'>Fluxos i Esdeveniments &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

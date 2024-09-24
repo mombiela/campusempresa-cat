@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Llegir des de fitxers en Fortran</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/fortran/reading-from-files" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/fortran/reading-from-files" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/fortran/reading-from-files" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/fortran/reading-from-files" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/fortran/reading-from-files" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='linked-lists'>&#x25C4;Llistes Enllaçades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Llegir des de fitxers en Fortran</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='writing-to-files'>Escrivint a Fitxers &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Llegir des de fitxers és una habilitat fonamental en la programació en Fortran, que et permet gestionar l'entrada de dades de manera eficient. Aquest tema et guiarà des dels conceptes bàsics fins a tècniques avançades de lectura de fitxers en Fortran.</p>
+</div><h1>Introducció a la gestió de fitxers en Fortran</h1>
+<div class='content'><p>Abans d'endinsar-nos en la lectura de fitxers, és essencial entendre alguns conceptes bàsics de la gestió de fitxers en Fortran.</p>
+<ul>
+<li><strong>Números d'unitat de fitxer</strong>: Fortran utilitza números d'unitat per referir-se als fitxers. Aquests són valors enters que identifiquen de manera única cada fitxer durant l'execució del programa.</li>
+<li><strong>Instrucció OPEN</strong>: Aquesta instrucció s'utilitza per obrir un fitxer i associar-lo amb un número d'unitat.</li>
+<li><strong>Instrucció READ</strong>: Aquesta instrucció llegeix dades d'un fitxer.</li>
+<li><strong>Instrucció CLOSE</strong>: Aquesta instrucció tanca un fitxer que ha estat obert.</li>
+</ul>
+</div><h1>Lectura bàsica de fitxers</h1>
+<div class='content'></div><h2>Obrir un fitxer</h2>
+<div class='content'><p>Per llegir des d'un fitxer, primer has d'obrir-lo utilitzant la instrucció <code>OPEN</code>. Aquí tens un exemple senzill:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UFJPR1JBTSBSZWFkRmlsZQogIElOVEVHRVIgOjogdW5pdF9udW1iZXIKICB1bml0X251bWJlciA9IDEwCiAgT1BFTih1bml0PXVuaXRfbnVtYmVyLCBmaWxlPSdkYXRhLnR4dCcsIHN0YXR1cz0nb2xkJykKICAhIEFyYSBlbCBmaXR4ZXIgJ2RhdGEudHh0JyBlc3TDoCBhc3NvY2lhdCBhbWIgZWwgbsO6bWVybyBkJ3VuaXRhdCAxMApFTkQgUFJPR1JBTSBSZWFkRmlsZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>PROGRAM ReadFile
+  INTEGER :: unit_number
+  unit_number = 10
+  OPEN(unit=unit_number, file='data.txt', status='old')
+  ! Ara el fitxer 'data.txt' est&agrave; associat amb el n&uacute;mero d'unitat 10
+END PROGRAM ReadFile</pre></div><div class='content'><ul>
+<li><code>unit=unit_number</code>: Especifica el número d'unitat.</li>
+<li><code>file='data.txt'</code>: Especifica el nom del fitxer.</li>
+<li><code>status='old'</code>: Indica que el fitxer ja existeix.</li>
+</ul>
+</div><h2>Llegir dades</h2>
+<div class='content'><p>Un cop el fitxer està obert, pots llegir dades utilitzant la instrucció <code>READ</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UFJPR1JBTSBSZWFkRmlsZQogIElOVEVHRVIgOjogdW5pdF9udW1iZXIsIG51bWJlcgogIHVuaXRfbnVtYmVyID0gMTAKICBPUEVOKHVuaXQ9dW5pdF9udW1iZXIsIGZpbGU9J2RhdGEudHh0Jywgc3RhdHVzPSdvbGQnKQogIFJFQUQodW5pdF9udW1iZXIsICopIG51bWJlcgogIFBSSU5UICosICdOw7ptZXJvIGxsZWdpdCBkZWwgZml0eGVyOicsIG51bWJlcgogIENMT1NFKHVuaXRfbnVtYmVyKQpFTkQgUFJPR1JBTSBSZWFkRmlsZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>PROGRAM ReadFile
+  INTEGER :: unit_number, number
+  unit_number = 10
+  OPEN(unit=unit_number, file='data.txt', status='old')
+  READ(unit_number, *) number
+  PRINT *, 'N&uacute;mero llegit del fitxer:', number
+  CLOSE(unit_number)
+END PROGRAM ReadFile</pre></div><div class='content'><ul>
+<li><code>READ(unit_number, *) number</code>: Llegeix dades del fitxer associat amb <code>unit_number</code> a la variable <code>number</code>.</li>
+</ul>
+</div><h2>Tancar un fitxer</h2>
+<div class='content'><p>Després de llegir les dades, és una bona pràctica tancar el fitxer utilitzant la instrucció <code>CLOSE</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q0xPU0UodW5pdF9udW1iZXIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CLOSE(unit_number)</pre></div><div class='content'></div><h1>Llegir diferents tipus de dades</h1>
+<div class='content'><p>Fortran et permet llegir diversos tipus de dades d'un fitxer, com ara enters, nombres reals i cadenes de text.</p>
+</div><h2>Exemple: Llegir múltiples tipus de dades</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UFJPR1JBTSBSZWFkRmlsZQogIElOVEVHRVIgOjogdW5pdF9udW1iZXIsIGludF92YWwKICBSRUFMIDo6IHJlYWxfdmFsCiAgQ0hBUkFDVEVSKGxlbj0yMCkgOjogc3RyX3ZhbAoKICB1bml0X251bWJlciA9IDEwCiAgT1BFTih1bml0PXVuaXRfbnVtYmVyLCBmaWxlPSdkYXRhLnR4dCcsIHN0YXR1cz0nb2xkJykKICBSRUFEKHVuaXRfbnVtYmVyLCAqKSBpbnRfdmFsLCByZWFsX3ZhbCwgc3RyX3ZhbAogIFBSSU5UICosICdFbnRlcjonLCBpbnRfdmFsCiAgUFJJTlQgKiwgJ1JlYWw6JywgcmVhbF92YWwKICBQUklOVCAqLCAnQ2FkZW5hOicsIHN0cl92YWwKICBDTE9TRSh1bml0X251bWJlcikKRU5EIFBST0dSQU0gUmVhZEZpbGU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>PROGRAM ReadFile
+  INTEGER :: unit_number, int_val
+  REAL :: real_val
+  CHARACTER(len=20) :: str_val
+
+  unit_number = 10
+  OPEN(unit=unit_number, file='data.txt', status='old')
+  READ(unit_number, *) int_val, real_val, str_val
+  PRINT *, 'Enter:', int_val
+  PRINT *, 'Real:', real_val
+  PRINT *, 'Cadena:', str_val
+  CLOSE(unit_number)
+END PROGRAM ReadFile</pre></div><div class='content'></div><h1>Tècniques avançades de lectura de fitxers</h1>
+<div class='content'></div><h2>Llegir dades en un bucle</h2>
+<div class='content'><p>Sovint, necessites llegir múltiples línies de dades. Això es pot fer utilitzant un bucle.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UFJPR1JBTSBSZWFkRmlsZQogIElOVEVHRVIgOjogdW5pdF9udW1iZXIsIGludF92YWwsIGkKICB1bml0X251bWJlciA9IDEwCiAgT1BFTih1bml0PXVuaXRfbnVtYmVyLCBmaWxlPSdkYXRhLnR4dCcsIHN0YXR1cz0nb2xkJykKCiAgRE8gaSA9IDEsIDEwCiAgICBSRUFEKHVuaXRfbnVtYmVyLCAqKSBpbnRfdmFsCiAgICBQUklOVCAqLCAnVmFsb3IgbGxlZ2l0OicsIGludF92YWwKICBFTkQgRE8KCiAgQ0xPU0UodW5pdF9udW1iZXIpCkVORCBQUk9HUkFNIFJlYWRGaWxl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>PROGRAM ReadFile
+  INTEGER :: unit_number, int_val, i
+  unit_number = 10
+  OPEN(unit=unit_number, file='data.txt', status='old')
+
+  DO i = 1, 10
+    READ(unit_number, *) int_val
+    PRINT *, 'Valor llegit:', int_val
+  END DO
+
+  CLOSE(unit_number)
+END PROGRAM ReadFile</pre></div><div class='content'></div><h2>Gestionar el final de fitxer</h2>
+<div class='content'><p>Per gestionar la condició de final de fitxer (EOF), pots utilitzar l'especificador <code>IOSTAT</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UFJPR1JBTSBSZWFkRmlsZQogIElOVEVHRVIgOjogdW5pdF9udW1iZXIsIGludF92YWwsIGlvX3N0YXR1cwogIHVuaXRfbnVtYmVyID0gMTAKICBPUEVOKHVuaXQ9dW5pdF9udW1iZXIsIGZpbGU9J2RhdGEudHh0Jywgc3RhdHVzPSdvbGQnKQoKICBETwogICAgUkVBRCh1bml0X251bWJlciwgKiwgSU9TVEFUPWlvX3N0YXR1cykgaW50X3ZhbAogICAgSUYgKGlvX3N0YXR1cyAvPSAwKSBFWElUCiAgICBQUklOVCAqLCAnVmFsb3IgbGxlZ2l0OicsIGludF92YWwKICBFTkQgRE8KCiAgQ0xPU0UodW5pdF9udW1iZXIpCkVORCBQUk9HUkFNIFJlYWRGaWxl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>PROGRAM ReadFile
+  INTEGER :: unit_number, int_val, io_status
+  unit_number = 10
+  OPEN(unit=unit_number, file='data.txt', status='old')
+
+  DO
+    READ(unit_number, *, IOSTAT=io_status) int_val
+    IF (io_status /= 0) EXIT
+    PRINT *, 'Valor llegit:', int_val
+  END DO
+
+  CLOSE(unit_number)
+END PROGRAM ReadFile</pre></div><div class='content'><ul>
+<li><code>IOSTAT=io_status</code>: Emmagatzema l'estat de l'operació d'E/S. Un valor diferent de zero indica un error o EOF.</li>
+</ul>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem cobert les tècniques bàsiques i avançades de lectura de fitxers en Fortran:</p>
+<ul>
+<li>Obrir i tancar fitxers utilitzant les instruccions <code>OPEN</code> i <code>CLOSE</code>.</li>
+<li>Llegir dades utilitzant la instrucció <code>READ</code>.</li>
+<li>Gestionar diferents tipus de dades.</li>
+<li>Llegir dades en bucles i gestionar condicions de EOF.</li>
+</ul>
+<p>Entendre aquests conceptes et permetrà gestionar de manera eficient l'entrada de dades en els teus programes Fortran. Practica aquestes tècniques amb diversos fitxers de dades per convertir-te en un expert en la gestió de fitxers.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='linked-lists'>&#x25C4;Llistes Enllaçades</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Llegir des de fitxers en Fortran</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='writing-to-files'>Escrivint a Fitxers &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

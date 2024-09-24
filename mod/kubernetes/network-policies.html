@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polítiques de Xarxa</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kubernetes/network-policies" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kubernetes/network-policies" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kubernetes/network-policies" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kubernetes/network-policies" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kubernetes/network-policies" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='ingress-controllers'>&#x25C4;Ingress Controllers</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Polítiques de Xarxa</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='persistent-volumes-and-persistent-volume-claims'>Volums Persistents i Claims de Volums Persistents &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a les Polítiques de Xarxa</h1>
+<div class='content'><p>Les Polítiques de Xarxa a Kubernetes s'utilitzen per controlar el flux de trànsit entre pods. Permeten especificar com es permet que els grups de pods es comuniquin entre ells i amb altres punts finals de la xarxa. Això és crucial per assegurar les teves aplicacions i garantir que només es permeti el trànsit autoritzat.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Selector de Pod</strong>: Defineix a quins pods s'aplica la política.</li>
+<li><strong>Regles d'Ingress</strong>: Controlen el trànsit entrant als pods seleccionats.</li>
+<li><strong>Regles d'Egress</strong>: Controlen el trànsit sortint dels pods seleccionats.</li>
+<li><strong>Namespaces</strong>: Les Polítiques de Xarxa són d'àmbit de namespace, és a dir, només s'apliquen dins del mateix namespace.</li>
+</ul>
+</div><h1>Creació d'una Política de Xarxa Bàsica</h1>
+<div class='content'><p>Per crear una Política de Xarxa, cal definir un fitxer YAML que especifiqui les regles de la política. Aquí tens un exemple bàsic:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogbmV0d29ya2luZy5rOHMuaW8vdjEKa2luZDogTmV0d29ya1BvbGljeQptZXRhZGF0YToKICBuYW1lOiBhbGxvdy1pbmdyZXNzCiAgbmFtZXNwYWNlOiBkZWZhdWx0CnNwZWM6CiAgcG9kU2VsZWN0b3I6CiAgICBtYXRjaExhYmVsczoKICAgICAgcm9sZTogZGIKICBwb2xpY3lUeXBlczoKICAtIEluZ3Jlc3MKICBpbmdyZXNzOgogIC0gZnJvbToKICAgIC0gcG9kU2VsZWN0b3I6CiAgICAgICAgbWF0Y2hMYWJlbHM6CiAgICAgICAgICByb2xlOiBmcm9udGVuZA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      role: db
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: frontend</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>apiVersion</strong>: Especifica la versió de l'API.</li>
+<li><strong>kind</strong>: Defineix el tipus de recurs, que és <code>NetworkPolicy</code>.</li>
+<li><strong>metadata</strong>: Conté el nom i el namespace de la política.</li>
+<li><strong>spec</strong>: Defineix les especificacions de la política.
+<ul>
+<li><strong>podSelector</strong>: Selecciona pods amb l'etiqueta <code>role: db</code>.</li>
+<li><strong>policyTypes</strong>: Especifica que aquesta política s'aplica al trànsit d'ingress.</li>
+<li><strong>ingress</strong>: Defineix les regles d'ingress.
+<ul>
+<li><strong>from</strong>: Especifica que es permet el trànsit des de pods amb l'etiqueta <code>role: frontend</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div><h1>Polítiques de Xarxa Avançades</h1>
+<div class='content'><p>Les Polítiques de Xarxa Avançades poden incloure tant regles d'ingress com d'egress, i poden ser més específiques sobre el trànsit permès.</p>
+</div><h2>Exemple: Política d'Ingress i Egress</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogbmV0d29ya2luZy5rOHMuaW8vdjEKa2luZDogTmV0d29ya1BvbGljeQptZXRhZGF0YToKICBuYW1lOiBhbGxvdy1pbmdyZXNzLWVncmVzcwogIG5hbWVzcGFjZTogZGVmYXVsdApzcGVjOgogIHBvZFNlbGVjdG9yOgogICAgbWF0Y2hMYWJlbHM6CiAgICAgIHJvbGU6IGJhY2tlbmQKICBwb2xpY3lUeXBlczoKICAtIEluZ3Jlc3MKICAtIEVncmVzcwogIGluZ3Jlc3M6CiAgLSBmcm9tOgogICAgLSBwb2RTZWxlY3RvcjoKICAgICAgICBtYXRjaExhYmVsczoKICAgICAgICAgIHJvbGU6IGZyb250ZW5kCiAgZWdyZXNzOgogIC0gdG86CiAgICAtIHBvZFNlbGVjdG9yOgogICAgICAgIG1hdGNoTGFiZWxzOgogICAgICAgICAgcm9sZTogZGI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-egress
+  namespace: default
+spec:
+  podSelector:
+    matchLabels:
+      role: backend
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          role: frontend
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          role: db</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>policyTypes</strong>: Inclou tant <code>Ingress</code> com <code>Egress</code>.</li>
+<li><strong>ingress</strong>: Permet el trànsit des de pods amb l'etiqueta <code>role: frontend</code>.</li>
+<li><strong>egress</strong>: Permet el trànsit cap a pods amb l'etiqueta <code>role: db</code>.</li>
+</ul>
+</div><h1>Usos Comuns</h1>
+<div class='content'><ul>
+<li><strong>Aïllar Pods Sensibles</strong>: Assegura que només pods específics puguin comunicar-se amb pods sensibles com bases de dades.</li>
+<li><strong>Restringir l'Accés Extern</strong>: Impedeix que els pods accedeixin a xarxes externes llevat que estigui explícitament permès.</li>
+<li><strong>Comunicació de Microserveis</strong>: Controla quins microserveis poden comunicar-se entre ells.</li>
+</ul>
+</div><h1>Resolució de Problemes amb les Polítiques de Xarxa</h1>
+<div class='content'><ul>
+<li><strong>Política No Aplicada</strong>: Assegura't que la política estigui en el namespace correcte i que el podSelector coincideixi amb els pods previstos.</li>
+<li><strong>Trànsit Bloquejat Inesperadament</strong>: Revisa les regles de la política i assegura't que totes les regles d'ingress i egress necessàries estiguin definides.</li>
+<li><strong>Aïllament de Namespace</strong>: Recorda que les Polítiques de Xarxa són d'àmbit de namespace. Les polítiques en un namespace no afecten els pods en un altre namespace.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Les Polítiques de Xarxa són una eina poderosa per assegurar els teus clústers de Kubernetes controlant el flux de trànsit entre pods. Entenent i implementant Polítiques de Xarxa, pots assegurar-te que les teves aplicacions estiguin segures i que només es permeti el trànsit autoritzat. Comença amb polítiques bàsiques i gradualment passa a configuracions més avançades a mesura que creixin les teves necessitats.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='ingress-controllers'>&#x25C4;Ingress Controllers</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Polítiques de Xarxa</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='persistent-volumes-and-persistent-volume-claims'>Volums Persistents i Claims de Volums Persistents &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

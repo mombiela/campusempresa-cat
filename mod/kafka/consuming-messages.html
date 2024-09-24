@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consumint Missatges</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kafka/consuming-messages" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kafka/consuming-messages" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kafka/consuming-messages" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kafka/consuming-messages" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kafka/consuming-messages" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='consumer-api-overview'>&#x25C4;Visió general de l'API del consumidor</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Consumint Missatges</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='consumer-groups'>Grups de consumidors &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Apache Kafka és una plataforma de streaming distribuïda que et permet publicar i subscriure't a fluxos de registres. En aquesta secció, ens centrarem en consumir missatges de temes de Kafka. Cobrirem els conceptes bàsics dels consumidors de Kafka, com configurar-los i tècniques avançades per a un consum eficient de missatges.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Consumer</strong>: Un client que llegeix registres d'un tema de Kafka.</li>
+<li><strong>Consumer Group</strong>: Un grup de consumidors que treballen junts per consumir missatges d'un tema.</li>
+<li><strong>Offset</strong>: Un identificador únic per a cada registre dins d'una partició, utilitzat per fer un seguiment de la posició del consumidor.</li>
+</ul>
+</div><h1>Configurant un Consumer de Kafka</h1>
+<div class='content'><p>Per consumir missatges de Kafka, necessites configurar un consumer de Kafka. Això implica configurar les propietats del consumer i escriure codi per llegir missatges d'un tema de Kafka.</p>
+</div><h2>Configuració Bàsica del Consumer</h2>
+<div class='content'><p>Aquí tens les propietats essencials que necessites configurar per a un consumer de Kafka:</p>
+<ul>
+<li><code>bootstrap.servers</code>: Una llista de parells host/port per utilitzar per establir la connexió inicial amb el clúster de Kafka.</li>
+<li><code>group.id</code>: Una cadena única que identifica el grup de consumidors al qual pertany aquest consumer.</li>
+<li><code>key.deserializer</code>: El nom de la classe del deserialitzador per a la clau.</li>
+<li><code>value.deserializer</code>: El nom de la classe del deserialitzador per al valor.</li>
+</ul>
+</div><h2>Exemple: Configuració Bàsica del Consumer en Java</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5hcGFjaGUua2Fma2EuY2xpZW50cy5jb25zdW1lci5Db25zdW1lckNvbmZpZzsKaW1wb3J0IG9yZy5hcGFjaGUua2Fma2EuY2xpZW50cy5jb25zdW1lci5LYWZrYUNvbnN1bWVyOwppbXBvcnQgb3JnLmFwYWNoZS5rYWZrYS5jbGllbnRzLmNvbnN1bWVyLkNvbnN1bWVyUmVjb3JkczsKaW1wb3J0IG9yZy5hcGFjaGUua2Fma2EuY2xpZW50cy5jb25zdW1lci5Db25zdW1lclJlY29yZDsKCmltcG9ydCBqYXZhLnV0aWwuUHJvcGVydGllczsKaW1wb3J0IGphdmEudXRpbC5Db2xsZWN0aW9uczsKCnB1YmxpYyBjbGFzcyBCYXNpY0NvbnN1bWVyIHsKICAgIHB1YmxpYyBzdGF0aWMgdm9pZCBtYWluKFN0cmluZ1tdIGFyZ3MpIHsKICAgICAgICBQcm9wZXJ0aWVzIHByb3BzID0gbmV3IFByb3BlcnRpZXMoKTsKICAgICAgICBwcm9wcy5wdXQoQ29uc3VtZXJDb25maWcuQk9PVFNUUkFQX1NFUlZFUlNfQ09ORklHLCAibG9jYWxob3N0OjkwOTIiKTsKICAgICAgICBwcm9wcy5wdXQoQ29uc3VtZXJDb25maWcuR1JPVVBfSURfQ09ORklHLCAidGVzdC1ncm91cCIpOwogICAgICAgIHByb3BzLnB1dChDb25zdW1lckNvbmZpZy5LRVlfREVTRVJJQUxJWkVSX0NMQVNTX0NPTkZJRywgIm9yZy5hcGFjaGUua2Fma2EuY29tbW9uLnNlcmlhbGl6YXRpb24uU3RyaW5nRGVzZXJpYWxpemVyIik7CiAgICAgICAgcHJvcHMucHV0KENvbnN1bWVyQ29uZmlnLlZBTFVFX0RFU0VSSUFMSVpFUl9DTEFTU19DT05GSUcsICJvcmcuYXBhY2hlLmthZmthLmNvbW1vbi5zZXJpYWxpemF0aW9uLlN0cmluZ0Rlc2VyaWFsaXplciIpOwoKICAgICAgICBLYWZrYUNvbnN1bWVyPFN0cmluZywgU3RyaW5nPiBjb25zdW1lciA9IG5ldyBLYWZrYUNvbnN1bWVyPD4ocHJvcHMpOwogICAgICAgIGNvbnN1bWVyLnN1YnNjcmliZShDb2xsZWN0aW9ucy5zaW5nbGV0b25MaXN0KCJ0ZXN0LXRvcGljIikpOwoKICAgICAgICB3aGlsZSAodHJ1ZSkgewogICAgICAgICAgICBDb25zdW1lclJlY29yZHM8U3RyaW5nLCBTdHJpbmc+IHJlY29yZHMgPSBjb25zdW1lci5wb2xsKDEwMCk7CiAgICAgICAgICAgIGZvciAoQ29uc3VtZXJSZWNvcmQ8U3RyaW5nLCBTdHJpbmc+IHJlY29yZCA6IHJlY29yZHMpIHsKICAgICAgICAgICAgICAgIFN5c3RlbS5vdXQucHJpbnRmKCJvZmZzZXQgPSAlZCwga2V5ID0gJXMsIHZhbHVlID0gJXMlbiIsIHJlY29yZC5vZmZzZXQoKSwgcmVjb3JkLmtleSgpLCByZWNvcmQudmFsdWUoKSk7CiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+
+import java.util.Properties;
+import java.util.Collections;
+
+public class BasicConsumer {
+    public static void main(String[] args) {
+        Properties props = new Properties();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, &quot;localhost:9092&quot;);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, &quot;test-group&quot;);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, &quot;org.apache.kafka.common.serialization.StringDeserializer&quot;);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, &quot;org.apache.kafka.common.serialization.StringDeserializer&quot;);
+
+        KafkaConsumer&lt;String, String&gt; consumer = new KafkaConsumer&lt;&gt;(props);
+        consumer.subscribe(Collections.singletonList(&quot;test-topic&quot;));
+
+        while (true) {
+            ConsumerRecords&lt;String, String&gt; records = consumer.poll(100);
+            for (ConsumerRecord&lt;String, String&gt; record : records) {
+                System.out.printf(&quot;offset = %d, key = %s, value = %s%n&quot;, record.offset(), record.key(), record.value());
+            }
+        }
+    }
+}</pre></div><div class='content'></div><h1>Funcions Avançades del Consumer</h1>
+<h2>Grups de Consumidors i Paral·lelisme</h2>
+<div class='content'><ul>
+<li><strong>Consumer Groups</strong>: Múltiples consumidors poden unir-se a un grup de consumidors per llegir d'un tema en paral·lel. Cada partició en el tema s'assigna només a un consumidor dins d'un grup, assegurant que cada missatge es processi només una vegada.</li>
+<li><strong>Rebalancing</strong>: Quan un nou consumidor s'uneix o deixa el grup, Kafka redistribueix automàticament les particions entre els consumidors.</li>
+</ul>
+</div><h2>Exemple: Grup de Consumidors en Acció</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gQ29uZmlndXJhY2nDsyBzaW1pbGFyIGFsIGNvbnN1bWVyIGLDoHNpYywgcGVyw7IgZXhlY3V0YSBtw7psdGlwbGVzIGluc3TDoG5jaWVzIGQnYXF1ZXN0IGNvbnN1bWVyIHBlciB2ZXVyZSBlbCByZWJhbGFuY2luZyBlbiBhY2Npw7Mu"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Configuraci&oacute; similar al consumer b&agrave;sic, per&ograve; executa m&uacute;ltiples inst&agrave;ncies d'aquest consumer per veure el rebalancing en acci&oacute;.</pre></div><div class='content'></div><h2>Cometre Offsets</h2>
+<div class='content'><ul>
+<li><strong>Cometre Offsets Automàticament</strong>: Kafka pot cometre offsets automàticament a intervals regulars.</li>
+<li><strong>Cometre Offsets Manualment</strong>: Pots cometre offsets manualment per tenir més control sobre el processament de missatges.</li>
+</ul>
+</div><h2>Exemple: Cometre Offsets Manualment</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5hcGFjaGUua2Fma2EuY2xpZW50cy5jb25zdW1lci5Db21taXRGYWlsZWRFeGNlcHRpb247CgovLyBEaW5zIGRlbCBidWNsZSB3aGlsZQp0cnkgewogICAgY29uc3VtZXIuY29tbWl0U3luYygpOwp9IGNhdGNoIChDb21taXRGYWlsZWRFeGNlcHRpb24gZSkgewogICAgU3lzdGVtLmVyci5wcmludGYoIkNvbW1pdCBmYWlsZWQ6ICVzJW4iLCBlLmdldE1lc3NhZ2UoKSk7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.apache.kafka.clients.consumer.CommitFailedException;
+
+// Dins del bucle while
+try {
+    consumer.commitSync();
+} catch (CommitFailedException e) {
+    System.err.printf(&quot;Commit failed: %s%n&quot;, e.getMessage());
+}</pre></div><div class='content'></div><h1>Gestió d'Errors i Reintents</h1>
+<div class='content'><ul>
+<li><strong>Gestió d'Errors de Deserialització</strong>: Implementa deserialitzadors personalitzats per gestionar errors de manera elegant.</li>
+<li><strong>Reintents</strong>: Configura polítiques de reintents per a errors transitoris.</li>
+</ul>
+</div><h2>Exemple: Deserialitzador Personalitzat</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5hcGFjaGUua2Fma2EuY29tbW9uLnNlcmlhbGl6YXRpb24uRGVzZXJpYWxpemVyOwoKcHVibGljIGNsYXNzIEN1c3RvbURlc2VyaWFsaXplciBpbXBsZW1lbnRzIERlc2VyaWFsaXplcjxNeU9iamVjdD4gewogICAgQE92ZXJyaWRlCiAgICBwdWJsaWMgTXlPYmplY3QgZGVzZXJpYWxpemUoU3RyaW5nIHRvcGljLCBieXRlW10gZGF0YSkgewogICAgICAgIHRyeSB7CiAgICAgICAgICAgIC8vIEzDsmdpY2EgZGUgZGVzZXJpYWxpdHphY2nDsyBwZXJzb25hbGl0emFkYQogICAgICAgIH0gY2F0Y2ggKEV4Y2VwdGlvbiBlKSB7CiAgICAgICAgICAgIC8vIEdlc3Rpb25hIGwnZXJyb3IgZGUgZGVzZXJpYWxpdHphY2nDswogICAgICAgIH0KICAgICAgICByZXR1cm4gbnVsbDsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.apache.kafka.common.serialization.Deserializer;
+
+public class CustomDeserializer implements Deserializer&lt;MyObject&gt; {
+    @Override
+    public MyObject deserialize(String topic, byte[] data) {
+        try {
+            // L&ograve;gica de deserialitzaci&oacute; personalitzada
+        } catch (Exception e) {
+            // Gestiona l'error de deserialitzaci&oacute;
+        }
+        return null;
+    }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Consumir missatges de Kafka és un aspecte fonamental de treballar amb aquesta potent plataforma de streaming. Entenent els conceptes bàsics dels consumidors de Kafka, configurant-los correctament i aprofitant funcions avançades com els grups de consumidors i el cometre offsets manualment, pots construir aplicacions de consum de missatges robustes i eficients. Considera sempre la gestió d'errors i els reintents per assegurar que les teves aplicacions de consumidors siguin resilients i fiables.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='consumer-api-overview'>&#x25C4;Visió general de l'API del consumidor</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Consumint Missatges</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='consumer-groups'>Grups de consumidors &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

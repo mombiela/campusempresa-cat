@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fils en Rust</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/rust/threads" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/rust/threads" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/rust/threads" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/rust/threads" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/rust/threads" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='generics'>&#x25C4;Generics</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Fils en Rust</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='message-passing'>Passatge de Missatges &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció als Fils</h1>
+<div class='content'><p>Els fils permeten que un programa realitzi múltiples tasques simultàniament, fent un ús eficient dels recursos del sistema. Rust proporciona un suport robust per als fils, garantint seguretat i rendiment.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Concurrència</strong>: Executar múltiples tasques al mateix temps.</li>
+<li><strong>Paral·lelisme</strong>: Executar múltiples tasques simultàniament en múltiples processadors.</li>
+<li><strong>Seguretat de Fils</strong>: Assegurar que les dades s'accedeixen correctament quan hi ha múltiples fils implicats.</li>
+</ul>
+</div><h1>Creació de Fils</h1>
+<div class='content'><p>La biblioteca estàndard de Rust proporciona el mòdul <code>std::thread</code> per a la creació i gestió de fils.</p>
+</div><h2>Creació Bàsica de Fils</h2>
+<div class='content'><p>Per crear un nou fil, utilitzes la funció <code>thread::spawn</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIHN0ZDo6dGhyZWFkOwoKZm4gbWFpbigpIHsKICAgIGxldCBoYW5kbGUgPSB0aHJlYWQ6OnNwYXduKHx8IHsKICAgICAgICBmb3IgaSBpbiAxLi4xMCB7CiAgICAgICAgICAgIHByaW50bG4hKCJIb2xhIGRlcyBkZWwgZmlsIGNyZWF0OiB7fSIsIGkpOwogICAgICAgIH0KICAgIH0pOwoKICAgIGZvciBpIGluIDEuLjUgewogICAgICAgIHByaW50bG4hKCJIb2xhIGRlcyBkZWwgZmlsIHByaW5jaXBhbDoge30iLCBpKTsKICAgIH0KCiAgICBoYW5kbGUuam9pbigpLnVud3JhcCgpOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use std::thread;
+
+fn main() {
+    let handle = thread::spawn(|| {
+        for i in 1..10 {
+            println!(&quot;Hola des del fil creat: {}&quot;, i);
+        }
+    });
+
+    for i in 1..5 {
+        println!(&quot;Hola des del fil principal: {}&quot;, i);
+    }
+
+    handle.join().unwrap();
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>thread::spawn</code> crea un nou fil.</li>
+<li>El tancament dins de <code>spawn</code> és el codi que s'executa en el nou fil.</li>
+<li><code>handle.join()</code> assegura que el fil principal espera que el fil creat acabi.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Seguretat de Fils amb `Mutex` i `Arc`</h1>
+<div class='content'><p>Quan múltiples fils necessiten accedir a dades compartides, Rust proporciona <code>Mutex</code> (Exclusió Mútua) i <code>Arc</code> (Comptatge de Referències Atòmic) per garantir la seguretat dels fils.</p>
+</div><h2>Ús de `Mutex`</h2>
+<div class='content'><p>Un <code>Mutex</code> permet que només un fil accedeixi a les dades a la vegada.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIHN0ZDo6c3luYzo6e011dGV4LCBBcmN9Owp1c2Ugc3RkOjp0aHJlYWQ7CgpmbiBtYWluKCkgewogICAgbGV0IGNvdW50ZXIgPSBBcmM6Om5ldyhNdXRleDo6bmV3KDApKTsKICAgIGxldCBtdXQgaGFuZGxlcyA9IHZlYyFbXTsKCiAgICBmb3IgXyBpbiAwLi4xMCB7CiAgICAgICAgbGV0IGNvdW50ZXIgPSBBcmM6OmNsb25lKCZjb3VudGVyKTsKICAgICAgICBsZXQgaGFuZGxlID0gdGhyZWFkOjpzcGF3bihtb3ZlIHx8IHsKICAgICAgICAgICAgbGV0IG11dCBudW0gPSBjb3VudGVyLmxvY2soKS51bndyYXAoKTsKICAgICAgICAgICAgKm51bSArPSAxOwogICAgICAgIH0pOwogICAgICAgIGhhbmRsZXMucHVzaChoYW5kbGUpOwogICAgfQoKICAgIGZvciBoYW5kbGUgaW4gaGFuZGxlcyB7CiAgICAgICAgaGFuZGxlLmpvaW4oKS51bndyYXAoKTsKICAgIH0KCiAgICBwcmludGxuISgiUmVzdWx0YXQ6IHt9IiwgKmNvdW50ZXIubG9jaygpLnVud3JhcCgpKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use std::sync::{Mutex, Arc};
+use std::thread;
+
+fn main() {
+    let counter = Arc::new(Mutex::new(0));
+    let mut handles = vec![];
+
+    for _ in 0..10 {
+        let counter = Arc::clone(&amp;counter);
+        let handle = thread::spawn(move || {
+            let mut num = counter.lock().unwrap();
+            *num += 1;
+        });
+        handles.push(handle);
+    }
+
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    println!(&quot;Resultat: {}&quot;, *counter.lock().unwrap());
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>Arc</code> permet la propietat múltiple del <code>Mutex</code>.</li>
+<li><code>Mutex::lock</code> bloqueja les dades per al fil actual.</li>
+<li><code>Arc::clone</code> crea una referència al <code>Mutex</code> embolicat en <code>Arc</code>.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Gestió Avançada de Fils</h1>
+<div class='content'><p>Rust proporciona funcions més avançades per a la gestió de fils, com ara canals per a la comunicació entre fils.</p>
+</div><h2>Ús de Canals</h2>
+<div class='content'><p>Els canals permeten que els fils es comuniquin enviant missatges.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlIHN0ZDo6c3luYzo6bXBzYzsKdXNlIHN0ZDo6dGhyZWFkOwp1c2Ugc3RkOjp0aW1lOjpEdXJhdGlvbjsKCmZuIG1haW4oKSB7CiAgICBsZXQgKHR4LCByeCkgPSBtcHNjOjpjaGFubmVsKCk7CgogICAgdGhyZWFkOjpzcGF3bihtb3ZlIHx8IHsKICAgICAgICBsZXQgdmFsID0gU3RyaW5nOjpmcm9tKCJob2xhIik7CiAgICAgICAgdHguc2VuZCh2YWwpLnVud3JhcCgpOwogICAgfSk7CgogICAgbGV0IHJlYnV0ID0gcngucmVjdigpLnVud3JhcCgpOwogICAgcHJpbnRsbiEoIlJlYnV0OiB7fSIsIHJlYnV0KTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>use std::sync::mpsc;
+use std::thread;
+use std::time::Duration;
+
+fn main() {
+    let (tx, rx) = mpsc::channel();
+
+    thread::spawn(move || {
+        let val = String::from(&quot;hola&quot;);
+        tx.send(val).unwrap();
+    });
+
+    let rebut = rx.recv().unwrap();
+    println!(&quot;Rebut: {}&quot;, rebut);
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>:
+<ul>
+<li><code>mpsc::channel</code> crea un transmissor (<code>tx</code>) i un receptor (<code>rx</code>).</li>
+<li><code>tx.send</code> envia dades al canal.</li>
+<li><code>rx.recv</code> rep dades del canal.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Els fils en Rust proporcionen eines poderoses per a la programació concurrent mentre garanteixen seguretat i rendiment. Utilitzant <code>thread::spawn</code>, <code>Mutex</code>, <code>Arc</code> i canals, pots crear aplicacions multithread eficients i segures. Entendre aquests conceptes és crucial per desenvolupar programes robustos en Rust que aprofitin tot el potencial dels processadors multicore moderns.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='generics'>&#x25C4;Generics</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Fils en Rust</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='message-passing'>Passatge de Missatges &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

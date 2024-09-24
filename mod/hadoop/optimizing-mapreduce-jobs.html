@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimització de Feines MapReduce</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/hadoop/optimizing-mapreduce-jobs" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/hadoop/optimizing-mapreduce-jobs" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/hadoop/optimizing-mapreduce-jobs" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/hadoop/optimizing-mapreduce-jobs" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/hadoop/optimizing-mapreduce-jobs" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='mapreduce-job-execution'>&#x25C4;Execució de Treballs MapReduce</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització de Feines MapReduce</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='yarn-architecture'>Arquitectura de YARN &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Optimitzar les feines MapReduce és crucial per millorar el rendiment i l'eficiència de les aplicacions Hadoop. Aquesta secció et guiarà a través de diverses tècniques i millors pràctiques per optimitzar les teves feines MapReduce, des de nivells bàsics fins a avançats.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Marc MapReduce</strong>: Entendre els components bàsics de MapReduce - Mapper, Reducer, i el flux de dades entre ells.</li>
+<li><strong>Configuració de Feines</strong>: Aprendre a configurar les teves feines MapReduce per obtenir un millor rendiment.</li>
+<li><strong>Localitat de Dades</strong>: Importància de processar les dades on resideixen.</li>
+<li><strong>Funcions Combinadores</strong>: Ús de combinadors per reduir la quantitat de dades transferides entre el Mapper i el Reducer.</li>
+<li><strong>Particionament</strong>: Particionament personalitzat per equilibrar la càrrega entre els reducers.</li>
+<li><strong>Execució Especulativa</strong>: Gestió de tasques lentes executant tasques duplicades.</li>
+<li><strong>Gestió de Recursos</strong>: Ús eficient dels recursos del clúster.</li>
+</ul>
+</div><h1>Configuració de Feines</h1>
+<div class='content'><p>Una configuració adequada de les feines pot tenir un impacte significatiu en el rendiment de les teves feines MapReduce.</p>
+</div><h2>Exemple: Configuració del Nombre de Reducers</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Sm9iIGpvYiA9IEpvYi5nZXRJbnN0YW5jZShjb25mLCAiZXhhbXBsZS1qb2IiKTsKam9iLnNldE51bVJlZHVjZVRhc2tzKDEwKTsgLy8gQ29uZmlndXJhY2nDsyBkZWwgbm9tYnJlIGRlIHJlZHVjZXJz"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Job job = Job.getInstance(conf, &quot;example-job&quot;);
+job.setNumReduceTasks(10); // Configuraci&oacute; del nombre de reducers</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Configurar un nombre adequat de reducers pot ajudar a equilibrar la càrrega i reduir el temps de finalització de la feina. Massa pocs reducers poden provocar colls d'ampolla, mentre que massa poden causar sobrecàrrega.</li>
+</ul>
+</div><h1>Localitat de Dades</h1>
+<div class='content'><p>Processar les dades on resideixen (localitat de dades) minimitza la congestió de la xarxa i millora el rendiment.</p>
+<ul>
+<li><strong>Col·locació de Blocs HDFS</strong>: Assegura't que els blocs de dades es col·loquin de manera que maximitzin la localitat de dades.</li>
+<li><strong>Afinitat de Nodes</strong>: Configura la teva feina per preferir nodes que tinguin els blocs de dades.</li>
+</ul>
+</div><h2>Exemple: Activació de la Localitat de Dades</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q29uZmlndXJhdGlvbiBjb25mID0gbmV3IENvbmZpZ3VyYXRpb24oKTsKY29uZi5zZXQoIm1hcHJlZHVjZS5qb2J0cmFja2VyLmFkZHJlc3MiLCAibG9jYWwiKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Configuration conf = new Configuration();
+conf.set(&quot;mapreduce.jobtracker.address&quot;, &quot;local&quot;);</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Aquesta configuració ajuda a assegurar que el job tracker intenti programar tasques en nodes on les dades ja estan presents.</li>
+</ul>
+</div><h1>Funcions Combinadores</h1>
+<div class='content'><p>Els combinadors són mini-reducers que processen la sortida del Mapper abans que s'enviï al Reducer, reduint la quantitat de dades transferides.</p>
+</div><h2>Exemple: Ús d'un Combinador</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("am9iLnNldENvbWJpbmVyQ2xhc3MoTXlDb21iaW5lci5jbGFzcyk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>job.setCombinerClass(MyCombiner.class);</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Configurant una classe combinadora, pots reduir la quantitat de dades intermèdies que necessiten ser transferides entre el Mapper i el Reducer.</li>
+</ul>
+</div><h1>Particionament</h1>
+<div class='content'><p>El particionament personalitzat pot ajudar a distribuir la càrrega de manera uniforme entre els reducers.</p>
+</div><h2>Exemple: Particionador Personalitzat</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHVibGljIGNsYXNzIE15UGFydGl0aW9uZXIgZXh0ZW5kcyBQYXJ0aXRpb25lcjxUZXh0LCBJbnRXcml0YWJsZT4gewogICAgQE92ZXJyaWRlCiAgICBwdWJsaWMgaW50IGdldFBhcnRpdGlvbihUZXh0IGtleSwgSW50V3JpdGFibGUgdmFsdWUsIGludCBudW1QYXJ0aXRpb25zKSB7CiAgICAgICAgcmV0dXJuIGtleS5oYXNoQ29kZSgpICUgbnVtUGFydGl0aW9uczsKICAgIH0KfQoKam9iLnNldFBhcnRpdGlvbmVyQ2xhc3MoTXlQYXJ0aXRpb25lci5jbGFzcyk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>public class MyPartitioner extends Partitioner&lt;Text, IntWritable&gt; {
+    @Override
+    public int getPartition(Text key, IntWritable value, int numPartitions) {
+        return key.hashCode() % numPartitions;
+    }
+}
+
+job.setPartitionerClass(MyPartitioner.class);</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Un particionador personalitzat assegura que les dades es distribueixin uniformement entre els reducers, prevenint que alguns reducers estiguin sobrecarregats mentre altres estan infrautilitzats.</li>
+</ul>
+</div><h1>Execució Especulativa</h1>
+<div class='content'><p>L'execució especulativa pot ajudar a gestionar tasques lentes executant tasques duplicades en diferents nodes.</p>
+</div><h2>Exemple: Activació de l'Execució Especulativa</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q29uZmlndXJhdGlvbiBjb25mID0gbmV3IENvbmZpZ3VyYXRpb24oKTsKY29uZi5zZXRCb29sZWFuKCJtYXByZWR1Y2UubWFwLnNwZWN1bGF0aXZlIiwgdHJ1ZSk7CmNvbmYuc2V0Qm9vbGVhbigibWFwcmVkdWNlLnJlZHVjZS5zcGVjdWxhdGl2ZSIsIHRydWUpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Configuration conf = new Configuration();
+conf.setBoolean(&quot;mapreduce.map.speculative&quot;, true);
+conf.setBoolean(&quot;mapreduce.reduce.speculative&quot;, true);</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Activar l'execució especulativa pot ajudar a completar les feines més ràpidament mitigant l'impacte de les tasques que s'executen lentament.</li>
+</ul>
+</div><h1>Gestió de Recursos</h1>
+<div class='content'><p>L'ús eficient dels recursos del clúster assegura que les teves feines MapReduce s'executin sense problemes sense contenció de recursos.</p>
+<ul>
+<li><strong>Configuració de YARN</strong>: Configura YARN per assignar recursos de manera efectiva.</li>
+<li><strong>Configuració de Memòria i CPU</strong>: Estableix límits adequats de memòria i CPU per a les teves tasques.</li>
+</ul>
+</div><h2>Exemple: Configuració de Recursos de YARN</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q29uZmlndXJhdGlvbiBjb25mID0gbmV3IENvbmZpZ3VyYXRpb24oKTsKY29uZi5zZXQoInlhcm4ubm9kZW1hbmFnZXIucmVzb3VyY2UubWVtb3J5LW1iIiwgIjgxOTIiKTsKY29uZi5zZXQoInlhcm4uc2NoZWR1bGVyLm1heGltdW0tYWxsb2NhdGlvbi1tYiIsICI0MDk2Iik7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Configuration conf = new Configuration();
+conf.set(&quot;yarn.nodemanager.resource.memory-mb&quot;, &quot;8192&quot;);
+conf.set(&quot;yarn.scheduler.maximum-allocation-mb&quot;, &quot;4096&quot;);</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Una configuració adequada de YARN assegura que els recursos es distribueixin eficientment, prevenint la contenció de recursos i millorant el rendiment de les feines.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Optimitzar les feines MapReduce implica una combinació de configuració adequada de les feines, assegurar la localitat de dades, utilitzar combinadors, particionament personalitzat, activar l'execució especulativa i una gestió eficient dels recursos. Seguint aquestes millors pràctiques, pots millorar significativament el rendiment i l'eficiència de les teves aplicacions Hadoop.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='mapreduce-job-execution'>&#x25C4;Execució de Treballs MapReduce</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització de Feines MapReduce</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='yarn-architecture'>Arquitectura de YARN &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

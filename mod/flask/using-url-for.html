@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utilitzant `url_for` per a URLs Dinàmiques</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/flask/using-url-for" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/flask/using-url-for" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/flask/using-url-for" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/flask/using-url-for" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/flask/using-url-for" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='working-with-static-files'>&#x25C4;Treballar amb Fitxers Estàtics</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Utilitzant `url_for` per a URLs Dinàmiques</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='handling-forms'>Gestionar Formularis a Flask &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquesta secció, explorarem com utilitzar la funció <code>url_for</code> en Flask per generar URLs dinàmiques. Aquesta és una habilitat crucial per crear aplicacions web flexibles i fàcils de mantenir.</p>
+</div><h1>Què és `url_for`?</h1>
+<div class='content'><ul>
+<li><code>url_for</code> és una funció d'utilitat de Flask utilitzada per construir URLs per a funcions específiques.</li>
+<li>Ajuda a generar URLs dinàmicament, fent que la teva aplicació sigui més flexible i fàcil de mantenir.</li>
+<li>Assegura que les teves URLs siguin sempre correctes i actualitzades, fins i tot si canvies les definicions de ruta.</li>
+</ul>
+</div><h1>Per què utilitzar `url_for`?</h1>
+<div class='content'><ul>
+<li><strong>Mantenibilitat</strong>: Si canvies una ruta, només necessites actualitzar-la en un sol lloc.</li>
+<li><strong>Llegibilitat</strong>: El codi és més fàcil de llegir i entendre.</li>
+<li><strong>Seguretat</strong>: Ajuda a prevenir la manipulació de URLs per part dels usuaris.</li>
+</ul>
+</div><h1>Ús bàsic</h1>
+<div class='content'></div><h2>Exemple 1: Generant una URL per a una Ruta Simple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2ssIHVybF9mb3IKCmFwcCA9IEZsYXNrKF9fbmFtZV9fKQoKQGFwcC5yb3V0ZSgnLycpCmRlZiBob21lKCk6CiAgICByZXR1cm4gJ0hvbWUgUGFnZScKCkBhcHAucm91dGUoJy9hYm91dCcpCmRlZiBhYm91dCgpOgogICAgcmV0dXJuICdBYm91dCBQYWdlJwoKQGFwcC5yb3V0ZSgnL2dlbmVyYXRlLXVybCcpCmRlZiBnZW5lcmF0ZV91cmwoKToKICAgIGhvbWVfdXJsID0gdXJsX2ZvcignaG9tZScpCiAgICBhYm91dF91cmwgPSB1cmxfZm9yKCdhYm91dCcpCiAgICByZXR1cm4gZidIb21lIFVSTDoge2hvbWVfdXJsfSwgQWJvdXQgVVJMOiB7YWJvdXRfdXJsfScKCmlmIF9fbmFtZV9fID09ICdfX21haW5fXyc6CiAgICBhcHAucnVuKGRlYnVnPVRydWUp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask, url_for
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return 'Home Page'
+
+@app.route('/about')
+def about():
+    return 'About Page'
+
+@app.route('/generate-url')
+def generate_url():
+    home_url = url_for('home')
+    about_url = url_for('about')
+    return f'Home URL: {home_url}, About URL: {about_url}'
+
+if __name__ == '__main__':
+    app.run(debug=True)</pre></div><div class='content'><ul>
+<li>En aquest exemple, <code>url_for('home')</code> genera la URL per a la ruta <code>home</code>, i <code>url_for('about')</code> genera la URL per a la ruta <code>about</code>.</li>
+<li>La ruta <code>generate_url</code> demostra com utilitzar <code>url_for</code> per generar URLs dinàmicament.</li>
+</ul>
+</div><h1>Utilitzant `url_for` amb Paràmetres de URL</h1>
+<div class='content'></div><h2>Exemple 2: Generant URLs amb Paràmetres</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2ssIHVybF9mb3IKCmFwcCA9IEZsYXNrKF9fbmFtZV9fKQoKQGFwcC5yb3V0ZSgnL3VzZXIvPHVzZXJuYW1lPicpCmRlZiBwcm9maWxlKHVzZXJuYW1lKToKICAgIHJldHVybiBmJ1VzZXI6IHt1c2VybmFtZX0nCgpAYXBwLnJvdXRlKCcvZ2VuZXJhdGUtdXJsJykKZGVmIGdlbmVyYXRlX3VybCgpOgogICAgcHJvZmlsZV91cmwgPSB1cmxfZm9yKCdwcm9maWxlJywgdXNlcm5hbWU9J2pvaG5fZG9lJykKICAgIHJldHVybiBmJ1Byb2ZpbGUgVVJMOiB7cHJvZmlsZV91cmx9JwoKaWYgX19uYW1lX18gPT0gJ19fbWFpbl9fJzoKICAgIGFwcC5ydW4oZGVidWc9VHJ1ZSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask, url_for
+
+app = Flask(__name__)
+
+@app.route('/user/&lt;username&gt;')
+def profile(username):
+    return f'User: {username}'
+
+@app.route('/generate-url')
+def generate_url():
+    profile_url = url_for('profile', username='john_doe')
+    return f'Profile URL: {profile_url}'
+
+if __name__ == '__main__':
+    app.run(debug=True)</pre></div><div class='content'><ul>
+<li>Aquí, <code>url_for('profile', username='john_doe')</code> genera la URL per a la ruta <code>profile</code> amb el paràmetre <code>username</code> establert a <code>john_doe</code>.</li>
+</ul>
+</div><h1>Utilitzant `url_for` amb Paràmetres de Consulta</h1>
+<div class='content'></div><h2>Exemple 3: Afegint Paràmetres de Consulta</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2ssIHVybF9mb3IKCmFwcCA9IEZsYXNrKF9fbmFtZV9fKQoKQGFwcC5yb3V0ZSgnL3NlYXJjaCcpCmRlZiBzZWFyY2goKToKICAgIHJldHVybiAnU2VhcmNoIFBhZ2UnCgpAYXBwLnJvdXRlKCcvZ2VuZXJhdGUtdXJsJykKZGVmIGdlbmVyYXRlX3VybCgpOgogICAgc2VhcmNoX3VybCA9IHVybF9mb3IoJ3NlYXJjaCcsIHE9J2ZsYXNrJywgcGFnZT0yKQogICAgcmV0dXJuIGYnU2VhcmNoIFVSTDoge3NlYXJjaF91cmx9JwoKaWYgX19uYW1lX18gPT0gJ19fbWFpbl9fJzoKICAgIGFwcC5ydW4oZGVidWc9VHJ1ZSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask, url_for
+
+app = Flask(__name__)
+
+@app.route('/search')
+def search():
+    return 'Search Page'
+
+@app.route('/generate-url')
+def generate_url():
+    search_url = url_for('search', q='flask', page=2)
+    return f'Search URL: {search_url}'
+
+if __name__ == '__main__':
+    app.run(debug=True)</pre></div><div class='content'><ul>
+<li>En aquest exemple, <code>url_for('search', q='flask', page=2)</code> genera la URL per a la ruta <code>search</code> amb els paràmetres de consulta <code>q</code> i <code>page</code>.</li>
+</ul>
+</div><h1>Ús Avançat</h1>
+<div class='content'></div><h2>Exemple 4: Utilitzant `url_for` amb Blueprints</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2ssIEJsdWVwcmludCwgdXJsX2ZvcgoKYXBwID0gRmxhc2soX19uYW1lX18pCgphZG1pbiA9IEJsdWVwcmludCgnYWRtaW4nLCBfX25hbWVfXywgdXJsX3ByZWZpeD0nL2FkbWluJykKCkBhZG1pbi5yb3V0ZSgnL2Rhc2hib2FyZCcpCmRlZiBkYXNoYm9hcmQoKToKICAgIHJldHVybiAnQWRtaW4gRGFzaGJvYXJkJwoKYXBwLnJlZ2lzdGVyX2JsdWVwcmludChhZG1pbikKCkBhcHAucm91dGUoJy9nZW5lcmF0ZS11cmwnKQpkZWYgZ2VuZXJhdGVfdXJsKCk6CiAgICBkYXNoYm9hcmRfdXJsID0gdXJsX2ZvcignYWRtaW4uZGFzaGJvYXJkJykKICAgIHJldHVybiBmJ0FkbWluIERhc2hib2FyZCBVUkw6IHtkYXNoYm9hcmRfdXJsfScKCmlmIF9fbmFtZV9fID09ICdfX21haW5fXyc6CiAgICBhcHAucnVuKGRlYnVnPVRydWUp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask, Blueprint, url_for
+
+app = Flask(__name__)
+
+admin = Blueprint('admin', __name__, url_prefix='/admin')
+
+@admin.route('/dashboard')
+def dashboard():
+    return 'Admin Dashboard'
+
+app.register_blueprint(admin)
+
+@app.route('/generate-url')
+def generate_url():
+    dashboard_url = url_for('admin.dashboard')
+    return f'Admin Dashboard URL: {dashboard_url}'
+
+if __name__ == '__main__':
+    app.run(debug=True)</pre></div><div class='content'><ul>
+<li>Aquest exemple demostra com utilitzar <code>url_for</code> amb blueprints. <code>url_for('admin.dashboard')</code> genera la URL per a la ruta <code>dashboard</code> dins del blueprint <code>admin</code>.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><ul>
+<li>La funció <code>url_for</code> és una eina poderosa en Flask que t'ajuda a generar URLs dinàmiques.</li>
+<li>Millora la mantenibilitat, llegibilitat i seguretat de la teva aplicació web.</li>
+<li>Tant si treballes amb rutes simples, rutes amb paràmetres o blueprints, <code>url_for</code> assegura que les teves URLs siguin sempre correctes i actualitzades.</li>
+</ul>
+<p>Dominant <code>url_for</code>, pots crear aplicacions Flask més flexibles i fàcils de mantenir.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='working-with-static-files'>&#x25C4;Treballar amb Fitxers Estàtics</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Utilitzant `url_for` per a URLs Dinàmiques</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='handling-forms'>Gestionar Formularis a Flask &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

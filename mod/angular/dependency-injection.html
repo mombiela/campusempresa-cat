@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Injecció de Dependències a Angular</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/angular/dependency-injection" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/angular/dependency-injection" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/angular/dependency-injection" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/angular/dependency-injection" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/angular/dependency-injection" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='creating-and-using-services'>&#x25C4;Creació i ús de serveis</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Injecció de Dependències a Angular</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='hierarchical-injectors'>Injeccions jeràrquiques &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a la Injecció de Dependències</h1>
+<div class='content'><p>La Injecció de Dependències (DI) és un patró de disseny utilitzat per implementar IoC (Inversió de Control), permetent que una classe rebi les seves dependències d'una font externa en lloc de crear-les ella mateixa. Angular utilitza DI per proporcionar als components els serveis que necessiten.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Dependència</strong>: Un objecte que una classe necessita per funcionar.</li>
+<li><strong>Injecció</strong>: El procés de proporcionar a una classe les seves dependències.</li>
+<li><strong>Proveïdor</strong>: Un objecte que diu al sistema DI com obtenir una dependència.</li>
+</ul>
+</div><h1>Per què Utilitzar la Injecció de Dependències?</h1>
+<div class='content'><ul>
+<li><strong>Desacoblament</strong>: Redueix la dependència entre classes, fent el codi més modular i fàcil de provar.</li>
+<li><strong>Reutilització</strong>: Els serveis es poden reutilitzar en diferents components.</li>
+<li><strong>Mantenibilitat</strong>: Més fàcil de gestionar i actualitzar les dependències.</li>
+</ul>
+</div><h1>Com Funciona la Injecció de Dependències a Angular</h1>
+<div class='content'><p>El sistema DI d'Angular és jeràrquic, el que significa que pots definir proveïdors a diferents nivells (mòdul, component, etc.), i Angular resoldrà les dependències basant-se en la jerarquia.</p>
+</div><h2>Exemple: Injecció de Dependències Bàsica</h2>
+<div class='content'><p>Creem un servei senzill i l'injectem en un component.</p>
+<h4>Pas 1: Crear un Servei</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3JjL2FwcC9zZXJ2aWNlcy9sb2dnZXIuc2VydmljZS50cwppbXBvcnQgeyBJbmplY3RhYmxlIH0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7CgpASW5qZWN0YWJsZSh7CiAgcHJvdmlkZWRJbjogJ3Jvb3QnLAp9KQpleHBvcnQgY2xhc3MgTG9nZ2VyU2VydmljZSB7CiAgbG9nKG1lc3NhZ2U6IHN0cmluZykgewogICAgY29uc29sZS5sb2cobWVzc2FnZSk7CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// src/app/services/logger.service.ts
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class LoggerService {
+  log(message: string) {
+    console.log(message);
+  }
+}</pre></div><div class='content'><ul>
+<li><code>@Injectable({ providedIn: 'root' })</code>: Aquest decorador marca la classe com un servei que es pot injectar. La sintaxi <code>providedIn: 'root'</code> significa que el servei està disponible a nivell d'aplicació.</li>
+</ul>
+<h4>Pas 2: Injectar el Servei en un Component</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3JjL2FwcC9jb21wb25lbnRzL2V4YW1wbGUvZXhhbXBsZS5jb21wb25lbnQudHMKaW1wb3J0IHsgQ29tcG9uZW50LCBPbkluaXQgfSBmcm9tICdAYW5ndWxhci9jb3JlJzsKaW1wb3J0IHsgTG9nZ2VyU2VydmljZSB9IGZyb20gJy4uLy4uL3NlcnZpY2VzL2xvZ2dlci5zZXJ2aWNlJzsKCkBDb21wb25lbnQoewogIHNlbGVjdG9yOiAnYXBwLWV4YW1wbGUnLAogIHRlbXBsYXRlVXJsOiAnLi9leGFtcGxlLmNvbXBvbmVudC5odG1sJywKICBzdHlsZVVybHM6IFsnLi9leGFtcGxlLmNvbXBvbmVudC5jc3MnXQp9KQpleHBvcnQgY2xhc3MgRXhhbXBsZUNvbXBvbmVudCBpbXBsZW1lbnRzIE9uSW5pdCB7CiAgY29uc3RydWN0b3IocHJpdmF0ZSBsb2dnZXI6IExvZ2dlclNlcnZpY2UpIHt9CgogIG5nT25Jbml0KCkgewogICAgdGhpcy5sb2dnZXIubG9nKCdFeGFtcGxlQ29tcG9uZW50IGluaXRpYWxpemVkJyk7CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// src/app/components/example/example.component.ts
+import { Component, OnInit } from '@angular/core';
+import { LoggerService } from '../../services/logger.service';
+
+@Component({
+  selector: 'app-example',
+  templateUrl: './example.component.html',
+  styleUrls: ['./example.component.css']
+})
+export class ExampleComponent implements OnInit {
+  constructor(private logger: LoggerService) {}
+
+  ngOnInit() {
+    this.logger.log('ExampleComponent initialized');
+  }
+}</pre></div><div class='content'><ul>
+<li><code>constructor(private logger: LoggerService) {}</code>: Aquesta sintaxi injecta el <code>LoggerService</code> en el component.</li>
+</ul>
+</div><h1>Tècniques Avançades d'Injecció de Dependències</h1>
+<div class='content'></div><h2>Injectors Jeràrquics</h2>
+<div class='content'><p>El sistema DI d'Angular permet definir proveïdors a diferents nivells, com en mòduls o components. Això pot ser útil per crear serveis singleton o per proporcionar diferents instàncies d'un servei.</p>
+<h4>Proveïdors a Nivell de Mòdul</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3JjL2FwcC9hcHAubW9kdWxlLnRzCmltcG9ydCB7IE5nTW9kdWxlIH0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7CmltcG9ydCB7IEJyb3dzZXJNb2R1bGUgfSBmcm9tICdAYW5ndWxhci9wbGF0Zm9ybS1icm93c2VyJzsKaW1wb3J0IHsgQXBwQ29tcG9uZW50IH0gZnJvbSAnLi9hcHAuY29tcG9uZW50JzsKaW1wb3J0IHsgTG9nZ2VyU2VydmljZSB9IGZyb20gJy4vc2VydmljZXMvbG9nZ2VyLnNlcnZpY2UnOwoKQE5nTW9kdWxlKHsKICBkZWNsYXJhdGlvbnM6IFtBcHBDb21wb25lbnRdLAogIGltcG9ydHM6IFtCcm93c2VyTW9kdWxlXSwKICBwcm92aWRlcnM6IFtMb2dnZXJTZXJ2aWNlXSwKICBib290c3RyYXA6IFtBcHBDb21wb25lbnRdCn0pCmV4cG9ydCBjbGFzcyBBcHBNb2R1bGUge30="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// src/app/app.module.ts
+import { NgModule } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppComponent } from './app.component';
+import { LoggerService } from './services/logger.service';
+
+@NgModule({
+  declarations: [AppComponent],
+  imports: [BrowserModule],
+  providers: [LoggerService],
+  bootstrap: [AppComponent]
+})
+export class AppModule {}</pre></div><div class='content'><ul>
+<li><code>providers: [LoggerService]</code>: Això fa que el <code>LoggerService</code> estigui disponible per a tots els components del mòdul.</li>
+</ul>
+<h4>Proveïdors a Nivell de Component</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3JjL2FwcC9jb21wb25lbnRzL2V4YW1wbGUvZXhhbXBsZS5jb21wb25lbnQudHMKaW1wb3J0IHsgQ29tcG9uZW50LCBPbkluaXQgfSBmcm9tICdAYW5ndWxhci9jb3JlJzsKaW1wb3J0IHsgTG9nZ2VyU2VydmljZSB9IGZyb20gJy4uLy4uL3NlcnZpY2VzL2xvZ2dlci5zZXJ2aWNlJzsKCkBDb21wb25lbnQoewogIHNlbGVjdG9yOiAnYXBwLWV4YW1wbGUnLAogIHRlbXBsYXRlVXJsOiAnLi9leGFtcGxlLmNvbXBvbmVudC5odG1sJywKICBzdHlsZVVybHM6IFsnLi9leGFtcGxlLmNvbXBvbmVudC5jc3MnXSwKICBwcm92aWRlcnM6IFtMb2dnZXJTZXJ2aWNlXQp9KQpleHBvcnQgY2xhc3MgRXhhbXBsZUNvbXBvbmVudCBpbXBsZW1lbnRzIE9uSW5pdCB7CiAgY29uc3RydWN0b3IocHJpdmF0ZSBsb2dnZXI6IExvZ2dlclNlcnZpY2UpIHt9CgogIG5nT25Jbml0KCkgewogICAgdGhpcy5sb2dnZXIubG9nKCdFeGFtcGxlQ29tcG9uZW50IGluaXRpYWxpemVkJyk7CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// src/app/components/example/example.component.ts
+import { Component, OnInit } from '@angular/core';
+import { LoggerService } from '../../services/logger.service';
+
+@Component({
+  selector: 'app-example',
+  templateUrl: './example.component.html',
+  styleUrls: ['./example.component.css'],
+  providers: [LoggerService]
+})
+export class ExampleComponent implements OnInit {
+  constructor(private logger: LoggerService) {}
+
+  ngOnInit() {
+    this.logger.log('ExampleComponent initialized');
+  }
+}</pre></div><div class='content'><ul>
+<li><code>providers: [LoggerService]</code>: Això fa que el <code>LoggerService</code> estigui disponible només per a aquest component i els seus fills.</li>
+</ul>
+</div><h2>Tokens d'Injecció</h2>
+<div class='content'><p>Els tokens d'injecció s'utilitzen per crear proveïdors no basats en classes. Això és útil per proporcionar objectes de configuració o altres dependències no basades en classes.</p>
+<h4>Exemple: Utilitzant Tokens d'Injecció</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3JjL2FwcC9hcHAubW9kdWxlLnRzCmltcG9ydCB7IE5nTW9kdWxlLCBJbmplY3Rpb25Ub2tlbiB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnOwppbXBvcnQgeyBCcm93c2VyTW9kdWxlIH0gZnJvbSAnQGFuZ3VsYXIvcGxhdGZvcm0tYnJvd3Nlcic7CmltcG9ydCB7IEFwcENvbXBvbmVudCB9IGZyb20gJy4vYXBwLmNvbXBvbmVudCc7CgpleHBvcnQgY29uc3QgQVBJX1VSTCA9IG5ldyBJbmplY3Rpb25Ub2tlbjxzdHJpbmc+KCdhcGlVcmwnKTsKCkBOZ01vZHVsZSh7CiAgZGVjbGFyYXRpb25zOiBbQXBwQ29tcG9uZW50XSwKICBpbXBvcnRzOiBbQnJvd3Nlck1vZHVsZV0sCiAgcHJvdmlkZXJzOiBbeyBwcm92aWRlOiBBUElfVVJMLCB1c2VWYWx1ZTogJ2h0dHBzOi8vYXBpLmV4YW1wbGUuY29tJyB9XSwKICBib290c3RyYXA6IFtBcHBDb21wb25lbnRdCn0pCmV4cG9ydCBjbGFzcyBBcHBNb2R1bGUge30="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// src/app/app.module.ts
+import { NgModule, InjectionToken } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppComponent } from './app.component';
+
+export const API_URL = new InjectionToken&lt;string&gt;('apiUrl');
+
+@NgModule({
+  declarations: [AppComponent],
+  imports: [BrowserModule],
+  providers: [{ provide: API_URL, useValue: 'https://api.example.com' }],
+  bootstrap: [AppComponent]
+})
+export class AppModule {}</pre></div><div class='content'><ul>
+<li><code>new InjectionToken&lt;string&gt;('apiUrl')</code>: Crea un nou token d'injecció.</li>
+<li><code>{ provide: API_URL, useValue: 'https://api.example.com' }</code>: Proporciona un valor per al token d'injecció.</li>
+</ul>
+<h4>Injectant el Token</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3JjL2FwcC9jb21wb25lbnRzL2V4YW1wbGUvZXhhbXBsZS5jb21wb25lbnQudHMKaW1wb3J0IHsgQ29tcG9uZW50LCBPbkluaXQsIEluamVjdCB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnOwppbXBvcnQgeyBBUElfVVJMIH0gZnJvbSAnLi4vLi4vYXBwLm1vZHVsZSc7CgpAQ29tcG9uZW50KHsKICBzZWxlY3RvcjogJ2FwcC1leGFtcGxlJywKICB0ZW1wbGF0ZVVybDogJy4vZXhhbXBsZS5jb21wb25lbnQuaHRtbCcsCiAgc3R5bGVVcmxzOiBbJy4vZXhhbXBsZS5jb21wb25lbnQuY3NzJ10KfSkKZXhwb3J0IGNsYXNzIEV4YW1wbGVDb21wb25lbnQgaW1wbGVtZW50cyBPbkluaXQgewogIGNvbnN0cnVjdG9yKEBJbmplY3QoQVBJX1VSTCkgcHJpdmF0ZSBhcGlVcmw6IHN0cmluZykge30KCiAgbmdPbkluaXQoKSB7CiAgICBjb25zb2xlLmxvZyhgQVBJIFVSTDogJHt0aGlzLmFwaVVybH1gKTsKICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// src/app/components/example/example.component.ts
+import { Component, OnInit, Inject } from '@angular/core';
+import { API_URL } from '../../app.module';
+
+@Component({
+  selector: 'app-example',
+  templateUrl: './example.component.html',
+  styleUrls: ['./example.component.css']
+})
+export class ExampleComponent implements OnInit {
+  constructor(@Inject(API_URL) private apiUrl: string) {}
+
+  ngOnInit() {
+    console.log(`API URL: ${this.apiUrl}`);
+  }
+}</pre></div><div class='content'><ul>
+<li><code>@Inject(API_URL) private apiUrl: string</code>: Injecta el valor associat amb el token <code>API_URL</code>.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La Injecció de Dependències és una característica poderosa a Angular que promou la modularitat, la reutilització i la mantenibilitat. Entenent com crear i injectar serveis, així com utilitzar injectors jeràrquics i tokens d'injecció, pots construir aplicacions Angular més robustes i escalables.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='creating-and-using-services'>&#x25C4;Creació i ús de serveis</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Injecció de Dependències a Angular</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='hierarchical-injectors'>Injeccions jeràrquiques &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

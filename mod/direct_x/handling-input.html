@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió de l'Entrada a DirectX</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/direct_x/handling-input" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/direct_x/handling-input" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/direct_x/handling-input" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/direct_x/handling-input" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/direct_x/handling-input" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='creating-a-game-loop'>&#x25C4;Crear un Bucle de Joc</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió de l'Entrada a DirectX</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='collision-detection-and-physics'>Detecció de Col·lisions i Física &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La gestió de l'entrada és un aspecte crucial en el desenvolupament d'aplicacions interactives i jocs utilitzant DirectX. Aquest tema et guiarà a través dels conceptes bàsics de la captura i processament de l'entrada de l'usuari, progressant cap a tècniques més avançades.</p>
+</div><h1>Introducció a la Gestió de l'Entrada</h1>
+<div class='content'><p>A DirectX, la gestió de l'entrada normalment implica capturar dades de diversos dispositius d'entrada com el teclat, el ratolí i els controladors de joc. Començarem amb els conceptes bàsics i gradualment passarem a escenaris més complexos.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>DirectInput</strong>: Una API antiga per gestionar dispositius d'entrada.</li>
+<li><strong>Raw Input</strong>: Una manera més moderna i flexible de gestionar l'entrada.</li>
+<li><strong>XInput</strong>: Dissenyat específicament per a controladors Xbox però també funciona amb altres gamepads.</li>
+</ul>
+</div><h1>Utilitzant DirectInput</h1>
+<div class='content'><p>DirectInput és part de l'API de DirectX i proporciona una manera d'interactuar amb dispositius d'entrada. Tot i que es considera una mica obsolet, encara és útil per a certes aplicacions.</p>
+</div><h2>Inicialització de DirectInput</h2>
+<div class='content'><p>Per utilitzar DirectInput, cal inicialitzar-lo i crear objectes de dispositiu per als dispositius d'entrada que vols gestionar.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPGRpbnB1dC5oPgoKLy8gVmFyaWFibGVzIGdsb2JhbHMgZGUgRGlyZWN0SW5wdXQKTFBESVJFQ1RJTlBVVDggZ19wREkgPSBOVUxMOwpMUERJUkVDVElOUFVUREVWSUNFOCBnX3BLZXlib2FyZCA9IE5VTEw7CgovLyBJbmljaWFsaXR6YXIgRGlyZWN0SW5wdXQKSFJFU1VMVCBJbml0RGlyZWN0SW5wdXQoSElOU1RBTkNFIGhJbnN0YW5jZSwgSFdORCBoV25kKSB7CiAgICBIUkVTVUxUIGhyOwoKICAgIC8vIENyZWFyIGxhIGludGVyZsOtY2llIGRlIERpcmVjdElucHV0CiAgICBociA9IERpcmVjdElucHV0OENyZWF0ZShoSW5zdGFuY2UsIERJUkVDVElOUFVUX1ZFUlNJT04sIElJRF9JRGlyZWN0SW5wdXQ4LCAodm9pZCoqKSZnX3BESSwgTlVMTCk7CiAgICBzaSAoRkFJTEVEKGhyKSkgcmV0dXJuIGhyOwoKICAgIC8vIENyZWFyIHVuIGRpc3Bvc2l0aXUgcGVyIGFsIHRlY2xhdAogICAgaHIgPSBnX3BESS0+Q3JlYXRlRGV2aWNlKEdVSURfU3lzS2V5Ym9hcmQsICZnX3BLZXlib2FyZCwgTlVMTCk7CiAgICBzaSAoRkFJTEVEKGhyKSkgcmV0dXJuIGhyOwoKICAgIC8vIEVzdGFibGlyIGVsIGZvcm1hdCBkZSBkYWRlcyBwZXIgYWwgdGVjbGF0CiAgICBociA9IGdfcEtleWJvYXJkLT5TZXREYXRhRm9ybWF0KCZjX2RmRElLZXlib2FyZCk7CiAgICBzaSAoRkFJTEVEKGhyKSkgcmV0dXJuIGhyOwoKICAgIC8vIEVzdGFibGlyIGVsIG5pdmVsbCBjb29wZXJhdGl1CiAgICBociA9IGdfcEtleWJvYXJkLT5TZXRDb29wZXJhdGl2ZUxldmVsKGhXbmQsIERJU0NMX0ZPUkVHUk9VTkQgfCBESVNDTF9OT05FWENMVVNJVkUpOwogICAgc2kgKEZBSUxFRChocikpIHJldHVybiBocjsKCiAgICByZXR1cm4gU19PSzsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;dinput.h&gt;
+
+// Variables globals de DirectInput
+LPDIRECTINPUT8 g_pDI = NULL;
+LPDIRECTINPUTDEVICE8 g_pKeyboard = NULL;
+
+// Inicialitzar DirectInput
+HRESULT InitDirectInput(HINSTANCE hInstance, HWND hWnd) {
+    HRESULT hr;
+
+    // Crear la interf&iacute;cie de DirectInput
+    hr = DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&amp;g_pDI, NULL);
+    si (FAILED(hr)) return hr;
+
+    // Crear un dispositiu per al teclat
+    hr = g_pDI-&gt;CreateDevice(GUID_SysKeyboard, &amp;g_pKeyboard, NULL);
+    si (FAILED(hr)) return hr;
+
+    // Establir el format de dades per al teclat
+    hr = g_pKeyboard-&gt;SetDataFormat(&amp;c_dfDIKeyboard);
+    si (FAILED(hr)) return hr;
+
+    // Establir el nivell cooperatiu
+    hr = g_pKeyboard-&gt;SetCooperativeLevel(hWnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
+    si (FAILED(hr)) return hr;
+
+    return S_OK;
+}</pre></div><div class='content'></div><h2>Llegir l'Entrada del Teclat</h2>
+<div class='content'><p>Un cop inicialitzat, pots llegir l'estat del teclat.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QllURSBnX0tleWJvYXJkU3RhdGVbMjU2XTsKCi8vIExsZWdpciBsJ2VzdGF0IGRlbCB0ZWNsYXQKdm9pZCBSZWFkS2V5Ym9hcmQoKSB7CiAgICBIUkVTVUxUIGhyID0gZ19wS2V5Ym9hcmQtPkdldERldmljZVN0YXRlKHNpemVvZihnX0tleWJvYXJkU3RhdGUpLCAoTFBWT0lEKSZnX0tleWJvYXJkU3RhdGUpOwogICAgc2kgKEZBSUxFRChocikpIHsKICAgICAgICAvLyBSZWFjcXVpcmUgZWwgZGlzcG9zaXRpdSBzaSDDqXMgbmVjZXNzYXJpCiAgICAgICAgc2kgKGhyID09IERJRVJSX0lOUFVUTE9TVCB8fCBociA9PSBESUVSUl9OT1RBQ1FVSVJFRCkgewogICAgICAgICAgICBnX3BLZXlib2FyZC0+QWNxdWlyZSgpOwogICAgICAgIH0KICAgIH0KfQoKLy8gQ29tcHJvdmFyIHNpIHVuYSB0ZWNsYSBlc3TDoCBwcmVtdWRhCmJvb2wgSXNLZXlQcmVzc2VkKEJZVEUga2V5KSB7CiAgICByZXR1cm4gKGdfS2V5Ym9hcmRTdGF0ZVtrZXldICYgMHg4MCkgIT0gMDsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>BYTE g_KeyboardState[256];
+
+// Llegir l'estat del teclat
+void ReadKeyboard() {
+    HRESULT hr = g_pKeyboard-&gt;GetDeviceState(sizeof(g_KeyboardState), (LPVOID)&amp;g_KeyboardState);
+    si (FAILED(hr)) {
+        // Reacquire el dispositiu si &eacute;s necessari
+        si (hr == DIERR_INPUTLOST || hr == DIERR_NOTACQUIRED) {
+            g_pKeyboard-&gt;Acquire();
+        }
+    }
+}
+
+// Comprovar si una tecla est&agrave; premuda
+bool IsKeyPressed(BYTE key) {
+    return (g_KeyboardState[key] &amp; 0x80) != 0;
+}</pre></div><div class='content'></div><h1>Utilitzant Raw Input</h1>
+<div class='content'><p>Raw Input proporciona més flexibilitat i és la manera recomanada de gestionar l'entrada en aplicacions modernes.</p>
+</div><h2>Registrar-se per a Raw Input</h2>
+<div class='content'><p>Primer, cal registrar la teva aplicació per rebre dades de raw input.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UkFXSU5QVVRERVZJQ0UgUmlkWzFdOwoKLy8gUmVnaXN0cmFyLXNlIHBlciBhIHJhdyBpbnB1dAp2b2lkIFJlZ2lzdGVyUmF3SW5wdXQoSFdORCBoV25kKSB7CiAgICBSaWRbMF0udXNVc2FnZVBhZ2UgPSBISURfVVNBR0VfUEFHRV9HRU5FUklDOwogICAgUmlkWzBdLnVzVXNhZ2UgPSBISURfVVNBR0VfR0VORVJJQ19NT1VTRTsKICAgIFJpZFswXS5kd0ZsYWdzID0gUklERVZfSU5QVVRTSU5LOwogICAgUmlkWzBdLmh3bmRUYXJnZXQgPSBoV25kOwoKICAgIHNpIChSZWdpc3RlclJhd0lucHV0RGV2aWNlcyhSaWQsIDEsIHNpemVvZihSaWRbMF0pKSA9PSBGQUxTRSkgewogICAgICAgIC8vIExhIHJlZ2lzdHJhY2nDsyBoYSBmYWxsYXQKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>RAWINPUTDEVICE Rid[1];
+
+// Registrar-se per a raw input
+void RegisterRawInput(HWND hWnd) {
+    Rid[0].usUsagePage = HID_USAGE_PAGE_GENERIC;
+    Rid[0].usUsage = HID_USAGE_GENERIC_MOUSE;
+    Rid[0].dwFlags = RIDEV_INPUTSINK;
+    Rid[0].hwndTarget = hWnd;
+
+    si (RegisterRawInputDevices(Rid, 1, sizeof(Rid[0])) == FALSE) {
+        // La registraci&oacute; ha fallat
+    }
+}</pre></div><div class='content'></div><h2>Processar Raw Input</h2>
+<div class='content'><p>Pots processar les dades de raw input en el teu procediment de finestra.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("TFJFU1VMVCBDQUxMQkFDSyBXaW5kb3dQcm9jKEhXTkQgaFduZCwgVUlOVCBtZXNzYWdlLCBXUEFSQU0gd1BhcmFtLCBMUEFSQU0gbFBhcmFtKSB7CiAgICBzd2l0Y2ggKG1lc3NhZ2UpIHsKICAgICAgICBjYXNlIFdNX0lOUFVUOiB7CiAgICAgICAgICAgIFVJTlQgZHdTaXplOwogICAgICAgICAgICBHZXRSYXdJbnB1dERhdGEoKEhSQVdJTlBVVClsUGFyYW0sIFJJRF9JTlBVVCwgTlVMTCwgJmR3U2l6ZSwgc2l6ZW9mKFJBV0lOUFVUSEVBREVSKSk7CiAgICAgICAgICAgIExQQllURSBscGIgPSBuZXcgQllURVtkd1NpemVdOwogICAgICAgICAgICBzaSAobHBiID09IE5VTEwpIHJldHVybiAwOwoKICAgICAgICAgICAgc2kgKEdldFJhd0lucHV0RGF0YSgoSFJBV0lOUFVUKWxQYXJhbSwgUklEX0lOUFVULCBscGIsICZkd1NpemUsIHNpemVvZihSQVdJTlBVVEhFQURFUikpICE9IGR3U2l6ZSkgewogICAgICAgICAgICAgICAgT3V0cHV0RGVidWdTdHJpbmcoVEVYVCgiR2V0UmF3SW5wdXREYXRhIGRvZXMgbm90IHJldHVybiBjb3JyZWN0IHNpemUgIVxuIikpOwogICAgICAgICAgICB9CgogICAgICAgICAgICBSQVdJTlBVVCogcmF3ID0gKFJBV0lOUFVUKilscGI7CgogICAgICAgICAgICBzaSAocmF3LT5oZWFkZXIuZHdUeXBlID09IFJJTV9UWVBFTU9VU0UpIHsKICAgICAgICAgICAgICAgIC8vIFByb2Nlc3NhciBsJ2VudHJhZGEgZGVsIHJhdG9sw60KICAgICAgICAgICAgICAgIGludCB4UG9zUmVsYXRpdmUgPSByYXctPmRhdGEubW91c2UubExhc3RYOwogICAgICAgICAgICAgICAgaW50IHlQb3NSZWxhdGl2ZSA9IHJhdy0+ZGF0YS5tb3VzZS5sTGFzdFk7CiAgICAgICAgICAgICAgICAvLyBHZXN0aW9uYXIgZWwgbW92aW1lbnQgZGVsIHJhdG9sw60KICAgICAgICAgICAgfQoKICAgICAgICAgICAgZGVsZXRlW10gbHBiOwogICAgICAgICAgICByZXR1cm4gMDsKICAgICAgICB9CiAgICAgICAgLy8gR2VzdGlvbmFyIGFsdHJlcyBtaXNzYXRnZXMKICAgIH0KICAgIHJldHVybiBEZWZXaW5kb3dQcm9jKGhXbmQsIG1lc3NhZ2UsIHdQYXJhbSwgbFBhcmFtKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+    switch (message) {
+        case WM_INPUT: {
+            UINT dwSize;
+            GetRawInputData((HRAWINPUT)lParam, RID_INPUT, NULL, &amp;dwSize, sizeof(RAWINPUTHEADER));
+            LPBYTE lpb = new BYTE[dwSize];
+            si (lpb == NULL) return 0;
+
+            si (GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb, &amp;dwSize, sizeof(RAWINPUTHEADER)) != dwSize) {
+                OutputDebugString(TEXT(&quot;GetRawInputData does not return correct size !\n&quot;));
+            }
+
+            RAWINPUT* raw = (RAWINPUT*)lpb;
+
+            si (raw-&gt;header.dwType == RIM_TYPEMOUSE) {
+                // Processar l'entrada del ratol&iacute;
+                int xPosRelative = raw-&gt;data.mouse.lLastX;
+                int yPosRelative = raw-&gt;data.mouse.lLastY;
+                // Gestionar el moviment del ratol&iacute;
+            }
+
+            delete[] lpb;
+            return 0;
+        }
+        // Gestionar altres missatges
+    }
+    return DefWindowProc(hWnd, message, wParam, lParam);
+}</pre></div><div class='content'></div><h1>Utilitzant XInput</h1>
+<div class='content'><p>XInput està dissenyat per a controladors Xbox però també es pot utilitzar per a altres gamepads. Proporciona una interfície senzilla per gestionar l'entrada del controlador.</p>
+</div><h2>Inicialització de XInput</h2>
+<div class='content'><p>XInput no requereix inicialització explícita. Pots començar a utilitzar-lo directament.</p>
+</div><h2>Llegir l'Entrada del Controlador</h2>
+<div class='content'><p>Pots llegir l'estat del controlador utilitzant <code>XInputGetState</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPFhJbnB1dC5oPgoKLy8gTGxlZ2lyIGwnZXN0YXQgZGVsIGNvbnRyb2xhZG9yCnZvaWQgUmVhZENvbnRyb2xsZXIoKSB7CiAgICBYSU5QVVRfU1RBVEUgc3RhdGU7CiAgICBaZXJvTWVtb3J5KCZzdGF0ZSwgc2l6ZW9mKFhJTlBVVF9TVEFURSkpOwoKICAgIERXT1JEIGR3UmVzdWx0ID0gWElucHV0R2V0U3RhdGUoMCwgJnN0YXRlKTsKICAgIHNpIChkd1Jlc3VsdCA9PSBFUlJPUl9TVUNDRVNTKSB7CiAgICAgICAgLy8gRWwgY29udHJvbGFkb3IgZXN0w6AgY29ubmVjdGF0CiAgICAgICAgWElOUFVUX0dBTUVQQUQqIHBhZCA9ICZzdGF0ZS5HYW1lcGFkOwoKICAgICAgICAvLyBDb21wcm92YXIgc2kgZWwgYm90w7MgQSBlc3TDoCBwcmVtdXQKICAgICAgICBzaSAocGFkLT53QnV0dG9ucyAmIFhJTlBVVF9HQU1FUEFEX0EpIHsKICAgICAgICAgICAgLy8gR2VzdGlvbmFyIGxhIHByZXNzacOzIGRlbCBib3TDsyBBCiAgICAgICAgfQoKICAgICAgICAvLyBDb21wcm92YXIgbGVzIHBvc2ljaW9ucyBkZWwgdGh1bWJzdGljawogICAgICAgIGZsb2F0IExYID0gcGFkLT5zVGh1bWJMWCAvIDMyNzY3LjBmOwogICAgICAgIGZsb2F0IExZID0gcGFkLT5zVGh1bWJMWSAvIDMyNzY3LjBmOwogICAgICAgIC8vIEdlc3Rpb25hciBlbCBtb3ZpbWVudCBkZWwgdGh1bWJzdGljawogICAgfSBlbHNlIHsKICAgICAgICAvLyBFbCBjb250cm9sYWRvciBubyBlc3TDoCBjb25uZWN0YXQKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;XInput.h&gt;
+
+// Llegir l'estat del controlador
+void ReadController() {
+    XINPUT_STATE state;
+    ZeroMemory(&amp;state, sizeof(XINPUT_STATE));
+
+    DWORD dwResult = XInputGetState(0, &amp;state);
+    si (dwResult == ERROR_SUCCESS) {
+        // El controlador est&agrave; connectat
+        XINPUT_GAMEPAD* pad = &amp;state.Gamepad;
+
+        // Comprovar si el bot&oacute; A est&agrave; premut
+        si (pad-&gt;wButtons &amp; XINPUT_GAMEPAD_A) {
+            // Gestionar la pressi&oacute; del bot&oacute; A
+        }
+
+        // Comprovar les posicions del thumbstick
+        float LX = pad-&gt;sThumbLX / 32767.0f;
+        float LY = pad-&gt;sThumbLY / 32767.0f;
+        // Gestionar el moviment del thumbstick
+    } else {
+        // El controlador no est&agrave; connectat
+    }
+}</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>La gestió de l'entrada a DirectX implica entendre i utilitzar diferents APIs depenent del tipus de dispositiu d'entrada i els requisits de la teva aplicació.</p>
+<ul>
+<li><strong>DirectInput</strong> és útil per a aplicacions antigues i proporciona una manera senzilla de gestionar l'entrada del teclat i el ratolí.</li>
+<li><strong>Raw Input</strong> ofereix més flexibilitat i és adequat per a aplicacions modernes que necessiten dades d'entrada detallades.</li>
+<li><strong>XInput</strong> és ideal per gestionar controladors de joc, especialment controladors Xbox, amb una interfície senzilla i eficient.</li>
+</ul>
+<p>En dominar aquestes tècniques, pots crear aplicacions DirectX responsives i interactives que proporcionen una gran experiència d'usuari.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='creating-a-game-loop'>&#x25C4;Crear un Bucle de Joc</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió de l'Entrada a DirectX</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='collision-detection-and-physics'>Detecció de Col·lisions i Física &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anàlisi de Components Principals (PCA)</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/machine_learning/pca" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/machine_learning/pca" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/machine_learning/pca" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/machine_learning/pca" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/machine_learning/pca" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='dbscan'>&#x25C4;Clustering: DBSCAN</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Anàlisi de Components Principals (PCA)</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='reduccion-dimensionalidad'>Reducció de Dimensionalitat &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció al PCA</h1>
+<div class='content'><p>L'Anàlisi de Components Principals (PCA) és una tècnica de reducció de dimensionalitat que s'utilitza per transformar un conjunt de variables possiblement correlacionades en un conjunt de valors de variables no correlacionades anomenades components principals. PCA és àmpliament utilitzat en Machine Learning per simplificar els models, reduir el soroll i millorar la visualització de dades.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Reducció de Dimensionalitat</strong>: Procés de reduir el nombre de variables sota consideració.</li>
+<li><strong>Components Principals</strong>: Noves variables no correlacionades que s'obtenen com a combinacions lineals de les variables originals.</li>
+<li><strong>Variància</strong>: Mesura de la dispersió de les dades; PCA busca maximitzar la variància en els components principals.</li>
+<li><strong>Autovalors i Autovectors</strong>: Matemàticament, els components principals s'obtenen a partir dels autovalors i autovectors de la matriu de covariància de les dades.</li>
+</ul>
+</div><h1>Passos per Realitzar PCA</h1>
+<div class='content'><ol>
+<li><strong>Estandardització de les Dades</strong>: Normalitzar les dades perquè cada variable tingui mitjana zero i variància u.</li>
+<li><strong>Càlcul de la Matriu de Covariància</strong>: Determinar la relació entre les variables.</li>
+<li><strong>Càlcul d'Autovalors i Autovectors</strong>: Obtenir els components principals.</li>
+<li><strong>Selecció de Components Principals</strong>: Escollir els components que expliquen la major part de la variància.</li>
+<li><strong>Transformació de les Dades</strong>: Projectar les dades originals en l'espai dels components principals.</li>
+</ol>
+</div><h1>Exemple de Codi</h1>
+<div class='content'><p>A continuació, es mostra un exemple de com realitzar PCA utilitzant Python i la biblioteca <code>scikit-learn</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG51bXB5IGFzIG5wCmltcG9ydCBwYW5kYXMgYXMgcGQKZnJvbSBza2xlYXJuLnByZXByb2Nlc3NpbmcgaW1wb3J0IFN0YW5kYXJkU2NhbGVyCmZyb20gc2tsZWFybi5kZWNvbXBvc2l0aW9uIGltcG9ydCBQQ0EKaW1wb3J0IG1hdHBsb3RsaWIucHlwbG90IGFzIHBsdAoKIyBHZW5lcmFyIGRhZGVzIGQnZXhlbXBsZQpucC5yYW5kb20uc2VlZCgwKQpkYXRhID0gbnAucmFuZG9tLnJhbmQoMTAwLCA1KQpkZiA9IHBkLkRhdGFGcmFtZShkYXRhLCBjb2x1bW5zPVsnQScsICdCJywgJ0MnLCAnRCcsICdFJ10pCgojIEVzdGFuZGFyZGl0emFjacOzIGRlIGxlcyBkYWRlcwpzY2FsZXIgPSBTdGFuZGFyZFNjYWxlcigpCnNjYWxlZF9kYXRhID0gc2NhbGVyLmZpdF90cmFuc2Zvcm0oZGYpCgojIEFwbGljYXIgUENBCnBjYSA9IFBDQShuX2NvbXBvbmVudHM9MikKcHJpbmNpcGFsX2NvbXBvbmVudHMgPSBwY2EuZml0X3RyYW5zZm9ybShzY2FsZWRfZGF0YSkKCiMgQ3JlYXIgdW4gRGF0YUZyYW1lIGFtYiBlbHMgY29tcG9uZW50cyBwcmluY2lwYWxzCnBjYV9kZiA9IHBkLkRhdGFGcmFtZShkYXRhPXByaW5jaXBhbF9jb21wb25lbnRzLCBjb2x1bW5zPVsnUEMxJywgJ1BDMiddKQoKIyBWaXN1YWxpdHphY2nDsyBkZWxzIGNvbXBvbmVudHMgcHJpbmNpcGFscwpwbHQuZmlndXJlKGZpZ3NpemU9KDgsIDYpKQpwbHQuc2NhdHRlcihwY2FfZGZbJ1BDMSddLCBwY2FfZGZbJ1BDMiddKQpwbHQueGxhYmVsKCdDb21wb25lbnQgUHJpbmNpcGFsIDEnKQpwbHQueWxhYmVsKCdDb21wb25lbnQgUHJpbmNpcGFsIDInKQpwbHQudGl0bGUoJ1BDQSBkZSBEYWRlcyBkJ0V4ZW1wbGUnKQpwbHQuc2hvdygp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import numpy as np
+import pandas as pd
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+
+# Generar dades d'exemple
+np.random.seed(0)
+data = np.random.rand(100, 5)
+df = pd.DataFrame(data, columns=['A', 'B', 'C', 'D', 'E'])
+
+# Estandarditzaci&oacute; de les dades
+scaler = StandardScaler()
+scaled_data = scaler.fit_transform(df)
+
+# Aplicar PCA
+pca = PCA(n_components=2)
+principal_components = pca.fit_transform(scaled_data)
+
+# Crear un DataFrame amb els components principals
+pca_df = pd.DataFrame(data=principal_components, columns=['PC1', 'PC2'])
+
+# Visualitzaci&oacute; dels components principals
+plt.figure(figsize=(8, 6))
+plt.scatter(pca_df['PC1'], pca_df['PC2'])
+plt.xlabel('Component Principal 1')
+plt.ylabel('Component Principal 2')
+plt.title('PCA de Dades d'Exemple')
+plt.show()</pre></div><div class='content'></div><h1>Interpretació de Resultats</h1>
+<div class='content'><ul>
+<li><strong>Variància Explicada</strong>: La quantitat de variància que cada component principal explica. Es pot accedir a aquesta informació mitjançant <code>pca.explained_variance_ratio_</code>.</li>
+<li><strong>Càrrega de Components</strong>: Els coeficients de les combinacions lineals que formen els components principals. Es pot accedir a aquesta informació mitjançant <code>pca.components_</code>.</li>
+</ul>
+</div><h1>Comparació de Variància Explicada</h1>
+<div class='content'><p>| Component Principal | Variància Explicada |
+|---------------------|---------------------|
+| PC1                 | 45%                 |
+| PC2                 | 30%                 |
+| PC3                 | 15%                 |
+| PC4                 | 7%                  |
+| PC5                 | 3%                  |</p>
+</div><h1>Conclusió</h1>
+<div class='content'><p>L'Anàlisi de Components Principals (PCA) és una eina poderosa per a la reducció de dimensionalitat en Machine Learning. En transformar les variables originals en components principals, PCA ajuda a simplificar els models, reduir el soroll i millorar la visualització de dades. És crucial entendre els passos i la interpretació dels resultats per aplicar PCA de manera efectiva en projectes de Machine Learning.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='dbscan'>&#x25C4;Clustering: DBSCAN</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Anàlisi de Components Principals (PCA)</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='reduccion-dimensionalidad'>Reducció de Dimensionalitat &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

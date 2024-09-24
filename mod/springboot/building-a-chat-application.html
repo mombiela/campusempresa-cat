@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construir una Aplicació de Xat amb Spring Boot</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/springboot/building-a-chat-application" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/springboot/building-a-chat-application" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/springboot/building-a-chat-application" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/springboot/building-a-chat-application" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/springboot/building-a-chat-application" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='implementing-a-task-management-system'>&#x25C4;Implementant un Sistema de Gestió de Tasques</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Construir una Aplicació de Xat amb Spring Boot</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='spring-boot-best-practices'>Millors Pràctiques de Spring Boot &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, et guiarem a través de la construcció d'una aplicació de xat utilitzant Spring Boot. Això cobrirà tot, des de la configuració del teu entorn de desenvolupament fins al desplegament de la teva aplicació. Al final d'aquest tema, tindràs una aplicació de xat completament funcional i una comprensió més profunda de Spring Boot.</p>
+</div><h1>Configuració de l'Entorn de Desenvolupament</h1>
+<div class='content'><p>Abans de començar a codificar, configurem el nostre entorn de desenvolupament.</p>
+<ul>
+<li><strong>Instal·lar Java Development Kit (JDK)</strong>: Assegura't de tenir instal·lat JDK 11 o superior.</li>
+<li><strong>Instal·lar un IDE</strong>: Es recomana IntelliJ IDEA o Eclipse.</li>
+<li><strong>Instal·lar Maven</strong>: Maven és una eina d'automatització de construcció utilitzada principalment per a projectes Java.</li>
+<li><strong>Instal·lar Spring Boot CLI</strong>: Això és opcional però pot ser útil per configurar ràpidament projectes Spring Boot.</li>
+</ul>
+</div><h1>Creació d'un Projecte Spring Boot</h1>
+<div class='content'><p>Començarem creant un nou projecte Spring Boot.</p>
+</div><h2>Utilitzant Spring Initializr</h2>
+<div class='content'><p>Spring Initializr és una eina basada en web per iniciar les teves aplicacions Spring Boot.</p>
+<ol>
+<li>
+<p>Ves a <a href="https://start.spring.io/">Spring Initializr</a>.</p>
+</li>
+<li>
+<p>Selecciona les següents opcions:</p>
+<ul>
+<li>Projecte: Projecte Maven</li>
+<li>Llenguatge: Java</li>
+<li>Spring Boot: 2.5.4 (o la versió estable més recent)</li>
+<li>Grup: com.example</li>
+<li>Artifact: chatapp</li>
+<li>Nom: chatapp</li>
+<li>Dependències: Web, Thymeleaf, WebSocket</li>
+</ul>
+</li>
+<li>
+<p>Fes clic a &quot;Generate&quot; per descarregar el projecte.</p>
+</li>
+<li>
+<p>Extreu el fitxer zip descarregat i obre'l al teu IDE.</p>
+</li>
+</ol>
+</div><h1>Construcció del Backend</h1>
+<div class='content'><p>El backend gestionarà les connexions dels usuaris, la difusió de missatges i les sessions dels usuaris.</p>
+</div><h2>Configuració de WebSocket</h2>
+<div class='content'><p>Els WebSockets proporcionen un canal de comunicació de doble sentit sobre una única connexió TCP.</p>
+<ol>
+<li>Crea una nova classe de configuració per a WebSocket.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBjb20uZXhhbXBsZS5jaGF0YXBwLmNvbmZpZzsKCmltcG9ydCBvcmcuc3ByaW5nZnJhbWV3b3JrLmNvbnRleHQuYW5ub3RhdGlvbi5Db25maWd1cmF0aW9uOwppbXBvcnQgb3JnLnNwcmluZ2ZyYW1ld29yay53ZWIuc29ja2V0LmNvbmZpZy5hbm5vdGF0aW9uLkVuYWJsZVdlYlNvY2tldE1lc3NhZ2VCcm9rZXI7CmltcG9ydCBvcmcuc3ByaW5nZnJhbWV3b3JrLndlYi5zb2NrZXQuY29uZmlnLmFubm90YXRpb24uU3RvbXBFbmRwb2ludFJlZ2lzdHJ5OwppbXBvcnQgb3JnLnNwcmluZ2ZyYW1ld29yay53ZWIuc29ja2V0LmNvbmZpZy5hbm5vdGF0aW9uLldlYlNvY2tldE1lc3NhZ2VCcm9rZXJDb25maWd1cmVyOwoKQENvbmZpZ3VyYXRpb24KQEVuYWJsZVdlYlNvY2tldE1lc3NhZ2VCcm9rZXIKcHVibGljIGNsYXNzIFdlYlNvY2tldENvbmZpZyBpbXBsZW1lbnRzIFdlYlNvY2tldE1lc3NhZ2VCcm9rZXJDb25maWd1cmVyIHsKCiAgICBAT3ZlcnJpZGUKICAgIHB1YmxpYyB2b2lkIHJlZ2lzdGVyU3RvbXBFbmRwb2ludHMoU3RvbXBFbmRwb2ludFJlZ2lzdHJ5IHJlZ2lzdHJ5KSB7CiAgICAgICAgcmVnaXN0cnkuYWRkRW5kcG9pbnQoIi9jaGF0Iikud2l0aFNvY2tKUygpOwogICAgfQoKICAgIEBPdmVycmlkZQogICAgcHVibGljIHZvaWQgY29uZmlndXJlTWVzc2FnZUJyb2tlcihNZXNzYWdlQnJva2VyUmVnaXN0cnkgY29uZmlnKSB7CiAgICAgICAgY29uZmlnLmVuYWJsZVNpbXBsZUJyb2tlcigiL3RvcGljIik7CiAgICAgICAgY29uZmlnLnNldEFwcGxpY2F0aW9uRGVzdGluYXRpb25QcmVmaXhlcygiL2FwcCIpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package com.example.chatapp.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+
+@Configuration
+@EnableWebSocketMessageBroker
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint(&quot;/chat&quot;).withSockJS();
+    }
+
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        config.enableSimpleBroker(&quot;/topic&quot;);
+        config.setApplicationDestinationPrefixes(&quot;/app&quot;);
+    }
+}</pre></div><div class='content'></div><h2>Creació del Model de Missatge</h2>
+<div class='content'><p>Defineix un model per als missatges de xat.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBjb20uZXhhbXBsZS5jaGF0YXBwLm1vZGVsOwoKcHVibGljIGNsYXNzIENoYXRNZXNzYWdlIHsKICAgIHByaXZhdGUgU3RyaW5nIGNvbnRlbnQ7CiAgICBwcml2YXRlIFN0cmluZyBzZW5kZXI7CiAgICBwcml2YXRlIE1lc3NhZ2VUeXBlIHR5cGU7CgogICAgcHVibGljIGVudW0gTWVzc2FnZVR5cGUgewogICAgICAgIENIQVQsIEpPSU4sIExFQVZFCiAgICB9CgogICAgLy8gR2V0dGVycyBpIFNldHRlcnMKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package com.example.chatapp.model;
+
+public class ChatMessage {
+    private String content;
+    private String sender;
+    private MessageType type;
+
+    public enum MessageType {
+        CHAT, JOIN, LEAVE
+    }
+
+    // Getters i Setters
+}</pre></div><div class='content'></div><h2>Creació d'un Controlador de Missatges</h2>
+<div class='content'><p>Gestiona els missatges entrants i difon-los a tots els clients connectats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBjb20uZXhhbXBsZS5jaGF0YXBwLmNvbnRyb2xsZXI7CgppbXBvcnQgY29tLmV4YW1wbGUuY2hhdGFwcC5tb2RlbC5DaGF0TWVzc2FnZTsKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsubWVzc2FnaW5nLmhhbmRsZXIuYW5ub3RhdGlvbi5NZXNzYWdlTWFwcGluZzsKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsubWVzc2FnaW5nLmhhbmRsZXIuYW5ub3RhdGlvbi5TZW5kVG87CmltcG9ydCBvcmcuc3ByaW5nZnJhbWV3b3JrLnN0ZXJlb3R5cGUuQ29udHJvbGxlcjsKCkBDb250cm9sbGVyCnB1YmxpYyBjbGFzcyBDaGF0Q29udHJvbGxlciB7CgogICAgQE1lc3NhZ2VNYXBwaW5nKCIvY2hhdC5zZW5kTWVzc2FnZSIpCiAgICBAU2VuZFRvKCIvdG9waWMvcHVibGljIikKICAgIHB1YmxpYyBDaGF0TWVzc2FnZSBzZW5kTWVzc2FnZShDaGF0TWVzc2FnZSBjaGF0TWVzc2FnZSkgewogICAgICAgIHJldHVybiBjaGF0TWVzc2FnZTsKICAgIH0KCiAgICBATWVzc2FnZU1hcHBpbmcoIi9jaGF0LmFkZFVzZXIiKQogICAgQFNlbmRUbygiL3RvcGljL3B1YmxpYyIpCiAgICBwdWJsaWMgQ2hhdE1lc3NhZ2UgYWRkVXNlcihDaGF0TWVzc2FnZSBjaGF0TWVzc2FnZSkgewogICAgICAgIGNoYXRNZXNzYWdlLnNldFR5cGUoQ2hhdE1lc3NhZ2UuTWVzc2FnZVR5cGUuSk9JTik7CiAgICAgICAgcmV0dXJuIGNoYXRNZXNzYWdlOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package com.example.chatapp.controller;
+
+import com.example.chatapp.model.ChatMessage;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.stereotype.Controller;
+
+@Controller
+public class ChatController {
+
+    @MessageMapping(&quot;/chat.sendMessage&quot;)
+    @SendTo(&quot;/topic/public&quot;)
+    public ChatMessage sendMessage(ChatMessage chatMessage) {
+        return chatMessage;
+    }
+
+    @MessageMapping(&quot;/chat.addUser&quot;)
+    @SendTo(&quot;/topic/public&quot;)
+    public ChatMessage addUser(ChatMessage chatMessage) {
+        chatMessage.setType(ChatMessage.MessageType.JOIN);
+        return chatMessage;
+    }
+}</pre></div><div class='content'></div><h1>Construcció del Frontend</h1>
+<div class='content'><p>El frontend serà una pàgina web senzilla on els usuaris poden unir-se al xat i enviar missatges.</p>
+</div><h2>Creació d'Arxius HTML i JavaScript</h2>
+<div class='content'><p>Crea un fitxer <code>index.html</code> al directori <code>src/main/resources/templates</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sPgo8aGVhZD4KICAgIDx0aXRsZT5DaGF0IEFwcGxpY2F0aW9uPC90aXRsZT4KICAgIDxsaW5rIHJlbD0ic3R5bGVzaGVldCIgaHJlZj0iL2Nzcy9tYWluLmNzcyI+CjwvaGVhZD4KPGJvZHk+CiAgICA8ZGl2IGlkPSJ1c2VybmFtZS1wYWdlIj4KICAgICAgICA8ZGl2IGNsYXNzPSJ1c2VybmFtZS1wYWdlLWNvbnRhaW5lciI+CiAgICAgICAgICAgIDxoMSBjbGFzcz0idGl0bGUiPkVudGVyIFVzZXJuYW1lPC9oMT4KICAgICAgICAgICAgPGRpdiBjbGFzcz0iZm9ybS1ncm91cCI+CiAgICAgICAgICAgICAgICA8aW5wdXQgdHlwZT0idGV4dCIgaWQ9Im5hbWUiIHBsYWNlaG9sZGVyPSJVc2VybmFtZSIgYXV0b2NvbXBsZXRlPSJvZmYiIGNsYXNzPSJmb3JtLWNvbnRyb2wiLz4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDxkaXYgY2xhc3M9ImZvcm0tZ3JvdXAiPgogICAgICAgICAgICAgICAgPGJ1dHRvbiB0eXBlPSJzdWJtaXQiIGNsYXNzPSJhY2NlbnQgdXNlcm5hbWUtc3VibWl0Ij5TdGFydCBDaGF0dGluZzwvYnV0dG9uPgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICA8L2Rpdj4KICAgIDwvZGl2PgogICAgPGRpdiBpZD0iY2hhdC1wYWdlIiBjbGFzcz0iaGlkZGVuIj4KICAgICAgICA8ZGl2IGNsYXNzPSJjaGF0LWNvbnRhaW5lciI+CiAgICAgICAgICAgIDxkaXYgY2xhc3M9ImNoYXQtaGVhZGVyIj4KICAgICAgICAgICAgICAgIDxoMj5TcHJpbmcgQm9vdCBDaGF0PC9oMj4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDx1bCBpZD0ibWVzc2FnZUFyZWEiPgogICAgICAgICAgICA8L3VsPgogICAgICAgICAgICA8ZGl2IGNsYXNzPSJmb3JtLWdyb3VwIj4KICAgICAgICAgICAgICAgIDxkaXYgY2xhc3M9ImlucHV0LWdyb3VwIGNsZWFyZml4Ij4KICAgICAgICAgICAgICAgICAgICA8aW5wdXQgdHlwZT0idGV4dCIgaWQ9Im1lc3NhZ2UiIHBsYWNlaG9sZGVyPSJUeXBlIGEgbWVzc2FnZS4uLiIgYXV0b2NvbXBsZXRlPSJvZmYiIGNsYXNzPSJmb3JtLWNvbnRyb2wiLz4KICAgICAgICAgICAgICAgICAgICA8YnV0dG9uIHR5cGU9InN1Ym1pdCIgY2xhc3M9InByaW1hcnkiPlNlbmQ8L2J1dHRvbj4KICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICA8L2Rpdj4KICAgIDwvZGl2PgogICAgPHNjcmlwdCBzcmM9Ii9qcy9tYWluLmpzIj48L3NjcmlwdD4KPC9ib2R5Pgo8L2h0bWw+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Chat Application&lt;/title&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;/css/main.css&quot;&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div id=&quot;username-page&quot;&gt;
+        &lt;div class=&quot;username-page-container&quot;&gt;
+            &lt;h1 class=&quot;title&quot;&gt;Enter Username&lt;/h1&gt;
+            &lt;div class=&quot;form-group&quot;&gt;
+                &lt;input type=&quot;text&quot; id=&quot;name&quot; placeholder=&quot;Username&quot; autocomplete=&quot;off&quot; class=&quot;form-control&quot;/&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;form-group&quot;&gt;
+                &lt;button type=&quot;submit&quot; class=&quot;accent username-submit&quot;&gt;Start Chatting&lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div id=&quot;chat-page&quot; class=&quot;hidden&quot;&gt;
+        &lt;div class=&quot;chat-container&quot;&gt;
+            &lt;div class=&quot;chat-header&quot;&gt;
+                &lt;h2&gt;Spring Boot Chat&lt;/h2&gt;
+            &lt;/div&gt;
+            &lt;ul id=&quot;messageArea&quot;&gt;
+            &lt;/ul&gt;
+            &lt;div class=&quot;form-group&quot;&gt;
+                &lt;div class=&quot;input-group clearfix&quot;&gt;
+                    &lt;input type=&quot;text&quot; id=&quot;message&quot; placeholder=&quot;Type a message...&quot; autocomplete=&quot;off&quot; class=&quot;form-control&quot;/&gt;
+                    &lt;button type=&quot;submit&quot; class=&quot;primary&quot;&gt;Send&lt;/button&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;script src=&quot;/js/main.js&quot;&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'><p>Crea un fitxer <code>main.js</code> al directori <code>src/main/resources/static/js</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("J3VzZSBzdHJpY3QnOwoKdmFyIHVzZXJuYW1lUGFnZSA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoJyN1c2VybmFtZS1wYWdlJyk7CnZhciBjaGF0UGFnZSA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoJyNjaGF0LXBhZ2UnKTsKdmFyIG1lc3NhZ2VGb3JtID0gZG9jdW1lbnQucXVlcnlTZWxlY3RvcignI21lc3NhZ2VGb3JtJyk7CnZhciBtZXNzYWdlSW5wdXQgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCcjbWVzc2FnZScpOwp2YXIgbWVzc2FnZUFyZWEgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCcjbWVzc2FnZUFyZWEnKTsKdmFyIGNvbm5lY3RpbmdFbGVtZW50ID0gZG9jdW1lbnQucXVlcnlTZWxlY3RvcignLmNvbm5lY3RpbmcnKTsKCnZhciBzdG9tcENsaWVudCA9IG51bGw7CnZhciB1c2VybmFtZSA9IG51bGw7CgpmdW5jdGlvbiBjb25uZWN0KGV2ZW50KSB7CiAgICB1c2VybmFtZSA9IGRvY3VtZW50LnF1ZXJ5U2VsZWN0b3IoJyNuYW1lJykudmFsdWUudHJpbSgpOwoKICAgIGlmKHVzZXJuYW1lKSB7CiAgICAgICAgdXNlcm5hbWVQYWdlLmNsYXNzTGlzdC5hZGQoJ2hpZGRlbicpOwogICAgICAgIGNoYXRQYWdlLmNsYXNzTGlzdC5yZW1vdmUoJ2hpZGRlbicpOwoKICAgICAgICB2YXIgc29ja2V0ID0gbmV3IFNvY2tKUygnL2NoYXQnKTsKICAgICAgICBzdG9tcENsaWVudCA9IFN0b21wLm92ZXIoc29ja2V0KTsKCiAgICAgICAgc3RvbXBDbGllbnQuY29ubmVjdCh7fSwgb25Db25uZWN0ZWQsIG9uRXJyb3IpOwogICAgfQogICAgZXZlbnQucHJldmVudERlZmF1bHQoKTsKfQoKZnVuY3Rpb24gb25Db25uZWN0ZWQoKSB7CiAgICBzdG9tcENsaWVudC5zdWJzY3JpYmUoJy90b3BpYy9wdWJsaWMnLCBvbk1lc3NhZ2VSZWNlaXZlZCk7CgogICAgc3RvbXBDbGllbnQuc2VuZCgiL2FwcC9jaGF0LmFkZFVzZXIiLAogICAgICAgIHt9LAogICAgICAgIEpTT04uc3RyaW5naWZ5KHtzZW5kZXI6IHVzZXJuYW1lLCB0eXBlOiAnSk9JTid9KQogICAgKQp9CgpmdW5jdGlvbiBvbkVycm9yKGVycm9yKSB7CiAgICBjb25uZWN0aW5nRWxlbWVudC50ZXh0Q29udGVudCA9ICdDb3VsZCBub3QgY29ubmVjdCB0byBXZWJTb2NrZXQgc2VydmVyLiBQbGVhc2UgcmVmcmVzaCB0aGlzIHBhZ2UgdG8gdHJ5IGFnYWluISc7CiAgICBjb25uZWN0aW5nRWxlbWVudC5zdHlsZS5jb2xvciA9ICdyZWQnOwp9CgpmdW5jdGlvbiBzZW5kTWVzc2FnZShldmVudCkgewogICAgdmFyIG1lc3NhZ2VDb250ZW50ID0gbWVzc2FnZUlucHV0LnZhbHVlLnRyaW0oKTsKCiAgICBpZihtZXNzYWdlQ29udGVudCAmJiBzdG9tcENsaWVudCkgewogICAgICAgIHZhciBjaGF0TWVzc2FnZSA9IHsKICAgICAgICAgICAgc2VuZGVyOiB1c2VybmFtZSwKICAgICAgICAgICAgY29udGVudDogbWVzc2FnZUNvbnRlbnQsCiAgICAgICAgICAgIHR5cGU6ICdDSEFUJwogICAgICAgIH07CgogICAgICAgIHN0b21wQ2xpZW50LnNlbmQoIi9hcHAvY2hhdC5zZW5kTWVzc2FnZSIsIHt9LCBKU09OLnN0cmluZ2lmeShjaGF0TWVzc2FnZSkpOwogICAgICAgIG1lc3NhZ2VJbnB1dC52YWx1ZSA9ICcnOwogICAgfQogICAgZXZlbnQucHJldmVudERlZmF1bHQoKTsKfQoKZnVuY3Rpb24gb25NZXNzYWdlUmVjZWl2ZWQocGF5bG9hZCkgewogICAgdmFyIG1lc3NhZ2UgPSBKU09OLnBhcnNlKHBheWxvYWQuYm9keSk7CgogICAgdmFyIG1lc3NhZ2VFbGVtZW50ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnbGknKTsKCiAgICBpZihtZXNzYWdlLnR5cGUgPT09ICdKT0lOJykgewogICAgICAgIG1lc3NhZ2VFbGVtZW50LmNsYXNzTGlzdC5hZGQoJ2V2ZW50LW1lc3NhZ2UnKTsKICAgICAgICBtZXNzYWdlLmNvbnRlbnQgPSBtZXNzYWdlLnNlbmRlciArICcgam9pbmVkISc7CiAgICB9IGVsc2UgaWYgKG1lc3NhZ2UudHlwZSA9PT0gJ0xFQVZFJykgewogICAgICAgIG1lc3NhZ2VFbGVtZW50LmNsYXNzTGlzdC5hZGQoJ2V2ZW50LW1lc3NhZ2UnKTsKICAgICAgICBtZXNzYWdlLmNvbnRlbnQgPSBtZXNzYWdlLnNlbmRlciArICcgbGVmdCEnOwogICAgfSBlbHNlIHsKICAgICAgICBtZXNzYWdlRWxlbWVudC5jbGFzc0xpc3QuYWRkKCdjaGF0LW1lc3NhZ2UnKTsKCiAgICAgICAgdmFyIGF2YXRhckVsZW1lbnQgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdpJyk7CiAgICAgICAgdmFyIGF2YXRhclRleHQgPSBkb2N1bWVudC5jcmVhdGVUZXh0Tm9kZShtZXNzYWdlLnNlbmRlclswXSk7CiAgICAgICAgYXZhdGFyRWxlbWVudC5hcHBlbmRDaGlsZChhdmF0YXJUZXh0KTsKICAgICAgICBtZXNzYWdlRWxlbWVudC5hcHBlbmRDaGlsZChhdmF0YXJFbGVtZW50KTsKCiAgICAgICAgdmFyIHVzZXJuYW1lRWxlbWVudCA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ3NwYW4nKTsKICAgICAgICB2YXIgdXNlcm5hbWVUZXh0ID0gZG9jdW1lbnQuY3JlYXRlVGV4dE5vZGUobWVzc2FnZS5zZW5kZXIpOwogICAgICAgIHVzZXJuYW1lRWxlbWVudC5hcHBlbmRDaGlsZCh1c2VybmFtZVRleHQpOwogICAgICAgIG1lc3NhZ2VFbGVtZW50LmFwcGVuZENoaWxkKHVzZXJuYW1lRWxlbWVudCk7CiAgICB9CgogICAgdmFyIHRleHRFbGVtZW50ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgncCcpOwogICAgdmFyIG1lc3NhZ2VUZXh0ID0gZG9jdW1lbnQuY3JlYXRlVGV4dE5vZGUobWVzc2FnZS5jb250ZW50KTsKICAgIHRleHRFbGVtZW50LmFwcGVuZENoaWxkKG1lc3NhZ2VUZXh0KTsKCiAgICBtZXNzYWdlRWxlbWVudC5hcHBlbmRDaGlsZCh0ZXh0RWxlbWVudCk7CgogICAgbWVzc2FnZUFyZWEuYXBwZW5kQ2hpbGQobWVzc2FnZUVsZW1lbnQpOwogICAgbWVzc2FnZUFyZWEuc2Nyb2xsVG9wID0gbWVzc2FnZUFyZWEuc2Nyb2xsSGVpZ2h0Owp9Cgpkb2N1bWVudC5xdWVyeVNlbGVjdG9yKCcjdXNlcm5hbWVGb3JtJykuYWRkRXZlbnRMaXN0ZW5lcignc3VibWl0JywgY29ubmVjdCwgdHJ1ZSkKZG9jdW1lbnQucXVlcnlTZWxlY3RvcignI21lc3NhZ2VGb3JtJykuYWRkRXZlbnRMaXN0ZW5lcignc3VibWl0Jywgc2VuZE1lc3NhZ2UsIHRydWUp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>'use strict';
+
+var usernamePage = document.querySelector('#username-page');
+var chatPage = document.querySelector('#chat-page');
+var messageForm = document.querySelector('#messageForm');
+var messageInput = document.querySelector('#message');
+var messageArea = document.querySelector('#messageArea');
+var connectingElement = document.querySelector('.connecting');
+
+var stompClient = null;
+var username = null;
+
+function connect(event) {
+    username = document.querySelector('#name').value.trim();
+
+    if(username) {
+        usernamePage.classList.add('hidden');
+        chatPage.classList.remove('hidden');
+
+        var socket = new SockJS('/chat');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, onConnected, onError);
+    }
+    event.preventDefault();
+}
+
+function onConnected() {
+    stompClient.subscribe('/topic/public', onMessageReceived);
+
+    stompClient.send(&quot;/app/chat.addUser&quot;,
+        {},
+        JSON.stringify({sender: username, type: 'JOIN'})
+    )
+}
+
+function onError(error) {
+    connectingElement.textContent = 'Could not connect to WebSocket server. Please refresh this page to try again!';
+    connectingElement.style.color = 'red';
+}
+
+function sendMessage(event) {
+    var messageContent = messageInput.value.trim();
+
+    if(messageContent &amp;&amp; stompClient) {
+        var chatMessage = {
+            sender: username,
+            content: messageContent,
+            type: 'CHAT'
+        };
+
+        stompClient.send(&quot;/app/chat.sendMessage&quot;, {}, JSON.stringify(chatMessage));
+        messageInput.value = '';
+    }
+    event.preventDefault();
+}
+
+function onMessageReceived(payload) {
+    var message = JSON.parse(payload.body);
+
+    var messageElement = document.createElement('li');
+
+    if(message.type === 'JOIN') {
+        messageElement.classList.add('event-message');
+        message.content = message.sender + ' joined!';
+    } else if (message.type === 'LEAVE') {
+        messageElement.classList.add('event-message');
+        message.content = message.sender + ' left!';
+    } else {
+        messageElement.classList.add('chat-message');
+
+        var avatarElement = document.createElement('i');
+        var avatarText = document.createTextNode(message.sender[0]);
+        avatarElement.appendChild(avatarText);
+        messageElement.appendChild(avatarElement);
+
+        var usernameElement = document.createElement('span');
+        var usernameText = document.createTextNode(message.sender);
+        usernameElement.appendChild(usernameText);
+        messageElement.appendChild(usernameElement);
+    }
+
+    var textElement = document.createElement('p');
+    var messageText = document.createTextNode(message.content);
+    textElement.appendChild(messageText);
+
+    messageElement.appendChild(textElement);
+
+    messageArea.appendChild(messageElement);
+    messageArea.scrollTop = messageArea.scrollHeight;
+}
+
+document.querySelector('#usernameForm').addEventListener('submit', connect, true)
+document.querySelector('#messageForm').addEventListener('submit', sendMessage, true)</pre></div><div class='content'></div><h1>Executar l'Aplicació</h1>
+<div class='content'><p>Per executar l'aplicació, utilitza la següent comanda al teu terminal:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Li9tdm53IHNwcmluZy1ib290OnJ1bg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>./mvnw spring-boot:run</pre></div><div class='content'><p>Obre el teu navegador i navega a <code>http://localhost:8080</code>. Hauries de veure la interfície de l'aplicació de xat.</p>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem construït una aplicació de xat senzilla utilitzant Spring Boot. Hem cobert la configuració de l'entorn de desenvolupament, la creació d'un projecte Spring Boot, la configuració de WebSocket, la construcció del backend i la creació del frontend. Aquest projecte es pot ampliar afegint funcions com l'autenticació d'usuaris, la persistència de missatges i més.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='implementing-a-task-management-system'>&#x25C4;Implementant un Sistema de Gestió de Tasques</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Construir una Aplicació de Xat amb Spring Boot</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='spring-boot-best-practices'>Millors Pràctiques de Spring Boot &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

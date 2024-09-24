@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventari Dinàmic a Ansible</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/ansible/dynamic-inventory" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/ansible/dynamic-inventory" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/ansible/dynamic-inventory" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/ansible/dynamic-inventory" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/ansible/dynamic-inventory" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='ansible-vault'>&#x25C4;Ansible Vault</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Inventari Dinàmic a Ansible</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='ansible-plugins'>Plugins d'Ansible &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>L'Inventari Dinàmic és una característica poderosa d'Ansible que et permet gestionar i configurar hosts de manera dinàmica, en lloc de dependre de fitxers d'inventari estàtics. Aquest tema et guiarà des dels conceptes bàsics fins a l'ús avançat de l'inventari dinàmic a Ansible.</p>
+</div><h1>Introducció a l'Inventari Dinàmic</h1>
+<div class='content'><ul>
+<li><strong>Definició</strong>: L'Inventari Dinàmic es refereix a la capacitat d'obtenir dades d'inventari de fonts externes, com ara proveïdors de núvol, bases de dades o altres APIs, en lloc d'utilitzar fitxers estàtics.</li>
+<li><strong>Casos d'Ús</strong>: Ideal per a entorns on la infraestructura està canviant constantment, com ara entorns de núvol (AWS, Azure, GCP), o per a desplegaments a gran escala on mantenir un inventari estàtic és poc pràctic.</li>
+</ul>
+</div><h1>Configuració de l'Inventari Dinàmic</h1>
+<div class='content'></div><h2>Prerequisits</h2>
+<div class='content'><ul>
+<li>Comprensió bàsica d'Ansible i inventari estàtic.</li>
+<li>Ansible instal·lat a la teva màquina local.</li>
+<li>Accés a una font externa (per exemple, AWS, Azure) si tens previst utilitzar-la per a l'inventari dinàmic.</li>
+</ul>
+</div><h2>Exemple Bàsic: Utilitzant AWS EC2 com a Inventari Dinàmic</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Instal·la Boto3 i el Plugin EC2 d'Ansible</strong>:</p>
+<pre><code class="language-bash">pip install boto3
+ansible-galaxy collection install amazon.aws
+</code></pre>
+</li>
+<li>
+<p><strong>Configura les Credencials d'AWS</strong>:
+Assegura't de tenir les teves credencials d'AWS configurades. Això es pot fer utilitzant l'AWS CLI:</p>
+<pre><code class="language-bash">aws configure
+</code></pre>
+</li>
+<li>
+<p><strong>Crea un Fitxer de Configuració d'Inventari</strong>:
+Crea un fitxer anomenat <code>aws_ec2.yaml</code> amb el següent contingut:</p>
+<pre><code class="language-yaml">plugin: amazon.aws.aws_ec2
+regions:
+  - us-east-1
+filters:
+  instance-state-name: running
+keyed_groups:
+  - key: tags.Name
+    prefix: tag
+</code></pre>
+</li>
+<li>
+<p><strong>Executa Ansible amb Inventari Dinàmic</strong>:</p>
+<pre><code class="language-bash">ansible-inventory -i aws_ec2.yaml --graph
+</code></pre>
+</li>
+</ol>
+</div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>plugin</strong>: Especifica el plugin a utilitzar, en aquest cas, <code>amazon.aws.aws_ec2</code>.</li>
+<li><strong>regions</strong>: Llista de regions d'AWS a consultar.</li>
+<li><strong>filters</strong>: Filtres a aplicar quan es consulten instàncies, com ara <code>instance-state-name: running</code>.</li>
+<li><strong>keyed_groups</strong>: Agrupa instàncies basant-se en les seves etiquetes.</li>
+</ul>
+</div><h1>Inventari Dinàmic Avançat</h1>
+<div class='content'></div><h2>Utilitzant Scripts Personalitzats</h2>
+<div class='content'><ul>
+<li><strong>Scripts d'Inventari Personalitzats</strong>: Pots escriure els teus propis scripts per generar inventari dinàmic. Aquests scripts han de produir JSON que Ansible pugui entendre.</li>
+</ul>
+<h4>Exemple: Script d'Inventari Personalitzat</h4>
+<ol>
+<li>
+<p><strong>Crea un Script</strong>:</p>
+<pre><code class="language-python">#!/usr/bin/env python3
+import json
+
+def get_inventory():
+    inventory = {
+        &quot;all&quot;: {
+            &quot;hosts&quot;: [&quot;host1.example.com&quot;, &quot;host2.example.com&quot;],
+            &quot;vars&quot;: {
+                &quot;ansible_user&quot;: &quot;admin&quot;
+            }
+        },
+        &quot;_meta&quot;: {
+            &quot;hostvars&quot;: {
+                &quot;host1.example.com&quot;: {
+                    &quot;ansible_host&quot;: &quot;192.168.1.1&quot;
+                },
+                &quot;host2.example.com&quot;: {
+                    &quot;ansible_host&quot;: &quot;192.168.1.2&quot;
+                }
+            }
+        }
+    }
+    return inventory
+
+if __name__ == &quot;__main__&quot;:
+    print(json.dumps(get_inventory()))
+</code></pre>
+</li>
+<li>
+<p><strong>Fes el Script Executable</strong>:</p>
+<pre><code class="language-bash">chmod +x custom_inventory.py
+</code></pre>
+</li>
+<li>
+<p><strong>Executa Ansible amb el Script Personalitzat</strong>:</p>
+<pre><code class="language-bash">ansible-inventory -i custom_inventory.py --graph
+</code></pre>
+</li>
+</ol>
+</div><h2>Utilitzant Plugins d'Inventari</h2>
+<div class='content'><ul>
+<li><strong>Plugins d'Inventari</strong>: Ansible proporciona diversos plugins integrats per a inventari dinàmic, com ara <code>azure_rm</code>, <code>gcp_compute</code> i <code>openstack</code>.</li>
+</ul>
+<h4>Exemple: Utilitzant el Plugin d'Inventari d'Azure</h4>
+<ol>
+<li>
+<p><strong>Instal·la la Col·lecció d'Azure</strong>:</p>
+<pre><code class="language-bash">ansible-galaxy collection install azure.azcollection
+</code></pre>
+</li>
+<li>
+<p><strong>Crea un Fitxer de Configuració d'Inventari</strong>:</p>
+<pre><code class="language-yaml">plugin: azure.azcollection.azure_rm
+auth_source: auto
+include_vm_resource_groups:
+  - myResourceGroup
+</code></pre>
+</li>
+<li>
+<p><strong>Executa Ansible amb l'Inventari d'Azure</strong>:</p>
+<pre><code class="language-bash">ansible-inventory -i azure_rm.yaml --graph
+</code></pre>
+</li>
+</ol>
+</div><h1>Millors Pràctiques</h1>
+<div class='content'><ul>
+<li><strong>Seguretat</strong>: Assegura't que els teus scripts d'inventari dinàmic i fitxers de configuració no exposin informació sensible.</li>
+<li><strong>Rendiment</strong>: Optimitza els teus scripts d'inventari per minimitzar les crides a l'API i reduir la latència.</li>
+<li><strong>Proves</strong>: Prova regularment la teva configuració d'inventari dinàmic per assegurar-te que funciona com s'espera, especialment després de canvis a la teva infraestructura.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>L'Inventari Dinàmic a Ansible proporciona una manera flexible i poderosa de gestionar hosts i entorns que estan canviant constantment. Aprofitant fonts externes i scripts personalitzats, pots mantenir un inventari actualitzat sense intervenció manual. Tant si utilitzes proveïdors de núvol com AWS, Azure, o escrius els teus propis scripts, l'inventari dinàmic pot agilitzar significativament els teus fluxos de treball amb Ansible.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='ansible-vault'>&#x25C4;Ansible Vault</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Inventari Dinàmic a Ansible</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='ansible-plugins'>Plugins d'Ansible &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creació de Controladors REST</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/springboot/creating-rest-controllers" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/springboot/creating-rest-controllers" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/springboot/creating-rest-controllers" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/springboot/creating-rest-controllers" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/springboot/creating-rest-controllers" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='introduction-to-restful-web-services'>&#x25C4;Introducció als Serveis Web RESTful</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Creació de Controladors REST</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='handling-http-methods'>Gestionant Mètodes HTTP (GET, POST, PUT, DELETE) &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquesta secció, explorarem com crear controladors REST a Spring Boot. Començarem amb els conceptes bàsics i gradualment passarem a conceptes més avançats. Al final d'aquesta secció, hauríeu de ser capaços de crear i gestionar serveis web RESTful utilitzant Spring Boot.</p>
+</div><h1>Introducció als Controladors REST</h1>
+<div class='content'><p>REST (Representational State Transfer) és un estil arquitectònic per dissenyar aplicacions en xarxa. Les aplicacions RESTful utilitzen sol·licituds HTTP per realitzar operacions CRUD (Create, Read, Update, Delete).</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Mètodes HTTP</strong>: GET, POST, PUT, DELETE, PATCH</li>
+<li><strong>Endpoints</strong>: URLs que representen recursos</li>
+<li><strong>Codis d'Estat</strong>: Indiquen el resultat d'una sol·licitud HTTP (per exemple, 200 OK, 404 Not Found)</li>
+<li><strong>Cos de la Sol·licitud</strong>: Dades enviades amb sol·licituds POST, PUT i PATCH</li>
+<li><strong>Cos de la Resposta</strong>: Dades retornades pel servidor</li>
+</ul>
+</div><h1>Configuració de Spring Boot</h1>
+<div class='content'><p>Abans de crear controladors REST, assegureu-vos que teniu un projecte Spring Boot configurat. Podeu crear un nou projecte Spring Boot utilitzant Spring Initializr o el vostre IDE preferit.</p>
+</div><h2>Dependències</h2>
+<div class='content'><p>Assegureu-vos que teniu les següents dependències al vostre fitxer <code>pom.xml</code> o <code>build.gradle</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PGRlcGVuZGVuY3k+CiAgICA8Z3JvdXBJZD5vcmcuc3ByaW5nZnJhbWV3b3JrLmJvb3Q8L2dyb3VwSWQ+CiAgICA8YXJ0aWZhY3RJZD5zcHJpbmctYm9vdC1zdGFydGVyLXdlYjwvYXJ0aWZhY3RJZD4KPC9kZXBlbmRlbmN5Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+&lt;/dependency&gt;</pre></div><div class='content'></div><h1>Creació d'un Controlador REST Simple</h1>
+<div class='content'><p>Comencem creant un controlador REST simple que gestioni sol·licituds HTTP GET bàsiques.</p>
+</div><h2>Exemple: Controlador Hello World</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsud2ViLmJpbmQuYW5ub3RhdGlvbi5HZXRNYXBwaW5nOwppbXBvcnQgb3JnLnNwcmluZ2ZyYW1ld29yay53ZWIuYmluZC5hbm5vdGF0aW9uLlJlcXVlc3RNYXBwaW5nOwppbXBvcnQgb3JnLnNwcmluZ2ZyYW1ld29yay53ZWIuYmluZC5hbm5vdGF0aW9uLlJlc3RDb250cm9sbGVyOwoKQFJlc3RDb250cm9sbGVyCkBSZXF1ZXN0TWFwcGluZygiL2FwaSIpCnB1YmxpYyBjbGFzcyBIZWxsb1dvcmxkQ29udHJvbGxlciB7CgogICAgQEdldE1hcHBpbmcoIi9oZWxsbyIpCiAgICBwdWJsaWMgU3RyaW5nIHNheUhlbGxvKCkgewogICAgICAgIHJldHVybiAiSGVsbG8sIFdvcmxkISI7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(&quot;/api&quot;)
+public class HelloWorldController {
+
+    @GetMapping(&quot;/hello&quot;)
+    public String sayHello() {
+        return &quot;Hello, World!&quot;;
+    }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><code>@RestController</code>: Indica que aquesta classe és un controlador REST.</li>
+<li><code>@RequestMapping(&quot;/api&quot;)</code>: URL base per a tots els endpoints en aquest controlador.</li>
+<li><code>@GetMapping(&quot;/hello&quot;)</code>: Assigna sol·licituds HTTP GET a <code>/api/hello</code> al mètode <code>sayHello</code>.</li>
+</ul>
+</div><h1>Gestió de Diferents Mètodes HTTP</h1>
+<div class='content'><p>Spring Boot facilita la gestió de diferents mètodes HTTP utilitzant anotacions.</p>
+</div><h2>Exemple: Operacions CRUD per a un Recurs</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsud2ViLmJpbmQuYW5ub3RhdGlvbi4qOwoKaW1wb3J0IGphdmEudXRpbC5BcnJheUxpc3Q7CmltcG9ydCBqYXZhLnV0aWwuTGlzdDsKCkBSZXN0Q29udHJvbGxlcgpAUmVxdWVzdE1hcHBpbmcoIi9hcGkvaXRlbXMiKQpwdWJsaWMgY2xhc3MgSXRlbUNvbnRyb2xsZXIgewoKICAgIHByaXZhdGUgTGlzdDxTdHJpbmc+IGl0ZW1zID0gbmV3IEFycmF5TGlzdDw+KCk7CgogICAgQEdldE1hcHBpbmcKICAgIHB1YmxpYyBMaXN0PFN0cmluZz4gZ2V0QWxsSXRlbXMoKSB7CiAgICAgICAgcmV0dXJuIGl0ZW1zOwogICAgfQoKICAgIEBQb3N0TWFwcGluZwogICAgcHVibGljIHZvaWQgYWRkSXRlbShAUmVxdWVzdEJvZHkgU3RyaW5nIGl0ZW0pIHsKICAgICAgICBpdGVtcy5hZGQoaXRlbSk7CiAgICB9CgogICAgQFB1dE1hcHBpbmcoIi97aW5kZXh9IikKICAgIHB1YmxpYyB2b2lkIHVwZGF0ZUl0ZW0oQFBhdGhWYXJpYWJsZSBpbnQgaW5kZXgsIEBSZXF1ZXN0Qm9keSBTdHJpbmcgaXRlbSkgewogICAgICAgIGl0ZW1zLnNldChpbmRleCwgaXRlbSk7CiAgICB9CgogICAgQERlbGV0ZU1hcHBpbmcoIi97aW5kZXh9IikKICAgIHB1YmxpYyB2b2lkIGRlbGV0ZUl0ZW0oQFBhdGhWYXJpYWJsZSBpbnQgaW5kZXgpIHsKICAgICAgICBpdGVtcy5yZW1vdmUoaW5kZXgpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/items&quot;)
+public class ItemController {
+
+    private List&lt;String&gt; items = new ArrayList&lt;&gt;();
+
+    @GetMapping
+    public List&lt;String&gt; getAllItems() {
+        return items;
+    }
+
+    @PostMapping
+    public void addItem(@RequestBody String item) {
+        items.add(item);
+    }
+
+    @PutMapping(&quot;/{index}&quot;)
+    public void updateItem(@PathVariable int index, @RequestBody String item) {
+        items.set(index, item);
+    }
+
+    @DeleteMapping(&quot;/{index}&quot;)
+    public void deleteItem(@PathVariable int index) {
+        items.remove(index);
+    }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><code>@GetMapping</code>: Recupera tots els ítems.</li>
+<li><code>@PostMapping</code>: Afegeix un nou ítem.</li>
+<li><code>@PutMapping(&quot;/{index}&quot;)</code>: Actualitza un ítem a l'índex especificat.</li>
+<li><code>@DeleteMapping(&quot;/{index}&quot;)</code>: Elimina un ítem a l'índex especificat.</li>
+<li><code>@RequestBody</code>: Assigna el cos de la sol·licitud HTTP a un paràmetre del mètode.</li>
+<li><code>@PathVariable</code>: Extreu valors de l'URI.</li>
+</ul>
+</div><h1>Temes Avançats</h1>
+<div class='content'></div><h2>Gestió d'Excepcions</h2>
+<div class='content'><p>Gestionar excepcions de manera elegant és crucial per a una API REST robusta.</p>
+<h4>Exemple: Gestor d'Excepcions Personalitzat</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuaHR0cC5IdHRwU3RhdHVzOwppbXBvcnQgb3JnLnNwcmluZ2ZyYW1ld29yay5odHRwLlJlc3BvbnNlRW50aXR5OwppbXBvcnQgb3JnLnNwcmluZ2ZyYW1ld29yay53ZWIuYmluZC5hbm5vdGF0aW9uLkV4Y2VwdGlvbkhhbmRsZXI7CmltcG9ydCBvcmcuc3ByaW5nZnJhbWV3b3JrLndlYi5iaW5kLmFubm90YXRpb24uUmVzdENvbnRyb2xsZXJBZHZpY2U7CgpAUmVzdENvbnRyb2xsZXJBZHZpY2UKcHVibGljIGNsYXNzIEdsb2JhbEV4Y2VwdGlvbkhhbmRsZXIgewoKICAgIEBFeGNlcHRpb25IYW5kbGVyKEluZGV4T3V0T2ZCb3VuZHNFeGNlcHRpb24uY2xhc3MpCiAgICBwdWJsaWMgUmVzcG9uc2VFbnRpdHk8U3RyaW5nPiBoYW5kbGVJbmRleE91dE9mQm91bmRzKEluZGV4T3V0T2ZCb3VuZHNFeGNlcHRpb24gZXgpIHsKICAgICAgICByZXR1cm4gbmV3IFJlc3BvbnNlRW50aXR5PD4oIkl0ZW0gbm90IGZvdW5kIiwgSHR0cFN0YXR1cy5OT1RfRk9VTkQpOwogICAgfQoKICAgIEBFeGNlcHRpb25IYW5kbGVyKEV4Y2VwdGlvbi5jbGFzcykKICAgIHB1YmxpYyBSZXNwb25zZUVudGl0eTxTdHJpbmc+IGhhbmRsZUdlbmVyYWxFeGNlcHRpb24oRXhjZXB0aW9uIGV4KSB7CiAgICAgICAgcmV0dXJuIG5ldyBSZXNwb25zZUVudGl0eTw+KCJBbiBlcnJvciBvY2N1cnJlZCIsIEh0dHBTdGF0dXMuSU5URVJOQUxfU0VSVkVSX0VSUk9SKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(IndexOutOfBoundsException.class)
+    public ResponseEntity&lt;String&gt; handleIndexOutOfBounds(IndexOutOfBoundsException ex) {
+        return new ResponseEntity&lt;&gt;(&quot;Item not found&quot;, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity&lt;String&gt; handleGeneralException(Exception ex) {
+        return new ResponseEntity&lt;&gt;(&quot;An error occurred&quot;, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><code>@RestControllerAdvice</code>: Permet gestionar excepcions globalment.</li>
+<li><code>@ExceptionHandler</code>: Especifica el tipus d'excepció a gestionar.</li>
+</ul>
+</div><h2>Validació de Sol·licituds</h2>
+<div class='content'><p>La validació assegura que les dades enviades pel client compleixin certs criteris.</p>
+<h4>Exemple: Validació d'un Cos de Sol·licitud</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmF4LnZhbGlkYXRpb24uVmFsaWQ7CmltcG9ydCBqYXZheC52YWxpZGF0aW9uLmNvbnN0cmFpbnRzLk5vdEVtcHR5OwoKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsud2ViLmJpbmQuYW5ub3RhdGlvbi4qOwoKQFJlc3RDb250cm9sbGVyCkBSZXF1ZXN0TWFwcGluZygiL2FwaS92YWxpZGF0ZWQtaXRlbXMiKQpwdWJsaWMgY2xhc3MgVmFsaWRhdGVkSXRlbUNvbnRyb2xsZXIgewoKICAgIEBQb3N0TWFwcGluZwogICAgcHVibGljIHZvaWQgYWRkSXRlbShAVmFsaWQgQFJlcXVlc3RCb2R5IFZhbGlkYXRlZEl0ZW0gaXRlbSkgewogICAgICAgIC8vIFByb2Nlc3NhIGwnw610ZW0KICAgIH0KCiAgICBwdWJsaWMgc3RhdGljIGNsYXNzIFZhbGlkYXRlZEl0ZW0gewogICAgICAgIEBOb3RFbXB0eShtZXNzYWdlID0gIk5hbWUgY2Fubm90IGJlIGVtcHR5IikKICAgICAgICBwcml2YXRlIFN0cmluZyBuYW1lOwoKICAgICAgICAvLyBHZXR0ZXJzIGkgc2V0dGVycwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping(&quot;/api/validated-items&quot;)
+public class ValidatedItemController {
+
+    @PostMapping
+    public void addItem(@Valid @RequestBody ValidatedItem item) {
+        // Processa l'&iacute;tem
+    }
+
+    public static class ValidatedItem {
+        @NotEmpty(message = &quot;Name cannot be empty&quot;)
+        private String name;
+
+        // Getters i setters
+    }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><code>@Valid</code>: Activa la validació sobre el cos de la sol·licitud.</li>
+<li><code>@NotEmpty</code>: Assegura que el camp no estigui buit.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem cobert els conceptes bàsics de la creació de controladors REST a Spring Boot, la gestió de diferents mètodes HTTP i temes avançats com la gestió d'excepcions i la validació de sol·licituds. Amb aquestes habilitats, podeu construir serveis web RESTful robustos i escalables. Continueu practicant creant controladors més complexos i explorant funcions addicionals de Spring Boot.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='introduction-to-restful-web-services'>&#x25C4;Introducció als Serveis Web RESTful</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Creació de Controladors REST</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='handling-http-methods'>Gestionant Mètodes HTTP (GET, POST, PUT, DELETE) &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

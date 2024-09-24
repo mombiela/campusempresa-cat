@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limitació de Ràtio en NGINX</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nginx/rate-limiting" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nginx/rate-limiting" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nginx/rate-limiting" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nginx/rate-limiting" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nginx/rate-limiting" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='setting-up-ssl-tls'>&#x25C4;Configurar SSL/TLS</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Limitació de Ràtio en NGINX</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='optimizing-performance'>Optimització del Rendiment &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La limitació de ràtio és una tècnica crucial utilitzada per controlar la ràtio de sol·licituds entrants a un servidor, assegurant que el servidor es mantingui responsiu i pugui gestionar pics de trànsit de manera elegant. Aquest tema et guiarà a través dels conceptes i la implementació de la limitació de ràtio en NGINX, des de nivells bàsics fins a avançats.</p>
+</div><h1>Introducció a la Limitació de Ràtio</h1>
+<div class='content'><p>La limitació de ràtio ajuda a:</p>
+<ul>
+<li>Prevenir l'abús i l'ús excessiu dels recursos del servidor.</li>
+<li>Protegir contra atacs DDoS (Distributed Denial of Service).</li>
+<li>Assegurar un ús just entre els usuaris.</li>
+</ul>
+</div><h1>Conceptes Bàsics</h1>
+<div class='content'></div><h2>Què és la Limitació de Ràtio?</h2>
+<div class='content'><p>La limitació de ràtio és el procés de controlar el nombre de sol·licituds que un usuari pot fer a un servidor dins d'un període de temps especificat.</p>
+</div><h2>Per què Utilitzar la Limitació de Ràtio?</h2>
+<div class='content'><ul>
+<li><strong>Gestió de Recursos</strong>: Prevé que un sol usuari consumeixi massa recursos.</li>
+<li><strong>Seguretat</strong>: Mitiga el risc d'atacs DDoS.</li>
+<li><strong>Justícia</strong>: Assegura que tots els usuaris tinguin accés igualitari als recursos.</li>
+</ul>
+</div><h1>Implementació de la Limitació de Ràtio en NGINX</h1>
+<div class='content'></div><h2>Prerequisits</h2>
+<div class='content'><ul>
+<li>Comprensió bàsica de la configuració de NGINX.</li>
+<li>NGINX instal·lat al teu servidor.</li>
+</ul>
+</div><h2>Configuració Bàsica de la Limitació de Ràtio</h2>
+<div class='content'><p>NGINX utilitza les directives <code>limit_req_zone</code> i <code>limit_req</code> per configurar la limitació de ràtio.</p>
+<h4>Guia Pas a Pas</h4>
+<ol>
+<li>
+<p><strong>Definir una Zona de Limitació de Ràtio</strong>:
+La directiva <code>limit_req_zone</code> defineix una zona de memòria compartida que fa un seguiment de les ràtios de sol·licituds.</p>
+<pre><code class="language-nginx">http {
+    limit_req_zone $binary_remote_addr zone=one:10m rate=1r/s;
+    ...
+}
+</code></pre>
+<ul>
+<li><code>$binary_remote_addr</code>: Utilitza l'adreça IP del client com a clau.</li>
+<li><code>zone=one:10m</code>: Crea una zona anomenada 'one' amb 10MB de memòria compartida.</li>
+<li><code>rate=1r/s</code>: Limita la ràtio a 1 sol·licitud per segon.</li>
+</ul>
+</li>
+<li>
+<p><strong>Aplicar la Zona de Limitació de Ràtio</strong>:
+Utilitza la directiva <code>limit_req</code> dins d'un bloc de servidor o ubicació per aplicar la limitació de ràtio.</p>
+<pre><code class="language-nginx">server {
+    location / {
+        limit_req zone=one burst=5 nodelay;
+        ...
+    }
+}
+</code></pre>
+<ul>
+<li><code>zone=one</code>: Es refereix a la zona definida prèviament.</li>
+<li><code>burst=5</code>: Permet un esclat de fins a 5 sol·licituds.</li>
+<li><code>nodelay</code>: Assegura que les sol·licituds que excedeixen el límit de ràtio siguin rebutjades immediatament.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Exemple de Configuració</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aHR0cCB7CiAgICBsaW1pdF9yZXFfem9uZSAkYmluYXJ5X3JlbW90ZV9hZGRyIHpvbmU9b25lOjEwbSByYXRlPTFyL3M7CgogICAgc2VydmVyIHsKICAgICAgICBsaXN0ZW4gODA7CiAgICAgICAgc2VydmVyX25hbWUgZXhhbXBsZS5jb207CgogICAgICAgIGxvY2F0aW9uIC8gewogICAgICAgICAgICBsaW1pdF9yZXEgem9uZT1vbmUgYnVyc3Q9NSBub2RlbGF5OwogICAgICAgICAgICBwcm94eV9wYXNzIGh0dHA6Ly9iYWNrZW5kOwogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>http {
+    limit_req_zone $binary_remote_addr zone=one:10m rate=1r/s;
+
+    server {
+        listen 80;
+        server_name example.com;
+
+        location / {
+            limit_req zone=one burst=5 nodelay;
+            proxy_pass http://backend;
+        }
+    }
+}</pre></div><div class='content'></div><h2>Tècniques Avançades de Limitació de Ràtio</h2>
+<div class='content'><h4>Utilitzant Múltiples Zones de Limitació de Ràtio</h4>
+<p>Pots definir múltiples zones de limitació de ràtio per aplicar diferents límits a diferents parts de la teva aplicació.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aHR0cCB7CiAgICBsaW1pdF9yZXFfem9uZSAkYmluYXJ5X3JlbW90ZV9hZGRyIHpvbmU9em9uZTE6MTBtIHJhdGU9MXIvczsKICAgIGxpbWl0X3JlcV96b25lICRiaW5hcnlfcmVtb3RlX2FkZHIgem9uZT16b25lMjoxMG0gcmF0ZT0xMHIvbTsKCiAgICBzZXJ2ZXIgewogICAgICAgIGxpc3RlbiA4MDsKICAgICAgICBzZXJ2ZXJfbmFtZSBleGFtcGxlLmNvbTsKCiAgICAgICAgbG9jYXRpb24gL2FwaS8gewogICAgICAgICAgICBsaW1pdF9yZXEgem9uZT16b25lMSBidXJzdD01IG5vZGVsYXk7CiAgICAgICAgICAgIHByb3h5X3Bhc3MgaHR0cDovL2FwaV9iYWNrZW5kOwogICAgICAgIH0KCiAgICAgICAgbG9jYXRpb24gL3N0YXRpYy8gewogICAgICAgICAgICBsaW1pdF9yZXEgem9uZT16b25lMiBidXJzdD0yMDsKICAgICAgICAgICAgcm9vdCAvdmFyL3d3dy9zdGF0aWM7CiAgICAgICAgfQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>http {
+    limit_req_zone $binary_remote_addr zone=zone1:10m rate=1r/s;
+    limit_req_zone $binary_remote_addr zone=zone2:10m rate=10r/m;
+
+    server {
+        listen 80;
+        server_name example.com;
+
+        location /api/ {
+            limit_req zone=zone1 burst=5 nodelay;
+            proxy_pass http://api_backend;
+        }
+
+        location /static/ {
+            limit_req zone=zone2 burst=20;
+            root /var/www/static;
+        }
+    }
+}</pre></div><div class='content'><h4>Personalitzant les Respostes de Limitació de Ràtio</h4>
+<p>Pots personalitzar la resposta que els clients reben quan excedeixen el límit de ràtio.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aHR0cCB7CiAgICBsaW1pdF9yZXFfem9uZSAkYmluYXJ5X3JlbW90ZV9hZGRyIHpvbmU9b25lOjEwbSByYXRlPTFyL3M7CgogICAgc2VydmVyIHsKICAgICAgICBsaXN0ZW4gODA7CiAgICAgICAgc2VydmVyX25hbWUgZXhhbXBsZS5jb207CgogICAgICAgIGxvY2F0aW9uIC8gewogICAgICAgICAgICBsaW1pdF9yZXEgem9uZT1vbmUgYnVyc3Q9NSBub2RlbGF5OwogICAgICAgICAgICBsaW1pdF9yZXFfc3RhdHVzIDQyOTsKICAgICAgICAgICAgZXJyb3JfcGFnZSA0MjkgPSAvcmF0ZV9saW1pdF9leGNlZWRlZDsKCiAgICAgICAgICAgIHByb3h5X3Bhc3MgaHR0cDovL2JhY2tlbmQ7CiAgICAgICAgfQoKICAgICAgICBsb2NhdGlvbiA9IC9yYXRlX2xpbWl0X2V4Y2VlZGVkIHsKICAgICAgICAgICAgcmV0dXJuIDQyOSAiUmF0ZSBsaW1pdCBleGNlZWRlZC4gUGxlYXNlIHRyeSBhZ2FpbiBsYXRlci4iOwogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>http {
+    limit_req_zone $binary_remote_addr zone=one:10m rate=1r/s;
+
+    server {
+        listen 80;
+        server_name example.com;
+
+        location / {
+            limit_req zone=one burst=5 nodelay;
+            limit_req_status 429;
+            error_page 429 = /rate_limit_exceeded;
+
+            proxy_pass http://backend;
+        }
+
+        location = /rate_limit_exceeded {
+            return 429 &quot;Rate limit exceeded. Please try again later.&quot;;
+        }
+    }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>La limitació de ràtio és una característica essencial per mantenir el rendiment i la seguretat de les teves aplicacions web. Entenent i implementant la limitació de ràtio en NGINX, pots:</p>
+<ul>
+<li>Protegir el teu servidor de l'abús i els atacs.</li>
+<li>Assegurar una distribució justa dels recursos entre els usuaris.</li>
+<li>Personalitzar les respostes per proporcionar una millor experiència d'usuari.</li>
+</ul>
+<p>Amb les tècniques bàsiques i avançades cobertes en aquest tema, hauries d'estar ben preparat per implementar estratègies efectives de limitació de ràtio en les teves configuracions de NGINX.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='setting-up-ssl-tls'>&#x25C4;Configurar SSL/TLS</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Limitació de Ràtio en NGINX</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='optimizing-performance'>Optimització del Rendiment &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

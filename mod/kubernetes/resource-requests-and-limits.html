@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sol·licituds i Límits de Recursos</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kubernetes/resource-requests-and-limits" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kubernetes/resource-requests-and-limits" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kubernetes/resource-requests-and-limits" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kubernetes/resource-requests-and-limits" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kubernetes/resource-requests-and-limits" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='health-checks-and-probes'>&#x25C4;Controls de Salut i Probes</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Sol·licituds i Límits de Recursos</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='cluster-networking'>Xarxes de Clúster &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En Kubernetes, gestionar els recursos de manera eficient és crucial per assegurar que les aplicacions funcionin sense problemes i que el clúster es mantingui estable. Les sol·licituds i els límits de recursos són dos conceptes clau que ajuden a aconseguir això controlant la quantitat de recursos de CPU i memòria que poden utilitzar els contenidors.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'></div><h2>Sol·licituds de Recursos</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: La quantitat mínima de recursos de CPU i memòria que un contenidor necessita per funcionar.</li>
+<li><strong>Propòsit</strong>: Assegura que el planificador de Kubernetes pugui prendre decisions informades sobre on col·locar els pods basant-se en els recursos disponibles.</li>
+<li><strong>Sintaxi</strong>: Especificat en el fitxer de configuració YAML del pod sota el camp <code>resources.requests</code>.</li>
+</ul>
+</div><h2>Límits de Recursos</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: La quantitat màxima de recursos de CPU i memòria que un contenidor pot utilitzar.</li>
+<li><strong>Propòsit</strong>: Prevé que un sol contenidor consumeixi tots els recursos d'un node, cosa que podria afectar altres contenidors que s'executen en el mateix node.</li>
+<li><strong>Sintaxi</strong>: Especificat en el fitxer de configuració YAML del pod sota el camp <code>resources.limits</code>.</li>
+</ul>
+</div><h1>Exemple de Configuració</h1>
+<div class='content'><p>Aquí teniu un exemple de com establir sol·licituds i límits de recursos en el fitxer de configuració YAML d'un pod:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUG9kCm1ldGFkYXRhOgogIG5hbWU6IHJlc291cmNlLWRlbW8Kc3BlYzoKICBjb250YWluZXJzOgogIC0gbmFtZTogcmVzb3VyY2UtZGVtby1jb250YWluZXIKICAgIGltYWdlOiBuZ2lueAogICAgcmVzb3VyY2VzOgogICAgICByZXF1ZXN0czoKICAgICAgICBtZW1vcnk6ICI2NE1pIgogICAgICAgIGNwdTogIjI1MG0iCiAgICAgIGxpbWl0czoKICAgICAgICBtZW1vcnk6ICIxMjhNaSIKICAgICAgICBjcHU6ICI1MDBtIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: Pod
+metadata:
+  name: resource-demo
+spec:
+  containers:
+  - name: resource-demo-container
+    image: nginx
+    resources:
+      requests:
+        memory: &quot;64Mi&quot;
+        cpu: &quot;250m&quot;
+      limits:
+        memory: &quot;128Mi&quot;
+        cpu: &quot;500m&quot;</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>requests.memory</strong>: El contenidor sol·licita 64 MiB de memòria.</li>
+<li><strong>requests.cpu</strong>: El contenidor sol·licita 250 milliCPU (0.25 CPU).</li>
+<li><strong>limits.memory</strong>: El contenidor està limitat a 128 MiB de memòria.</li>
+<li><strong>limits.cpu</strong>: El contenidor està limitat a 500 milliCPU (0.5 CPU).</li>
+</ul>
+</div><h1>Millors Pràctiques</h1>
+<div class='content'><ul>
+<li><strong>Establir Sol·licituds Realistes</strong>: Assegureu-vos que les sol·licituds de recursos es basen en les necessitats reals de l'aplicació per evitar la sobreprovisió.</li>
+<li><strong>Establir Límits per Prevenir l'Acaparament de Recursos</strong>: Utilitzeu límits de recursos per evitar que un sol contenidor consumeixi massa recursos, cosa que podria afectar altres contenidors.</li>
+<li><strong>Monitoritzar i Ajustar</strong>: Monitoritzeu contínuament l'ús de recursos i ajusteu les sol·licituds i els límits segons sigui necessari per optimitzar el rendiment i la utilització dels recursos.</li>
+</ul>
+</div><h1>Temes Avançats</h1>
+<div class='content'></div><h2>Quotes de Recursos</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: Les quotes de recursos s'utilitzen per limitar la quantitat total de recursos que poden ser consumits per tots els pods en un espai de noms.</li>
+<li><strong>Propòsit</strong>: Ajuda a gestionar l'assignació de recursos entre diferents equips o projectes dins del mateix clúster.</li>
+<li><strong>Exemple</strong>:</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUmVzb3VyY2VRdW90YQptZXRhZGF0YToKICBuYW1lOiBtZW0tY3B1LXF1b3RhCiAgbmFtZXNwYWNlOiBteW5hbWVzcGFjZQpzcGVjOgogIGhhcmQ6CiAgICByZXF1ZXN0cy5jcHU6ICIxIgogICAgcmVxdWVzdHMubWVtb3J5OiAxR2kKICAgIGxpbWl0cy5jcHU6ICIyIgogICAgbGltaXRzLm1lbW9yeTogMkdp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: mem-cpu-quota
+  namespace: mynamespace
+spec:
+  hard:
+    requests.cpu: &quot;1&quot;
+    requests.memory: 1Gi
+    limits.cpu: &quot;2&quot;
+    limits.memory: 2Gi</pre></div><div class='content'></div><h2>Rangs de Límits</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: Els rangs de límits s'utilitzen per fer complir els límits mínims i màxims de recursos per als contenidors en un espai de noms.</li>
+<li><strong>Propòsit</strong>: Assegura que tots els contenidors en un espai de noms compleixin amb les restriccions de recursos especificades.</li>
+<li><strong>Exemple</strong>:</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogTGltaXRSYW5nZQptZXRhZGF0YToKICBuYW1lOiBtZW0tbGltaXQtcmFuZ2UKICBuYW1lc3BhY2U6IG15bmFtZXNwYWNlCnNwZWM6CiAgbGltaXRzOgogIC0gbWF4OgogICAgICBtZW1vcnk6ICIxR2kiCiAgICBtaW46CiAgICAgIG1lbW9yeTogIjI1Nk1pIgogICAgdHlwZTogQ29udGFpbmVy"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: LimitRange
+metadata:
+  name: mem-limit-range
+  namespace: mynamespace
+spec:
+  limits:
+  - max:
+      memory: &quot;1Gi&quot;
+    min:
+      memory: &quot;256Mi&quot;
+    type: Container</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Entendre i configurar correctament les sol·licituds i els límits de recursos és essencial per a una gestió eficient dels recursos en Kubernetes. Establint sol·licituds i límits adequats, podeu assegurar que les vostres aplicacions funcionin sense problemes mentre preveniu la contenció de recursos i assegureu una distribució justa dels recursos a través del vostre clúster. Funcionalitats avançades com les quotes de recursos i els rangs de límits proporcionen un control addicional i poden ajudar a gestionar els recursos a nivell d'espai de noms. Monitoritzeu i ajusteu contínuament aquests paràmetres per mantenir un rendiment òptim i una utilització eficient dels recursos.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='health-checks-and-probes'>&#x25C4;Controls de Salut i Probes</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Sol·licituds i Límits de Recursos</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='cluster-networking'>Xarxes de Clúster &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

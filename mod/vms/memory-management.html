@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió de Memòria en OpenVMS</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/vms/memory-management" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/vms/memory-management" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/vms/memory-management" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/vms/memory-management" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/vms/memory-management" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='file-io-operations'>&#x25C4;Operacions d'E/S de Fitxers</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió de Memòria en OpenVMS</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='networking-concepts-in-openvms'>Conceptes de Xarxes en OpenVMS &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La gestió de memòria és un aspecte crític de qualsevol sistema operatiu, i OpenVMS no és una excepció. Aquest tema et guiarà a través dels fonaments de la gestió de memòria en OpenVMS, progressant des de conceptes bàsics fins a avançats.</p>
+</div><h1>Introducció a la Gestió de Memòria</h1>
+<div class='content'><p>La gestió de memòria en OpenVMS implica l'assignació, desassignació i organització dels recursos de memòria. Entendre aquests conceptes és crucial per al desenvolupament eficient d'aplicacions i el rendiment del sistema.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Memòria Virtual</strong>: OpenVMS utilitza memòria virtual per proporcionar a cada procés el seu propi espai d'adreces.</li>
+<li><strong>Memòria Física</strong>: La RAM real instal·lada en el sistema.</li>
+<li><strong>Paginació</strong>: El procés de moure dades entre la memòria física i l'emmagatzematge en disc.</li>
+<li><strong>Intercanvi</strong>: Mou tot el procés entre la memòria física i l'emmagatzematge en disc.</li>
+</ul>
+</div><h1>Memòria Virtual</h1>
+<div class='content'><p>La memòria virtual permet a OpenVMS utilitzar espai en disc com una extensió de la RAM, permetent al sistema executar aplicacions més grans del que permetria la memòria física.</p>
+</div><h2>Espai d'Adreces</h2>
+<div class='content'><ul>
+<li><strong>Espai d'Adreces del Procés</strong>: Cada procés en OpenVMS té el seu propi espai d'adreces virtual.</li>
+<li><strong>Espai d'Adreces del Sistema</strong>: Compartit per tots els processos, utilitzat per recursos de tot el sistema.</li>
+</ul>
+</div><h2>Exemple: Assignació de Memòria Virtual</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxzdGRsaWIuaD4KCmludCBtYWluKCkgewogICAgaW50ICpwdHI7CiAgICBwdHIgPSAoaW50ICopbWFsbG9jKDEwMCAqIHNpemVvZihpbnQpKTsgLy8gQXNzaWduYXIgbWVtw7JyaWEgcGVyIGEgMTAwIGVudGVycwogICAgaWYgKHB0ciA9PSBOVUxMKSB7CiAgICAgICAgcHJpbnRmKCJMJ2Fzc2lnbmFjacOzIGRlIG1lbcOycmlhIGhhIGZhbGxhdFxuIik7CiAgICAgICAgcmV0dXJuIDE7CiAgICB9CiAgICAvLyBVdGlsaXR6YXIgbGEgbWVtw7JyaWEgYXNzaWduYWRhCiAgICBmb3IgKGludCBpID0gMDsgaSA8IDEwMDsgaSsrKSB7CiAgICAgICAgcHRyW2ldID0gaTsKICAgIH0KICAgIC8vIEFsbGliZXJhciBsYSBtZW3DsnJpYSBhc3NpZ25hZGEKICAgIGZyZWUocHRyKTsKICAgIHJldHVybiAwOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main() {
+    int *ptr;
+    ptr = (int *)malloc(100 * sizeof(int)); // Assignar mem&ograve;ria per a 100 enters
+    if (ptr == NULL) {
+        printf(&quot;L'assignaci&oacute; de mem&ograve;ria ha fallat\n&quot;);
+        return 1;
+    }
+    // Utilitzar la mem&ograve;ria assignada
+    for (int i = 0; i &lt; 100; i++) {
+        ptr[i] = i;
+    }
+    // Alliberar la mem&ograve;ria assignada
+    free(ptr);
+    return 0;
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: La funció <code>malloc</code> assigna memòria en l'espai d'adreces virtual del procés. La funció <code>free</code> la desassigna.</li>
+</ul>
+</div><h1>Memòria Física</h1>
+<div class='content'><p>La memòria física es refereix a la RAM real instal·lada en el sistema. OpenVMS gestiona la memòria física per optimitzar el rendiment i assegurar l'estabilitat.</p>
+</div><h2>Pàgines de Memòria</h2>
+<div class='content'><ul>
+<li><strong>Mida de la Pàgina</strong>: Normalment 512 bytes o 8192 bytes, depenent de l'arquitectura del sistema.</li>
+<li><strong>Marcs de Pàgina</strong>: Blocs de mida fixa de memòria física.</li>
+</ul>
+</div><h2>Exemple: Veure l'Ús de la Memòria Física</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("JCBTSE9XIE1FTU9SWSAvUEhZU0lDQUw="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>$ SHOW MEMORY /PHYSICAL</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Aquesta comanda mostra l'ús actual de la memòria física en el sistema.</li>
+</ul>
+</div><h1>Paginació i Intercanvi</h1>
+<div class='content'><p>La paginació i l'intercanvi són tècniques utilitzades per gestionar la memòria de manera eficient movent dades entre la memòria física i l'emmagatzematge en disc.</p>
+</div><h2>Paginació</h2>
+<div class='content'><ul>
+<li><strong>Error de Pàgina</strong>: Es produeix quan un procés intenta accedir a una pàgina que no està actualment en la memòria física.</li>
+<li><strong>Reemplaçament de Pàgina</strong>: El procés de moure una pàgina fora de la memòria física al disc per fer espai per a una nova pàgina.</li>
+</ul>
+</div><h2>Intercanvi</h2>
+<div class='content'><ul>
+<li><strong>Intercanvi de Procés</strong>: Mou tot el procés entre la memòria física i l'emmagatzematge en disc per alliberar memòria.</li>
+</ul>
+</div><h2>Exemple: Configuració de Fitxers de Paginació</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("JCBDUkVBVEUgL1BBR0VGSUxFIFNZUyRTWVNURU06UEFHRUZJTEUuU1lTIC9TSVpFPTEwMDAwCiQgSU5TVEFMTCAvUEFHRUZJTEUgU1lTJFNZU1RFTTpQQUdFRklMRS5TWVM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>$ CREATE /PAGEFILE SYS$SYSTEM:PAGEFILE.SYS /SIZE=10000
+$ INSTALL /PAGEFILE SYS$SYSTEM:PAGEFILE.SYS</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Aquestes comandes creen i instal·len un fitxer de paginació, que s'utilitza per emmagatzemar pàgines intercanviades fora de la memòria física.</li>
+</ul>
+</div><h1>Gestió Avançada de Memòria</h1>
+<div class='content'><p>Les tècniques avançades de gestió de memòria en OpenVMS inclouen l'ajust dels paràmetres del sistema i l'ús de serveis específics del sistema per a un rendiment òptim.</p>
+</div><h2>Paràmetres del Sistema</h2>
+<div class='content'><ul>
+<li><strong>VIRTUALPAGECNT</strong>: Nombre màxim de pàgines virtuals que un procés pot utilitzar.</li>
+<li><strong>WSDEFAULT</strong>: Mida predeterminada del conjunt de treball per als processos.</li>
+</ul>
+</div><h2>Exemple: Ajust dels Paràmetres del Sistema</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("JCBTRVQgUEFSQU1FVEVSIFZJUlRVQUxQQUdFQ05UIDUwMDAwCiQgU0VUIFBBUkFNRVRFUiBXU0RFRkFVTFQgMTAyNA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>$ SET PARAMETER VIRTUALPAGECNT 50000
+$ SET PARAMETER WSDEFAULT 1024</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: Aquestes comandes estableixen el nombre màxim de pàgines virtuals i la mida predeterminada del conjunt de treball per als processos.</li>
+</ul>
+</div><h2>Serveis del Sistema</h2>
+<div class='content'><ul>
+<li><strong>SYS$CRMPSC</strong>: Crear i mapar una secció de memòria.</li>
+<li><strong>SYS$DELTVA</strong>: Eliminar un rang d'adreces virtuals.</li>
+</ul>
+</div><h2>Exemple: Ús de SYS$CRMPSC</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPGxpYiRyb3V0aW5lcy5oPgojaW5jbHVkZSA8c3NkZWYuaD4KI2luY2x1ZGUgPHN0YXJsZXQuaD4KCmludCBtYWluKCkgewogICAgdW5zaWduZWQgbG9uZyBzdGF0dXM7CiAgICB1bnNpZ25lZCBsb25nIHN0YXJ0X3ZhID0gMDsKICAgIHVuc2lnbmVkIGxvbmcgZW5kX3ZhID0gMDsKICAgIHVuc2lnbmVkIGxvbmcgbGVuZ3RoID0gODE5MjsgLy8gOEtCCgogICAgc3RhdHVzID0gc3lzJGNybXBzYygmc3RhcnRfdmEsICZlbmRfdmEsIDAsIDAsIDAsIDAsIDAsIDAsIDAsICZsZW5ndGgsIDAsIDApOwogICAgaWYgKHN0YXR1cyAhPSBTUyRfTk9STUFMKSB7CiAgICAgICAgcHJpbnRmKCJFbCBtYXBlaWcgZGUgbWVtw7JyaWEgaGEgZmFsbGF0XG4iKTsKICAgICAgICByZXR1cm4gMTsKICAgIH0KICAgIC8vIFV0aWxpdHphciBsYSBtZW3DsnJpYSBtYXBlamFkYQogICAgLy8gLi4uCgogICAgLy8gRGVzbWFwYXIgbGEgbWVtw7JyaWEKICAgIHN5cyRkZWx0dmEoJnN0YXJ0X3ZhLCAmZW5kX3ZhLCAwKTsKICAgIHJldHVybiAwOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;lib$routines.h&gt;
+#include &lt;ssdef.h&gt;
+#include &lt;starlet.h&gt;
+
+int main() {
+    unsigned long status;
+    unsigned long start_va = 0;
+    unsigned long end_va = 0;
+    unsigned long length = 8192; // 8KB
+
+    status = sys$crmpsc(&amp;start_va, &amp;end_va, 0, 0, 0, 0, 0, 0, 0, &amp;length, 0, 0);
+    if (status != SS$_NORMAL) {
+        printf(&quot;El mapeig de mem&ograve;ria ha fallat\n&quot;);
+        return 1;
+    }
+    // Utilitzar la mem&ograve;ria mapejada
+    // ...
+
+    // Desmapar la mem&ograve;ria
+    sys$deltva(&amp;start_va, &amp;end_va, 0);
+    return 0;
+}</pre></div><div class='content'><ul>
+<li><strong>Explicació</strong>: El servei <code>sys$crmpsc</code> mapar una secció de memòria, i <code>sys$deltva</code> la desmapa.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La gestió de memòria en OpenVMS és un tema complex però essencial. Entenent la memòria virtual i física, la paginació, l'intercanvi i les tècniques avançades, pots optimitzar les teves aplicacions i assegurar un ús eficient dels recursos del sistema. Practica aquests conceptes amb els exemples i comandes proporcionats per obtenir una comprensió més profunda i habilitat en la gestió de memòria en OpenVMS.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='file-io-operations'>&#x25C4;Operacions d'E/S de Fitxers</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Gestió de Memòria en OpenVMS</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='networking-concepts-in-openvms'>Conceptes de Xarxes en OpenVMS &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

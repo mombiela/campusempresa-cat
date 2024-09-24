@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuració de Connectors</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kafka/configuring-connectors" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kafka/configuring-connectors" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kafka/configuring-connectors" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kafka/configuring-connectors" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kafka/configuring-connectors" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='source-and-sink-connectors'>&#x25C4;Connectors de font i destí</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Configuració de Connectors</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='transformations-and-converters'>Transformacions i convertidors &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Apache Kafka Connect és una eina per transmetre dades de manera escalable i fiable entre Apache Kafka i altres sistemes. Configurar connectors és una part crucial de la configuració de Kafka Connect. Aquest tema et guiarà a través del procés des de nivells principiants fins a avançats.</p>
+</div><h1>Introducció als Connectors de Kafka</h1>
+<div class='content'><p>Els connectors de Kafka són plugins que t'ajuden a moure grans col·leccions de dades dins i fora de Kafka. N'hi ha de dos tipus:</p>
+<ul>
+<li><strong>Connectors d'Origen</strong>: Importen dades de sistemes externs a temes de Kafka.</li>
+<li><strong>Connectors de Destí</strong>: Exporten dades de temes de Kafka a sistemes externs.</li>
+</ul>
+</div><h1>Configuració Bàsica</h1>
+<div class='content'></div><h2>Configurant Kafka Connect</h2>
+<div class='content'><p>Abans de configurar connectors, necessites configurar Kafka Connect. Aquí tens una configuració bàsica per a mode autònom:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBjb25uZWN0LXN0YW5kYWxvbmUucHJvcGVydGllcwpib290c3RyYXAuc2VydmVycz1sb2NhbGhvc3Q6OTA5MgprZXkuY29udmVydGVyPW9yZy5hcGFjaGUua2Fma2EuY29ubmVjdC5qc29uLkpzb25Db252ZXJ0ZXIKdmFsdWUuY29udmVydGVyPW9yZy5hcGFjaGUua2Fma2EuY29ubmVjdC5qc29uLkpzb25Db252ZXJ0ZXIKb2Zmc2V0LnN0b3JhZ2UuZmlsZS5maWxlbmFtZT0vdG1wL2Nvbm5lY3Qub2Zmc2V0cw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># connect-standalone.properties
+bootstrap.servers=localhost:9092
+key.converter=org.apache.kafka.connect.json.JsonConverter
+value.converter=org.apache.kafka.connect.json.JsonConverter
+offset.storage.file.filename=/tmp/connect.offsets</pre></div><div class='content'></div><h2>Configurant un Connector d'Origen</h2>
+<div class='content'><p>Una configuració de connector d'origen típicament inclou les següents propietats:</p>
+<ul>
+<li><strong>name</strong>: Nom únic per al connector.</li>
+<li><strong>connector.class</strong>: La classe Java per al connector.</li>
+<li><strong>tasks.max</strong>: Nombre màxim de tasques a utilitzar per aquest connector.</li>
+<li><strong>topics</strong>: Llista de temes de Kafka on escriure les dades.</li>
+</ul>
+<p>Exemple de configuració per a un FileStreamSourceConnector:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBmaWxlLXNvdXJjZS5wcm9wZXJ0aWVzCm5hbWU9ZmlsZS1zb3VyY2UtY29ubmVjdG9yCmNvbm5lY3Rvci5jbGFzcz1vcmcuYXBhY2hlLmthZmthLmNvbm5lY3QuZmlsZS5GaWxlU3RyZWFtU291cmNlQ29ubmVjdG9yCnRhc2tzLm1heD0xCmZpbGU9L3BhdGgvdG8vaW5wdXQvZmlsZS50eHQKdG9waWM9ZXhhbXBsZS10b3BpYw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># file-source.properties
+name=file-source-connector
+connector.class=org.apache.kafka.connect.file.FileStreamSourceConnector
+tasks.max=1
+file=/path/to/input/file.txt
+topic=example-topic</pre></div><div class='content'></div><h2>Configurant un Connector de Destí</h2>
+<div class='content'><p>Una configuració de connector de destí inclou propietats similars però es centra en llegir de temes de Kafka i escriure a sistemes externs.</p>
+<p>Exemple de configuració per a un FileStreamSinkConnector:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBmaWxlLXNpbmsucHJvcGVydGllcwpuYW1lPWZpbGUtc2luay1jb25uZWN0b3IKY29ubmVjdG9yLmNsYXNzPW9yZy5hcGFjaGUua2Fma2EuY29ubmVjdC5maWxlLkZpbGVTdHJlYW1TaW5rQ29ubmVjdG9yCnRhc2tzLm1heD0xCmZpbGU9L3BhdGgvdG8vb3V0cHV0L2ZpbGUudHh0CnRvcGljcz1leGFtcGxlLXRvcGlj"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># file-sink.properties
+name=file-sink-connector
+connector.class=org.apache.kafka.connect.file.FileStreamSinkConnector
+tasks.max=1
+file=/path/to/output/file.txt
+topics=example-topic</pre></div><div class='content'></div><h1>Configuració Avançada</h1>
+<div class='content'></div><h2>Mode Distribuït</h2>
+<div class='content'><p>Per a entorns de producció, hauries d'utilitzar Kafka Connect en mode distribuït. Aquest mode proporciona escalabilitat i tolerància a fallades.</p>
+<p>Exemple de configuració per a mode distribuït:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBjb25uZWN0LWRpc3RyaWJ1dGVkLnByb3BlcnRpZXMKYm9vdHN0cmFwLnNlcnZlcnM9bG9jYWxob3N0OjkwOTIKZ3JvdXAuaWQ9Y29ubmVjdC1jbHVzdGVyCmtleS5jb252ZXJ0ZXI9b3JnLmFwYWNoZS5rYWZrYS5jb25uZWN0Lmpzb24uSnNvbkNvbnZlcnRlcgp2YWx1ZS5jb252ZXJ0ZXI9b3JnLmFwYWNoZS5rYWZrYS5jb25uZWN0Lmpzb24uSnNvbkNvbnZlcnRlcgpjb25maWcuc3RvcmFnZS50b3BpYz1jb25uZWN0LWNvbmZpZ3MKb2Zmc2V0LnN0b3JhZ2UudG9waWM9Y29ubmVjdC1vZmZzZXRzCnN0YXR1cy5zdG9yYWdlLnRvcGljPWNvbm5lY3Qtc3RhdHVz"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># connect-distributed.properties
+bootstrap.servers=localhost:9092
+group.id=connect-cluster
+key.converter=org.apache.kafka.connect.json.JsonConverter
+value.converter=org.apache.kafka.connect.json.JsonConverter
+config.storage.topic=connect-configs
+offset.storage.topic=connect-offsets
+status.storage.topic=connect-status</pre></div><div class='content'></div><h2>Convertidors Personalitzats</h2>
+<div class='content'><p>Pots utilitzar convertidors personalitzats per gestionar diferents formats de dades. Per exemple, utilitzant AvroConverter:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a2V5LmNvbnZlcnRlcj1pby5jb25mbHVlbnQuY29ubmVjdC5hdnJvLkF2cm9Db252ZXJ0ZXIKa2V5LmNvbnZlcnRlci5zY2hlbWEucmVnaXN0cnkudXJsPWh0dHA6Ly9sb2NhbGhvc3Q6ODA4MQp2YWx1ZS5jb252ZXJ0ZXI9aW8uY29uZmx1ZW50LmNvbm5lY3QuYXZyby5BdnJvQ29udmVydGVyCnZhbHVlLmNvbnZlcnRlci5zY2hlbWEucmVnaXN0cnkudXJsPWh0dHA6Ly9sb2NhbGhvc3Q6ODA4MQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>key.converter=io.confluent.connect.avro.AvroConverter
+key.converter.schema.registry.url=http://localhost:8081
+value.converter=io.confluent.connect.avro.AvroConverter
+value.converter.schema.registry.url=http://localhost:8081</pre></div><div class='content'></div><h2>Transformacions</h2>
+<div class='content'><p>Les Transformacions de Missatge Únic (SMTs) et permeten modificar missatges a mesura que flueixen a través de Kafka Connect. Aquí tens un exemple d'afegir una marca de temps a cada missatge:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHJhbnNmb3Jtcz1JbnNlcnRUaW1lc3RhbXAKdHJhbnNmb3Jtcy5JbnNlcnRUaW1lc3RhbXAudHlwZT1vcmcuYXBhY2hlLmthZmthLmNvbm5lY3QudHJhbnNmb3Jtcy5JbnNlcnRGaWVsZCRWYWx1ZQp0cmFuc2Zvcm1zLkluc2VydFRpbWVzdGFtcC50aW1lc3RhbXAuZmllbGQ9dGltZXN0YW1w"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>transforms=InsertTimestamp
+transforms.InsertTimestamp.type=org.apache.kafka.connect.transforms.InsertField$Value
+transforms.InsertTimestamp.timestamp.field=timestamp</pre></div><div class='content'></div><h1>Monitorització i Gestió</h1>
+<div class='content'></div><h2>API REST</h2>
+<div class='content'><p>Kafka Connect proporciona una API REST per gestionar connectors. Pots utilitzar-la per crear, configurar i monitoritzar connectors.</p>
+<p>Exemple per crear un connector utilitzant curl:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y3VybCAtWCBQT1NUIC1IICJDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24iIC0tZGF0YSAnewogICJuYW1lIjogImZpbGUtc291cmNlLWNvbm5lY3RvciIsCiAgImNvbmZpZyI6IHsKICAgICJjb25uZWN0b3IuY2xhc3MiOiAib3JnLmFwYWNoZS5rYWZrYS5jb25uZWN0LmZpbGUuRmlsZVN0cmVhbVNvdXJjZUNvbm5lY3RvciIsCiAgICAidGFza3MubWF4IjogIjEiLAogICAgImZpbGUiOiAiL3BhdGgvdG8vaW5wdXQvZmlsZS50eHQiLAogICAgInRvcGljIjogImV4YW1wbGUtdG9waWMiCiAgfQp9JyBodHRwOi8vbG9jYWxob3N0OjgwODMvY29ubmVjdG9ycw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>curl -X POST -H &quot;Content-Type: application/json&quot; --data '{
+  &quot;name&quot;: &quot;file-source-connector&quot;,
+  &quot;config&quot;: {
+    &quot;connector.class&quot;: &quot;org.apache.kafka.connect.file.FileStreamSourceConnector&quot;,
+    &quot;tasks.max&quot;: &quot;1&quot;,
+    &quot;file&quot;: &quot;/path/to/input/file.txt&quot;,
+    &quot;topic&quot;: &quot;example-topic&quot;
+  }
+}' http://localhost:8083/connectors</pre></div><div class='content'></div><h2>Mètriques</h2>
+<div class='content'><p>Kafka Connect exposa mètriques via JMX. Pots monitoritzar aquestes mètriques per assegurar-te que els teus connectors funcionen correctament.</p>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Configurar connectors en Kafka Connect implica configurar l'entorn, definir propietats del connector i opcionalment utilitzar característiques avançades com convertidors personalitzats i transformacions. Tant si estàs funcionant en mode autònom com en mode distribuït, entendre aquestes configuracions t'ajudarà a transmetre dades de manera efectiva entre Kafka i altres sistemes. Monitoritzar i gestionar els teus connectors via l'API REST i les mètriques també és crucial per mantenir una pipeline de dades saludable.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='source-and-sink-connectors'>&#x25C4;Connectors de font i destí</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Configuració de Connectors</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='transformations-and-converters'>Transformacions i convertidors &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

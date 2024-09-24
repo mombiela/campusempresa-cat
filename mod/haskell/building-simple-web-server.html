@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construir un Servidor Web Simple en Haskell</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/haskell/building-simple-web-server" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/haskell/building-simple-web-server" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/haskell/building-simple-web-server" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/haskell/building-simple-web-server" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/haskell/building-simple-web-server" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='metaprogramming'>&#x25C4;Metaprogramació</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Construir un Servidor Web Simple en Haskell</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='database-access'>Accés a Bases de Dades &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, explorarem com construir un servidor web simple utilitzant Haskell. Això cobrirà els conceptes bàsics de la configuració d'un entorn Haskell, la comprensió de HTTP i l'ús de les biblioteques <code>wai</code> i <code>warp</code> per crear un servidor web funcional.</p>
+</div><h1>Prerequisits</h1>
+<div class='content'><p>Abans de començar, assegura't de tenir:</p>
+<ul>
+<li>Comprensió bàsica de la sintaxi i les funcions de Haskell.</li>
+<li>Haskell instal·lat a la teva màquina (GHC i Cabal o Stack).</li>
+</ul>
+</div><h1>Configurant l'Entorn</h1>
+<div class='content'><p>Per començar, necessitem configurar el nostre entorn Haskell i instal·lar les biblioteques necessàries.</p>
+</div><h2>Instal·lant Haskell</h2>
+<div class='content'><ol>
+<li><strong>GHC (Glasgow Haskell Compiler)</strong>: El compilador principal per a Haskell.</li>
+<li><strong>Cabal o Stack</strong>: Eines de construcció per gestionar projectes Haskell.</li>
+</ol>
+</div><h2>Instal·lant Biblioteques</h2>
+<div class='content'><p>Utilitzarem les biblioteques <code>wai</code> (Web Application Interface) i <code>warp</code> (una biblioteca de servidor HTTP ràpida).</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2FiYWwgdXBkYXRlCmNhYmFsIGluc3RhbGwgd2FpIHdhcnA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>cabal update
+cabal install wai warp</pre></div><div class='content'><p>O, si utilitzes Stack:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RhY2sgdXBkYXRlCnN0YWNrIGluc3RhbGwgd2FpIHdhcnA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>stack update
+stack install wai warp</pre></div><div class='content'></div><h1>Comprenent els Conceptes Bàsics de HTTP</h1>
+<div class='content'><p>Abans de submergir-nos en el codi, entenem breument HTTP, el protocol utilitzat pels servidors web per comunicar-se amb els clients (navegadors).</p>
+<ul>
+<li><strong>Request</strong>: Enviat pel client al servidor, inclou mètodes com GET, POST, etc.</li>
+<li><strong>Response</strong>: Enviat pel servidor al client, inclou codis d'estat (200, 404, etc.) i dades.</li>
+</ul>
+</div><h1>Construint el Servidor Web</h1>
+<div class='content'></div><h2>Creant un Servidor Bàsic</h2>
+<div class='content'><p>Comencem creant un servidor web simple que respongui amb &quot;Hello, World!&quot; a qualsevol sol·licitud.</p>
+<ol>
+<li>
+<p><strong>Crea un nou fitxer Haskell</strong>:</p>
+<pre><code class="language-bash">touch Main.hs
+</code></pre>
+</li>
+<li>
+<p><strong>Escriu el següent codi a <code>Main.hs</code></strong>:</p>
+<pre><code class="language-haskell">{-# LANGUAGE OverloadedStrings #-}
+import Network.Wai (responseLBS, Application)
+import Network.Wai.Handler.Warp (run)
+import Network.HTTP.Types (status200)
+
+main :: IO ()
+main = do
+    putStrLn &quot;Starting server on port 8080...&quot;
+    run 8080 app
+
+app :: Application
+app _ respond = respond $ responseLBS status200 [(&quot;Content-Type&quot;, &quot;text/plain&quot;)] &quot;Hello, World!&quot;
+</code></pre>
+</li>
+</ol>
+</div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Imports</strong>: Importem els mòduls necessaris de <code>wai</code>, <code>warp</code> i <code>http-types</code>.</li>
+<li><strong>Funció Principal</strong>: Inicia el servidor al port 8080 i utilitza la funció <code>app</code> per gestionar les sol·licituds.</li>
+<li><strong>Funció App</strong>: Defineix la lògica de l'aplicació, que respon amb un estat 200 i el missatge &quot;Hello, World!&quot;.</li>
+</ul>
+</div><h2>Executant el Servidor</h2>
+<div class='content'><p>Per executar el servidor, utilitza la següent comanda:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cnVuaGFza2VsbCBNYWluLmhz"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>runhaskell Main.hs</pre></div><div class='content'><p>Obre el teu navegador i navega a <code>http://localhost:8080</code> per veure &quot;Hello, World!&quot;.</p>
+</div><h1>Afegint Rutes</h1>
+<div class='content'><p>A continuació, afegim algunes rutes per gestionar diferents camins.</p>
+</div><h2>Exemple de Codi</h2>
+<div class='content'><p>Actualitza <code>Main.hs</code> per incloure el routing:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ey0jIExBTkdVQUdFIE92ZXJsb2FkZWRTdHJpbmdzICMtfQppbXBvcnQgTmV0d29yay5XYWkgKHJlc3BvbnNlTEJTLCBBcHBsaWNhdGlvbiwgcGF0aEluZm8pCmltcG9ydCBOZXR3b3JrLldhaS5IYW5kbGVyLldhcnAgKHJ1bikKaW1wb3J0IE5ldHdvcmsuSFRUUC5UeXBlcyAoc3RhdHVzMjAwLCBzdGF0dXM0MDQpCgptYWluIDo6IElPICgpCm1haW4gPSBkbwogICAgcHV0U3RyTG4gIlN0YXJ0aW5nIHNlcnZlciBvbiBwb3J0IDgwODAuLi4iCiAgICBydW4gODA4MCBhcHAKCmFwcCA6OiBBcHBsaWNhdGlvbgphcHAgcmVxIHJlc3BvbmQgPSBjYXNlIHBhdGhJbmZvIHJlcSBvZgogICAgWyJoZWxsbyJdIC0+IHJlc3BvbmQgJCByZXNwb25zZUxCUyBzdGF0dXMyMDAgWygiQ29udGVudC1UeXBlIiwgInRleHQvcGxhaW4iKV0gIkhlbGxvLCBXb3JsZCEiCiAgICBbImdvb2RieWUiXSAtPiByZXNwb25kICQgcmVzcG9uc2VMQlMgc3RhdHVzMjAwIFsoIkNvbnRlbnQtVHlwZSIsICJ0ZXh0L3BsYWluIildICJHb29kYnllLCBXb3JsZCEiCiAgICBfIC0+IHJlc3BvbmQgJCByZXNwb25zZUxCUyBzdGF0dXM0MDQgWygiQ29udGVudC1UeXBlIiwgInRleHQvcGxhaW4iKV0gIjQwNCAtIE5vdCBGb3VuZCI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{-# LANGUAGE OverloadedStrings #-}
+import Network.Wai (responseLBS, Application, pathInfo)
+import Network.Wai.Handler.Warp (run)
+import Network.HTTP.Types (status200, status404)
+
+main :: IO ()
+main = do
+    putStrLn &quot;Starting server on port 8080...&quot;
+    run 8080 app
+
+app :: Application
+app req respond = case pathInfo req of
+    [&quot;hello&quot;] -&gt; respond $ responseLBS status200 [(&quot;Content-Type&quot;, &quot;text/plain&quot;)] &quot;Hello, World!&quot;
+    [&quot;goodbye&quot;] -&gt; respond $ responseLBS status200 [(&quot;Content-Type&quot;, &quot;text/plain&quot;)] &quot;Goodbye, World!&quot;
+    _ -&gt; respond $ responseLBS status404 [(&quot;Content-Type&quot;, &quot;text/plain&quot;)] &quot;404 - Not Found&quot;</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>pathInfo</strong>: Extreu el camí de la sol·licitud.</li>
+<li><strong>Coincidència de Casos</strong>: Coincideix el camí amb rutes predefinides i respon en conseqüència.</li>
+</ul>
+</div><h2>Executant el Servidor</h2>
+<div class='content'><p>Executa el servidor de nou i navega a:</p>
+<ul>
+<li><code>http://localhost:8080/hello</code> per veure &quot;Hello, World!&quot;</li>
+<li><code>http://localhost:8080/goodbye</code> per veure &quot;Goodbye, World!&quot;</li>
+<li>Qualsevol altre camí retornarà &quot;404 - Not Found&quot;.</li>
+</ul>
+</div><h1>Gestionant Paràmetres de Consulta</h1>
+<div class='content'><p>Gestionem els paràmetres de consulta per fer el nostre servidor més dinàmic.</p>
+</div><h2>Exemple de Codi</h2>
+<div class='content'><p>Actualitza <code>Main.hs</code> per gestionar els paràmetres de consulta:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ey0jIExBTkdVQUdFIE92ZXJsb2FkZWRTdHJpbmdzICMtfQppbXBvcnQgTmV0d29yay5XYWkgKHJlc3BvbnNlTEJTLCBBcHBsaWNhdGlvbiwgcXVlcnlTdHJpbmcpCmltcG9ydCBOZXR3b3JrLldhaS5IYW5kbGVyLldhcnAgKHJ1bikKaW1wb3J0IE5ldHdvcmsuSFRUUC5UeXBlcyAoc3RhdHVzMjAwLCBzdGF0dXM0MDApCmltcG9ydCBEYXRhLk1heWJlIChmcm9tTWF5YmUpCmltcG9ydCBEYXRhLkJ5dGVTdHJpbmcuTGF6eS5DaGFyOCAocGFjaykKCm1haW4gOjogSU8gKCkKbWFpbiA9IGRvCiAgICBwdXRTdHJMbiAiU3RhcnRpbmcgc2VydmVyIG9uIHBvcnQgODA4MC4uLiIKICAgIHJ1biA4MDgwIGFwcAoKYXBwIDo6IEFwcGxpY2F0aW9uCmFwcCByZXEgcmVzcG9uZCA9IGNhc2UgcGF0aEluZm8gcmVxIG9mCiAgICBbImdyZWV0Il0gLT4gZG8KICAgICAgICBsZXQgbmFtZSA9IGZyb21NYXliZSAiV29ybGQiICQgbG9va3VwICJuYW1lIiAkIHF1ZXJ5U3RyaW5nIHJlcQogICAgICAgIHJlc3BvbmQgJCByZXNwb25zZUxCUyBzdGF0dXMyMDAgWygiQ29udGVudC1UeXBlIiwgInRleHQvcGxhaW4iKV0gKHBhY2sgJCAiSGVsbG8sICIgKysgc2hvdyBuYW1lICsrICIhIikKICAgIF8gLT4gcmVzcG9uZCAkIHJlc3BvbnNlTEJTIHN0YXR1czQwMCBbKCJDb250ZW50LVR5cGUiLCAidGV4dC9wbGFpbiIpXSAiNDAwIC0gQmFkIFJlcXVlc3Qi"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{-# LANGUAGE OverloadedStrings #-}
+import Network.Wai (responseLBS, Application, queryString)
+import Network.Wai.Handler.Warp (run)
+import Network.HTTP.Types (status200, status400)
+import Data.Maybe (fromMaybe)
+import Data.ByteString.Lazy.Char8 (pack)
+
+main :: IO ()
+main = do
+    putStrLn &quot;Starting server on port 8080...&quot;
+    run 8080 app
+
+app :: Application
+app req respond = case pathInfo req of
+    [&quot;greet&quot;] -&gt; do
+        let name = fromMaybe &quot;World&quot; $ lookup &quot;name&quot; $ queryString req
+        respond $ responseLBS status200 [(&quot;Content-Type&quot;, &quot;text/plain&quot;)] (pack $ &quot;Hello, &quot; ++ show name ++ &quot;!&quot;)
+    _ -&gt; respond $ responseLBS status400 [(&quot;Content-Type&quot;, &quot;text/plain&quot;)] &quot;400 - Bad Request&quot;</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>queryString</strong>: Extreu els paràmetres de consulta de la sol·licitud.</li>
+<li><strong>fromMaybe</strong>: Proporciona un valor per defecte si no es troba el paràmetre.</li>
+<li><strong>pack</strong>: Converteix una cadena a un ByteString.</li>
+</ul>
+</div><h2>Executant el Servidor</h2>
+<div class='content'><p>Executa el servidor i navega a:</p>
+<ul>
+<li><code>http://localhost:8080/greet?name=Haskell</code> per veure &quot;Hello, Haskell!&quot;</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem cobert els conceptes bàsics de la construcció d'un servidor web simple en Haskell utilitzant les biblioteques <code>wai</code> i <code>warp</code>. Hem començat amb un servidor bàsic, hem afegit routing i hem gestionat paràmetres de consulta. Aquesta base et permetrà construir aplicacions web més complexes en Haskell.</p>
+</div><h2>Resum</h2>
+<div class='content'><ul>
+<li>Hem configurat l'entorn Haskell i hem instal·lat les biblioteques necessàries.</li>
+<li>Hem construït un servidor web bàsic que respon amb &quot;Hello, World!&quot;.</li>
+<li>Hem afegit routing per gestionar diferents camins.</li>
+<li>Hem gestionat paràmetres de consulta per fer el servidor dinàmic.</li>
+</ul>
+<p>Amb aquestes habilitats, ara pots explorar temes més avançats com middleware, integració de bases de dades i routing més complex.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='metaprogramming'>&#x25C4;Metaprogramació</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Construir un Servidor Web Simple en Haskell</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='database-access'>Accés a Bases de Dades &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

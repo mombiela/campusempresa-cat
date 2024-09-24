@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimització del Rendiment de Renderització</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/open_gl/optimizing-rendering-performance" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/open_gl/optimizing-rendering-performance" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/open_gl/optimizing-rendering-performance" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/open_gl/optimizing-rendering-performance" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/open_gl/optimizing-rendering-performance" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='particle-systems'>&#x25C4;Sistemes de Partícules</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització del Rendiment de Renderització</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='level-of-detail'>Nivell de Detall (LOD) &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Optimitzar el rendiment de renderització en OpenGL és crucial per crear aplicacions gràfiques eficients i responsives. Aquest tema cobrirà diverses tècniques i millors pràctiques per millorar el rendiment de les teves aplicacions OpenGL, des de nivells principiants fins a avançats.</p>
+</div><h1>Comprendre els Colls d'Ampolla de Rendiment</h1>
+<div class='content'><p>Abans d'entrar en tècniques d'optimització, és essencial entendre els colls d'ampolla comuns de rendiment en aplicacions OpenGL.</p>
+<ul>
+<li><strong>Colls d'Ampolla de la CPU</strong>: Ocórren quan la CPU no pot seguir el ritme de la GPU, sovint a causa de crides de dibuix excessives o maneig ineficient de dades.</li>
+<li><strong>Colls d'Ampolla de la GPU</strong>: Succeeixen quan la GPU està aclaparada per la complexitat de les tasques de renderització, com ara alts comptatges de polígons o shaders complexos.</li>
+<li><strong>Colls d'Ampolla de Memòria</strong>: Resulten d'un ús ineficient de la memòria, conduint a transferències freqüents de dades entre la CPU i la GPU.</li>
+</ul>
+</div><h1>Optimitzacions de Nivell Principiant</h1>
+<div class='content'></div><h2>Reduir les Crides de Dibuix</h2>
+<div class='content'><p>Les crides de dibuix són comandes enviades des de la CPU a la GPU per renderitzar objectes. Reduir el nombre de crides de dibuix pot millorar significativament el rendiment.</p>
+<ul>
+<li><strong>Agrupació</strong>: Combina múltiples objectes en una sola crida de dibuix.</li>
+<li><strong>Instanciació</strong>: Utilitza la renderització instanciada per dibuixar múltiples instàncies del mateix objecte amb una sola crida de dibuix.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRXhlbXBsZSBkZSByZW5kZXJpdHphY2nDsyBpbnN0YW5jaWFkYQpnbEJpbmRWZXJ0ZXhBcnJheSh2YW8pOwpnbERyYXdBcnJheXNJbnN0YW5jZWQoR0xfVFJJQU5HTEVTLCAwLCB2ZXJ0ZXhDb3VudCwgaW5zdGFuY2VDb3VudCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Exemple de renderitzaci&oacute; instanciada
+glBindVertexArray(vao);
+glDrawArraysInstanced(GL_TRIANGLES, 0, vertexCount, instanceCount);</pre></div><div class='content'></div><h2>Gestió Eficient de Dades</h2>
+<div class='content'><p>Gestionar eficientment la transferència de dades entre la CPU i la GPU pot reduir la sobrecàrrega i millorar el rendiment.</p>
+<ul>
+<li><strong>Objectes de Búfer de Vèrtexs (VBOs)</strong>: Emmagatzema dades de vèrtexs en memòria de la GPU per minimitzar la transferència de dades.</li>
+<li><strong>Objectes de Búfer d'Elements (EBOs)</strong>: Utilitza EBOs per reutilitzar dades de vèrtexs per a múltiples crides de dibuix.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRXhlbXBsZSBkJ8O6cyBkZSBWQk8gaSBFQk8KR0x1aW50IHZibywgZWJvOwpnbEdlbkJ1ZmZlcnMoMSwgJnZibyk7CmdsQmluZEJ1ZmZlcihHTF9BUlJBWV9CVUZGRVIsIHZibyk7CmdsQnVmZmVyRGF0YShHTF9BUlJBWV9CVUZGRVIsIHNpemVvZih2ZXJ0aWNlcyksIHZlcnRpY2VzLCBHTF9TVEFUSUNfRFJBVyk7CgpnbEdlbkJ1ZmZlcnMoMSwgJmVibyk7CmdsQmluZEJ1ZmZlcihHTF9FTEVNRU5UX0FSUkFZX0JVRkZFUiwgZWJvKTsKZ2xCdWZmZXJEYXRhKEdMX0VMRU1FTlRfQVJSQVlfQlVGRkVSLCBzaXplb2YoaW5kaWNlcyksIGluZGljZXMsIEdMX1NUQVRJQ19EUkFXKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Exemple d'&uacute;s de VBO i EBO
+GLuint vbo, ebo;
+glGenBuffers(1, &amp;vbo);
+glBindBuffer(GL_ARRAY_BUFFER, vbo);
+glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+glGenBuffers(1, &amp;ebo);
+glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);</pre></div><div class='content'></div><h1>Optimitzacions de Nivell Intermedi</h1>
+<div class='content'></div><h2>Nivell de Detall (LOD)</h2>
+<div class='content'><p>Les tècniques de Nivell de Detall (LOD) ajusten la complexitat dels objectes en funció de la seva distància de la càmera.</p>
+<ul>
+<li><strong>Models Simplificats</strong>: Utilitza models de menys polígons per a objectes llunyans.</li>
+<li><strong>LOD Dinàmic</strong>: Ajusta el LOD dinàmicament en funció de mètriques de rendiment.</li>
+</ul>
+</div><h2>Optimització de Textures</h2>
+<div class='content'><p>L'ús eficient de textures pot impactar significativament el rendiment de renderització.</p>
+<ul>
+<li><strong>Atles de Textures</strong>: Combina múltiples textures en una sola textura gran per reduir les operacions de vinculació de textures.</li>
+<li><strong>Mipmapping</strong>: Utilitza mipmaps per millorar el rendiment del mostreig de textures i reduir l'aliasing.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRXhlbXBsZSBkZSBnZW5lcmFjacOzIGRlIG1pcG1hcHMKZ2xCaW5kVGV4dHVyZShHTF9URVhUVVJFXzJELCB0ZXh0dXJlSUQpOwpnbFRleFBhcmFtZXRlcmkoR0xfVEVYVFVSRV8yRCwgR0xfVEVYVFVSRV9NSU5fRklMVEVSLCBHTF9MSU5FQVJfTUlQTUFQX0xJTkVBUik7CmdsR2VuZXJhdGVNaXBtYXAoR0xfVEVYVFVSRV8yRCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Exemple de generaci&oacute; de mipmaps
+glBindTexture(GL_TEXTURE_2D, textureID);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+glGenerateMipmap(GL_TEXTURE_2D);</pre></div><div class='content'></div><h1>Optimitzacions de Nivell Avançat</h1>
+<div class='content'></div><h2>Optimització de Shaders</h2>
+<div class='content'><p>Optimitzar shaders pot conduir a millores significatives en el rendiment.</p>
+<ul>
+<li><strong>Minimitzar la Complexitat dels Shaders</strong>: Simplifica els càlculs dels shaders i evita operacions innecessàries.</li>
+<li><strong>Utilitza Funcions Incorporades</strong>: Aprofita les funcions incorporades de GLSL per a un rendiment optimitzat.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRXhlbXBsZSBkJ3VuIHNoYWRlciBkZSBmcmFnbWVudCBzaW1wbGUgb3B0aW1pdHphdAojdmVyc2lvbiAzMzAgY29yZQpvdXQgdmVjNCBGcmFnQ29sb3I7CmluIHZlYzIgVGV4Q29vcmRzOwp1bmlmb3JtIHNhbXBsZXIyRCB0ZXh0dXJlMTsKCnZvaWQgbWFpbigpCnsKICAgIEZyYWdDb2xvciA9IHRleHR1cmUodGV4dHVyZTEsIFRleENvb3Jkcyk7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Exemple d'un shader de fragment simple optimitzat
+#version 330 core
+out vec4 FragColor;
+in vec2 TexCoords;
+uniform sampler2D texture1;
+
+void main()
+{
+    FragColor = texture(texture1, TexCoords);
+}</pre></div><div class='content'></div><h2>Occlusion Culling</h2>
+<div class='content'><p>L'occlusion culling millora el rendiment no renderitzant objectes que no són visibles per la càmera.</p>
+<ul>
+<li><strong>Consultes d'Oclusió de Maquinari</strong>: Utilitza consultes d'OpenGL per determinar si els objectes són visibles.</li>
+<li><strong>Occlusion Culling de Programari</strong>: Implementa algorismes personalitzats per determinar la visibilitat.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRXhlbXBsZSBkJ8O6cyBkZSBjb25zdWx0ZXMgZCdvY2x1c2nDswpHTHVpbnQgcXVlcnk7CmdsR2VuUXVlcmllcygxLCAmcXVlcnkpOwpnbEJlZ2luUXVlcnkoR0xfU0FNUExFU19QQVNTRUQsIHF1ZXJ5KTsKLy8gUmVuZGVyaXR6YSBsYSBjYWl4YSBkZWxpbWl0YWRvcmEgbyBnZW9tZXRyaWEgc2ltcGxpZmljYWRhCmdsRW5kUXVlcnkoR0xfU0FNUExFU19QQVNTRUQpOwoKR0x1aW50IHNhbXBsZXNQYXNzZWQ7CmdsR2V0UXVlcnlPYmplY3R1aXYocXVlcnksIEdMX1FVRVJZX1JFU1VMVCwgJnNhbXBsZXNQYXNzZWQpOwppZiAoc2FtcGxlc1Bhc3NlZCA+IDApIHsKICAgIC8vIFJlbmRlcml0emEgbCdvYmplY3RlIHJlYWwKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Exemple d'&uacute;s de consultes d'oclusi&oacute;
+GLuint query;
+glGenQueries(1, &amp;query);
+glBeginQuery(GL_SAMPLES_PASSED, query);
+// Renderitza la caixa delimitadora o geometria simplificada
+glEndQuery(GL_SAMPLES_PASSED);
+
+GLuint samplesPassed;
+glGetQueryObjectuiv(query, GL_QUERY_RESULT, &amp;samplesPassed);
+if (samplesPassed &gt; 0) {
+    // Renderitza l'objecte real
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Optimitzar el rendiment de renderització en OpenGL implica una combinació de tècniques que aborden colls d'ampolla de la CPU, GPU i memòria. Reduint les crides de dibuix, gestionant dades eficientment, implementant LOD, optimitzant textures i shaders, i utilitzant occlusion culling, pots millorar significativament el rendiment de les teves aplicacions OpenGL. Recorda, l'optimització és un procés iteratiu que requereix perfilatge i proves per aconseguir els millors resultats.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='particle-systems'>&#x25C4;Sistemes de Partícules</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Optimització del Rendiment de Renderització</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='level-of-detail'>Nivell de Detall (LOD) &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

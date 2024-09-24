@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redis Streams</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/redis/redis-streams" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/redis/redis-streams" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/redis/redis-streams" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body>
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png" style="visibility:hiddenxx;"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/redis/redis-streams" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/redis/redis-streams" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content"><div class='row navigation'>
+	<div class='col-4'>
+					<a href='best-practices'>&#x25C4;Millors Pràctiques</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Redis Streams</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='redisgraph'>RedisGraph &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Redis Streams és una estructura de dades potent introduïda a Redis 5.0, dissenyada per gestionar i processar fluxos de dades. Aquesta secció cobrirà des dels conceptes bàsics fins a l'ús avançat de Redis Streams, incloent conceptes clau, comandes i exemples pràctics.</p>
+</div><h1>Introducció a Redis Streams</h1>
+<div class='content'><p>Redis Streams és una estructura de dades de registre que et permet emmagatzemar múltiples camps i valors de cadena amb una seqüència automàtica basada en el temps. És particularment útil per al processament de dades en temps real, l'origen d'esdeveniments i els sistemes de missatgeria.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Stream</strong>: Una seqüència d'entrades, cadascuna amb una ID única.</li>
+<li><strong>Entry</strong>: Un registre únic en el flux, que consisteix en una ID única i un o més parells camp-valor.</li>
+<li><strong>Consumer Group</strong>: Un grup de consumidors que poden llegir del flux de manera coordinada.</li>
+<li><strong>Consumer</strong>: Un client únic que llegeix entrades del flux.</li>
+</ul>
+</div><h1>Comandes Bàsiques</h1>
+<div class='content'></div><h2>Afegir Entrades a un Flux</h2>
+<div class='content'><p>Per afegir una entrada a un flux, utilitza la comanda <code>XADD</code>. La sintaxi bàsica és:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WEFERCBzdHJlYW1fbmFtZSAqIGZpZWxkMSB2YWx1ZTEgZmllbGQyIHZhbHVlMiAuLi4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XADD stream_name * field1 value1 field2 value2 ...</pre></div><div class='content'><p>Exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WEFERCBteXN0cmVhbSAqIHNlbnNvci1pZCAxMjM0IHRlbXBlcmF0dXJlIDE5Ljg="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XADD mystream * sensor-id 1234 temperature 19.8</pre></div><div class='content'></div><h2>Llegir Entrades d'un Flux</h2>
+<div class='content'><p>Per llegir entrades d'un flux, utilitza la comanda <code>XRANGE</code>. La sintaxi bàsica és:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WFJBTkdFIHN0cmVhbV9uYW1lIHN0YXJ0IGVuZCBbQ09VTlQgY291bnRd"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XRANGE stream_name start end [COUNT count]</pre></div><div class='content'><p>Exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WFJBTkdFIG15c3RyZWFtIC0gKw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XRANGE mystream - +</pre></div><div class='content'><p>Aquesta comanda llegeix totes les entrades del flux <code>mystream</code>.</p>
+</div><h2>Llegir Noves Entrades</h2>
+<div class='content'><p>Per llegir noves entrades afegides al flux, utilitza la comanda <code>XREAD</code>. La sintaxi bàsica és:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WFJFQUQgQ09VTlQgY291bnQgU1RSRUFNUyBzdHJlYW1fbmFtZSBsYXN0X2lk"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XREAD COUNT count STREAMS stream_name last_id</pre></div><div class='content'><p>Exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WFJFQUQgQ09VTlQgMiBTVFJFQU1TIG15c3RyZWFtICQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XREAD COUNT 2 STREAMS mystream $</pre></div><div class='content'><p>Aquesta comanda llegeix les dues següents noves entrades de <code>mystream</code>.</p>
+</div><h1>Ús Avançat</h1>
+<div class='content'></div><h2>Grups de Consumidors</h2>
+<div class='content'><p>Els grups de consumidors permeten que múltiples consumidors llegeixin del mateix flux sense duplicar la feina. Utilitza la comanda <code>XGROUP</code> per gestionar grups de consumidors.</p>
+<h4>Crear un Grup de Consumidors</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WEdST1VQIENSRUFURSBzdHJlYW1fbmFtZSBncm91cF9uYW1lICQgTUtTVFJFQU0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XGROUP CREATE stream_name group_name $ MKSTREAM</pre></div><div class='content'><p>Exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WEdST1VQIENSRUFURSBteXN0cmVhbSBteWdyb3VwICQgTUtTVFJFQU0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XGROUP CREATE mystream mygroup $ MKSTREAM</pre></div><div class='content'><h4>Llegir Entrades amb Grups de Consumidors</h4>
+<p>Utilitza la comanda <code>XREADGROUP</code> per llegir entrades com a part d'un grup de consumidors.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WFJFQURHUk9VUCBHUk9VUCBncm91cF9uYW1lIGNvbnN1bWVyX25hbWUgQ09VTlQgY291bnQgU1RSRUFNUyBzdHJlYW1fbmFtZSBsYXN0X2lk"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XREADGROUP GROUP group_name consumer_name COUNT count STREAMS stream_name last_id</pre></div><div class='content'><p>Exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WFJFQURHUk9VUCBHUk9VUCBteWdyb3VwIGNvbnN1bWVyMSBDT1VOVCAyIFNUUkVBTVMgbXlzdHJlYW0gPg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XREADGROUP GROUP mygroup consumer1 COUNT 2 STREAMS mystream &gt;</pre></div><div class='content'></div><h2>Acknowledging Entrades</h2>
+<div class='content'><p>Els consumidors han d'acknowledging les entrades que han processat utilitzant la comanda <code>XACK</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WEFDSyBzdHJlYW1fbmFtZSBncm91cF9uYW1lIGVudHJ5X2lk"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XACK stream_name group_name entry_id</pre></div><div class='content'><p>Exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WEFDSyBteXN0cmVhbSBteWdyb3VwIDE1MjY1Njk0OTU2MzEtMA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XACK mystream mygroup 1526569495631-0</pre></div><div class='content'></div><h2>Gestionar Entrades Pendents</h2>
+<div class='content'><p>Per veure les entrades pendents, utilitza la comanda <code>XPENDING</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WFBFTkRJTkcgc3RyZWFtX25hbWUgZ3JvdXBfbmFtZSBbc3RhcnQgZW5kIGNvdW50IFtjb25zdW1lcl1d"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XPENDING stream_name group_name [start end count [consumer]]</pre></div><div class='content'><p>Exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WFBFTkRJTkcgbXlzdHJlYW0gbXlncm91cA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XPENDING mystream mygroup</pre></div><div class='content'></div><h1>Exemples Pràctics</h1>
+<div class='content'></div><h2>Exemple: Productor-Consumidor Simple</h2>
+<div class='content'><p>Productor:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WEFERCBteXN0cmVhbSAqIHNlbnNvci1pZCAxMjM0IHRlbXBlcmF0dXJlIDE5LjgKWEFERCBteXN0cmVhbSAqIHNlbnNvci1pZCAxMjM1IHRlbXBlcmF0dXJlIDIwLjE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XADD mystream * sensor-id 1234 temperature 19.8
+XADD mystream * sensor-id 1235 temperature 20.1</pre></div><div class='content'><p>Consumidor:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WFJFQUQgQ09VTlQgMiBTVFJFQU1TIG15c3RyZWFtIDA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XREAD COUNT 2 STREAMS mystream 0</pre></div><div class='content'></div><h2>Exemple: Utilitzant Grups de Consumidors</h2>
+<div class='content'><p>Crear un grup de consumidors:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WEdST1VQIENSRUFURSBteXN0cmVhbSBteWdyb3VwICQgTUtTVFJFQU0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XGROUP CREATE mystream mygroup $ MKSTREAM</pre></div><div class='content'><p>Productor:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WEFERCBteXN0cmVhbSAqIHNlbnNvci1pZCAxMjM0IHRlbXBlcmF0dXJlIDE5LjgKWEFERCBteXN0cmVhbSAqIHNlbnNvci1pZCAxMjM1IHRlbXBlcmF0dXJlIDIwLjE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XADD mystream * sensor-id 1234 temperature 19.8
+XADD mystream * sensor-id 1235 temperature 20.1</pre></div><div class='content'><p>Consumidor 1:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WFJFQURHUk9VUCBHUk9VUCBteWdyb3VwIGNvbnN1bWVyMSBDT1VOVCAyIFNUUkVBTVMgbXlzdHJlYW0gPg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XREADGROUP GROUP mygroup consumer1 COUNT 2 STREAMS mystream &gt;</pre></div><div class='content'><p>Consumidor 2:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WFJFQURHUk9VUCBHUk9VUCBteWdyb3VwIGNvbnN1bWVyMiBDT1VOVCAyIFNUUkVBTVMgbXlzdHJlYW0gPg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XREADGROUP GROUP mygroup consumer2 COUNT 2 STREAMS mystream &gt;</pre></div><div class='content'><p>Acknowledge entrades processades:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WEFDSyBteXN0cmVhbSBteWdyb3VwIDE1MjY1Njk0OTU2MzEtMA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XACK mystream mygroup 1526569495631-0</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>Redis Streams és una estructura de dades versàtil per gestionar fluxos de dades en temps real. Suporta afegir i llegir entrades, gestionar grups de consumidors i acknowledging entrades processades. Entenent i utilitzant aquestes comandes, pots gestionar i processar eficientment fluxos de dades en les teves aplicacions.</p>
+</div><div class='row navigation'>
+	<div class='col-4'>
+					<a href='best-practices'>&#x25C4;Millors Pràctiques</a>
+			</div>
+	<div class='col-4 text-center'>
+		<a href="./" class="title">Redis Streams</a>
+	</div>
+	<div class='col-4 text-end'>
+					<a href='redisgraph'>RedisGraph &#x25BA;</a>
+			</div>
+</div>
+</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>
