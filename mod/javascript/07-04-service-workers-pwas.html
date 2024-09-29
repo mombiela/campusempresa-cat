@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Workers i Aplicacions Web Progressives (PWAs)</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/javascript/07-04-service-workers-pwas" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/javascript/07-04-service-workers-pwas" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/javascript/07-04-service-workers-pwas" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/javascript/07-04-service-workers-pwas" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/javascript/07-04-service-workers-pwas" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-03-websockets' title="WebSockets">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Service Workers i Aplicacions Web Progressives (PWAs)</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-05-introduction-webassembly' title="Introducció a WebAssembly">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, explorarem els conceptes de Service Workers i Aplicacions Web Progressives (PWAs). Els Service Workers són una tecnologia clau per a les PWAs, permetent funcionalitats com la càrrega fora de línia, notificacions push i altres característiques avançades que milloren l'experiència de l'usuari.</p>
+</div><h1>Què és un Service Worker?</h1>
+<div class='content'><p>Un Service Worker és un script que el navegador executa en segon pla, separat de la pàgina web. Proporciona característiques com la capacitat de gestionar sol·licituds de xarxa, emmagatzemar en memòria cau i enviar notificacions push.</p>
+</div><h2>Característiques Clau dels Service Workers:</h2>
+<div class='content'><ul>
+<li><strong>Execució en segon pla</strong>: No interfereixen amb el fil principal de la pàgina web.</li>
+<li><strong>Intercepció de sol·licituds de xarxa</strong>: Poden gestionar sol·licituds de xarxa per proporcionar funcionalitats fora de línia.</li>
+<li><strong>Memòria cau</strong>: Permeten emmagatzemar recursos en memòria cau per a un accés ràpid i fora de línia.</li>
+<li><strong>Notificacions push</strong>: Poden enviar notificacions push als usuaris.</li>
+</ul>
+</div><h1>Instal·lació i Activació d'un Service Worker</h1>
+<div class='content'></div><h2>Pas 1: Registrar el Service Worker</h2>
+<div class='content'><p>El primer pas és registrar el Service Worker des del fitxer JavaScript principal de la teva aplicació.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aWYgKCdzZXJ2aWNlV29ya2VyJyBpbiBuYXZpZ2F0b3IpIHsKICB3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcignbG9hZCcsICgpID0+IHsKICAgIG5hdmlnYXRvci5zZXJ2aWNlV29ya2VyLnJlZ2lzdGVyKCcvc2VydmljZS13b3JrZXIuanMnKQogICAgICAudGhlbihyZWdpc3RyYXRpb24gPT4gewogICAgICAgIGNvbnNvbGUubG9nKCdTZXJ2aWNlIFdvcmtlciByZWdpc3RyYXQgYW1iIMOoeGl0OicsIHJlZ2lzdHJhdGlvbik7CiAgICAgIH0pCiAgICAgIC5jYXRjaChlcnJvciA9PiB7CiAgICAgICAgY29uc29sZS5sb2coJ0Vycm9yIGVuIHJlZ2lzdHJhciBlbCBTZXJ2aWNlIFdvcmtlcjonLCBlcnJvcik7CiAgICAgIH0pOwogIH0pOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () =&gt; {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration =&gt; {
+        console.log('Service Worker registrat amb &egrave;xit:', registration);
+      })
+      .catch(error =&gt; {
+        console.log('Error en registrar el Service Worker:', error);
+      });
+  });
+}</pre></div><div class='content'></div><h2>Pas 2: Escriure el Fitxer del Service Worker</h2>
+<div class='content'><p>El següent pas és crear el fitxer <code>service-worker.js</code> on definirem el comportament del Service Worker.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZXZlbnQgPT4gewogIGNvbnNvbGUubG9nKCdTZXJ2aWNlIFdvcmtlciBpbnN0YWzCt2xhdCcpOwogIC8vIFByZS1jYWNoaW5nIHJlc291cmNlcwogIGV2ZW50LndhaXRVbnRpbCgKICAgIGNhY2hlcy5vcGVuKCd2MScpLnRoZW4oY2FjaGUgPT4gewogICAgICByZXR1cm4gY2FjaGUuYWRkQWxsKFsKICAgICAgICAnLycsCiAgICAgICAgJy9pbmRleC5odG1sJywKICAgICAgICAnL3N0eWxlcy5jc3MnLAogICAgICAgICcvc2NyaXB0LmpzJywKICAgICAgICAnL2ltYWdlLnBuZycKICAgICAgXSk7CiAgICB9KQogICk7Cn0pOwoKc2VsZi5hZGRFdmVudExpc3RlbmVyKCdhY3RpdmF0ZScsIGV2ZW50ID0+IHsKICBjb25zb2xlLmxvZygnU2VydmljZSBXb3JrZXIgYWN0aXZhdCcpOwp9KTsKCnNlbGYuYWRkRXZlbnRMaXN0ZW5lcignZmV0Y2gnLCBldmVudCA9PiB7CiAgZXZlbnQucmVzcG9uZFdpdGgoCiAgICBjYWNoZXMubWF0Y2goZXZlbnQucmVxdWVzdCkKICAgICAgLnRoZW4ocmVzcG9uc2UgPT4gewogICAgICAgIHJldHVybiByZXNwb25zZSB8fCBmZXRjaChldmVudC5yZXF1ZXN0KTsKICAgICAgfSkKICApOwp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>self.addEventListener('install', event =&gt; {
+  console.log('Service Worker instal&middot;lat');
+  // Pre-caching resources
+  event.waitUntil(
+    caches.open('v1').then(cache =&gt; {
+      return cache.addAll([
+        '/',
+        '/index.html',
+        '/styles.css',
+        '/script.js',
+        '/image.png'
+      ]);
+    })
+  );
+});
+
+self.addEventListener('activate', event =&gt; {
+  console.log('Service Worker activat');
+});
+
+self.addEventListener('fetch', event =&gt; {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response =&gt; {
+        return response || fetch(event.request);
+      })
+  );
+});</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><strong><code>install</code></strong>: Aquest esdeveniment s'activa quan el Service Worker s'instal·la. Aquí és on podem pre-emmagatzemar en memòria cau els recursos necessaris.</li>
+<li><strong><code>activate</code></strong>: Aquest esdeveniment s'activa quan el Service Worker s'activa. És un bon lloc per netejar memòries cau antigues.</li>
+<li><strong><code>fetch</code></strong>: Aquest esdeveniment s'activa per a cada sol·licitud de xarxa. Aquí podem interceptar les sol·licituds i servir-les des de la memòria cau si estan disponibles.</li>
+</ul>
+</div><h1>Aplicacions Web Progressives (PWAs)</h1>
+<div class='content'><p>Les PWAs són aplicacions web que utilitzen tecnologies modernes per proporcionar una experiència d'usuari semblant a les aplicacions natives. Les característiques clau de les PWAs inclouen:</p>
+<ul>
+<li><strong>Responsive</strong>: Adaptables a qualsevol dispositiu i mida de pantalla.</li>
+<li><strong>Offline-first</strong>: Funcionen fora de línia gràcies als Service Workers.</li>
+<li><strong>Segures</strong>: Requereixen HTTPS per garantir la seguretat.</li>
+<li><strong>Engaging</strong>: Permeten notificacions push i altres funcionalitats interactives.</li>
+</ul>
+</div><h2>Manifest de la PWA</h2>
+<div class='content'><p>Per convertir la teva aplicació web en una PWA, necessites un fitxer <code>manifest.json</code> que defineixi les propietats de la teva aplicació.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJuYW1lIjogIk15IFBXQSIsCiAgInNob3J0X25hbWUiOiAiUFdBIiwKICAic3RhcnRfdXJsIjogIi9pbmRleC5odG1sIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjZmZmZmZmIiwKICAidGhlbWVfY29sb3IiOiAiIzAwMDAwMCIsCiAgImljb25zIjogWwogICAgewogICAgICAic3JjIjogIi9pY29uLTE5MngxOTIucG5nIiwKICAgICAgInNpemVzIjogIjE5MngxOTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9LAogICAgewogICAgICAic3JjIjogIi9pY29uLTUxMng1MTIucG5nIiwKICAgICAgInNpemVzIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9CiAgXQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;name&quot;: &quot;My PWA&quot;,
+  &quot;short_name&quot;: &quot;PWA&quot;,
+  &quot;start_url&quot;: &quot;/index.html&quot;,
+  &quot;display&quot;: &quot;standalone&quot;,
+  &quot;background_color&quot;: &quot;#ffffff&quot;,
+  &quot;theme_color&quot;: &quot;#000000&quot;,
+  &quot;icons&quot;: [
+    {
+      &quot;src&quot;: &quot;/icon-192x192.png&quot;,
+      &quot;sizes&quot;: &quot;192x192&quot;,
+      &quot;type&quot;: &quot;image/png&quot;
+    },
+    {
+      &quot;src&quot;: &quot;/icon-512x512.png&quot;,
+      &quot;sizes&quot;: &quot;512x512&quot;,
+      &quot;type&quot;: &quot;image/png&quot;
+    }
+  ]
+}</pre></div><div class='content'></div><h2>Integració del Manifest</h2>
+<div class='content'><p>Inclou el manifest en el teu fitxer HTML principal.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PGxpbmsgcmVsPSJtYW5pZmVzdCIgaHJlZj0iL21hbmlmZXN0Lmpzb24iPg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;link rel=&quot;manifest&quot; href=&quot;/manifest.json&quot;&gt;</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Crear una PWA simple que funcioni fora de línia i mostri una notificació push.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li><strong>Crear el fitxer <code>manifest.json</code></strong>.</li>
+<li><strong>Registrar i escriure el Service Worker</strong>.</li>
+<li><strong>Implementar la memòria cau de recursos</strong>.</li>
+<li><strong>Enviar una notificació push</strong>.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><ol>
+<li><strong><code>manifest.json</code></strong>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJuYW1lIjogIlNpbXBsZSBQV0EiLAogICJzaG9ydF9uYW1lIjogIlBXQSIsCiAgInN0YXJ0X3VybCI6ICIvaW5kZXguaHRtbCIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgImJhY2tncm91bmRfY29sb3IiOiAiI2ZmZmZmZiIsCiAgInRoZW1lX2NvbG9yIjogIiMwMDAwZmYiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICIvaWNvbi0xOTJ4MTkyLnBuZyIsCiAgICAgICJzaXplcyI6ICIxOTJ4MTkyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgfSwKICAgIHsKICAgICAgInNyYyI6ICIvaWNvbi01MTJ4NTEyLnBuZyIsCiAgICAgICJzaXplcyI6ICI1MTJ4NTEyIiwKICAgICAgInR5cGUiOiAiaW1hZ2UvcG5nIgogICAgfQogIF0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;name&quot;: &quot;Simple PWA&quot;,
+  &quot;short_name&quot;: &quot;PWA&quot;,
+  &quot;start_url&quot;: &quot;/index.html&quot;,
+  &quot;display&quot;: &quot;standalone&quot;,
+  &quot;background_color&quot;: &quot;#ffffff&quot;,
+  &quot;theme_color&quot;: &quot;#0000ff&quot;,
+  &quot;icons&quot;: [
+    {
+      &quot;src&quot;: &quot;/icon-192x192.png&quot;,
+      &quot;sizes&quot;: &quot;192x192&quot;,
+      &quot;type&quot;: &quot;image/png&quot;
+    },
+    {
+      &quot;src&quot;: &quot;/icon-512x512.png&quot;,
+      &quot;sizes&quot;: &quot;512x512&quot;,
+      &quot;type&quot;: &quot;image/png&quot;
+    }
+  ]
+}</pre></div><div class='content'><ol start="2">
+<li><strong>Registrar el Service Worker</strong>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aWYgKCdzZXJ2aWNlV29ya2VyJyBpbiBuYXZpZ2F0b3IpIHsKICB3aW5kb3cuYWRkRXZlbnRMaXN0ZW5lcignbG9hZCcsICgpID0+IHsKICAgIG5hdmlnYXRvci5zZXJ2aWNlV29ya2VyLnJlZ2lzdGVyKCcvc2VydmljZS13b3JrZXIuanMnKQogICAgICAudGhlbihyZWdpc3RyYXRpb24gPT4gewogICAgICAgIGNvbnNvbGUubG9nKCdTZXJ2aWNlIFdvcmtlciByZWdpc3RyYXQgYW1iIMOoeGl0OicsIHJlZ2lzdHJhdGlvbik7CiAgICAgIH0pCiAgICAgIC5jYXRjaChlcnJvciA9PiB7CiAgICAgICAgY29uc29sZS5sb2coJ0Vycm9yIGVuIHJlZ2lzdHJhciBlbCBTZXJ2aWNlIFdvcmtlcjonLCBlcnJvcik7CiAgICAgIH0pOwogIH0pOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () =&gt; {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration =&gt; {
+        console.log('Service Worker registrat amb &egrave;xit:', registration);
+      })
+      .catch(error =&gt; {
+        console.log('Error en registrar el Service Worker:', error);
+      });
+  });
+}</pre></div><div class='content'><ol start="3">
+<li><strong>Escriure el Service Worker</strong>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZXZlbnQgPT4gewogIGV2ZW50LndhaXRVbnRpbCgKICAgIGNhY2hlcy5vcGVuKCd2MScpLnRoZW4oY2FjaGUgPT4gewogICAgICByZXR1cm4gY2FjaGUuYWRkQWxsKFsKICAgICAgICAnLycsCiAgICAgICAgJy9pbmRleC5odG1sJywKICAgICAgICAnL3N0eWxlcy5jc3MnLAogICAgICAgICcvc2NyaXB0LmpzJywKICAgICAgICAnL2ljb24tMTkyeDE5Mi5wbmcnLAogICAgICAgICcvaWNvbi01MTJ4NTEyLnBuZycKICAgICAgXSk7CiAgICB9KQogICk7Cn0pOwoKc2VsZi5hZGRFdmVudExpc3RlbmVyKCdmZXRjaCcsIGV2ZW50ID0+IHsKICBldmVudC5yZXNwb25kV2l0aCgKICAgIGNhY2hlcy5tYXRjaChldmVudC5yZXF1ZXN0KQogICAgICAudGhlbihyZXNwb25zZSA9PiB7CiAgICAgICAgcmV0dXJuIHJlc3BvbnNlIHx8IGZldGNoKGV2ZW50LnJlcXVlc3QpOwogICAgICB9KQogICk7Cn0pOwoKc2VsZi5hZGRFdmVudExpc3RlbmVyKCdwdXNoJywgZXZlbnQgPT4gewogIGNvbnN0IHRpdGxlID0gJ05vdGlmaWNhY2nDsyBQdXNoJzsKICBjb25zdCBvcHRpb25zID0gewogICAgYm9keTogJ0FpeMOyIMOpcyB1bmEgbm90aWZpY2FjacOzIHB1c2ghJywKICAgIGljb246ICcvaWNvbi0xOTJ4MTkyLnBuZycsCiAgICBiYWRnZTogJy9pY29uLTE5MngxOTIucG5nJwogIH07CgogIGV2ZW50LndhaXRVbnRpbCgKICAgIHNlbGYucmVnaXN0cmF0aW9uLnNob3dOb3RpZmljYXRpb24odGl0bGUsIG9wdGlvbnMpCiAgKTsKfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>self.addEventListener('install', event =&gt; {
+  event.waitUntil(
+    caches.open('v1').then(cache =&gt; {
+      return cache.addAll([
+        '/',
+        '/index.html',
+        '/styles.css',
+        '/script.js',
+        '/icon-192x192.png',
+        '/icon-512x512.png'
+      ]);
+    })
+  );
+});
+
+self.addEventListener('fetch', event =&gt; {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response =&gt; {
+        return response || fetch(event.request);
+      })
+  );
+});
+
+self.addEventListener('push', event =&gt; {
+  const title = 'Notificaci&oacute; Push';
+  const options = {
+    body: 'Aix&ograve; &eacute;s una notificaci&oacute; push!',
+    icon: '/icon-192x192.png',
+    badge: '/icon-192x192.png'
+  };
+
+  event.waitUntil(
+    self.registration.showNotification(title, options)
+  );
+});</pre></div><div class='content'><ol start="4">
+<li><strong>Enviar una Notificació Push</strong> (simulació):</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gU2ltdWxhY2nDsyBkJ2VudmlhbWVudCBkZSBub3RpZmljYWNpw7MgcHVzaApuYXZpZ2F0b3Iuc2VydmljZVdvcmtlci5yZWFkeS50aGVuKHJlZ2lzdHJhdGlvbiA9PiB7CiAgcmVnaXN0cmF0aW9uLnNob3dOb3RpZmljYXRpb24oJ05vdGlmaWNhY2nDsyBQdXNoJywgewogICAgYm9keTogJ0FpeMOyIMOpcyB1bmEgbm90aWZpY2FjacOzIHB1c2ghJywKICAgIGljb246ICcvaWNvbi0xOTJ4MTkyLnBuZycsCiAgICBiYWRnZTogJy9pY29uLTE5MngxOTIucG5nJwogIH0pOwp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Simulaci&oacute; d'enviament de notificaci&oacute; push
+navigator.serviceWorker.ready.then(registration =&gt; {
+  registration.showNotification('Notificaci&oacute; Push', {
+    body: 'Aix&ograve; &eacute;s una notificaci&oacute; push!',
+    icon: '/icon-192x192.png',
+    badge: '/icon-192x192.png'
+  });
+});</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après què són els Service Workers i com utilitzar-los per crear Aplicacions Web Progressives (PWAs). Hem vist com registrar i escriure un Service Worker, així com crear un manifest per a la nostra PWA. També hem implementat una funcionalitat de notificació push. Aquestes tècniques permeten millorar significativament l'experiència de l'usuari, fent que les aplicacions web siguin més ràpides, fiables i atractives.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-03-websockets' title="WebSockets">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-05-introduction-webassembly' title="Introducció a WebAssembly">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

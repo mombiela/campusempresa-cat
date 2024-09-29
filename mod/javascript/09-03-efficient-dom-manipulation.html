@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manipulació Eficient del DOM</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/javascript/09-03-efficient-dom-manipulation" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/javascript/09-03-efficient-dom-manipulation" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/javascript/09-03-efficient-dom-manipulation" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/javascript/09-03-efficient-dom-manipulation" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/javascript/09-03-efficient-dom-manipulation" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-02-memory-management' title="Gestió de Memòria">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Manipulació Eficient del DOM</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-04-lazy-loading-code-splitting' title="Càrrega Per Mandat i Divisió de Codi">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La manipulació del Document Object Model (DOM) és una part fonamental del desenvolupament web amb JavaScript. No obstant això, si no es fa de manera eficient, pot afectar negativament el rendiment de la teva aplicació. En aquesta secció, aprendrem tècniques per manipular el DOM de manera eficient.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'></div><h2>1. Comprendre el DOM</h2>
+<div class='content'><p>El DOM és una representació en forma d'arbre de la pàgina web. Cada element HTML és un node en aquest arbre. Manipular el DOM implica afegir, eliminar o modificar aquests nodes.</p>
+</div><h2>2. Reflow i Repaint</h2>
+<div class='content'><ul>
+<li><strong>Reflow</strong>: Es produeix quan el navegador ha de calcular de nou les posicions i dimensions dels elements en la pàgina.</li>
+<li><strong>Repaint</strong>: Es produeix quan el navegador ha de tornar a dibuixar una part de la pàgina a causa d'un canvi visual.</li>
+</ul>
+<p>Els reflows són més costosos en termes de rendiment que els repaints. Per tant, és important minimitzar els reflows.</p>
+</div><h2>3. Manipulació Directa vs. Manipulació en Memòria</h2>
+<div class='content'><p>Manipular el DOM directament pot ser costós. Una tècnica eficient és fer manipulacions en memòria (utilitzant fragments de document) i després afegir-les al DOM.</p>
+</div><h1>Tècniques per a una Manipulació Eficient del DOM</h1>
+<div class='content'></div><h2>1. Utilitzar Fragments de Document</h2>
+<div class='content'><p>Els fragments de document permeten crear nodes en memòria i afegir-los al DOM en una sola operació.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gQ3JlYXIgdW4gZnJhZ21lbnQgZGUgZG9jdW1lbnQKY29uc3QgZnJhZ21lbnQgPSBkb2N1bWVudC5jcmVhdGVEb2N1bWVudEZyYWdtZW50KCk7CgovLyBDcmVhciBub3VzIGVsZW1lbnRzIGkgYWZlZ2lyLWxvcyBhbCBmcmFnbWVudApmb3IgKGxldCBpID0gMDsgaSA8IDEwMDsgaSsrKSB7CiAgY29uc3QgbmV3RGl2ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnZGl2Jyk7CiAgbmV3RGl2LnRleHRDb250ZW50ID0gYEVsZW1lbnQgJHtpfWA7CiAgZnJhZ21lbnQuYXBwZW5kQ2hpbGQobmV3RGl2KTsKfQoKLy8gQWZlZ2lyIGVsIGZyYWdtZW50IGFsIERPTQpkb2N1bWVudC5ib2R5LmFwcGVuZENoaWxkKGZyYWdtZW50KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Crear un fragment de document
+const fragment = document.createDocumentFragment();
+
+// Crear nous elements i afegir-los al fragment
+for (let i = 0; i &lt; 100; i++) {
+  const newDiv = document.createElement('div');
+  newDiv.textContent = `Element ${i}`;
+  fragment.appendChild(newDiv);
+}
+
+// Afegir el fragment al DOM
+document.body.appendChild(fragment);</pre></div><div class='content'></div><h2>2. Evitar Accessos Repetits al DOM</h2>
+<div class='content'><p>Cada accés al DOM pot ser costós. És millor emmagatzemar referències als elements que necessites manipular.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgY29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NvbnRhaW5lcicpOwoKLy8gRXZpdGFyIGFjY2VkaXIgYWwgRE9NIGRpbnMgZGVsIGJ1Y2xlCmZvciAobGV0IGkgPSAwOyBpIDwgMTAwOyBpKyspIHsKICBjb25zdCBuZXdEaXYgPSBkb2N1bWVudC5jcmVhdGVFbGVtZW50KCdkaXYnKTsKICBuZXdEaXYudGV4dENvbnRlbnQgPSBgRWxlbWVudCAke2l9YDsKICBjb250YWluZXIuYXBwZW5kQ2hpbGQobmV3RGl2KTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const container = document.getElementById('container');
+
+// Evitar accedir al DOM dins del bucle
+for (let i = 0; i &lt; 100; i++) {
+  const newDiv = document.createElement('div');
+  newDiv.textContent = `Element ${i}`;
+  container.appendChild(newDiv);
+}</pre></div><div class='content'></div><h2>3. Utilitzar `innerHTML` amb Precaució</h2>
+<div class='content'><p><code>innerHTML</code> pot ser més ràpid que crear elements individualment, però també pot ser menys segur i més difícil de mantenir.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgY29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NvbnRhaW5lcicpOwpsZXQgaHRtbFN0cmluZyA9ICcnOwoKZm9yIChsZXQgaSA9IDA7IGkgPCAxMDA7IGkrKykgewogIGh0bWxTdHJpbmcgKz0gYDxkaXY+RWxlbWVudCAke2l9PC9kaXY+YDsKfQoKY29udGFpbmVyLmlubmVySFRNTCA9IGh0bWxTdHJpbmc7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const container = document.getElementById('container');
+let htmlString = '';
+
+for (let i = 0; i &lt; 100; i++) {
+  htmlString += `&lt;div&gt;Element ${i}&lt;/div&gt;`;
+}
+
+container.innerHTML = htmlString;</pre></div><div class='content'></div><h2>4. Minimitzar els Reflows</h2>
+<div class='content'><ul>
+<li><strong>Afegir classes en lloc d'estils individuals</strong>: Afegir una classe que conté múltiples estils és més eficient que afegir estils individualment.</li>
+<li><strong>Amagar elements durant la manipulació</strong>: Amagar un element (<code>display: none</code>) abans de fer múltiples canvis i després mostrar-lo de nou pot reduir els reflows.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgY29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NvbnRhaW5lcicpOwpjb250YWluZXIuc3R5bGUuZGlzcGxheSA9ICdub25lJzsKCi8vIEZlciBtw7psdGlwbGVzIGNhbnZpcwpmb3IgKGxldCBpID0gMDsgaSA8IDEwMDsgaSsrKSB7CiAgY29uc3QgbmV3RGl2ID0gZG9jdW1lbnQuY3JlYXRlRWxlbWVudCgnZGl2Jyk7CiAgbmV3RGl2LnRleHRDb250ZW50ID0gYEVsZW1lbnQgJHtpfWA7CiAgY29udGFpbmVyLmFwcGVuZENoaWxkKG5ld0Rpdik7Cn0KCmNvbnRhaW5lci5zdHlsZS5kaXNwbGF5ID0gJ2Jsb2NrJzs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const container = document.getElementById('container');
+container.style.display = 'none';
+
+// Fer m&uacute;ltiples canvis
+for (let i = 0; i &lt; 100; i++) {
+  const newDiv = document.createElement('div');
+  newDiv.textContent = `Element ${i}`;
+  container.appendChild(newDiv);
+}
+
+container.style.display = 'block';</pre></div><div class='content'></div><h2>5. Utilitzar Delegació d'Esdeveniments</h2>
+<div class='content'><p>La delegació d'esdeveniments permet gestionar esdeveniments en elements dinàmics de manera més eficient.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgY29udGFpbmVyID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NvbnRhaW5lcicpOwoKLy8gRGVsZWdhY2nDsyBkJ2VzZGV2ZW5pbWVudHMKY29udGFpbmVyLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24oZXZlbnQpIHsKICBpZiAoZXZlbnQudGFyZ2V0ICYmIGV2ZW50LnRhcmdldC5ub2RlTmFtZSA9PT0gJ0RJVicpIHsKICAgIGNvbnNvbGUubG9nKGBFbGVtZW50IGNsaWNhdDogJHtldmVudC50YXJnZXQudGV4dENvbnRlbnR9YCk7CiAgfQp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const container = document.getElementById('container');
+
+// Delegaci&oacute; d'esdeveniments
+container.addEventListener('click', function(event) {
+  if (event.target &amp;&amp; event.target.nodeName === 'DIV') {
+    console.log(`Element clicat: ${event.target.textContent}`);
+  }
+});</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear i Afegir Elements amb un Fragment de Document</h2>
+<div class='content'><p>Crea una funció que afegeixi 100 elements <code>div</code> amb el text &quot;Element X&quot; (on X és el número de l'element) a un contenidor utilitzant un fragment de document.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gYWRkRWxlbWVudHMoKSB7CiAgY29uc3QgZnJhZ21lbnQgPSBkb2N1bWVudC5jcmVhdGVEb2N1bWVudEZyYWdtZW50KCk7CiAgZm9yIChsZXQgaSA9IDE7IGkgPD0gMTAwOyBpKyspIHsKICAgIGNvbnN0IG5ld0RpdiA9IGRvY3VtZW50LmNyZWF0ZUVsZW1lbnQoJ2RpdicpOwogICAgbmV3RGl2LnRleHRDb250ZW50ID0gYEVsZW1lbnQgJHtpfWA7CiAgICBmcmFnbWVudC5hcHBlbmRDaGlsZChuZXdEaXYpOwogIH0KICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgnY29udGFpbmVyJykuYXBwZW5kQ2hpbGQoZnJhZ21lbnQpOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function addElements() {
+  const fragment = document.createDocumentFragment();
+  for (let i = 1; i &lt;= 100; i++) {
+    const newDiv = document.createElement('div');
+    newDiv.textContent = `Element ${i}`;
+    fragment.appendChild(newDiv);
+  }
+  document.getElementById('container').appendChild(fragment);
+}</pre></div><div class='content'></div><h2>Exercici 2: Delegació d'Esdeveniments</h2>
+<div class='content'><p>Implementa la delegació d'esdeveniments per gestionar clics en elements <code>div</code> dins d'un contenidor. Quan es faci clic en un <code>div</code>, mostra un missatge amb el text del <code>div</code> clicat.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ2NvbnRhaW5lcicpLmFkZEV2ZW50TGlzdGVuZXIoJ2NsaWNrJywgZnVuY3Rpb24oZXZlbnQpIHsKICBpZiAoZXZlbnQudGFyZ2V0ICYmIGV2ZW50LnRhcmdldC5ub2RlTmFtZSA9PT0gJ0RJVicpIHsKICAgIGFsZXJ0KGBFbGVtZW50IGNsaWNhdDogJHtldmVudC50YXJnZXQudGV4dENvbnRlbnR9YCk7CiAgfQp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>document.getElementById('container').addEventListener('click', function(event) {
+  if (event.target &amp;&amp; event.target.nodeName === 'DIV') {
+    alert(`Element clicat: ${event.target.textContent}`);
+  }
+});</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après diverses tècniques per manipular el DOM de manera eficient:</p>
+<ul>
+<li>Utilitzar fragments de document per reduir el nombre d'operacions directes al DOM.</li>
+<li>Evitar accessos repetits al DOM emmagatzemant referències.</li>
+<li>Utilitzar <code>innerHTML</code> amb precaució per a grans quantitats de contingut.</li>
+<li>Minimitzar els reflows amagant elements durant la manipulació.</li>
+<li>Utilitzar la delegació d'esdeveniments per gestionar esdeveniments en elements dinàmics.</li>
+</ul>
+<p>Aquestes tècniques ajudaran a millorar el rendiment de les teves aplicacions web i a fer-les més responsives. En el proper tema, explorarem com gestionar i validar formularis de manera eficient.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-02-memory-management' title="Gestió de Memòria">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-04-lazy-loading-code-splitting' title="Càrrega Per Mandat i Divisió de Codi">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

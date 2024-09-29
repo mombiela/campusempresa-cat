@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operacions amb Fitxers i Directoris</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/python/06-04-file-and-directory-operations" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/python/06-04-file-and-directory-operations" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/python/06-04-file-and-directory-operations" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/python/06-04-file-and-directory-operations" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/python/06-04-file-and-directory-operations" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-03-json-data-handling' title="Gestió de Dades JSON">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Operacions amb Fitxers i Directoris</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-01-introduction-to-exceptions' title="Introducció a les Excepcions">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com gestionar fitxers i directoris utilitzant Python. Això inclou crear, eliminar, moure i renombrar fitxers i directoris, així com obtenir informació sobre ells. Utilitzarem el mòdul <code>os</code> i el mòdul <code>shutil</code> per dur a terme aquestes operacions.</p>
+</div><h1>Continguts</h1>
+<div class='content'><ol>
+<li><a href="#introducció-al-mòdul-os">Introducció al mòdul <code>os</code></a></li>
+<li><a href="#operacions-bàsiques-amb-fitxers">Operacions bàsiques amb fitxers</a></li>
+<li><a href="#operacions-bàsiques-amb-directoris">Operacions bàsiques amb directoris</a></li>
+<li><a href="#ús-del-mòdul-shutil">Ús del mòdul <code>shutil</code></a></li>
+<li><a href="#exercicis-pràctics">Exercicis pràctics</a></li>
+</ol>
+</div><h1>Introducció al mòdul `os`</h1>
+<div class='content'><p>El mòdul <code>os</code> proporciona una manera de treballar amb el sistema operatiu. Aquest mòdul ens permet interactuar amb el sistema de fitxers i realitzar operacions com crear, eliminar i moure fitxers i directoris.</p>
+</div><h2>Exemple bàsic</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9zCgojIE9idGVuaXIgZWwgZGlyZWN0b3JpIGRlIHRyZWJhbGwgYWN0dWFsCmN1cnJlbnRfZGlyZWN0b3J5ID0gb3MuZ2V0Y3dkKCkKcHJpbnQoZiJEaXJlY3RvcmkgYWN0dWFsOiB7Y3VycmVudF9kaXJlY3Rvcnl9IikKCiMgQ2FudmlhciBlbCBkaXJlY3RvcmkgZGUgdHJlYmFsbApvcy5jaGRpcignL3BhdGgvdG8vbmV3L2RpcmVjdG9yeScpCnByaW50KGYiTm91IGRpcmVjdG9yaSBkZSB0cmViYWxsOiB7b3MuZ2V0Y3dkKCl9Iik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import os
+
+# Obtenir el directori de treball actual
+current_directory = os.getcwd()
+print(f&quot;Directori actual: {current_directory}&quot;)
+
+# Canviar el directori de treball
+os.chdir('/path/to/new/directory')
+print(f&quot;Nou directori de treball: {os.getcwd()}&quot;)</pre></div><div class='content'></div><h1>Operacions bàsiques amb fitxers</h1>
+<div class='content'></div><h2>Crear un fitxer</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("d2l0aCBvcGVuKCdub3VfZml0eGVyLnR4dCcsICd3JykgYXMgZmlsZToKICAgIGZpbGUud3JpdGUoIkFxdWVzdCDDqXMgdW4gbm91IGZpdHhlci4iKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>with open('nou_fitxer.txt', 'w') as file:
+    file.write(&quot;Aquest &eacute;s un nou fitxer.&quot;)</pre></div><div class='content'></div><h2>Eliminar un fitxer</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9zCgppZiBvcy5wYXRoLmV4aXN0cygnbm91X2ZpdHhlci50eHQnKToKICAgIG9zLnJlbW92ZSgnbm91X2ZpdHhlci50eHQnKQogICAgcHJpbnQoIkZpdHhlciBlbGltaW5hdC4iKQplbHNlOgogICAgcHJpbnQoIkVsIGZpdHhlciBubyBleGlzdGVpeC4iKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import os
+
+if os.path.exists('nou_fitxer.txt'):
+    os.remove('nou_fitxer.txt')
+    print(&quot;Fitxer eliminat.&quot;)
+else:
+    print(&quot;El fitxer no existeix.&quot;)</pre></div><div class='content'></div><h2>Renombrar un fitxer</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9zCgpvcy5yZW5hbWUoJ2FudGljX25vbS50eHQnLCAnbm91X25vbS50eHQnKQpwcmludCgiRml0eGVyIHJlbm9tYnJhdC4iKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import os
+
+os.rename('antic_nom.txt', 'nou_nom.txt')
+print(&quot;Fitxer renombrat.&quot;)</pre></div><div class='content'></div><h2>Moure un fitxer</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9zCgpvcy5yZXBsYWNlKCdmaXR4ZXJfYV9tb3VyZS50eHQnLCAnL25vdS9jYW1pL2ZpdHhlcl9hX21vdXJlLnR4dCcpCnByaW50KCJGaXR4ZXIgbW9ndXQuIik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import os
+
+os.replace('fitxer_a_moure.txt', '/nou/cami/fitxer_a_moure.txt')
+print(&quot;Fitxer mogut.&quot;)</pre></div><div class='content'></div><h1>Operacions bàsiques amb directoris</h1>
+<div class='content'></div><h2>Crear un directori</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9zCgpvcy5ta2Rpcignbm91X2RpcmVjdG9yaScpCnByaW50KCJEaXJlY3RvcmkgY3JlYXQuIik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import os
+
+os.mkdir('nou_directori')
+print(&quot;Directori creat.&quot;)</pre></div><div class='content'></div><h2>Eliminar un directori</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9zCgpvcy5ybWRpcignbm91X2RpcmVjdG9yaScpCnByaW50KCJEaXJlY3RvcmkgZWxpbWluYXQuIik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import os
+
+os.rmdir('nou_directori')
+print(&quot;Directori eliminat.&quot;)</pre></div><div class='content'></div><h2>Llistar contingut d'un directori</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9zCgpjb250aW5ndXQgPSBvcy5saXN0ZGlyKCcuJykKcHJpbnQoIkNvbnRpbmd1dCBkZWwgZGlyZWN0b3JpIGFjdHVhbDoiKQpmb3IgZWxlbWVudCBpbiBjb250aW5ndXQ6CiAgICBwcmludChlbGVtZW50KQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import os
+
+contingut = os.listdir('.')
+print(&quot;Contingut del directori actual:&quot;)
+for element in contingut:
+    print(element)</pre></div><div class='content'></div><h1>Ús del mòdul `shutil`</h1>
+<div class='content'><p>El mòdul <code>shutil</code> proporciona una interfície d'alt nivell per a operacions amb fitxers i directoris, com copiar i moure fitxers.</p>
+</div><h2>Copiar un fitxer</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHNodXRpbAoKc2h1dGlsLmNvcHkoJ2ZpdHhlcl9vcmlnaW5hbC50eHQnLCAnY29waWFfZml0eGVyLnR4dCcpCnByaW50KCJGaXR4ZXIgY29waWF0LiIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import shutil
+
+shutil.copy('fitxer_original.txt', 'copia_fitxer.txt')
+print(&quot;Fitxer copiat.&quot;)</pre></div><div class='content'></div><h2>Moure un fitxer</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHNodXRpbAoKc2h1dGlsLm1vdmUoJ2ZpdHhlcl9hX21vdXJlLnR4dCcsICcvbm91L2NhbWkvZml0eGVyX2FfbW91cmUudHh0JykKcHJpbnQoIkZpdHhlciBtb2d1dC4iKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import shutil
+
+shutil.move('fitxer_a_moure.txt', '/nou/cami/fitxer_a_moure.txt')
+print(&quot;Fitxer mogut.&quot;)</pre></div><div class='content'></div><h2>Eliminar un directori amb contingut</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHNodXRpbAoKc2h1dGlsLnJtdHJlZSgnZGlyZWN0b3JpX2FtYl9jb250aW5ndXQnKQpwcmludCgiRGlyZWN0b3JpIGFtYiBjb250aW5ndXQgZWxpbWluYXQuIik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import shutil
+
+shutil.rmtree('directori_amb_contingut')
+print(&quot;Directori amb contingut eliminat.&quot;)</pre></div><div class='content'></div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear i eliminar un fitxer</h2>
+<div class='content'><ol>
+<li>Escriu un programa que creï un fitxer anomenat <code>exercici1.txt</code> i escrigui &quot;Hola, món!&quot; en ell.</li>
+<li>Després, elimina el fitxer.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBTb2x1Y2nDswp3aXRoIG9wZW4oJ2V4ZXJjaWNpMS50eHQnLCAndycpIGFzIGZpbGU6CiAgICBmaWxlLndyaXRlKCJIb2xhLCBtw7NuISIpCgppZiBvcy5wYXRoLmV4aXN0cygnZXhlcmNpY2kxLnR4dCcpOgogICAgb3MucmVtb3ZlKCdleGVyY2ljaTEudHh0JykKICAgIHByaW50KCJGaXR4ZXIgZWxpbWluYXQuIikKZWxzZToKICAgIHByaW50KCJFbCBmaXR4ZXIgbm8gZXhpc3RlaXguIik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Soluci&oacute;
+with open('exercici1.txt', 'w') as file:
+    file.write(&quot;Hola, m&oacute;n!&quot;)
+
+if os.path.exists('exercici1.txt'):
+    os.remove('exercici1.txt')
+    print(&quot;Fitxer eliminat.&quot;)
+else:
+    print(&quot;El fitxer no existeix.&quot;)</pre></div><div class='content'></div><h2>Exercici 2: Crear i llistar un directori</h2>
+<div class='content'><ol>
+<li>Escriu un programa que creï un directori anomenat <code>exercici2</code>.</li>
+<li>Llista el contingut del directori actual per verificar que el nou directori ha estat creat.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBTb2x1Y2nDswppbXBvcnQgb3MKCm9zLm1rZGlyKCdleGVyY2ljaTInKQpjb250aW5ndXQgPSBvcy5saXN0ZGlyKCcuJykKcHJpbnQoIkNvbnRpbmd1dCBkZWwgZGlyZWN0b3JpIGFjdHVhbDoiKQpmb3IgZWxlbWVudCBpbiBjb250aW5ndXQ6CiAgICBwcmludChlbGVtZW50KQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Soluci&oacute;
+import os
+
+os.mkdir('exercici2')
+contingut = os.listdir('.')
+print(&quot;Contingut del directori actual:&quot;)
+for element in contingut:
+    print(element)</pre></div><div class='content'></div><h2>Exercici 3: Copiar i renombrar un fitxer</h2>
+<div class='content'><ol>
+<li>Escriu un programa que copiï un fitxer existent anomenat <code>original.txt</code> a un nou fitxer anomenat <code>copia.txt</code>.</li>
+<li>Renombra <code>copia.txt</code> a <code>renombrat.txt</code>.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBTb2x1Y2nDswppbXBvcnQgc2h1dGlsCgpzaHV0aWwuY29weSgnb3JpZ2luYWwudHh0JywgJ2NvcGlhLnR4dCcpCm9zLnJlbmFtZSgnY29waWEudHh0JywgJ3Jlbm9tYnJhdC50eHQnKQpwcmludCgiRml0eGVyIGNvcGlhdCBpIHJlbm9tYnJhdC4iKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Soluci&oacute;
+import shutil
+
+shutil.copy('original.txt', 'copia.txt')
+os.rename('copia.txt', 'renombrat.txt')
+print(&quot;Fitxer copiat i renombrat.&quot;)</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com gestionar fitxers i directoris utilitzant Python. Hem vist com crear, eliminar, moure i renombrar fitxers i directoris, així com obtenir informació sobre ells. També hem explorat el mòdul <code>shutil</code> per a operacions d'alt nivell. Aquestes habilitats són essencials per a qualsevol programador que treballi amb sistemes de fitxers.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-03-json-data-handling' title="Gestió de Dades JSON">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-01-introduction-to-exceptions' title="Introducció a les Excepcions">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

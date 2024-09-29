@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arbres B</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/estructuras_datos/05-05-arboles-b" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/estructuras_datos/05-05-arbres-b" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/estructuras_datos/05-05-b-trees" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/estructuras_datos/05-05-arbres-b" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/estructuras_datos/05-05-arbres-b" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-arbres-avl' title="Arbres AVL">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Arbres B</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-06-exercicis-arbres' title="Exercicis amb Arbres">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció als Arbres B</h1>
+<div class='content'><p>Els arbres B són una estructura de dades autoequilibrada que manté les dades ordenades i permet insercions, eliminacions i cerques en temps logarítmic. Són especialment útils en sistemes de bases de dades i sistemes de fitxers.</p>
+</div><h2>Característiques dels Arbres B</h2>
+<div class='content'><ol>
+<li><strong>Equilibri</strong>: Els arbres B estan dissenyats per mantenir-se equilibrats, garantint que totes les fulles estiguin al mateix nivell.</li>
+<li><strong>Nodes amb múltiples claus</strong>: Cada node pot contenir múltiples claus i fills.</li>
+<li><strong>Ordenació</strong>: Les claus dins de cada node estan ordenades.</li>
+<li><strong>Capacitat de nodes</strong>: Cada node té un nombre mínim i màxim de claus, determinat per l'ordre de l'arbre B.</li>
+</ol>
+</div><h2>Definicions Clau</h2>
+<div class='content'><ul>
+<li><strong>Ordre (m)</strong>: L'ordre d'un arbre B és un paràmetre que determina el nombre màxim de fills que pot tenir un node. Un arbre B d'ordre m té les següents propietats:
+<ul>
+<li>Cada node intern pot tenir com a màxim m fills.</li>
+<li>Cada node intern, excepte l'arrel, té com a mínim ⌈m/2⌉ fills.</li>
+<li>L'arrel té almenys dos fills si no és una fulla.</li>
+<li>Tots els nodes fulla estan al mateix nivell.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Estructura d'un Node en un Arbre B</h2>
+<div class='content'><p>Un node en un arbre B conté:</p>
+<ul>
+<li>Un nombre variable de claus (dins d'un rang determinat).</li>
+<li>Un nombre variable de fills (un més que el nombre de claus).</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Tm9kZToKICAtIENsYXVzOiBbazEsIGsyLCAuLi4sIGtuXQogIC0gRmlsbHM6IFtjMCwgYzEsIGMyLCAuLi4sIGNuXQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Node:
+  - Claus: [k1, k2, ..., kn]
+  - Fills: [c0, c1, c2, ..., cn]</pre></div><div class='content'></div><h1>Operacions en Arbres B</h1>
+<div class='content'></div><h2>Inserció</h2>
+<div class='content'><p>La inserció en un arbre B implica trobar el lloc correcte per la nova clau i inserir-la. Si el node resultant excedeix el nombre màxim de claus, es divideix en dos nodes i la clau mitjana es puja al node pare.</p>
+<h4>Exemple d'Inserció</h4>
+<p>Suposem un arbre B d'ordre 3 i volem inserir la clau 10:</p>
+<ol>
+<li><strong>Trobar el lloc correcte</strong>: Busquem el node fulla on hauria d'anar la clau 10.</li>
+<li><strong>Inserir la clau</strong>: Inserim la clau 10 en el node fulla.</li>
+<li><strong>Divisió si és necessari</strong>: Si el node fulla excedeix el nombre màxim de claus, es divideix i la clau mitjana es puja al node pare.</li>
+</ol>
+</div><h2>Eliminació</h2>
+<div class='content'><p>L'eliminació en un arbre B és més complexa que la inserció. Pot implicar la fusió de nodes o el préstec de claus entre nodes veïns per mantenir les propietats de l'arbre B.</p>
+<h4>Exemple d'Eliminació</h4>
+<p>Suposem un arbre B d'ordre 3 i volem eliminar la clau 10:</p>
+<ol>
+<li><strong>Trobar la clau</strong>: Busquem el node que conté la clau 10.</li>
+<li><strong>Eliminar la clau</strong>: Eliminem la clau 10.</li>
+<li><strong>Reequilibrar l'arbre</strong>: Si el node resultant té menys claus del mínim permès, es pot necessitar la fusió amb un node veí o el préstec de claus.</li>
+</ol>
+</div><h1>Exemple Pràctic</h1>
+<div class='content'></div><h2>Implementació Bàsica d'un Arbre B en Python</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgQlRyZWVOb2RlOgogICAgZGVmIF9faW5pdF9fKHNlbGYsIHQsIGxlYWY9RmFsc2UpOgogICAgICAgIHNlbGYudCA9IHQgICMgTcOtbmltIGdyYXUgKHQpCiAgICAgICAgc2VsZi5sZWFmID0gbGVhZiAgIyBTaSDDqXMgZnVsbGEKICAgICAgICBzZWxmLmtleXMgPSBbXSAgIyBDbGF1cyBlbiBlbCBub2RlCiAgICAgICAgc2VsZi5jaGlsZHJlbiA9IFtdICAjIEZpbGxzIGRlbCBub2RlCgpjbGFzcyBCVHJlZToKICAgIGRlZiBfX2luaXRfXyhzZWxmLCB0KToKICAgICAgICBzZWxmLnJvb3QgPSBCVHJlZU5vZGUodCwgVHJ1ZSkKICAgICAgICBzZWxmLnQgPSB0CgogICAgZGVmIHRyYXZlcnNlKHNlbGYpOgogICAgICAgIHNlbGYuX3RyYXZlcnNlKHNlbGYucm9vdCkKCiAgICBkZWYgX3RyYXZlcnNlKHNlbGYsIG5vZGUpOgogICAgICAgIGZvciBpIGluIHJhbmdlKGxlbihub2RlLmtleXMpKToKICAgICAgICAgICAgaWYgbm90IG5vZGUubGVhZjoKICAgICAgICAgICAgICAgIHNlbGYuX3RyYXZlcnNlKG5vZGUuY2hpbGRyZW5baV0pCiAgICAgICAgICAgIHByaW50KG5vZGUua2V5c1tpXSwgZW5kPScgJykKICAgICAgICBpZiBub3Qgbm9kZS5sZWFmOgogICAgICAgICAgICBzZWxmLl90cmF2ZXJzZShub2RlLmNoaWxkcmVuW2xlbihub2RlLmtleXMpXSkKCiAgICBkZWYgc2VhcmNoKHNlbGYsIGspOgogICAgICAgIHJldHVybiBzZWxmLl9zZWFyY2goc2VsZi5yb290LCBrKQoKICAgIGRlZiBfc2VhcmNoKHNlbGYsIG5vZGUsIGspOgogICAgICAgIGkgPSAwCiAgICAgICAgd2hpbGUgaSA8IGxlbihub2RlLmtleXMpIGFuZCBrID4gbm9kZS5rZXlzW2ldOgogICAgICAgICAgICBpICs9IDEKICAgICAgICBpZiBpIDwgbGVuKG5vZGUua2V5cykgYW5kIGsgPT0gbm9kZS5rZXlzW2ldOgogICAgICAgICAgICByZXR1cm4gbm9kZQogICAgICAgIGlmIG5vZGUubGVhZjoKICAgICAgICAgICAgcmV0dXJuIE5vbmUKICAgICAgICByZXR1cm4gc2VsZi5fc2VhcmNoKG5vZGUuY2hpbGRyZW5baV0sIGspCgogICAgIyBNw6h0b2RlcyBkJ2luc2VyY2nDsyBpIGVsaW1pbmFjacOzIHMnaW1wbGVtZW50ZW4gYXF1w60KCiMgRXhlbXBsZSBkJ8O6cwpidHJlZSA9IEJUcmVlKDMpCiMgSW5zZXJpciBjbGF1cyBpIHJlYWxpdHphciBvcGVyYWNpb25z"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class BTreeNode:
+    def __init__(self, t, leaf=False):
+        self.t = t  # M&iacute;nim grau (t)
+        self.leaf = leaf  # Si &eacute;s fulla
+        self.keys = []  # Claus en el node
+        self.children = []  # Fills del node
+
+class BTree:
+    def __init__(self, t):
+        self.root = BTreeNode(t, True)
+        self.t = t
+
+    def traverse(self):
+        self._traverse(self.root)
+
+    def _traverse(self, node):
+        for i in range(len(node.keys)):
+            if not node.leaf:
+                self._traverse(node.children[i])
+            print(node.keys[i], end=' ')
+        if not node.leaf:
+            self._traverse(node.children[len(node.keys)])
+
+    def search(self, k):
+        return self._search(self.root, k)
+
+    def _search(self, node, k):
+        i = 0
+        while i &lt; len(node.keys) and k &gt; node.keys[i]:
+            i += 1
+        if i &lt; len(node.keys) and k == node.keys[i]:
+            return node
+        if node.leaf:
+            return None
+        return self._search(node.children[i], k)
+
+    # M&egrave;todes d'inserci&oacute; i eliminaci&oacute; s'implementen aqu&iacute;
+
+# Exemple d'&uacute;s
+btree = BTree(3)
+# Inserir claus i realitzar operacions</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Inserció en un Arbre B</strong>:</p>
+<ul>
+<li>Inseriu les claus [10, 20, 5, 6, 12, 30, 7, 17] en un arbre B d'ordre 3.</li>
+<li>Dibuixeu l'arbre resultant després de cada inserció.</li>
+</ul>
+</li>
+<li>
+<p><strong>Eliminació en un Arbre B</strong>:</p>
+<ul>
+<li>Elimineu les claus [6, 13, 7] d'un arbre B d'ordre 3 que conté les claus [10, 20, 5, 6, 12, 30, 7, 17].</li>
+<li>Dibuixeu l'arbre resultant després de cada eliminació.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Resum</h1>
+<div class='content'><p>Els arbres B són una estructura de dades eficient per a la gestió de grans quantitats de dades, especialment en sistemes de bases de dades i sistemes de fitxers. La seva capacitat per mantenir-se equilibrats i permetre operacions en temps logarítmic els fa molt útils en aplicacions on l'eficiència és crucial.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-arbres-avl' title="Arbres AVL">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-06-exercicis-arbres' title="Exercicis amb Arbres">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

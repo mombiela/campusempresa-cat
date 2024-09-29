@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concurrència: Fils i Processos</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/python/08-04-concurrency-threads-and-processes" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/python/08-04-concurrency-threads-and-processes" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/python/08-04-concurrency-threads-and-processes" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/python/08-04-concurrency-threads-and-processes" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/python/08-04-concurrency-threads-and-processes" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-03-context-managers' title="Gestors de Context">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Concurrència: Fils i Processos</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-05-asyncio-for-asynchronous-programming' title="Asyncio per a Programació Asíncrona">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La concurrència és un concepte clau en la programació moderna, especialment quan es tracta de millorar el rendiment i la capacitat de resposta de les aplicacions. En aquest tema, explorarem com Python gestiona la concurrència mitjançant fils (threads) i processos (processes).</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ul>
+<li>Entendre la diferència entre fils i processos.</li>
+<li>Aprendre a crear i gestionar fils en Python.</li>
+<li>Aprendre a crear i gestionar processos en Python.</li>
+<li>Conèixer les eines i biblioteques que Python ofereix per treballar amb concurrència.</li>
+</ul>
+</div><h1>1. Diferència entre Fils i Processos</h1>
+<div class='content'></div><h2>Fils (Threads)</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: Un fil és la unitat més petita d'execució dins d'un procés. Els fils d'un mateix procés comparteixen el mateix espai de memòria.</li>
+<li><strong>Avantatges</strong>:
+<ul>
+<li>Menor sobrecàrrega en la creació i destrucció.</li>
+<li>Compartició de memòria fàcil entre fils.</li>
+</ul>
+</li>
+<li><strong>Desavantatges</strong>:
+<ul>
+<li>Potencials problemes de sincronització (race conditions).</li>
+<li>Limitació del GIL (Global Interpreter Lock) en Python, que impedeix l'execució concurrent de múltiples fils en un sol procés.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Processos (Processes)</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: Un procés és una instància d'un programa en execució. Cada procés té el seu propi espai de memòria.</li>
+<li><strong>Avantatges</strong>:
+<ul>
+<li>Execució realment paral·lela en sistemes multiprocessador.</li>
+<li>Aïllament de memòria, evitant problemes de sincronització.</li>
+</ul>
+</li>
+<li><strong>Desavantatges</strong>:
+<ul>
+<li>Major sobrecàrrega en la creació i destrucció.</li>
+<li>Comunicació entre processos més complexa.</li>
+</ul>
+</li>
+</ul>
+</div><h1>2. Treballant amb Fils en Python</h1>
+<div class='content'></div><h2>Creació de Fils</h2>
+<div class='content'><p>Python proporciona el mòdul <code>threading</code> per treballar amb fils. A continuació, es mostra un exemple bàsic de com crear i executar un fil:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRocmVhZGluZwoKZGVmIHRyZWJhbGxhcigpOgogICAgcHJpbnQoIkVsIGZpbCBlc3TDoCB0cmViYWxsYW50IikKCiMgQ3JlYXIgdW4gZmlsCmZpbCA9IHRocmVhZGluZy5UaHJlYWQodGFyZ2V0PXRyZWJhbGxhcikKCiMgSW5pY2lhciBlbCBmaWwKZmlsLnN0YXJ0KCkKCiMgRXNwZXJhciBxdWUgZWwgZmlsIGFjYWJpCmZpbC5qb2luKCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import threading
+
+def treballar():
+    print(&quot;El fil est&agrave; treballant&quot;)
+
+# Crear un fil
+fil = threading.Thread(target=treballar)
+
+# Iniciar el fil
+fil.start()
+
+# Esperar que el fil acabi
+fil.join()</pre></div><div class='content'></div><h2>Sincronització de Fils</h2>
+<div class='content'><p>Per evitar problemes de sincronització, podem utilitzar bloquejos (locks):</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRocmVhZGluZwoKYmxvcXVlaWcgPSB0aHJlYWRpbmcuTG9jaygpCgpkZWYgdHJlYmFsbGFyKCk6CiAgICB3aXRoIGJsb3F1ZWlnOgogICAgICAgIHByaW50KCJFbCBmaWwgZXN0w6AgdHJlYmFsbGFudCBhbWIgYmxvcXVlaWciKQoKZmlsID0gdGhyZWFkaW5nLlRocmVhZCh0YXJnZXQ9dHJlYmFsbGFyKQpmaWwuc3RhcnQoKQpmaWwuam9pbigp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import threading
+
+bloqueig = threading.Lock()
+
+def treballar():
+    with bloqueig:
+        print(&quot;El fil est&agrave; treballant amb bloqueig&quot;)
+
+fil = threading.Thread(target=treballar)
+fil.start()
+fil.join()</pre></div><div class='content'></div><h1>3. Treballant amb Processos en Python</h1>
+<div class='content'></div><h2>Creació de Processos</h2>
+<div class='content'><p>Python proporciona el mòdul <code>multiprocessing</code> per treballar amb processos. A continuació, es mostra un exemple bàsic de com crear i executar un procés:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG11bHRpcHJvY2Vzc2luZwoKZGVmIHRyZWJhbGxhcigpOgogICAgcHJpbnQoIkVsIHByb2PDqXMgZXN0w6AgdHJlYmFsbGFudCIpCgojIENyZWFyIHVuIHByb2PDqXMKcHJvY8OpcyA9IG11bHRpcHJvY2Vzc2luZy5Qcm9jZXNzKHRhcmdldD10cmViYWxsYXIpCgojIEluaWNpYXIgZWwgcHJvY8Opcwpwcm9jw6lzLnN0YXJ0KCkKCiMgRXNwZXJhciBxdWUgZWwgcHJvY8OpcyBhY2FiaQpwcm9jw6lzLmpvaW4oKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import multiprocessing
+
+def treballar():
+    print(&quot;El proc&eacute;s est&agrave; treballant&quot;)
+
+# Crear un proc&eacute;s
+proc&eacute;s = multiprocessing.Process(target=treballar)
+
+# Iniciar el proc&eacute;s
+proc&eacute;s.start()
+
+# Esperar que el proc&eacute;s acabi
+proc&eacute;s.join()</pre></div><div class='content'></div><h2>Comunicació entre Processos</h2>
+<div class='content'><p>Podem utilitzar cues (queues) per comunicar-nos entre processos:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG11bHRpcHJvY2Vzc2luZwoKZGVmIHRyZWJhbGxhcihjdWEpOgogICAgY3VhLnB1dCgiTWlzc2F0Z2UgZGVsIHByb2PDqXMiKQoKIyBDcmVhciB1bmEgY3VhCmN1YSA9IG11bHRpcHJvY2Vzc2luZy5RdWV1ZSgpCgojIENyZWFyIHVuIHByb2PDqXMKcHJvY8OpcyA9IG11bHRpcHJvY2Vzc2luZy5Qcm9jZXNzKHRhcmdldD10cmViYWxsYXIsIGFyZ3M9KGN1YSwpKQoKIyBJbmljaWFyIGVsIHByb2PDqXMKcHJvY8Opcy5zdGFydCgpCgojIEVzcGVyYXIgcXVlIGVsIHByb2PDqXMgYWNhYmkKcHJvY8Opcy5qb2luKCkKCiMgTGxlZ2lyIGVsIG1pc3NhdGdlIGRlIGxhIGN1YQptaXNzYXRnZSA9IGN1YS5nZXQoKQpwcmludChtaXNzYXRnZSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import multiprocessing
+
+def treballar(cua):
+    cua.put(&quot;Missatge del proc&eacute;s&quot;)
+
+# Crear una cua
+cua = multiprocessing.Queue()
+
+# Crear un proc&eacute;s
+proc&eacute;s = multiprocessing.Process(target=treballar, args=(cua,))
+
+# Iniciar el proc&eacute;s
+proc&eacute;s.start()
+
+# Esperar que el proc&eacute;s acabi
+proc&eacute;s.join()
+
+# Llegir el missatge de la cua
+missatge = cua.get()
+print(missatge)</pre></div><div class='content'></div><h1>4. Comparació entre Fils i Processos</h1>
+<div class='content'><table>
+<thead>
+<tr>
+<th>Característica</th>
+<th>Fils</th>
+<th>Processos</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Espai de Memòria</td>
+<td>Compartit</td>
+<td>Aïllat</td>
+</tr>
+<tr>
+<td>Creació/Destrucció</td>
+<td>Ràpida</td>
+<td>Més lenta</td>
+</tr>
+<tr>
+<td>Comunicació</td>
+<td>Fàcil (memòria compartida)</td>
+<td>Més complexa (IPC)</td>
+</tr>
+<tr>
+<td>Execució Paral·lela</td>
+<td>Limitada pel GIL</td>
+<td>Realment paral·lela</td>
+</tr>
+<tr>
+<td>Sincronització</td>
+<td>Necessària (locks)</td>
+<td>Menys necessària</td>
+</tr>
+</tbody>
+</table>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear i Gestionar Fils</h2>
+<div class='content'><p>Crea un programa que iniciï tres fils, cadascun dels quals imprimeixi un missatge diferent. Assegura't que tots els fils acabin abans que el programa finalitzi.</p>
+</div><h2>Exercici 2: Crear i Gestionar Processos</h2>
+<div class='content'><p>Crea un programa que iniciï dos processos, cadascun dels quals imprimeixi un missatge diferent. Utilitza una cua per enviar un missatge des de cada procés al procés principal.</p>
+</div><h2>Exercici 3: Sincronització de Fils</h2>
+<div class='content'><p>Crea un programa que iniciï dos fils que incrementin una variable compartida 1000 vegades cadascun. Utilitza un bloqueig per assegurar-te que la variable es modifica de manera segura.</p>
+</div><h1>Solucions</h1>
+<div class='content'></div><h2>Solució 1: Crear i Gestionar Fils</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRocmVhZGluZwoKZGVmIHRyZWJhbGxhcihtaXNzYXRnZSk6CiAgICBwcmludChtaXNzYXRnZSkKCmZpbHMgPSBbXQptaXNzYXRnZXMgPSBbIkZpbCAxIiwgIkZpbCAyIiwgIkZpbCAzIl0KCmZvciBtaXNzYXRnZSBpbiBtaXNzYXRnZXM6CiAgICBmaWwgPSB0aHJlYWRpbmcuVGhyZWFkKHRhcmdldD10cmViYWxsYXIsIGFyZ3M9KG1pc3NhdGdlLCkpCiAgICBmaWxzLmFwcGVuZChmaWwpCiAgICBmaWwuc3RhcnQoKQoKZm9yIGZpbCBpbiBmaWxzOgogICAgZmlsLmpvaW4oKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import threading
+
+def treballar(missatge):
+    print(missatge)
+
+fils = []
+missatges = [&quot;Fil 1&quot;, &quot;Fil 2&quot;, &quot;Fil 3&quot;]
+
+for missatge in missatges:
+    fil = threading.Thread(target=treballar, args=(missatge,))
+    fils.append(fil)
+    fil.start()
+
+for fil in fils:
+    fil.join()</pre></div><div class='content'></div><h2>Solució 2: Crear i Gestionar Processos</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG11bHRpcHJvY2Vzc2luZwoKZGVmIHRyZWJhbGxhcihtaXNzYXRnZSwgY3VhKToKICAgIHByaW50KG1pc3NhdGdlKQogICAgY3VhLnB1dChmIk1pc3NhdGdlIGRlbCB7bWlzc2F0Z2V9IikKCmN1YSA9IG11bHRpcHJvY2Vzc2luZy5RdWV1ZSgpCnByb2Nlc3NvcyA9IFtdCm1pc3NhdGdlcyA9IFsiUHJvY8OpcyAxIiwgIlByb2PDqXMgMiJdCgpmb3IgbWlzc2F0Z2UgaW4gbWlzc2F0Z2VzOgogICAgcHJvY8OpcyA9IG11bHRpcHJvY2Vzc2luZy5Qcm9jZXNzKHRhcmdldD10cmViYWxsYXIsIGFyZ3M9KG1pc3NhdGdlLCBjdWEpKQogICAgcHJvY2Vzc29zLmFwcGVuZChwcm9jw6lzKQogICAgcHJvY8Opcy5zdGFydCgpCgpmb3IgcHJvY8OpcyBpbiBwcm9jZXNzb3M6CiAgICBwcm9jw6lzLmpvaW4oKQoKd2hpbGUgbm90IGN1YS5lbXB0eSgpOgogICAgcHJpbnQoY3VhLmdldCgpKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import multiprocessing
+
+def treballar(missatge, cua):
+    print(missatge)
+    cua.put(f&quot;Missatge del {missatge}&quot;)
+
+cua = multiprocessing.Queue()
+processos = []
+missatges = [&quot;Proc&eacute;s 1&quot;, &quot;Proc&eacute;s 2&quot;]
+
+for missatge in missatges:
+    proc&eacute;s = multiprocessing.Process(target=treballar, args=(missatge, cua))
+    processos.append(proc&eacute;s)
+    proc&eacute;s.start()
+
+for proc&eacute;s in processos:
+    proc&eacute;s.join()
+
+while not cua.empty():
+    print(cua.get())</pre></div><div class='content'></div><h2>Solució 3: Sincronització de Fils</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRocmVhZGluZwoKYmxvcXVlaWcgPSB0aHJlYWRpbmcuTG9jaygpCnZhcmlhYmxlX2NvbXBhcnRpZGEgPSAwCgpkZWYgaW5jcmVtZW50YXIoKToKICAgIGdsb2JhbCB2YXJpYWJsZV9jb21wYXJ0aWRhCiAgICBmb3IgXyBpbiByYW5nZSgxMDAwKToKICAgICAgICB3aXRoIGJsb3F1ZWlnOgogICAgICAgICAgICB2YXJpYWJsZV9jb21wYXJ0aWRhICs9IDEKCmZpbHMgPSBbdGhyZWFkaW5nLlRocmVhZCh0YXJnZXQ9aW5jcmVtZW50YXIpIGZvciBfIGluIHJhbmdlKDIpXQoKZm9yIGZpbCBpbiBmaWxzOgogICAgZmlsLnN0YXJ0KCkKCmZvciBmaWwgaW4gZmlsczoKICAgIGZpbC5qb2luKCkKCnByaW50KGYiVmFsb3IgZmluYWwgZGUgbGEgdmFyaWFibGUgY29tcGFydGlkYToge3ZhcmlhYmxlX2NvbXBhcnRpZGF9Iik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import threading
+
+bloqueig = threading.Lock()
+variable_compartida = 0
+
+def incrementar():
+    global variable_compartida
+    for _ in range(1000):
+        with bloqueig:
+            variable_compartida += 1
+
+fils = [threading.Thread(target=incrementar) for _ in range(2)]
+
+for fil in fils:
+    fil.start()
+
+for fil in fils:
+    fil.join()
+
+print(f&quot;Valor final de la variable compartida: {variable_compartida}&quot;)</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem explorat els conceptes de concurrència en Python mitjançant fils i processos. Hem après a crear i gestionar fils i processos, així com a sincronitzar fils per evitar problemes de concurrència. També hem vist com comunicar-nos entre processos utilitzant cues. La comprensió d'aquests conceptes és fonamental per escriure aplicacions eficients i responsives.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-03-context-managers' title="Gestors de Context">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-05-asyncio-for-asynchronous-programming' title="Asyncio per a Programació Asíncrona">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

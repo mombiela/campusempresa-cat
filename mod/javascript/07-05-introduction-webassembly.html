@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducció a WebAssembly</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/javascript/07-05-introduction-webassembly" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/javascript/07-05-introduction-webassembly" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/javascript/07-05-introduction-webassembly" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/javascript/07-05-introduction-webassembly" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/javascript/07-05-introduction-webassembly" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-service-workers-pwas' title="Service Workers i Aplicacions Web Progressives (PWAs)">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Introducció a WebAssembly</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-01-debugging-javascript' title="Depuració de JavaScript">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Què és WebAssembly?</h1>
+<div class='content'><p>WebAssembly (Wasm) és un format d'instruccions binàries per a una màquina virtual basada en la web. Està dissenyat per ser un objectiu de compilació per a llenguatges de programació com C, C++, Rust, entre d'altres, permetent l'execució de codi a prop de la velocitat nativa en navegadors web. WebAssembly és un estàndard obert que permet executar codi de manera segura i eficient en diferents entorns.</p>
+</div><h2>Característiques Clau de WebAssembly</h2>
+<div class='content'><ul>
+<li><strong>Rendiment Alt</strong>: Permet l'execució de codi a prop de la velocitat nativa.</li>
+<li><strong>Portabilitat</strong>: Funciona en qualsevol entorn que implementi la màquina virtual de WebAssembly.</li>
+<li><strong>Seguretat</strong>: Executa codi en un entorn segur i aïllat.</li>
+<li><strong>Interoperabilitat</strong>: Pot interactuar amb JavaScript i altres APIs del navegador.</li>
+</ul>
+</div><h1>Configuració de l'Entorn</h1>
+<div class='content'></div><h2>Requisits Previs</h2>
+<div class='content'><ul>
+<li><strong>Navegador Modern</strong>: WebAssembly és compatible amb la majoria dels navegadors moderns com Chrome, Firefox, Safari i Edge.</li>
+<li><strong>Eina de Compilació</strong>: Necessitaràs eines com Emscripten per compilar codi C/C++ a WebAssembly.</li>
+</ul>
+</div><h2>Instal·lació d'Emscripten</h2>
+<div class='content'><p>Emscripten és una eina que compila codi C/C++ a WebAssembly. A continuació es mostra com instal·lar Emscripten:</p>
+<ol>
+<li>
+<p><strong>Clona el Repositori de Emscripten</strong>:</p>
+<pre><code class="language-bash">git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk
+</code></pre>
+</li>
+<li>
+<p><strong>Instal·la i Activa les Últimes Eines</strong>:</p>
+<pre><code class="language-bash">./emsdk install latest
+./emsdk activate latest
+</code></pre>
+</li>
+<li>
+<p><strong>Carrega l'Entorn Emscripten</strong>:</p>
+<pre><code class="language-bash">source ./emsdk_env.sh
+</code></pre>
+</li>
+</ol>
+</div><h1>El Teu Primer Programa en WebAssembly</h1>
+<div class='content'></div><h2>Exemple de Codi en C</h2>
+<div class='content'><p>A continuació es mostra un exemple senzill de codi en C que es compilarà a WebAssembly:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gaGVsbG8uYwojaW5jbHVkZSA8c3RkaW8uaD4KCmludCBtYWluKCkgewogICAgcHJpbnRmKCJIb2xhLCBXZWJBc3NlbWJseSFcbiIpOwogICAgcmV0dXJuIDA7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// hello.c
+#include &lt;stdio.h&gt;
+
+int main() {
+    printf(&quot;Hola, WebAssembly!\n&quot;);
+    return 0;
+}</pre></div><div class='content'></div><h2>Compilació a WebAssembly</h2>
+<div class='content'><p>Utilitza Emscripten per compilar el codi C a WebAssembly:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZW1jYyBoZWxsby5jIC1vIGhlbGxvLmh0bWw="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>emcc hello.c -o hello.html</pre></div><div class='content'><p>Aquest comandament generarà tres fitxers:</p>
+<ul>
+<li><code>hello.html</code>: Un fitxer HTML per carregar el mòdul WebAssembly.</li>
+<li><code>hello.js</code>: Un fitxer JavaScript per carregar i executar el mòdul WebAssembly.</li>
+<li><code>hello.wasm</code>: El fitxer WebAssembly binari.</li>
+</ul>
+</div><h2>Executar el Programa</h2>
+<div class='content'><p>Obre <code>hello.html</code> en un navegador web per veure el resultat. Hauries de veure &quot;Hola, WebAssembly!&quot; a la consola del navegador.</p>
+</div><h1>Interacció amb JavaScript</h1>
+<div class='content'><p>WebAssembly pot interactuar amb JavaScript de manera eficient. A continuació es mostra com cridar una funció WebAssembly des de JavaScript.</p>
+</div><h2>Exemple de Codi en C</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gYWRkLmMKaW50IGFkZChpbnQgYSwgaW50IGIpIHsKICAgIHJldHVybiBhICsgYjsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// add.c
+int add(int a, int b) {
+    return a + b;
+}</pre></div><div class='content'></div><h2>Compilació a WebAssembly</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZW1jYyBhZGQuYyAtbyBhZGQuanMgLXMgRVhQT1JURURfRlVOQ1RJT05TPSdbIl9hZGQiXScgLXMgRVhUUkFfRVhQT1JURURfUlVOVElNRV9NRVRIT0RTPSdbImN3cmFwIl0n"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>emcc add.c -o add.js -s EXPORTED_FUNCTIONS='[&quot;_add&quot;]' -s EXTRA_EXPORTED_RUNTIME_METHODS='[&quot;cwrap&quot;]'</pre></div><div class='content'></div><h2>Crida des de JavaScript</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sPgo8aGVhZD4KICAgIDx0aXRsZT5XZWJBc3NlbWJseSBFeGFtcGxlPC90aXRsZT4KICAgIDxzY3JpcHQgc3JjPSJhZGQuanMiPjwvc2NyaXB0Pgo8L2hlYWQ+Cjxib2R5PgogICAgPHNjcmlwdD4KICAgICAgICAvLyBDYXJyZWdhIGVsIG3DsmR1bCBXZWJBc3NlbWJseQogICAgICAgIHZhciBhZGQgPSBNb2R1bGUuY3dyYXAoJ2FkZCcsICdudW1iZXInLCBbJ251bWJlcicsICdudW1iZXInXSk7CiAgICAgICAgCiAgICAgICAgLy8gVXRpbGl0emEgbGEgZnVuY2nDsyBXZWJBc3NlbWJseQogICAgICAgIGNvbnNvbGUubG9nKCJSZXN1bHRhdCBkZSA1ICsgMzogIiArIGFkZCg1LCAzKSk7CiAgICA8L3NjcmlwdD4KPC9ib2R5Pgo8L2h0bWw+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;WebAssembly Example&lt;/title&gt;
+    &lt;script src=&quot;add.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;script&gt;
+        // Carrega el m&ograve;dul WebAssembly
+        var add = Module.cwrap('add', 'number', ['number', 'number']);
+        
+        // Utilitza la funci&oacute; WebAssembly
+        console.log(&quot;Resultat de 5 + 3: &quot; + add(5, 3));
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Multiplicació</h2>
+<div class='content'><ol>
+<li>Escriu una funció en C que multipliqui dos nombres.</li>
+<li>Compila el codi a WebAssembly.</li>
+<li>Crida la funció des de JavaScript i mostra el resultat a la consola.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gbXVsdGlwbHkuYwppbnQgbXVsdGlwbHkoaW50IGEsIGludCBiKSB7CiAgICByZXR1cm4gYSAqIGI7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// multiply.c
+int multiply(int a, int b) {
+    return a * b;
+}</pre></div><div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZW1jYyBtdWx0aXBseS5jIC1vIG11bHRpcGx5LmpzIC1zIEVYUE9SVEVEX0ZVTkNUSU9OUz0nWyJfbXVsdGlwbHkiXScgLXMgRVhUUkFfRVhQT1JURURfUlVOVElNRV9NRVRIT0RTPSdbImN3cmFwIl0n"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>emcc multiply.c -o multiply.js -s EXPORTED_FUNCTIONS='[&quot;_multiply&quot;]' -s EXTRA_EXPORTED_RUNTIME_METHODS='[&quot;cwrap&quot;]'</pre></div><div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sPgo8aGVhZD4KICAgIDx0aXRsZT5XZWJBc3NlbWJseSBFeGFtcGxlPC90aXRsZT4KICAgIDxzY3JpcHQgc3JjPSJtdWx0aXBseS5qcyI+PC9zY3JpcHQ+CjwvaGVhZD4KPGJvZHk+CiAgICA8c2NyaXB0PgogICAgICAgIHZhciBtdWx0aXBseSA9IE1vZHVsZS5jd3JhcCgnbXVsdGlwbHknLCAnbnVtYmVyJywgWydudW1iZXInLCAnbnVtYmVyJ10pOwogICAgICAgIGNvbnNvbGUubG9nKCJSZXN1bHRhdCBkZSA2ICogNzogIiArIG11bHRpcGx5KDYsIDcpKTsKICAgIDwvc2NyaXB0Pgo8L2JvZHk+CjwvaHRtbD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;WebAssembly Example&lt;/title&gt;
+    &lt;script src=&quot;multiply.js&quot;&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;script&gt;
+        var multiply = Module.cwrap('multiply', 'number', ['number', 'number']);
+        console.log(&quot;Resultat de 6 * 7: &quot; + multiply(6, 7));
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'></div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ul>
+<li><strong>Error de Compilació</strong>: Assegura't que el codi C no conté errors i que les opcions de compilació són correctes.</li>
+<li><strong>Problemes de Carregament</strong>: Verifica que els fitxers generats (HTML, JS, Wasm) estan en el mateix directori i que el navegador suporta WebAssembly.</li>
+<li><strong>Interacció amb JavaScript</strong>: Assegura't que les funcions exportades estan correctament declarades en les opcions de compilació.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>WebAssembly és una eina poderosa que permet portar codi de llenguatges com C i C++ a la web amb un rendiment alt. En aquesta secció, hem après què és WebAssembly, com configurar l'entorn, compilar codi C a WebAssembly i interactuar amb JavaScript. Amb aquests coneixements, estàs preparat per explorar més a fons les capacitats de WebAssembly i integrar-lo en els teus projectes web.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-service-workers-pwas' title="Service Workers i Aplicacions Web Progressives (PWAs)">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-01-debugging-javascript' title="Depuració de JavaScript">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ús de pdb per a la Depuració</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/python/09-05-using-pdb-for-debugging" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/python/09-05-using-pdb-for-debugging" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/python/09-05-using-pdb-for-debugging" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/python/09-05-using-pdb-for-debugging" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/python/09-05-using-pdb-for-debugging" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-04-debugging-techniques' title="Tècniques de Depuració">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Ús de pdb per a la Depuració</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-01-introduction-to-web-development' title="Introducció al Desenvolupament Web">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>El depurador <code>pdb</code> (Python Debugger) és una eina poderosa que permet als desenvolupadors inspeccionar i controlar l'execució del codi Python en temps real. Amb <code>pdb</code>, pots fer un seguiment de l'execució del programa, establir punts de ruptura, inspeccionar variables i molt més. Aquest mòdul t'ensenyarà com utilitzar <code>pdb</code> per depurar els teus programes Python de manera eficient.</p>
+</div><h1>Continguts</h1>
+<div class='content'><ol>
+<li><a href="#introducció-a-pdb">Introducció a pdb</a></li>
+<li><a href="#iniciar-pdb">Iniciar pdb</a></li>
+<li><a href="#comandes-bàsiques-de-pdb">Comandes bàsiques de pdb</a></li>
+<li><a href="#establir-punts-de-ruptura">Establir punts de ruptura</a></li>
+<li><a href="#inspeccionar-variables">Inspeccionar variables</a></li>
+<li><a href="#exercicis-pràctics">Exercicis pràctics</a></li>
+<li><a href="#conclusió">Conclusió</a></li>
+</ol>
+</div><h1>Introducció a pdb</h1>
+<div class='content'><p><code>pdb</code> és el depurador integrat de Python que permet als desenvolupadors:</p>
+<ul>
+<li>Pausar l'execució del programa en punts específics.</li>
+<li>Examinar l'estat del programa (variables, pila de crides, etc.).</li>
+<li>Executar línia per línia per entendre el flux del programa.</li>
+<li>Modificar variables en temps real per provar diferents escenaris.</li>
+</ul>
+</div><h1>Iniciar pdb</h1>
+<div class='content'><p>Hi ha diverses maneres d'iniciar <code>pdb</code> en un programa Python:</p>
+</div><h2>1. Iniciar pdb des de la línia de comandes</h2>
+<div class='content'><p>Pots iniciar <code>pdb</code> executant el teu script amb l'opció <code>-m pdb</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHl0aG9uIC1tIHBkYiBlbF9tZXVfc2NyaXB0LnB5"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>python -m pdb el_meu_script.py</pre></div><div class='content'></div><h2>2. Iniciar pdb des del codi</h2>
+<div class='content'><p>També pots inserir una crida a <code>pdb.set_trace()</code> directament en el teu codi:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHBkYgoKZGVmIGZ1bmNpbygpOgogICAgeCA9IDEwCiAgICBwZGIuc2V0X3RyYWNlKCkgICMgUGF1c2EgbCdleGVjdWNpw7MgYXF1w60KICAgIHkgPSAyMAogICAgeiA9IHggKyB5CiAgICBwcmludCh6KQoKZnVuY2lvKCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import pdb
+
+def funcio():
+    x = 10
+    pdb.set_trace()  # Pausa l'execuci&oacute; aqu&iacute;
+    y = 20
+    z = x + y
+    print(z)
+
+funcio()</pre></div><div class='content'><p>Quan el programa arribi a <code>pdb.set_trace()</code>, entrarà en el mode de depuració.</p>
+</div><h1>Comandes bàsiques de pdb</h1>
+<div class='content'><p>A continuació es mostren algunes de les comandes més útils de <code>pdb</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Comanda</th>
+<th>Descripció</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>l</code> o <code>list</code></td>
+<td>Mostra el codi al voltant de la línia actual.</td>
+</tr>
+<tr>
+<td><code>n</code> o <code>next</code></td>
+<td>Executa la següent línia de codi.</td>
+</tr>
+<tr>
+<td><code>s</code> o <code>step</code></td>
+<td>Entra en la següent funció.</td>
+</tr>
+<tr>
+<td><code>c</code> o <code>continue</code></td>
+<td>Continua l'execució fins al següent punt de ruptura.</td>
+</tr>
+<tr>
+<td><code>q</code> o <code>quit</code></td>
+<td>Surt del depurador.</td>
+</tr>
+<tr>
+<td><code>p</code> o <code>print</code></td>
+<td>Imprimeix el valor d'una variable.</td>
+</tr>
+<tr>
+<td><code>h</code> o <code>help</code></td>
+<td>Mostra ajuda sobre les comandes disponibles.</td>
+</tr>
+</tbody>
+</table>
+</div><h1>Establir punts de ruptura</h1>
+<div class='content'><p>Els punts de ruptura permeten pausar l'execució del programa en línies específiques. Pots establir punts de ruptura de diverses maneres:</p>
+</div><h2>1. Des de la línia de comandes de pdb</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("KHBkYikgYnJlYWsgbm9tX2RlbF9maXR4ZXIucHk6bGluaWE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>(pdb) break nom_del_fitxer.py:linia</pre></div><div class='content'></div><h2>2. Des del codi</h2>
+<div class='content'><p>Utilitza <code>pdb.set_trace()</code> com hem vist anteriorment.</p>
+</div><h2>Exemple:</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHBkYgoKZGVmIHN1bWEoYSwgYik6CiAgICByZXR1cm4gYSArIGIKCmRlZiByZXN0YShhLCBiKToKICAgIHJldHVybiBhIC0gYgoKcGRiLnNldF90cmFjZSgpICAjIFBhdXNhIGFxdcOtCnggPSBzdW1hKDEwLCA1KQp5ID0gcmVzdGEoMTAsIDUpCnByaW50KHgsIHkp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import pdb
+
+def suma(a, b):
+    return a + b
+
+def resta(a, b):
+    return a - b
+
+pdb.set_trace()  # Pausa aqu&iacute;
+x = suma(10, 5)
+y = resta(10, 5)
+print(x, y)</pre></div><div class='content'></div><h1>Inspeccionar variables</h1>
+<div class='content'><p>Pots utilitzar la comanda <code>p</code> per imprimir el valor de les variables:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("KHBkYikgcCB4CjEwCihwZGIpIHAgeQo1"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>(pdb) p x
+10
+(pdb) p y
+5</pre></div><div class='content'><p>També pots modificar el valor de les variables en temps real:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("KHBkYikgeCA9IDIwCihwZGIpIHAgeAoyMA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>(pdb) x = 20
+(pdb) p x
+20</pre></div><div class='content'></div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Depuració bàsica</h2>
+<div class='content'><ol>
+<li>Crea un script Python amb el següent codi:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIG11bHRpcGxpY2FjaW8oYSwgYik6CiAgICByZXR1cm4gYSAqIGIKCmRlZiBkaXZpc2lvKGEsIGIpOgogICAgcmV0dXJuIGEgLyBiCgp4ID0gbXVsdGlwbGljYWNpbygxMCwgNSkKeSA9IGRpdmlzaW8oMTAsIDApICAjIEFpeMOyIGdlbmVyYXLDoCB1bmEgZXhjZXBjacOzCnByaW50KHgsIHkp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def multiplicacio(a, b):
+    return a * b
+
+def divisio(a, b):
+    return a / b
+
+x = multiplicacio(10, 5)
+y = divisio(10, 0)  # Aix&ograve; generar&agrave; una excepci&oacute;
+print(x, y)</pre></div><div class='content'><ol start="2">
+<li>Utilitza <code>pdb</code> per depurar l'error de divisió per zero.</li>
+</ol>
+</div><h2>Solució:</h2>
+<div class='content'><ol>
+<li>Inicia <code>pdb</code> des de la línia de comandes:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHl0aG9uIC1tIHBkYiBlbF9tZXVfc2NyaXB0LnB5"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>python -m pdb el_meu_script.py</pre></div><div class='content'><ol start="2">
+<li>Quan el programa es pausi, utilitza les comandes <code>n</code> i <code>p</code> per inspeccionar les variables i trobar l'error.</li>
+</ol>
+</div><h2>Exercici 2: Establir punts de ruptura</h2>
+<div class='content'><ol>
+<li>Modifica el codi anterior per incloure un punt de ruptura abans de la divisió.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHBkYgoKZGVmIG11bHRpcGxpY2FjaW8oYSwgYik6CiAgICByZXR1cm4gYSAqIGIKCmRlZiBkaXZpc2lvKGEsIGIpOgogICAgcmV0dXJuIGEgLyBiCgp4ID0gbXVsdGlwbGljYWNpbygxMCwgNSkKcGRiLnNldF90cmFjZSgpICAjIFBhdXNhIGFxdcOtCnkgPSBkaXZpc2lvKDEwLCAwKSAgIyBBaXjDsiBnZW5lcmFyw6AgdW5hIGV4Y2VwY2nDswpwcmludCh4LCB5KQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import pdb
+
+def multiplicacio(a, b):
+    return a * b
+
+def divisio(a, b):
+    return a / b
+
+x = multiplicacio(10, 5)
+pdb.set_trace()  # Pausa aqu&iacute;
+y = divisio(10, 0)  # Aix&ograve; generar&agrave; una excepci&oacute;
+print(x, y)</pre></div><div class='content'><ol start="2">
+<li>Executa el codi i utilitza <code>pdb</code> per depurar l'error.</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>El depurador <code>pdb</code> és una eina essencial per a qualsevol desenvolupador Python. Amb <code>pdb</code>, pots inspeccionar i controlar l'execució del teu codi en temps real, la qual cosa facilita la identificació i correcció d'errors. Practica utilitzant <code>pdb</code> en els teus projectes per millorar les teves habilitats de depuració i escriure codi més robust i fiable.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-04-debugging-techniques' title="Tècniques de Depuració">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-01-introduction-to-web-development' title="Introducció al Desenvolupament Web">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>
