@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuració de Kafka</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kafka/04-01-configuring-kafka" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kafka/04-01-configuring-kafka" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kafka/04-01-configuring-kafka" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kafka/04-01-configuring-kafka" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kafka/04-01-configuring-kafka" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-04-kafka-streams' title="Kafka Streams">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Configuració de Kafka</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-02-managing-kafka-topics' title="Gestió de Temes de Kafka">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com configurar Apache Kafka per a un entorn de producció. La configuració adequada és crucial per assegurar el rendiment, la fiabilitat i la seguretat del sistema. Aquest mòdul cobreix els següents aspectes:</p>
+<ol>
+<li><strong>Instal·lació de Kafka</strong></li>
+<li><strong>Configuració del Broker</strong></li>
+<li><strong>Configuració del Zookeeper</strong></li>
+<li><strong>Configuració del Productor i el Consumidor</strong></li>
+<li><strong>Paràmetres de Rendiment i Optimització</strong></li>
+</ol>
+</div><h1>1. Instal·lació de Kafka</h1>
+<div class='content'></div><h2>Requisits previs</h2>
+<div class='content'><ul>
+<li>Java 8 o superior</li>
+<li>Apache Zookeeper (Kafka utilitza Zookeeper per a la gestió del clúster)</li>
+</ul>
+</div><h2>Passos d'instal·lació</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Descarregar Kafka:</strong></p>
+<pre><code class="language-sh">wget https://downloads.apache.org/kafka/2.8.0/kafka_2.13-2.8.0.tgz
+tar -xzf kafka_2.13-2.8.0.tgz
+cd kafka_2.13-2.8.0
+</code></pre>
+</li>
+<li>
+<p><strong>Iniciar Zookeeper:</strong></p>
+<pre><code class="language-sh">bin/zookeeper-server-start.sh config/zookeeper.properties
+</code></pre>
+</li>
+<li>
+<p><strong>Iniciar Kafka:</strong></p>
+<pre><code class="language-sh">bin/kafka-server-start.sh config/server.properties
+</code></pre>
+</li>
+</ol>
+</div><h1>2. Configuració del Broker</h1>
+<div class='content'><p>El fitxer de configuració principal del broker és <code>server.properties</code>. A continuació, es mostren alguns dels paràmetres més importants:</p>
+</div><h2>Paràmetres clau</h2>
+<div class='content'><ul>
+<li>
+<p><strong>broker.id:</strong> Identificador únic per a cada broker en el clúster.</p>
+<pre><code class="language-properties">broker.id=0
+</code></pre>
+</li>
+<li>
+<p><strong>listeners:</strong> Adreça i port en què el broker escolta les connexions.</p>
+<pre><code class="language-properties">listeners=PLAINTEXT://:9092
+</code></pre>
+</li>
+<li>
+<p><strong>log.dirs:</strong> Directori on es guarden els logs de Kafka.</p>
+<pre><code class="language-properties">log.dirs=/var/lib/kafka/logs
+</code></pre>
+</li>
+<li>
+<p><strong>zookeeper.connect:</strong> Adreça del servidor Zookeeper.</p>
+<pre><code class="language-properties">zookeeper.connect=localhost:2181
+</code></pre>
+</li>
+</ul>
+</div><h2>Exemple de configuració</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YnJva2VyLmlkPTAKbGlzdGVuZXJzPVBMQUlOVEVYVDovLzo5MDkyCmxvZy5kaXJzPS92YXIvbGliL2thZmthL2xvZ3MKbnVtLm5ldHdvcmsudGhyZWFkcz0zCm51bS5pby50aHJlYWRzPTgKc29ja2V0LnNlbmQuYnVmZmVyLmJ5dGVzPTEwMjQwMApzb2NrZXQucmVjZWl2ZS5idWZmZXIuYnl0ZXM9MTAyNDAwCnNvY2tldC5yZXF1ZXN0Lm1heC5ieXRlcz0xMDQ4NTc2MDAKbG9nLnJldGVudGlvbi5ob3Vycz0xNjgKbG9nLnNlZ21lbnQuYnl0ZXM9MTA3Mzc0MTgyNApsb2cucmV0ZW50aW9uLmNoZWNrLmludGVydmFsLm1zPTMwMDAwMAp6b29rZWVwZXIuY29ubmVjdD1sb2NhbGhvc3Q6MjE4MQp6b29rZWVwZXIuY29ubmVjdGlvbi50aW1lb3V0Lm1zPTYwMDA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>broker.id=0
+listeners=PLAINTEXT://:9092
+log.dirs=/var/lib/kafka/logs
+num.network.threads=3
+num.io.threads=8
+socket.send.buffer.bytes=102400
+socket.receive.buffer.bytes=102400
+socket.request.max.bytes=104857600
+log.retention.hours=168
+log.segment.bytes=1073741824
+log.retention.check.interval.ms=300000
+zookeeper.connect=localhost:2181
+zookeeper.connection.timeout.ms=6000</pre></div><div class='content'></div><h1>3. Configuració del Zookeeper</h1>
+<div class='content'><p>El fitxer de configuració principal de Zookeeper és <code>zookeeper.properties</code>. A continuació, es mostren alguns dels paràmetres més importants:</p>
+</div><h2>Paràmetres clau</h2>
+<div class='content'><ul>
+<li>
+<p><strong>dataDir:</strong> Directori on es guarden les dades de Zookeeper.</p>
+<pre><code class="language-properties">dataDir=/var/lib/zookeeper
+</code></pre>
+</li>
+<li>
+<p><strong>clientPort:</strong> Port en què Zookeeper escolta les connexions.</p>
+<pre><code class="language-properties">clientPort=2181
+</code></pre>
+</li>
+</ul>
+</div><h2>Exemple de configuració</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGlja1RpbWU9MjAwMApkYXRhRGlyPS92YXIvbGliL3pvb2tlZXBlcgpjbGllbnRQb3J0PTIxODEKbWF4Q2xpZW50Q254bnM9NjA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>tickTime=2000
+dataDir=/var/lib/zookeeper
+clientPort=2181
+maxClientCnxns=60</pre></div><div class='content'></div><h1>4. Configuració del Productor i el Consumidor</h1>
+<div class='content'></div><h2>Configuració del Productor</h2>
+<div class='content'><p>El productor té diversos paràmetres que es poden configurar per optimitzar el rendiment i la fiabilitat.</p>
+<ul>
+<li>
+<p><strong>bootstrap.servers:</strong> Llista de brokers per connectar-se.</p>
+<pre><code class="language-properties">bootstrap.servers=localhost:9092
+</code></pre>
+</li>
+<li>
+<p><strong>key.serializer:</strong> Classe per serialitzar les claus.</p>
+<pre><code class="language-properties">key.serializer=org.apache.kafka.common.serialization.StringSerializer
+</code></pre>
+</li>
+<li>
+<p><strong>value.serializer:</strong> Classe per serialitzar els valors.</p>
+<pre><code class="language-properties">value.serializer=org.apache.kafka.common.serialization.StringSerializer
+</code></pre>
+</li>
+</ul>
+</div><h2>Configuració del Consumidor</h2>
+<div class='content'><p>El consumidor també té diversos paràmetres configurables.</p>
+<ul>
+<li>
+<p><strong>bootstrap.servers:</strong> Llista de brokers per connectar-se.</p>
+<pre><code class="language-properties">bootstrap.servers=localhost:9092
+</code></pre>
+</li>
+<li>
+<p><strong>group.id:</strong> Identificador del grup de consumidors.</p>
+<pre><code class="language-properties">group.id=my-group
+</code></pre>
+</li>
+<li>
+<p><strong>key.deserializer:</strong> Classe per deserialitzar les claus.</p>
+<pre><code class="language-properties">key.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+</code></pre>
+</li>
+<li>
+<p><strong>value.deserializer:</strong> Classe per deserialitzar els valors.</p>
+<pre><code class="language-properties">value.deserializer=org.apache.kafka.common.serialization.StringDeserializer
+</code></pre>
+</li>
+</ul>
+</div><h1>5. Paràmetres de Rendiment i Optimització</h1>
+<div class='content'></div><h2>Paràmetres clau per a l'optimització</h2>
+<div class='content'><ul>
+<li>
+<p><strong>num.network.threads:</strong> Nombre de fils de xarxa.</p>
+<pre><code class="language-properties">num.network.threads=3
+</code></pre>
+</li>
+<li>
+<p><strong>num.io.threads:</strong> Nombre de fils d'entrada/sortida.</p>
+<pre><code class="language-properties">num.io.threads=8
+</code></pre>
+</li>
+<li>
+<p><strong>socket.send.buffer.bytes:</strong> Tamany del buffer d'enviament del socket.</p>
+<pre><code class="language-properties">socket.send.buffer.bytes=102400
+</code></pre>
+</li>
+<li>
+<p><strong>socket.receive.buffer.bytes:</strong> Tamany del buffer de recepció del socket.</p>
+<pre><code class="language-properties">socket.receive.buffer.bytes=102400
+</code></pre>
+</li>
+<li>
+<p><strong>log.retention.hours:</strong> Nombre d'hores que es retenen els logs.</p>
+<pre><code class="language-properties">log.retention.hours=168
+</code></pre>
+</li>
+<li>
+<p><strong>log.segment.bytes:</strong> Tamany màxim dels segments de log.</p>
+<pre><code class="language-properties">log.segment.bytes=1073741824
+</code></pre>
+</li>
+</ul>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après com configurar Apache Kafka, incloent la instal·lació, la configuració del broker, Zookeeper, i els paràmetres del productor i el consumidor. També hem revisat alguns paràmetres clau per optimitzar el rendiment del sistema. Amb aquesta base, estem preparats per gestionar i operar un clúster de Kafka de manera eficient.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-04-kafka-streams' title="Kafka Streams">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-02-managing-kafka-topics' title="Gestió de Temes de Kafka">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

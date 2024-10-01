@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuració d'un pipeline de CD</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/devops_basico/03-04-configuracion-pipeline-cd" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/devops_basico/03-04-configuracio-pipeline-cd" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/devops_basico/03-04-setting-up-cd-pipeline" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/devops_basico/03-04-configuracio-pipeline-cd" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/devops_basico/03-04-configuracio-pipeline-cd" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-eines-populars-cd' title="Eines populars de CD">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Configuració d'un pipeline de CD</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-introduccio-automatitzacio-desplegaments' title="Introducció a l'automatització de desplegaments">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com configurar un pipeline de Lliurament Continu (CD) per automatitzar el procés de desplegament de codi des de l'entorn de desenvolupament fins a l'entorn de producció. Un pipeline de CD ben configurat permet desplegar canvis de manera ràpida i segura, minimitzant els errors humans i millorant la qualitat del programari.</p>
+</div><h1>Objectius d'Aprenentatge</h1>
+<div class='content'><ul>
+<li>Comprendre els components clau d'un pipeline de CD.</li>
+<li>Configurar un pipeline de CD utilitzant una eina popular.</li>
+<li>Implementar pràctiques recomanades per assegurar un desplegament eficient i segur.</li>
+</ul>
+</div><h1>Components Clau d'un Pipeline de CD</h1>
+<div class='content'><p>Un pipeline de CD típic inclou els següents components:</p>
+<ol>
+<li><strong>Control de Versions</strong>: Emmagatzema el codi font i permet la col·laboració entre desenvolupadors.</li>
+<li><strong>Integració Contínua (CI)</strong>: Compila i prova el codi automàticament cada vegada que es fan canvis.</li>
+<li><strong>Desplegament Automatitzat</strong>: Desplega el codi a diferents entorns (staging, producció) de manera automatitzada.</li>
+<li><strong>Proves de Desplegament</strong>: Executa proves per assegurar que el desplegament ha estat exitós.</li>
+<li><strong>Monitorització i Feedback</strong>: Monitoritza el desplegament i proporciona feedback continu.</li>
+</ol>
+</div><h1>Configuració d'un Pipeline de CD amb Jenkins</h1>
+<div class='content'></div><h2>Pas 1: Instal·lació de Jenkins</h2>
+<div class='content'><ol>
+<li><strong>Descarrega i instal·la Jenkins</strong> des del <a href="https://jenkins.io/download/">lloc oficial</a>.</li>
+<li><strong>Inicia Jenkins</strong> i accedeix a la interfície web a través de <code>http://localhost:8080</code>.</li>
+</ol>
+</div><h2>Pas 2: Configuració del Projecte</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crea un nou projecte</strong>:</p>
+<ul>
+<li>A la pàgina principal de Jenkins, selecciona &quot;New Item&quot;.</li>
+<li>Dona un nom al projecte i selecciona &quot;Pipeline&quot;.</li>
+</ul>
+</li>
+<li>
+<p><strong>Configura el repositori de codi</strong>:</p>
+<ul>
+<li>A la configuració del projecte, selecciona &quot;Pipeline&quot; i després &quot;Pipeline script from SCM&quot;.</li>
+<li>Selecciona &quot;Git&quot; i introdueix l'URL del teu repositori.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Pas 3: Definició del Pipeline</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crea un fitxer <code>Jenkinsfile</code></strong> al teu repositori amb el següent contingut bàsic:</p>
+<pre><code class="language-groovy">pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                // Afegeix aquí els passos per compilar el teu codi
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                // Afegeix aquí els passos per executar les proves
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+                // Afegeix aquí els passos per desplegar el codi
+            }
+        }
+    }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Personalitza el <code>Jenkinsfile</code></strong> segons les necessitats del teu projecte:</p>
+<ul>
+<li><strong>Build</strong>: Afegeix els passos necessaris per compilar el teu codi.</li>
+<li><strong>Test</strong>: Inclou les proves automatitzades que vols executar.</li>
+<li><strong>Deploy</strong>: Defineix els passos per desplegar el codi a l'entorn desitjat.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Pas 4: Execució del Pipeline</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Desa i executa el pipeline</strong>:</p>
+<ul>
+<li>Desa els canvis al <code>Jenkinsfile</code> i puja'l al teu repositori.</li>
+<li>A la pàgina del projecte a Jenkins, selecciona &quot;Build Now&quot; per iniciar el pipeline.</li>
+</ul>
+</li>
+<li>
+<p><strong>Monitoritza l'execució</strong>:</p>
+<ul>
+<li>Observa els logs de cada etapa per assegurar-te que tot funciona correctament.</li>
+<li>Si hi ha errors, revisa els logs per identificar i solucionar els problemes.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Pràctiques Recomanades</h1>
+<div class='content'><ul>
+<li><strong>Automatitza totes les proves</strong>: Assegura't que totes les proves es poden executar de manera automatitzada.</li>
+<li><strong>Utilitza entorns de staging</strong>: Desplega primer a un entorn de staging abans de producció per detectar possibles problemes.</li>
+<li><strong>Implementa rollback</strong>: Configura mecanismes per revertir desplegaments fallits de manera ràpida.</li>
+<li><strong>Monitoritza contínuament</strong>: Utilitza eines de monitorització per detectar problemes en temps real i rebre feedback continu.</li>
+</ul>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Configura un Pipeline de CD amb Jenkins</h2>
+<div class='content'><ol>
+<li><strong>Crea un repositori de codi</strong> amb un projecte simple (pot ser un projecte web bàsic).</li>
+<li><strong>Defineix un <code>Jenkinsfile</code></strong> amb les etapes de build, test i deploy.</li>
+<li><strong>Configura Jenkins</strong> per executar el pipeline cada vegada que es faci un canvi al repositori.</li>
+<li><strong>Executa el pipeline</strong> i assegura't que totes les etapes es completen correctament.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwZWxpbmUgewogICAgYWdlbnQgYW55CgogICAgc3RhZ2VzIHsKICAgICAgICBzdGFnZSgnQnVpbGQnKSB7CiAgICAgICAgICAgIHN0ZXBzIHsKICAgICAgICAgICAgICAgIGVjaG8gJ0J1aWxkaW5nLi4uJwogICAgICAgICAgICAgICAgc2ggJ21ha2UgYnVpbGQnIC8vIEV4ZW1wbGUgZGUgY29tIGNvbXBpbGFyIGVsIGNvZGkKICAgICAgICAgICAgfQogICAgICAgIH0KICAgICAgICBzdGFnZSgnVGVzdCcpIHsKICAgICAgICAgICAgc3RlcHMgewogICAgICAgICAgICAgICAgZWNobyAnVGVzdGluZy4uLicKICAgICAgICAgICAgICAgIHNoICdtYWtlIHRlc3QnIC8vIEV4ZW1wbGUgZGUgY29tIGV4ZWN1dGFyIGxlcyBwcm92ZXMKICAgICAgICAgICAgfQogICAgICAgIH0KICAgICAgICBzdGFnZSgnRGVwbG95JykgewogICAgICAgICAgICBzdGVwcyB7CiAgICAgICAgICAgICAgICBlY2hvICdEZXBsb3lpbmcuLi4nCiAgICAgICAgICAgICAgICBzaCAnbWFrZSBkZXBsb3knIC8vIEV4ZW1wbGUgZGUgY29tIGRlc3BsZWdhciBlbCBjb2RpCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                sh 'make build' // Exemple de com compilar el codi
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                sh 'make test' // Exemple de com executar les proves
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+                sh 'make deploy' // Exemple de com desplegar el codi
+            }
+        }
+    }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com configurar un pipeline de CD utilitzant Jenkins, una de les eines més populars en l'àmbit de DevOps. Hem vist els components clau d'un pipeline de CD, com definir un <code>Jenkinsfile</code> i les pràctiques recomanades per assegurar un desplegament eficient i segur. Amb aquesta base, estàs preparat per implementar pipelines de CD en els teus projectes i millorar el procés de desplegament del teu programari.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-eines-populars-cd' title="Eines populars de CD">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-introduccio-automatitzacio-desplegaments' title="Introducció a l'automatització de desplegaments">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

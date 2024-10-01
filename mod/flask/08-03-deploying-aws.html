@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desplegament a AWS</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/flask/08-03-deploying-aws" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/flask/08-03-deploying-aws" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/flask/08-03-deploying-aws" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/flask/08-03-deploying-aws" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/flask/08-03-deploying-aws" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-02-deploying-heroku' title="Desplegament a Heroku">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Desplegament a AWS</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-04-monitoring-performance' title="Monitorització i Optimització del Rendiment">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a desplegar una aplicació Flask a Amazon Web Services (AWS). AWS és una de les plataformes de computació en núvol més populars i ofereix una àmplia gamma de serveis que poden ajudar a escalar i gestionar aplicacions web de manera eficient.</p>
+</div><h1>1. Configuració del Compte AWS</h1>
+<div class='content'></div><h2>1.1 Creació d'un Compte AWS</h2>
+<div class='content'><p>Si encara no tens un compte AWS, segueix aquests passos per crear-ne un:</p>
+<ol>
+<li>Visita <a href="https://aws.amazon.com">aws.amazon.com</a> i fes clic a &quot;Create an AWS Account&quot;.</li>
+<li>Introdueix la teva informació personal i de pagament.</li>
+<li>Completa el procés de verificació.</li>
+</ol>
+</div><h2>1.2 Configuració de les Credencials AWS CLI</h2>
+<div class='content'><p>Per gestionar els serveis AWS des de la línia de comandes, necessitaràs configurar l'AWS Command Line Interface (CLI):</p>
+<ol>
+<li>Instal·la l'AWS CLI seguint les instruccions de la <a href="https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html">documentació oficial</a>.</li>
+<li>Configura les credencials executant <code>aws configure</code> i introduint les teves claus d'accés.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("JCBhd3MgY29uZmlndXJlCkFXUyBBY2Nlc3MgS2V5IElEIFtOb25lXTogWU9VUl9BQ0NFU1NfS0VZX0lECkFXUyBTZWNyZXQgQWNjZXNzIEtleSBbTm9uZV06IFlPVVJfU0VDUkVUX0FDQ0VTU19LRVkKRGVmYXVsdCByZWdpb24gbmFtZSBbTm9uZV06IFlPVVJfUFJFRkVSUkVEX1JFR0lPTgpEZWZhdWx0IG91dHB1dCBmb3JtYXQgW05vbmVdOiBqc29u"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>$ aws configure
+AWS Access Key ID [None]: YOUR_ACCESS_KEY_ID
+AWS Secret Access Key [None]: YOUR_SECRET_ACCESS_KEY
+Default region name [None]: YOUR_PREFERRED_REGION
+Default output format [None]: json</pre></div><div class='content'></div><h1>2. Preparació de l'Aplicació Flask</h1>
+<div class='content'></div><h2>2.1 Requisits de l'Aplicació</h2>
+<div class='content'><p>Assegura't que la teva aplicació Flask estigui preparada per a la producció:</p>
+<ul>
+<li>Utilitza un servidor WSGI com Gunicorn.</li>
+<li>Configura correctament les variables d'entorn.</li>
+<li>Assegura't que les dependències estiguin llistades en un fitxer <code>requirements.txt</code>.</li>
+</ul>
+</div><h2>2.2 Exemple de Fitxer `requirements.txt`</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Rmxhc2s9PTIuMC4xCmd1bmljb3JuPT0yMC4xLjA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Flask==2.0.1
+gunicorn==20.1.0</pre></div><div class='content'></div><h2>2.3 Exemple de Fitxer `app.py`</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2sKCmFwcCA9IEZsYXNrKF9fbmFtZV9fKQoKQGFwcC5yb3V0ZSgnLycpCmRlZiBoZWxsb193b3JsZCgpOgogICAgcmV0dXJuICdIZWxsbywgV29ybGQhJwoKaWYgX19uYW1lX18gPT0gJ19fbWFpbl9fJzoKICAgIGFwcC5ydW4oKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
+
+if __name__ == '__main__':
+    app.run()</pre></div><div class='content'></div><h1>3. Desplegament amb Elastic Beanstalk</h1>
+<div class='content'></div><h2>3.1 Creació d'un Entorn Elastic Beanstalk</h2>
+<div class='content'><p>Elastic Beanstalk és un servei fàcil d'utilitzar per desplegar i escalar aplicacions web i serveis desenvolupats amb diversos llenguatges de programació.</p>
+<ol>
+<li>
+<p>Instal·la l'Elastic Beanstalk CLI:</p>
+<pre><code class="language-bash">$ pip install awsebcli
+</code></pre>
+</li>
+<li>
+<p>Inicialitza un nou projecte Elastic Beanstalk:</p>
+<pre><code class="language-bash">$ eb init -p python-3.8 flask-app --region YOUR_PREFERRED_REGION
+</code></pre>
+</li>
+<li>
+<p>Crea un nou entorn:</p>
+<pre><code class="language-bash">$ eb create flask-env
+</code></pre>
+</li>
+</ol>
+</div><h2>3.2 Desplegament de l'Aplicació</h2>
+<div class='content'><ol>
+<li>
+<p>Desplega l'aplicació a Elastic Beanstalk:</p>
+<pre><code class="language-bash">$ eb deploy
+</code></pre>
+</li>
+<li>
+<p>Obre l'aplicació al navegador:</p>
+<pre><code class="language-bash">$ eb open
+</code></pre>
+</li>
+</ol>
+</div><h1>4. Configuració de la Base de Dades</h1>
+<div class='content'></div><h2>4.1 Creació d'una Instància RDS</h2>
+<div class='content'><p>Si la teva aplicació necessita una base de dades, pots utilitzar Amazon RDS:</p>
+<ol>
+<li>A la consola d'AWS, navega a RDS i crea una nova instància de base de dades.</li>
+<li>Configura els paràmetres necessaris (tipus de base de dades, credencials, etc.).</li>
+</ol>
+</div><h2>4.2 Connexió a la Base de Dades</h2>
+<div class='content'><p>Actualitza la configuració de la teva aplicació Flask per connectar-se a la base de dades RDS.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9zCmZyb20gZmxhc2sgaW1wb3J0IEZsYXNrCmZyb20gZmxhc2tfc3FsYWxjaGVteSBpbXBvcnQgU1FMQWxjaGVteQoKYXBwID0gRmxhc2soX19uYW1lX18pCmFwcC5jb25maWdbJ1NRTEFMQ0hFTVlfREFUQUJBU0VfVVJJJ10gPSBvcy5lbnZpcm9uLmdldCgnREFUQUJBU0VfVVJMJykKZGIgPSBTUUxBbGNoZW15KGFwcCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import os
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
+db = SQLAlchemy(app)</pre></div><div class='content'></div><h1>5. Monitorització i Escalabilitat</h1>
+<div class='content'></div><h2>5.1 Monitorització amb CloudWatch</h2>
+<div class='content'><p>Utilitza Amazon CloudWatch per monitoritzar el rendiment de la teva aplicació:</p>
+<ol>
+<li>Configura mètriques i alarmes a la consola de CloudWatch.</li>
+<li>Revisa els logs i les mètriques per assegurar-te que l'aplicació funciona correctament.</li>
+</ol>
+</div><h2>5.2 Escalabilitat Automàtica</h2>
+<div class='content'><p>Configura l'escalabilitat automàtica per assegurar-te que la teva aplicació pot gestionar increments de trànsit:</p>
+<ol>
+<li>A la consola d'Elastic Beanstalk, navega a la configuració de l'entorn.</li>
+<li>Configura les polítiques d'escalabilitat automàtica segons les necessitats de la teva aplicació.</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Desplegar una aplicació Flask a AWS pot semblar complex al principi, però amb les eines adequades i una configuració correcta, pots aprofitar la potència i la flexibilitat d'AWS per escalar i gestionar la teva aplicació de manera eficient. En aquest tema, hem cobert els passos bàsics per configurar el teu entorn, preparar la teva aplicació, desplegar-la amb Elastic Beanstalk, configurar una base de dades i monitoritzar el rendiment. Amb aquests coneixements, estaràs preparat per portar la teva aplicació Flask a la producció a AWS.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-02-deploying-heroku' title="Desplegament a Heroku">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-04-monitoring-performance' title="Monitorització i Optimització del Rendiment">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

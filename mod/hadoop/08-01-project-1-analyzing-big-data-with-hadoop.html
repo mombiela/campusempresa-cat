@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projecte 1: Analitzar grans dades amb Hadoop</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/hadoop/08-01-project-1-analyzing-big-data-with-hadoop" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/hadoop/08-01-project-1-analyzing-big-data-with-hadoop" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/hadoop/08-01-project-1-analyzing-big-data-with-hadoop" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/hadoop/08-01-project-1-analyzing-big-data-with-hadoop" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/hadoop/08-01-project-1-analyzing-big-data-with-hadoop" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-case-studies-of-hadoop-implementations' title="Estudis de cas d'implementacions de Hadoop">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Projecte 1: Analitzar grans dades amb Hadoop</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-project-2-building-a-data-pipeline-with-hadoop-ecosystem' title="Projecte 2: Construir una pipeline de dades amb l'ecosistema Hadoop">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest projecte, aplicarem els coneixements adquirits al llarg del curs per analitzar un conjunt de dades massiu utilitzant Hadoop. L'objectiu és proporcionar una experiència pràctica que permeti als estudiants comprendre com utilitzar Hadoop per resoldre problemes reals de grans dades.</p>
+</div><h1>Objectius del Projecte</h1>
+<div class='content'><ol>
+<li><strong>Configurar un entorn Hadoop funcional.</strong></li>
+<li><strong>Carregar i gestionar dades en HDFS.</strong></li>
+<li><strong>Desenvolupar i executar treballs MapReduce per analitzar les dades.</strong></li>
+<li><strong>Utilitzar eines de l'ecosistema Hadoop per enriquir l'anàlisi.</strong></li>
+</ol>
+</div><h1>Requisits Previs</h1>
+<div class='content'><p>Abans de començar aquest projecte, assegura't de tenir:</p>
+<ul>
+<li>Un clúster Hadoop configurat (pot ser un clúster local o un clúster en el núvol).</li>
+<li>Coneixements bàsics de HDFS i MapReduce.</li>
+<li>Familiaritat amb les eines de l'ecosistema Hadoop com Apache Pig, Hive, etc.</li>
+</ul>
+</div><h1>Pas 1: Configuració de l'Entorn</h1>
+<div class='content'></div><h2>1.1 Instal·lació de Hadoop</h2>
+<div class='content'><p>Si no tens Hadoop instal·lat, segueix els passos del <a href="01-04-setting-up-hadoop-environment">Mòdul 1: Configuració de l'entorn Hadoop</a> per instal·lar i configurar Hadoop al teu sistema.</p>
+</div><h2>1.2 Verificació de la Instal·lació</h2>
+<div class='content'><p>Assegura't que el teu clúster Hadoop està funcionant correctament executant les següents comandes:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBJbmljaWFyIEhERlMKc3RhcnQtZGZzLnNoCgojIEluaWNpYXIgWUFSTgpzdGFydC15YXJuLnNoCgojIFZlcmlmaWNhciBlbHMgc2VydmVpcwpqcHM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Iniciar HDFS
+start-dfs.sh
+
+# Iniciar YARN
+start-yarn.sh
+
+# Verificar els serveis
+jps</pre></div><div class='content'></div><h1>Pas 2: Carregar Dades en HDFS</h1>
+<div class='content'></div><h2>2.1 Preparació del Conjunt de Dades</h2>
+<div class='content'><p>Per aquest projecte, utilitzarem un conjunt de dades públic. Descarrega el conjunt de dades des del següent enllaç: <a href="https://example.com/dataset.csv">Conjunt de Dades Públic</a>.</p>
+</div><h2>2.2 Carregar Dades en HDFS</h2>
+<div class='content'><p>Carrega el conjunt de dades en HDFS utilitzant les següents comandes:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDcmVhciB1biBkaXJlY3RvcmkgZW4gSERGUwpoZGZzIGRmcyAtbWtkaXIgL3VzZXIvbm9tX3VzdWFyaS9wcm9qZWN0ZTEKCiMgQ2FycmVnYXIgZWwgZml0eGVyIENTViBlbiBIREZTCmhkZnMgZGZzIC1wdXQgZGF0YXNldC5jc3YgL3VzZXIvbm9tX3VzdWFyaS9wcm9qZWN0ZTEv"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Crear un directori en HDFS
+hdfs dfs -mkdir /user/nom_usuari/projecte1
+
+# Carregar el fitxer CSV en HDFS
+hdfs dfs -put dataset.csv /user/nom_usuari/projecte1/</pre></div><div class='content'></div><h1>Pas 3: Desenvolupar un Treball MapReduce</h1>
+<div class='content'></div><h2>3.1 Introducció a MapReduce</h2>
+<div class='content'><p>Revisa el <a href="04-01-introduction-to-mapreduce">Mòdul 4: Programació MapReduce</a> per refrescar els conceptes bàsics de MapReduce.</p>
+</div><h2>3.2 Escriure el Codi MapReduce</h2>
+<div class='content'><p>A continuació, es mostra un exemple de codi MapReduce per analitzar el conjunt de dades. Aquest codi compta la freqüència de paraules en el conjunt de dades.</p>
+<h4>Mapper</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEuaW8uSU9FeGNlcHRpb247CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5pby5JbnRXcml0YWJsZTsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmlvLkxvbmdXcml0YWJsZTsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmlvLlRleHQ7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5tYXByZWR1Y2UuTWFwcGVyOwoKcHVibGljIGNsYXNzIFdvcmRDb3VudE1hcHBlciBleHRlbmRzIE1hcHBlcjxMb25nV3JpdGFibGUsIFRleHQsIFRleHQsIEludFdyaXRhYmxlPiB7CiAgICBwcml2YXRlIGZpbmFsIHN0YXRpYyBJbnRXcml0YWJsZSBvbmUgPSBuZXcgSW50V3JpdGFibGUoMSk7CiAgICBwcml2YXRlIFRleHQgd29yZCA9IG5ldyBUZXh0KCk7CgogICAgQE92ZXJyaWRlCiAgICBwcm90ZWN0ZWQgdm9pZCBtYXAoTG9uZ1dyaXRhYmxlIGtleSwgVGV4dCB2YWx1ZSwgQ29udGV4dCBjb250ZXh0KSB0aHJvd3MgSU9FeGNlcHRpb24sIEludGVycnVwdGVkRXhjZXB0aW9uIHsKICAgICAgICBTdHJpbmdbXSB3b3JkcyA9IHZhbHVlLnRvU3RyaW5nKCkuc3BsaXQoIlxccysiKTsKICAgICAgICBmb3IgKFN0cmluZyBzdHIgOiB3b3JkcykgewogICAgICAgICAgICB3b3JkLnNldChzdHIpOwogICAgICAgICAgICBjb250ZXh0LndyaXRlKHdvcmQsIG9uZSk7CiAgICAgICAgfQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.io.IOException;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+public class WordCountMapper extends Mapper&lt;LongWritable, Text, Text, IntWritable&gt; {
+    private final static IntWritable one = new IntWritable(1);
+    private Text word = new Text();
+
+    @Override
+    protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+        String[] words = value.toString().split(&quot;\\s+&quot;);
+        for (String str : words) {
+            word.set(str);
+            context.write(word, one);
+        }
+    }
+}</pre></div><div class='content'><h4>Reducer</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEuaW8uSU9FeGNlcHRpb247CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5pby5JbnRXcml0YWJsZTsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmlvLlRleHQ7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5tYXByZWR1Y2UuUmVkdWNlcjsKCnB1YmxpYyBjbGFzcyBXb3JkQ291bnRSZWR1Y2VyIGV4dGVuZHMgUmVkdWNlcjxUZXh0LCBJbnRXcml0YWJsZSwgVGV4dCwgSW50V3JpdGFibGU+IHsKICAgIEBPdmVycmlkZQogICAgcHJvdGVjdGVkIHZvaWQgcmVkdWNlKFRleHQga2V5LCBJdGVyYWJsZTxJbnRXcml0YWJsZT4gdmFsdWVzLCBDb250ZXh0IGNvbnRleHQpIHRocm93cyBJT0V4Y2VwdGlvbiwgSW50ZXJydXB0ZWRFeGNlcHRpb24gewogICAgICAgIGludCBzdW0gPSAwOwogICAgICAgIGZvciAoSW50V3JpdGFibGUgdmFsIDogdmFsdWVzKSB7CiAgICAgICAgICAgIHN1bSArPSB2YWwuZ2V0KCk7CiAgICAgICAgfQogICAgICAgIGNvbnRleHQud3JpdGUoa2V5LCBuZXcgSW50V3JpdGFibGUoc3VtKSk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.io.IOException;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
+public class WordCountReducer extends Reducer&lt;Text, IntWritable, Text, IntWritable&gt; {
+    @Override
+    protected void reduce(Text key, Iterable&lt;IntWritable&gt; values, Context context) throws IOException, InterruptedException {
+        int sum = 0;
+        for (IntWritable val : values) {
+            sum += val.get();
+        }
+        context.write(key, new IntWritable(sum));
+    }
+}</pre></div><div class='content'><h4>Driver</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmNvbmYuQ29uZmlndXJhdGlvbjsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmZzLlBhdGg7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5pby5JbnRXcml0YWJsZTsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmlvLlRleHQ7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5tYXByZWR1Y2UuSm9iOwppbXBvcnQgb3JnLmFwYWNoZS5oYWRvb3AubWFwcmVkdWNlLmxpYi5pbnB1dC5GaWxlSW5wdXRGb3JtYXQ7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5tYXByZWR1Y2UubGliLm91dHB1dC5GaWxlT3V0cHV0Rm9ybWF0OwoKcHVibGljIGNsYXNzIFdvcmRDb3VudCB7CiAgICBwdWJsaWMgc3RhdGljIHZvaWQgbWFpbihTdHJpbmdbXSBhcmdzKSB0aHJvd3MgRXhjZXB0aW9uIHsKICAgICAgICBDb25maWd1cmF0aW9uIGNvbmYgPSBuZXcgQ29uZmlndXJhdGlvbigpOwogICAgICAgIEpvYiBqb2IgPSBKb2IuZ2V0SW5zdGFuY2UoY29uZiwgIndvcmQgY291bnQiKTsKICAgICAgICBqb2Iuc2V0SmFyQnlDbGFzcyhXb3JkQ291bnQuY2xhc3MpOwogICAgICAgIGpvYi5zZXRNYXBwZXJDbGFzcyhXb3JkQ291bnRNYXBwZXIuY2xhc3MpOwogICAgICAgIGpvYi5zZXRDb21iaW5lckNsYXNzKFdvcmRDb3VudFJlZHVjZXIuY2xhc3MpOwogICAgICAgIGpvYi5zZXRSZWR1Y2VyQ2xhc3MoV29yZENvdW50UmVkdWNlci5jbGFzcyk7CiAgICAgICAgam9iLnNldE91dHB1dEtleUNsYXNzKFRleHQuY2xhc3MpOwogICAgICAgIGpvYi5zZXRPdXRwdXRWYWx1ZUNsYXNzKEludFdyaXRhYmxlLmNsYXNzKTsKICAgICAgICBGaWxlSW5wdXRGb3JtYXQuYWRkSW5wdXRQYXRoKGpvYiwgbmV3IFBhdGgoYXJnc1swXSkpOwogICAgICAgIEZpbGVPdXRwdXRGb3JtYXQuc2V0T3V0cHV0UGF0aChqb2IsIG5ldyBQYXRoKGFyZ3NbMV0pKTsKICAgICAgICBTeXN0ZW0uZXhpdChqb2Iud2FpdEZvckNvbXBsZXRpb24odHJ1ZSkgPyAwIDogMSk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class WordCount {
+    public static void main(String[] args) throws Exception {
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, &quot;word count&quot;);
+        job.setJarByClass(WordCount.class);
+        job.setMapperClass(WordCountMapper.class);
+        job.setCombinerClass(WordCountReducer.class);
+        job.setReducerClass(WordCountReducer.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
+    }
+}</pre></div><div class='content'></div><h2>3.3 Compilar i Executar el Treball MapReduce</h2>
+<div class='content'><p>Compila el codi utilitzant <code>javac</code> i crea un fitxer JAR:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDb21waWxhciBlbHMgZml0eGVycyBKYXZhCmphdmFjIC1jbGFzc3BhdGggYGhhZG9vcCBjbGFzc3BhdGhgIC1kIC4gV29yZENvdW50TWFwcGVyLmphdmEgV29yZENvdW50UmVkdWNlci5qYXZhIFdvcmRDb3VudC5qYXZhCgojIENyZWFyIGVsIGZpdHhlciBKQVIKamFyIC1jdmYgd29yZGNvdW50LmphciAqLmNsYXNz"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Compilar els fitxers Java
+javac -classpath `hadoop classpath` -d . WordCountMapper.java WordCountReducer.java WordCount.java
+
+# Crear el fitxer JAR
+jar -cvf wordcount.jar *.class</pre></div><div class='content'><p>Executa el treball MapReduce:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGFkb29wIGphciB3b3JkY291bnQuamFyIFdvcmRDb3VudCAvdXNlci9ub21fdXN1YXJpL3Byb2plY3RlMS9kYXRhc2V0LmNzdiAvdXNlci9ub21fdXN1YXJpL3Byb2plY3RlMS9vdXRwdXQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>hadoop jar wordcount.jar WordCount /user/nom_usuari/projecte1/dataset.csv /user/nom_usuari/projecte1/output</pre></div><div class='content'></div><h1>Pas 4: Utilitzar Eines de l'Ecosistema Hadoop</h1>
+<div class='content'></div><h2>4.1 Apache Hive</h2>
+<div class='content'><p>Utilitza Apache Hive per executar consultes SQL sobre el conjunt de dades. Primer, crea una taula en Hive:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIGRhdGFzZXQgKAogICAgY29sdW1uMSBTVFJJTkcsCiAgICBjb2x1bW4yIFNUUklORywKICAgIC4uLgopIFJPVyBGT1JNQVQgREVMSU1JVEVECkZJRUxEUyBURVJNSU5BVEVEIEJZICcsJwpTVE9SRUQgQVMgVEVYVEZJTEU7CgpMT0FEIERBVEEgSU5QQVRIICcvdXNlci9ub21fdXN1YXJpL3Byb2plY3RlMS9kYXRhc2V0LmNzdicgSU5UTyBUQUJMRSBkYXRhc2V0Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE dataset (
+    column1 STRING,
+    column2 STRING,
+    ...
+) ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+LOAD DATA INPATH '/user/nom_usuari/projecte1/dataset.csv' INTO TABLE dataset;</pre></div><div class='content'><p>Executa una consulta simple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGNvbHVtbjEsIENPVU5UKCopIEZST00gZGF0YXNldCBHUk9VUCBCWSBjb2x1bW4xOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT column1, COUNT(*) FROM dataset GROUP BY column1;</pre></div><div class='content'></div><h2>4.2 Apache Pig</h2>
+<div class='content'><p>Utilitza Apache Pig per processar el conjunt de dades amb un llenguatge de script més senzill:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGF0YXNldCA9IExPQUQgJy91c2VyL25vbV91c3VhcmkvcHJvamVjdGUxL2RhdGFzZXQuY3N2JyBVU0lORyBQaWdTdG9yYWdlKCcsJykgQVMgKGNvbHVtbjE6Y2hhcmFycmF5LCBjb2x1bW4yOmNoYXJhcnJheSwgLi4uKTsKZ3JvdXBlZF9kYXRhID0gR1JPVVAgZGF0YXNldCBCWSBjb2x1bW4xOwpjb3VudGVkX2RhdGEgPSBGT1JFQUNIIGdyb3VwZWRfZGF0YSBHRU5FUkFURSBncm91cCwgQ09VTlQoZGF0YXNldCk7CkRVTVAgY291bnRlZF9kYXRhOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>dataset = LOAD '/user/nom_usuari/projecte1/dataset.csv' USING PigStorage(',') AS (column1:chararray, column2:chararray, ...);
+grouped_data = GROUP dataset BY column1;
+counted_data = FOREACH grouped_data GENERATE group, COUNT(dataset);
+DUMP counted_data;</pre></div><div class='content'></div><h1>Pas 5: Anàlisi i Conclusions</h1>
+<div class='content'></div><h2>5.1 Anàlisi dels Resultats</h2>
+<div class='content'><p>Revisa els resultats obtinguts dels treballs MapReduce, les consultes Hive i els scripts Pig. Analitza les dades per obtenir informació valuosa.</p>
+</div><h2>5.2 Conclusions</h2>
+<div class='content'><ul>
+<li><strong>Eficàcia de Hadoop:</strong> Hem vist com Hadoop pot gestionar i processar grans volums de dades de manera eficient.</li>
+<li><strong>Utilitat de les Eines:</strong> Eines com Hive i Pig faciliten l'anàlisi de dades amb sintaxi més amigable.</li>
+<li><strong>Aplicació Pràctica:</strong> Aquest projecte demostra com es poden aplicar els conceptes de Hadoop a problemes reals de grans dades.</li>
+</ul>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'><ol>
+<li><strong>Modifica el codi MapReduce</strong> per comptar la freqüència de paraules només en una columna específica del conjunt de dades.</li>
+<li><strong>Crea una nova taula en Hive</strong> i executa una consulta més complexa que impliqui múltiples columnes.</li>
+<li><strong>Escriu un script Pig</strong> que filtri les dades basant-se en una condició específica i després compti les ocurrències.</li>
+</ol>
+</div><h1>Solucions</h1>
+<div class='content'></div><h2>Exercici 1: Modificar el codi MapReduce</h2>
+<div class='content'><p>Modifica el <code>WordCountMapper</code> per processar només una columna específica:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QE92ZXJyaWRlCnByb3RlY3RlZCB2b2lkIG1hcChMb25nV3JpdGFibGUga2V5LCBUZXh0IHZhbHVlLCBDb250ZXh0IGNvbnRleHQpIHRocm93cyBJT0V4Y2VwdGlvbiwgSW50ZXJydXB0ZWRFeGNlcHRpb24gewogICAgU3RyaW5nW10gY29sdW1ucyA9IHZhbHVlLnRvU3RyaW5nKCkuc3BsaXQoIiwiKTsKICAgIFN0cmluZyBjb2x1bW5EYXRhID0gY29sdW1uc1swXTsgLy8gU3Vwb3NhbnQgcXVlIHZvbGVtIHByb2Nlc3NhciBsYSBwcmltZXJhIGNvbHVtbmEKICAgIFN0cmluZ1tdIHdvcmRzID0gY29sdW1uRGF0YS5zcGxpdCgiXFxzKyIpOwogICAgZm9yIChTdHJpbmcgc3RyIDogd29yZHMpIHsKICAgICAgICB3b3JkLnNldChzdHIpOwogICAgICAgIGNvbnRleHQud3JpdGUod29yZCwgb25lKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@Override
+protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+    String[] columns = value.toString().split(&quot;,&quot;);
+    String columnData = columns[0]; // Suposant que volem processar la primera columna
+    String[] words = columnData.split(&quot;\\s+&quot;);
+    for (String str : words) {
+        word.set(str);
+        context.write(word, one);
+    }
+}</pre></div><div class='content'></div><h2>Exercici 2: Crear una nova taula en Hive</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIG5ld19kYXRhc2V0ICgKICAgIGNvbHVtbjEgU1RSSU5HLAogICAgY29sdW1uMiBTVFJJTkcsCiAgICAuLi4KKSBST1cgRk9STUFUIERFTElNSVRFRApGSUVMRFMgVEVSTUlOQVRFRCBCWSAnLCcKU1RPUkVEIEFTIFRFWFRGSUxFOwoKTE9BRCBEQVRBIElOUEFUSCAnL3VzZXIvbm9tX3VzdWFyaS9wcm9qZWN0ZTEvbmV3X2RhdGFzZXQuY3N2JyBJTlRPIFRBQkxFIG5ld19kYXRhc2V0OwoKU0VMRUNUIGNvbHVtbjEsIGNvbHVtbjIsIENPVU5UKCopIEZST00gbmV3X2RhdGFzZXQgR1JPVVAgQlkgY29sdW1uMSwgY29sdW1uMjs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE new_dataset (
+    column1 STRING,
+    column2 STRING,
+    ...
+) ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+LOAD DATA INPATH '/user/nom_usuari/projecte1/new_dataset.csv' INTO TABLE new_dataset;
+
+SELECT column1, column2, COUNT(*) FROM new_dataset GROUP BY column1, column2;</pre></div><div class='content'></div><h2>Exercici 3: Escriure un script Pig</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZmlsdGVyZWRfZGF0YSA9IEZJTFRFUiBkYXRhc2V0IEJZIGNvbHVtbjEgPT0gJ3NvbWVfdmFsdWUnOwpncm91cGVkX2RhdGEgPSBHUk9VUCBmaWx0ZXJlZF9kYXRhIEJZIGNvbHVtbjI7CmNvdW50ZWRfZGF0YSA9IEZPUkVBQ0ggZ3JvdXBlZF9kYXRhIEdFTkVSQVRFIGdyb3VwLCBDT1VOVChmaWx0ZXJlZF9kYXRhKTsKRFVNUCBjb3VudGVkX2RhdGE7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>filtered_data = FILTER dataset BY column1 == 'some_value';
+grouped_data = GROUP filtered_data BY column2;
+counted_data = FOREACH grouped_data GENERATE group, COUNT(filtered_data);
+DUMP counted_data;</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Aquest projecte ha proporcionat una experiència pràctica en l'ús de Hadoop per analitzar grans dades. Hem cobert des de la configuració de l'entorn fins a l'ús de MapReduce i altres eines de l'ecosistema Hadoop per realitzar anàlisis detallades. Amb aquests coneixements, estàs preparat per abordar projectes més complexos i aplicar Hadoop a problemes reals de grans dades.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-case-studies-of-hadoop-implementations' title="Estudis de cas d'implementacions de Hadoop">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-project-2-building-a-data-pipeline-with-hadoop-ecosystem' title="Projecte 2: Construir una pipeline de dades amb l'ecosistema Hadoop">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

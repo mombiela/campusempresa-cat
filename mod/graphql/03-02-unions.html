@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unions</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/graphql/03-02-unions" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/graphql/03-02-unions" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/graphql/03-02-unions" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/graphql/03-02-unions" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/graphql/03-02-unions" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-01-interfaces' title="Interfícies">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Unions</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-03-enums' title="Enums">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a les Unions en GraphQL</h1>
+<div class='content'><p>Les unions en GraphQL permeten definir un tipus que pot ser un de diversos tipus diferents. Això és útil quan es vol retornar diferents tipus d'objectes en una sola consulta. Les unions són similars a les interfícies, però a diferència d'aquestes, no requereixen que els tipus que les implementen comparteixin cap camp comú.</p>
+</div><h1>Definició d'Unions</h1>
+<div class='content'></div><h2>Sintaxi bàsica</h2>
+<div class='content'><p>Per definir una union en GraphQL, utilitzem la paraula clau <code>union</code> seguida del nom de la union i els tipus que la componen.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dW5pb24gU2VhcmNoUmVzdWx0ID0gVXNlciB8IFBvc3QgfCBDb21tZW50"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>union SearchResult = User | Post | Comment</pre></div><div class='content'><p>En aquest exemple, <code>SearchResult</code> és una union que pot ser un <code>User</code>, un <code>Post</code> o un <code>Comment</code>.</p>
+</div><h2>Exemple pràctic</h2>
+<div class='content'><p>Suposem que tenim els següents tipus definits en el nostre esquema:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHlwZSBVc2VyIHsKICBpZDogSUQhCiAgbmFtZTogU3RyaW5nIQp9Cgp0eXBlIFBvc3QgewogIGlkOiBJRCEKICB0aXRsZTogU3RyaW5nIQogIGNvbnRlbnQ6IFN0cmluZyEKfQoKdHlwZSBDb21tZW50IHsKICBpZDogSUQhCiAgdGV4dDogU3RyaW5nIQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>type User {
+  id: ID!
+  name: String!
+}
+
+type Post {
+  id: ID!
+  title: String!
+  content: String!
+}
+
+type Comment {
+  id: ID!
+  text: String!
+}</pre></div><div class='content'><p>Podem definir una union <code>SearchResult</code> que pot ser qualsevol d'aquests tres tipus:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dW5pb24gU2VhcmNoUmVzdWx0ID0gVXNlciB8IFBvc3QgfCBDb21tZW50"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>union SearchResult = User | Post | Comment</pre></div><div class='content'></div><h1>Utilització d'Unions en Consultes</h1>
+<div class='content'><p>Quan utilitzem unions en les nostres consultes, hem de fer servir fragments per especificar com volem que es resolguin els diferents tipus.</p>
+</div><h2>Exemple de consulta</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cXVlcnkgewogIHNlYXJjaCh0ZXJtOiAiR3JhcGhRTCIpIHsKICAgIC4uLiBvbiBVc2VyIHsKICAgICAgaWQKICAgICAgbmFtZQogICAgfQogICAgLi4uIG9uIFBvc3QgewogICAgICBpZAogICAgICB0aXRsZQogICAgICBjb250ZW50CiAgICB9CiAgICAuLi4gb24gQ29tbWVudCB7CiAgICAgIGlkCiAgICAgIHRleHQKICAgIH0KICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>query {
+  search(term: &quot;GraphQL&quot;) {
+    ... on User {
+      id
+      name
+    }
+    ... on Post {
+      id
+      title
+      content
+    }
+    ... on Comment {
+      id
+      text
+    }
+  }
+}</pre></div><div class='content'><p>En aquesta consulta, <code>search</code> retorna un <code>SearchResult</code>, que pot ser un <code>User</code>, un <code>Post</code> o un <code>Comment</code>. Utilitzem fragments per especificar quins camps volem per a cada tipus.</p>
+</div><h1>Implementació de Resolvers per a Unions</h1>
+<div class='content'><p>Quan implementem resolvers per a unions, hem de proporcionar una funció de resolució per a la union que determini quin tipus específic s'ha de retornar.</p>
+</div><h2>Exemple de resolver</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgcmVzb2x2ZXJzID0gewogIFF1ZXJ5OiB7CiAgICBzZWFyY2g6IChwYXJlbnQsIGFyZ3MsIGNvbnRleHQsIGluZm8pID0+IHsKICAgICAgLy8gTMOyZ2ljYSBwZXIgYnVzY2FyIHVzdWFyaXMsIHBvc3RzIGkgY29tZW50YXJpcwogICAgICAvLyBSZXRvcm5hIHVuYSBsbGlzdGEgZGUgcmVzdWx0YXRzIHF1ZSBwb2RlbiBzZXIgZGUgZGlmZXJlbnRzIHRpcHVzCiAgICB9LAogIH0sCiAgU2VhcmNoUmVzdWx0OiB7CiAgICBfX3Jlc29sdmVUeXBlKG9iaiwgY29udGV4dCwgaW5mbykgewogICAgICBpZiAob2JqLm5hbWUpIHsKICAgICAgICByZXR1cm4gJ1VzZXInOwogICAgICB9CiAgICAgIGlmIChvYmoudGl0bGUpIHsKICAgICAgICByZXR1cm4gJ1Bvc3QnOwogICAgICB9CiAgICAgIGlmIChvYmoudGV4dCkgewogICAgICAgIHJldHVybiAnQ29tbWVudCc7CiAgICAgIH0KICAgICAgcmV0dXJuIG51bGw7CiAgICB9LAogIH0sCn07"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const resolvers = {
+  Query: {
+    search: (parent, args, context, info) =&gt; {
+      // L&ograve;gica per buscar usuaris, posts i comentaris
+      // Retorna una llista de resultats que poden ser de diferents tipus
+    },
+  },
+  SearchResult: {
+    __resolveType(obj, context, info) {
+      if (obj.name) {
+        return 'User';
+      }
+      if (obj.title) {
+        return 'Post';
+      }
+      if (obj.text) {
+        return 'Comment';
+      }
+      return null;
+    },
+  },
+};</pre></div><div class='content'><p>En aquest exemple, la funció <code>__resolveType</code> determina el tipus de cada objecte retornat per la consulta <code>search</code>.</p>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Enunciat</h2>
+<div class='content'><ol>
+<li>Defineix una union <code>Media</code> que pugui ser un <code>Photo</code> o un <code>Video</code>.</li>
+<li>Defineix els tipus <code>Photo</code> i <code>Video</code> amb els següents camps:
+<ul>
+<li><code>Photo</code>: <code>id</code>, <code>url</code>, <code>description</code></li>
+<li><code>Video</code>: <code>id</code>, <code>url</code>, <code>duration</code></li>
+</ul>
+</li>
+<li>Escriu una consulta <code>media</code> que retorni una llista de <code>Media</code>.</li>
+<li>Implementa els resolvers necessaris per a la consulta <code>media</code> i la union <code>Media</code>.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><h4>Esquema</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHlwZSBQaG90byB7CiAgaWQ6IElEIQogIHVybDogU3RyaW5nIQogIGRlc2NyaXB0aW9uOiBTdHJpbmcKfQoKdHlwZSBWaWRlbyB7CiAgaWQ6IElEIQogIHVybDogU3RyaW5nIQogIGR1cmF0aW9uOiBJbnQKfQoKdW5pb24gTWVkaWEgPSBQaG90byB8IFZpZGVvCgp0eXBlIFF1ZXJ5IHsKICBtZWRpYTogW01lZGlhXQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>type Photo {
+  id: ID!
+  url: String!
+  description: String
+}
+
+type Video {
+  id: ID!
+  url: String!
+  duration: Int
+}
+
+union Media = Photo | Video
+
+type Query {
+  media: [Media]
+}</pre></div><div class='content'><h4>Resolvers</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgcmVzb2x2ZXJzID0gewogIFF1ZXJ5OiB7CiAgICBtZWRpYTogKCkgPT4gewogICAgICByZXR1cm4gWwogICAgICAgIHsgaWQ6ICcxJywgdXJsOiAnaHR0cDovL2V4YW1wbGUuY29tL3Bob3RvMS5qcGcnLCBkZXNjcmlwdGlvbjogJ0EgYmVhdXRpZnVsIHN1bnJpc2UnLCBfX3R5cGVuYW1lOiAnUGhvdG8nIH0sCiAgICAgICAgeyBpZDogJzInLCB1cmw6ICdodHRwOi8vZXhhbXBsZS5jb20vdmlkZW8xLm1wNCcsIGR1cmF0aW9uOiAxMjAsIF9fdHlwZW5hbWU6ICdWaWRlbycgfSwKICAgICAgXTsKICAgIH0sCiAgfSwKICBNZWRpYTogewogICAgX19yZXNvbHZlVHlwZShvYmosIGNvbnRleHQsIGluZm8pIHsKICAgICAgaWYgKG9iai5kZXNjcmlwdGlvbikgewogICAgICAgIHJldHVybiAnUGhvdG8nOwogICAgICB9CiAgICAgIGlmIChvYmouZHVyYXRpb24pIHsKICAgICAgICByZXR1cm4gJ1ZpZGVvJzsKICAgICAgfQogICAgICByZXR1cm4gbnVsbDsKICAgIH0sCiAgfSwKfTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const resolvers = {
+  Query: {
+    media: () =&gt; {
+      return [
+        { id: '1', url: 'http://example.com/photo1.jpg', description: 'A beautiful sunrise', __typename: 'Photo' },
+        { id: '2', url: 'http://example.com/video1.mp4', duration: 120, __typename: 'Video' },
+      ];
+    },
+  },
+  Media: {
+    __resolveType(obj, context, info) {
+      if (obj.description) {
+        return 'Photo';
+      }
+      if (obj.duration) {
+        return 'Video';
+      }
+      return null;
+    },
+  },
+};</pre></div><div class='content'></div><h2>Consulta</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cXVlcnkgewogIG1lZGlhIHsKICAgIC4uLiBvbiBQaG90byB7CiAgICAgIGlkCiAgICAgIHVybAogICAgICBkZXNjcmlwdGlvbgogICAgfQogICAgLi4uIG9uIFZpZGVvIHsKICAgICAgaWQKICAgICAgdXJsCiAgICAgIGR1cmF0aW9uCiAgICB9CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>query {
+  media {
+    ... on Photo {
+      id
+      url
+      description
+    }
+    ... on Video {
+      id
+      url
+      duration
+    }
+  }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Les unions en GraphQL són una eina poderosa per retornar diferents tipus d'objectes en una sola consulta. Utilitzant fragments i resolvers adequats, podem gestionar fàcilment aquestes estructures complexes i proporcionar respostes flexibles i riques en dades.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-01-interfaces' title="Interfícies">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-03-enums' title="Enums">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

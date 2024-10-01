@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Implementant autenticació JWT</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/springboot/05-04-implementing-jwt-authentication" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/springboot/05-04-implementing-jwt-authentication" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/springboot/05-04-implementing-jwt-authentication" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/springboot/05-04-implementing-jwt-authentication" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/springboot/05-04-implementing-jwt-authentication" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-03-user-authentication-authorization' title="Autenticació i autorització d'usuaris">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Implementant autenticació JWT</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-01-introduction-testing' title="Introducció a les proves">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a implementar l'autenticació basada en JSON Web Tokens (JWT) en una aplicació Spring Boot. Els JWT són una manera segura i estàndard de representar reclamacions entre dues parts. Són àmpliament utilitzats per a l'autenticació i l'autorització en aplicacions web.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre què és un JWT i com funciona.</li>
+<li>Configurar Spring Security per utilitzar JWT.</li>
+<li>Crear un servei per generar i validar JWT.</li>
+<li>Implementar filtres de seguretat per gestionar les sol·licituds autenticades.</li>
+</ul>
+</div><h1>Què és un JWT?</h1>
+<div class='content'><p>Un JSON Web Token (JWT) és un estàndard obert (RFC 7519) que defineix una manera compacta i autònoma de transmetre informació de manera segura entre les parts com un objecte JSON. Aquesta informació pot ser verificada i confiada perquè està signada digitalment.</p>
+</div><h2>Estructura d'un JWT</h2>
+<div class='content'><p>Un JWT consta de tres parts separades per punts (.):</p>
+<ol>
+<li><strong>Header (Capçalera)</strong>: Conté el tipus de token (JWT) i l'algoritme de signatura utilitzat (per exemple, HMAC SHA256).</li>
+<li><strong>Payload (Càrrega útil)</strong>: Conté les reclamacions. Les reclamacions són declaracions sobre una entitat (normalment, l'usuari) i dades addicionals.</li>
+<li><strong>Signature (Signatura)</strong>: La signatura és utilitzada per verificar que el remitente del JWT és qui diu ser i per assegurar que el missatge no ha estat alterat.</li>
+</ol>
+<p>Exemple d'un JWT:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SnpkV0lpT2lKMWMyVnlNU0lzSW1WNGNDSTZNVFl3T1RJM01qQXdNSDAuNGZQNVpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEZaYzhGWmM4RlpjOEYjIyBDb25maWd1cmFjacOzIGRlIFNwcmluZyBTZWN1cml0eSBwZXIgdXRpbGl0emFyIEpXVAoKIyMjIERlcGVuZMOobmNpZXMgTWF2ZW4KClByaW1lciwgbmVjZXNzaXRlbSBhZmVnaXIgbGVzIGRlcGVuZMOobmNpZXMgbmVjZXNzw6ByaWVzIGFsIG5vc3RyZSBwcm9qZWN0ZS4gQWZlZ2VpeCBsZXMgc2Vnw7xlbnRzIGRlcGVuZMOobmNpZXMgYWwgdGV1IGZpdHhlciBgcG9tLnhtbGA6"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMSIsImV4cCI6MTYwOTI3MjAwMH0.4fP5Zc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8FZc8F## Configuraci&oacute; de Spring Security per utilitzar JWT
+
+### Depend&egrave;ncies Maven
+
+Primer, necessitem afegir les depend&egrave;ncies necess&agrave;ries al nostre projecte. Afegeix les seg&uuml;ents depend&egrave;ncies al teu fitxer `pom.xml`:</pre></div><div class='content'><dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+<dependency>
+    <groupId>io.jsonwebtoken</groupId>
+    <artifactId>jjwt</artifactId>
+    <version>0.9.1</version>
+</dependency>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CiMjIyBDb25maWd1cmFjacOzIGRlIHNlZ3VyZXRhdAoKQ3JlYSB1bmEgY2xhc3NlIGRlIGNvbmZpZ3VyYWNpw7MgZGUgc2VndXJldGF0IHF1ZSBlc3Rlbmd1aSBgV2ViU2VjdXJpdHlDb25maWd1cmVyQWRhcHRlcmAgaSBzb2JyZWVzY3JpdSBlbHMgbcOodG9kZXMgbmVjZXNzYXJpcyBwZXIgY29uZmlndXJhciBsYSBzZWd1cmV0YXQgZGUgbGEgdGV2YSBhcGxpY2FjacOzLg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+### Configuraci&oacute; de seguretat
+
+Crea una classe de configuraci&oacute; de seguretat que estengui `WebSecurityConfigurerAdapter` i sobreescriu els m&egrave;todes necessaris per configurar la seguretat de la teva aplicaci&oacute;.</pre></div><div class='content'><p>import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;</p>
+<p>@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {</p>
+<pre><code>@Override
+protected void configure(HttpSecurity http) throws Exception {
+    http.csrf().disable()
+        .authorizeRequests()
+        .antMatchers(&quot;/auth/**&quot;).permitAll()
+        .anyRequest().authenticated()
+        .and()
+        .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+    http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+}
+
+@Bean
+public JwtAuthenticationFilter jwtAuthenticationFilter() {
+    return new JwtAuthenticationFilter();
+}
+</code></pre>
+<p>}</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CiMjIyBDcmVhY2nDsyBkZWwgc2VydmVpIEpXVAoKQ3JlYSB1bmEgY2xhc3NlIGBKd3RUb2tlblByb3ZpZGVyYCBxdWUgcydlbmNhcnJlZ2Fyw6AgZGUgZ2VuZXJhciBpIHZhbGlkYXIgZWxzIHRva2VucyBKV1Qu"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+### Creaci&oacute; del servei JWT
+
+Crea una classe `JwtTokenProvider` que s'encarregar&agrave; de generar i validar els tokens JWT.</pre></div><div class='content'><p>import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;</p>
+<p>import java.util.Date;</p>
+<p>@Component
+public class JwtTokenProvider {</p>
+<pre><code>@Value(&quot;${jwt.secret}&quot;)
+private String jwtSecret;
+
+@Value(&quot;${jwt.expiration}&quot;)
+private long jwtExpiration;
+
+public String generateToken(String username) {
+    Date now = new Date();
+    Date expiryDate = new Date(now.getTime() + jwtExpiration);
+
+    return Jwts.builder()
+            .setSubject(username)
+            .setIssuedAt(now)
+            .setExpiration(expiryDate)
+            .signWith(SignatureAlgorithm.HS512, jwtSecret)
+            .compact();
+}
+
+public String getUsernameFromJWT(String token) {
+    Claims claims = Jwts.parser()
+            .setSigningKey(jwtSecret)
+            .parseClaimsJws(token)
+            .getBody();
+
+    return claims.getSubject();
+}
+
+public boolean validateToken(String authToken) {
+    try {
+        Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);
+        return true;
+    } catch (Exception e) {
+        return false;
+    }
+}
+</code></pre>
+<p>}</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CiMjIyBJbXBsZW1lbnRhY2nDsyBkZWwgZmlsdHJlIEpXVAoKQ3JlYSB1bmEgY2xhc3NlIGBKd3RBdXRoZW50aWNhdGlvbkZpbHRlcmAgcXVlIGV4dGVuZ3VpIGBPbmNlUGVyUmVxdWVzdEZpbHRlcmAgcGVyIGludGVyY2VwdGFyIGxlcyBzb2zCt2xpY2l0dWRzIEhUVFAgaSB2YWxpZGFyIGVsIHRva2VuIEpXVC4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+### Implementaci&oacute; del filtre JWT
+
+Crea una classe `JwtAuthenticationFilter` que extengui `OncePerRequestFilter` per interceptar les sol&middot;licituds HTTP i validar el token JWT.</pre></div><div class='content'><p>import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;</p>
+<p>import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;</p>
+<p>@Component
+public class JwtAuthenticationFilter extends OncePerRequestFilter {</p>
+<pre><code>@Autowired
+private JwtTokenProvider tokenProvider;
+
+@Autowired
+private UserDetailsService userDetailsService;
+
+@Override
+protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+        throws ServletException, IOException {
+    String jwt = getJwtFromRequest(request);
+
+    if (jwt != null &amp;&amp; tokenProvider.validateToken(jwt)) {
+        String username = tokenProvider.getUsernameFromJWT(jwt);
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        if (userDetails != null) {
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+    }
+
+    filterChain.doFilter(request, response);
+}
+
+private String getJwtFromRequest(HttpServletRequest request) {
+    String bearerToken = request.getHeader(&quot;Authorization&quot;);
+    if (bearerToken != null &amp;&amp; bearerToken.startsWith(&quot;Bearer &quot;)) {
+        return bearerToken.substring(7);
+    }
+    return null;
+}
+</code></pre>
+<p>}</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CiMjIyBDb250cm9sYWRvciBkJ2F1dGVudGljYWNpw7MKCkNyZWEgdW4gY29udHJvbGFkb3IgcGVyIGdlc3Rpb25hciBsZXMgc29swrdsaWNpdHVkcyBkJ2F1dGVudGljYWNpw7MgaSBnZW5lcmFyIGVsIHRva2VuIEpXVC4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+### Controlador d'autenticaci&oacute;
+
+Crea un controlador per gestionar les sol&middot;licituds d'autenticaci&oacute; i generar el token JWT.</pre></div><div class='content'><p>import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.web.bind.annotation.*;</p>
+<p>@RestController
+@RequestMapping(&quot;/auth&quot;)
+public class AuthController {</p>
+<pre><code>@Autowired
+private AuthenticationManager authenticationManager;
+
+@Autowired
+private JwtTokenProvider tokenProvider;
+
+@Autowired
+private UserDetailsService userDetailsService;
+
+@PostMapping(&quot;/login&quot;)
+public String authenticateUser(@RequestBody LoginRequest loginRequest) {
+    try {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername(),
+                        loginRequest.getPassword()
+                )
+        );
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return tokenProvider.generateToken(userDetails.getUsername());
+    } catch (AuthenticationException e) {
+        throw new RuntimeException(&quot;Invalid credentials&quot;);
+    }
+}
+</code></pre>
+<p>}</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CiMjIyBNb2RlbCBkZSBzb2zCt2xpY2l0dWQgZGUgbG9naW4KCkNyZWEgdW5hIGNsYXNzZSBgTG9naW5SZXF1ZXN0YCBwZXIgZW5jYXBzdWxhciBsZXMgZGFkZXMgZGUgbGEgc29swrdsaWNpdHVkIGRlIGxvZ2luLg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+### Model de sol&middot;licitud de login
+
+Crea una classe `LoginRequest` per encapsular les dades de la sol&middot;licitud de login.</pre></div><div class='content'><p>public class LoginRequest {
+private String username;
+private String password;</p>
+<pre><code>// Getters and setters
+</code></pre>
+<p>}</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CiMjIFJlc3VtCgpFbiBhcXVlc3RhIHNlY2Npw7MsIGhlbSBhcHLDqHMgYSBpbXBsZW1lbnRhciBsJ2F1dGVudGljYWNpw7MgYmFzYWRhIGVuIEpXVCBlbiB1bmEgYXBsaWNhY2nDsyBTcHJpbmcgQm9vdC4gSGVtIGNvbmZpZ3VyYXQgU3ByaW5nIFNlY3VyaXR5IHBlciB1dGlsaXR6YXIgSldULCBjcmVhdCB1biBzZXJ2ZWkgcGVyIGdlbmVyYXIgaSB2YWxpZGFyIHRva2VucywgaW1wbGVtZW50YXQgZmlsdHJlcyBkZSBzZWd1cmV0YXQgcGVyIGdlc3Rpb25hciBsZXMgc29swrdsaWNpdHVkcyBhdXRlbnRpY2FkZXMgaSBjcmVhdCB1biBjb250cm9sYWRvciBwZXIgZ2VzdGlvbmFyIGxlcyBzb2zCt2xpY2l0dWRzIGQnYXV0ZW50aWNhY2nDsy4gQW1iIGFxdWVzdHMgY29uZWl4ZW1lbnRzLCBlc3TDoHMgcHJlcGFyYXQgcGVyIHByb3RlZ2lyIGxhIHRldmEgYXBsaWNhY2nDsyBTcHJpbmcgQm9vdCBhbWIgYXV0ZW50aWNhY2nDsyBKV1Qu"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+## Resum
+
+En aquesta secci&oacute;, hem apr&egrave;s a implementar l'autenticaci&oacute; basada en JWT en una aplicaci&oacute; Spring Boot. Hem configurat Spring Security per utilitzar JWT, creat un servei per generar i validar tokens, implementat filtres de seguretat per gestionar les sol&middot;licituds autenticades i creat un controlador per gestionar les sol&middot;licituds d'autenticaci&oacute;. Amb aquests coneixements, est&agrave;s preparat per protegir la teva aplicaci&oacute; Spring Boot amb autenticaci&oacute; JWT.</pre></div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-03-user-authentication-authorization' title="Autenticació i autorització d'usuaris">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-01-introduction-testing' title="Introducció a les proves">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

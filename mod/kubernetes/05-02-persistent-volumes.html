@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volums Persistents</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kubernetes/05-02-persistent-volumes" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kubernetes/05-02-persistent-volumes" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kubernetes/05-02-persistent-volumes" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kubernetes/05-02-persistent-volumes" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kubernetes/05-02-persistent-volumes" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-01-volumes' title="Volums">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Volums Persistents</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-03-persistent-volume-claims' title="Reclamacions de Volums Persistents">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Els volums persistents (Persistent Volumes, PV) són una part fonamental de l'emmagatzematge en Kubernetes. Proporcionen una manera d'abstraure l'emmagatzematge físic i permeten que les aplicacions utilitzin emmagatzematge persistent de manera independent de la infraestructura subjacent.</p>
+</div><h1>Objectius d'Aprenentatge</h1>
+<div class='content'><p>Al final d'aquest tema, hauràs après:</p>
+<ul>
+<li>Què són els volums persistents i per què són importants.</li>
+<li>Com es defineixen i es gestionen els volums persistents en Kubernetes.</li>
+<li>La diferència entre volums persistents i reclamacions de volums persistents.</li>
+<li>Com utilitzar volums persistents en les teves aplicacions.</li>
+</ul>
+</div><h1>Què és un Volum Persistent?</h1>
+<div class='content'><p>Un volum persistent (PV) és un recurs d'emmagatzematge en un clúster de Kubernetes que ha estat provisionat per un administrador. Els PV són recursos del clúster, igual que els nodes, i no estan lligats a cap pod específic. Els PV poden ser provisionats de manera dinàmica o estàtica.</p>
+</div><h2>Característiques Clau dels PV:</h2>
+<div class='content'><ul>
+<li><strong>Persistència</strong>: Els PV persisteixen més enllà del cicle de vida dels pods.</li>
+<li><strong>Abstracció</strong>: Proporcionen una abstracció sobre l'emmagatzematge físic, permetent que les aplicacions utilitzin emmagatzematge sense preocupar-se de la infraestructura subjacent.</li>
+<li><strong>Gestió de Recursos</strong>: Els PV són gestionats pel clúster de Kubernetes, permetent una gestió centralitzada de l'emmagatzematge.</li>
+</ul>
+</div><h1>Definició d'un Volum Persistent</h1>
+<div class='content'><p>Un PV es defineix mitjançant un objecte de Kubernetes. A continuació es mostra un exemple de definició d'un PV:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUGVyc2lzdGVudFZvbHVtZQptZXRhZGF0YToKICBuYW1lOiBleGFtcGxlLXB2CnNwZWM6CiAgY2FwYWNpdHk6CiAgICBzdG9yYWdlOiAxMEdpCiAgYWNjZXNzTW9kZXM6CiAgICAtIFJlYWRXcml0ZU9uY2UKICBwZXJzaXN0ZW50Vm9sdW1lUmVjbGFpbVBvbGljeTogUmV0YWluCiAgc3RvcmFnZUNsYXNzTmFtZTogc3RhbmRhcmQKICBob3N0UGF0aDoKICAgIHBhdGg6IC9tbnQvZGF0YQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: example-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: standard
+  hostPath:
+    path: /mnt/data</pre></div><div class='content'></div><h2>Explicació del Codi:</h2>
+<div class='content'><ul>
+<li><strong>apiVersion</strong>: La versió de l'API de Kubernetes.</li>
+<li><strong>kind</strong>: El tipus de recurs, en aquest cas <code>PersistentVolume</code>.</li>
+<li><strong>metadata</strong>: Informació sobre el PV, com ara el nom.</li>
+<li><strong>spec</strong>: L'especificació del PV, que inclou:
+<ul>
+<li><strong>capacity</strong>: La capacitat d'emmagatzematge del PV.</li>
+<li><strong>accessModes</strong>: Els modes d'accés del PV (per exemple, <code>ReadWriteOnce</code>).</li>
+<li><strong>persistentVolumeReclaimPolicy</strong>: La política de reclamació del PV (per exemple, <code>Retain</code>).</li>
+<li><strong>storageClassName</strong>: El nom de la classe d'emmagatzematge.</li>
+<li><strong>hostPath</strong>: El camí de l'emmagatzematge físic en el node.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Reclamacions de Volums Persistents</h1>
+<div class='content'><p>Una reclamació de volum persistent (Persistent Volume Claim, PVC) és una sol·licitud d'emmagatzematge per part d'un usuari. Els PVC són similars als pods en què els pods consumeixen recursos del node i els PVC consumeixen recursos dels PV.</p>
+</div><h2>Definició d'una PVC</h2>
+<div class='content'><p>A continuació es mostra un exemple de definició d'una PVC:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUGVyc2lzdGVudFZvbHVtZUNsYWltCm1ldGFkYXRhOgogIG5hbWU6IGV4YW1wbGUtcHZjCnNwZWM6CiAgYWNjZXNzTW9kZXM6CiAgICAtIFJlYWRXcml0ZU9uY2UKICByZXNvdXJjZXM6CiAgICByZXF1ZXN0czoKICAgICAgc3RvcmFnZTogMTBHaQogIHN0b3JhZ2VDbGFzc05hbWU6IHN0YW5kYXJk"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: example-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard</pre></div><div class='content'></div><h2>Explicació del Codi:</h2>
+<div class='content'><ul>
+<li><strong>apiVersion</strong>: La versió de l'API de Kubernetes.</li>
+<li><strong>kind</strong>: El tipus de recurs, en aquest cas <code>PersistentVolumeClaim</code>.</li>
+<li><strong>metadata</strong>: Informació sobre la PVC, com ara el nom.</li>
+<li><strong>spec</strong>: L'especificació de la PVC, que inclou:
+<ul>
+<li><strong>accessModes</strong>: Els modes d'accés sol·licitats (per exemple, <code>ReadWriteOnce</code>).</li>
+<li><strong>resources</strong>: Els recursos sol·licitats, com ara la capacitat d'emmagatzematge.</li>
+<li><strong>storageClassName</strong>: El nom de la classe d'emmagatzematge.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Utilització de Volums Persistents en Aplicacions</h1>
+<div class='content'><p>Per utilitzar un PV en una aplicació, primer has de crear una PVC i després referenciar-la en la definició del pod. A continuació es mostra un exemple de com utilitzar una PVC en un pod:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUG9kCm1ldGFkYXRhOgogIG5hbWU6IGV4YW1wbGUtcG9kCnNwZWM6CiAgY29udGFpbmVyczoKICAgIC0gbmFtZTogZXhhbXBsZS1jb250YWluZXIKICAgICAgaW1hZ2U6IG5naW54CiAgICAgIHZvbHVtZU1vdW50czoKICAgICAgICAtIG1vdW50UGF0aDogIi91c3Ivc2hhcmUvbmdpbngvaHRtbCIKICAgICAgICAgIG5hbWU6IGV4YW1wbGUtdm9sdW1lCiAgdm9sdW1lczoKICAgIC0gbmFtZTogZXhhbXBsZS12b2x1bWUKICAgICAgcGVyc2lzdGVudFZvbHVtZUNsYWltOgogICAgICAgIGNsYWltTmFtZTogZXhhbXBsZS1wdmM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  containers:
+    - name: example-container
+      image: nginx
+      volumeMounts:
+        - mountPath: &quot;/usr/share/nginx/html&quot;
+          name: example-volume
+  volumes:
+    - name: example-volume
+      persistentVolumeClaim:
+        claimName: example-pvc</pre></div><div class='content'></div><h2>Explicació del Codi:</h2>
+<div class='content'><ul>
+<li><strong>containers</strong>: Defineix els contenidors dins del pod.
+<ul>
+<li><strong>volumeMounts</strong>: Especifica on muntar el volum dins del contenidor.</li>
+</ul>
+</li>
+<li><strong>volumes</strong>: Defineix els volums que utilitzarà el pod.
+<ul>
+<li><strong>persistentVolumeClaim</strong>: Referencia la PVC creada anteriorment.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu:</h2>
+<div class='content'><p>Crear un volum persistent i una reclamació de volum persistent, i utilitzar-los en un pod.</p>
+</div><h2>Passos:</h2>
+<div class='content'><ol>
+<li>Crea un fitxer <code>pv.yaml</code> amb la definició del PV.</li>
+<li>Crea un fitxer <code>pvc.yaml</code> amb la definició de la PVC.</li>
+<li>Crea un fitxer <code>pod.yaml</code> amb la definició del pod que utilitza la PVC.</li>
+<li>Aplica els fitxers al clúster de Kubernetes.</li>
+</ol>
+</div><h2>Solució:</h2>
+<div class='content'><p><strong>pv.yaml</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUGVyc2lzdGVudFZvbHVtZQptZXRhZGF0YToKICBuYW1lOiBleGFtcGxlLXB2CnNwZWM6CiAgY2FwYWNpdHk6CiAgICBzdG9yYWdlOiAxMEdpCiAgYWNjZXNzTW9kZXM6CiAgICAtIFJlYWRXcml0ZU9uY2UKICBwZXJzaXN0ZW50Vm9sdW1lUmVjbGFpbVBvbGljeTogUmV0YWluCiAgc3RvcmFnZUNsYXNzTmFtZTogc3RhbmRhcmQKICBob3N0UGF0aDoKICAgIHBhdGg6IC9tbnQvZGF0YQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: example-pv
+spec:
+  capacity:
+    storage: 10Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: standard
+  hostPath:
+    path: /mnt/data</pre></div><div class='content'><p><strong>pvc.yaml</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUGVyc2lzdGVudFZvbHVtZUNsYWltCm1ldGFkYXRhOgogIG5hbWU6IGV4YW1wbGUtcHZjCnNwZWM6CiAgYWNjZXNzTW9kZXM6CiAgICAtIFJlYWRXcml0ZU9uY2UKICByZXNvdXJjZXM6CiAgICByZXF1ZXN0czoKICAgICAgc3RvcmFnZTogMTBHaQogIHN0b3JhZ2VDbGFzc05hbWU6IHN0YW5kYXJk"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: example-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard</pre></div><div class='content'><p><strong>pod.yaml</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUG9kCm1ldGFkYXRhOgogIG5hbWU6IGV4YW1wbGUtcG9kCnNwZWM6CiAgY29udGFpbmVyczoKICAgIC0gbmFtZTogZXhhbXBsZS1jb250YWluZXIKICAgICAgaW1hZ2U6IG5naW54CiAgICAgIHZvbHVtZU1vdW50czoKICAgICAgICAtIG1vdW50UGF0aDogIi91c3Ivc2hhcmUvbmdpbngvaHRtbCIKICAgICAgICAgIG5hbWU6IGV4YW1wbGUtdm9sdW1lCiAgdm9sdW1lczoKICAgIC0gbmFtZTogZXhhbXBsZS12b2x1bWUKICAgICAgcGVyc2lzdGVudFZvbHVtZUNsYWltOgogICAgICAgIGNsYWltTmFtZTogZXhhbXBsZS1wdmM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  containers:
+    - name: example-container
+      image: nginx
+      volumeMounts:
+        - mountPath: &quot;/usr/share/nginx/html&quot;
+          name: example-volume
+  volumes:
+    - name: example-volume
+      persistentVolumeClaim:
+        claimName: example-pvc</pre></div><div class='content'></div><h2>Comandes:</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a3ViZWN0bCBhcHBseSAtZiBwdi55YW1sCmt1YmVjdGwgYXBwbHkgLWYgcHZjLnlhbWwKa3ViZWN0bCBhcHBseSAtZiBwb2QueWFtbA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>kubectl apply -f pv.yaml
+kubectl apply -f pvc.yaml
+kubectl apply -f pod.yaml</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après què són els volums persistents i com es defineixen i es gestionen en Kubernetes. També hem vist com utilitzar volums persistents en les nostres aplicacions mitjançant reclamacions de volums persistents. Els volums persistents són una eina poderosa per gestionar l'emmagatzematge en un clúster de Kubernetes, proporcionant persistència i abstracció sobre l'emmagatzematge físic.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-01-volumes' title="Volums">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-03-persistent-volume-claims' title="Reclamacions de Volums Persistents">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

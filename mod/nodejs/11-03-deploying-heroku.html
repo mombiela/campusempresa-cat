@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desplegar a Heroku</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nodejs/11-03-deploying-heroku" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nodejs/11-03-deploying-heroku" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nodejs/11-03-deploying-heroku" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nodejs/11-03-deploying-heroku" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nodejs/11-03-deploying-heroku" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='11-02-using-pm2' title="Utilitzar PM2 per a la Gestió de Processos">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Desplegar a Heroku</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='11-04-ci-cd' title="Integració i Desplegament Continu">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com desplegar una aplicació Node.js a Heroku, una plataforma de núvol que permet als desenvolupadors construir, executar i operar aplicacions completament en el núvol. Heroku és conegut per la seva facilitat d'ús i la seva integració amb Git, cosa que fa que el procés de desplegament sigui molt senzill.</p>
+</div><h1>1. Prerequisits</h1>
+<div class='content'><p>Abans de començar, assegura't de tenir els següents requisits:</p>
+<ul>
+<li>Un compte a <a href="https://www.heroku.com/">Heroku</a>.</li>
+<li><a href="https://nodejs.org/">Node.js</a> instal·lat al teu ordinador.</li>
+<li><a href="https://git-scm.com/">Git</a> instal·lat al teu ordinador.</li>
+<li><a href="https://devcenter.heroku.com/articles/heroku-cli">Heroku CLI</a> instal·lat.</li>
+</ul>
+</div><h1>2. Configuració del Projecte</h1>
+<div class='content'></div><h2>2.1. Crear un Projecte Node.js</h2>
+<div class='content'><p>Si no tens un projecte Node.js, pots crear-ne un de nou. A continuació, es mostra un exemple bàsic d'una aplicació Node.js amb Express:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bWtkaXIgbXktaGVyb2t1LWFwcApjZCBteS1oZXJva3UtYXBwCm5wbSBpbml0IC15Cm5wbSBpbnN0YWxsIGV4cHJlc3M="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>mkdir my-heroku-app
+cd my-heroku-app
+npm init -y
+npm install express</pre></div><div class='content'><p>Crea un fitxer <code>index.js</code> amb el següent contingut:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoJ2V4cHJlc3MnKTsKY29uc3QgYXBwID0gZXhwcmVzcygpOwpjb25zdCBwb3J0ID0gcHJvY2Vzcy5lbnYuUE9SVCB8fCAzMDAwOwoKYXBwLmdldCgnLycsIChyZXEsIHJlcykgPT4gewogIHJlcy5zZW5kKCdIZWxsbywgSGVyb2t1IScpOwp9KTsKCmFwcC5saXN0ZW4ocG9ydCwgKCkgPT4gewogIGNvbnNvbGUubG9nKGBTZXJ2ZXIgaXMgcnVubmluZyBvbiBwb3J0ICR7cG9ydH1gKTsKfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.get('/', (req, res) =&gt; {
+  res.send('Hello, Heroku!');
+});
+
+app.listen(port, () =&gt; {
+  console.log(`Server is running on port ${port}`);
+});</pre></div><div class='content'></div><h2>2.2. Crear un Fitxer `Procfile`</h2>
+<div class='content'><p>Heroku utilitza un fitxer anomenat <code>Procfile</code> per saber com executar la teva aplicació. Crea un fitxer anomenat <code>Procfile</code> a l'arrel del teu projecte amb el següent contingut:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("d2ViOiBub2RlIGluZGV4Lmpz"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>web: node index.js</pre></div><div class='content'></div><h2>2.3. Crear un Fitxer `.gitignore`</h2>
+<div class='content'><p>Crea un fitxer <code>.gitignore</code> per excloure fitxers i directoris innecessaris del teu repositori Git:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bm9kZV9tb2R1bGVz"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>node_modules</pre></div><div class='content'></div><h1>3. Desplegament a Heroku</h1>
+<div class='content'></div><h2>3.1. Inicialitzar un Repositori Git</h2>
+<div class='content'><p>Inicialitza un repositori Git al teu projecte:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2l0IGluaXQKZ2l0IGFkZCAuCmdpdCBjb21taXQgLW0gIkluaXRpYWwgY29tbWl0Ig=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>git init
+git add .
+git commit -m &quot;Initial commit&quot;</pre></div><div class='content'></div><h2>3.2. Crear una Aplicació a Heroku</h2>
+<div class='content'><p>Utilitza Heroku CLI per crear una nova aplicació:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGVyb2t1IGNyZWF0ZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>heroku create</pre></div><div class='content'><p>Això crearà una nova aplicació a Heroku i afegirà un remot Git anomenat <code>heroku</code> al teu repositori.</p>
+</div><h2>3.3. Desplegar l'Aplicació</h2>
+<div class='content'><p>Desplega la teva aplicació a Heroku utilitzant Git:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2l0IHB1c2ggaGVyb2t1IG1hc3Rlcg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>git push heroku master</pre></div><div class='content'></div><h2>3.4. Obtenir l'URL de l'Aplicació</h2>
+<div class='content'><p>Després de desplegar l'aplicació, pots obtenir l'URL de l'aplicació amb el següent comandament:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGVyb2t1IG9wZW4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>heroku open</pre></div><div class='content'><p>Això obrirà el navegador web amb l'URL de la teva aplicació desplegada.</p>
+</div><h1>4. Gestió de Variables d'Entorn</h1>
+<div class='content'><p>Heroku permet configurar variables d'entorn per a la teva aplicació. Pots afegir variables d'entorn utilitzant Heroku CLI:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGVyb2t1IGNvbmZpZzpzZXQgTVlfVkFSSUFCTEU9bXlfdmFsdWU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>heroku config:set MY_VARIABLE=my_value</pre></div><div class='content'><p>Per accedir a aquestes variables d'entorn a la teva aplicació Node.js, pots utilitzar <code>process.env</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgbXlWYXJpYWJsZSA9IHByb2Nlc3MuZW52Lk1ZX1ZBUklBQkxFOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const myVariable = process.env.MY_VARIABLE;</pre></div><div class='content'></div><h1>5. Monitorització i Escalabilitat</h1>
+<div class='content'><p>Heroku ofereix eines per monitoritzar i escalar la teva aplicació. Pots veure els logs de la teva aplicació amb el següent comandament:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGVyb2t1IGxvZ3MgLS10YWls"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>heroku logs --tail</pre></div><div class='content'><p>Per escalar la teva aplicació, pots utilitzar el següent comandament:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGVyb2t1IHBzOnNjYWxlIHdlYj0y"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>heroku ps:scale web=2</pre></div><div class='content'><p>Això augmentarà el nombre de dinasties (instàncies) de la teva aplicació.</p>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com desplegar una aplicació Node.js a Heroku. Hem cobert els passos des de la configuració del projecte fins al desplegament i la gestió de variables d'entorn. Ara estàs preparat per desplegar les teves pròpies aplicacions a Heroku i aprofitar els avantatges del núvol.</p>
+<p><strong>Exercici Pràctic:</strong></p>
+<ol>
+<li>Crea una aplicació Node.js bàsica amb Express.</li>
+<li>Desplega l'aplicació a Heroku seguint els passos descrits.</li>
+<li>Configura una variable d'entorn a Heroku i utilitza-la a la teva aplicació.</li>
+</ol>
+<p><strong>Solució:</strong></p>
+<ol>
+<li>Segueix els passos descrits a la secció &quot;Configuració del Projecte&quot;.</li>
+<li>Segueix els passos descrits a la secció &quot;Desplegament a Heroku&quot;.</li>
+<li>Utilitza el comandament <code>heroku config:set</code> per configurar una variable d'entorn i accedeix-hi a la teva aplicació utilitzant <code>process.env</code>.</li>
+</ol>
+<p>Amb això, hauràs completat el desplegament de la teva aplicació Node.js a Heroku!</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='11-02-using-pm2' title="Utilitzar PM2 per a la Gestió de Processos">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='11-04-ci-cd' title="Integració i Desplegament Continu">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

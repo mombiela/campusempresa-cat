@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Còpia de Seguretat i Restauració de Jenkins</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/jenkins/05-03-backup-and-restore-jenkins" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/jenkins/05-03-backup-and-restore-jenkins" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/jenkins/05-03-backup-and-restore-jenkins" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/jenkins/05-03-backup-and-restore-jenkins" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/jenkins/05-03-backup-and-restore-jenkins" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-02-configuring-security' title="Configurant la Seguretat">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Còpia de Seguretat i Restauració de Jenkins</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-04-monitoring-jenkins' title="Monitorant Jenkins">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com realitzar còpies de seguretat i restaurar Jenkins. La còpia de seguretat és essencial per garantir que les dades i configuracions de Jenkins es puguin recuperar en cas de fallada del sistema o altres problemes. La restauració permet tornar a un estat conegut i funcional de Jenkins.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre la importància de les còpies de seguretat.</li>
+<li>Aprendre a realitzar còpies de seguretat de Jenkins.</li>
+<li>Aprendre a restaurar Jenkins des d'una còpia de seguretat.</li>
+</ul>
+</div><h1>Importància de les Còpies de Seguretat</h1>
+<div class='content'><p>Les còpies de seguretat són crucials per:</p>
+<ul>
+<li><strong>Protegir contra pèrdues de dades:</strong> En cas de fallada del sistema, corrupció de dades o errors humans.</li>
+<li><strong>Facilitar la recuperació ràpida:</strong> Permet tornar a un estat funcional ràpidament.</li>
+<li><strong>Complir amb les polítiques de seguretat:</strong> Moltes organitzacions tenen requisits de còpia de seguretat per complir amb normatives.</li>
+</ul>
+</div><h1>Components Clau per a la Còpia de Seguretat</h1>
+<div class='content'><p>Els components principals que cal incloure en una còpia de seguretat de Jenkins són:</p>
+<ul>
+<li><strong>Directori de configuració de Jenkins:</strong> Conté la configuració global, les feines, els plugins, etc.</li>
+<li><strong>Directori de feines:</strong> Conté les configuracions específiques de cada feina.</li>
+<li><strong>Directori de plugins:</strong> Conté els plugins instal·lats.</li>
+<li><strong>Directori de secrets:</strong> Conté les credencials i altres secrets.</li>
+</ul>
+</div><h1>Realitzant una Còpia de Seguretat</h1>
+<div class='content'></div><h2>Mètode Manual</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Atura el servei de Jenkins:</strong></p>
+<pre><code class="language-bash">sudo systemctl stop jenkins
+</code></pre>
+</li>
+<li>
+<p><strong>Copia els directoris clau:</strong></p>
+<pre><code class="language-bash">sudo cp -r /var/lib/jenkins /path/to/backup/location
+</code></pre>
+</li>
+<li>
+<p><strong>Reinicia el servei de Jenkins:</strong></p>
+<pre><code class="language-bash">sudo systemctl start jenkins
+</code></pre>
+</li>
+</ol>
+</div><h2>Mètode Automatitzat amb Scripts</h2>
+<div class='content'><p>Pots utilitzar un script per automatitzar el procés de còpia de seguretat. Aquí tens un exemple de script en Bash:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyEvYmluL2Jhc2gKCiMgRGlyZWN0b3JpIGRlIEplbmtpbnMKSkVOS0lOU19IT01FPSIvdmFyL2xpYi9qZW5raW5zIgoKIyBEaXJlY3RvcmkgZGUgY8OycGlhIGRlIHNlZ3VyZXRhdApCQUNLVVBfRElSPSIvcGF0aC90by9iYWNrdXAvbG9jYXRpb24vamVua2luc19iYWNrdXBfJChkYXRlICslRl8lVCkiCgojIENyZWFyIGVsIGRpcmVjdG9yaSBkZSBjw7JwaWEgZGUgc2VndXJldGF0Cm1rZGlyIC1wICRCQUNLVVBfRElSCgojIEF0dXJhciBKZW5raW5zCnN1ZG8gc3lzdGVtY3RsIHN0b3AgamVua2lucwoKIyBDb3BpYXIgZWxzIGZpdHhlcnMKc3VkbyBjcCAtciAkSkVOS0lOU19IT01FICRCQUNLVVBfRElSCgojIFJlaW5pY2lhciBKZW5raW5zCnN1ZG8gc3lzdGVtY3RsIHN0YXJ0IGplbmtpbnMKCiMgQ29uZmlybWFyIGxhIGPDsnBpYSBkZSBzZWd1cmV0YXQKZWNobyAiQ8OycGlhIGRlIHNlZ3VyZXRhdCBjb21wbGV0YWRhIGEgJEJBQ0tVUF9ESVIi"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#!/bin/bash
+
+# Directori de Jenkins
+JENKINS_HOME=&quot;/var/lib/jenkins&quot;
+
+# Directori de c&ograve;pia de seguretat
+BACKUP_DIR=&quot;/path/to/backup/location/jenkins_backup_$(date +%F_%T)&quot;
+
+# Crear el directori de c&ograve;pia de seguretat
+mkdir -p $BACKUP_DIR
+
+# Aturar Jenkins
+sudo systemctl stop jenkins
+
+# Copiar els fitxers
+sudo cp -r $JENKINS_HOME $BACKUP_DIR
+
+# Reiniciar Jenkins
+sudo systemctl start jenkins
+
+# Confirmar la c&ograve;pia de seguretat
+echo &quot;C&ograve;pia de seguretat completada a $BACKUP_DIR&quot;</pre></div><div class='content'></div><h1>Restauració de Jenkins</h1>
+<div class='content'></div><h2>Mètode Manual</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Atura el servei de Jenkins:</strong></p>
+<pre><code class="language-bash">sudo systemctl stop jenkins
+</code></pre>
+</li>
+<li>
+<p><strong>Restaura els directoris clau des de la còpia de seguretat:</strong></p>
+<pre><code class="language-bash">sudo cp -r /path/to/backup/location/jenkins_backup /var/lib/jenkins
+</code></pre>
+</li>
+<li>
+<p><strong>Reinicia el servei de Jenkins:</strong></p>
+<pre><code class="language-bash">sudo systemctl start jenkins
+</code></pre>
+</li>
+</ol>
+</div><h2>Mètode Automatitzat amb Scripts</h2>
+<div class='content'><p>Pots utilitzar un script per automatitzar el procés de restauració. Aquí tens un exemple de script en Bash:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyEvYmluL2Jhc2gKCiMgRGlyZWN0b3JpIGRlIEplbmtpbnMKSkVOS0lOU19IT01FPSIvdmFyL2xpYi9qZW5raW5zIgoKIyBEaXJlY3RvcmkgZGUgY8OycGlhIGRlIHNlZ3VyZXRhdApCQUNLVVBfRElSPSIvcGF0aC90by9iYWNrdXAvbG9jYXRpb24vamVua2luc19iYWNrdXAiCgojIEF0dXJhciBKZW5raW5zCnN1ZG8gc3lzdGVtY3RsIHN0b3AgamVua2lucwoKIyBSZXN0YXVyYXIgZWxzIGZpdHhlcnMKc3VkbyBjcCAtciAkQkFDS1VQX0RJUi8qICRKRU5LSU5TX0hPTUUKCiMgUmVpbmljaWFyIEplbmtpbnMKc3VkbyBzeXN0ZW1jdGwgc3RhcnQgamVua2lucwoKIyBDb25maXJtYXIgbGEgcmVzdGF1cmFjacOzCmVjaG8gIlJlc3RhdXJhY2nDsyBjb21wbGV0YWRhIGRlcyBkZSAkQkFDS1VQX0RJUiI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#!/bin/bash
+
+# Directori de Jenkins
+JENKINS_HOME=&quot;/var/lib/jenkins&quot;
+
+# Directori de c&ograve;pia de seguretat
+BACKUP_DIR=&quot;/path/to/backup/location/jenkins_backup&quot;
+
+# Aturar Jenkins
+sudo systemctl stop jenkins
+
+# Restaurar els fitxers
+sudo cp -r $BACKUP_DIR/* $JENKINS_HOME
+
+# Reiniciar Jenkins
+sudo systemctl start jenkins
+
+# Confirmar la restauraci&oacute;
+echo &quot;Restauraci&oacute; completada des de $BACKUP_DIR&quot;</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici 1: Realitzar una Còpia de Seguretat Manual</h2>
+<div class='content'><ol>
+<li>Atura el servei de Jenkins.</li>
+<li>Copia el directori <code>/var/lib/jenkins</code> a una ubicació de còpia de seguretat.</li>
+<li>Reinicia el servei de Jenkins.</li>
+</ol>
+</div><h2>Exercici 2: Restaurar Jenkins Manualment</h2>
+<div class='content'><ol>
+<li>Atura el servei de Jenkins.</li>
+<li>Restaura el directori <code>/var/lib/jenkins</code> des de la ubicació de còpia de seguretat.</li>
+<li>Reinicia el servei de Jenkins.</li>
+</ol>
+</div><h2>Solucions</h2>
+<div class='content'><h4>Solució a l'Exercici 1</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3VkbyBzeXN0ZW1jdGwgc3RvcCBqZW5raW5zCnN1ZG8gY3AgLXIgL3Zhci9saWIvamVua2lucyAvcGF0aC90by9iYWNrdXAvbG9jYXRpb24Kc3VkbyBzeXN0ZW1jdGwgc3RhcnQgamVua2lucw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>sudo systemctl stop jenkins
+sudo cp -r /var/lib/jenkins /path/to/backup/location
+sudo systemctl start jenkins</pre></div><div class='content'><h4>Solució a l'Exercici 2</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3VkbyBzeXN0ZW1jdGwgc3RvcCBqZW5raW5zCnN1ZG8gY3AgLXIgL3BhdGgvdG8vYmFja3VwL2xvY2F0aW9uL2plbmtpbnNfYmFja3VwIC92YXIvbGliL2plbmtpbnMKc3VkbyBzeXN0ZW1jdGwgc3RhcnQgamVua2lucw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>sudo systemctl stop jenkins
+sudo cp -r /path/to/backup/location/jenkins_backup /var/lib/jenkins
+sudo systemctl start jenkins</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après la importància de les còpies de seguretat i com realitzar-les i restaurar-les tant manualment com mitjançant scripts. Les còpies de seguretat són essencials per garantir la continuïtat del servei i la protecció de les dades en Jenkins.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-02-configuring-security' title="Configurant la Seguretat">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-04-monitoring-jenkins' title="Monitorant Jenkins">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

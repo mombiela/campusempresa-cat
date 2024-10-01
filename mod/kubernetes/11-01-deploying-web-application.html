@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desplegament d'una Aplicació Web</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kubernetes/11-01-deploying-web-application" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kubernetes/11-01-deploying-web-application" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kubernetes/11-01-deploying-web-application" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kubernetes/11-01-deploying-web-application" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kubernetes/11-01-deploying-web-application" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='10-04-minikube' title="Minikube">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Desplegament d'una Aplicació Web</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='11-02-cicd-kubernetes' title="CI/CD amb Kubernetes">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a desplegar una aplicació web en un clúster de Kubernetes. Aquest procés inclou la creació de recursos bàsics com Pods, Services i Ingress, així com la configuració de l'emmagatzematge i la gestió de la configuració necessària per a l'aplicació.</p>
+</div><h1>Objectius d'Aprenentatge</h1>
+<div class='content'><ul>
+<li>Entendre com crear i desplegar un Pod en Kubernetes.</li>
+<li>Configurar un Service per exposar l'aplicació.</li>
+<li>Utilitzar Ingress per gestionar l'accés extern a l'aplicació.</li>
+<li>Configurar l'emmagatzematge persistent per a l'aplicació.</li>
+<li>Gestionar la configuració de l'aplicació mitjançant ConfigMaps i Secrets.</li>
+</ul>
+</div><h1>1. Creació del Pod</h1>
+<div class='content'></div><h2>Definició del Pod</h2>
+<div class='content'><p>Un Pod és la unitat bàsica de desplegament en Kubernetes. Conté un o més contenidors que comparteixen el mateix espai de xarxa i emmagatzematge.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUG9kCm1ldGFkYXRhOgogIG5hbWU6IHdlYi1hcHAKICBsYWJlbHM6CiAgICBhcHA6IHdlYi1hcHAKc3BlYzoKICBjb250YWluZXJzOgogIC0gbmFtZTogd2ViLWFwcAogICAgaW1hZ2U6IG5naW54OmxhdGVzdAogICAgcG9ydHM6CiAgICAtIGNvbnRhaW5lclBvcnQ6IDgw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: Pod
+metadata:
+  name: web-app
+  labels:
+    app: web-app
+spec:
+  containers:
+  - name: web-app
+    image: nginx:latest
+    ports:
+    - containerPort: 80</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>apiVersion</code>: La versió de l'API de Kubernetes que estem utilitzant.</li>
+<li><code>kind</code>: El tipus de recurs que estem creant, en aquest cas, un Pod.</li>
+<li><code>metadata</code>: Informació sobre el Pod, incloent el nom i les etiquetes.</li>
+<li><code>spec</code>: L'especificació del Pod, que inclou els contenidors que conté.</li>
+<li><code>containers</code>: Una llista de contenidors dins del Pod.</li>
+<li><code>name</code>: El nom del contenidor.</li>
+<li><code>image</code>: La imatge del contenidor que s'utilitzarà.</li>
+<li><code>ports</code>: Els ports que el contenidor exposarà.</li>
+</ul>
+</div><h2>Comandes per Crear el Pod</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a3ViZWN0bCBhcHBseSAtZiBwb2QueWFtbA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>kubectl apply -f pod.yaml</pre></div><div class='content'></div><h1>2. Creació del Service</h1>
+<div class='content'><p>Un Service en Kubernetes exposa un conjunt de Pods com un servei de xarxa.</p>
+</div><h2>Definició del Service</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogU2VydmljZQptZXRhZGF0YToKICBuYW1lOiB3ZWItYXBwLXNlcnZpY2UKc3BlYzoKICBzZWxlY3RvcjoKICAgIGFwcDogd2ViLWFwcAogIHBvcnRzOgogIC0gcHJvdG9jb2w6IFRDUAogICAgcG9ydDogODAKICAgIHRhcmdldFBvcnQ6IDgwCiAgdHlwZTogTG9hZEJhbGFuY2Vy"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: Service
+metadata:
+  name: web-app-service
+spec:
+  selector:
+    app: web-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+  type: LoadBalancer</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>selector</code>: Selecciona els Pods que coincideixen amb les etiquetes especificades.</li>
+<li><code>ports</code>: Defineix els ports que el servei exposarà.</li>
+<li><code>type</code>: El tipus de servei, en aquest cas, <code>LoadBalancer</code> per exposar l'aplicació a Internet.</li>
+</ul>
+</div><h2>Comandes per Crear el Service</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a3ViZWN0bCBhcHBseSAtZiBzZXJ2aWNlLnlhbWw="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>kubectl apply -f service.yaml</pre></div><div class='content'></div><h1>3. Configuració d'Ingress</h1>
+<div class='content'><p>Ingress gestiona l'accés extern als serveis dins del clúster.</p>
+</div><h2>Definició d'Ingress</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogbmV0d29ya2luZy5rOHMuaW8vdjEKa2luZDogSW5ncmVzcwptZXRhZGF0YToKICBuYW1lOiB3ZWItYXBwLWluZ3Jlc3MKc3BlYzoKICBydWxlczoKICAtIGhvc3Q6IHdlYmFwcC5leGFtcGxlLmNvbQogICAgaHR0cDoKICAgICAgcGF0aHM6CiAgICAgIC0gcGF0aDogLwogICAgICAgIHBhdGhUeXBlOiBQcmVmaXgKICAgICAgICBiYWNrZW5kOgogICAgICAgICAgc2VydmljZToKICAgICAgICAgICAgbmFtZTogd2ViLWFwcC1zZXJ2aWNlCiAgICAgICAgICAgIHBvcnQ6CiAgICAgICAgICAgICAgbnVtYmVyOiA4MA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-app-ingress
+spec:
+  rules:
+  - host: webapp.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web-app-service
+            port:
+              number: 80</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>rules</code>: Defineix les regles per a l'accés extern.</li>
+<li><code>host</code>: El domini que gestionarà l'Ingress.</li>
+<li><code>paths</code>: Defineix els camins i els serveis de backend que gestionaran les sol·licituds.</li>
+</ul>
+</div><h2>Comandes per Crear l'Ingress</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a3ViZWN0bCBhcHBseSAtZiBpbmdyZXNzLnlhbWw="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>kubectl apply -f ingress.yaml</pre></div><div class='content'></div><h1>4. Configuració de l'Emmagatzematge Persistent</h1>
+<div class='content'></div><h2>Definició del PersistentVolume (PV)</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUGVyc2lzdGVudFZvbHVtZQptZXRhZGF0YToKICBuYW1lOiB3ZWItYXBwLXB2CnNwZWM6CiAgY2FwYWNpdHk6CiAgICBzdG9yYWdlOiAxR2kKICBhY2Nlc3NNb2RlczoKICAgIC0gUmVhZFdyaXRlT25jZQogIGhvc3RQYXRoOgogICAgcGF0aDogIi9tbnQvZGF0YSI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: web-app-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: &quot;/mnt/data&quot;</pre></div><div class='content'></div><h2>Definició del PersistentVolumeClaim (PVC)</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUGVyc2lzdGVudFZvbHVtZUNsYWltCm1ldGFkYXRhOgogIG5hbWU6IHdlYi1hcHAtcHZjCnNwZWM6CiAgYWNjZXNzTW9kZXM6CiAgICAtIFJlYWRXcml0ZU9uY2UKICByZXNvdXJjZXM6CiAgICByZXF1ZXN0czoKICAgICAgc3RvcmFnZTogMUdp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: web-app-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>PersistentVolume</code>: Defineix un volum físic en el clúster.</li>
+<li><code>PersistentVolumeClaim</code>: Sol·licita un volum persistent per a un Pod.</li>
+</ul>
+</div><h2>Comandes per Crear el PV i PVC</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a3ViZWN0bCBhcHBseSAtZiBwdi55YW1sCmt1YmVjdGwgYXBwbHkgLWYgcHZjLnlhbWw="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>kubectl apply -f pv.yaml
+kubectl apply -f pvc.yaml</pre></div><div class='content'></div><h1>5. Gestió de la Configuració</h1>
+<div class='content'></div><h2>Definició del ConfigMap</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogQ29uZmlnTWFwCm1ldGFkYXRhOgogIG5hbWU6IHdlYi1hcHAtY29uZmlnCmRhdGE6CiAgQVBQX0VOVjogInByb2R1Y3Rpb24iCiAgQVBQX0RFQlVHOiAiZmFsc2Ui"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-app-config
+data:
+  APP_ENV: &quot;production&quot;
+  APP_DEBUG: &quot;false&quot;</pre></div><div class='content'></div><h2>Definició del Secret</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogU2VjcmV0Cm1ldGFkYXRhOgogIG5hbWU6IHdlYi1hcHAtc2VjcmV0CnR5cGU6IE9wYXF1ZQpkYXRhOgogIERCX1BBU1NXT1JEOiBjR0Z6YzNkdmNtUT0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: Secret
+metadata:
+  name: web-app-secret
+type: Opaque
+data:
+  DB_PASSWORD: cGFzc3dvcmQ=</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>ConfigMap</code>: Emmagatzema dades de configuració no sensibles.</li>
+<li><code>Secret</code>: Emmagatzema dades sensibles, com contrasenyes.</li>
+</ul>
+</div><h2>Comandes per Crear el ConfigMap i Secret</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a3ViZWN0bCBhcHBseSAtZiBjb25maWdtYXAueWFtbAprdWJlY3RsIGFwcGx5IC1mIHNlY3JldC55YW1s"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>kubectl apply -f configmap.yaml
+kubectl apply -f secret.yaml</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Desplegar una Aplicació Web Completa</h2>
+<div class='content'><ol>
+<li>Crea els fitxers YAML per al Pod, Service, Ingress, PersistentVolume, PersistentVolumeClaim, ConfigMap i Secret.</li>
+<li>Aplica cada fitxer utilitzant <code>kubectl apply -f &lt;fitxer&gt;.yaml</code>.</li>
+<li>Verifica que l'aplicació està funcionant accedint al domini configurat en l'Ingress.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a3ViZWN0bCBhcHBseSAtZiBwb2QueWFtbAprdWJlY3RsIGFwcGx5IC1mIHNlcnZpY2UueWFtbAprdWJlY3RsIGFwcGx5IC1mIGluZ3Jlc3MueWFtbAprdWJlY3RsIGFwcGx5IC1mIHB2LnlhbWwKa3ViZWN0bCBhcHBseSAtZiBwdmMueWFtbAprdWJlY3RsIGFwcGx5IC1mIGNvbmZpZ21hcC55YW1sCmt1YmVjdGwgYXBwbHkgLWYgc2VjcmV0LnlhbWw="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>kubectl apply -f pod.yaml
+kubectl apply -f service.yaml
+kubectl apply -f ingress.yaml
+kubectl apply -f pv.yaml
+kubectl apply -f pvc.yaml
+kubectl apply -f configmap.yaml
+kubectl apply -f secret.yaml</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après a desplegar una aplicació web en Kubernetes utilitzant recursos bàsics com Pods, Services i Ingress. També hem configurat l'emmagatzematge persistent i gestionat la configuració de l'aplicació mitjançant ConfigMaps i Secrets. Aquestes habilitats són fonamentals per gestionar aplicacions en un entorn de producció amb Kubernetes.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='10-04-minikube' title="Minikube">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='11-02-cicd-kubernetes' title="CI/CD amb Kubernetes">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

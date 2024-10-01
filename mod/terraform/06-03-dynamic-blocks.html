@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blocs dinàmics</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/terraform/06-03-dynamic-blocks" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/terraform/06-03-dynamic-blocks" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/terraform/06-03-dynamic-blocks" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/terraform/06-03-dynamic-blocks" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/terraform/06-03-dynamic-blocks" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-terraform-functions' title="Funcions de Terraform">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Blocs dinàmics</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-terraform-import' title="Importació de Terraform">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Els blocs dinàmics en Terraform permeten generar configuracions repetitives de manera programàtica dins dels fitxers de configuració. Això és especialment útil quan es treballa amb recursos que tenen múltiples instàncies o configuracions similars, ja que permet evitar la duplicació de codi i mantenir els fitxers de configuració més nets i manejables.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Blocs dinàmics</strong>: Permeten crear múltiples instàncies d'un bloc de configuració dins d'un recurs o mòdul.</li>
+<li><strong>For-each</strong>: Utilitzat per iterar sobre una col·lecció de valors per generar múltiples blocs.</li>
+<li><strong>Content</strong>: Defineix el contingut del bloc dinàmic.</li>
+</ol>
+</div><h1>Sintaxi dels Blocs Dinàmics</h1>
+<div class='content'><p>La sintaxi bàsica per a un bloc dinàmic és la següent:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVzb3VyY2UgInJlc291cmNlX3R5cGUiICJyZXNvdXJjZV9uYW1lIiB7CiAgZHluYW1pYyAiYmxvY2tfbmFtZSIgewogICAgZm9yX2VhY2ggPSB2YXIuY29sbGVjdGlvbgogICAgY29udGVudCB7CiAgICAgIGF0dHJpYnV0ZSA9IGJsb2NrX25hbWUudmFsdWUKICAgIH0KICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>resource &quot;resource_type&quot; &quot;resource_name&quot; {
+  dynamic &quot;block_name&quot; {
+    for_each = var.collection
+    content {
+      attribute = block_name.value
+    }
+  }
+}</pre></div><div class='content'><ul>
+<li><code>dynamic &quot;block_name&quot;</code>: Defineix el nom del bloc dinàmic.</li>
+<li><code>for_each = var.collection</code>: Itera sobre una col·lecció de valors.</li>
+<li><code>content { ... }</code>: Defineix el contingut del bloc dinàmic.</li>
+</ul>
+</div><h1>Exemple Pràctic</h1>
+<div class='content'><p>Suposem que volem crear múltiples regles de seguretat per a un grup de seguretat en AWS. En lloc de definir cada regla manualment, podem utilitzar un bloc dinàmic.</p>
+</div><h2>Definició de Variables</h2>
+<div class='content'><p>Primer, definim una variable que conté les regles de seguretat:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFyaWFibGUgInNlY3VyaXR5X3J1bGVzIiB7CiAgdHlwZSA9IGxpc3Qob2JqZWN0KHsKICAgIGZyb21fcG9ydCAgID0gbnVtYmVyCiAgICB0b19wb3J0ICAgICA9IG51bWJlcgogICAgcHJvdG9jb2wgICAgPSBzdHJpbmcKICAgIGNpZHJfYmxvY2tzID0gbGlzdChzdHJpbmcpCiAgfSkpCiAgZGVmYXVsdCA9IFsKICAgIHsKICAgICAgZnJvbV9wb3J0ICAgPSA4MAogICAgICB0b19wb3J0ICAgICA9IDgwCiAgICAgIHByb3RvY29sICAgID0gInRjcCIKICAgICAgY2lkcl9ibG9ja3MgPSBbIjAuMC4wLjAvMCJdCiAgICB9LAogICAgewogICAgICBmcm9tX3BvcnQgICA9IDQ0MwogICAgICB0b19wb3J0ICAgICA9IDQ0MwogICAgICBwcm90b2NvbCAgICA9ICJ0Y3AiCiAgICAgIGNpZHJfYmxvY2tzID0gWyIwLjAuMC4wLzAiXQogICAgfQogIF0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>variable &quot;security_rules&quot; {
+  type = list(object({
+    from_port   = number
+    to_port     = number
+    protocol    = string
+    cidr_blocks = list(string)
+  }))
+  default = [
+    {
+      from_port   = 80
+      to_port     = 80
+      protocol    = &quot;tcp&quot;
+      cidr_blocks = [&quot;0.0.0.0/0&quot;]
+    },
+    {
+      from_port   = 443
+      to_port     = 443
+      protocol    = &quot;tcp&quot;
+      cidr_blocks = [&quot;0.0.0.0/0&quot;]
+    }
+  ]
+}</pre></div><div class='content'></div><h2>Utilització del Bloc Dinàmic</h2>
+<div class='content'><p>A continuació, utilitzem un bloc dinàmic per crear les regles de seguretat:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVzb3VyY2UgImF3c19zZWN1cml0eV9ncm91cCIgImV4YW1wbGUiIHsKICBuYW1lICAgICAgICA9ICJleGFtcGxlIgogIGRlc2NyaXB0aW9uID0gIkV4YW1wbGUgc2VjdXJpdHkgZ3JvdXAiCgogIGR5bmFtaWMgImluZ3Jlc3MiIHsKICAgIGZvcl9lYWNoID0gdmFyLnNlY3VyaXR5X3J1bGVzCiAgICBjb250ZW50IHsKICAgICAgZnJvbV9wb3J0ICAgPSBpbmdyZXNzLnZhbHVlLmZyb21fcG9ydAogICAgICB0b19wb3J0ICAgICA9IGluZ3Jlc3MudmFsdWUudG9fcG9ydAogICAgICBwcm90b2NvbCAgICA9IGluZ3Jlc3MudmFsdWUucHJvdG9jb2wKICAgICAgY2lkcl9ibG9ja3MgPSBpbmdyZXNzLnZhbHVlLmNpZHJfYmxvY2tzCiAgICB9CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>resource &quot;aws_security_group&quot; &quot;example&quot; {
+  name        = &quot;example&quot;
+  description = &quot;Example security group&quot;
+
+  dynamic &quot;ingress&quot; {
+    for_each = var.security_rules
+    content {
+      from_port   = ingress.value.from_port
+      to_port     = ingress.value.to_port
+      protocol    = ingress.value.protocol
+      cidr_blocks = ingress.value.cidr_blocks
+    }
+  }
+}</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li><code>dynamic &quot;ingress&quot;</code>: Defineix un bloc dinàmic per a les regles d'ingrés.</li>
+<li><code>for_each = var.security_rules</code>: Itera sobre la col·lecció de regles de seguretat.</li>
+<li><code>content { ... }</code>: Defineix el contingut de cada regla d'ingrés.</li>
+</ul>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Crear un recurs de grup de seguretat amb múltiples regles d'ingrés utilitzant blocs dinàmics.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>Defineix una variable <code>security_rules</code> amb diverses regles d'ingrés.</li>
+<li>Utilitza un bloc dinàmic per crear les regles d'ingrés dins d'un recurs <code>aws_security_group</code>.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFyaWFibGUgInNlY3VyaXR5X3J1bGVzIiB7CiAgdHlwZSA9IGxpc3Qob2JqZWN0KHsKICAgIGZyb21fcG9ydCAgID0gbnVtYmVyCiAgICB0b19wb3J0ICAgICA9IG51bWJlcgogICAgcHJvdG9jb2wgICAgPSBzdHJpbmcKICAgIGNpZHJfYmxvY2tzID0gbGlzdChzdHJpbmcpCiAgfSkpCiAgZGVmYXVsdCA9IFsKICAgIHsKICAgICAgZnJvbV9wb3J0ICAgPSAyMgogICAgICB0b19wb3J0ICAgICA9IDIyCiAgICAgIHByb3RvY29sICAgID0gInRjcCIKICAgICAgY2lkcl9ibG9ja3MgPSBbIjAuMC4wLjAvMCJdCiAgICB9LAogICAgewogICAgICBmcm9tX3BvcnQgICA9IDgwCiAgICAgIHRvX3BvcnQgICAgID0gODAKICAgICAgcHJvdG9jb2wgICAgPSAidGNwIgogICAgICBjaWRyX2Jsb2NrcyA9IFsiMC4wLjAuMC8wIl0KICAgIH0KICBdCn0KCnJlc291cmNlICJhd3Nfc2VjdXJpdHlfZ3JvdXAiICJleGFtcGxlIiB7CiAgbmFtZSAgICAgICAgPSAiZXhhbXBsZSIKICBkZXNjcmlwdGlvbiA9ICJFeGFtcGxlIHNlY3VyaXR5IGdyb3VwIgoKICBkeW5hbWljICJpbmdyZXNzIiB7CiAgICBmb3JfZWFjaCA9IHZhci5zZWN1cml0eV9ydWxlcwogICAgY29udGVudCB7CiAgICAgIGZyb21fcG9ydCAgID0gaW5ncmVzcy52YWx1ZS5mcm9tX3BvcnQKICAgICAgdG9fcG9ydCAgICAgPSBpbmdyZXNzLnZhbHVlLnRvX3BvcnQKICAgICAgcHJvdG9jb2wgICAgPSBpbmdyZXNzLnZhbHVlLnByb3RvY29sCiAgICAgIGNpZHJfYmxvY2tzID0gaW5ncmVzcy52YWx1ZS5jaWRyX2Jsb2NrcwogICAgfQogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>variable &quot;security_rules&quot; {
+  type = list(object({
+    from_port   = number
+    to_port     = number
+    protocol    = string
+    cidr_blocks = list(string)
+  }))
+  default = [
+    {
+      from_port   = 22
+      to_port     = 22
+      protocol    = &quot;tcp&quot;
+      cidr_blocks = [&quot;0.0.0.0/0&quot;]
+    },
+    {
+      from_port   = 80
+      to_port     = 80
+      protocol    = &quot;tcp&quot;
+      cidr_blocks = [&quot;0.0.0.0/0&quot;]
+    }
+  ]
+}
+
+resource &quot;aws_security_group&quot; &quot;example&quot; {
+  name        = &quot;example&quot;
+  description = &quot;Example security group&quot;
+
+  dynamic &quot;ingress&quot; {
+    for_each = var.security_rules
+    content {
+      from_port   = ingress.value.from_port
+      to_port     = ingress.value.to_port
+      protocol    = ingress.value.protocol
+      cidr_blocks = ingress.value.cidr_blocks
+    }
+  }
+}</pre></div><div class='content'></div><h1>Errors Comuns</h1>
+<div class='content'><ol>
+<li><strong>No definir correctament la col·lecció</strong>: Assegura't que la col·lecció utilitzada en <code>for_each</code> estigui ben definida i sigui del tipus correcte.</li>
+<li><strong>Accés incorrecte als valors</strong>: Utilitza <code>block_name.value</code> per accedir als valors dins del bloc dinàmic.</li>
+</ol>
+</div><h1>Consells Addicionals</h1>
+<div class='content'><ul>
+<li>Utilitza blocs dinàmics per mantenir els fitxers de configuració nets i evitar la duplicació de codi.</li>
+<li>Revisa la documentació oficial de Terraform per a més exemples i casos d'ús avançats.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Els blocs dinàmics són una eina poderosa en Terraform que permeten generar configuracions repetitives de manera eficient. Amb una comprensió clara de la seva sintaxi i ús, pots simplificar significativament els teus fitxers de configuració i fer-los més manejables. En el següent tema, explorarem com importar recursos existents a Terraform.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-terraform-functions' title="Funcions de Terraform">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-terraform-import' title="Importació de Terraform">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

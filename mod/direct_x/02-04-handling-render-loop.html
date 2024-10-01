@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar el Bucle de Renderització</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/direct_x/02-04-handling-render-loop" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/direct_x/02-04-handling-render-loop" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/direct_x/02-04-handling-render-loop" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/direct_x/02-04-handling-render-loop" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/direct_x/02-04-handling-render-loop" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-03-rendering-a-triangle' title="Renderitzar un Triangle">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Gestionar el Bucle de Renderització</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-01-introduction-to-shaders' title="Introducció als Shaders">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a gestionar el bucle de renderització en una aplicació DirectX. El bucle de renderització és el cor de qualsevol aplicació gràfica en temps real, ja que és responsable de dibuixar els fotogrames a la pantalla de manera contínua. A continuació, desglossarem els conceptes clau, proporcionarem exemples pràctics i oferirem exercicis per reforçar l'aprenentatge.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Bucle de Renderització</strong>: És un bucle infinit que actualitza i dibuixa el contingut de la pantalla.</li>
+<li><strong>Actualització de l'Estat</strong>: Processar la lògica del joc o aplicació abans de dibuixar.</li>
+<li><strong>Renderització</strong>: Dibuixar els objectes a la pantalla.</li>
+<li><strong>Sincronització Vertical (V-Sync)</strong>: Sincronitzar la velocitat de fotogrames amb la freqüència de refresc del monitor per evitar el &quot;tearing&quot;.</li>
+</ol>
+</div><h1>Estructura del Bucle de Renderització</h1>
+<div class='content'><p>El bucle de renderització típic en una aplicació DirectX segueix aquests passos:</p>
+<ol>
+<li><strong>Processar Missatges del Sistema</strong>: Gestionar els esdeveniments del sistema operatiu.</li>
+<li><strong>Actualitzar l'Estat</strong>: Actualitzar la lògica del joc o aplicació.</li>
+<li><strong>Renderitzar</strong>: Dibuixar el contingut a la pantalla.</li>
+<li><strong>Presentar el Fotograma</strong>: Mostrar el fotograma renderitzat a la pantalla.</li>
+</ol>
+</div><h1>Exemple Pràctic</h1>
+<div class='content'><p>A continuació, es mostra un exemple de codi en C++ que implementa un bucle de renderització bàsic utilitzant DirectX 11.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPHdpbmRvd3MuaD4KI2luY2x1ZGUgPGQzZDExLmg+CgovLyBWYXJpYWJsZXMgZ2xvYmFscwpIV05EIGh3bmQgPSBudWxscHRyOwpJRDNEMTFEZXZpY2UqIGRldmljZSA9IG51bGxwdHI7CklEM0QxMURldmljZUNvbnRleHQqIGNvbnRleHQgPSBudWxscHRyOwpJRFhHSVN3YXBDaGFpbiogc3dhcENoYWluID0gbnVsbHB0cjsKSUQzRDExUmVuZGVyVGFyZ2V0VmlldyogcmVuZGVyVGFyZ2V0VmlldyA9IG51bGxwdHI7CgovLyBQcm90b3RpcHMgZGUgZnVuY2lvbnMKTFJFU1VMVCBDQUxMQkFDSyBXaW5kb3dQcm9jKEhXTkQgaHduZCwgVUlOVCB1TXNnLCBXUEFSQU0gd1BhcmFtLCBMUEFSQU0gbFBhcmFtKTsKdm9pZCBJbml0RDNEKEhXTkQgaHduZCk7CnZvaWQgQ2xlYW5EM0QoKTsKdm9pZCBSZW5kZXJGcmFtZSgpOwoKaW50IFdJTkFQSSBXaW5NYWluKEhJTlNUQU5DRSBoSW5zdGFuY2UsIEhJTlNUQU5DRSBoUHJldkluc3RhbmNlLCBMUFNUUiBscENtZExpbmUsIGludCBuQ21kU2hvdykgewogICAgLy8gQ3JlYXIgZmluZXN0cmEKICAgIFdORENMQVNTRVggd2MgPSB7IHNpemVvZihXTkRDTEFTU0VYKSwgQ1NfQ0xBU1NEQywgV2luZG93UHJvYywgMEwsIDBMLCBHZXRNb2R1bGVIYW5kbGUoTlVMTCksIE5VTEwsIE5VTEwsIE5VTEwsIE5VTEwsIF9UKCJEaXJlY3RYRXhhbXBsZSIpLCBOVUxMIH07CiAgICBSZWdpc3RlckNsYXNzRXgoJndjKTsKICAgIGh3bmQgPSBDcmVhdGVXaW5kb3cod2MubHBzekNsYXNzTmFtZSwgX1QoIkRpcmVjdFggRXhhbXBsZSIpLCBXU19PVkVSTEFQUEVEV0lORE9XLCAxMDAsIDEwMCwgODAwLCA2MDAsIE5VTEwsIE5VTEwsIHdjLmhJbnN0YW5jZSwgTlVMTCk7CgogICAgLy8gSW5pY2lhbGl0emFyIERpcmVjdDNECiAgICBJbml0RDNEKGh3bmQpOwoKICAgIC8vIE1vc3RyYXIgZmluZXN0cmEKICAgIFNob3dXaW5kb3coaHduZCwgbkNtZFNob3cpOwogICAgVXBkYXRlV2luZG93KGh3bmQpOwoKICAgIC8vIEJ1Y2xlIGRlIG1pc3NhdGdlcwogICAgTVNHIG1zZyA9IHsgMCB9OwogICAgd2hpbGUgKG1zZy5tZXNzYWdlICE9IFdNX1FVSVQpIHsKICAgICAgICBpZiAoUGVla01lc3NhZ2UoJm1zZywgTlVMTCwgMFUsIDBVLCBQTV9SRU1PVkUpKSB7CiAgICAgICAgICAgIFRyYW5zbGF0ZU1lc3NhZ2UoJm1zZyk7CiAgICAgICAgICAgIERpc3BhdGNoTWVzc2FnZSgmbXNnKTsKICAgICAgICB9IGVsc2UgewogICAgICAgICAgICAvLyBBY3R1YWxpdHphciBsJ2VzdGF0CiAgICAgICAgICAgIC8vIChBcXXDrSBhbmlyaWEgbGEgbMOyZ2ljYSBkZWwgam9jIG8gYXBsaWNhY2nDsykKCiAgICAgICAgICAgIC8vIFJlbmRlcml0emFyCiAgICAgICAgICAgIFJlbmRlckZyYW1lKCk7CiAgICAgICAgfQogICAgfQoKICAgIC8vIE5ldGVqYXIgRGlyZWN0M0QKICAgIENsZWFuRDNEKCk7CgogICAgVW5yZWdpc3RlckNsYXNzKHdjLmxwc3pDbGFzc05hbWUsIHdjLmhJbnN0YW5jZSk7CiAgICByZXR1cm4gMDsKfQoKTFJFU1VMVCBDQUxMQkFDSyBXaW5kb3dQcm9jKEhXTkQgaHduZCwgVUlOVCB1TXNnLCBXUEFSQU0gd1BhcmFtLCBMUEFSQU0gbFBhcmFtKSB7CiAgICBzd2l0Y2ggKHVNc2cpIHsKICAgIGNhc2UgV01fREVTVFJPWToKICAgICAgICBQb3N0UXVpdE1lc3NhZ2UoMCk7CiAgICAgICAgcmV0dXJuIDA7CiAgICB9CiAgICByZXR1cm4gRGVmV2luZG93UHJvYyhod25kLCB1TXNnLCB3UGFyYW0sIGxQYXJhbSk7Cn0KCnZvaWQgSW5pdEQzRChIV05EIGh3bmQpIHsKICAgIC8vIENyZWFyIGRpc3Bvc2l0aXUgaSBjb250ZXh0IGRlIGRpc3Bvc2l0aXUKICAgIEQzRDExQ3JlYXRlRGV2aWNlKE5VTEwsIEQzRF9EUklWRVJfVFlQRV9IQVJEV0FSRSwgTlVMTCwgMCwgTlVMTCwgMCwgRDNEMTFfU0RLX1ZFUlNJT04sICZkZXZpY2UsIE5VTEwsICZjb250ZXh0KTsKCiAgICAvLyBDcmVhciBjYWRlbmEgZCdpbnRlcmNhbnZpCiAgICBEWEdJX1NXQVBfQ0hBSU5fREVTQyBzY2QgPSB7IDAgfTsKICAgIHNjZC5CdWZmZXJDb3VudCA9IDE7CiAgICBzY2QuQnVmZmVyRGVzYy5Gb3JtYXQgPSBEWEdJX0ZPUk1BVF9SOEc4QjhBOF9VTk9STTsKICAgIHNjZC5CdWZmZXJVc2FnZSA9IERYR0lfVVNBR0VfUkVOREVSX1RBUkdFVF9PVVRQVVQ7CiAgICBzY2QuT3V0cHV0V2luZG93ID0gaHduZDsKICAgIHNjZC5TYW1wbGVEZXNjLkNvdW50ID0gNDsKICAgIHNjZC5XaW5kb3dlZCA9IFRSVUU7CiAgICBJRFhHSUZhY3RvcnkqIGZhY3Rvcnk7CiAgICBDcmVhdGVEWEdJRmFjdG9yeShfX3V1aWRvZihJRFhHSUZhY3RvcnkpLCAodm9pZCoqKSZmYWN0b3J5KTsKICAgIGZhY3RvcnktPkNyZWF0ZVN3YXBDaGFpbihkZXZpY2UsICZzY2QsICZzd2FwQ2hhaW4pOwogICAgZmFjdG9yeS0+UmVsZWFzZSgpOwoKICAgIC8vIENyZWFyIHZpc3RhIGRlIHJlbmRlcml0emFjacOzCiAgICBJRDNEMTFUZXh0dXJlMkQqIGJhY2tCdWZmZXI7CiAgICBzd2FwQ2hhaW4tPkdldEJ1ZmZlcigwLCBfX3V1aWRvZihJRDNEMTFUZXh0dXJlMkQpLCAoTFBWT0lEKikmYmFja0J1ZmZlcik7CiAgICBkZXZpY2UtPkNyZWF0ZVJlbmRlclRhcmdldFZpZXcoYmFja0J1ZmZlciwgTlVMTCwgJnJlbmRlclRhcmdldFZpZXcpOwogICAgYmFja0J1ZmZlci0+UmVsZWFzZSgpOwoKICAgIC8vIEVzdGFibGlyIGxhIHZpc3RhIGRlIHJlbmRlcml0emFjacOzCiAgICBjb250ZXh0LT5PTVNldFJlbmRlclRhcmdldHMoMSwgJnJlbmRlclRhcmdldFZpZXcsIE5VTEwpOwp9Cgp2b2lkIENsZWFuRDNEKCkgewogICAgc3dhcENoYWluLT5SZWxlYXNlKCk7CiAgICByZW5kZXJUYXJnZXRWaWV3LT5SZWxlYXNlKCk7CiAgICBjb250ZXh0LT5SZWxlYXNlKCk7CiAgICBkZXZpY2UtPlJlbGVhc2UoKTsKfQoKdm9pZCBSZW5kZXJGcmFtZSgpIHsKICAgIC8vIEVzYm9ycmFyIGxhIHBhbnRhbGxhCiAgICBmbG9hdCBjb2xvcls0XSA9IHsgMC4wZiwgMC4yZiwgMC40ZiwgMS4wZiB9OwogICAgY29udGV4dC0+Q2xlYXJSZW5kZXJUYXJnZXRWaWV3KHJlbmRlclRhcmdldFZpZXcsIGNvbG9yKTsKCiAgICAvLyAoQXF1w60gYW5pcmlhIGVsIGNvZGkgZGUgcmVuZGVyaXR6YWNpw7MpCgogICAgLy8gUHJlc2VudGFyIGVsIGZvdG9ncmFtYQogICAgc3dhcENoYWluLT5QcmVzZW50KDAsIDApOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;windows.h&gt;
+#include &lt;d3d11.h&gt;
+
+// Variables globals
+HWND hwnd = nullptr;
+ID3D11Device* device = nullptr;
+ID3D11DeviceContext* context = nullptr;
+IDXGISwapChain* swapChain = nullptr;
+ID3D11RenderTargetView* renderTargetView = nullptr;
+
+// Prototips de funcions
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+void InitD3D(HWND hwnd);
+void CleanD3D();
+void RenderFrame();
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+    // Crear finestra
+    WNDCLASSEX wc = { sizeof(WNDCLASSEX), CS_CLASSDC, WindowProc, 0L, 0L, GetModuleHandle(NULL), NULL, NULL, NULL, NULL, _T(&quot;DirectXExample&quot;), NULL };
+    RegisterClassEx(&amp;wc);
+    hwnd = CreateWindow(wc.lpszClassName, _T(&quot;DirectX Example&quot;), WS_OVERLAPPEDWINDOW, 100, 100, 800, 600, NULL, NULL, wc.hInstance, NULL);
+
+    // Inicialitzar Direct3D
+    InitD3D(hwnd);
+
+    // Mostrar finestra
+    ShowWindow(hwnd, nCmdShow);
+    UpdateWindow(hwnd);
+
+    // Bucle de missatges
+    MSG msg = { 0 };
+    while (msg.message != WM_QUIT) {
+        if (PeekMessage(&amp;msg, NULL, 0U, 0U, PM_REMOVE)) {
+            TranslateMessage(&amp;msg);
+            DispatchMessage(&amp;msg);
+        } else {
+            // Actualitzar l'estat
+            // (Aqu&iacute; aniria la l&ograve;gica del joc o aplicaci&oacute;)
+
+            // Renderitzar
+            RenderFrame();
+        }
+    }
+
+    // Netejar Direct3D
+    CleanD3D();
+
+    UnregisterClass(wc.lpszClassName, wc.hInstance);
+    return 0;
+}
+
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+    switch (uMsg) {
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        return 0;
+    }
+    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
+void InitD3D(HWND hwnd) {
+    // Crear dispositiu i context de dispositiu
+    D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, NULL, 0, D3D11_SDK_VERSION, &amp;device, NULL, &amp;context);
+
+    // Crear cadena d'intercanvi
+    DXGI_SWAP_CHAIN_DESC scd = { 0 };
+    scd.BufferCount = 1;
+    scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    scd.OutputWindow = hwnd;
+    scd.SampleDesc.Count = 4;
+    scd.Windowed = TRUE;
+    IDXGIFactory* factory;
+    CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&amp;factory);
+    factory-&gt;CreateSwapChain(device, &amp;scd, &amp;swapChain);
+    factory-&gt;Release();
+
+    // Crear vista de renderitzaci&oacute;
+    ID3D11Texture2D* backBuffer;
+    swapChain-&gt;GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&amp;backBuffer);
+    device-&gt;CreateRenderTargetView(backBuffer, NULL, &amp;renderTargetView);
+    backBuffer-&gt;Release();
+
+    // Establir la vista de renderitzaci&oacute;
+    context-&gt;OMSetRenderTargets(1, &amp;renderTargetView, NULL);
+}
+
+void CleanD3D() {
+    swapChain-&gt;Release();
+    renderTargetView-&gt;Release();
+    context-&gt;Release();
+    device-&gt;Release();
+}
+
+void RenderFrame() {
+    // Esborrar la pantalla
+    float color[4] = { 0.0f, 0.2f, 0.4f, 1.0f };
+    context-&gt;ClearRenderTargetView(renderTargetView, color);
+
+    // (Aqu&iacute; aniria el codi de renderitzaci&oacute;)
+
+    // Presentar el fotograma
+    swapChain-&gt;Present(0, 0);
+}</pre></div><div class='content'></div><h1>Explicació del Codi</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Inicialització de Direct3D</strong>:</p>
+<ul>
+<li><code>D3D11CreateDevice</code>: Crea el dispositiu Direct3D i el context de dispositiu.</li>
+<li><code>CreateSwapChain</code>: Crea la cadena d'intercanvi per gestionar els fotogrames.</li>
+<li><code>CreateRenderTargetView</code>: Crea la vista de renderització per al back buffer.</li>
+</ul>
+</li>
+<li>
+<p><strong>Bucle de Missatges</strong>:</p>
+<ul>
+<li><code>PeekMessage</code>: Processa els missatges del sistema operatiu.</li>
+<li><code>TranslateMessage</code> i <code>DispatchMessage</code>: Gestionen els esdeveniments de la finestra.</li>
+</ul>
+</li>
+<li>
+<p><strong>Renderització</strong>:</p>
+<ul>
+<li><code>ClearRenderTargetView</code>: Esborra la pantalla amb un color de fons.</li>
+<li><code>Present</code>: Mostra el fotograma renderitzat a la pantalla.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Afegir Actualització de l'Estat</strong>:</p>
+<ul>
+<li>Modifica el codi per incloure una funció que actualitzi la lògica del joc o aplicació abans de la renderització.</li>
+</ul>
+</li>
+<li>
+<p><strong>Implementar V-Sync</strong>:</p>
+<ul>
+<li>Modifica el codi per activar la sincronització vertical (V-Sync) en la funció <code>Present</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Afegir Objectes a la Renderització</strong>:</p>
+<ul>
+<li>Afegeix codi per dibuixar objectes simples (com quadrats o cercles) a la pantalla.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Solucions</h1>
+<div class='content'></div><h2>Exercici 1: Afegir Actualització de l'Estat</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dm9pZCBVcGRhdGUoKSB7CiAgICAvLyBBcXXDrSBhbmlyaWEgbGEgbMOyZ2ljYSBkZWwgam9jIG8gYXBsaWNhY2nDswp9CgovLyBEaW5zIGRlbCBidWNsZSBkZSBtaXNzYXRnZXMKaWYgKFBlZWtNZXNzYWdlKCZtc2csIE5VTEwsIDBVLCAwVSwgUE1fUkVNT1ZFKSkgewogICAgVHJhbnNsYXRlTWVzc2FnZSgmbXNnKTsKICAgIERpc3BhdGNoTWVzc2FnZSgmbXNnKTsKfSBlbHNlIHsKICAgIFVwZGF0ZSgpOyAvLyBBY3R1YWxpdHphciBsJ2VzdGF0CiAgICBSZW5kZXJGcmFtZSgpOyAvLyBSZW5kZXJpdHphcgp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>void Update() {
+    // Aqu&iacute; aniria la l&ograve;gica del joc o aplicaci&oacute;
+}
+
+// Dins del bucle de missatges
+if (PeekMessage(&amp;msg, NULL, 0U, 0U, PM_REMOVE)) {
+    TranslateMessage(&amp;msg);
+    DispatchMessage(&amp;msg);
+} else {
+    Update(); // Actualitzar l'estat
+    RenderFrame(); // Renderitzar
+}</pre></div><div class='content'></div><h2>Exercici 2: Implementar V-Sync</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gQ2FudmlhciBlbCBwYXLDoG1ldHJlIGRlIFByZXNlbnQgYSAxIHBlciBhY3RpdmFyIFYtU3luYwpzd2FwQ2hhaW4tPlByZXNlbnQoMSwgMCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Canviar el par&agrave;metre de Present a 1 per activar V-Sync
+swapChain-&gt;Present(1, 0);</pre></div><div class='content'></div><h2>Exercici 3: Afegir Objectes a la Renderització</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dm9pZCBSZW5kZXJGcmFtZSgpIHsKICAgIC8vIEVzYm9ycmFyIGxhIHBhbnRhbGxhCiAgICBmbG9hdCBjb2xvcls0XSA9IHsgMC4wZiwgMC4yZiwgMC40ZiwgMS4wZiB9OwogICAgY29udGV4dC0+Q2xlYXJSZW5kZXJUYXJnZXRWaWV3KHJlbmRlclRhcmdldFZpZXcsIGNvbG9yKTsKCiAgICAvLyBBcXXDrSBhbmlyaWEgZWwgY29kaSBwZXIgZGlidWl4YXIgb2JqZWN0ZXMKCiAgICAvLyBQcmVzZW50YXIgZWwgZm90b2dyYW1hCiAgICBzd2FwQ2hhaW4tPlByZXNlbnQoMSwgMCk7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>void RenderFrame() {
+    // Esborrar la pantalla
+    float color[4] = { 0.0f, 0.2f, 0.4f, 1.0f };
+    context-&gt;ClearRenderTargetView(renderTargetView, color);
+
+    // Aqu&iacute; aniria el codi per dibuixar objectes
+
+    // Presentar el fotograma
+    swapChain-&gt;Present(1, 0);
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après a gestionar el bucle de renderització en una aplicació DirectX. Hem vist com inicialitzar Direct3D, processar missatges del sistema, actualitzar l'estat de l'aplicació i renderitzar fotogrames. A més, hem proporcionat exercicis pràctics per reforçar els conceptes apresos. En el següent mòdul, explorarem com treballar amb shaders per crear efectes visuals avançats.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-03-rendering-a-triangle' title="Renderitzar un Triangle">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-01-introduction-to-shaders' title="Introducció als Shaders">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

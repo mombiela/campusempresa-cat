@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proves unitàries de resolvers</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/graphql/07-01-unit-testing-resolvers" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/graphql/07-01-unit-testing-resolvers" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/graphql/07-01-unit-testing-resolvers" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/graphql/07-01-unit-testing-resolvers" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/graphql/07-01-unit-testing-resolvers" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-04-graphql-subscriptions' title="Subscripcions de GraphQL">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Proves unitàries de resolvers</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-02-integration-testing' title="Proves d'integració">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Les proves unitàries són una part essencial del desenvolupament de programari, ja que asseguren que cada unitat de codi funcioni correctament de manera aïllada. En el context de GraphQL, els resolvers són una part crítica de l'esquema, ja que s'encarreguen de recuperar les dades sol·licitades per les consultes. En aquesta secció, aprendrem com escriure proves unitàries per als resolvers de GraphQL.</p>
+</div><h1>Objectius d'aprenentatge</h1>
+<div class='content'><ul>
+<li>Entendre la importància de les proves unitàries per als resolvers.</li>
+<li>Configurar un entorn de proves per a resolvers de GraphQL.</li>
+<li>Escriure proves unitàries per a resolvers utilitzant eines com Jest.</li>
+<li>Gestionar mocks i dades simulades per a les proves.</li>
+</ul>
+</div><h1>1. Importància de les proves unitàries per als resolvers</h1>
+<div class='content'><p>Les proves unitàries per als resolvers són importants per diverses raons:</p>
+<ul>
+<li><strong>Fiabilitat</strong>: Asseguren que els resolvers funcionin correctament i retornin les dades esperades.</li>
+<li><strong>Mantenibilitat</strong>: Faciliten la detecció de regressions quan es fan canvis en el codi.</li>
+<li><strong>Documentació</strong>: Les proves poden servir com a documentació viva del comportament esperat dels resolvers.</li>
+</ul>
+</div><h1>2. Configuració de l'entorn de proves</h1>
+<div class='content'></div><h2>Instal·lació de Jest</h2>
+<div class='content'><p>Jest és una eina popular per a les proves unitàries en JavaScript. Per començar, instal·lem Jest en el nostre projecte:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnBtIGluc3RhbGwgLS1zYXZlLWRldiBqZXN0"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npm install --save-dev jest</pre></div><div class='content'></div><h2>Configuració de Jest</h2>
+<div class='content'><p>Afegim una configuració bàsica de Jest al nostre <code>package.json</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJzY3JpcHRzIjogewogICAgInRlc3QiOiAiamVzdCIKICB9LAogICJqZXN0IjogewogICAgInRlc3RFbnZpcm9ubWVudCI6ICJub2RlIgogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;scripts&quot;: {
+    &quot;test&quot;: &quot;jest&quot;
+  },
+  &quot;jest&quot;: {
+    &quot;testEnvironment&quot;: &quot;node&quot;
+  }
+}</pre></div><div class='content'></div><h1>3. Escriure proves unitàries per a resolvers</h1>
+<div class='content'></div><h2>Exemple de resolver</h2>
+<div class='content'><p>Suposem que tenim el següent resolver per a una consulta <code>getUser</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgcmVzb2x2ZXJzID0gewogIFF1ZXJ5OiB7CiAgICBnZXRVc2VyOiBhc3luYyAoXywgeyBpZCB9LCB7IGRhdGFTb3VyY2VzIH0pID0+IHsKICAgICAgcmV0dXJuIGRhdGFTb3VyY2VzLnVzZXJBUEkuZ2V0VXNlckJ5SWQoaWQpOwogICAgfSwKICB9LAp9OwoKbW9kdWxlLmV4cG9ydHMgPSByZXNvbHZlcnM7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const resolvers = {
+  Query: {
+    getUser: async (_, { id }, { dataSources }) =&gt; {
+      return dataSources.userAPI.getUserById(id);
+    },
+  },
+};
+
+module.exports = resolvers;</pre></div><div class='content'></div><h2>Prova unitària per al resolver `getUser`</h2>
+<div class='content'><p>Creem un fitxer de prova <code>resolvers.test.js</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgcmVzb2x2ZXJzID0gcmVxdWlyZSgnLi9yZXNvbHZlcnMnKTsKCmRlc2NyaWJlKCdSZXNvbHZlcnMnLCAoKSA9PiB7CiAgZGVzY3JpYmUoJ1F1ZXJ5LmdldFVzZXInLCAoKSA9PiB7CiAgICBpdCgnaGF1cmlhIGRlIHJldG9ybmFyIHVuIHVzdWFyaSBwZXIgSUQnLCBhc3luYyAoKSA9PiB7CiAgICAgIC8vIE1vY2sgZGVsIGRhdGFTb3VyY2UKICAgICAgY29uc3QgbW9ja0RhdGFTb3VyY2UgPSB7CiAgICAgICAgdXNlckFQSTogewogICAgICAgICAgZ2V0VXNlckJ5SWQ6IGplc3QuZm4oKS5tb2NrUmVzb2x2ZWRWYWx1ZSh7IGlkOiAnMScsIG5hbWU6ICdKb2huIERvZScgfSksCiAgICAgICAgfSwKICAgICAgfTsKCiAgICAgIC8vIEV4ZWN1dGFyIGVsIHJlc29sdmVyCiAgICAgIGNvbnN0IHJlc3VsdCA9IGF3YWl0IHJlc29sdmVycy5RdWVyeS5nZXRVc2VyKG51bGwsIHsgaWQ6ICcxJyB9LCB7IGRhdGFTb3VyY2VzOiBtb2NrRGF0YVNvdXJjZSB9KTsKCiAgICAgIC8vIENvbXByb3ZhciBlbCByZXN1bHRhdAogICAgICBleHBlY3QocmVzdWx0KS50b0VxdWFsKHsgaWQ6ICcxJywgbmFtZTogJ0pvaG4gRG9lJyB9KTsKICAgICAgZXhwZWN0KG1vY2tEYXRhU291cmNlLnVzZXJBUEkuZ2V0VXNlckJ5SWQpLnRvSGF2ZUJlZW5DYWxsZWRXaXRoKCcxJyk7CiAgICB9KTsKICB9KTsKfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const resolvers = require('./resolvers');
+
+describe('Resolvers', () =&gt; {
+  describe('Query.getUser', () =&gt; {
+    it('hauria de retornar un usuari per ID', async () =&gt; {
+      // Mock del dataSource
+      const mockDataSource = {
+        userAPI: {
+          getUserById: jest.fn().mockResolvedValue({ id: '1', name: 'John Doe' }),
+        },
+      };
+
+      // Executar el resolver
+      const result = await resolvers.Query.getUser(null, { id: '1' }, { dataSources: mockDataSource });
+
+      // Comprovar el resultat
+      expect(result).toEqual({ id: '1', name: 'John Doe' });
+      expect(mockDataSource.userAPI.getUserById).toHaveBeenCalledWith('1');
+    });
+  });
+});</pre></div><div class='content'></div><h2>Explicació del codi</h2>
+<div class='content'><ol>
+<li><strong>Importació del resolver</strong>: Importem el resolver que volem provar.</li>
+<li><strong>Descripció de la prova</strong>: Utilitzem <code>describe</code> per agrupar les proves relacionades amb els resolvers.</li>
+<li><strong>Mock del dataSource</strong>: Creem un mock del <code>dataSource</code> que el resolver utilitza per obtenir les dades.</li>
+<li><strong>Execució del resolver</strong>: Cridem el resolver amb els paràmetres necessaris.</li>
+<li><strong>Comprovació del resultat</strong>: Utilitzem <code>expect</code> per verificar que el resultat sigui el que esperem i que el mètode del <code>dataSource</code> s'hagi cridat amb els paràmetres correctes.</li>
+</ol>
+</div><h1>4. Mocks i dades simulades</h1>
+<div class='content'></div><h2>Utilització de mocks</h2>
+<div class='content'><p>Els mocks són essencials per aïllar el codi que estem provant. En el cas dels resolvers, podem utilitzar mocks per simular les respostes dels <code>dataSources</code> o altres dependències.</p>
+</div><h2>Exemple avançat amb més mocks</h2>
+<div class='content'><p>Suposem que el nostre resolver <code>getUser</code> també fa una crida a un altre servei per obtenir informació addicional:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgcmVzb2x2ZXJzID0gewogIFF1ZXJ5OiB7CiAgICBnZXRVc2VyOiBhc3luYyAoXywgeyBpZCB9LCB7IGRhdGFTb3VyY2VzIH0pID0+IHsKICAgICAgY29uc3QgdXNlciA9IGF3YWl0IGRhdGFTb3VyY2VzLnVzZXJBUEkuZ2V0VXNlckJ5SWQoaWQpOwogICAgICBjb25zdCBhZGRpdGlvbmFsSW5mbyA9IGF3YWl0IGRhdGFTb3VyY2VzLmluZm9BUEkuZ2V0QWRkaXRpb25hbEluZm8odXNlci5pZCk7CiAgICAgIHJldHVybiB7IC4uLnVzZXIsIC4uLmFkZGl0aW9uYWxJbmZvIH07CiAgICB9LAogIH0sCn07Cgptb2R1bGUuZXhwb3J0cyA9IHJlc29sdmVyczs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const resolvers = {
+  Query: {
+    getUser: async (_, { id }, { dataSources }) =&gt; {
+      const user = await dataSources.userAPI.getUserById(id);
+      const additionalInfo = await dataSources.infoAPI.getAdditionalInfo(user.id);
+      return { ...user, ...additionalInfo };
+    },
+  },
+};
+
+module.exports = resolvers;</pre></div><div class='content'><p>La prova unitària per a aquest resolver seria:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgcmVzb2x2ZXJzID0gcmVxdWlyZSgnLi9yZXNvbHZlcnMnKTsKCmRlc2NyaWJlKCdSZXNvbHZlcnMnLCAoKSA9PiB7CiAgZGVzY3JpYmUoJ1F1ZXJ5LmdldFVzZXInLCAoKSA9PiB7CiAgICBpdCgnaGF1cmlhIGRlIHJldG9ybmFyIHVuIHVzdWFyaSBhbWIgaW5mb3JtYWNpw7MgYWRkaWNpb25hbCcsIGFzeW5jICgpID0+IHsKICAgICAgLy8gTW9jayBkZWxzIGRhdGFTb3VyY2VzCiAgICAgIGNvbnN0IG1vY2tEYXRhU291cmNlID0gewogICAgICAgIHVzZXJBUEk6IHsKICAgICAgICAgIGdldFVzZXJCeUlkOiBqZXN0LmZuKCkubW9ja1Jlc29sdmVkVmFsdWUoeyBpZDogJzEnLCBuYW1lOiAnSm9obiBEb2UnIH0pLAogICAgICAgIH0sCiAgICAgICAgaW5mb0FQSTogewogICAgICAgICAgZ2V0QWRkaXRpb25hbEluZm86IGplc3QuZm4oKS5tb2NrUmVzb2x2ZWRWYWx1ZSh7IGFnZTogMzAsIGVtYWlsOiAnam9obi5kb2VAZXhhbXBsZS5jb20nIH0pLAogICAgICAgIH0sCiAgICAgIH07CgogICAgICAvLyBFeGVjdXRhciBlbCByZXNvbHZlcgogICAgICBjb25zdCByZXN1bHQgPSBhd2FpdCByZXNvbHZlcnMuUXVlcnkuZ2V0VXNlcihudWxsLCB7IGlkOiAnMScgfSwgeyBkYXRhU291cmNlczogbW9ja0RhdGFTb3VyY2UgfSk7CgogICAgICAvLyBDb21wcm92YXIgZWwgcmVzdWx0YXQKICAgICAgZXhwZWN0KHJlc3VsdCkudG9FcXVhbCh7IGlkOiAnMScsIG5hbWU6ICdKb2huIERvZScsIGFnZTogMzAsIGVtYWlsOiAnam9obi5kb2VAZXhhbXBsZS5jb20nIH0pOwogICAgICBleHBlY3QobW9ja0RhdGFTb3VyY2UudXNlckFQSS5nZXRVc2VyQnlJZCkudG9IYXZlQmVlbkNhbGxlZFdpdGgoJzEnKTsKICAgICAgZXhwZWN0KG1vY2tEYXRhU291cmNlLmluZm9BUEkuZ2V0QWRkaXRpb25hbEluZm8pLnRvSGF2ZUJlZW5DYWxsZWRXaXRoKCcxJyk7CiAgICB9KTsKICB9KTsKfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const resolvers = require('./resolvers');
+
+describe('Resolvers', () =&gt; {
+  describe('Query.getUser', () =&gt; {
+    it('hauria de retornar un usuari amb informaci&oacute; addicional', async () =&gt; {
+      // Mock dels dataSources
+      const mockDataSource = {
+        userAPI: {
+          getUserById: jest.fn().mockResolvedValue({ id: '1', name: 'John Doe' }),
+        },
+        infoAPI: {
+          getAdditionalInfo: jest.fn().mockResolvedValue({ age: 30, email: 'john.doe@example.com' }),
+        },
+      };
+
+      // Executar el resolver
+      const result = await resolvers.Query.getUser(null, { id: '1' }, { dataSources: mockDataSource });
+
+      // Comprovar el resultat
+      expect(result).toEqual({ id: '1', name: 'John Doe', age: 30, email: 'john.doe@example.com' });
+      expect(mockDataSource.userAPI.getUserById).toHaveBeenCalledWith('1');
+      expect(mockDataSource.infoAPI.getAdditionalInfo).toHaveBeenCalledWith('1');
+    });
+  });
+});</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après la importància de les proves unitàries per als resolvers de GraphQL i com configurar un entorn de proves utilitzant Jest. Hem vist exemples pràctics de com escriure proves unitàries per a resolvers, incloent-hi la gestió de mocks i dades simulades. Les proves unitàries són una eina poderosa per assegurar la qualitat i fiabilitat del nostre codi, i són especialment importants en aplicacions de GraphQL on els resolvers juguen un paper crucial en la recuperació de dades.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-04-graphql-subscriptions' title="Subscripcions de GraphQL">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-02-integration-testing' title="Proves d'integració">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

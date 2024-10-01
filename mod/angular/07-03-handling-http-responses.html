@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar respostes HTTP</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/angular/07-03-handling-http-responses" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/angular/07-03-handling-http-responses" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/angular/07-03-handling-http-responses" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/angular/07-03-handling-http-responses" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/angular/07-03-handling-http-responses" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-02-making-http-requests' title="Fer sol·licituds HTTP">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Gestionar respostes HTTP</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-04-using-observables' title="Utilitzar observables">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com gestionar les respostes HTTP en una aplicació Angular. Quan fem sol·licituds HTTP, és crucial saber com tractar les dades que rebem, així com gestionar possibles errors. A continuació, veurem com fer-ho pas a pas.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Comprendre com rebre i processar respostes HTTP.</li>
+<li>Aprendre a gestionar errors en les respostes HTTP.</li>
+<li>Utilitzar operadors d'RxJS per transformar i manipular les dades rebudes.</li>
+</ul>
+</div><h1>1. Rebre respostes HTTP</h1>
+<div class='content'><p>Quan fem una sol·licitud HTTP, rebem una resposta que conté dades. Utilitzarem el servei <code>HttpClient</code> d'Angular per fer sol·licituds i gestionar les respostes.</p>
+</div><h2>Exemple bàsic</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHsgSHR0cENsaWVudCB9IGZyb20gJ0Bhbmd1bGFyL2NvbW1vbi9odHRwJzsKaW1wb3J0IHsgQ29tcG9uZW50LCBPbkluaXQgfSBmcm9tICdAYW5ndWxhci9jb3JlJzsKCkBDb21wb25lbnQoewogIHNlbGVjdG9yOiAnYXBwLWRhdGEtZmV0Y2hlcicsCiAgdGVtcGxhdGU6IGA8ZGl2ICpuZ0lmPSJkYXRhIj57eyBkYXRhIHwganNvbiB9fTwvZGl2PmAsCn0pCmV4cG9ydCBjbGFzcyBEYXRhRmV0Y2hlckNvbXBvbmVudCBpbXBsZW1lbnRzIE9uSW5pdCB7CiAgZGF0YTogYW55OwoKICBjb25zdHJ1Y3Rvcihwcml2YXRlIGh0dHA6IEh0dHBDbGllbnQpIHt9CgogIG5nT25Jbml0KCkgewogICAgdGhpcy5odHRwLmdldCgnaHR0cHM6Ly9hcGkuZXhhbXBsZS5jb20vZGF0YScpCiAgICAgIC5zdWJzY3JpYmUocmVzcG9uc2UgPT4gewogICAgICAgIHRoaXMuZGF0YSA9IHJlc3BvbnNlOwogICAgICB9KTsKICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+
+@Component({
+  selector: 'app-data-fetcher',
+  template: `&lt;div *ngIf=&quot;data&quot;&gt;{{ data | json }}&lt;/div&gt;`,
+})
+export class DataFetcherComponent implements OnInit {
+  data: any;
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit() {
+    this.http.get('https://api.example.com/data')
+      .subscribe(response =&gt; {
+        this.data = response;
+      });
+  }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Importació del <code>HttpClient</code></strong>: Importem <code>HttpClient</code> des de <code>@angular/common/http</code>.</li>
+<li><strong>Injecció de dependències</strong>: Injecció del servei <code>HttpClient</code> en el constructor del component.</li>
+<li><strong>Fer una sol·licitud GET</strong>: Utilitzem el mètode <code>get</code> del <code>HttpClient</code> per fer una sol·licitud GET a una URL.</li>
+<li><strong>Subscripció a l'observable</strong>: Ens subscrivim a l'observable retornat per <code>get</code> per rebre la resposta.</li>
+</ul>
+</div><h1>2. Gestionar errors</h1>
+<div class='content'><p>És important gestionar els errors que poden ocórrer durant les sol·licituds HTTP. Utilitzarem l'operador <code>catchError</code> d'RxJS per capturar i gestionar errors.</p>
+</div><h2>Exemple amb gestió d'errors</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHsgSHR0cENsaWVudCB9IGZyb20gJ0Bhbmd1bGFyL2NvbW1vbi9odHRwJzsKaW1wb3J0IHsgQ29tcG9uZW50LCBPbkluaXQgfSBmcm9tICdAYW5ndWxhci9jb3JlJzsKaW1wb3J0IHsgY2F0Y2hFcnJvciB9IGZyb20gJ3J4anMvb3BlcmF0b3JzJzsKaW1wb3J0IHsgb2YgfSBmcm9tICdyeGpzJzsKCkBDb21wb25lbnQoewogIHNlbGVjdG9yOiAnYXBwLWRhdGEtZmV0Y2hlcicsCiAgdGVtcGxhdGU6IGAKICAgIDxkaXYgKm5nSWY9ImRhdGEiPnt7IGRhdGEgfCBqc29uIH19PC9kaXY+CiAgICA8ZGl2ICpuZ0lmPSJlcnJvciI+e3sgZXJyb3IgfX08L2Rpdj4KICBgLAp9KQpleHBvcnQgY2xhc3MgRGF0YUZldGNoZXJDb21wb25lbnQgaW1wbGVtZW50cyBPbkluaXQgewogIGRhdGE6IGFueTsKICBlcnJvcjogc3RyaW5nOwoKICBjb25zdHJ1Y3Rvcihwcml2YXRlIGh0dHA6IEh0dHBDbGllbnQpIHt9CgogIG5nT25Jbml0KCkgewogICAgdGhpcy5odHRwLmdldCgnaHR0cHM6Ly9hcGkuZXhhbXBsZS5jb20vZGF0YScpCiAgICAgIC5waXBlKAogICAgICAgIGNhdGNoRXJyb3IoZXJyID0+IHsKICAgICAgICAgIHRoaXMuZXJyb3IgPSAnRXJyb3IgZmV0Y2hpbmcgZGF0YSc7CiAgICAgICAgICByZXR1cm4gb2YobnVsbCk7CiAgICAgICAgfSkKICAgICAgKQogICAgICAuc3Vic2NyaWJlKHJlc3BvbnNlID0+IHsKICAgICAgICB0aGlzLmRhdGEgPSByZXNwb25zZTsKICAgICAgfSk7CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
+
+@Component({
+  selector: 'app-data-fetcher',
+  template: `
+    &lt;div *ngIf=&quot;data&quot;&gt;{{ data | json }}&lt;/div&gt;
+    &lt;div *ngIf=&quot;error&quot;&gt;{{ error }}&lt;/div&gt;
+  `,
+})
+export class DataFetcherComponent implements OnInit {
+  data: any;
+  error: string;
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit() {
+    this.http.get('https://api.example.com/data')
+      .pipe(
+        catchError(err =&gt; {
+          this.error = 'Error fetching data';
+          return of(null);
+        })
+      )
+      .subscribe(response =&gt; {
+        this.data = response;
+      });
+  }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Importació de <code>catchError</code> i <code>of</code></strong>: Importem l'operador <code>catchError</code> i la funció <code>of</code> d'RxJS.</li>
+<li><strong>Utilització de <code>catchError</code></strong>: Utilitzem <code>catchError</code> per capturar errors i retornar un observable amb un valor per defecte (<code>null</code> en aquest cas).</li>
+<li><strong>Assignació d'un missatge d'error</strong>: Assignem un missatge d'error a la propietat <code>error</code> del component.</li>
+</ul>
+</div><h1>3. Transformar dades amb operadors d'RxJS</h1>
+<div class='content'><p>Podem utilitzar operadors d'RxJS per transformar les dades rebudes abans de processar-les.</p>
+</div><h2>Exemple amb transformació de dades</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHsgSHR0cENsaWVudCB9IGZyb20gJ0Bhbmd1bGFyL2NvbW1vbi9odHRwJzsKaW1wb3J0IHsgQ29tcG9uZW50LCBPbkluaXQgfSBmcm9tICdAYW5ndWxhci9jb3JlJzsKaW1wb3J0IHsgbWFwIH0gZnJvbSAncnhqcy9vcGVyYXRvcnMnOwoKQENvbXBvbmVudCh7CiAgc2VsZWN0b3I6ICdhcHAtZGF0YS1mZXRjaGVyJywKICB0ZW1wbGF0ZTogYDxkaXYgKm5nSWY9ImRhdGEiPnt7IGRhdGEgfCBqc29uIH19PC9kaXY+YCwKfSkKZXhwb3J0IGNsYXNzIERhdGFGZXRjaGVyQ29tcG9uZW50IGltcGxlbWVudHMgT25Jbml0IHsKICBkYXRhOiBhbnk7CgogIGNvbnN0cnVjdG9yKHByaXZhdGUgaHR0cDogSHR0cENsaWVudCkge30KCiAgbmdPbkluaXQoKSB7CiAgICB0aGlzLmh0dHAuZ2V0KCdodHRwczovL2FwaS5leGFtcGxlLmNvbS9kYXRhJykKICAgICAgLnBpcGUoCiAgICAgICAgbWFwKHJlc3BvbnNlID0+IHsKICAgICAgICAgIC8vIFRyYW5zZm9ybWVtIGxlcyBkYWRlcyBhcXXDrQogICAgICAgICAgcmV0dXJuIHJlc3BvbnNlWydpdGVtcyddOwogICAgICAgIH0pCiAgICAgICkKICAgICAgLnN1YnNjcmliZSh0cmFuc2Zvcm1lZERhdGEgPT4gewogICAgICAgIHRoaXMuZGF0YSA9IHRyYW5zZm9ybWVkRGF0YTsKICAgICAgfSk7CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { map } from 'rxjs/operators';
+
+@Component({
+  selector: 'app-data-fetcher',
+  template: `&lt;div *ngIf=&quot;data&quot;&gt;{{ data | json }}&lt;/div&gt;`,
+})
+export class DataFetcherComponent implements OnInit {
+  data: any;
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit() {
+    this.http.get('https://api.example.com/data')
+      .pipe(
+        map(response =&gt; {
+          // Transformem les dades aqu&iacute;
+          return response['items'];
+        })
+      )
+      .subscribe(transformedData =&gt; {
+        this.data = transformedData;
+      });
+  }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Importació de <code>map</code></strong>: Importem l'operador <code>map</code> d'RxJS.</li>
+<li><strong>Utilització de <code>map</code></strong>: Utilitzem <code>map</code> per transformar les dades rebudes. En aquest exemple, accedim a la propietat <code>items</code> de la resposta.</li>
+</ul>
+</div><h1>Exercici pràctic</h1>
+<div class='content'></div><h2>Enunciat</h2>
+<div class='content'><p>Crea un component que faci una sol·licitud HTTP a una API pública (per exemple, https://jsonplaceholder.typicode.com/posts) i mostri els títols dels posts en una llista. Gestiona els errors mostrant un missatge d'error si la sol·licitud falla.</p>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHsgSHR0cENsaWVudCB9IGZyb20gJ0Bhbmd1bGFyL2NvbW1vbi9odHRwJzsKaW1wb3J0IHsgQ29tcG9uZW50LCBPbkluaXQgfSBmcm9tICdAYW5ndWxhci9jb3JlJzsKaW1wb3J0IHsgY2F0Y2hFcnJvciwgbWFwIH0gZnJvbSAncnhqcy9vcGVyYXRvcnMnOwppbXBvcnQgeyBvZiB9IGZyb20gJ3J4anMnOwoKQENvbXBvbmVudCh7CiAgc2VsZWN0b3I6ICdhcHAtcG9zdC1saXN0JywKICB0ZW1wbGF0ZTogYAogICAgPHVsICpuZ0lmPSJwb3N0cyI+CiAgICAgIDxsaSAqbmdGb3I9ImxldCBwb3N0IG9mIHBvc3RzIj57eyBwb3N0LnRpdGxlIH19PC9saT4KICAgIDwvdWw+CiAgICA8ZGl2ICpuZ0lmPSJlcnJvciI+e3sgZXJyb3IgfX08L2Rpdj4KICBgLAp9KQpleHBvcnQgY2xhc3MgUG9zdExpc3RDb21wb25lbnQgaW1wbGVtZW50cyBPbkluaXQgewogIHBvc3RzOiBhbnlbXTsKICBlcnJvcjogc3RyaW5nOwoKICBjb25zdHJ1Y3Rvcihwcml2YXRlIGh0dHA6IEh0dHBDbGllbnQpIHt9CgogIG5nT25Jbml0KCkgewogICAgdGhpcy5odHRwLmdldCgnaHR0cHM6Ly9qc29ucGxhY2Vob2xkZXIudHlwaWNvZGUuY29tL3Bvc3RzJykKICAgICAgLnBpcGUoCiAgICAgICAgbWFwKHJlc3BvbnNlID0+IHJlc3BvbnNlIGFzIGFueVtdKSwKICAgICAgICBjYXRjaEVycm9yKGVyciA9PiB7CiAgICAgICAgICB0aGlzLmVycm9yID0gJ0Vycm9yIGZldGNoaW5nIHBvc3RzJzsKICAgICAgICAgIHJldHVybiBvZihbXSk7CiAgICAgICAgfSkKICAgICAgKQogICAgICAuc3Vic2NyaWJlKHBvc3RzID0+IHsKICAgICAgICB0aGlzLnBvc3RzID0gcG9zdHM7CiAgICAgIH0pOwogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { catchError, map } from 'rxjs/operators';
+import { of } from 'rxjs';
+
+@Component({
+  selector: 'app-post-list',
+  template: `
+    &lt;ul *ngIf=&quot;posts&quot;&gt;
+      &lt;li *ngFor=&quot;let post of posts&quot;&gt;{{ post.title }}&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;div *ngIf=&quot;error&quot;&gt;{{ error }}&lt;/div&gt;
+  `,
+})
+export class PostListComponent implements OnInit {
+  posts: any[];
+  error: string;
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit() {
+    this.http.get('https://jsonplaceholder.typicode.com/posts')
+      .pipe(
+        map(response =&gt; response as any[]),
+        catchError(err =&gt; {
+          this.error = 'Error fetching posts';
+          return of([]);
+        })
+      )
+      .subscribe(posts =&gt; {
+        this.posts = posts;
+      });
+  }
+}</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>Sol·licitud GET</strong>: Fem una sol·licitud GET a l'API pública.</li>
+<li><strong>Transformació de dades</strong>: Utilitzem <code>map</code> per convertir la resposta en un array.</li>
+<li><strong>Gestió d'errors</strong>: Utilitzem <code>catchError</code> per gestionar errors i retornar un array buit en cas d'error.</li>
+<li><strong>Visualització de dades</strong>: Mostrem els títols dels posts en una llista no ordenada (<code>&lt;ul&gt;</code>).</li>
+</ul>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après com gestionar respostes HTTP en Angular. Hem vist com rebre i processar dades, gestionar errors i transformar dades utilitzant operadors d'RxJS. Aquests conceptes són fonamentals per treballar amb APIs i serveis web en aplicacions Angular.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-02-making-http-requests' title="Fer sol·licituds HTTP">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-04-using-observables' title="Utilitzar observables">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anàlisi de dades financeres</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/bigquery/10-02-financial-data-analysis" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/bigquery/10-02-financial-data-analysis" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/bigquery/10-02-financial-data-analysis" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/bigquery/10-02-financial-data-analysis" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/bigquery/10-02-financial-data-analysis" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='10-01-analyzing-web-app-analytics' title="Anàlisi d'analítiques web i d'aplicacions">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Anàlisi de dades financeres</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-03-iot-data-processing' title="Processament de dades IoT">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem com utilitzar BigQuery per analitzar dades financeres. Aquest tipus d'anàlisi és crucial per a empreses que necessiten prendre decisions informades basades en dades financeres. Aprendrem a carregar, transformar i analitzar dades financeres utilitzant SQL a BigQuery.</p>
+</div><h1>Objectius del tema</h1>
+<div class='content'><ul>
+<li>Comprendre les fonts de dades financeres i com carregar-les a BigQuery.</li>
+<li>Aprendre a netejar i transformar dades financeres.</li>
+<li>Realitzar anàlisis financeres bàsiques i avançades utilitzant SQL.</li>
+<li>Crear informes i visualitzacions per a la presa de decisions.</li>
+</ul>
+</div><h1>1. Fonts de dades financeres</h1>
+<div class='content'></div><h2>Tipus de dades financeres</h2>
+<div class='content'><ul>
+<li><strong>Transaccions bancàries</strong>: Registres de compres, vendes, transferències, etc.</li>
+<li><strong>Estats financers</strong>: Balanços, comptes de resultats, fluxos de caixa.</li>
+<li><strong>Dades de mercat</strong>: Preus d'accions, índexs borsaris, tipus de canvi.</li>
+</ul>
+</div><h2>Carregar dades financeres a BigQuery</h2>
+<div class='content'><p>Per carregar dades financeres a BigQuery, podem utilitzar diversos mètodes com ara la càrrega de fitxers CSV, l'ús de connectors de dades o l'ús d'APIs. A continuació, es mostra un exemple de com carregar un fitxer CSV amb dades de transaccions bancàries.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gQ3JlYXIgdW5hIHRhdWxhIHBlciBhIGxlcyB0cmFuc2FjY2lvbnMgYmFuY8OgcmllcwpDUkVBVEUgVEFCTEUgYHByb2plY3RfaWQuZGF0YXNldF9pZC5iYW5rX3RyYW5zYWN0aW9uc2AgKAogIHRyYW5zYWN0aW9uX2lkIFNUUklORywKICBkYXRlIERBVEUsCiAgYW1vdW50IEZMT0FUNjQsCiAgZGVzY3JpcHRpb24gU1RSSU5HLAogIGNhdGVnb3J5IFNUUklORwopOwoKLS0gQ2FycmVnYXIgZGFkZXMgZGVzIGQndW4gZml0eGVyIENTVgpMT0FEIERBVEEgSU5UTyBgcHJvamVjdF9pZC5kYXRhc2V0X2lkLmJhbmtfdHJhbnNhY3Rpb25zYApGUk9NIEZJTEVTICgKICBmb3JtYXQgPSAnQ1NWJywKICB1cmlzID0gWydnczovL2J1Y2tldF9uYW1lL3BhdGgvdG8vdHJhbnNhY3Rpb25zLmNzdiddCik7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Crear una taula per a les transaccions banc&agrave;ries
+CREATE TABLE `project_id.dataset_id.bank_transactions` (
+  transaction_id STRING,
+  date DATE,
+  amount FLOAT64,
+  description STRING,
+  category STRING
+);
+
+-- Carregar dades des d'un fitxer CSV
+LOAD DATA INTO `project_id.dataset_id.bank_transactions`
+FROM FILES (
+  format = 'CSV',
+  uris = ['gs://bucket_name/path/to/transactions.csv']
+);</pre></div><div class='content'></div><h1>2. Neteja i transformació de dades financeres</h1>
+<div class='content'></div><h2>Neteja de dades</h2>
+<div class='content'><p>La neteja de dades és un pas crucial per assegurar que les dades siguin consistents i fiables. A continuació, es mostra un exemple de com netejar dades duplicades i corregir valors nuls.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gRWxpbWluYXIgZHVwbGljYXRzCkNSRUFURSBPUiBSRVBMQUNFIFRBQkxFIGBwcm9qZWN0X2lkLmRhdGFzZXRfaWQuY2xlYW5fdHJhbnNhY3Rpb25zYCBBUwpTRUxFQ1QgRElTVElOQ1QgKiBGUk9NIGBwcm9qZWN0X2lkLmRhdGFzZXRfaWQuYmFua190cmFuc2FjdGlvbnNgOwoKLS0gU3Vic3RpdHVpciB2YWxvcnMgbnVscwpDUkVBVEUgT1IgUkVQTEFDRSBUQUJMRSBgcHJvamVjdF9pZC5kYXRhc2V0X2lkLmNsZWFuX3RyYW5zYWN0aW9uc2AgQVMKU0VMRUNUCiAgdHJhbnNhY3Rpb25faWQsCiAgZGF0ZSwKICBJRk5VTEwoYW1vdW50LCAwKSBBUyBhbW91bnQsCiAgZGVzY3JpcHRpb24sCiAgSUZOVUxMKGNhdGVnb3J5LCAnVW5jYXRlZ29yaXplZCcpIEFTIGNhdGVnb3J5CkZST00gYHByb2plY3RfaWQuZGF0YXNldF9pZC5jbGVhbl90cmFuc2FjdGlvbnNgOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Eliminar duplicats
+CREATE OR REPLACE TABLE `project_id.dataset_id.clean_transactions` AS
+SELECT DISTINCT * FROM `project_id.dataset_id.bank_transactions`;
+
+-- Substituir valors nuls
+CREATE OR REPLACE TABLE `project_id.dataset_id.clean_transactions` AS
+SELECT
+  transaction_id,
+  date,
+  IFNULL(amount, 0) AS amount,
+  description,
+  IFNULL(category, 'Uncategorized') AS category
+FROM `project_id.dataset_id.clean_transactions`;</pre></div><div class='content'></div><h2>Transformació de dades</h2>
+<div class='content'><p>La transformació de dades implica modificar les dades per adaptar-les a les necessitats de l'anàlisi. Per exemple, podem crear noves columnes per a l'anàlisi de tendències.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gQWZlZ2lyIHVuYSBjb2x1bW5hIHBlciBhIGwnYW55IGkgZWwgbWVzCkNSRUFURSBPUiBSRVBMQUNFIFRBQkxFIGBwcm9qZWN0X2lkLmRhdGFzZXRfaWQudHJhbnNmb3JtZWRfdHJhbnNhY3Rpb25zYCBBUwpTRUxFQ1QKICB0cmFuc2FjdGlvbl9pZCwKICBkYXRlLAogIGFtb3VudCwKICBkZXNjcmlwdGlvbiwKICBjYXRlZ29yeSwKICBFWFRSQUNUKFlFQVIgRlJPTSBkYXRlKSBBUyB5ZWFyLAogIEVYVFJBQ1QoTU9OVEggRlJPTSBkYXRlKSBBUyBtb250aApGUk9NIGBwcm9qZWN0X2lkLmRhdGFzZXRfaWQuY2xlYW5fdHJhbnNhY3Rpb25zYDs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Afegir una columna per a l'any i el mes
+CREATE OR REPLACE TABLE `project_id.dataset_id.transformed_transactions` AS
+SELECT
+  transaction_id,
+  date,
+  amount,
+  description,
+  category,
+  EXTRACT(YEAR FROM date) AS year,
+  EXTRACT(MONTH FROM date) AS month
+FROM `project_id.dataset_id.clean_transactions`;</pre></div><div class='content'></div><h1>3. Anàlisi financera amb SQL</h1>
+<div class='content'></div><h2>Anàlisi de despeses per categoria</h2>
+<div class='content'><p>Una de les anàlisis més comunes és la distribució de despeses per categoria.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gVG90YWwgZGUgZGVzcGVzZXMgcGVyIGNhdGVnb3JpYQpTRUxFQ1QKICBjYXRlZ29yeSwKICBTVU0oYW1vdW50KSBBUyB0b3RhbF9hbW91bnQKRlJPTSBgcHJvamVjdF9pZC5kYXRhc2V0X2lkLnRyYW5zZm9ybWVkX3RyYW5zYWN0aW9uc2AKV0hFUkUgYW1vdW50IDwgMApHUk9VUCBCWSBjYXRlZ29yeQpPUkRFUiBCWSB0b3RhbF9hbW91bnQgREVTQzs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Total de despeses per categoria
+SELECT
+  category,
+  SUM(amount) AS total_amount
+FROM `project_id.dataset_id.transformed_transactions`
+WHERE amount &lt; 0
+GROUP BY category
+ORDER BY total_amount DESC;</pre></div><div class='content'></div><h2>Anàlisi de tendències temporals</h2>
+<div class='content'><p>Podem analitzar les tendències de despeses al llarg del temps per identificar patrons.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gRGVzcGVzZXMgbWVuc3VhbHMKU0VMRUNUCiAgeWVhciwKICBtb250aCwKICBTVU0oYW1vdW50KSBBUyB0b3RhbF9hbW91bnQKRlJPTSBgcHJvamVjdF9pZC5kYXRhc2V0X2lkLnRyYW5zZm9ybWVkX3RyYW5zYWN0aW9uc2AKV0hFUkUgYW1vdW50IDwgMApHUk9VUCBCWSB5ZWFyLCBtb250aApPUkRFUiBCWSB5ZWFyLCBtb250aDs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Despeses mensuals
+SELECT
+  year,
+  month,
+  SUM(amount) AS total_amount
+FROM `project_id.dataset_id.transformed_transactions`
+WHERE amount &lt; 0
+GROUP BY year, month
+ORDER BY year, month;</pre></div><div class='content'></div><h1>4. Creació d'informes i visualitzacions</h1>
+<div class='content'></div><h2>Utilització de Data Studio</h2>
+<div class='content'><p>Google Data Studio és una eina poderosa per crear informes i visualitzacions interactives. Podem connectar BigQuery a Data Studio per visualitzar les nostres dades financeres.</p>
+<ol>
+<li>
+<p><strong>Connectar BigQuery a Data Studio</strong>:</p>
+<ul>
+<li>Obre Data Studio i crea una nova font de dades.</li>
+<li>Selecciona BigQuery com a font de dades.</li>
+<li>Tria el projecte, dataset i taula que vols visualitzar.</li>
+</ul>
+</li>
+<li>
+<p><strong>Crear visualitzacions</strong>:</p>
+<ul>
+<li>Utilitza gràfics de barres, línies i pastissos per visualitzar les despeses per categoria, les tendències temporals, etc.</li>
+<li>Personalitza els informes amb filtres, segments i altres opcions interactives.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après a carregar, netejar, transformar i analitzar dades financeres utilitzant BigQuery. També hem vist com crear informes i visualitzacions per a la presa de decisions. Aquestes habilitats són essencials per a qualsevol analista financer que vulgui aprofitar el poder de BigQuery per a l'anàlisi de dades financeres.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='10-01-analyzing-web-app-analytics' title="Anàlisi d'analítiques web i d'aplicacions">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-03-iot-data-processing' title="Processament de dades IoT">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

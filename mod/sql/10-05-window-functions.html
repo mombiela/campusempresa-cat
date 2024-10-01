@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funcions de finestra</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/sql/10-05-window-functions" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/sql/10-05-window-functions" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/sql/10-05-window-functions" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/sql/10-05-window-functions" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/sql/10-05-window-functions" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='10-04-common-table-expressions' title="Expressions de taula comunes (CTEs)">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Funcions de finestra</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='11-01-real-world-use-cases' title="Casos d'ús del món real">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Les funcions de finestra (o &quot;window functions&quot;) són una característica poderosa de SQL que permet realitzar càlculs sobre un conjunt de files relacionades amb la fila actual. Aquestes funcions són molt útils per a tasques com el càlcul de sumes acumulades, mitjanes mòbils, classificacions i altres operacions que necessiten accedir a múltiples files per a cada fila del resultat.</p>
+</div><h1>Conceptes clau</h1>
+<div class='content'><p>Abans d'entrar en els detalls de les funcions de finestra, és important comprendre alguns conceptes clau:</p>
+<ol>
+<li><strong>Partició</strong>: Un conjunt de files sobre les quals s'aplica la funció de finestra. És similar a un &quot;GROUP BY&quot;, però no redueix el nombre de files del resultat.</li>
+<li><strong>Ordre</strong>: L'ordre en què es processen les files dins de cada partició.</li>
+<li><strong>Finestra</strong>: Un conjunt de files que es defineix en relació amb la fila actual.</li>
+</ol>
+</div><h1>Sintaxi bàsica</h1>
+<div class='content'><p>La sintaxi general per a una funció de finestra és:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PGZ1bmNpw7NfZGVfZmluZXN0cmE+IE9WRVIgKAogICAgW1BBUlRJVElPTiBCWSA8Y29sdW1uYTE+LCA8Y29sdW1uYTI+LCAuLi5dCiAgICBbT1JERVIgQlkgPGNvbHVtbmExPiBbQVNDfERFU0NdLCA8Y29sdW1uYTI+IFtBU0N8REVTQ10sIC4uLl0KICAgIFtST1dTfFJBTkdFIEJFVFdFRU4gPGluaWNpPiBBTkQgPGZpbmFsPl0KKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;funci&oacute;_de_finestra&gt; OVER (
+    [PARTITION BY &lt;columna1&gt;, &lt;columna2&gt;, ...]
+    [ORDER BY &lt;columna1&gt; [ASC|DESC], &lt;columna2&gt; [ASC|DESC], ...]
+    [ROWS|RANGE BETWEEN &lt;inici&gt; AND &lt;final&gt;]
+)</pre></div><div class='content'></div><h1>Funcions de finestra comunes</h1>
+<div class='content'></div><h2>1. `ROW_NUMBER()`</h2>
+<div class='content'><p>Aquesta funció assigna un número únic a cada fila dins de la partició de la finestra.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIAogICAgY29sdW1uYTEsCiAgICBjb2x1bW5hMiwKICAgIFJPV19OVU1CRVIoKSBPVkVSIChQQVJUSVRJT04gQlkgY29sdW1uYTEgT1JERVIgQlkgY29sdW1uYTIpIEFTIGZpbGFfbnVtCkZST00gCiAgICB0YXVsYTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT 
+    columna1,
+    columna2,
+    ROW_NUMBER() OVER (PARTITION BY columna1 ORDER BY columna2) AS fila_num
+FROM 
+    taula;</pre></div><div class='content'></div><h2>2. `RANK()`</h2>
+<div class='content'><p>Aquesta funció assigna un rang a cada fila dins de la partició de la finestra, amb possibles empats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIAogICAgY29sdW1uYTEsCiAgICBjb2x1bW5hMiwKICAgIFJBTksoKSBPVkVSIChQQVJUSVRJT04gQlkgY29sdW1uYTEgT1JERVIgQlkgY29sdW1uYTIpIEFTIHJhbmcKRlJPTSAKICAgIHRhdWxhOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT 
+    columna1,
+    columna2,
+    RANK() OVER (PARTITION BY columna1 ORDER BY columna2) AS rang
+FROM 
+    taula;</pre></div><div class='content'></div><h2>3. `DENSE_RANK()`</h2>
+<div class='content'><p>Similar a <code>RANK()</code>, però sense salts en els rangs en cas d'empats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIAogICAgY29sdW1uYTEsCiAgICBjb2x1bW5hMiwKICAgIERFTlNFX1JBTksoKSBPVkVSIChQQVJUSVRJT04gQlkgY29sdW1uYTEgT1JERVIgQlkgY29sdW1uYTIpIEFTIHJhbmdfZGVucwpGUk9NIAogICAgdGF1bGE7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT 
+    columna1,
+    columna2,
+    DENSE_RANK() OVER (PARTITION BY columna1 ORDER BY columna2) AS rang_dens
+FROM 
+    taula;</pre></div><div class='content'></div><h2>4. `SUM()`</h2>
+<div class='content'><p>Calcula la suma acumulada de valors dins de la finestra.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIAogICAgY29sdW1uYTEsCiAgICBjb2x1bW5hMiwKICAgIFNVTShjb2x1bW5hMikgT1ZFUiAoUEFSVElUSU9OIEJZIGNvbHVtbmExIE9SREVSIEJZIGNvbHVtbmEyKSBBUyBzdW1hX2FjdW11bGFkYQpGUk9NIAogICAgdGF1bGE7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT 
+    columna1,
+    columna2,
+    SUM(columna2) OVER (PARTITION BY columna1 ORDER BY columna2) AS suma_acumulada
+FROM 
+    taula;</pre></div><div class='content'></div><h2>5. `AVG()`</h2>
+<div class='content'><p>Calcula la mitjana acumulada de valors dins de la finestra.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIAogICAgY29sdW1uYTEsCiAgICBjb2x1bW5hMiwKICAgIEFWRyhjb2x1bW5hMikgT1ZFUiAoUEFSVElUSU9OIEJZIGNvbHVtbmExIE9SREVSIEJZIGNvbHVtbmEyKSBBUyBtaXRqYW5hX2FjdW11bGFkYQpGUk9NIAogICAgdGF1bGE7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT 
+    columna1,
+    columna2,
+    AVG(columna2) OVER (PARTITION BY columna1 ORDER BY columna2) AS mitjana_acumulada
+FROM 
+    taula;</pre></div><div class='content'></div><h1>Exemples pràctics</h1>
+<div class='content'></div><h2>Exemple 1: Classificació de vendes per producte</h2>
+<div class='content'><p>Suposem que tenim una taula <code>vendes</code> amb les següents columnes: <code>producte_id</code>, <code>data_venda</code> i <code>quantitat</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIAogICAgcHJvZHVjdGVfaWQsCiAgICBkYXRhX3ZlbmRhLAogICAgcXVhbnRpdGF0LAogICAgUkFOSygpIE9WRVIgKFBBUlRJVElPTiBCWSBwcm9kdWN0ZV9pZCBPUkRFUiBCWSBkYXRhX3ZlbmRhKSBBUyByYW5nX3ZlbmRhCkZST00gCiAgICB2ZW5kZXM7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT 
+    producte_id,
+    data_venda,
+    quantitat,
+    RANK() OVER (PARTITION BY producte_id ORDER BY data_venda) AS rang_venda
+FROM 
+    vendes;</pre></div><div class='content'></div><h2>Exemple 2: Suma acumulada de vendes per producte</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIAogICAgcHJvZHVjdGVfaWQsCiAgICBkYXRhX3ZlbmRhLAogICAgcXVhbnRpdGF0LAogICAgU1VNKHF1YW50aXRhdCkgT1ZFUiAoUEFSVElUSU9OIEJZIHByb2R1Y3RlX2lkIE9SREVSIEJZIGRhdGFfdmVuZGEpIEFTIHN1bWFfYWN1bXVsYWRhCkZST00gCiAgICB2ZW5kZXM7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT 
+    producte_id,
+    data_venda,
+    quantitat,
+    SUM(quantitat) OVER (PARTITION BY producte_id ORDER BY data_venda) AS suma_acumulada
+FROM 
+    vendes;</pre></div><div class='content'></div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Classificació de productes per vendes</h2>
+<div class='content'><p><strong>Enunciat</strong>: Utilitzant la taula <code>vendes</code>, classifica els productes segons la quantitat total venuda en cada data.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIAogICAgcHJvZHVjdGVfaWQsCiAgICBkYXRhX3ZlbmRhLAogICAgcXVhbnRpdGF0LAogICAgUkFOSygpIE9WRVIgKFBBUlRJVElPTiBCWSBkYXRhX3ZlbmRhIE9SREVSIEJZIHF1YW50aXRhdCBERVNDKSBBUyByYW5nX3ZlbmRhCkZST00gCiAgICB2ZW5kZXM7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT 
+    producte_id,
+    data_venda,
+    quantitat,
+    RANK() OVER (PARTITION BY data_venda ORDER BY quantitat DESC) AS rang_venda
+FROM 
+    vendes;</pre></div><div class='content'></div><h2>Exercici 2: Mitjana acumulada de vendes per producte</h2>
+<div class='content'><p><strong>Enunciat</strong>: Calcula la mitjana acumulada de vendes per a cada producte en cada data.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIAogICAgcHJvZHVjdGVfaWQsCiAgICBkYXRhX3ZlbmRhLAogICAgcXVhbnRpdGF0LAogICAgQVZHKHF1YW50aXRhdCkgT1ZFUiAoUEFSVElUSU9OIEJZIHByb2R1Y3RlX2lkIE9SREVSIEJZIGRhdGFfdmVuZGEpIEFTIG1pdGphbmFfYWN1bXVsYWRhCkZST00gCiAgICB2ZW5kZXM7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT 
+    producte_id,
+    data_venda,
+    quantitat,
+    AVG(quantitat) OVER (PARTITION BY producte_id ORDER BY data_venda) AS mitjana_acumulada
+FROM 
+    vendes;</pre></div><div class='content'></div><h1>Errors comuns i consells</h1>
+<div class='content'><ol>
+<li><strong>Oblidar la clàusula <code>ORDER BY</code></strong>: Moltes funcions de finestra necessiten una clàusula <code>ORDER BY</code> per funcionar correctament.</li>
+<li><strong>Confondre <code>PARTITION BY</code> amb <code>GROUP BY</code></strong>: Recorda que <code>PARTITION BY</code> no redueix el nombre de files del resultat.</li>
+<li><strong>No especificar correctament la finestra</strong>: Assegura't de definir correctament la finestra per obtenir els resultats esperats.</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Les funcions de finestra són una eina poderosa per a l'anàlisi de dades en SQL. Permeten realitzar càlculs complexos de manera eficient i són essencials per a moltes aplicacions analítiques. Amb la pràctica, podràs dominar aquestes funcions i utilitzar-les per resoldre problemes complexos de manera elegant i eficient.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='10-04-common-table-expressions' title="Expressions de taula comunes (CTEs)">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='11-01-real-world-use-cases' title="Casos d'ús del món real">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

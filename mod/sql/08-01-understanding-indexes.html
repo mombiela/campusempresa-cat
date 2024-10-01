@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprendre els índexs</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/sql/08-01-understanding-indexes" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/sql/08-01-understanding-indexes" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/sql/08-01-understanding-indexes" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/sql/08-01-understanding-indexes" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/sql/08-01-understanding-indexes" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-using-subqueries-select-from-where' title="Utilitzar subconsultes en les clàusules SELECT, FROM i WHERE">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Comprendre els índexs</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-creating-managing-indexes' title="Crear i gestionar índexs">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='index'><p>Els índexs són una part fonamental de l'optimització de bases de dades. Ajuden a accelerar les consultes permetent un accés més ràpid a les dades. En aquesta secció, explorarem què són els índexs, com funcionen i com es poden utilitzar per millorar el rendiment de les consultes SQL.</p>
+</div><h2>Què és un índex?</h2>
+<div class='index'><p>Un índex és una estructura de dades que millora la velocitat de les operacions de recuperació de dades en una taula de base de dades. Els índexs es creen sobre una o més columnes d'una taula i permeten a la base de dades trobar ràpidament les files que compleixen amb determinats criteris de cerca.</p>
+</div><h2>Tipus d'índexs</h2>
+<div class='index'><ol>
+<li>
+<p><strong>Índexs Bàsics:</strong></p>
+<ul>
+<li><strong>Índexs únics:</strong> Asseguren que els valors de la columna indexada siguin únics.</li>
+<li><strong>Índexs no únics:</strong> Permeten valors duplicats a la columna indexada.</li>
+</ul>
+</li>
+<li>
+<p><strong>Índexs Compostos:</strong></p>
+<ul>
+<li>Creats sobre múltiples columnes d'una taula.</li>
+</ul>
+</li>
+<li>
+<p><strong>Índexs de Text Complets:</strong></p>
+<ul>
+<li>Utilitzats per a cerques de text complet en columnes de text.</li>
+</ul>
+</li>
+<li>
+<p><strong>Índexs Clustered:</strong></p>
+<ul>
+<li>Reorganitzen les dades físiques de la taula per coincidir amb l'ordre de l'índex.</li>
+</ul>
+</li>
+<li>
+<p><strong>Índexs No Clustered:</strong></p>
+<ul>
+<li>No alteren l'ordre físic de les dades de la taula, sinó que creen una estructura separada que apunta a les dades.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Com funcionen els índexs?</h2>
+<div class='index'><p>Els índexs funcionen de manera similar a l'índex d'un llibre. Quan es crea un índex en una columna, la base de dades crea una estructura que permet accedir ràpidament a les files que contenen els valors de la columna indexada. Això redueix el nombre de files que la base de dades ha de revisar per trobar les dades sol·licitades.</p>
+</div><h2>Exemple d'Índex</h2>
+<div class='index'><p>Suposem que tenim una taula <code>clients</code> amb les següents columnes:</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>nom</th>
+<th>cognom</th>
+<th>edat</th>
+<th>ciutat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Joan</td>
+<td>Pérez</td>
+<td>30</td>
+<td>Barcelona</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Maria</td>
+<td>García</td>
+<td>25</td>
+<td>Madrid</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Lluís</td>
+<td>Martínez</td>
+<td>35</td>
+<td>València</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Anna</td>
+<td>López</td>
+<td>28</td>
+<td>Sevilla</td>
+</tr>
+</tbody>
+</table>
+<p>Si creem un índex sobre la columna <code>cognom</code>, la base de dades podrà trobar ràpidament tots els clients amb un determinat cognom.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIElOREVYIGlkeF9jb2dub20gT04gY2xpZW50cyAoY29nbm9tKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE INDEX idx_cognom ON clients (cognom);</pre></div><div class='index'></div><h2>Beneficis dels índexs</h2>
+<div class='index'><ol>
+<li>
+<p><strong>Millora del Rendiment de les Consultes:</strong></p>
+<ul>
+<li>Els índexs redueixen el temps de resposta de les consultes, especialment en taules grans.</li>
+</ul>
+</li>
+<li>
+<p><strong>Accés Ràpid a les Dades:</strong></p>
+<ul>
+<li>Permeten accedir ràpidament a les files que compleixen amb els criteris de cerca.</li>
+</ul>
+</li>
+<li>
+<p><strong>Optimització de Consultes Complexes:</strong></p>
+<ul>
+<li>Els índexs compostos poden optimitzar consultes que filtren per múltiples columnes.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Desavantatges dels índexs</h2>
+<div class='index'><ol>
+<li>
+<p><strong>Espai d'Emmagatzematge:</strong></p>
+<ul>
+<li>Els índexs ocupen espai addicional a la base de dades.</li>
+</ul>
+</li>
+<li>
+<p><strong>Temps Addicional en Operacions DML:</strong></p>
+<ul>
+<li>Les operacions d'inserció, actualització i eliminació poden ser més lentes, ja que els índexs s'han d'actualitzar.</li>
+</ul>
+</li>
+<li>
+<p><strong>Manteniment:</strong></p>
+<ul>
+<li>Els índexs requereixen manteniment per assegurar-se que es mantenen eficients.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Exercici Pràctic</h2>
+<div class='index'></div><h2>Exercici 1: Crear un índex</h2>
+<div class='index'><p>Crea un índex sobre la columna <code>ciutat</code> de la taula <code>clients</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIElOREVYIGlkeF9jaXV0YXQgT04gY2xpZW50cyAoY2l1dGF0KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE INDEX idx_ciutat ON clients (ciutat);</pre></div><div class='index'></div><h2>Exercici 2: Consultar amb índex</h2>
+<div class='index'><p>Executa una consulta per trobar tots els clients de &quot;Barcelona&quot; i observa la millora en el temps de resposta.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUICogRlJPTSBjbGllbnRzIFdIRVJFIGNpdXRhdCA9ICdCYXJjZWxvbmEnOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT * FROM clients WHERE ciutat = 'Barcelona';</pre></div><div class='index'></div><h2>Solució</h2>
+<div class='index'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gQ3JlYXIgbCfDrW5kZXgKQ1JFQVRFIElOREVYIGlkeF9jaXV0YXQgT04gY2xpZW50cyAoY2l1dGF0KTsKCi0tIENvbnN1bHRhciBhbWIgbCfDrW5kZXgKU0VMRUNUICogRlJPTSBjbGllbnRzIFdIRVJFIGNpdXRhdCA9ICdCYXJjZWxvbmEnOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Crear l'&iacute;ndex
+CREATE INDEX idx_ciutat ON clients (ciutat);
+
+-- Consultar amb l'&iacute;ndex
+SELECT * FROM clients WHERE ciutat = 'Barcelona';</pre></div><div class='index'></div><h2>Resum</h2>
+<div class='index'><p>En aquesta secció, hem après què són els índexs, com funcionen i com es poden utilitzar per millorar el rendiment de les consultes SQL. També hem vist els beneficis i desavantatges dels índexs i hem practicat la creació i ús d'índexs en una taula de base de dades. En la següent secció, explorarem com crear i gestionar índexs de manera més detallada.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-using-subqueries-select-from-where' title="Utilitzar subconsultes en les clàusules SELECT, FROM i WHERE">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-creating-managing-indexes' title="Crear i gestionar índexs">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

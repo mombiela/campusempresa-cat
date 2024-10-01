@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proves Unitàries amb Flask</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/flask/09-01-unit-testing" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/flask/09-01-unit-testing" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/flask/09-01-unit-testing" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/flask/09-01-unit-testing" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/flask/09-01-unit-testing" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-04-monitoring-performance' title="Monitorització i Optimització del Rendiment">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Proves Unitàries amb Flask</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-02-integration-testing' title="Proves d'Integració">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Les proves unitàries són una part essencial del desenvolupament de programari, ja que permeten verificar que les diferents parts de la teva aplicació funcionen correctament de manera independent. En aquest tema, aprendrem com crear i executar proves unitàries per a una aplicació Flask.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre la importància de les proves unitàries.</li>
+<li>Configurar un entorn de proves per a una aplicació Flask.</li>
+<li>Escriure i executar proves unitàries utilitzant <code>unittest</code> i <code>pytest</code>.</li>
+</ul>
+</div><h1>1. Importància de les Proves Unitàries</h1>
+<div class='content'><p>Les proves unitàries ajuden a:</p>
+<ul>
+<li>Detectar errors en fases primerenques del desenvolupament.</li>
+<li>Assegurar que els canvis en el codi no introdueixin nous errors.</li>
+<li>Facilitar el manteniment del codi.</li>
+<li>Millorar la qualitat del codi.</li>
+</ul>
+</div><h1>2. Configuració de l'Entorn de Proves</h1>
+<div class='content'></div><h2>Instal·lació de Dependències</h2>
+<div class='content'><p>Per començar a escriure proves unitàries, necessitem instal·lar algunes biblioteques. Les més comunes són <code>unittest</code> (inclosa en la biblioteca estàndard de Python) i <code>pytest</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgcHl0ZXN0"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install pytest</pre></div><div class='content'></div><h2>Estructura del Projecte</h2>
+<div class='content'><p>És recomanable tenir una estructura clara per a les proves dins del teu projecte. Una estructura típica podria ser:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bXlfZmxhc2tfYXBwLwrilJzilIDilIAgYXBwLwrilIIgICDilJzilIDilIAgX19pbml0X18ucHkK4pSCICAg4pSc4pSA4pSAIHJvdXRlcy5weQrilIIgICDilJTilIDilIAgbW9kZWxzLnB5CuKUnOKUgOKUgCB0ZXN0cy8K4pSCICAg4pSc4pSA4pSAIF9faW5pdF9fLnB5CuKUgiAgIOKUnOKUgOKUgCB0ZXN0X3JvdXRlcy5weQrilIIgICDilJTilIDilIAgdGVzdF9tb2RlbHMucHkK4pSc4pSA4pSAIGNvbmZpZy5weQrilJTilIDilIAgcnVuLnB5"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>my_flask_app/
+├── app/
+│   ├── __init__.py
+│   ├── routes.py
+│   └── models.py
+├── tests/
+│   ├── __init__.py
+│   ├── test_routes.py
+│   └── test_models.py
+├── config.py
+└── run.py</pre></div><div class='content'></div><h1>3. Escriure Proves Unitàries amb `unittest`</h1>
+<div class='content'></div><h2>Exemple de Prova Unitària</h2>
+<div class='content'><p>A continuació, es mostra un exemple de com escriure una prova unitària per a una ruta simple en Flask.</p>
+<h4>app/routes.py</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2ssIGpzb25pZnkKCmFwcCA9IEZsYXNrKF9fbmFtZV9fKQoKQGFwcC5yb3V0ZSgnL2hlbGxvJywgbWV0aG9kcz1bJ0dFVCddKQpkZWYgaGVsbG8oKToKICAgIHJldHVybiBqc29uaWZ5KG1lc3NhZ2U9IkhlbGxvLCBXb3JsZCEiKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask, jsonify
+
+app = Flask(__name__)
+
+@app.route('/hello', methods=['GET'])
+def hello():
+    return jsonify(message=&quot;Hello, World!&quot;)</pre></div><div class='content'><h4>tests/test_routes.py</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHVuaXR0ZXN0CmZyb20gYXBwLnJvdXRlcyBpbXBvcnQgYXBwCgpjbGFzcyBCYXNpY1Rlc3RzKHVuaXR0ZXN0LlRlc3RDYXNlKToKCiAgICBkZWYgc2V0VXAoc2VsZik6CiAgICAgICAgc2VsZi5hcHAgPSBhcHAudGVzdF9jbGllbnQoKQogICAgICAgIHNlbGYuYXBwLnRlc3RpbmcgPSBUcnVlCgogICAgZGVmIHRlc3RfaGVsbG8oc2VsZik6CiAgICAgICAgcmVzcG9uc2UgPSBzZWxmLmFwcC5nZXQoJy9oZWxsbycpCiAgICAgICAgc2VsZi5hc3NlcnRFcXVhbChyZXNwb25zZS5zdGF0dXNfY29kZSwgMjAwKQogICAgICAgIHNlbGYuYXNzZXJ0RXF1YWwocmVzcG9uc2UuanNvbiwgeyJtZXNzYWdlIjogIkhlbGxvLCBXb3JsZCEifSkKCmlmIF9fbmFtZV9fID09ICJfX21haW5fXyI6CiAgICB1bml0dGVzdC5tYWluKCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import unittest
+from app.routes import app
+
+class BasicTests(unittest.TestCase):
+
+    def setUp(self):
+        self.app = app.test_client()
+        self.app.testing = True
+
+    def test_hello(self):
+        response = self.app.get('/hello')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json, {&quot;message&quot;: &quot;Hello, World!&quot;})
+
+if __name__ == &quot;__main__&quot;:
+    unittest.main()</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>setUp</code>: Aquest mètode s'executa abans de cada prova. Aquí, configurem el client de proves de Flask.</li>
+<li><code>test_hello</code>: Aquesta és una prova unitària que verifica que la ruta <code>/hello</code> retorna un codi d'estat 200 i el missatge esperat.</li>
+</ul>
+</div><h1>4. Executar Proves amb `unittest`</h1>
+<div class='content'><p>Per executar les proves, simplement executa el fitxer de proves:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHl0aG9uIC1tIHVuaXR0ZXN0IGRpc2NvdmVyIHRlc3Rz"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>python -m unittest discover tests</pre></div><div class='content'></div><h1>5. Escriure Proves Unitàries amb `pytest`</h1>
+<div class='content'></div><h2>Exemple de Prova Unitària amb `pytest`</h2>
+<div class='content'><p><code>pytest</code> és una altra eina popular per a les proves unitàries en Python. A continuació, es mostra com escriure la mateixa prova utilitzant <code>pytest</code>.</p>
+<h4>tests/test_routes.py</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHB5dGVzdApmcm9tIGFwcC5yb3V0ZXMgaW1wb3J0IGFwcAoKQHB5dGVzdC5maXh0dXJlCmRlZiBjbGllbnQoKToKICAgIGFwcC50ZXN0aW5nID0gVHJ1ZQogICAgcmV0dXJuIGFwcC50ZXN0X2NsaWVudCgpCgpkZWYgdGVzdF9oZWxsbyhjbGllbnQpOgogICAgcmVzcG9uc2UgPSBjbGllbnQuZ2V0KCcvaGVsbG8nKQogICAgYXNzZXJ0IHJlc3BvbnNlLnN0YXR1c19jb2RlID09IDIwMAogICAgYXNzZXJ0IHJlc3BvbnNlLmpzb24gPT0geyJtZXNzYWdlIjogIkhlbGxvLCBXb3JsZCEifQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import pytest
+from app.routes import app
+
+@pytest.fixture
+def client():
+    app.testing = True
+    return app.test_client()
+
+def test_hello(client):
+    response = client.get('/hello')
+    assert response.status_code == 200
+    assert response.json == {&quot;message&quot;: &quot;Hello, World!&quot;}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>@pytest.fixture</code>: Aquesta funció proporciona un client de proves per a les proves.</li>
+<li><code>test_hello</code>: Aquesta és la prova unitària que verifica la ruta <code>/hello</code>.</li>
+</ul>
+</div><h1>6. Executar Proves amb `pytest`</h1>
+<div class='content'><p>Per executar les proves amb <code>pytest</code>, simplement executa:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHl0ZXN0"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pytest</pre></div><div class='content'></div><h1>7. Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Provar una Ruta POST</h2>
+<div class='content'><p>Crea una ruta POST que accepti dades JSON i retorni una resposta. Escriu una prova unitària per verificar aquesta funcionalitat.</p>
+<h4>app/routes.py</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QGFwcC5yb3V0ZSgnL2VjaG8nLCBtZXRob2RzPVsnUE9TVCddKQpkZWYgZWNobygpOgogICAgZGF0YSA9IHJlcXVlc3QuZ2V0X2pzb24oKQogICAgcmV0dXJuIGpzb25pZnkoZGF0YSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@app.route('/echo', methods=['POST'])
+def echo():
+    data = request.get_json()
+    return jsonify(data)</pre></div><div class='content'><h4>tests/test_routes.py</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIHRlc3RfZWNobyhjbGllbnQpOgogICAgcmVzcG9uc2UgPSBjbGllbnQucG9zdCgnL2VjaG8nLCBqc29uPXsia2V5IjogInZhbHVlIn0pCiAgICBhc3NlcnQgcmVzcG9uc2Uuc3RhdHVzX2NvZGUgPT0gMjAwCiAgICBhc3NlcnQgcmVzcG9uc2UuanNvbiA9PSB7ImtleSI6ICJ2YWx1ZSJ9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def test_echo(client):
+    response = client.post('/echo', json={&quot;key&quot;: &quot;value&quot;})
+    assert response.status_code == 200
+    assert response.json == {&quot;key&quot;: &quot;value&quot;}</pre></div><div class='content'></div><h2>Exercici 2: Provar una Ruta amb Paràmetres</h2>
+<div class='content'><p>Crea una ruta que accepti un paràmetre en l'URL i retorni una resposta basada en aquest paràmetre. Escriu una prova unitària per verificar aquesta funcionalitat.</p>
+<h4>app/routes.py</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QGFwcC5yb3V0ZSgnL2dyZWV0LzxuYW1lPicsIG1ldGhvZHM9WydHRVQnXSkKZGVmIGdyZWV0KG5hbWUpOgogICAgcmV0dXJuIGpzb25pZnkobWVzc2FnZT1mIkhlbGxvLCB7bmFtZX0hIik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@app.route('/greet/&lt;name&gt;', methods=['GET'])
+def greet(name):
+    return jsonify(message=f&quot;Hello, {name}!&quot;)</pre></div><div class='content'><h4>tests/test_routes.py</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIHRlc3RfZ3JlZXQoY2xpZW50KToKICAgIHJlc3BvbnNlID0gY2xpZW50LmdldCgnL2dyZWV0L0pvaG4nKQogICAgYXNzZXJ0IHJlc3BvbnNlLnN0YXR1c19jb2RlID09IDIwMAogICAgYXNzZXJ0IHJlc3BvbnNlLmpzb24gPT0geyJtZXNzYWdlIjogIkhlbGxvLCBKb2huISJ9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def test_greet(client):
+    response = client.get('/greet/John')
+    assert response.status_code == 200
+    assert response.json == {&quot;message&quot;: &quot;Hello, John!&quot;}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après la importància de les proves unitàries i com configurar un entorn de proves per a una aplicació Flask. Hem escrit i executat proves unitàries utilitzant <code>unittest</code> i <code>pytest</code>. A més, hem practicat amb exercicis per reforçar els conceptes apresos. Les proves unitàries són una eina poderosa per assegurar la qualitat i la robustesa del teu codi, i és important integrar-les en el teu flux de treball de desenvolupament.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-04-monitoring-performance' title="Monitorització i Optimització del Rendiment">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-02-integration-testing' title="Proves d'Integració">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

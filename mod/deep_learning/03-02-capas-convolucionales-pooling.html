@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capes Convolutionals i de Pooling</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/deep_learning/03-02-capas-convolucionales-pooling" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/deep_learning/03-02-capas-convolucionales-pooling" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/deep_learning/03-02-convolutional-pooling-layers" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/deep_learning/03-02-capas-convolucionales-pooling" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/deep_learning/03-02-capas-convolucionales-pooling" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-01-introduccion-cnn' title="Introducció a les CNN">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Capes Convolutionals i de Pooling</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-03-arquitecturas-populares-cnn' title="Arquitectures populars de CNN">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem les capes convolutionals i de pooling, que són components fonamentals de les Xarxes Neuronals Convolucionals (CNN). Aquestes capes permeten a les CNN extreure característiques rellevants de les imatges, reduir la dimensionalitat i millorar l'eficiència del model.</p>
+</div><h1>1. Capa Convolutional</h1>
+<div class='content'></div><h2>1.1. Què és una Capa Convolutional?</h2>
+<div class='content'><p>Una capa convolutional aplica un conjunt de filtres (o kernels) a una entrada per produir mapes de característiques. Cada filtre es desplaça sobre la imatge d'entrada i calcula el producte puntual entre el filtre i una regió de la imatge.</p>
+</div><h2>1.2. Paràmetres Clau</h2>
+<div class='content'><ul>
+<li><strong>Filtres (Kernels):</strong> Matrius petites que s'apliquen a la imatge d'entrada per detectar característiques com vores, textures, etc.</li>
+<li><strong>Stride:</strong> El pas amb el qual el filtre es desplaça sobre la imatge. Un stride més gran redueix la mida del mapa de característiques resultant.</li>
+<li><strong>Padding:</strong> Afegeix píxels addicionals a les vores de la imatge per controlar la mida del mapa de característiques. Pot ser 'valid' (sense padding) o 'same' (padding per mantenir la mida).</li>
+</ul>
+</div><h2>1.3. Exemple Pràctic</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKZnJvbSB0ZW5zb3JmbG93LmtlcmFzLmxheWVycyBpbXBvcnQgQ29udjJECgojIERlZmluaW0gdW5hIGNhcGEgY29udm9sdXRpb25hbCBhbWIgMzIgZmlsdHJlcywgbWlkYSBkZSBmaWx0cmUgM3gzLCBzdHJpZGUgZGUgMSBpIHBhZGRpbmcgJ3NhbWUnCmNvbnZfbGF5ZXIgPSBDb252MkQoZmlsdGVycz0zMiwga2VybmVsX3NpemU9KDMsIDMpLCBzdHJpZGVzPSgxLCAxKSwgcGFkZGluZz0nc2FtZScsIGFjdGl2YXRpb249J3JlbHUnKQoKIyBTdXBvc2VtIHVuYSBlbnRyYWRhIGRlIG1pZGEgMjh4Mjh4MSAoaW1hdGdlIGVuIGVzY2FsYSBkZSBncmlzb3MpCmlucHV0X3NoYXBlID0gKDI4LCAyOCwgMSkKbW9kZWwgPSB0Zi5rZXJhcy5TZXF1ZW50aWFsKFt0Zi5rZXJhcy5JbnB1dChzaGFwZT1pbnB1dF9zaGFwZSksIGNvbnZfbGF5ZXJdKQoKIyBNb3N0cmVtIGVsIHJlc3VtIGRlbCBtb2RlbAptb2RlbC5zdW1tYXJ5KCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+from tensorflow.keras.layers import Conv2D
+
+# Definim una capa convolutional amb 32 filtres, mida de filtre 3x3, stride de 1 i padding 'same'
+conv_layer = Conv2D(filters=32, kernel_size=(3, 3), strides=(1, 1), padding='same', activation='relu')
+
+# Suposem una entrada de mida 28x28x1 (imatge en escala de grisos)
+input_shape = (28, 28, 1)
+model = tf.keras.Sequential([tf.keras.Input(shape=input_shape), conv_layer])
+
+# Mostrem el resum del model
+model.summary()</pre></div><div class='content'><p><strong>Explicació del codi:</strong></p>
+<ul>
+<li>Utilitzem <code>Conv2D</code> de Keras per crear una capa convolutional.</li>
+<li><code>filters=32</code> indica que utilitzarem 32 filtres.</li>
+<li><code>kernel_size=(3, 3)</code> defineix la mida dels filtres.</li>
+<li><code>strides=(1, 1)</code> especifica que el filtre es desplaçarà un píxel a la vegada.</li>
+<li><code>padding='same'</code> afegeix padding per mantenir la mida de la sortida igual a la de l'entrada.</li>
+<li><code>activation='relu'</code> aplica la funció d'activació ReLU després de la convolució.</li>
+</ul>
+</div><h1>2. Capa de Pooling</h1>
+<div class='content'></div><h2>2.1. Què és una Capa de Pooling?</h2>
+<div class='content'><p>Una capa de pooling redueix la dimensionalitat del mapa de característiques agregant valors en regions petites. Això ajuda a reduir el nombre de paràmetres i la complexitat computacional, i també fa que el model sigui més robust a les translacions.</p>
+</div><h2>2.2. Tipus de Pooling</h2>
+<div class='content'><ul>
+<li><strong>Max Pooling:</strong> Selecciona el valor màxim en cada regió.</li>
+<li><strong>Average Pooling:</strong> Calcula la mitjana dels valors en cada regió.</li>
+</ul>
+</div><h2>2.3. Paràmetres Clau</h2>
+<div class='content'><ul>
+<li><strong>Pool Size:</strong> La mida de la finestra sobre la qual es realitza el pooling.</li>
+<li><strong>Stride:</strong> El pas amb el qual la finestra de pooling es desplaça sobre el mapa de característiques.</li>
+</ul>
+</div><h2>2.4. Exemple Pràctic</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKZnJvbSB0ZW5zb3JmbG93LmtlcmFzLmxheWVycyBpbXBvcnQgTWF4UG9vbGluZzJECgojIERlZmluaW0gdW5hIGNhcGEgZGUgbWF4IHBvb2xpbmcgYW1iIG1pZGEgZGUgZmluZXN0cmEgMngyIGkgc3RyaWRlIGRlIDIKcG9vbGluZ19sYXllciA9IE1heFBvb2xpbmcyRChwb29sX3NpemU9KDIsIDIpLCBzdHJpZGVzPSgyLCAyKSwgcGFkZGluZz0ndmFsaWQnKQoKIyBTdXBvc2VtIHVuYSBlbnRyYWRhIGRlIG1pZGEgMjh4Mjh4MSAoaW1hdGdlIGVuIGVzY2FsYSBkZSBncmlzb3MpCmlucHV0X3NoYXBlID0gKDI4LCAyOCwgMSkKbW9kZWwgPSB0Zi5rZXJhcy5TZXF1ZW50aWFsKFt0Zi5rZXJhcy5JbnB1dChzaGFwZT1pbnB1dF9zaGFwZSksIHBvb2xpbmdfbGF5ZXJdKQoKIyBNb3N0cmVtIGVsIHJlc3VtIGRlbCBtb2RlbAptb2RlbC5zdW1tYXJ5KCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+from tensorflow.keras.layers import MaxPooling2D
+
+# Definim una capa de max pooling amb mida de finestra 2x2 i stride de 2
+pooling_layer = MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding='valid')
+
+# Suposem una entrada de mida 28x28x1 (imatge en escala de grisos)
+input_shape = (28, 28, 1)
+model = tf.keras.Sequential([tf.keras.Input(shape=input_shape), pooling_layer])
+
+# Mostrem el resum del model
+model.summary()</pre></div><div class='content'><p><strong>Explicació del codi:</strong></p>
+<ul>
+<li>Utilitzem <code>MaxPooling2D</code> de Keras per crear una capa de max pooling.</li>
+<li><code>pool_size=(2, 2)</code> defineix la mida de la finestra de pooling.</li>
+<li><code>strides=(2, 2)</code> especifica que la finestra es desplaçarà dos píxels a la vegada.</li>
+<li><code>padding='valid'</code> indica que no s'afegirà padding.</li>
+</ul>
+</div><h1>3. Combinació de Capa Convolutional i de Pooling</h1>
+<div class='content'></div><h2>3.1. Exemple Complet</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKZnJvbSB0ZW5zb3JmbG93LmtlcmFzLmxheWVycyBpbXBvcnQgQ29udjJELCBNYXhQb29saW5nMkQKCiMgRGVmaW5pbSB1bmEgc2Vxw7zDqG5jaWEgZGUgY2FwZXMgY29udm9sdXRpb25hbHMgaSBkZSBwb29saW5nCm1vZGVsID0gdGYua2VyYXMuU2VxdWVudGlhbChbCiAgICB0Zi5rZXJhcy5JbnB1dChzaGFwZT0oMjgsIDI4LCAxKSksCiAgICBDb252MkQoZmlsdGVycz0zMiwga2VybmVsX3NpemU9KDMsIDMpLCBhY3RpdmF0aW9uPSdyZWx1JywgcGFkZGluZz0nc2FtZScpLAogICAgTWF4UG9vbGluZzJEKHBvb2xfc2l6ZT0oMiwgMiksIHN0cmlkZXM9KDIsIDIpLCBwYWRkaW5nPSd2YWxpZCcpLAogICAgQ29udjJEKGZpbHRlcnM9NjQsIGtlcm5lbF9zaXplPSgzLCAzKSwgYWN0aXZhdGlvbj0ncmVsdScsIHBhZGRpbmc9J3NhbWUnKSwKICAgIE1heFBvb2xpbmcyRChwb29sX3NpemU9KDIsIDIpLCBzdHJpZGVzPSgyLCAyKSwgcGFkZGluZz0ndmFsaWQnKQpdKQoKIyBNb3N0cmVtIGVsIHJlc3VtIGRlbCBtb2RlbAptb2RlbC5zdW1tYXJ5KCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+from tensorflow.keras.layers import Conv2D, MaxPooling2D
+
+# Definim una seq&uuml;&egrave;ncia de capes convolutionals i de pooling
+model = tf.keras.Sequential([
+    tf.keras.Input(shape=(28, 28, 1)),
+    Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='same'),
+    MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding='valid'),
+    Conv2D(filters=64, kernel_size=(3, 3), activation='relu', padding='same'),
+    MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding='valid')
+])
+
+# Mostrem el resum del model
+model.summary()</pre></div><div class='content'><p><strong>Explicació del codi:</strong></p>
+<ul>
+<li>Primer, afegim una capa convolutional amb 32 filtres i una capa de max pooling.</li>
+<li>Després, afegim una segona capa convolutional amb 64 filtres i una altra capa de max pooling.</li>
+<li>Aquestes capes es combinen per extreure característiques de diferents nivells de la imatge.</li>
+</ul>
+</div><h1>4. Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici</h2>
+<div class='content'><p>Crea una xarxa neuronal convolucional amb les següents especificacions:</p>
+<ol>
+<li>Entrada de mida 64x64x3 (imatge en color).</li>
+<li>Primera capa convolutional amb 16 filtres, mida de filtre 3x3, stride de 1 i padding 'same'.</li>
+<li>Capa de max pooling amb mida de finestra 2x2 i stride de 2.</li>
+<li>Segona capa convolutional amb 32 filtres, mida de filtre 3x3, stride de 1 i padding 'same'.</li>
+<li>Capa de max pooling amb mida de finestra 2x2 i stride de 2.</li>
+</ol>
+</div><h2>Solució</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKZnJvbSB0ZW5zb3JmbG93LmtlcmFzLmxheWVycyBpbXBvcnQgQ29udjJELCBNYXhQb29saW5nMkQKCiMgRGVmaW5pbSBsYSB4YXJ4YSBuZXVyb25hbCBjb252b2x1Y2lvbmFsCm1vZGVsID0gdGYua2VyYXMuU2VxdWVudGlhbChbCiAgICB0Zi5rZXJhcy5JbnB1dChzaGFwZT0oNjQsIDY0LCAzKSksCiAgICBDb252MkQoZmlsdGVycz0xNiwga2VybmVsX3NpemU9KDMsIDMpLCBhY3RpdmF0aW9uPSdyZWx1JywgcGFkZGluZz0nc2FtZScpLAogICAgTWF4UG9vbGluZzJEKHBvb2xfc2l6ZT0oMiwgMiksIHN0cmlkZXM9KDIsIDIpLCBwYWRkaW5nPSd2YWxpZCcpLAogICAgQ29udjJEKGZpbHRlcnM9MzIsIGtlcm5lbF9zaXplPSgzLCAzKSwgYWN0aXZhdGlvbj0ncmVsdScsIHBhZGRpbmc9J3NhbWUnKSwKICAgIE1heFBvb2xpbmcyRChwb29sX3NpemU9KDIsIDIpLCBzdHJpZGVzPSgyLCAyKSwgcGFkZGluZz0ndmFsaWQnKQpdKQoKIyBNb3N0cmVtIGVsIHJlc3VtIGRlbCBtb2RlbAptb2RlbC5zdW1tYXJ5KCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+from tensorflow.keras.layers import Conv2D, MaxPooling2D
+
+# Definim la xarxa neuronal convolucional
+model = tf.keras.Sequential([
+    tf.keras.Input(shape=(64, 64, 3)),
+    Conv2D(filters=16, kernel_size=(3, 3), activation='relu', padding='same'),
+    MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding='valid'),
+    Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='same'),
+    MaxPooling2D(pool_size=(2, 2), strides=(2, 2), padding='valid')
+])
+
+# Mostrem el resum del model
+model.summary()</pre></div><div class='content'></div><h1>5. Resum</h1>
+<div class='content'><p>En aquesta secció, hem après sobre les capes convolutionals i de pooling, incloent-hi els seus paràmetres clau i com es combinen per construir xarxes neuronals convolucionals. Hem vist exemples pràctics de com implementar aquestes capes utilitzant TensorFlow i Keras, i hem realitzat un exercici pràctic per reforçar els conceptes apresos.</p>
+<p>En el següent tema, explorarem les arquitectures populars de CNN i com s'utilitzen en aplicacions reals.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-01-introduccion-cnn' title="Introducció a les CNN">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-03-arquitecturas-populares-cnn' title="Arquitectures populars de CNN">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funcions de finestra</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/postgresql/03-04-window-functions" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/postgresql/03-04-window-functions" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/postgresql/03-04-window-functions" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/postgresql/03-04-window-functions" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/postgresql/03-04-window-functions" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-aggregate-functions' title="Funcions agregades">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Funcions de finestra</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-05-common-table-expressions' title="Expressions de taula comunes (CTEs)">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Les funcions de finestra (o &quot;window functions&quot;) són una característica poderosa de SQL que permet realitzar càlculs sobre un conjunt de files relacionades amb la fila actual. A diferència de les funcions agregades, que retornen un únic valor per a un conjunt de files, les funcions de finestra poden retornar múltiples valors per a cada fila del conjunt.</p>
+</div><h1>Conceptes clau</h1>
+<div class='content'><ol>
+<li><strong>Partició</strong>: Divideix les files en grups sobre els quals s'aplicarà la funció de finestra.</li>
+<li><strong>Ordre</strong>: Defineix l'ordre en què es processaran les files dins de cada partició.</li>
+<li><strong>Marc de la finestra</strong>: Especifica el rang de files que s'inclouran en el càlcul per a cada fila.</li>
+</ol>
+</div><h1>Sintaxi bàsica</h1>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY2nDs19kZV9maW5lc3RyYSgpIE9WRVIgKAogICAgW1BBUlRJVElPTiBCWSBjb2x1bW5hMSwgY29sdW1uYTIsIC4uLl0KICAgIFtPUkRFUiBCWSBjb2x1bW5hMSBbQVNDfERFU0NdLCBjb2x1bW5hMiBbQVNDfERFU0NdLCAuLi5dCiAgICBbUk9XU3xSQU5HRSBCRVRXRUVOIC4uLl0KKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>funci&oacute;_de_finestra() OVER (
+    [PARTITION BY columna1, columna2, ...]
+    [ORDER BY columna1 [ASC|DESC], columna2 [ASC|DESC], ...]
+    [ROWS|RANGE BETWEEN ...]
+)</pre></div><div class='content'></div><h1>Exemples pràctics</h1>
+<div class='content'></div><h2>1. Funció `ROW_NUMBER()`</h2>
+<div class='content'><p>La funció <code>ROW_NUMBER()</code> assigna un número únic a cada fila dins de la partició d'un conjunt de resultats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUCiAgICBpZCwKICAgIG5vbSwKICAgIGRlcGFydGFtZW50LAogICAgUk9XX05VTUJFUigpIE9WRVIgKFBBUlRJVElPTiBCWSBkZXBhcnRhbWVudCBPUkRFUiBCWSBub20pIEFTIGZpbGFfbnVtCkZST00KICAgIGVtcGxlYXRzOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT
+    id,
+    nom,
+    departament,
+    ROW_NUMBER() OVER (PARTITION BY departament ORDER BY nom) AS fila_num
+FROM
+    empleats;</pre></div><div class='content'><p><strong>Explicació</strong>:</p>
+<ul>
+<li><strong>PARTITION BY departament</strong>: Divideix les files per departament.</li>
+<li><strong>ORDER BY nom</strong>: Ordena les files dins de cada departament per nom.</li>
+<li><strong>ROW_NUMBER()</strong>: Assigna un número de fila únic dins de cada partició.</li>
+</ul>
+</div><h2>2. Funció `RANK()`</h2>
+<div class='content'><p>La funció <code>RANK()</code> assigna un rang a cada fila dins de la partició d'un conjunt de resultats, amb l'opció de tenir rangs duplicats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUCiAgICBpZCwKICAgIG5vbSwKICAgIGRlcGFydGFtZW50LAogICAgc2FsYXJpLAogICAgUkFOSygpIE9WRVIgKFBBUlRJVElPTiBCWSBkZXBhcnRhbWVudCBPUkRFUiBCWSBzYWxhcmkgREVTQykgQVMgcmFuZwpGUk9NCiAgICBlbXBsZWF0czs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT
+    id,
+    nom,
+    departament,
+    salari,
+    RANK() OVER (PARTITION BY departament ORDER BY salari DESC) AS rang
+FROM
+    empleats;</pre></div><div class='content'><p><strong>Explicació</strong>:</p>
+<ul>
+<li><strong>PARTITION BY departament</strong>: Divideix les files per departament.</li>
+<li><strong>ORDER BY salari DESC</strong>: Ordena les files dins de cada departament per salari en ordre descendent.</li>
+<li><strong>RANK()</strong>: Assigna un rang a cada fila dins de cada partició, permetent rangs duplicats per a salaris iguals.</li>
+</ul>
+</div><h2>3. Funció `DENSE_RANK()`</h2>
+<div class='content'><p>La funció <code>DENSE_RANK()</code> és similar a <code>RANK()</code>, però no deixa espais en els rangs.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUCiAgICBpZCwKICAgIG5vbSwKICAgIGRlcGFydGFtZW50LAogICAgc2FsYXJpLAogICAgREVOU0VfUkFOSygpIE9WRVIgKFBBUlRJVElPTiBCWSBkZXBhcnRhbWVudCBPUkRFUiBCWSBzYWxhcmkgREVTQykgQVMgcmFuZ19kZW5zCkZST00KICAgIGVtcGxlYXRzOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT
+    id,
+    nom,
+    departament,
+    salari,
+    DENSE_RANK() OVER (PARTITION BY departament ORDER BY salari DESC) AS rang_dens
+FROM
+    empleats;</pre></div><div class='content'><p><strong>Explicació</strong>:</p>
+<ul>
+<li><strong>PARTITION BY departament</strong>: Divideix les files per departament.</li>
+<li><strong>ORDER BY salari DESC</strong>: Ordena les files dins de cada departament per salari en ordre descendent.</li>
+<li><strong>DENSE_RANK()</strong>: Assigna un rang dens a cada fila dins de cada partició, sense deixar espais en els rangs.</li>
+</ul>
+</div><h2>4. Funció `SUM()`</h2>
+<div class='content'><p>La funció <code>SUM()</code> pot ser utilitzada com a funció de finestra per calcular la suma acumulativa.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUCiAgICBpZCwKICAgIG5vbSwKICAgIGRlcGFydGFtZW50LAogICAgc2FsYXJpLAogICAgU1VNKHNhbGFyaSkgT1ZFUiAoUEFSVElUSU9OIEJZIGRlcGFydGFtZW50IE9SREVSIEJZIG5vbSkgQVMgc3VtYV9hY3VtdWxhdGl2YQpGUk9NCiAgICBlbXBsZWF0czs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT
+    id,
+    nom,
+    departament,
+    salari,
+    SUM(salari) OVER (PARTITION BY departament ORDER BY nom) AS suma_acumulativa
+FROM
+    empleats;</pre></div><div class='content'><p><strong>Explicació</strong>:</p>
+<ul>
+<li><strong>PARTITION BY departament</strong>: Divideix les files per departament.</li>
+<li><strong>ORDER BY nom</strong>: Ordena les files dins de cada departament per nom.</li>
+<li><strong>SUM(salari)</strong>: Calcula la suma acumulativa del salari dins de cada partició.</li>
+</ul>
+</div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Assignar números de fila</h2>
+<div class='content'><p>Crea una consulta que assigni un número de fila únic a cada empleat dins de cada departament, ordenat per data de contractació.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUCiAgICBpZCwKICAgIG5vbSwKICAgIGRlcGFydGFtZW50LAogICAgZGF0YV9jb250cmFjdGFjaW8sCiAgICBST1dfTlVNQkVSKCkgT1ZFUiAoUEFSVElUSU9OIEJZIGRlcGFydGFtZW50IE9SREVSIEJZIGRhdGFfY29udHJhY3RhY2lvKSBBUyBmaWxhX251bQpGUk9NCiAgICBlbXBsZWF0czs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT
+    id,
+    nom,
+    departament,
+    data_contractacio,
+    ROW_NUMBER() OVER (PARTITION BY departament ORDER BY data_contractacio) AS fila_num
+FROM
+    empleats;</pre></div><div class='content'></div><h2>Exercici 2: Calcular el rang de salaris</h2>
+<div class='content'><p>Crea una consulta que assigni un rang als empleats dins de cada departament basat en el seu salari, en ordre descendent.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUCiAgICBpZCwKICAgIG5vbSwKICAgIGRlcGFydGFtZW50LAogICAgc2FsYXJpLAogICAgUkFOSygpIE9WRVIgKFBBUlRJVElPTiBCWSBkZXBhcnRhbWVudCBPUkRFUiBCWSBzYWxhcmkgREVTQykgQVMgcmFuZwpGUk9NCiAgICBlbXBsZWF0czs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT
+    id,
+    nom,
+    departament,
+    salari,
+    RANK() OVER (PARTITION BY departament ORDER BY salari DESC) AS rang
+FROM
+    empleats;</pre></div><div class='content'></div><h2>Exercici 3: Suma acumulativa de vendes</h2>
+<div class='content'><p>Crea una consulta que calculi la suma acumulativa de les vendes per a cada venedor, ordenades per data de venda.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUCiAgICB2ZW5lZG9yX2lkLAogICAgZGF0YV92ZW5kYSwKICAgIGltcG9ydF92ZW5kYSwKICAgIFNVTShpbXBvcnRfdmVuZGEpIE9WRVIgKFBBUlRJVElPTiBCWSB2ZW5lZG9yX2lkIE9SREVSIEJZIGRhdGFfdmVuZGEpIEFTIHN1bWFfYWN1bXVsYXRpdmEKRlJPTQogICAgdmVuZGVzOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT
+    venedor_id,
+    data_venda,
+    import_venda,
+    SUM(import_venda) OVER (PARTITION BY venedor_id ORDER BY data_venda) AS suma_acumulativa
+FROM
+    vendes;</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>Les funcions de finestra són una eina poderosa per realitzar càlculs complexos en SQL. Permeten treballar amb conjunts de files relacionades i realitzar càlculs com numeració de files, rangs, i sumes acumulatives. Comprendre com utilitzar aquestes funcions pot millorar significativament la capacitat d'analitzar i manipular dades en PostgreSQL.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-aggregate-functions' title="Funcions agregades">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-05-common-table-expressions' title="Expressions de taula comunes (CTEs)">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

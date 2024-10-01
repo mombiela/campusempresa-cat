@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concurrència en Scala</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/scala/06-04-concurrency-in-scala" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/scala/06-04-concurrency-in-scala" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/scala/06-04-concurrency-in-scala" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/scala/06-04-concurrency-in-scala" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/scala/06-04-concurrency-in-scala" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-03-macros-and-reflection' title="Macros i Reflexió">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Concurrència en Scala</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-05-introduction-to-akka' title="Introducció a Akka">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La concurrència és un concepte clau en la programació moderna, especialment en aplicacions que necessiten gestionar múltiples tasques simultàniament. Scala ofereix diverses eines i biblioteques per treballar amb concurrència de manera eficient i segura. En aquest tema, explorarem els conceptes bàsics de la concurrència en Scala, incloent futures, promeses, actors i altres mecanismes.</p>
+</div><h1>Continguts</h1>
+<div class='content'><ol>
+<li><strong>Introducció a la Concurrència</strong></li>
+<li><strong>Futures i Promeses</strong></li>
+<li><strong>Actors amb Akka</strong></li>
+<li><strong>Paral·lelisme i Col·leccions Paral·leles</strong></li>
+<li><strong>Exercicis Pràctics</strong></li>
+</ol>
+</div><h1>1. Introducció a la Concurrència</h1>
+<div class='content'><p>La concurrència permet que múltiples tasques es realitzin al mateix temps, millorant l'eficiència i el rendiment de les aplicacions. En Scala, la concurrència es pot gestionar de diverses maneres:</p>
+<ul>
+<li><strong>Futures i Promeses</strong>: Permeten treballar amb resultats asíncrons.</li>
+<li><strong>Actors</strong>: Un model de concurrència basat en missatges.</li>
+<li><strong>Col·leccions Paral·leles</strong>: Permeten operacions paral·leles sobre col·leccions.</li>
+</ul>
+</div><h1>2. Futures i Promeses</h1>
+<div class='content'></div><h2>Futures</h2>
+<div class='content'><p>Un <code>Future</code> representa un valor que pot estar disponible en algun moment en el futur. És una eina poderosa per treballar amb operacions asíncrones.</p>
+<h4>Exemple de Future</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHNjYWxhLmNvbmN1cnJlbnQuXwppbXBvcnQgRXhlY3V0aW9uQ29udGV4dC5JbXBsaWNpdHMuZ2xvYmFsCmltcG9ydCBzY2FsYS51dGlsLntTdWNjZXNzLCBGYWlsdXJlfQoKdmFsIGZ1dHVyZSA9IEZ1dHVyZSB7CiAgLy8gU2ltdWxhY2nDsyBkJ3VuYSB0YXNjYSBxdWUgdHJpZ2EgdGVtcHMKICBUaHJlYWQuc2xlZXAoMTAwMCkKICA0Mgp9CgpmdXR1cmUub25Db21wbGV0ZSB7CiAgY2FzZSBTdWNjZXNzKHZhbHVlKSA9PiBwcmludGxuKHMiRWwgcmVzdWx0YXQgw6lzICR2YWx1ZSIpCiAgY2FzZSBGYWlsdXJlKGUpID0+IHByaW50bG4ocyJFcnJvcjogJHtlLmdldE1lc3NhZ2V9IikKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import scala.concurrent._
+import ExecutionContext.Implicits.global
+import scala.util.{Success, Failure}
+
+val future = Future {
+  // Simulaci&oacute; d'una tasca que triga temps
+  Thread.sleep(1000)
+  42
+}
+
+future.onComplete {
+  case Success(value) =&gt; println(s&quot;El resultat &eacute;s $value&quot;)
+  case Failure(e) =&gt; println(s&quot;Error: ${e.getMessage}&quot;)
+}</pre></div><div class='content'></div><h2>Promeses</h2>
+<div class='content'><p>Una <code>Promise</code> és un contenidor que es pot completar amb un valor o un error. Un <code>Future</code> es pot derivar d'una <code>Promise</code>.</p>
+<h4>Exemple de Promise</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHNjYWxhLmNvbmN1cnJlbnQuUHJvbWlzZQoKdmFsIHByb21pc2UgPSBQcm9taXNlW0ludF0oKQp2YWwgZnV0dXJlID0gcHJvbWlzZS5mdXR1cmUKCmZ1dHVyZS5vbkNvbXBsZXRlIHsKICBjYXNlIFN1Y2Nlc3ModmFsdWUpID0+IHByaW50bG4ocyJFbCByZXN1bHRhdCDDqXMgJHZhbHVlIikKICBjYXNlIEZhaWx1cmUoZSkgPT4gcHJpbnRsbihzIkVycm9yOiAke2UuZ2V0TWVzc2FnZX0iKQp9CgovLyBDb21wbGV0YXIgbGEgcHJvbWVzYQpwcm9taXNlLnN1Y2Nlc3MoNDIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import scala.concurrent.Promise
+
+val promise = Promise[Int]()
+val future = promise.future
+
+future.onComplete {
+  case Success(value) =&gt; println(s&quot;El resultat &eacute;s $value&quot;)
+  case Failure(e) =&gt; println(s&quot;Error: ${e.getMessage}&quot;)
+}
+
+// Completar la promesa
+promise.success(42)</pre></div><div class='content'></div><h1>3. Actors amb Akka</h1>
+<div class='content'><p>Akka és una biblioteca per a la programació concurrent i distribuïda basada en el model d'actors. Els actors són unitats de computació que processen missatges de manera asíncrona.</p>
+</div><h2>Exemple d'Actor</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGFra2EuYWN0b3Iue0FjdG9yLCBBY3RvclN5c3RlbSwgUHJvcHN9CgpjbGFzcyBIZWxsb0FjdG9yIGV4dGVuZHMgQWN0b3IgewogIGRlZiByZWNlaXZlID0gewogICAgY2FzZSAiaGVsbG8iID0+IHByaW50bG4oIkhvbGEsIG3Ds24hIikKICAgIGNhc2UgXyA9PiBwcmludGxuKCJNaXNzYXRnZSBkZXNjb25lZ3V0IikKICB9Cn0KCnZhbCBzeXN0ZW0gPSBBY3RvclN5c3RlbSgiSGVsbG9TeXN0ZW0iKQp2YWwgaGVsbG9BY3RvciA9IHN5c3RlbS5hY3Rvck9mKFByb3BzW0hlbGxvQWN0b3JdLCBuYW1lID0gImhlbGxvYWN0b3IiKQoKaGVsbG9BY3RvciAhICJoZWxsbyIKaGVsbG9BY3RvciAhICJhZGV1Ig=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import akka.actor.{Actor, ActorSystem, Props}
+
+class HelloActor extends Actor {
+  def receive = {
+    case &quot;hello&quot; =&gt; println(&quot;Hola, m&oacute;n!&quot;)
+    case _ =&gt; println(&quot;Missatge desconegut&quot;)
+  }
+}
+
+val system = ActorSystem(&quot;HelloSystem&quot;)
+val helloActor = system.actorOf(Props[HelloActor], name = &quot;helloactor&quot;)
+
+helloActor ! &quot;hello&quot;
+helloActor ! &quot;adeu&quot;</pre></div><div class='content'></div><h1>4. Paral·lelisme i Col·leccions Paral·leles</h1>
+<div class='content'><p>Scala proporciona col·leccions paral·leles que permeten realitzar operacions en paral·lel de manera senzilla.</p>
+</div><h2>Exemple de Col·leccions Paral·leles</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIGxpc3QgPSBMaXN0KDEsIDIsIDMsIDQsIDUpCnZhbCBwYXJMaXN0ID0gbGlzdC5wYXIKCnZhbCByZXN1bHQgPSBwYXJMaXN0Lm1hcChfICogMikKcHJpbnRsbihyZXN1bHQp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val list = List(1, 2, 3, 4, 5)
+val parList = list.par
+
+val result = parList.map(_ * 2)
+println(result)</pre></div><div class='content'></div><h1>5. Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Utilitzar Futures</h2>
+<div class='content'><p>Crea un <code>Future</code> que calculi la suma de dos nombres després d'un retard de 2 segons.</p>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHNjYWxhLmNvbmN1cnJlbnQuXwppbXBvcnQgRXhlY3V0aW9uQ29udGV4dC5JbXBsaWNpdHMuZ2xvYmFsCgp2YWwgZnV0dXJlU3VtID0gRnV0dXJlIHsKICBUaHJlYWQuc2xlZXAoMjAwMCkKICAzICsgNAp9CgpmdXR1cmVTdW0ub25Db21wbGV0ZSB7CiAgY2FzZSBTdWNjZXNzKHZhbHVlKSA9PiBwcmludGxuKHMiTGEgc3VtYSDDqXMgJHZhbHVlIikKICBjYXNlIEZhaWx1cmUoZSkgPT4gcHJpbnRsbihzIkVycm9yOiAke2UuZ2V0TWVzc2FnZX0iKQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import scala.concurrent._
+import ExecutionContext.Implicits.global
+
+val futureSum = Future {
+  Thread.sleep(2000)
+  3 + 4
+}
+
+futureSum.onComplete {
+  case Success(value) =&gt; println(s&quot;La suma &eacute;s $value&quot;)
+  case Failure(e) =&gt; println(s&quot;Error: ${e.getMessage}&quot;)
+}</pre></div><div class='content'></div><h2>Exercici 2: Crear un Actor</h2>
+<div class='content'><p>Crea un actor que rebi un missatge amb un nombre i respongui amb el doble d'aquest nombre.</p>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGFra2EuYWN0b3Iue0FjdG9yLCBBY3RvclN5c3RlbSwgUHJvcHN9CgpjbGFzcyBEb3VibGVBY3RvciBleHRlbmRzIEFjdG9yIHsKICBkZWYgcmVjZWl2ZSA9IHsKICAgIGNhc2UgbnVtOiBJbnQgPT4gcHJpbnRsbihzIkVsIGRvYmxlIGRlICRudW0gw6lzICR7bnVtICogMn0iKQogICAgY2FzZSBfID0+IHByaW50bG4oIk1pc3NhdGdlIGRlc2NvbmVndXQiKQogIH0KfQoKdmFsIHN5c3RlbSA9IEFjdG9yU3lzdGVtKCJEb3VibGVTeXN0ZW0iKQp2YWwgZG91YmxlQWN0b3IgPSBzeXN0ZW0uYWN0b3JPZihQcm9wc1tEb3VibGVBY3Rvcl0sIG5hbWUgPSAiZG91YmxlYWN0b3IiKQoKZG91YmxlQWN0b3IgISA1CmRvdWJsZUFjdG9yICEgImhvbGEi"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import akka.actor.{Actor, ActorSystem, Props}
+
+class DoubleActor extends Actor {
+  def receive = {
+    case num: Int =&gt; println(s&quot;El doble de $num &eacute;s ${num * 2}&quot;)
+    case _ =&gt; println(&quot;Missatge desconegut&quot;)
+  }
+}
+
+val system = ActorSystem(&quot;DoubleSystem&quot;)
+val doubleActor = system.actorOf(Props[DoubleActor], name = &quot;doubleactor&quot;)
+
+doubleActor ! 5
+doubleActor ! &quot;hola&quot;</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem explorat els conceptes bàsics de la concurrència en Scala, incloent futures, promeses, actors i col·leccions paral·leles. Aquests mecanismes permeten escriure aplicacions més eficients i responsives. En el proper tema, aprofundirem en l'ecosistema i les eines de Scala, incloent SBT i Play Framework.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-03-macros-and-reflection' title="Macros i Reflexió">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-05-introduction-to-akka' title="Introducció a Akka">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

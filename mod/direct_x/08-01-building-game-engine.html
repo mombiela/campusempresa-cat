@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construir un Motor de Joc</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/direct_x/08-01-building-game-engine" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/direct_x/08-01-building-game-engine" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/direct_x/08-01-building-game-engine" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/direct_x/08-01-building-game-engine" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/direct_x/08-01-building-game-engine" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-ray-tracing' title="Traçat de Raigs">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Construir un Motor de Joc</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-integrating-physics' title="Integrar Física">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a construir un motor de joc utilitzant DirectX. Un motor de joc és una plataforma que proporciona les eines i tecnologies necessàries per desenvolupar jocs. Inclou components com el renderitzat gràfic, la física, l'entrada de l'usuari, l'àudio, i més. Aquest mòdul està dissenyat per guiar-te a través dels passos essencials per crear un motor de joc bàsic amb DirectX.</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ul>
+<li>Comprendre els components bàsics d'un motor de joc.</li>
+<li>Aprendre a estructurar un projecte de motor de joc.</li>
+<li>Implementar un sistema de renderització bàsic.</li>
+<li>Integrar la gestió d'entrada de l'usuari.</li>
+<li>Desenvolupar un bucle principal del joc.</li>
+</ul>
+</div><h1>Components Bàsics d'un Motor de Joc</h1>
+<div class='content'><p>Un motor de joc típicament inclou els següents components:</p>
+<ol>
+<li><strong>Sistema de Renderització</strong>: Responsable de dibuixar gràfics a la pantalla.</li>
+<li><strong>Gestió d'Entrada</strong>: Captura i processa les entrades de l'usuari (teclat, ratolí, controladors).</li>
+<li><strong>Sistema de Física</strong>: Simula la física del món del joc.</li>
+<li><strong>Gestió d'Escena</strong>: Organitza i gestiona els objectes del joc.</li>
+<li><strong>Àudio</strong>: Maneja els efectes de so i la música.</li>
+<li><strong>Bucle Principal del Joc</strong>: Controla el flux del joc, actualitzant i renderitzant cada fotograma.</li>
+</ol>
+</div><h1>Estructura del Projecte</h1>
+<div class='content'><p>Abans de començar a codificar, és important tenir una estructura clara per al nostre projecte. Aquí tens una estructura bàsica:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R2FtZUVuZ2luZS8K4pSc4pSA4pSAIEFzc2V0cy8K4pSc4pSA4pSAIEluY2x1ZGUvCuKUgiAgIOKUnOKUgOKUgCBHcmFwaGljcy8K4pSCICAg4pSc4pSA4pSAIElucHV0LwrilIIgICDilJzilIDilIAgUGh5c2ljcy8K4pSCICAg4pSU4pSA4pSAIENvcmUvCuKUnOKUgOKUgCBTb3VyY2UvCuKUgiAgIOKUnOKUgOKUgCBHcmFwaGljcy8K4pSCICAg4pSc4pSA4pSAIElucHV0LwrilIIgICDilJzilIDilIAgUGh5c2ljcy8K4pSCICAg4pSU4pSA4pSAIENvcmUvCuKUlOKUgOKUgCBtYWluLmNwcA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GameEngine/
+├── Assets/
+├── Include/
+│   ├── Graphics/
+│   ├── Input/
+│   ├── Physics/
+│   └── Core/
+├── Source/
+│   ├── Graphics/
+│   ├── Input/
+│   ├── Physics/
+│   └── Core/
+└── main.cpp</pre></div><div class='content'></div><h1>Implementació del Sistema de Renderització</h1>
+<div class='content'></div><h2>Inicialització de Direct3D</h2>
+<div class='content'><p>Primer, necessitem inicialitzar Direct3D. Aquí tens un exemple de codi per inicialitzar Direct3D:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPGQzZDExLmg+CiNpbmNsdWRlIDxkeGdpLmg+CiNpbmNsdWRlIDxpb3N0cmVhbT4KCiNwcmFnbWEgY29tbWVudCAobGliLCAiZDNkMTEubGliIikKI3ByYWdtYSBjb21tZW50IChsaWIsICJkeGdpLmxpYiIpCgpJRFhHSVN3YXBDaGFpbiogc3dhcENoYWluOwpJRDNEMTFEZXZpY2UqIGRldmljZTsKSUQzRDExRGV2aWNlQ29udGV4dCogZGV2aWNlQ29udGV4dDsKSUQzRDExUmVuZGVyVGFyZ2V0VmlldyogcmVuZGVyVGFyZ2V0VmlldzsKCmJvb2wgSW5pdGlhbGl6ZURpcmVjdDNEKEhXTkQgaHduZCkgewogICAgRFhHSV9TV0FQX0NIQUlOX0RFU0Mgc3dhcENoYWluRGVzYyA9IHt9OwogICAgc3dhcENoYWluRGVzYy5CdWZmZXJDb3VudCA9IDE7CiAgICBzd2FwQ2hhaW5EZXNjLkJ1ZmZlckRlc2MuRm9ybWF0ID0gRFhHSV9GT1JNQVRfUjhHOEI4QThfVU5PUk07CiAgICBzd2FwQ2hhaW5EZXNjLkJ1ZmZlclVzYWdlID0gRFhHSV9VU0FHRV9SRU5ERVJfVEFSR0VUX09VVFBVVDsKICAgIHN3YXBDaGFpbkRlc2MuT3V0cHV0V2luZG93ID0gaHduZDsKICAgIHN3YXBDaGFpbkRlc2MuU2FtcGxlRGVzYy5Db3VudCA9IDE7CiAgICBzd2FwQ2hhaW5EZXNjLldpbmRvd2VkID0gVFJVRTsKCiAgICBIUkVTVUxUIGhyID0gRDNEMTFDcmVhdGVEZXZpY2VBbmRTd2FwQ2hhaW4oCiAgICAgICAgbnVsbHB0ciwKICAgICAgICBEM0RfRFJJVkVSX1RZUEVfSEFSRFdBUkUsCiAgICAgICAgbnVsbHB0ciwKICAgICAgICAwLAogICAgICAgIG51bGxwdHIsCiAgICAgICAgMCwKICAgICAgICBEM0QxMV9TREtfVkVSU0lPTiwKICAgICAgICAmc3dhcENoYWluRGVzYywKICAgICAgICAmc3dhcENoYWluLAogICAgICAgICZkZXZpY2UsCiAgICAgICAgbnVsbHB0ciwKICAgICAgICAmZGV2aWNlQ29udGV4dAogICAgKTsKCiAgICBpZiAoRkFJTEVEKGhyKSkgewogICAgICAgIHN0ZDo6Y2VyciA8PCAiRmFpbGVkIHRvIGNyZWF0ZSBkZXZpY2UgYW5kIHN3YXAgY2hhaW4uIiA8PCBzdGQ6OmVuZGw7CiAgICAgICAgcmV0dXJuIGZhbHNlOwogICAgfQoKICAgIElEM0QxMVRleHR1cmUyRCogYmFja0J1ZmZlcjsKICAgIHN3YXBDaGFpbi0+R2V0QnVmZmVyKDAsIF9fdXVpZG9mKElEM0QxMVRleHR1cmUyRCksICh2b2lkKiopJmJhY2tCdWZmZXIpOwogICAgZGV2aWNlLT5DcmVhdGVSZW5kZXJUYXJnZXRWaWV3KGJhY2tCdWZmZXIsIG51bGxwdHIsICZyZW5kZXJUYXJnZXRWaWV3KTsKICAgIGJhY2tCdWZmZXItPlJlbGVhc2UoKTsKCiAgICBkZXZpY2VDb250ZXh0LT5PTVNldFJlbmRlclRhcmdldHMoMSwgJnJlbmRlclRhcmdldFZpZXcsIG51bGxwdHIpOwoKICAgIHJldHVybiB0cnVlOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;d3d11.h&gt;
+#include &lt;dxgi.h&gt;
+#include &lt;iostream&gt;
+
+#pragma comment (lib, &quot;d3d11.lib&quot;)
+#pragma comment (lib, &quot;dxgi.lib&quot;)
+
+IDXGISwapChain* swapChain;
+ID3D11Device* device;
+ID3D11DeviceContext* deviceContext;
+ID3D11RenderTargetView* renderTargetView;
+
+bool InitializeDirect3D(HWND hwnd) {
+    DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
+    swapChainDesc.BufferCount = 1;
+    swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    swapChainDesc.OutputWindow = hwnd;
+    swapChainDesc.SampleDesc.Count = 1;
+    swapChainDesc.Windowed = TRUE;
+
+    HRESULT hr = D3D11CreateDeviceAndSwapChain(
+        nullptr,
+        D3D_DRIVER_TYPE_HARDWARE,
+        nullptr,
+        0,
+        nullptr,
+        0,
+        D3D11_SDK_VERSION,
+        &amp;swapChainDesc,
+        &amp;swapChain,
+        &amp;device,
+        nullptr,
+        &amp;deviceContext
+    );
+
+    if (FAILED(hr)) {
+        std::cerr &lt;&lt; &quot;Failed to create device and swap chain.&quot; &lt;&lt; std::endl;
+        return false;
+    }
+
+    ID3D11Texture2D* backBuffer;
+    swapChain-&gt;GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&amp;backBuffer);
+    device-&gt;CreateRenderTargetView(backBuffer, nullptr, &amp;renderTargetView);
+    backBuffer-&gt;Release();
+
+    deviceContext-&gt;OMSetRenderTargets(1, &amp;renderTargetView, nullptr);
+
+    return true;
+}</pre></div><div class='content'></div><h2>Renderització Bàsica</h2>
+<div class='content'><p>Un cop inicialitzat Direct3D, podem començar a renderitzar. Aquí tens un exemple de codi per renderitzar un color de fons:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dm9pZCBSZW5kZXIoKSB7CiAgICBmbG9hdCBjbGVhckNvbG9yW10gPSB7IDAuMGYsIDAuMmYsIDAuNGYsIDEuMGYgfTsKICAgIGRldmljZUNvbnRleHQtPkNsZWFyUmVuZGVyVGFyZ2V0VmlldyhyZW5kZXJUYXJnZXRWaWV3LCBjbGVhckNvbG9yKTsKCiAgICBzd2FwQ2hhaW4tPlByZXNlbnQoMSwgMCk7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>void Render() {
+    float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
+    deviceContext-&gt;ClearRenderTargetView(renderTargetView, clearColor);
+
+    swapChain-&gt;Present(1, 0);
+}</pre></div><div class='content'></div><h1>Gestió d'Entrada de l'Usuari</h1>
+<div class='content'><p>Per capturar l'entrada de l'usuari, podem utilitzar la biblioteca DirectInput o la biblioteca de Windows. Aquí tens un exemple de codi per capturar l'entrada del teclat utilitzant la biblioteca de Windows:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPHdpbmRvd3MuaD4KCmJvb2wgSXNLZXlQcmVzc2VkKGludCBrZXkpIHsKICAgIHJldHVybiBHZXRBc3luY0tleVN0YXRlKGtleSkgJiAweDgwMDA7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;windows.h&gt;
+
+bool IsKeyPressed(int key) {
+    return GetAsyncKeyState(key) &amp; 0x8000;
+}</pre></div><div class='content'></div><h1>Desenvolupament del Bucle Principal del Joc</h1>
+<div class='content'><p>El bucle principal del joc és el cor del motor de joc. Controla el flux del joc, actualitzant i renderitzant cada fotograma. Aquí tens un exemple de codi per al bucle principal del joc:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dm9pZCBHYW1lTG9vcCgpIHsKICAgIE1TRyBtc2cgPSB7fTsKICAgIHdoaWxlIChtc2cubWVzc2FnZSAhPSBXTV9RVUlUKSB7CiAgICAgICAgaWYgKFBlZWtNZXNzYWdlKCZtc2csIG51bGxwdHIsIDAsIDAsIFBNX1JFTU9WRSkpIHsKICAgICAgICAgICAgVHJhbnNsYXRlTWVzc2FnZSgmbXNnKTsKICAgICAgICAgICAgRGlzcGF0Y2hNZXNzYWdlKCZtc2cpOwogICAgICAgIH0gZWxzZSB7CiAgICAgICAgICAgIC8vIEFjdHVhbGl0emFyIGwnZXN0YXQgZGVsIGpvYwogICAgICAgICAgICAvLyAuLi4KCiAgICAgICAgICAgIC8vIFJlbmRlcml0emFyIGVsIGpvYwogICAgICAgICAgICBSZW5kZXIoKTsKICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>void GameLoop() {
+    MSG msg = {};
+    while (msg.message != WM_QUIT) {
+        if (PeekMessage(&amp;msg, nullptr, 0, 0, PM_REMOVE)) {
+            TranslateMessage(&amp;msg);
+            DispatchMessage(&amp;msg);
+        } else {
+            // Actualitzar l'estat del joc
+            // ...
+
+            // Renderitzar el joc
+            Render();
+        }
+    }
+}</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<h2>Exercici 1: Crear un Sistema de Renderització Bàsic</h2>
+<div class='content'><ol>
+<li>Inicialitza Direct3D en una finestra.</li>
+<li>Renderitza un color de fons a la pantalla.</li>
+<li>Captura l'entrada del teclat per tancar la finestra quan es prem la tecla ESC.</li>
+</ol>
+</div><h2>Solució</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPHdpbmRvd3MuaD4KI2luY2x1ZGUgPGQzZDExLmg+CiNpbmNsdWRlIDxkeGdpLmg+CiNpbmNsdWRlIDxpb3N0cmVhbT4KCiNwcmFnbWEgY29tbWVudCAobGliLCAiZDNkMTEubGliIikKI3ByYWdtYSBjb21tZW50IChsaWIsICJkeGdpLmxpYiIpCgpJRFhHSVN3YXBDaGFpbiogc3dhcENoYWluOwpJRDNEMTFEZXZpY2UqIGRldmljZTsKSUQzRDExRGV2aWNlQ29udGV4dCogZGV2aWNlQ29udGV4dDsKSUQzRDExUmVuZGVyVGFyZ2V0VmlldyogcmVuZGVyVGFyZ2V0VmlldzsKCmJvb2wgSW5pdGlhbGl6ZURpcmVjdDNEKEhXTkQgaHduZCkgewogICAgRFhHSV9TV0FQX0NIQUlOX0RFU0Mgc3dhcENoYWluRGVzYyA9IHt9OwogICAgc3dhcENoYWluRGVzYy5CdWZmZXJDb3VudCA9IDE7CiAgICBzd2FwQ2hhaW5EZXNjLkJ1ZmZlckRlc2MuRm9ybWF0ID0gRFhHSV9GT1JNQVRfUjhHOEI4QThfVU5PUk07CiAgICBzd2FwQ2hhaW5EZXNjLkJ1ZmZlclVzYWdlID0gRFhHSV9VU0FHRV9SRU5ERVJfVEFSR0VUX09VVFBVVDsKICAgIHN3YXBDaGFpbkRlc2MuT3V0cHV0V2luZG93ID0gaHduZDsKICAgIHN3YXBDaGFpbkRlc2MuU2FtcGxlRGVzYy5Db3VudCA9IDE7CiAgICBzd2FwQ2hhaW5EZXNjLldpbmRvd2VkID0gVFJVRTsKCiAgICBIUkVTVUxUIGhyID0gRDNEMTFDcmVhdGVEZXZpY2VBbmRTd2FwQ2hhaW4oCiAgICAgICAgbnVsbHB0ciwKICAgICAgICBEM0RfRFJJVkVSX1RZUEVfSEFSRFdBUkUsCiAgICAgICAgbnVsbHB0ciwKICAgICAgICAwLAogICAgICAgIG51bGxwdHIsCiAgICAgICAgMCwKICAgICAgICBEM0QxMV9TREtfVkVSU0lPTiwKICAgICAgICAmc3dhcENoYWluRGVzYywKICAgICAgICAmc3dhcENoYWluLAogICAgICAgICZkZXZpY2UsCiAgICAgICAgbnVsbHB0ciwKICAgICAgICAmZGV2aWNlQ29udGV4dAogICAgKTsKCiAgICBpZiAoRkFJTEVEKGhyKSkgewogICAgICAgIHN0ZDo6Y2VyciA8PCAiRmFpbGVkIHRvIGNyZWF0ZSBkZXZpY2UgYW5kIHN3YXAgY2hhaW4uIiA8PCBzdGQ6OmVuZGw7CiAgICAgICAgcmV0dXJuIGZhbHNlOwogICAgfQoKICAgIElEM0QxMVRleHR1cmUyRCogYmFja0J1ZmZlcjsKICAgIHN3YXBDaGFpbi0+R2V0QnVmZmVyKDAsIF9fdXVpZG9mKElEM0QxMVRleHR1cmUyRCksICh2b2lkKiopJmJhY2tCdWZmZXIpOwogICAgZGV2aWNlLT5DcmVhdGVSZW5kZXJUYXJnZXRWaWV3KGJhY2tCdWZmZXIsIG51bGxwdHIsICZyZW5kZXJUYXJnZXRWaWV3KTsKICAgIGJhY2tCdWZmZXItPlJlbGVhc2UoKTsKCiAgICBkZXZpY2VDb250ZXh0LT5PTVNldFJlbmRlclRhcmdldHMoMSwgJnJlbmRlclRhcmdldFZpZXcsIG51bGxwdHIpOwoKICAgIHJldHVybiB0cnVlOwp9Cgp2b2lkIFJlbmRlcigpIHsKICAgIGZsb2F0IGNsZWFyQ29sb3JbXSA9IHsgMC4wZiwgMC4yZiwgMC40ZiwgMS4wZiB9OwogICAgZGV2aWNlQ29udGV4dC0+Q2xlYXJSZW5kZXJUYXJnZXRWaWV3KHJlbmRlclRhcmdldFZpZXcsIGNsZWFyQ29sb3IpOwoKICAgIHN3YXBDaGFpbi0+UHJlc2VudCgxLCAwKTsKfQoKYm9vbCBJc0tleVByZXNzZWQoaW50IGtleSkgewogICAgcmV0dXJuIEdldEFzeW5jS2V5U3RhdGUoa2V5KSAmIDB4ODAwMDsKfQoKdm9pZCBHYW1lTG9vcCgpIHsKICAgIE1TRyBtc2cgPSB7fTsKICAgIHdoaWxlIChtc2cubWVzc2FnZSAhPSBXTV9RVUlUKSB7CiAgICAgICAgaWYgKFBlZWtNZXNzYWdlKCZtc2csIG51bGxwdHIsIDAsIDAsIFBNX1JFTU9WRSkpIHsKICAgICAgICAgICAgVHJhbnNsYXRlTWVzc2FnZSgmbXNnKTsKICAgICAgICAgICAgRGlzcGF0Y2hNZXNzYWdlKCZtc2cpOwogICAgICAgIH0gZWxzZSB7CiAgICAgICAgICAgIGlmIChJc0tleVByZXNzZWQoVktfRVNDQVBFKSkgewogICAgICAgICAgICAgICAgUG9zdFF1aXRNZXNzYWdlKDApOwogICAgICAgICAgICB9CgogICAgICAgICAgICBSZW5kZXIoKTsKICAgICAgICB9CiAgICB9Cn0KCkxSRVNVTFQgQ0FMTEJBQ0sgV2luZG93UHJvYyhIV05EIGh3bmQsIFVJTlQgdU1zZywgV1BBUkFNIHdQYXJhbSwgTFBBUkFNIGxQYXJhbSkgewogICAgc3dpdGNoICh1TXNnKSB7CiAgICAgICAgY2FzZSBXTV9ERVNUUk9ZOgogICAgICAgICAgICBQb3N0UXVpdE1lc3NhZ2UoMCk7CiAgICAgICAgICAgIHJldHVybiAwOwogICAgfQogICAgcmV0dXJuIERlZldpbmRvd1Byb2MoaHduZCwgdU1zZywgd1BhcmFtLCBsUGFyYW0pOwp9CgppbnQgV0lOQVBJIFdpbk1haW4oSElOU1RBTkNFIGhJbnN0YW5jZSwgSElOU1RBTkNFIGhQcmV2SW5zdGFuY2UsIExQU1RSIGxwQ21kTGluZSwgaW50IG5DbWRTaG93KSB7CiAgICBXTkRDTEFTU0VYIHdjID0ge307CiAgICB3Yy5jYlNpemUgPSBzaXplb2YoV05EQ0xBU1NFWCk7CiAgICB3Yy5scGZuV25kUHJvYyA9IFdpbmRvd1Byb2M7CiAgICB3Yy5oSW5zdGFuY2UgPSBoSW5zdGFuY2U7CiAgICB3Yy5scHN6Q2xhc3NOYW1lID0gIkdhbWVXaW5kb3dDbGFzcyI7CgogICAgUmVnaXN0ZXJDbGFzc0V4KCZ3Yyk7CgogICAgSFdORCBod25kID0gQ3JlYXRlV2luZG93RXgoCiAgICAgICAgMCwKICAgICAgICAiR2FtZVdpbmRvd0NsYXNzIiwKICAgICAgICAiRGlyZWN0WCBHYW1lIEVuZ2luZSIsCiAgICAgICAgV1NfT1ZFUkxBUFBFRFdJTkRPVywKICAgICAgICBDV19VU0VERUZBVUxULCBDV19VU0VERUZBVUxULCA4MDAsIDYwMCwKICAgICAgICBudWxscHRyLCBudWxscHRyLCBoSW5zdGFuY2UsIG51bGxwdHIKICAgICk7CgogICAgU2hvd1dpbmRvdyhod25kLCBuQ21kU2hvdyk7CgogICAgaWYgKCFJbml0aWFsaXplRGlyZWN0M0QoaHduZCkpIHsKICAgICAgICByZXR1cm4gLTE7CiAgICB9CgogICAgR2FtZUxvb3AoKTsKCiAgICByZXR1cm4gMDsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;windows.h&gt;
+#include &lt;d3d11.h&gt;
+#include &lt;dxgi.h&gt;
+#include &lt;iostream&gt;
+
+#pragma comment (lib, &quot;d3d11.lib&quot;)
+#pragma comment (lib, &quot;dxgi.lib&quot;)
+
+IDXGISwapChain* swapChain;
+ID3D11Device* device;
+ID3D11DeviceContext* deviceContext;
+ID3D11RenderTargetView* renderTargetView;
+
+bool InitializeDirect3D(HWND hwnd) {
+    DXGI_SWAP_CHAIN_DESC swapChainDesc = {};
+    swapChainDesc.BufferCount = 1;
+    swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    swapChainDesc.OutputWindow = hwnd;
+    swapChainDesc.SampleDesc.Count = 1;
+    swapChainDesc.Windowed = TRUE;
+
+    HRESULT hr = D3D11CreateDeviceAndSwapChain(
+        nullptr,
+        D3D_DRIVER_TYPE_HARDWARE,
+        nullptr,
+        0,
+        nullptr,
+        0,
+        D3D11_SDK_VERSION,
+        &amp;swapChainDesc,
+        &amp;swapChain,
+        &amp;device,
+        nullptr,
+        &amp;deviceContext
+    );
+
+    if (FAILED(hr)) {
+        std::cerr &lt;&lt; &quot;Failed to create device and swap chain.&quot; &lt;&lt; std::endl;
+        return false;
+    }
+
+    ID3D11Texture2D* backBuffer;
+    swapChain-&gt;GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&amp;backBuffer);
+    device-&gt;CreateRenderTargetView(backBuffer, nullptr, &amp;renderTargetView);
+    backBuffer-&gt;Release();
+
+    deviceContext-&gt;OMSetRenderTargets(1, &amp;renderTargetView, nullptr);
+
+    return true;
+}
+
+void Render() {
+    float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
+    deviceContext-&gt;ClearRenderTargetView(renderTargetView, clearColor);
+
+    swapChain-&gt;Present(1, 0);
+}
+
+bool IsKeyPressed(int key) {
+    return GetAsyncKeyState(key) &amp; 0x8000;
+}
+
+void GameLoop() {
+    MSG msg = {};
+    while (msg.message != WM_QUIT) {
+        if (PeekMessage(&amp;msg, nullptr, 0, 0, PM_REMOVE)) {
+            TranslateMessage(&amp;msg);
+            DispatchMessage(&amp;msg);
+        } else {
+            if (IsKeyPressed(VK_ESCAPE)) {
+                PostQuitMessage(0);
+            }
+
+            Render();
+        }
+    }
+}
+
+LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
+    switch (uMsg) {
+        case WM_DESTROY:
+            PostQuitMessage(0);
+            return 0;
+    }
+    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+}
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+    WNDCLASSEX wc = {};
+    wc.cbSize = sizeof(WNDCLASSEX);
+    wc.lpfnWndProc = WindowProc;
+    wc.hInstance = hInstance;
+    wc.lpszClassName = &quot;GameWindowClass&quot;;
+
+    RegisterClassEx(&amp;wc);
+
+    HWND hwnd = CreateWindowEx(
+        0,
+        &quot;GameWindowClass&quot;,
+        &quot;DirectX Game Engine&quot;,
+        WS_OVERLAPPEDWINDOW,
+        CW_USEDEFAULT, CW_USEDEFAULT, 800, 600,
+        nullptr, nullptr, hInstance, nullptr
+    );
+
+    ShowWindow(hwnd, nCmdShow);
+
+    if (!InitializeDirect3D(hwnd)) {
+        return -1;
+    }
+
+    GameLoop();
+
+    return 0;
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après a construir un motor de joc bàsic utilitzant DirectX. Hem cobert la inicialització de Direct3D, la renderització bàsica, la gestió d'entrada de l'usuari i el desenvolupament del bucle principal del joc. Aquestes són les bases sobre les quals pots construir un motor de joc més complex i funcional. En els següents temes, explorarem com integrar altres components com la física, l'àudio i la xarxa per completar el nostre motor de joc.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-ray-tracing' title="Traçat de Raigs">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-integrating-physics' title="Integrar Física">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

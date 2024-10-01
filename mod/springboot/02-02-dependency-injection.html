@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Injecció de dependències a Spring Boot</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/springboot/02-02-dependency-injection" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/springboot/02-02-dependency-injection" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/springboot/02-02-dependency-injection" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/springboot/02-02-dependency-injection" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/springboot/02-02-dependency-injection" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-spring-boot-annotations' title="Anotacions de Spring Boot">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Injecció de dependències a Spring Boot</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-spring-boot-configuration' title="Configuració de Spring Boot">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>La injecció de dependències és un concepte fonamental en el desenvolupament d'aplicacions amb Spring Boot. Permet gestionar les dependències entre els components de l'aplicació de manera eficient i flexible, facilitant la creació de codi modular i fàcil de mantenir.</p>
+</div><h1>Conceptes clau</h1>
+<div class='content'><ul>
+<li><strong>Inversió de control (IoC)</strong>: Principi de disseny que inverteix el control del flux del programa des del codi personalitzat a un contenidor o marc.</li>
+<li><strong>Injecció de dependències (DI)</strong>: Procés de proporcionar les dependències necessàries a un objecte en lloc de crear-les dins de l'objecte mateix.</li>
+<li><strong>Contenidor de Spring</strong>: Gestiona el cicle de vida dels beans (objectes gestionats per Spring) i les seves dependències.</li>
+</ul>
+</div><h1>Tipus d'injecció de dependències</h1>
+<div class='content'><ol>
+<li><strong>Injecció per constructor</strong>: Les dependències es passen a través del constructor de la classe.</li>
+<li><strong>Injecció per setter</strong>: Les dependències es passen a través de mètodes setter.</li>
+<li><strong>Injecció de camp</strong>: Les dependències es passen directament als camps de la classe.</li>
+</ol>
+</div><h1>Exemples pràctics</h1>
+<div class='content'></div><h2>Injecció per constructor</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuYmVhbnMuZmFjdG9yeS5hbm5vdGF0aW9uLkF1dG93aXJlZDsKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuc3RlcmVvdHlwZS5TZXJ2aWNlOwoKQFNlcnZpY2UKcHVibGljIGNsYXNzIFByb2R1Y3RTZXJ2aWNlIHsKCiAgICBwcml2YXRlIGZpbmFsIFByb2R1Y3RSZXBvc2l0b3J5IHByb2R1Y3RSZXBvc2l0b3J5OwoKICAgIEBBdXRvd2lyZWQKICAgIHB1YmxpYyBQcm9kdWN0U2VydmljZShQcm9kdWN0UmVwb3NpdG9yeSBwcm9kdWN0UmVwb3NpdG9yeSkgewogICAgICAgIHRoaXMucHJvZHVjdFJlcG9zaXRvcnkgPSBwcm9kdWN0UmVwb3NpdG9yeTsKICAgIH0KCiAgICBwdWJsaWMgTGlzdDxQcm9kdWN0PiBnZXRBbGxQcm9kdWN0cygpIHsKICAgICAgICByZXR1cm4gcHJvZHVjdFJlcG9zaXRvcnkuZmluZEFsbCgpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ProductService {
+
+    private final ProductRepository productRepository;
+
+    @Autowired
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    public List&lt;Product&gt; getAllProducts() {
+        return productRepository.findAll();
+    }
+}</pre></div><div class='content'><p><strong>Explicació</strong>:</p>
+<ul>
+<li><code>@Service</code>: Marca la classe com un servei gestionat per Spring.</li>
+<li><code>@Autowired</code>: Indica a Spring que injecti la dependència <code>ProductRepository</code> al constructor de <code>ProductService</code>.</li>
+</ul>
+</div><h2>Injecció per setter</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuYmVhbnMuZmFjdG9yeS5hbm5vdGF0aW9uLkF1dG93aXJlZDsKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuc3RlcmVvdHlwZS5TZXJ2aWNlOwoKQFNlcnZpY2UKcHVibGljIGNsYXNzIE9yZGVyU2VydmljZSB7CgogICAgcHJpdmF0ZSBPcmRlclJlcG9zaXRvcnkgb3JkZXJSZXBvc2l0b3J5OwoKICAgIEBBdXRvd2lyZWQKICAgIHB1YmxpYyB2b2lkIHNldE9yZGVyUmVwb3NpdG9yeShPcmRlclJlcG9zaXRvcnkgb3JkZXJSZXBvc2l0b3J5KSB7CiAgICAgICAgdGhpcy5vcmRlclJlcG9zaXRvcnkgPSBvcmRlclJlcG9zaXRvcnk7CiAgICB9CgogICAgcHVibGljIExpc3Q8T3JkZXI+IGdldEFsbE9yZGVycygpIHsKICAgICAgICByZXR1cm4gb3JkZXJSZXBvc2l0b3J5LmZpbmRBbGwoKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class OrderService {
+
+    private OrderRepository orderRepository;
+
+    @Autowired
+    public void setOrderRepository(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
+    public List&lt;Order&gt; getAllOrders() {
+        return orderRepository.findAll();
+    }
+}</pre></div><div class='content'><p><strong>Explicació</strong>:</p>
+<ul>
+<li><code>@Autowired</code> al mètode setter <code>setOrderRepository</code> indica a Spring que injecti la dependència <code>OrderRepository</code>.</li>
+</ul>
+</div><h2>Injecció de camp</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuYmVhbnMuZmFjdG9yeS5hbm5vdGF0aW9uLkF1dG93aXJlZDsKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuc3RlcmVvdHlwZS5TZXJ2aWNlOwoKQFNlcnZpY2UKcHVibGljIGNsYXNzIEN1c3RvbWVyU2VydmljZSB7CgogICAgQEF1dG93aXJlZAogICAgcHJpdmF0ZSBDdXN0b21lclJlcG9zaXRvcnkgY3VzdG9tZXJSZXBvc2l0b3J5OwoKICAgIHB1YmxpYyBMaXN0PEN1c3RvbWVyPiBnZXRBbGxDdXN0b21lcnMoKSB7CiAgICAgICAgcmV0dXJuIGN1c3RvbWVyUmVwb3NpdG9yeS5maW5kQWxsKCk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class CustomerService {
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    public List&lt;Customer&gt; getAllCustomers() {
+        return customerRepository.findAll();
+    }
+}</pre></div><div class='content'><p><strong>Explicació</strong>:</p>
+<ul>
+<li><code>@Autowired</code> al camp <code>customerRepository</code> indica a Spring que injecti la dependència directament al camp.</li>
+</ul>
+</div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Injecció per constructor</h2>
+<div class='content'><p>Crea una classe <code>UserService</code> que depengui de <code>UserRepository</code> utilitzant la injecció per constructor.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuYmVhbnMuZmFjdG9yeS5hbm5vdGF0aW9uLkF1dG93aXJlZDsKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuc3RlcmVvdHlwZS5TZXJ2aWNlOwoKQFNlcnZpY2UKcHVibGljIGNsYXNzIFVzZXJTZXJ2aWNlIHsKCiAgICBwcml2YXRlIGZpbmFsIFVzZXJSZXBvc2l0b3J5IHVzZXJSZXBvc2l0b3J5OwoKICAgIEBBdXRvd2lyZWQKICAgIHB1YmxpYyBVc2VyU2VydmljZShVc2VyUmVwb3NpdG9yeSB1c2VyUmVwb3NpdG9yeSkgewogICAgICAgIHRoaXMudXNlclJlcG9zaXRvcnkgPSB1c2VyUmVwb3NpdG9yeTsKICAgIH0KCiAgICBwdWJsaWMgTGlzdDxVc2VyPiBnZXRBbGxVc2VycygpIHsKICAgICAgICByZXR1cm4gdXNlclJlcG9zaXRvcnkuZmluZEFsbCgpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public List&lt;User&gt; getAllUsers() {
+        return userRepository.findAll();
+    }
+}</pre></div><div class='content'></div><h2>Exercici 2: Injecció per setter</h2>
+<div class='content'><p>Crea una classe <code>PaymentService</code> que depengui de <code>PaymentRepository</code> utilitzant la injecció per setter.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuYmVhbnMuZmFjdG9yeS5hbm5vdGF0aW9uLkF1dG93aXJlZDsKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuc3RlcmVvdHlwZS5TZXJ2aWNlOwoKQFNlcnZpY2UKcHVibGljIGNsYXNzIFBheW1lbnRTZXJ2aWNlIHsKCiAgICBwcml2YXRlIFBheW1lbnRSZXBvc2l0b3J5IHBheW1lbnRSZXBvc2l0b3J5OwoKICAgIEBBdXRvd2lyZWQKICAgIHB1YmxpYyB2b2lkIHNldFBheW1lbnRSZXBvc2l0b3J5KFBheW1lbnRSZXBvc2l0b3J5IHBheW1lbnRSZXBvc2l0b3J5KSB7CiAgICAgICAgdGhpcy5wYXltZW50UmVwb3NpdG9yeSA9IHBheW1lbnRSZXBvc2l0b3J5OwogICAgfQoKICAgIHB1YmxpYyBMaXN0PFBheW1lbnQ+IGdldEFsbFBheW1lbnRzKCkgewogICAgICAgIHJldHVybiBwYXltZW50UmVwb3NpdG9yeS5maW5kQWxsKCk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class PaymentService {
+
+    private PaymentRepository paymentRepository;
+
+    @Autowired
+    public void setPaymentRepository(PaymentRepository paymentRepository) {
+        this.paymentRepository = paymentRepository;
+    }
+
+    public List&lt;Payment&gt; getAllPayments() {
+        return paymentRepository.findAll();
+    }
+}</pre></div><div class='content'></div><h2>Exercici 3: Injecció de camp</h2>
+<div class='content'><p>Crea una classe <code>InvoiceService</code> que depengui de <code>InvoiceRepository</code> utilitzant la injecció de camp.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuYmVhbnMuZmFjdG9yeS5hbm5vdGF0aW9uLkF1dG93aXJlZDsKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuc3RlcmVvdHlwZS5TZXJ2aWNlOwoKQFNlcnZpY2UKcHVibGljIGNsYXNzIEludm9pY2VTZXJ2aWNlIHsKCiAgICBAQXV0b3dpcmVkCiAgICBwcml2YXRlIEludm9pY2VSZXBvc2l0b3J5IGludm9pY2VSZXBvc2l0b3J5OwoKICAgIHB1YmxpYyBMaXN0PEludm9pY2U+IGdldEFsbEludm9pY2VzKCkgewogICAgICAgIHJldHVybiBpbnZvaWNlUmVwb3NpdG9yeS5maW5kQWxsKCk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class InvoiceService {
+
+    @Autowired
+    private InvoiceRepository invoiceRepository;
+
+    public List&lt;Invoice&gt; getAllInvoices() {
+        return invoiceRepository.findAll();
+    }
+}</pre></div><div class='content'></div><h1>Errors comuns i consells</h1>
+<div class='content'><ul>
+<li><strong>No oblidar <code>@Autowired</code></strong>: Assegura't d'anotar correctament els constructors, setters o camps amb <code>@Autowired</code>.</li>
+<li><strong>Circular dependencies</strong>: Evita les dependències circulars, ja que poden causar errors en el moment de la injecció.</li>
+<li><strong>Utilitza final per a dependències injectades per constructor</strong>: Això ajuda a assegurar que les dependències no es modifiquin després de la injecció.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La injecció de dependències és una tècnica poderosa que facilita la gestió de les dependències entre els components de l'aplicació. Amb Spring Boot, pots utilitzar diferents tipus d'injecció segons les teves necessitats, millorant la modularitat i mantenibilitat del teu codi. Practica els exemples i exercicis proporcionats per consolidar els teus coneixements sobre aquest tema essencial.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-spring-boot-annotations' title="Anotacions de Spring Boot">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-spring-boot-configuration' title="Configuració de Spring Boot">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

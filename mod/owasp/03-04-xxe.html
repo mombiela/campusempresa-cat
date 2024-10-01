@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A4: Entitats Externes XML (XXE)</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/owasp/03-04-xxe" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/owasp/03-04-xxe" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/owasp/03-04-xxe" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/owasp/03-04-xxe" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/owasp/03-04-xxe" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-exposicio-dades-sensibles' title="A3: Exposició de Dades Sensibles">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">A4: Entitats Externes XML (XXE)</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-05-control-acces-trencat' title="A5: Control d'Accés Trencat">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a XXE</h1>
+<div class='content'><p>Les Entitats Externes XML (XXE) són una vulnerabilitat de seguretat que es produeix quan un processador XML interpreta incorrectament una entitat externa dins d'un document XML. Aquesta vulnerabilitat pot permetre a un atacant accedir a dades sensibles, executar codi remotament o realitzar atacs de denegació de servei (DoS).</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>XML (Extensible Markup Language):</strong> Un llenguatge de marcatge utilitzat per emmagatzemar i transportar dades.</li>
+<li><strong>Entitat Externa:</strong> Una referència dins d'un document XML que apunta a una ubicació externa.</li>
+<li><strong>Processador XML:</strong> Un programari que interpreta i processa documents XML.</li>
+</ul>
+</div><h1>Funcionament de XXE</h1>
+<div class='content'><p>Quan un processador XML troba una entitat externa, intenta resoldre-la accedint a la ubicació especificada. Si el processador no està configurat correctament, pot permetre que un atacant especifiqui una entitat externa maliciosa que apunti a fitxers locals o recursos remots.</p>
+</div><h2>Exemple de Codi Vulnerable</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGZvbyBbCiAgPCFFTEVNRU5UIGZvbyBBTlkgPgogIDwhRU5USVRZIHh4ZSBTWVNURU0gImZpbGU6Ly8vZXRjL3Bhc3N3ZCIgPl0+Cgo8Zm9vPiZ4eGU7PC9mb28+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE foo [
+  &lt;!ELEMENT foo ANY &gt;
+  &lt;!ENTITY xxe SYSTEM &quot;file:///etc/passwd&quot; &gt;]&gt;
+
+&lt;foo&gt;&amp;xxe;&lt;/foo&gt;</pre></div><div class='content'><p>En aquest exemple, el processador XML intentarà substituir <code>&amp;xxe;</code> pel contingut del fitxer <code>/etc/passwd</code>, exposant així informació sensible.</p>
+</div><h1>Impacte de XXE</h1>
+<div class='content'><ul>
+<li><strong>Accés a Fitxers Locals:</strong> Un atacant pot accedir a fitxers sensibles del sistema.</li>
+<li><strong>Execució de Codi Remot:</strong> En alguns casos, es pot executar codi remotament.</li>
+<li><strong>Denegació de Servei (DoS):</strong> L'atacant pot sobrecarregar el sistema amb peticions malicioses.</li>
+</ul>
+</div><h1>Prevenció de XXE</h1>
+<div class='content'></div><h2>Deshabilitar Entitats Externes</h2>
+<div class='content'><p>La manera més efectiva de prevenir XXE és deshabilitar la resolució d'entitats externes en el processador XML.</p>
+<h4>Exemple en Java</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RG9jdW1lbnRCdWlsZGVyRmFjdG9yeSBkYmYgPSBEb2N1bWVudEJ1aWxkZXJGYWN0b3J5Lm5ld0luc3RhbmNlKCk7CmRiZi5zZXRGZWF0dXJlKCJodHRwOi8vYXBhY2hlLm9yZy94bWwvZmVhdHVyZXMvZGlzYWxsb3ctZG9jdHlwZS1kZWNsIiwgdHJ1ZSk7CmRiZi5zZXRGZWF0dXJlKCJodHRwOi8veG1sLm9yZy9zYXgvZmVhdHVyZXMvZXh0ZXJuYWwtZ2VuZXJhbC1lbnRpdGllcyIsIGZhbHNlKTsKZGJmLnNldEZlYXR1cmUoImh0dHA6Ly94bWwub3JnL3NheC9mZWF0dXJlcy9leHRlcm5hbC1wYXJhbWV0ZXItZW50aXRpZXMiLCBmYWxzZSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+dbf.setFeature(&quot;http://apache.org/xml/features/disallow-doctype-decl&quot;, true);
+dbf.setFeature(&quot;http://xml.org/sax/features/external-general-entities&quot;, false);
+dbf.setFeature(&quot;http://xml.org/sax/features/external-parameter-entities&quot;, false);</pre></div><div class='content'></div><h2>Validació i Sanitització</h2>
+<div class='content'><ul>
+<li><strong>Validació:</strong> Assegurar-se que els documents XML compleixin amb un esquema segur.</li>
+<li><strong>Sanitització:</strong> Eliminar o neutralitzar entitats externes abans de processar el document.</li>
+</ul>
+</div><h2>Utilitzar Biblioteques Segures</h2>
+<div class='content'><p>Utilitzar biblioteques i marcs de treball que tinguin proteccions integrades contra XXE.</p>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici 1: Identificació de Vulnerabilitats XXE</h2>
+<div class='content'><h4>Descripció</h4>
+<p>Analitza el següent codi i identifica si és vulnerable a XXE. Si és així, proposa una solució per mitigar la vulnerabilitat.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHhtbC5ldHJlZS5FbGVtZW50VHJlZSBhcyBFVAoKeG1sX2RhdGEgPSAiIiIKPCFET0NUWVBFIGZvbyBbCiAgPCFFTEVNRU5UIGZvbyBBTlkgPgogIDwhRU5USVRZIHh4ZSBTWVNURU0gImZpbGU6Ly8vZXRjL3Bhc3N3ZCIgPl0+Cgo8Zm9vPiZ4eGU7PC9mb28+CiIiIgoKdHJlZSA9IEVULkVsZW1lbnRUcmVlKEVULmZyb21zdHJpbmcoeG1sX2RhdGEpKQpyb290ID0gdHJlZS5nZXRyb290KCkKcHJpbnQocm9vdC50ZXh0KQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import xml.etree.ElementTree as ET
+
+xml_data = &quot;&quot;&quot;
+&lt;!DOCTYPE foo [
+  &lt;!ELEMENT foo ANY &gt;
+  &lt;!ENTITY xxe SYSTEM &quot;file:///etc/passwd&quot; &gt;]&gt;
+
+&lt;foo&gt;&amp;xxe;&lt;/foo&gt;
+&quot;&quot;&quot;
+
+tree = ET.ElementTree(ET.fromstring(xml_data))
+root = tree.getroot()
+print(root.text)</pre></div><div class='content'><h4>Solució</h4>
+<p>El codi és vulnerable a XXE. Per mitigar aquesta vulnerabilitat, es pot utilitzar una biblioteca que deshabiliti les entitats externes per defecte, com <code>defusedxml</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGRlZnVzZWR4bWwuRWxlbWVudFRyZWUgYXMgRVQKCnhtbF9kYXRhID0gIiIiCjwhRE9DVFlQRSBmb28gWwogIDwhRUxFTUVOVCBmb28gQU5ZID4KICA8IUVOVElUWSB4eGUgU1lTVEVNICJmaWxlOi8vL2V0Yy9wYXNzd2QiID5dPgoKPGZvbz4meHhlOzwvZm9vPgoiIiIKCnRyZWUgPSBFVC5FbGVtZW50VHJlZShFVC5mcm9tc3RyaW5nKHhtbF9kYXRhKSkKcm9vdCA9IHRyZWUuZ2V0cm9vdCgpCnByaW50KHJvb3QudGV4dCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import defusedxml.ElementTree as ET
+
+xml_data = &quot;&quot;&quot;
+&lt;!DOCTYPE foo [
+  &lt;!ELEMENT foo ANY &gt;
+  &lt;!ENTITY xxe SYSTEM &quot;file:///etc/passwd&quot; &gt;]&gt;
+
+&lt;foo&gt;&amp;xxe;&lt;/foo&gt;
+&quot;&quot;&quot;
+
+tree = ET.ElementTree(ET.fromstring(xml_data))
+root = tree.getroot()
+print(root.text)</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>Les Entitats Externes XML (XXE) són una vulnerabilitat crítica que pot tenir greus conseqüències per a la seguretat de les aplicacions web. És essencial deshabilitar les entitats externes en els processadors XML i utilitzar biblioteques segures per prevenir aquests atacs. La validació i sanitització dels documents XML també són mesures importants per protegir-se contra XXE.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-exposicio-dades-sensibles' title="A3: Exposició de Dades Sensibles">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-05-control-acces-trencat' title="A5: Control d'Accés Trencat">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

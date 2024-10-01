@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desplegament d'Aplicacions Django</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/django/05-01-deploying-django-applications" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/django/05-01-deploying-django-applications" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/django/05-01-deploying-django-applications" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/django/05-01-deploying-django-applications" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/django/05-01-deploying-django-applications" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-05-performance-optimization' title="Optimització del Rendiment">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Desplegament d'Aplicacions Django</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-02-security-best-practices' title="Millors Pràctiques de Seguretat">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>El desplegament d'una aplicació Django és el procés de posar la teva aplicació en un servidor perquè estigui disponible per als usuaris finals. Aquest procés implica diverses etapes, des de la configuració del servidor fins a la gestió de bases de dades i la configuració de servidors web. En aquesta secció, aprendrem com desplegar una aplicació Django pas a pas.</p>
+</div><h1>1. Preparació del Projecte per al Desplegament</h1>
+<div class='content'></div><h2>1.1. Configuració de l'Entorn de Producció</h2>
+<div class='content'><p>Abans de desplegar la teva aplicació, és important assegurar-se que està configurada correctament per a l'entorn de producció. Això inclou ajustar les configuracions de seguretat i optimització.</p>
+<h4>Configuració del fitxer <code>settings.py</code></h4>
+<ol>
+<li>
+<p><strong>DEBUG</strong>: Assegura't que <code>DEBUG</code> està establert a <code>False</code> en producció.</p>
+<pre><code class="language-python">DEBUG = False
+</code></pre>
+</li>
+<li>
+<p><strong>ALLOWED_HOSTS</strong>: Defineix els dominis o adreces IP que poden accedir a la teva aplicació.</p>
+<pre><code class="language-python">ALLOWED_HOSTS = ['example.com', 'www.example.com']
+</code></pre>
+</li>
+<li>
+<p><strong>Configuració de la Base de Dades</strong>: Utilitza una base de dades adequada per a producció, com PostgreSQL.</p>
+<pre><code class="language-python">DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mydatabase',
+        'USER': 'mydatabaseuser',
+        'PASSWORD': 'mypassword',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Configuració de l'Static i Media Files</strong>: Assegura't que els fitxers estàtics i els fitxers de mitjans es gestionen correctament.</p>
+<pre><code class="language-python">STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+</code></pre>
+</li>
+</ol>
+</div><h2>1.2. Instal·lació de Dependències</h2>
+<div class='content'><p>Crea un fitxer <code>requirements.txt</code> amb totes les dependències del teu projecte.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGZyZWV6ZSA+IHJlcXVpcmVtZW50cy50eHQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip freeze &gt; requirements.txt</pre></div><div class='content'></div><h1>2. Configuració del Servidor</h1>
+<div class='content'></div><h2>2.1. Elecció del Servidor</h2>
+<div class='content'><p>Hi ha diverses opcions per desplegar una aplicació Django, com ara:</p>
+<ul>
+<li><strong>Heroku</strong></li>
+<li><strong>DigitalOcean</strong></li>
+<li><strong>AWS (Amazon Web Services)</strong></li>
+<li><strong>Google Cloud Platform</strong></li>
+<li><strong>Azure</strong></li>
+</ul>
+<p>En aquest exemple, utilitzarem <strong>DigitalOcean</strong>.</p>
+</div><h2>2.2. Configuració del Servidor a DigitalOcean</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear un Droplet</strong>: Inicia sessió a DigitalOcean i crea un nou Droplet amb Ubuntu.</p>
+</li>
+<li>
+<p><strong>Accés al Servidor</strong>: Accedeix al teu servidor via SSH.</p>
+<pre><code class="language-bash">ssh root@your_server_ip
+</code></pre>
+</li>
+<li>
+<p><strong>Actualització del Sistema</strong>: Actualitza el sistema operatiu.</p>
+<pre><code class="language-bash">apt update &amp;&amp; apt upgrade -y
+</code></pre>
+</li>
+<li>
+<p><strong>Instal·lació de Dependències</strong>: Instal·la les dependències necessàries.</p>
+<pre><code class="language-bash">apt install python3-pip python3-dev libpq-dev nginx curl -y
+</code></pre>
+</li>
+<li>
+<p><strong>Configuració de PostgreSQL</strong>: Instal·la i configura PostgreSQL.</p>
+<pre><code class="language-bash">apt install postgresql postgresql-contrib -y
+sudo -u postgres psql
+CREATE DATABASE mydatabase;
+CREATE USER mydatabaseuser WITH PASSWORD 'mypassword';
+ALTER ROLE mydatabaseuser SET client_encoding TO 'utf8';
+ALTER ROLE mydatabaseuser SET default_transaction_isolation TO 'read committed';
+ALTER ROLE mydatabaseuser SET timezone TO 'UTC';
+GRANT ALL PRIVILEGES ON DATABASE mydatabase TO mydatabaseuser;
+\q
+</code></pre>
+</li>
+</ol>
+</div><h1>3. Desplegament de l'Aplicació</h1>
+<div class='content'></div><h2>3.1. Clonació del Projecte</h2>
+<div class='content'><p>Clona el teu projecte des del repositori de Git.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2l0IGNsb25lIGh0dHBzOi8vZ2l0aHViLmNvbS91c2VybmFtZS9yZXBvc2l0b3J5LmdpdApjZCByZXBvc2l0b3J5"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>git clone https://github.com/username/repository.git
+cd repository</pre></div><div class='content'></div><h2>3.2. Creació d'un Entorn Virtual</h2>
+<div class='content'><p>Crea i activa un entorn virtual.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHl0aG9uMyAtbSB2ZW52IHZlbnYKc291cmNlIHZlbnYvYmluL2FjdGl2YXRl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>python3 -m venv venv
+source venv/bin/activate</pre></div><div class='content'></div><h2>3.3. Instal·lació de Dependències</h2>
+<div class='content'><p>Instal·la les dependències del projecte.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgLXIgcmVxdWlyZW1lbnRzLnR4dA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install -r requirements.txt</pre></div><div class='content'></div><h2>3.4. Migració de la Base de Dades</h2>
+<div class='content'><p>Executa les migracions de la base de dades.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHl0aG9uIG1hbmFnZS5weSBtaWdyYXRl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>python manage.py migrate</pre></div><div class='content'></div><h2>3.5. Recopilació de Fitxers Estàtics</h2>
+<div class='content'><p>Recopila els fitxers estàtics.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHl0aG9uIG1hbmFnZS5weSBjb2xsZWN0c3RhdGlj"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>python manage.py collectstatic</pre></div><div class='content'></div><h1>4. Configuració de Gunicorn i Nginx</h1>
+<div class='content'></div><h2>4.1. Configuració de Gunicorn</h2>
+<div class='content'><p>Instal·la Gunicorn i crea un servei de systemd per gestionar-lo.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgZ3VuaWNvcm4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install gunicorn</pre></div><div class='content'><p>Crea un fitxer de servei per Gunicorn a <code>/etc/systemd/system/gunicorn.service</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("W1VuaXRdCkRlc2NyaXB0aW9uPWd1bmljb3JuIGRhZW1vbgpBZnRlcj1uZXR3b3JrLnRhcmdldAoKW1NlcnZpY2VdClVzZXI9cm9vdApHcm91cD13d3ctZGF0YQpXb3JraW5nRGlyZWN0b3J5PS9wYXRoL3RvL3lvdXIvcHJvamVjdApFeGVjU3RhcnQ9L3BhdGgvdG8veW91ci9wcm9qZWN0L3ZlbnYvYmluL2d1bmljb3JuIC0td29ya2VycyAzIC0tYmluZCB1bml4Oi9wYXRoL3RvL3lvdXIvcHJvamVjdC5zb2NrIHByb2plY3RuYW1lLndzZ2k6YXBwbGljYXRpb24KCltJbnN0YWxsXQpXYW50ZWRCeT1tdWx0aS11c2VyLnRhcmdldA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/path/to/your/project
+ExecStart=/path/to/your/project/venv/bin/gunicorn --workers 3 --bind unix:/path/to/your/project.sock projectname.wsgi:application
+
+[Install]
+WantedBy=multi-user.target</pre></div><div class='content'><p>Inicia i habilita el servei de Gunicorn.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3lzdGVtY3RsIHN0YXJ0IGd1bmljb3JuCnN5c3RlbWN0bCBlbmFibGUgZ3VuaWNvcm4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>systemctl start gunicorn
+systemctl enable gunicorn</pre></div><div class='content'></div><h2>4.2. Configuració de Nginx</h2>
+<div class='content'><p>Configura Nginx per servir la teva aplicació Django. Crea un fitxer de configuració a <code>/etc/nginx/sites-available/projectname</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmVyIHsKICAgIGxpc3RlbiA4MDsKICAgIHNlcnZlcl9uYW1lIHlvdXJfZG9tYWluIHd3dy55b3VyX2RvbWFpbjsKCiAgICBsb2NhdGlvbiA9IC9mYXZpY29uLmljbyB7IGFjY2Vzc19sb2cgb2ZmOyBsb2dfbm90X2ZvdW5kIG9mZjsgfQogICAgbG9jYXRpb24gL3N0YXRpYy8gewogICAgICAgIHJvb3QgL3BhdGgvdG8veW91ci9wcm9qZWN0OwogICAgfQoKICAgIGxvY2F0aW9uIC8gewogICAgICAgIGluY2x1ZGUgcHJveHlfcGFyYW1zOwogICAgICAgIHByb3h5X3Bhc3MgaHR0cDovL3VuaXg6L3BhdGgvdG8veW91ci9wcm9qZWN0LnNvY2s7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>server {
+    listen 80;
+    server_name your_domain www.your_domain;
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location /static/ {
+        root /path/to/your/project;
+    }
+
+    location / {
+        include proxy_params;
+        proxy_pass http://unix:/path/to/your/project.sock;
+    }
+}</pre></div><div class='content'><p>Activa la configuració i reinicia Nginx.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG4gLXMgL2V0Yy9uZ2lueC9zaXRlcy1hdmFpbGFibGUvcHJvamVjdG5hbWUgL2V0Yy9uZ2lueC9zaXRlcy1lbmFibGVkCm5naW54IC10CnN5c3RlbWN0bCByZXN0YXJ0IG5naW54"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ln -s /etc/nginx/sites-available/projectname /etc/nginx/sites-enabled
+nginx -t
+systemctl restart nginx</pre></div><div class='content'></div><h1>5. Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com desplegar una aplicació Django en un servidor de producció. Hem cobert la configuració de l'entorn de producció, la instal·lació de dependències, la configuració del servidor, i la configuració de Gunicorn i Nginx. Amb aquests passos, la teva aplicació Django hauria d'estar disponible per als usuaris finals.</p>
+</div><h2>Resum</h2>
+<div class='content'><ul>
+<li>Configuració de l'entorn de producció.</li>
+<li>Instal·lació de dependències i configuració del servidor.</li>
+<li>Desplegament de l'aplicació.</li>
+<li>Configuració de Gunicorn i Nginx.</li>
+</ul>
+<p>Ara estàs preparat per desplegar aplicacions Django en un entorn de producció. En el següent tema, explorarem les millors pràctiques de seguretat per assegurar la teva aplicació Django.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-05-performance-optimization' title="Optimització del Rendiment">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-02-security-best-practices' title="Millors Pràctiques de Seguretat">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

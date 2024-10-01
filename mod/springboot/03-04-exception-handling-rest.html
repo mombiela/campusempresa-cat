@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió d'excepcions en REST</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/springboot/03-04-exception-handling-rest" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/springboot/03-04-exception-handling-rest" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/springboot/03-04-exception-handling-rest" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/springboot/03-04-exception-handling-rest" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/springboot/03-04-exception-handling-rest" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-handling-http-methods' title="Gestionant mètodes HTTP">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Gestió d'excepcions en REST</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-introduction-spring-data-jpa' title="Introducció a Spring Data JPA">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com gestionar les excepcions en una aplicació Spring Boot que exposa serveis web RESTful. La gestió adequada d'excepcions és crucial per proporcionar respostes coherents i informatives als clients de l'API.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre la importància de la gestió d'excepcions en serveis RESTful.</li>
+<li>Aprendre a utilitzar les anotacions de Spring per gestionar excepcions.</li>
+<li>Implementar un controlador d'excepcions global.</li>
+<li>Proporcionar respostes personalitzades per a diferents tipus d'errors.</li>
+</ul>
+</div><h1>1. Importància de la Gestió d'Excepcions en REST</h1>
+<div class='content'><p>Quan es desenvolupa una API RESTful, és important gestionar les excepcions de manera que els clients rebin respostes clares i coherents. Això ajuda a:</p>
+<ul>
+<li>Millorar l'experiència de l'usuari.</li>
+<li>Facilitar el depurament i la resolució de problemes.</li>
+<li>Mantenir la seguretat de l'aplicació evitant la divulgació d'informació sensible.</li>
+</ul>
+</div><h1>2. Utilitzant @ExceptionHandler</h1>
+<div class='content'><p>Spring Boot proporciona l'anotació <code>@ExceptionHandler</code> per gestionar excepcions específiques en un controlador. Vegem un exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QFJlc3RDb250cm9sbGVyCkBSZXF1ZXN0TWFwcGluZygiL2FwaSIpCnB1YmxpYyBjbGFzcyBQcm9kdWN0Q29udHJvbGxlciB7CgogICAgQEdldE1hcHBpbmcoIi9wcm9kdWN0cy97aWR9IikKICAgIHB1YmxpYyBSZXNwb25zZUVudGl0eTxQcm9kdWN0PiBnZXRQcm9kdWN0QnlJZChAUGF0aFZhcmlhYmxlIExvbmcgaWQpIHsKICAgICAgICBQcm9kdWN0IHByb2R1Y3QgPSBwcm9kdWN0U2VydmljZS5maW5kQnlJZChpZCk7CiAgICAgICAgaWYgKHByb2R1Y3QgPT0gbnVsbCkgewogICAgICAgICAgICB0aHJvdyBuZXcgUHJvZHVjdE5vdEZvdW5kRXhjZXB0aW9uKCJQcm9kdWN0IG5vdCBmb3VuZCB3aXRoIGlkOiAiICsgaWQpOwogICAgICAgIH0KICAgICAgICByZXR1cm4gUmVzcG9uc2VFbnRpdHkub2socHJvZHVjdCk7CiAgICB9CgogICAgQEV4Y2VwdGlvbkhhbmRsZXIoUHJvZHVjdE5vdEZvdW5kRXhjZXB0aW9uLmNsYXNzKQogICAgcHVibGljIFJlc3BvbnNlRW50aXR5PEVycm9yUmVzcG9uc2U+IGhhbmRsZVByb2R1Y3ROb3RGb3VuZEV4Y2VwdGlvbihQcm9kdWN0Tm90Rm91bmRFeGNlcHRpb24gZXgpIHsKICAgICAgICBFcnJvclJlc3BvbnNlIGVycm9yUmVzcG9uc2UgPSBuZXcgRXJyb3JSZXNwb25zZShIdHRwU3RhdHVzLk5PVF9GT1VORC52YWx1ZSgpLCBleC5nZXRNZXNzYWdlKCkpOwogICAgICAgIHJldHVybiBuZXcgUmVzcG9uc2VFbnRpdHk8PihlcnJvclJlc3BvbnNlLCBIdHRwU3RhdHVzLk5PVF9GT1VORCk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@RestController
+@RequestMapping(&quot;/api&quot;)
+public class ProductController {
+
+    @GetMapping(&quot;/products/{id}&quot;)
+    public ResponseEntity&lt;Product&gt; getProductById(@PathVariable Long id) {
+        Product product = productService.findById(id);
+        if (product == null) {
+            throw new ProductNotFoundException(&quot;Product not found with id: &quot; + id);
+        }
+        return ResponseEntity.ok(product);
+    }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleProductNotFoundException(ProductNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+        return new ResponseEntity&lt;&gt;(errorResponse, HttpStatus.NOT_FOUND);
+    }
+}</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li><code>ProductController</code> té un mètode <code>getProductById</code> que llança una excepció <code>ProductNotFoundException</code> si el producte no es troba.</li>
+<li>El mètode <code>handleProductNotFoundException</code> està anotat amb <code>@ExceptionHandler</code> per gestionar aquesta excepció i retornar una resposta personalitzada.</li>
+</ul>
+</div><h1>3. Creant un Controlador d'Excepcions Global</h1>
+<div class='content'><p>Per evitar repetir el codi de gestió d'excepcions en cada controlador, podem crear un controlador d'excepcions global utilitzant <code>@ControllerAdvice</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QENvbnRyb2xsZXJBZHZpY2UKcHVibGljIGNsYXNzIEdsb2JhbEV4Y2VwdGlvbkhhbmRsZXIgewoKICAgIEBFeGNlcHRpb25IYW5kbGVyKFByb2R1Y3ROb3RGb3VuZEV4Y2VwdGlvbi5jbGFzcykKICAgIHB1YmxpYyBSZXNwb25zZUVudGl0eTxFcnJvclJlc3BvbnNlPiBoYW5kbGVQcm9kdWN0Tm90Rm91bmRFeGNlcHRpb24oUHJvZHVjdE5vdEZvdW5kRXhjZXB0aW9uIGV4KSB7CiAgICAgICAgRXJyb3JSZXNwb25zZSBlcnJvclJlc3BvbnNlID0gbmV3IEVycm9yUmVzcG9uc2UoSHR0cFN0YXR1cy5OT1RfRk9VTkQudmFsdWUoKSwgZXguZ2V0TWVzc2FnZSgpKTsKICAgICAgICByZXR1cm4gbmV3IFJlc3BvbnNlRW50aXR5PD4oZXJyb3JSZXNwb25zZSwgSHR0cFN0YXR1cy5OT1RfRk9VTkQpOwogICAgfQoKICAgIEBFeGNlcHRpb25IYW5kbGVyKEV4Y2VwdGlvbi5jbGFzcykKICAgIHB1YmxpYyBSZXNwb25zZUVudGl0eTxFcnJvclJlc3BvbnNlPiBoYW5kbGVHZW5lcmljRXhjZXB0aW9uKEV4Y2VwdGlvbiBleCkgewogICAgICAgIEVycm9yUmVzcG9uc2UgZXJyb3JSZXNwb25zZSA9IG5ldyBFcnJvclJlc3BvbnNlKEh0dHBTdGF0dXMuSU5URVJOQUxfU0VSVkVSX0VSUk9SLnZhbHVlKCksICJBbiB1bmV4cGVjdGVkIGVycm9yIG9jY3VycmVkIik7CiAgICAgICAgcmV0dXJuIG5ldyBSZXNwb25zZUVudGl0eTw+KGVycm9yUmVzcG9uc2UsIEh0dHBTdGF0dXMuSU5URVJOQUxfU0VSVkVSX0VSUk9SKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleProductNotFoundException(ProductNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+        return new ResponseEntity&lt;&gt;(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleGenericException(Exception ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), &quot;An unexpected error occurred&quot;);
+        return new ResponseEntity&lt;&gt;(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li><code>GlobalExceptionHandler</code> és una classe anotada amb <code>@ControllerAdvice</code> que gestiona excepcions a nivell global.</li>
+<li>Té dos mètodes per gestionar excepcions específiques (<code>ProductNotFoundException</code>) i genèriques (<code>Exception</code>).</li>
+</ul>
+</div><h1>4. Proporcionant Respostes Personalitzades</h1>
+<div class='content'><p>Podem crear una classe <code>ErrorResponse</code> per estructurar les respostes d'error de manera coherent.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHVibGljIGNsYXNzIEVycm9yUmVzcG9uc2UgewogICAgcHJpdmF0ZSBpbnQgc3RhdHVzOwogICAgcHJpdmF0ZSBTdHJpbmcgbWVzc2FnZTsKCiAgICBwdWJsaWMgRXJyb3JSZXNwb25zZShpbnQgc3RhdHVzLCBTdHJpbmcgbWVzc2FnZSkgewogICAgICAgIHRoaXMuc3RhdHVzID0gc3RhdHVzOwogICAgICAgIHRoaXMubWVzc2FnZSA9IG1lc3NhZ2U7CiAgICB9CgogICAgLy8gR2V0dGVycyBhbmQgc2V0dGVycwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>public class ErrorResponse {
+    private int status;
+    private String message;
+
+    public ErrorResponse(int status, String message) {
+        this.status = status;
+        this.message = message;
+    }
+
+    // Getters and setters
+}</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<h2>Objectiu</h2>
+<div class='content'><p>Implementar la gestió d'excepcions en un controlador RESTful.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>Crea una excepció personalitzada <code>UserNotFoundException</code>.</li>
+<li>Implementa un controlador <code>UserController</code> amb un mètode per obtenir un usuari per ID.</li>
+<li>Afegeix un mètode <code>@ExceptionHandler</code> per gestionar <code>UserNotFoundException</code>.</li>
+<li>Crea un controlador d'excepcions global per gestionar excepcions genèriques.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><ol>
+<li>Excepció personalitzada:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHVibGljIGNsYXNzIFVzZXJOb3RGb3VuZEV4Y2VwdGlvbiBleHRlbmRzIFJ1bnRpbWVFeGNlcHRpb24gewogICAgcHVibGljIFVzZXJOb3RGb3VuZEV4Y2VwdGlvbihTdHJpbmcgbWVzc2FnZSkgewogICAgICAgIHN1cGVyKG1lc3NhZ2UpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>public class UserNotFoundException extends RuntimeException {
+    public UserNotFoundException(String message) {
+        super(message);
+    }
+}</pre></div><div class='content'><ol start="2">
+<li>Controlador <code>UserController</code>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QFJlc3RDb250cm9sbGVyCkBSZXF1ZXN0TWFwcGluZygiL2FwaSIpCnB1YmxpYyBjbGFzcyBVc2VyQ29udHJvbGxlciB7CgogICAgQEdldE1hcHBpbmcoIi91c2Vycy97aWR9IikKICAgIHB1YmxpYyBSZXNwb25zZUVudGl0eTxVc2VyPiBnZXRVc2VyQnlJZChAUGF0aFZhcmlhYmxlIExvbmcgaWQpIHsKICAgICAgICBVc2VyIHVzZXIgPSB1c2VyU2VydmljZS5maW5kQnlJZChpZCk7CiAgICAgICAgaWYgKHVzZXIgPT0gbnVsbCkgewogICAgICAgICAgICB0aHJvdyBuZXcgVXNlck5vdEZvdW5kRXhjZXB0aW9uKCJVc2VyIG5vdCBmb3VuZCB3aXRoIGlkOiAiICsgaWQpOwogICAgICAgIH0KICAgICAgICByZXR1cm4gUmVzcG9uc2VFbnRpdHkub2sodXNlcik7CiAgICB9CgogICAgQEV4Y2VwdGlvbkhhbmRsZXIoVXNlck5vdEZvdW5kRXhjZXB0aW9uLmNsYXNzKQogICAgcHVibGljIFJlc3BvbnNlRW50aXR5PEVycm9yUmVzcG9uc2U+IGhhbmRsZVVzZXJOb3RGb3VuZEV4Y2VwdGlvbihVc2VyTm90Rm91bmRFeGNlcHRpb24gZXgpIHsKICAgICAgICBFcnJvclJlc3BvbnNlIGVycm9yUmVzcG9uc2UgPSBuZXcgRXJyb3JSZXNwb25zZShIdHRwU3RhdHVzLk5PVF9GT1VORC52YWx1ZSgpLCBleC5nZXRNZXNzYWdlKCkpOwogICAgICAgIHJldHVybiBuZXcgUmVzcG9uc2VFbnRpdHk8PihlcnJvclJlc3BvbnNlLCBIdHRwU3RhdHVzLk5PVF9GT1VORCk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@RestController
+@RequestMapping(&quot;/api&quot;)
+public class UserController {
+
+    @GetMapping(&quot;/users/{id}&quot;)
+    public ResponseEntity&lt;User&gt; getUserById(@PathVariable Long id) {
+        User user = userService.findById(id);
+        if (user == null) {
+            throw new UserNotFoundException(&quot;User not found with id: &quot; + id);
+        }
+        return ResponseEntity.ok(user);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleUserNotFoundException(UserNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+        return new ResponseEntity&lt;&gt;(errorResponse, HttpStatus.NOT_FOUND);
+    }
+}</pre></div><div class='content'><ol start="3">
+<li>Controlador d'excepcions global:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QENvbnRyb2xsZXJBZHZpY2UKcHVibGljIGNsYXNzIEdsb2JhbEV4Y2VwdGlvbkhhbmRsZXIgewoKICAgIEBFeGNlcHRpb25IYW5kbGVyKFVzZXJOb3RGb3VuZEV4Y2VwdGlvbi5jbGFzcykKICAgIHB1YmxpYyBSZXNwb25zZUVudGl0eTxFcnJvclJlc3BvbnNlPiBoYW5kbGVVc2VyTm90Rm91bmRFeGNlcHRpb24oVXNlck5vdEZvdW5kRXhjZXB0aW9uIGV4KSB7CiAgICAgICAgRXJyb3JSZXNwb25zZSBlcnJvclJlc3BvbnNlID0gbmV3IEVycm9yUmVzcG9uc2UoSHR0cFN0YXR1cy5OT1RfRk9VTkQudmFsdWUoKSwgZXguZ2V0TWVzc2FnZSgpKTsKICAgICAgICByZXR1cm4gbmV3IFJlc3BvbnNlRW50aXR5PD4oZXJyb3JSZXNwb25zZSwgSHR0cFN0YXR1cy5OT1RfRk9VTkQpOwogICAgfQoKICAgIEBFeGNlcHRpb25IYW5kbGVyKEV4Y2VwdGlvbi5jbGFzcykKICAgIHB1YmxpYyBSZXNwb25zZUVudGl0eTxFcnJvclJlc3BvbnNlPiBoYW5kbGVHZW5lcmljRXhjZXB0aW9uKEV4Y2VwdGlvbiBleCkgewogICAgICAgIEVycm9yUmVzcG9uc2UgZXJyb3JSZXNwb25zZSA9IG5ldyBFcnJvclJlc3BvbnNlKEh0dHBTdGF0dXMuSU5URVJOQUxfU0VSVkVSX0VSUk9SLnZhbHVlKCksICJBbiB1bmV4cGVjdGVkIGVycm9yIG9jY3VycmVkIik7CiAgICAgICAgcmV0dXJuIG5ldyBSZXNwb25zZUVudGl0eTw+KGVycm9yUmVzcG9uc2UsIEh0dHBTdGF0dXMuSU5URVJOQUxfU0VSVkVSX0VSUk9SKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleUserNotFoundException(UserNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage());
+        return new ResponseEntity&lt;&gt;(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleGenericException(Exception ex) {
+        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), &quot;An unexpected error occurred&quot;);
+        return new ResponseEntity&lt;&gt;(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après com gestionar les excepcions en una aplicació Spring Boot que exposa serveis web RESTful. Hem vist com utilitzar <code>@ExceptionHandler</code> per gestionar excepcions específiques i com crear un controlador d'excepcions global amb <code>@ControllerAdvice</code>. També hem après a proporcionar respostes personalitzades per a diferents tipus d'errors. La gestió adequada d'excepcions és essencial per proporcionar una API robusta i fàcil de depurar.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-handling-http-methods' title="Gestionant mètodes HTTP">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-introduction-spring-data-jpa' title="Introducció a Spring Data JPA">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

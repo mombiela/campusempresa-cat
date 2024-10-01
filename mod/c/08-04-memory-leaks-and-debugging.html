@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fuites de Memòria i Depuració</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/c/08-04-memory-leaks-and-debugging" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/c/08-04-memory-leaks-and-debugging" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/c/08-04-memory-leaks-and-debugging" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/c/08-04-memory-leaks-and-debugging" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/c/08-04-memory-leaks-and-debugging" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-03-calloc-and-realloc' title="Calloc i Realloc">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Fuites de Memòria i Depuració</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-01-introduction-to-file-handling' title="Introducció a la Gestió d'Arxius">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, explorarem les fuites de memòria, un problema comú en la programació en C, i les tècniques per depurar-les. Les fuites de memòria ocorren quan un programa reserva memòria dinàmica però no l'allibera correctament, la qual cosa pot conduir a un ús excessiu de memòria i, eventualment, a la fallida del programa.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'></div><h2>Què és una Fuita de Memòria?</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: Una fuita de memòria es produeix quan un programa reserva memòria dinàmica (utilitzant funcions com <code>malloc</code>, <code>calloc</code> o <code>realloc</code>) i no l'allibera (utilitzant <code>free</code>), fent que la memòria reservada no estigui disponible per a altres processos.</li>
+<li><strong>Impacte</strong>: Les fuites de memòria poden causar que un programa utilitzi més memòria de la necessària, la qual cosa pot conduir a una disminució del rendiment i, en casos extrems, a la fallida del sistema.</li>
+</ul>
+</div><h2>Identificació de Fuites de Memòria</h2>
+<div class='content'><ul>
+<li><strong>Símptomes</strong>: Un ús creixent de memòria durant l'execució del programa, fallides inesperades, i missatges d'error relacionats amb la memòria.</li>
+<li><strong>Eines</strong>: Hi ha diverses eines disponibles per identificar fuites de memòria, com Valgrind, AddressSanitizer, i altres depuradors de memòria.</li>
+</ul>
+</div><h1>Exemples Pràctics</h1>
+<div class='content'></div><h2>Exemple de Fuita de Memòria</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxzdGRsaWIuaD4KCnZvaWQgY3JlYXRlTWVtb3J5TGVhaygpIHsKICAgIGludCAqcHRyID0gKGludCAqKW1hbGxvYyhzaXplb2YoaW50KSAqIDEwKTsKICAgIC8vIE5vIHMnYWxsaWJlcmEgbGEgbWVtw7JyaWEgcmVzZXJ2YWRhCn0KCmludCBtYWluKCkgewogICAgY3JlYXRlTWVtb3J5TGVhaygpOwogICAgcmV0dXJuIDA7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+void createMemoryLeak() {
+    int *ptr = (int *)malloc(sizeof(int) * 10);
+    // No s'allibera la mem&ograve;ria reservada
+}
+
+int main() {
+    createMemoryLeak();
+    return 0;
+}</pre></div><div class='content'><p><strong>Explicació</strong>: En aquest exemple, la funció <code>createMemoryLeak</code> reserva memòria per a un array de 10 enters, però no l'allibera. Això resulta en una fuita de memòria.</p>
+</div><h2>Solució a la Fuita de Memòria</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxzdGRsaWIuaD4KCnZvaWQgY3JlYXRlTWVtb3J5TGVhaygpIHsKICAgIGludCAqcHRyID0gKGludCAqKW1hbGxvYyhzaXplb2YoaW50KSAqIDEwKTsKICAgIC8vIFMnYWxsaWJlcmEgbGEgbWVtw7JyaWEgcmVzZXJ2YWRhCiAgICBmcmVlKHB0cik7Cn0KCmludCBtYWluKCkgewogICAgY3JlYXRlTWVtb3J5TGVhaygpOwogICAgcmV0dXJuIDA7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+void createMemoryLeak() {
+    int *ptr = (int *)malloc(sizeof(int) * 10);
+    // S'allibera la mem&ograve;ria reservada
+    free(ptr);
+}
+
+int main() {
+    createMemoryLeak();
+    return 0;
+}</pre></div><div class='content'><p><strong>Explicació</strong>: Aquí, hem afegit la funció <code>free(ptr)</code> per alliberar la memòria reservada, eliminant així la fuita de memòria.</p>
+</div><h1>Eines de Depuració</h1>
+<div class='content'></div><h2>Valgrind</h2>
+<div class='content'><p>Valgrind és una eina potent per detectar fuites de memòria i altres errors relacionats amb la memòria.</p>
+<h4>Instal·lació de Valgrind</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3VkbyBhcHQtZ2V0IGluc3RhbGwgdmFsZ3JpbmQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>sudo apt-get install valgrind</pre></div><div class='content'><h4>Ús de Valgrind</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsZ3JpbmQgLS1sZWFrLWNoZWNrPWZ1bGwgLi9ub21fZGVsX3Byb2dyYW1h"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>valgrind --leak-check=full ./nom_del_programa</pre></div><div class='content'><p><strong>Explicació</strong>: Aquesta comanda executa el programa sota Valgrind, que informarà de qualsevol fuita de memòria detectada.</p>
+</div><h2>AddressSanitizer</h2>
+<div class='content'><p>AddressSanitizer és una altra eina popular per detectar errors de memòria.</p>
+<h4>Compilació amb AddressSanitizer</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2NjIC1mc2FuaXRpemU9YWRkcmVzcyAtZyAtbyBub21fZGVsX3Byb2dyYW1hIG5vbV9kZWxfcHJvZ3JhbWEuYw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>gcc -fsanitize=address -g -o nom_del_programa nom_del_programa.c</pre></div><div class='content'><h4>Execució del Programa</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Li9ub21fZGVsX3Byb2dyYW1h"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>./nom_del_programa</pre></div><div class='content'><p><strong>Explicació</strong>: Compilant el programa amb l'opció <code>-fsanitize=address</code>, AddressSanitizer detectarà i informarà de qualsevol fuita de memòria durant l'execució.</p>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Identificar i Corregir una Fuita de Memòria</h2>
+<div class='content'><p><strong>Codi Inicial</strong>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxzdGRsaWIuaD4KCnZvaWQgbWVtb3J5TGVha0V4YW1wbGUoKSB7CiAgICBjaGFyICpzdHIgPSAoY2hhciAqKW1hbGxvYyg1MCAqIHNpemVvZihjaGFyKSk7CiAgICAvLyBObyBzJ2FsbGliZXJhIGxhIG1lbcOycmlhIHJlc2VydmFkYQp9CgppbnQgbWFpbigpIHsKICAgIG1lbW9yeUxlYWtFeGFtcGxlKCk7CiAgICByZXR1cm4gMDsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+void memoryLeakExample() {
+    char *str = (char *)malloc(50 * sizeof(char));
+    // No s'allibera la mem&ograve;ria reservada
+}
+
+int main() {
+    memoryLeakExample();
+    return 0;
+}</pre></div><div class='content'><p><strong>Tasques</strong>:</p>
+<ol>
+<li>Identifica la fuita de memòria en el codi.</li>
+<li>Corregeix la fuita de memòria alliberant la memòria reservada.</li>
+</ol>
+<p><strong>Solució</strong>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxzdGRsaWIuaD4KCnZvaWQgbWVtb3J5TGVha0V4YW1wbGUoKSB7CiAgICBjaGFyICpzdHIgPSAoY2hhciAqKW1hbGxvYyg1MCAqIHNpemVvZihjaGFyKSk7CiAgICAvLyBTJ2FsbGliZXJhIGxhIG1lbcOycmlhIHJlc2VydmFkYQogICAgZnJlZShzdHIpOwp9CgppbnQgbWFpbigpIHsKICAgIG1lbW9yeUxlYWtFeGFtcGxlKCk7CiAgICByZXR1cm4gMDsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+void memoryLeakExample() {
+    char *str = (char *)malloc(50 * sizeof(char));
+    // S'allibera la mem&ograve;ria reservada
+    free(str);
+}
+
+int main() {
+    memoryLeakExample();
+    return 0;
+}</pre></div><div class='content'></div><h2>Exercici 2: Utilitzar Valgrind per Detectar Fuites de Memòria</h2>
+<div class='content'><p><strong>Tasques</strong>:</p>
+<ol>
+<li>Escriu un programa que contingui una fuita de memòria.</li>
+<li>Utilitza Valgrind per detectar la fuita de memòria.</li>
+<li>Corregeix la fuita de memòria basada en la sortida de Valgrind.</li>
+</ol>
+<p><strong>Solució</strong>:</p>
+<ol>
+<li>
+<p><strong>Codi amb Fuita de Memòria</strong>:</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+void memoryLeakExample() {
+    int *arr = (int *)malloc(100 * sizeof(int));
+    // No s'allibera la memòria reservada
+}
+
+int main() {
+    memoryLeakExample();
+    return 0;
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Execució amb Valgrind</strong>:</p>
+<pre><code class="language-sh">valgrind --leak-check=full ./nom_del_programa
+</code></pre>
+</li>
+<li>
+<p><strong>Codi Corregit</strong>:</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+void memoryLeakExample() {
+    int *arr = (int *)malloc(100 * sizeof(int));
+    // S'allibera la memòria reservada
+    free(arr);
+}
+
+int main() {
+    memoryLeakExample();
+    return 0;
+}
+</code></pre>
+</li>
+</ol>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après què són les fuites de memòria, com identificar-les i com utilitzar eines com Valgrind i AddressSanitizer per depurar-les. També hem vist exemples pràctics i exercicis per reforçar els conceptes apresos. Assegurar-se que la memòria es gestiona correctament és crucial per a la robustesa i l'eficiència dels programes en C.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-03-calloc-and-realloc' title="Calloc i Realloc">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-01-introduction-to-file-handling' title="Introducció a la Gestió d'Arxius">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desenvolupar una Plataforma de Blogs</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nodejs/12-03-developing-blogging-platform" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nodejs/12-03-developing-blogging-platform" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nodejs/12-03-developing-blogging-platform" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nodejs/12-03-developing-blogging-platform" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nodejs/12-03-developing-blogging-platform" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='12-02-creating-ecommerce-api' title="Crear una API de Comerç Electrònic">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Desenvolupar una Plataforma de Blogs</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='12-04-building-task-management' title="Construir una Eina de Gestió de Tasques">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a desenvolupar una plataforma de blogs utilitzant Node.js i Express. Aquest projecte ens permetrà aplicar molts dels conceptes apresos al llarg del curs, com ara la gestió de rutes, l'autenticació, la interacció amb bases de dades i la creació d'APIs RESTful.</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ul>
+<li>Crear una aplicació de blogs amb Node.js i Express.</li>
+<li>Implementar operacions CRUD (Crear, Llegir, Actualitzar, Eliminar) per a les entrades del blog.</li>
+<li>Gestionar l'autenticació i l'autorització dels usuaris.</li>
+<li>Utilitzar una base de dades per emmagatzemar les dades del blog.</li>
+<li>Implementar una interfície d'usuari bàsica per interactuar amb l'API.</li>
+</ul>
+</div><h1>Requisits Previs</h1>
+<div class='content'><ul>
+<li>Coneixements bàsics de Node.js i Express.</li>
+<li>Familiaritat amb MongoDB i Mongoose.</li>
+<li>Comprensió de les operacions CRUD.</li>
+<li>Coneixements bàsics d'HTML i CSS per a la interfície d'usuari.</li>
+</ul>
+</div><h1>Passos per Desenvolupar la Plataforma de Blogs</h1>
+<div class='content'></div><h2>1. Configuració del Projecte</h2>
+<div class='content'><h4>1.1. Crear l'Estructura del Projecte</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bWtkaXIgYmxvZy1wbGF0Zm9ybQpjZCBibG9nLXBsYXRmb3JtCm5wbSBpbml0IC15Cm5wbSBpbnN0YWxsIGV4cHJlc3MgbW9uZ29vc2UgYm9keS1wYXJzZXIgYmNyeXB0anMganNvbndlYnRva2Vu"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>mkdir blog-platform
+cd blog-platform
+npm init -y
+npm install express mongoose body-parser bcryptjs jsonwebtoken</pre></div><div class='content'><h4>1.2. Estructura de Carpetes</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YmxvZy1wbGF0Zm9ybS8K4pSCCuKUnOKUgOKUgCBtb2RlbHMvCuKUgiAgIOKUnOKUgOKUgCB1c2VyLmpzCuKUgiAgIOKUlOKUgOKUgCBwb3N0LmpzCuKUggrilJzilIDilIAgcm91dGVzLwrilIIgICDilJzilIDilIAgYXV0aC5qcwrilIIgICDilJTilIDilIAgcG9zdHMuanMK4pSCCuKUnOKUgOKUgCBjb250cm9sbGVycy8K4pSCICAg4pSc4pSA4pSAIGF1dGhDb250cm9sbGVyLmpzCuKUgiAgIOKUlOKUgOKUgCBwb3N0Q29udHJvbGxlci5qcwrilIIK4pSc4pSA4pSAIG1pZGRsZXdhcmUvCuKUgiAgIOKUlOKUgOKUgCBhdXRoTWlkZGxld2FyZS5qcwrilIIK4pSc4pSA4pSAIHZpZXdzLwrilIIgICDilJzilIDilIAgaW5kZXguaHRtbArilIIgICDilJTilIDilIAgcG9zdC5odG1sCuKUggrilJzilIDilIAgYXBwLmpzCuKUlOKUgOKUgCBjb25maWcuanM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>blog-platform/
+│
+├── models/
+│   ├── user.js
+│   └── post.js
+│
+├── routes/
+│   ├── auth.js
+│   └── posts.js
+│
+├── controllers/
+│   ├── authController.js
+│   └── postController.js
+│
+├── middleware/
+│   └── authMiddleware.js
+│
+├── views/
+│   ├── index.html
+│   └── post.html
+│
+├── app.js
+└── config.js</pre></div><div class='content'></div><h2>2. Configuració de l'Aplicació</h2>
+<div class='content'><h4>2.1. Crear <code>app.js</code></h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoJ2V4cHJlc3MnKTsKY29uc3QgbW9uZ29vc2UgPSByZXF1aXJlKCdtb25nb29zZScpOwpjb25zdCBib2R5UGFyc2VyID0gcmVxdWlyZSgnYm9keS1wYXJzZXInKTsKY29uc3QgY29uZmlnID0gcmVxdWlyZSgnLi9jb25maWcnKTsKCmNvbnN0IGFwcCA9IGV4cHJlc3MoKTsKCi8vIE1pZGRsZXdhcmUKYXBwLnVzZShib2R5UGFyc2VyLmpzb24oKSk7CgovLyBDb25lY3RhciBhIE1vbmdvREIKbW9uZ29vc2UuY29ubmVjdChjb25maWcuZGJVcmksIHsgdXNlTmV3VXJsUGFyc2VyOiB0cnVlLCB1c2VVbmlmaWVkVG9wb2xvZ3k6IHRydWUgfSkKICAgIC50aGVuKCgpID0+IGNvbnNvbGUubG9nKCdNb25nb0RCIGNvbm5lY3RlZCcpKQogICAgLmNhdGNoKGVyciA9PiBjb25zb2xlLmxvZyhlcnIpKTsKCi8vIFJ1dGVzCmNvbnN0IGF1dGhSb3V0ZXMgPSByZXF1aXJlKCcuL3JvdXRlcy9hdXRoJyk7CmNvbnN0IHBvc3RSb3V0ZXMgPSByZXF1aXJlKCcuL3JvdXRlcy9wb3N0cycpOwoKYXBwLnVzZSgnL2FwaS9hdXRoJywgYXV0aFJvdXRlcyk7CmFwcC51c2UoJy9hcGkvcG9zdHMnLCBwb3N0Um91dGVzKTsKCmNvbnN0IFBPUlQgPSBwcm9jZXNzLmVudi5QT1JUIHx8IDUwMDA7CmFwcC5saXN0ZW4oUE9SVCwgKCkgPT4gY29uc29sZS5sb2coYFNlcnZlciBydW5uaW5nIG9uIHBvcnQgJHtQT1JUfWApKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const config = require('./config');
+
+const app = express();
+
+// Middleware
+app.use(bodyParser.json());
+
+// Conectar a MongoDB
+mongoose.connect(config.dbUri, { useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() =&gt; console.log('MongoDB connected'))
+    .catch(err =&gt; console.log(err));
+
+// Rutes
+const authRoutes = require('./routes/auth');
+const postRoutes = require('./routes/posts');
+
+app.use('/api/auth', authRoutes);
+app.use('/api/posts', postRoutes);
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () =&gt; console.log(`Server running on port ${PORT}`));</pre></div><div class='content'><h4>2.2. Crear <code>config.js</code></h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kdWxlLmV4cG9ydHMgPSB7CiAgICBkYlVyaTogJ21vbmdvZGI6Ly9sb2NhbGhvc3Q6MjcwMTcvYmxvZy1wbGF0Zm9ybScsCiAgICBqd3RTZWNyZXQ6ICd5b3VyX2p3dF9zZWNyZXQnCn07"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>module.exports = {
+    dbUri: 'mongodb://localhost:27017/blog-platform',
+    jwtSecret: 'your_jwt_secret'
+};</pre></div><div class='content'></div><h2>3. Models</h2>
+<div class='content'><h4>3.1. Model d'Usuari (<code>models/user.js</code>)</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgbW9uZ29vc2UgPSByZXF1aXJlKCdtb25nb29zZScpOwpjb25zdCBiY3J5cHQgPSByZXF1aXJlKCdiY3J5cHRqcycpOwoKY29uc3QgVXNlclNjaGVtYSA9IG5ldyBtb25nb29zZS5TY2hlbWEoewogICAgdXNlcm5hbWU6IHsgdHlwZTogU3RyaW5nLCByZXF1aXJlZDogdHJ1ZSwgdW5pcXVlOiB0cnVlIH0sCiAgICBwYXNzd29yZDogeyB0eXBlOiBTdHJpbmcsIHJlcXVpcmVkOiB0cnVlIH0KfSk7CgpVc2VyU2NoZW1hLnByZSgnc2F2ZScsIGFzeW5jIGZ1bmN0aW9uKG5leHQpIHsKICAgIGlmICghdGhpcy5pc01vZGlmaWVkKCdwYXNzd29yZCcpKSByZXR1cm4gbmV4dCgpOwogICAgY29uc3Qgc2FsdCA9IGF3YWl0IGJjcnlwdC5nZW5TYWx0KDEwKTsKICAgIHRoaXMucGFzc3dvcmQgPSBhd2FpdCBiY3J5cHQuaGFzaCh0aGlzLnBhc3N3b3JkLCBzYWx0KTsKICAgIG5leHQoKTsKfSk7CgpVc2VyU2NoZW1hLm1ldGhvZHMubWF0Y2hQYXNzd29yZCA9IGFzeW5jIGZ1bmN0aW9uKHBhc3N3b3JkKSB7CiAgICByZXR1cm4gYXdhaXQgYmNyeXB0LmNvbXBhcmUocGFzc3dvcmQsIHRoaXMucGFzc3dvcmQpOwp9OwoKbW9kdWxlLmV4cG9ydHMgPSBtb25nb29zZS5tb2RlbCgnVXNlcicsIFVzZXJTY2hlbWEpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+
+const UserSchema = new mongoose.Schema({
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true }
+});
+
+UserSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) return next();
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+});
+
+UserSchema.methods.matchPassword = async function(password) {
+    return await bcrypt.compare(password, this.password);
+};
+
+module.exports = mongoose.model('User', UserSchema);</pre></div><div class='content'><h4>3.2. Model de Post (<code>models/post.js</code>)</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgbW9uZ29vc2UgPSByZXF1aXJlKCdtb25nb29zZScpOwoKY29uc3QgUG9zdFNjaGVtYSA9IG5ldyBtb25nb29zZS5TY2hlbWEoewogICAgdGl0bGU6IHsgdHlwZTogU3RyaW5nLCByZXF1aXJlZDogdHJ1ZSB9LAogICAgY29udGVudDogeyB0eXBlOiBTdHJpbmcsIHJlcXVpcmVkOiB0cnVlIH0sCiAgICBhdXRob3I6IHsgdHlwZTogbW9uZ29vc2UuU2NoZW1hLlR5cGVzLk9iamVjdElkLCByZWY6ICdVc2VyJywgcmVxdWlyZWQ6IHRydWUgfSwKICAgIGNyZWF0ZWRBdDogeyB0eXBlOiBEYXRlLCBkZWZhdWx0OiBEYXRlLm5vdyB9Cn0pOwoKbW9kdWxlLmV4cG9ydHMgPSBtb25nb29zZS5tb2RlbCgnUG9zdCcsIFBvc3RTY2hlbWEpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const mongoose = require('mongoose');
+
+const PostSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    content: { type: String, required: true },
+    author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    createdAt: { type: Date, default: Date.now }
+});
+
+module.exports = mongoose.model('Post', PostSchema);</pre></div><div class='content'></div><h2>4. Rutes i Controladors</h2>
+<div class='content'><h4>4.1. Rutes d'Autenticació (<code>routes/auth.js</code>)</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoJ2V4cHJlc3MnKTsKY29uc3QgeyByZWdpc3RlciwgbG9naW4gfSA9IHJlcXVpcmUoJy4uL2NvbnRyb2xsZXJzL2F1dGhDb250cm9sbGVyJyk7CmNvbnN0IHJvdXRlciA9IGV4cHJlc3MuUm91dGVyKCk7Cgpyb3V0ZXIucG9zdCgnL3JlZ2lzdGVyJywgcmVnaXN0ZXIpOwpyb3V0ZXIucG9zdCgnL2xvZ2luJywgbG9naW4pOwoKbW9kdWxlLmV4cG9ydHMgPSByb3V0ZXI7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const express = require('express');
+const { register, login } = require('../controllers/authController');
+const router = express.Router();
+
+router.post('/register', register);
+router.post('/login', login);
+
+module.exports = router;</pre></div><div class='content'><h4>4.2. Controlador d'Autenticació (<code>controllers/authController.js</code>)</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgVXNlciA9IHJlcXVpcmUoJy4uL21vZGVscy91c2VyJyk7CmNvbnN0IGp3dCA9IHJlcXVpcmUoJ2pzb253ZWJ0b2tlbicpOwpjb25zdCBjb25maWcgPSByZXF1aXJlKCcuLi9jb25maWcnKTsKCmV4cG9ydHMucmVnaXN0ZXIgPSBhc3luYyAocmVxLCByZXMpID0+IHsKICAgIGNvbnN0IHsgdXNlcm5hbWUsIHBhc3N3b3JkIH0gPSByZXEuYm9keTsKICAgIHRyeSB7CiAgICAgICAgY29uc3QgdXNlciA9IG5ldyBVc2VyKHsgdXNlcm5hbWUsIHBhc3N3b3JkIH0pOwogICAgICAgIGF3YWl0IHVzZXIuc2F2ZSgpOwogICAgICAgIHJlcy5zdGF0dXMoMjAxKS5qc29uKHsgbWVzc2FnZTogJ1VzZXIgcmVnaXN0ZXJlZCBzdWNjZXNzZnVsbHknIH0pOwogICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgICAgcmVzLnN0YXR1cyg0MDApLmpzb24oeyBlcnJvcjogZXJyLm1lc3NhZ2UgfSk7CiAgICB9Cn07CgpleHBvcnRzLmxvZ2luID0gYXN5bmMgKHJlcSwgcmVzKSA9PiB7CiAgICBjb25zdCB7IHVzZXJuYW1lLCBwYXNzd29yZCB9ID0gcmVxLmJvZHk7CiAgICB0cnkgewogICAgICAgIGNvbnN0IHVzZXIgPSBhd2FpdCBVc2VyLmZpbmRPbmUoeyB1c2VybmFtZSB9KTsKICAgICAgICBpZiAoIXVzZXIgfHwgIShhd2FpdCB1c2VyLm1hdGNoUGFzc3dvcmQocGFzc3dvcmQpKSkgewogICAgICAgICAgICByZXR1cm4gcmVzLnN0YXR1cyg0MDEpLmpzb24oeyBtZXNzYWdlOiAnSW52YWxpZCBjcmVkZW50aWFscycgfSk7CiAgICAgICAgfQogICAgICAgIGNvbnN0IHRva2VuID0gand0LnNpZ24oeyBpZDogdXNlci5faWQgfSwgY29uZmlnLmp3dFNlY3JldCwgeyBleHBpcmVzSW46ICcxaCcgfSk7CiAgICAgICAgcmVzLmpzb24oeyB0b2tlbiB9KTsKICAgIH0gY2F0Y2ggKGVycikgewogICAgICAgIHJlcy5zdGF0dXMoNDAwKS5qc29uKHsgZXJyb3I6IGVyci5tZXNzYWdlIH0pOwogICAgfQp9Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const User = require('../models/user');
+const jwt = require('jsonwebtoken');
+const config = require('../config');
+
+exports.register = async (req, res) =&gt; {
+    const { username, password } = req.body;
+    try {
+        const user = new User({ username, password });
+        await user.save();
+        res.status(201).json({ message: 'User registered successfully' });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
+exports.login = async (req, res) =&gt; {
+    const { username, password } = req.body;
+    try {
+        const user = await User.findOne({ username });
+        if (!user || !(await user.matchPassword(password))) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+        const token = jwt.sign({ id: user._id }, config.jwtSecret, { expiresIn: '1h' });
+        res.json({ token });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};</pre></div><div class='content'><h4>4.3. Middleware d'Autenticació (<code>middleware/authMiddleware.js</code>)</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3Qgand0ID0gcmVxdWlyZSgnanNvbndlYnRva2VuJyk7CmNvbnN0IGNvbmZpZyA9IHJlcXVpcmUoJy4uL2NvbmZpZycpOwpjb25zdCBVc2VyID0gcmVxdWlyZSgnLi4vbW9kZWxzL3VzZXInKTsKCmV4cG9ydHMucHJvdGVjdCA9IGFzeW5jIChyZXEsIHJlcywgbmV4dCkgPT4gewogICAgbGV0IHRva2VuOwogICAgaWYgKHJlcS5oZWFkZXJzLmF1dGhvcml6YXRpb24gJiYgcmVxLmhlYWRlcnMuYXV0aG9yaXphdGlvbi5zdGFydHNXaXRoKCdCZWFyZXInKSkgewogICAgICAgIHRva2VuID0gcmVxLmhlYWRlcnMuYXV0aG9yaXphdGlvbi5zcGxpdCgnICcpWzFdOwogICAgfQogICAgaWYgKCF0b2tlbikgewogICAgICAgIHJldHVybiByZXMuc3RhdHVzKDQwMSkuanNvbih7IG1lc3NhZ2U6ICdOb3QgYXV0aG9yaXplZCcgfSk7CiAgICB9CiAgICB0cnkgewogICAgICAgIGNvbnN0IGRlY29kZWQgPSBqd3QudmVyaWZ5KHRva2VuLCBjb25maWcuand0U2VjcmV0KTsKICAgICAgICByZXEudXNlciA9IGF3YWl0IFVzZXIuZmluZEJ5SWQoZGVjb2RlZC5pZCk7CiAgICAgICAgbmV4dCgpOwogICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgICAgcmVzLnN0YXR1cyg0MDEpLmpzb24oeyBtZXNzYWdlOiAnTm90IGF1dGhvcml6ZWQnIH0pOwogICAgfQp9Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const jwt = require('jsonwebtoken');
+const config = require('../config');
+const User = require('../models/user');
+
+exports.protect = async (req, res, next) =&gt; {
+    let token;
+    if (req.headers.authorization &amp;&amp; req.headers.authorization.startsWith('Bearer')) {
+        token = req.headers.authorization.split(' ')[1];
+    }
+    if (!token) {
+        return res.status(401).json({ message: 'Not authorized' });
+    }
+    try {
+        const decoded = jwt.verify(token, config.jwtSecret);
+        req.user = await User.findById(decoded.id);
+        next();
+    } catch (err) {
+        res.status(401).json({ message: 'Not authorized' });
+    }
+};</pre></div><div class='content'><h4>4.4. Rutes de Posts (<code>routes/posts.js</code>)</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoJ2V4cHJlc3MnKTsKY29uc3QgeyBnZXRQb3N0cywgY3JlYXRlUG9zdCwgdXBkYXRlUG9zdCwgZGVsZXRlUG9zdCB9ID0gcmVxdWlyZSgnLi4vY29udHJvbGxlcnMvcG9zdENvbnRyb2xsZXInKTsKY29uc3QgeyBwcm90ZWN0IH0gPSByZXF1aXJlKCcuLi9taWRkbGV3YXJlL2F1dGhNaWRkbGV3YXJlJyk7CmNvbnN0IHJvdXRlciA9IGV4cHJlc3MuUm91dGVyKCk7Cgpyb3V0ZXIucm91dGUoJy8nKQogICAgLmdldChnZXRQb3N0cykKICAgIC5wb3N0KHByb3RlY3QsIGNyZWF0ZVBvc3QpOwoKcm91dGVyLnJvdXRlKCcvOmlkJykKICAgIC5wdXQocHJvdGVjdCwgdXBkYXRlUG9zdCkKICAgIC5kZWxldGUocHJvdGVjdCwgZGVsZXRlUG9zdCk7Cgptb2R1bGUuZXhwb3J0cyA9IHJvdXRlcjs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const express = require('express');
+const { getPosts, createPost, updatePost, deletePost } = require('../controllers/postController');
+const { protect } = require('../middleware/authMiddleware');
+const router = express.Router();
+
+router.route('/')
+    .get(getPosts)
+    .post(protect, createPost);
+
+router.route('/:id')
+    .put(protect, updatePost)
+    .delete(protect, deletePost);
+
+module.exports = router;</pre></div><div class='content'><h4>4.5. Controlador de Posts (<code>controllers/postController.js</code>)</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgUG9zdCA9IHJlcXVpcmUoJy4uL21vZGVscy9wb3N0Jyk7CgpleHBvcnRzLmdldFBvc3RzID0gYXN5bmMgKHJlcSwgcmVzKSA9PiB7CiAgICB0cnkgewogICAgICAgIGNvbnN0IHBvc3RzID0gYXdhaXQgUG9zdC5maW5kKCkucG9wdWxhdGUoJ2F1dGhvcicsICd1c2VybmFtZScpOwogICAgICAgIHJlcy5qc29uKHBvc3RzKTsKICAgIH0gY2F0Y2ggKGVycikgewogICAgICAgIHJlcy5zdGF0dXMoNDAwKS5qc29uKHsgZXJyb3I6IGVyci5tZXNzYWdlIH0pOwogICAgfQp9OwoKZXhwb3J0cy5jcmVhdGVQb3N0ID0gYXN5bmMgKHJlcSwgcmVzKSA9PiB7CiAgICBjb25zdCB7IHRpdGxlLCBjb250ZW50IH0gPSByZXEuYm9keTsKICAgIHRyeSB7CiAgICAgICAgY29uc3QgcG9zdCA9IG5ldyBQb3N0KHsgdGl0bGUsIGNvbnRlbnQsIGF1dGhvcjogcmVxLnVzZXIuX2lkIH0pOwogICAgICAgIGF3YWl0IHBvc3Quc2F2ZSgpOwogICAgICAgIHJlcy5zdGF0dXMoMjAxKS5qc29uKHBvc3QpOwogICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgICAgcmVzLnN0YXR1cyg0MDApLmpzb24oeyBlcnJvcjogZXJyLm1lc3NhZ2UgfSk7CiAgICB9Cn07CgpleHBvcnRzLnVwZGF0ZVBvc3QgPSBhc3luYyAocmVxLCByZXMpID0+IHsKICAgIGNvbnN0IHsgaWQgfSA9IHJlcS5wYXJhbXM7CiAgICBjb25zdCB7IHRpdGxlLCBjb250ZW50IH0gPSByZXEuYm9keTsKICAgIHRyeSB7CiAgICAgICAgY29uc3QgcG9zdCA9IGF3YWl0IFBvc3QuZmluZEJ5SWQoaWQpOwogICAgICAgIGlmICghcG9zdCkgewogICAgICAgICAgICByZXR1cm4gcmVzLnN0YXR1cyg0MDQpLmpzb24oeyBtZXNzYWdlOiAnUG9zdCBub3QgZm91bmQnIH0pOwogICAgICAgIH0KICAgICAgICBpZiAocG9zdC5hdXRob3IudG9TdHJpbmcoKSAhPT0gcmVxLnVzZXIuX2lkLnRvU3RyaW5nKCkpIHsKICAgICAgICAgICAgcmV0dXJuIHJlcy5zdGF0dXMoNDAxKS5qc29uKHsgbWVzc2FnZTogJ05vdCBhdXRob3JpemVkJyB9KTsKICAgICAgICB9CiAgICAgICAgcG9zdC50aXRsZSA9IHRpdGxlOwogICAgICAgIHBvc3QuY29udGVudCA9IGNvbnRlbnQ7CiAgICAgICAgYXdhaXQgcG9zdC5zYXZlKCk7CiAgICAgICAgcmVzLmpzb24ocG9zdCk7CiAgICB9IGNhdGNoIChlcnIpIHsKICAgICAgICByZXMuc3RhdHVzKDQwMCkuanNvbih7IGVycm9yOiBlcnIubWVzc2FnZSB9KTsKICAgIH0KfTsKCmV4cG9ydHMuZGVsZXRlUG9zdCA9IGFzeW5jIChyZXEsIHJlcykgPT4gewogICAgY29uc3QgeyBpZCB9ID0gcmVxLnBhcmFtczsKICAgIHRyeSB7CiAgICAgICAgY29uc3QgcG9zdCA9IGF3YWl0IFBvc3QuZmluZEJ5SWQoaWQpOwogICAgICAgIGlmICghcG9zdCkgewogICAgICAgICAgICByZXR1cm4gcmVzLnN0YXR1cyg0MDQpLmpzb24oeyBtZXNzYWdlOiAnUG9zdCBub3QgZm91bmQnIH0pOwogICAgICAgIH0KICAgICAgICBpZiAocG9zdC5hdXRob3IudG9TdHJpbmcoKSAhPT0gcmVxLnVzZXIuX2lkLnRvU3RyaW5nKCkpIHsKICAgICAgICAgICAgcmV0dXJuIHJlcy5zdGF0dXMoNDAxKS5qc29uKHsgbWVzc2FnZTogJ05vdCBhdXRob3JpemVkJyB9KTsKICAgICAgICB9CiAgICAgICAgYXdhaXQgcG9zdC5yZW1vdmUoKTsKICAgICAgICByZXMuanNvbih7IG1lc3NhZ2U6ICdQb3N0IHJlbW92ZWQnIH0pOwogICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgICAgcmVzLnN0YXR1cyg0MDApLmpzb24oeyBlcnJvcjogZXJyLm1lc3NhZ2UgfSk7CiAgICB9Cn07"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const Post = require('../models/post');
+
+exports.getPosts = async (req, res) =&gt; {
+    try {
+        const posts = await Post.find().populate('author', 'username');
+        res.json(posts);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
+exports.createPost = async (req, res) =&gt; {
+    const { title, content } = req.body;
+    try {
+        const post = new Post({ title, content, author: req.user._id });
+        await post.save();
+        res.status(201).json(post);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
+exports.updatePost = async (req, res) =&gt; {
+    const { id } = req.params;
+    const { title, content } = req.body;
+    try {
+        const post = await Post.findById(id);
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+        if (post.author.toString() !== req.user._id.toString()) {
+            return res.status(401).json({ message: 'Not authorized' });
+        }
+        post.title = title;
+        post.content = content;
+        await post.save();
+        res.json(post);
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};
+
+exports.deletePost = async (req, res) =&gt; {
+    const { id } = req.params;
+    try {
+        const post = await Post.findById(id);
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+        if (post.author.toString() !== req.user._id.toString()) {
+            return res.status(401).json({ message: 'Not authorized' });
+        }
+        await post.remove();
+        res.json({ message: 'Post removed' });
+    } catch (err) {
+        res.status(400).json({ error: err.message });
+    }
+};</pre></div><div class='content'></div><h2>5. Interfície d'Usuari</h2>
+<div class='content'><h4>5.1. Crear <code>views/index.html</code></h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CiAgICA8bWV0YSBjaGFyc2V0PSJVVEYtOCI+CiAgICA8bWV0YSBuYW1lPSJ2aWV3cG9ydCIgY29udGVudD0id2lkdGg9ZGV2aWNlLXdpZHRoLCBpbml0aWFsLXNjYWxlPTEuMCI+CiAgICA8dGl0bGU+QmxvZyBQbGF0Zm9ybTwvdGl0bGU+CjwvaGVhZD4KPGJvZHk+CiAgICA8aDE+V2VsY29tZSB0byB0aGUgQmxvZyBQbGF0Zm9ybTwvaDE+CiAgICA8ZGl2IGlkPSJwb3N0cyI+PC9kaXY+CiAgICA8c2NyaXB0PgogICAgICAgIGFzeW5jIGZ1bmN0aW9uIGZldGNoUG9zdHMoKSB7CiAgICAgICAgICAgIGNvbnN0IHJlc3BvbnNlID0gYXdhaXQgZmV0Y2goJy9hcGkvcG9zdHMnKTsKICAgICAgICAgICAgY29uc3QgcG9zdHMgPSBhd2FpdCByZXNwb25zZS5qc29uKCk7CiAgICAgICAgICAgIGNvbnN0IHBvc3RzRGl2ID0gZG9jdW1lbnQuZ2V0RWxlbWVudEJ5SWQoJ3Bvc3RzJyk7CiAgICAgICAgICAgIHBvc3RzRGl2LmlubmVySFRNTCA9IHBvc3RzLm1hcChwb3N0ID0+IGAKICAgICAgICAgICAgICAgIDxkaXY+CiAgICAgICAgICAgICAgICAgICAgPGgyPiR7cG9zdC50aXRsZX08L2gyPgogICAgICAgICAgICAgICAgICAgIDxwPiR7cG9zdC5jb250ZW50fTwvcD4KICAgICAgICAgICAgICAgICAgICA8cD5BdXRob3I6ICR7cG9zdC5hdXRob3IudXNlcm5hbWV9PC9wPgogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIGApLmpvaW4oJycpOwogICAgICAgIH0KICAgICAgICBmZXRjaFBvc3RzKCk7CiAgICA8L3NjcmlwdD4KPC9ib2R5Pgo8L2h0bWw+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;Blog Platform&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Welcome to the Blog Platform&lt;/h1&gt;
+    &lt;div id=&quot;posts&quot;&gt;&lt;/div&gt;
+    &lt;script&gt;
+        async function fetchPosts() {
+            const response = await fetch('/api/posts');
+            const posts = await response.json();
+            const postsDiv = document.getElementById('posts');
+            postsDiv.innerHTML = posts.map(post =&gt; `
+                &lt;div&gt;
+                    &lt;h2&gt;${post.title}&lt;/h2&gt;
+                    &lt;p&gt;${post.content}&lt;/p&gt;
+                    &lt;p&gt;Author: ${post.author.username}&lt;/p&gt;
+                &lt;/div&gt;
+            `).join('');
+        }
+        fetchPosts();
+    &lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'></div><h2>6. Resum</h2>
+<div class='content'><p>En aquest tema, hem creat una plataforma de blogs utilitzant Node.js i Express. Hem configurat l'estructura del projecte, creat models per a usuaris i posts, implementat rutes i controladors per gestionar l'autenticació i les operacions CRUD, i hem creat una interfície d'usuari bàsica per mostrar les entrades del blog. Aquest projecte ens ha permès aplicar molts dels conceptes apresos al llarg del curs i ens ha proporcionat una base sòlida per desenvolupar aplicacions web amb Node.js.</p>
+</div><h2>Exercicis Pràctics</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Ampliar la Funcionalitat de l'Aplicació:</strong></p>
+<ul>
+<li>Afegir la funcionalitat per a que els usuaris puguin comentar les entrades del blog.</li>
+<li>Implementar la funcionalitat de &quot;like&quot; per a les entrades del blog.</li>
+</ul>
+</li>
+<li>
+<p><strong>Millorar la Interfície d'Usuari:</strong></p>
+<ul>
+<li>Utilitzar un framework CSS com Bootstrap per millorar l'aparença de la interfície d'usuari.</li>
+<li>Afegir formularis per crear i editar entrades del blog des de la interfície d'usuari.</li>
+</ul>
+</li>
+<li>
+<p><strong>Seguretat:</strong></p>
+<ul>
+<li>Implementar la validació de dades al servidor per assegurar-se que les entrades del blog continguin informació vàlida.</li>
+<li>Utilitzar HTTPS per assegurar la comunicació entre el client i el servidor.</li>
+</ul>
+</li>
+<li>
+<p><strong>Desplegament:</strong></p>
+<ul>
+<li>Desplegar l'aplicació a una plataforma com Heroku o Vercel.</li>
+<li>Configurar variables d'entorn per gestionar la configuració de l'aplicació en diferents entorns (desenvolupament, producció).</li>
+</ul>
+</li>
+</ol>
+</div><h2>Solucions als Exercicis</h2>
+<div class='content'><p>Les solucions als exercicis pràctics es poden trobar a la documentació oficial de Node.js, Express, i MongoDB, així com en diversos tutorials i recursos en línia. Es recomana als estudiants que intentin resoldre els exercicis per si mateixos abans de buscar les solucions, ja que això els ajudarà a consolidar els coneixements adquirits.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='12-02-creating-ecommerce-api' title="Crear una API de Comerç Electrònic">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='12-04-building-task-management' title="Construir una Eina de Gestió de Tasques">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

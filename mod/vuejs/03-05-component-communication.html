@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comunicació entre components</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/vuejs/03-05-component-communication" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/vuejs/03-05-component-communication" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/vuejs/03-05-component-communication" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/vuejs/03-05-component-communication" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/vuejs/03-05-component-communication" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-04-dynamic-async-components' title="Components dinàmics i asíncrons">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Comunicació entre components</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-introduction-vue-router' title="Introducció a Vue Router">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem com els components de Vue.js poden comunicar-se entre ells. La comunicació entre components és essencial per construir aplicacions complexes i ben organitzades. Aprendrem sobre les diferents maneres de passar dades i esdeveniments entre components pare i fill, així com entre components germans.</p>
+</div><h1>Objectius d'aprenentatge</h1>
+<div class='content'><ul>
+<li>Entendre com passar dades dels components pare als components fill utilitzant <code>props</code>.</li>
+<li>Aprendre a emetre esdeveniments des dels components fill als components pare.</li>
+<li>Explorar la comunicació entre components germans utilitzant un bus d'esdeveniments o un estat global.</li>
+</ul>
+</div><h1>1. Passar dades amb `props`</h1>
+<div class='content'></div><h2>Què són les `props`?</h2>
+<div class='content'><p>Les <code>props</code> (abreviatura de &quot;properties&quot;) són una manera de passar dades dels components pare als components fill. Les <code>props</code> permeten que els components fill siguin reutilitzables i configurables.</p>
+</div><h2>Exemple de `props`</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCEtLSBDb21wb25lbnQgUGFyZSAtLT4KPHRlbXBsYXRlPgogIDxkaXY+CiAgICA8aDE+Q29tdW5pY2FjacOzIGVudHJlIGNvbXBvbmVudHM8L2gxPgogICAgPENoaWxkQ29tcG9uZW50IG1lc3NhZ2U9IkhvbGEgZGVzIGRlbCBjb21wb25lbnQgcGFyZSEiIC8+CiAgPC9kaXY+CjwvdGVtcGxhdGU+Cgo8c2NyaXB0PgppbXBvcnQgQ2hpbGRDb21wb25lbnQgZnJvbSAnLi9DaGlsZENvbXBvbmVudC52dWUnOwoKZXhwb3J0IGRlZmF1bHQgewogIGNvbXBvbmVudHM6IHsKICAgIENoaWxkQ29tcG9uZW50CiAgfQp9Owo8L3NjcmlwdD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!-- Component Pare --&gt;
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;h1&gt;Comunicaci&oacute; entre components&lt;/h1&gt;
+    &lt;ChildComponent message=&quot;Hola des del component pare!&quot; /&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import ChildComponent from './ChildComponent.vue';
+
+export default {
+  components: {
+    ChildComponent
+  }
+};
+&lt;/script&gt;</pre></div><div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCEtLSBDb21wb25lbnQgRmlsbCAoQ2hpbGRDb21wb25lbnQudnVlKSAtLT4KPHRlbXBsYXRlPgogIDxkaXY+CiAgICA8cD57eyBtZXNzYWdlIH19PC9wPgogIDwvZGl2Pgo8L3RlbXBsYXRlPgoKPHNjcmlwdD4KZXhwb3J0IGRlZmF1bHQgewogIHByb3BzOiB7CiAgICBtZXNzYWdlOiB7CiAgICAgIHR5cGU6IFN0cmluZywKICAgICAgcmVxdWlyZWQ6IHRydWUKICAgIH0KICB9Cn07Cjwvc2NyaXB0Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!-- Component Fill (ChildComponent.vue) --&gt;
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;p&gt;{{ message }}&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  props: {
+    message: {
+      type: String,
+      required: true
+    }
+  }
+};
+&lt;/script&gt;</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ol>
+<li><strong>Component Pare</strong>: Passa una <code>prop</code> anomenada <code>message</code> al <code>ChildComponent</code>.</li>
+<li><strong>Component Fill</strong>: Declara la <code>prop</code> <code>message</code> i la mostra en el seu template.</li>
+</ol>
+</div><h1>2. Emetre esdeveniments</h1>
+<div class='content'></div><h2>Què són els esdeveniments personalitzats?</h2>
+<div class='content'><p>Els esdeveniments personalitzats permeten que els components fill enviïn informació als components pare. Això es fa mitjançant l'emissió d'esdeveniments des del component fill i la captura d'aquests esdeveniments en el component pare.</p>
+</div><h2>Exemple d'esdeveniments personalitzats</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCEtLSBDb21wb25lbnQgUGFyZSAtLT4KPHRlbXBsYXRlPgogIDxkaXY+CiAgICA8aDE+Q29tdW5pY2FjacOzIGVudHJlIGNvbXBvbmVudHM8L2gxPgogICAgPENoaWxkQ29tcG9uZW50IEBjdXN0b20tZXZlbnQ9ImhhbmRsZUN1c3RvbUV2ZW50IiAvPgogIDwvZGl2Pgo8L3RlbXBsYXRlPgoKPHNjcmlwdD4KaW1wb3J0IENoaWxkQ29tcG9uZW50IGZyb20gJy4vQ2hpbGRDb21wb25lbnQudnVlJzsKCmV4cG9ydCBkZWZhdWx0IHsKICBjb21wb25lbnRzOiB7CiAgICBDaGlsZENvbXBvbmVudAogIH0sCiAgbWV0aG9kczogewogICAgaGFuZGxlQ3VzdG9tRXZlbnQoZGF0YSkgewogICAgICBjb25zb2xlLmxvZygnRXNkZXZlbmltZW50IHJlYnV0OicsIGRhdGEpOwogICAgfQogIH0KfTsKPC9zY3JpcHQ+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!-- Component Pare --&gt;
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;h1&gt;Comunicaci&oacute; entre components&lt;/h1&gt;
+    &lt;ChildComponent @custom-event=&quot;handleCustomEvent&quot; /&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import ChildComponent from './ChildComponent.vue';
+
+export default {
+  components: {
+    ChildComponent
+  },
+  methods: {
+    handleCustomEvent(data) {
+      console.log('Esdeveniment rebut:', data);
+    }
+  }
+};
+&lt;/script&gt;</pre></div><div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCEtLSBDb21wb25lbnQgRmlsbCAoQ2hpbGRDb21wb25lbnQudnVlKSAtLT4KPHRlbXBsYXRlPgogIDxkaXY+CiAgICA8YnV0dG9uIEBjbGljaz0iZW1pdEV2ZW50Ij5FbWV0IGVzZGV2ZW5pbWVudDwvYnV0dG9uPgogIDwvZGl2Pgo8L3RlbXBsYXRlPgoKPHNjcmlwdD4KZXhwb3J0IGRlZmF1bHQgewogIG1ldGhvZHM6IHsKICAgIGVtaXRFdmVudCgpIHsKICAgICAgdGhpcy4kZW1pdCgnY3VzdG9tLWV2ZW50JywgJ0hvbGEgZGVzIGRlbCBjb21wb25lbnQgZmlsbCEnKTsKICAgIH0KICB9Cn07Cjwvc2NyaXB0Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!-- Component Fill (ChildComponent.vue) --&gt;
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;button @click=&quot;emitEvent&quot;&gt;Emet esdeveniment&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  methods: {
+    emitEvent() {
+      this.$emit('custom-event', 'Hola des del component fill!');
+    }
+  }
+};
+&lt;/script&gt;</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ol>
+<li><strong>Component Pare</strong>: Escolta l'esdeveniment <code>custom-event</code> i executa el mètode <code>handleCustomEvent</code> quan l'esdeveniment és emès.</li>
+<li><strong>Component Fill</strong>: Emet l'esdeveniment <code>custom-event</code> amb un missatge quan es fa clic al botó.</li>
+</ol>
+</div><h1>3. Comunicació entre components germans</h1>
+<div class='content'></div><h2>Utilitzant un bus d'esdeveniments</h2>
+<div class='content'><p>Un bus d'esdeveniments és una instància de Vue que s'utilitza per emetre i escoltar esdeveniments entre components que no tenen una relació pare-fill.</p>
+</div><h2>Exemple de bus d'esdeveniments</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gZXZlbnRCdXMuanMKaW1wb3J0IFZ1ZSBmcm9tICd2dWUnOwpleHBvcnQgY29uc3QgRXZlbnRCdXMgPSBuZXcgVnVlKCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// eventBus.js
+import Vue from 'vue';
+export const EventBus = new Vue();</pre></div><div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCEtLSBDb21wb25lbnQgQSAtLT4KPHRlbXBsYXRlPgogIDxkaXY+CiAgICA8YnV0dG9uIEBjbGljaz0ic2VuZE1lc3NhZ2UiPkVudmlhIG1pc3NhdGdlIGEgQ29tcG9uZW50IEI8L2J1dHRvbj4KICA8L2Rpdj4KPC90ZW1wbGF0ZT4KCjxzY3JpcHQ+CmltcG9ydCB7IEV2ZW50QnVzIH0gZnJvbSAnLi9ldmVudEJ1cyc7CgpleHBvcnQgZGVmYXVsdCB7CiAgbWV0aG9kczogewogICAgc2VuZE1lc3NhZ2UoKSB7CiAgICAgIEV2ZW50QnVzLiRlbWl0KCdtZXNzYWdlJywgJ0hvbGEgZGVzIGRlbCBDb21wb25lbnQgQSEnKTsKICAgIH0KICB9Cn07Cjwvc2NyaXB0Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!-- Component A --&gt;
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;button @click=&quot;sendMessage&quot;&gt;Envia missatge a Component B&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import { EventBus } from './eventBus';
+
+export default {
+  methods: {
+    sendMessage() {
+      EventBus.$emit('message', 'Hola des del Component A!');
+    }
+  }
+};
+&lt;/script&gt;</pre></div><div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCEtLSBDb21wb25lbnQgQiAtLT4KPHRlbXBsYXRlPgogIDxkaXY+CiAgICA8cD57eyBtZXNzYWdlIH19PC9wPgogIDwvZGl2Pgo8L3RlbXBsYXRlPgoKPHNjcmlwdD4KaW1wb3J0IHsgRXZlbnRCdXMgfSBmcm9tICcuL2V2ZW50QnVzJzsKCmV4cG9ydCBkZWZhdWx0IHsKICBkYXRhKCkgewogICAgcmV0dXJuIHsKICAgICAgbWVzc2FnZTogJycKICAgIH07CiAgfSwKICBjcmVhdGVkKCkgewogICAgRXZlbnRCdXMuJG9uKCdtZXNzYWdlJywgKGRhdGEpID0+IHsKICAgICAgdGhpcy5tZXNzYWdlID0gZGF0YTsKICAgIH0pOwogIH0KfTsKPC9zY3JpcHQ+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!-- Component B --&gt;
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;p&gt;{{ message }}&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import { EventBus } from './eventBus';
+
+export default {
+  data() {
+    return {
+      message: ''
+    };
+  },
+  created() {
+    EventBus.$on('message', (data) =&gt; {
+      this.message = data;
+    });
+  }
+};
+&lt;/script&gt;</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ol>
+<li><strong>eventBus.js</strong>: Crea una instància de Vue que actua com a bus d'esdeveniments.</li>
+<li><strong>Component A</strong>: Emet un esdeveniment <code>message</code> amb un missatge.</li>
+<li><strong>Component B</strong>: Escolta l'esdeveniment <code>message</code> i actualitza la seva dada <code>message</code> amb el missatge rebut.</li>
+</ol>
+</div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Passar dades amb `props`</h2>
+<div class='content'><p>Crea dos components, <code>ParentComponent</code> i <code>ChildComponent</code>. Passa una <code>prop</code> anomenada <code>title</code> des del <code>ParentComponent</code> al <code>ChildComponent</code> i mostra-la en el <code>ChildComponent</code>.</p>
+</div><h2>Solució</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCEtLSBQYXJlbnRDb21wb25lbnQudnVlIC0tPgo8dGVtcGxhdGU+CiAgPGRpdj4KICAgIDxDaGlsZENvbXBvbmVudCB0aXRsZT0iVMOtdG9sIGRlcyBkZWwgY29tcG9uZW50IHBhcmUiIC8+CiAgPC9kaXY+CjwvdGVtcGxhdGU+Cgo8c2NyaXB0PgppbXBvcnQgQ2hpbGRDb21wb25lbnQgZnJvbSAnLi9DaGlsZENvbXBvbmVudC52dWUnOwoKZXhwb3J0IGRlZmF1bHQgewogIGNvbXBvbmVudHM6IHsKICAgIENoaWxkQ29tcG9uZW50CiAgfQp9Owo8L3NjcmlwdD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!-- ParentComponent.vue --&gt;
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;ChildComponent title=&quot;T&iacute;tol des del component pare&quot; /&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import ChildComponent from './ChildComponent.vue';
+
+export default {
+  components: {
+    ChildComponent
+  }
+};
+&lt;/script&gt;</pre></div><div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCEtLSBDaGlsZENvbXBvbmVudC52dWUgLS0+Cjx0ZW1wbGF0ZT4KICA8ZGl2PgogICAgPGgyPnt7IHRpdGxlIH19PC9oMj4KICA8L2Rpdj4KPC90ZW1wbGF0ZT4KCjxzY3JpcHQ+CmV4cG9ydCBkZWZhdWx0IHsKICBwcm9wczogewogICAgdGl0bGU6IHsKICAgICAgdHlwZTogU3RyaW5nLAogICAgICByZXF1aXJlZDogdHJ1ZQogICAgfQogIH0KfTsKPC9zY3JpcHQ+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!-- ChildComponent.vue --&gt;
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;h2&gt;{{ title }}&lt;/h2&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  props: {
+    title: {
+      type: String,
+      required: true
+    }
+  }
+};
+&lt;/script&gt;</pre></div><div class='content'></div><h2>Exercici 2: Emetre esdeveniments</h2>
+<div class='content'><p>Crea dos components, <code>ParentComponent</code> i <code>ChildComponent</code>. Emet un esdeveniment des del <code>ChildComponent</code> amb un missatge i captura'l en el <code>ParentComponent</code>.</p>
+</div><h2>Solució</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCEtLSBQYXJlbnRDb21wb25lbnQudnVlIC0tPgo8dGVtcGxhdGU+CiAgPGRpdj4KICAgIDxDaGlsZENvbXBvbmVudCBAY3VzdG9tLWV2ZW50PSJoYW5kbGVFdmVudCIgLz4KICA8L2Rpdj4KPC90ZW1wbGF0ZT4KCjxzY3JpcHQ+CmltcG9ydCBDaGlsZENvbXBvbmVudCBmcm9tICcuL0NoaWxkQ29tcG9uZW50LnZ1ZSc7CgpleHBvcnQgZGVmYXVsdCB7CiAgY29tcG9uZW50czogewogICAgQ2hpbGRDb21wb25lbnQKICB9LAogIG1ldGhvZHM6IHsKICAgIGhhbmRsZUV2ZW50KG1lc3NhZ2UpIHsKICAgICAgY29uc29sZS5sb2coJ01pc3NhdGdlIHJlYnV0OicsIG1lc3NhZ2UpOwogICAgfQogIH0KfTsKPC9zY3JpcHQ+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!-- ParentComponent.vue --&gt;
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;ChildComponent @custom-event=&quot;handleEvent&quot; /&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import ChildComponent from './ChildComponent.vue';
+
+export default {
+  components: {
+    ChildComponent
+  },
+  methods: {
+    handleEvent(message) {
+      console.log('Missatge rebut:', message);
+    }
+  }
+};
+&lt;/script&gt;</pre></div><div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCEtLSBDaGlsZENvbXBvbmVudC52dWUgLS0+Cjx0ZW1wbGF0ZT4KICA8ZGl2PgogICAgPGJ1dHRvbiBAY2xpY2s9ImVtaXRFdmVudCI+RW1ldCBlc2RldmVuaW1lbnQ8L2J1dHRvbj4KICA8L2Rpdj4KPC90ZW1wbGF0ZT4KCjxzY3JpcHQ+CmV4cG9ydCBkZWZhdWx0IHsKICBtZXRob2RzOiB7CiAgICBlbWl0RXZlbnQoKSB7CiAgICAgIHRoaXMuJGVtaXQoJ2N1c3RvbS1ldmVudCcsICdIb2xhIGRlcyBkZWwgY29tcG9uZW50IGZpbGwhJyk7CiAgICB9CiAgfQp9Owo8L3NjcmlwdD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!-- ChildComponent.vue --&gt;
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;button @click=&quot;emitEvent&quot;&gt;Emet esdeveniment&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+export default {
+  methods: {
+    emitEvent() {
+      this.$emit('custom-event', 'Hola des del component fill!');
+    }
+  }
+};
+&lt;/script&gt;</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com els components de Vue.js poden comunicar-se entre ells utilitzant <code>props</code> i esdeveniments personalitzats. També hem explorat com els components germans poden comunicar-se utilitzant un bus d'esdeveniments. Aquests conceptes són fonamentals per construir aplicacions Vue.js ben estructurades i escalables. En el següent mòdul, aprofundirem en l'ús de Vue Router per gestionar la navegació en les nostres aplicacions.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-04-dynamic-async-components' title="Components dinàmics i asíncrons">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-introduction-vue-router' title="Introducció a Vue Router">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

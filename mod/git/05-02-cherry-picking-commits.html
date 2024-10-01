@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cherry-Picking de Commits</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/git/05-02-cherry-picking-commits" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/git/05-02-cherry-picking-commits" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/git/05-02-cherry-picking-commits" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/git/05-02-cherry-picking-commits" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/git/05-02-cherry-picking-commits" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-01-rebasing' title="Rebasing">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Cherry-Picking de Commits</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-03-stashing-changes' title="Emmagatzemant Canvis">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>El cherry-picking és una tècnica en Git que permet aplicar canvis específics d'un commit existent a una altra branca. Aquesta operació és útil quan necessites portar un canvi concret a una branca diferent sense fusionar tot el conjunt de canvis.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Commit</strong>: Un instantani del teu projecte en un moment específic.</li>
+<li><strong>Branca</strong>: Una línia de desenvolupament independent.</li>
+<li><strong>Cherry-Pick</strong>: L'acte de seleccionar un commit específic d'una branca i aplicar-lo a una altra.</li>
+</ul>
+</div><h1>Quan Utilitzar Cherry-Picking</h1>
+<div class='content'><ul>
+<li>Quan necessites aplicar un hotfix d'una branca de desenvolupament a la branca de producció.</li>
+<li>Quan vols portar un canvi específic a una branca sense fusionar tots els canvis d'aquesta branca.</li>
+</ul>
+</div><h1>Com Realitzar un Cherry-Pick</h1>
+<div class='content'></div><h2>Pas 1: Identificar el Commit</h2>
+<div class='content'><p>Primer, has d'identificar el commit que vols cherry-pick. Pots utilitzar <code>git log</code> per veure l'historial de commits i obtenir l'identificador del commit (hash).</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2l0IGxvZw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>git log</pre></div><div class='content'></div><h2>Pas 2: Canviar a la Branca de Destí</h2>
+<div class='content'><p>Canvia a la branca on vols aplicar el commit.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2l0IGNoZWNrb3V0IDxub20tZGUtbGEtYnJhbmNhLWRlLWRlc3TDrT4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>git checkout &lt;nom-de-la-branca-de-dest&iacute;&gt;</pre></div><div class='content'></div><h2>Pas 3: Realitzar el Cherry-Pick</h2>
+<div class='content'><p>Utilitza el següent comandament per aplicar el commit seleccionat a la branca actual.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2l0IGNoZXJyeS1waWNrIDxoYXNoLWRlbC1jb21taXQ+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>git cherry-pick &lt;hash-del-commit&gt;</pre></div><div class='content'></div><h2>Exemple Pràctic</h2>
+<div class='content'><p>Suposem que tens dues branques: <code>develop</code> i <code>main</code>. Vols portar un commit específic de <code>develop</code> a <code>main</code>.</p>
+<ol>
+<li>
+<p><strong>Identificar el Commit</strong>: Suposem que el hash del commit és <code>a1b2c3d4</code>.</p>
+<pre><code class="language-bash">git log
+</code></pre>
+</li>
+<li>
+<p><strong>Canviar a la Branca de Destí</strong>:</p>
+<pre><code class="language-bash">git checkout main
+</code></pre>
+</li>
+<li>
+<p><strong>Realitzar el Cherry-Pick</strong>:</p>
+<pre><code class="language-bash">git cherry-pick a1b2c3d4
+</code></pre>
+</li>
+</ol>
+</div><h1>Resolució de Conflictes</h1>
+<div class='content'><p>És possible que trobis conflictes durant el cherry-pick. Si això passa, Git t'informarà dels fitxers en conflicte. Pots resoldre'ls manualment i després continuar amb el procés.</p>
+</div><h2>Passos per Resoldre Conflictes</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Resoldre els Conflictes</strong>: Edita els fitxers en conflicte per resoldre'ls.</p>
+</li>
+<li>
+<p><strong>Afegir els Fitxers Resolts</strong>:</p>
+<pre><code class="language-bash">git add &lt;fitxer-resolt&gt;
+</code></pre>
+</li>
+<li>
+<p><strong>Continuar amb el Cherry-Pick</strong>:</p>
+<pre><code class="language-bash">git cherry-pick --continue
+</code></pre>
+</li>
+</ol>
+<p>Si vols avortar el cherry-pick, pots utilitzar:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2l0IGNoZXJyeS1waWNrIC0tYWJvcnQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>git cherry-pick --abort</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici</h2>
+<div class='content'><ol>
+<li>Crea dues branques: <code>feature</code> i <code>main</code>.</li>
+<li>Fes un commit a la branca <code>feature</code>.</li>
+<li>Utilitza <code>git cherry-pick</code> per portar aquest commit a la branca <code>main</code>.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear les Branques</strong>:</p>
+<pre><code class="language-bash">git checkout -b feature
+git checkout -b main
+</code></pre>
+</li>
+<li>
+<p><strong>Fer un Commit a <code>feature</code></strong>:</p>
+<pre><code class="language-bash">git checkout feature
+echo &quot;Hello, World!&quot; &gt; hello.txt
+git add hello.txt
+git commit -m &quot;Add hello.txt&quot;
+</code></pre>
+</li>
+<li>
+<p><strong>Cherry-Pick a <code>main</code></strong>:</p>
+<pre><code class="language-bash">git checkout main
+git cherry-pick &lt;hash-del-commit&gt;
+</code></pre>
+</li>
+</ol>
+</div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ul>
+<li><strong>Conflictes de Fusió</strong>: És comú trobar conflictes durant el cherry-pick. Assegura't de resoldre'ls correctament.</li>
+<li><strong>Identificadors de Commit Incorrectes</strong>: Verifica que estàs utilitzant el hash correcte del commit.</li>
+<li><strong>Historial de Commits</strong>: Utilitza <code>git log</code> per assegurar-te que el commit ha estat aplicat correctament.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>El cherry-picking és una eina poderosa per gestionar canvis específics en Git. Amb aquesta tècnica, pots portar commits individuals a altres branques sense necessitat de fusionar tot el conjunt de canvis. Practica aquesta tècnica per dominar-la i utilitzar-la de manera efectiva en els teus projectes.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-01-rebasing' title="Rebasing">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-03-stashing-changes' title="Emmagatzemant Canvis">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

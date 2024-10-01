@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analitzar Dades JSON</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/flutter/06-02-parsing-json-data" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/flutter/06-02-parsing-json-data" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/flutter/06-02-parsing-json-data" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/flutter/06-02-parsing-json-data" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/flutter/06-02-parsing-json-data" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-fetching-data-from-internet' title="Obtenir Dades d'Internet">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Analitzar Dades JSON</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-handling-network-errors' title="Gestió d'Errors de Xarxa">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com analitzar dades JSON en una aplicació Flutter utilitzant el llenguatge de programació Dart. JSON (JavaScript Object Notation) és un format de dades lleuger i fàcil de llegir que s'utilitza àmpliament per intercanviar dades entre un servidor i una aplicació web o mòbil.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Comprendre què és JSON i per què s'utilitza.</li>
+<li>Aprendre a deserialitzar (parsejar) dades JSON en objectes Dart.</li>
+<li>Aprendre a serialitzar objectes Dart en JSON.</li>
+<li>Treballar amb dades JSON complexes.</li>
+</ul>
+</div><h1>Què és JSON?</h1>
+<div class='content'><p>JSON és un format de text per a l'intercanvi de dades que és fàcil de llegir i escriure per a humans i fàcil de parsejar i generar per a màquines. Un objecte JSON és una col·lecció de parelles clau-valor, i una matriu JSON és una llista ordenada de valors.</p>
+</div><h2>Exemple d'Objecte JSON</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJub20iOiAiSm9hbiIsCiAgImVkYXQiOiAzMCwKICAiY29ycmV1IjogImpvYW5AZXhhbXBsZS5jb20iLAogICJpbnRlcmVzc29zIjogWyJwcm9ncmFtYWNpw7MiLCAibGVjdHVyYSIsICJlc3BvcnRzIl0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;nom&quot;: &quot;Joan&quot;,
+  &quot;edat&quot;: 30,
+  &quot;correu&quot;: &quot;joan@example.com&quot;,
+  &quot;interessos&quot;: [&quot;programaci&oacute;&quot;, &quot;lectura&quot;, &quot;esports&quot;]
+}</pre></div><div class='content'></div><h2>Exemple de Matriu JSON</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WwogIHsKICAgICJub20iOiAiSm9hbiIsCiAgICAiZWRhdCI6IDMwCiAgfSwKICB7CiAgICAibm9tIjogIk1hcmlhIiwKICAgICJlZGF0IjogMjUKICB9Cl0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>[
+  {
+    &quot;nom&quot;: &quot;Joan&quot;,
+    &quot;edat&quot;: 30
+  },
+  {
+    &quot;nom&quot;: &quot;Maria&quot;,
+    &quot;edat&quot;: 25
+  }
+]</pre></div><div class='content'></div><h1>Deserialitzar Dades JSON</h1>
+<div class='content'><p>Deserialitzar dades JSON significa convertir una cadena JSON en objectes Dart. En Dart, podem utilitzar la biblioteca <code>dart:convert</code> per a aquesta tasca.</p>
+</div><h2>Exemple Pràctic</h2>
+<div class='content'><p>Suposem que tenim la següent cadena JSON:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJub20iOiAiSm9hbiIsCiAgImVkYXQiOiAzMCwKICAiY29ycmV1IjogImpvYW5AZXhhbXBsZS5jb20iLAogICJpbnRlcmVzc29zIjogWyJwcm9ncmFtYWNpw7MiLCAibGVjdHVyYSIsICJlc3BvcnRzIl0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;nom&quot;: &quot;Joan&quot;,
+  &quot;edat&quot;: 30,
+  &quot;correu&quot;: &quot;joan@example.com&quot;,
+  &quot;interessos&quot;: [&quot;programaci&oacute;&quot;, &quot;lectura&quot;, &quot;esports&quot;]
+}</pre></div><div class='content'><p>Podem deserialitzar aquesta cadena en un objecte Dart de la següent manera:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0ICdkYXJ0OmNvbnZlcnQnOwoKdm9pZCBtYWluKCkgewogIFN0cmluZyBqc29uU3RyaW5nID0gJycnCiAgewogICAgIm5vbSI6ICJKb2FuIiwKICAgICJlZGF0IjogMzAsCiAgICAiY29ycmV1IjogImpvYW5AZXhhbXBsZS5jb20iLAogICAgImludGVyZXNzb3MiOiBbInByb2dyYW1hY2nDsyIsICJsZWN0dXJhIiwgImVzcG9ydHMiXQogIH0KICAnJyc7CgogIE1hcDxTdHJpbmcsIGR5bmFtaWM+IHVzZXIgPSBqc29uRGVjb2RlKGpzb25TdHJpbmcpOwoKICBwcmludCgnTm9tOiAke3VzZXJbJ25vbSddfScpOwogIHByaW50KCdFZGF0OiAke3VzZXJbJ2VkYXQnXX0nKTsKICBwcmludCgnQ29ycmV1OiAke3VzZXJbJ2NvcnJldSddfScpOwogIHByaW50KCdJbnRlcmVzc29zOiAke3VzZXJbJ2ludGVyZXNzb3MnXX0nKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import 'dart:convert';
+
+void main() {
+  String jsonString = '''
+  {
+    &quot;nom&quot;: &quot;Joan&quot;,
+    &quot;edat&quot;: 30,
+    &quot;correu&quot;: &quot;joan@example.com&quot;,
+    &quot;interessos&quot;: [&quot;programaci&oacute;&quot;, &quot;lectura&quot;, &quot;esports&quot;]
+  }
+  ''';
+
+  Map&lt;String, dynamic&gt; user = jsonDecode(jsonString);
+
+  print('Nom: ${user['nom']}');
+  print('Edat: ${user['edat']}');
+  print('Correu: ${user['correu']}');
+  print('Interessos: ${user['interessos']}');
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>jsonDecode</code> és una funció de la biblioteca <code>dart:convert</code> que converteix una cadena JSON en un objecte Dart.</li>
+<li>El resultat és un <code>Map&lt;String, dynamic&gt;</code> on les claus són cadenes i els valors poden ser de qualsevol tipus.</li>
+</ul>
+</div><h1>Serialitzar Objectes Dart en JSON</h1>
+<div class='content'><p>Serialitzar objectes Dart en JSON significa convertir objectes Dart en una cadena JSON. També podem utilitzar la biblioteca <code>dart:convert</code> per a aquesta tasca.</p>
+</div><h2>Exemple Pràctic</h2>
+<div class='content'><p>Suposem que tenim el següent objecte Dart:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("TWFwPFN0cmluZywgZHluYW1pYz4gdXNlciA9IHsKICAnbm9tJzogJ0pvYW4nLAogICdlZGF0JzogMzAsCiAgJ2NvcnJldSc6ICdqb2FuQGV4YW1wbGUuY29tJywKICAnaW50ZXJlc3Nvcyc6IFsncHJvZ3JhbWFjacOzJywgJ2xlY3R1cmEnLCAnZXNwb3J0cyddCn07"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Map&lt;String, dynamic&gt; user = {
+  'nom': 'Joan',
+  'edat': 30,
+  'correu': 'joan@example.com',
+  'interessos': ['programaci&oacute;', 'lectura', 'esports']
+};</pre></div><div class='content'><p>Podem serialitzar aquest objecte en una cadena JSON de la següent manera:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0ICdkYXJ0OmNvbnZlcnQnOwoKdm9pZCBtYWluKCkgewogIE1hcDxTdHJpbmcsIGR5bmFtaWM+IHVzZXIgPSB7CiAgICAnbm9tJzogJ0pvYW4nLAogICAgJ2VkYXQnOiAzMCwKICAgICdjb3JyZXUnOiAnam9hbkBleGFtcGxlLmNvbScsCiAgICAnaW50ZXJlc3Nvcyc6IFsncHJvZ3JhbWFjacOzJywgJ2xlY3R1cmEnLCAnZXNwb3J0cyddCiAgfTsKCiAgU3RyaW5nIGpzb25TdHJpbmcgPSBqc29uRW5jb2RlKHVzZXIpOwoKICBwcmludChqc29uU3RyaW5nKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import 'dart:convert';
+
+void main() {
+  Map&lt;String, dynamic&gt; user = {
+    'nom': 'Joan',
+    'edat': 30,
+    'correu': 'joan@example.com',
+    'interessos': ['programaci&oacute;', 'lectura', 'esports']
+  };
+
+  String jsonString = jsonEncode(user);
+
+  print(jsonString);
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>jsonEncode</code> és una funció de la biblioteca <code>dart:convert</code> que converteix un objecte Dart en una cadena JSON.</li>
+</ul>
+</div><h1>Treballar amb Dades JSON Complexes</h1>
+<div class='content'><p>Quan treballem amb dades JSON complexes, és útil definir classes per representar les dades i utilitzar constructors i mètodes de fàbrica per a la deserialització i la serialització.</p>
+</div><h2>Exemple Pràctic</h2>
+<div class='content'><p>Suposem que tenim la següent cadena JSON:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJub20iOiAiSm9hbiIsCiAgImVkYXQiOiAzMCwKICAiY29ycmV1IjogImpvYW5AZXhhbXBsZS5jb20iLAogICJpbnRlcmVzc29zIjogWyJwcm9ncmFtYWNpw7MiLCAibGVjdHVyYSIsICJlc3BvcnRzIl0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;nom&quot;: &quot;Joan&quot;,
+  &quot;edat&quot;: 30,
+  &quot;correu&quot;: &quot;joan@example.com&quot;,
+  &quot;interessos&quot;: [&quot;programaci&oacute;&quot;, &quot;lectura&quot;, &quot;esports&quot;]
+}</pre></div><div class='content'><p>Podem definir una classe <code>User</code> per representar aquestes dades:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0ICdkYXJ0OmNvbnZlcnQnOwoKY2xhc3MgVXNlciB7CiAgU3RyaW5nIG5vbTsKICBpbnQgZWRhdDsKICBTdHJpbmcgY29ycmV1OwogIExpc3Q8U3RyaW5nPiBpbnRlcmVzc29zOwoKICBVc2VyKHtyZXF1aXJlZCB0aGlzLm5vbSwgcmVxdWlyZWQgdGhpcy5lZGF0LCByZXF1aXJlZCB0aGlzLmNvcnJldSwgcmVxdWlyZWQgdGhpcy5pbnRlcmVzc29zfSk7CgogIGZhY3RvcnkgVXNlci5mcm9tSnNvbihNYXA8U3RyaW5nLCBkeW5hbWljPiBqc29uKSB7CiAgICByZXR1cm4gVXNlcigKICAgICAgbm9tOiBqc29uWydub20nXSwKICAgICAgZWRhdDoganNvblsnZWRhdCddLAogICAgICBjb3JyZXU6IGpzb25bJ2NvcnJldSddLAogICAgICBpbnRlcmVzc29zOiBMaXN0PFN0cmluZz4uZnJvbShqc29uWydpbnRlcmVzc29zJ10pLAogICAgKTsKICB9CgogIE1hcDxTdHJpbmcsIGR5bmFtaWM+IHRvSnNvbigpIHsKICAgIHJldHVybiB7CiAgICAgICdub20nOiBub20sCiAgICAgICdlZGF0JzogZWRhdCwKICAgICAgJ2NvcnJldSc6IGNvcnJldSwKICAgICAgJ2ludGVyZXNzb3MnOiBpbnRlcmVzc29zLAogICAgfTsKICB9Cn0KCnZvaWQgbWFpbigpIHsKICBTdHJpbmcganNvblN0cmluZyA9ICcnJwogIHsKICAgICJub20iOiAiSm9hbiIsCiAgICAiZWRhdCI6IDMwLAogICAgImNvcnJldSI6ICJqb2FuQGV4YW1wbGUuY29tIiwKICAgICJpbnRlcmVzc29zIjogWyJwcm9ncmFtYWNpw7MiLCAibGVjdHVyYSIsICJlc3BvcnRzIl0KICB9CiAgJycnOwoKICAvLyBEZXNlcmlhbGl0emFyCiAgTWFwPFN0cmluZywgZHluYW1pYz4gdXNlck1hcCA9IGpzb25EZWNvZGUoanNvblN0cmluZyk7CiAgVXNlciB1c2VyID0gVXNlci5mcm9tSnNvbih1c2VyTWFwKTsKCiAgcHJpbnQoJ05vbTogJHt1c2VyLm5vbX0nKTsKICBwcmludCgnRWRhdDogJHt1c2VyLmVkYXR9Jyk7CiAgcHJpbnQoJ0NvcnJldTogJHt1c2VyLmNvcnJldX0nKTsKICBwcmludCgnSW50ZXJlc3NvczogJHt1c2VyLmludGVyZXNzb3N9Jyk7CgogIC8vIFNlcmlhbGl0emFyCiAgU3RyaW5nIGpzb24gPSBqc29uRW5jb2RlKHVzZXIpOwogIHByaW50KCdKU09OOiAkanNvbicpOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import 'dart:convert';
+
+class User {
+  String nom;
+  int edat;
+  String correu;
+  List&lt;String&gt; interessos;
+
+  User({required this.nom, required this.edat, required this.correu, required this.interessos});
+
+  factory User.fromJson(Map&lt;String, dynamic&gt; json) {
+    return User(
+      nom: json['nom'],
+      edat: json['edat'],
+      correu: json['correu'],
+      interessos: List&lt;String&gt;.from(json['interessos']),
+    );
+  }
+
+  Map&lt;String, dynamic&gt; toJson() {
+    return {
+      'nom': nom,
+      'edat': edat,
+      'correu': correu,
+      'interessos': interessos,
+    };
+  }
+}
+
+void main() {
+  String jsonString = '''
+  {
+    &quot;nom&quot;: &quot;Joan&quot;,
+    &quot;edat&quot;: 30,
+    &quot;correu&quot;: &quot;joan@example.com&quot;,
+    &quot;interessos&quot;: [&quot;programaci&oacute;&quot;, &quot;lectura&quot;, &quot;esports&quot;]
+  }
+  ''';
+
+  // Deserialitzar
+  Map&lt;String, dynamic&gt; userMap = jsonDecode(jsonString);
+  User user = User.fromJson(userMap);
+
+  print('Nom: ${user.nom}');
+  print('Edat: ${user.edat}');
+  print('Correu: ${user.correu}');
+  print('Interessos: ${user.interessos}');
+
+  // Serialitzar
+  String json = jsonEncode(user);
+  print('JSON: $json');
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li>La classe <code>User</code> té un constructor per inicialitzar les propietats.</li>
+<li>El mètode de fàbrica <code>fromJson</code> crea una instància de <code>User</code> a partir d'un <code>Map&lt;String, dynamic&gt;</code>.</li>
+<li>El mètode <code>toJson</code> converteix una instància de <code>User</code> en un <code>Map&lt;String, dynamic&gt;</code>.</li>
+</ul>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1</h2>
+<div class='content'><p>Deserialitza la següent cadena JSON en un objecte Dart i imprimeix les seves propietats:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJ0w610b2wiOiAiRmx1dHRlciBwZXIgYSBQcmluY2lwaWFudHMiLAogICJhdXRvciI6ICJBbm5hIiwKICAicMOgZ2luZXMiOiAyMDAsCiAgInRlbWVzIjogWyJGbHV0dGVyIiwgIkRhcnQiLCAiUHJvZ3JhbWFjacOzIl0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;t&iacute;tol&quot;: &quot;Flutter per a Principiants&quot;,
+  &quot;autor&quot;: &quot;Anna&quot;,
+  &quot;p&agrave;gines&quot;: 200,
+  &quot;temes&quot;: [&quot;Flutter&quot;, &quot;Dart&quot;, &quot;Programaci&oacute;&quot;]
+}</pre></div><div class='content'></div><h2>Solució</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0ICdkYXJ0OmNvbnZlcnQnOwoKdm9pZCBtYWluKCkgewogIFN0cmluZyBqc29uU3RyaW5nID0gJycnCiAgewogICAgInTDrXRvbCI6ICJGbHV0dGVyIHBlciBhIFByaW5jaXBpYW50cyIsCiAgICAiYXV0b3IiOiAiQW5uYSIsCiAgICAicMOgZ2luZXMiOiAyMDAsCiAgICAidGVtZXMiOiBbIkZsdXR0ZXIiLCAiRGFydCIsICJQcm9ncmFtYWNpw7MiXQogIH0KICAnJyc7CgogIE1hcDxTdHJpbmcsIGR5bmFtaWM+IGJvb2sgPSBqc29uRGVjb2RlKGpzb25TdHJpbmcpOwoKICBwcmludCgnVMOtdG9sOiAke2Jvb2tbJ3TDrXRvbCddfScpOwogIHByaW50KCdBdXRvcjogJHtib29rWydhdXRvciddfScpOwogIHByaW50KCdQw6BnaW5lczogJHtib29rWydww6BnaW5lcyddfScpOwogIHByaW50KCdUZW1lczogJHtib29rWyd0ZW1lcyddfScpOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import 'dart:convert';
+
+void main() {
+  String jsonString = '''
+  {
+    &quot;t&iacute;tol&quot;: &quot;Flutter per a Principiants&quot;,
+    &quot;autor&quot;: &quot;Anna&quot;,
+    &quot;p&agrave;gines&quot;: 200,
+    &quot;temes&quot;: [&quot;Flutter&quot;, &quot;Dart&quot;, &quot;Programaci&oacute;&quot;]
+  }
+  ''';
+
+  Map&lt;String, dynamic&gt; book = jsonDecode(jsonString);
+
+  print('T&iacute;tol: ${book['t&iacute;tol']}');
+  print('Autor: ${book['autor']}');
+  print('P&agrave;gines: ${book['p&agrave;gines']}');
+  print('Temes: ${book['temes']}');
+}</pre></div><div class='content'></div><h2>Exercici 2</h2>
+<div class='content'><p>Defineix una classe <code>Book</code> per representar les dades del llibre i implementa els mètodes <code>fromJson</code> i <code>toJson</code>.</p>
+</div><h2>Solució</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0ICdkYXJ0OmNvbnZlcnQnOwoKY2xhc3MgQm9vayB7CiAgU3RyaW5nIHTDrXRvbDsKICBTdHJpbmcgYXV0b3I7CiAgaW50IHDDoGdpbmVzOwogIExpc3Q8U3RyaW5nPiB0ZW1lczsKCiAgQm9vayh7cmVxdWlyZWQgdGhpcy50w610b2wsIHJlcXVpcmVkIHRoaXMuYXV0b3IsIHJlcXVpcmVkIHRoaXMucMOgZ2luZXMsIHJlcXVpcmVkIHRoaXMudGVtZXN9KTsKCiAgZmFjdG9yeSBCb29rLmZyb21Kc29uKE1hcDxTdHJpbmcsIGR5bmFtaWM+IGpzb24pIHsKICAgIHJldHVybiBCb29rKAogICAgICB0w610b2w6IGpzb25bJ3TDrXRvbCddLAogICAgICBhdXRvcjoganNvblsnYXV0b3InXSwKICAgICAgcMOgZ2luZXM6IGpzb25bJ3DDoGdpbmVzJ10sCiAgICAgIHRlbWVzOiBMaXN0PFN0cmluZz4uZnJvbShqc29uWyd0ZW1lcyddKSwKICAgICk7CiAgfQoKICBNYXA8U3RyaW5nLCBkeW5hbWljPiB0b0pzb24oKSB7CiAgICByZXR1cm4gewogICAgICAndMOtdG9sJzogdMOtdG9sLAogICAgICAnYXV0b3InOiBhdXRvciwKICAgICAgJ3DDoGdpbmVzJzogcMOgZ2luZXMsCiAgICAgICd0ZW1lcyc6IHRlbWVzLAogICAgfTsKICB9Cn0KCnZvaWQgbWFpbigpIHsKICBTdHJpbmcganNvblN0cmluZyA9ICcnJwogIHsKICAgICJ0w610b2wiOiAiRmx1dHRlciBwZXIgYSBQcmluY2lwaWFudHMiLAogICAgImF1dG9yIjogIkFubmEiLAogICAgInDDoGdpbmVzIjogMjAwLAogICAgInRlbWVzIjogWyJGbHV0dGVyIiwgIkRhcnQiLCAiUHJvZ3JhbWFjacOzIl0KICB9CiAgJycnOwoKICAvLyBEZXNlcmlhbGl0emFyCiAgTWFwPFN0cmluZywgZHluYW1pYz4gYm9va01hcCA9IGpzb25EZWNvZGUoanNvblN0cmluZyk7CiAgQm9vayBib29rID0gQm9vay5mcm9tSnNvbihib29rTWFwKTsKCiAgcHJpbnQoJ1TDrXRvbDogJHtib29rLnTDrXRvbH0nKTsKICBwcmludCgnQXV0b3I6ICR7Ym9vay5hdXRvcn0nKTsKICBwcmludCgnUMOgZ2luZXM6ICR7Ym9vay5ww6BnaW5lc30nKTsKICBwcmludCgnVGVtZXM6ICR7Ym9vay50ZW1lc30nKTsKCiAgLy8gU2VyaWFsaXR6YXIKICBTdHJpbmcganNvbiA9IGpzb25FbmNvZGUoYm9vayk7CiAgcHJpbnQoJ0pTT046ICRqc29uJyk7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import 'dart:convert';
+
+class Book {
+  String t&iacute;tol;
+  String autor;
+  int p&agrave;gines;
+  List&lt;String&gt; temes;
+
+  Book({required this.t&iacute;tol, required this.autor, required this.p&agrave;gines, required this.temes});
+
+  factory Book.fromJson(Map&lt;String, dynamic&gt; json) {
+    return Book(
+      t&iacute;tol: json['t&iacute;tol'],
+      autor: json['autor'],
+      p&agrave;gines: json['p&agrave;gines'],
+      temes: List&lt;String&gt;.from(json['temes']),
+    );
+  }
+
+  Map&lt;String, dynamic&gt; toJson() {
+    return {
+      't&iacute;tol': t&iacute;tol,
+      'autor': autor,
+      'p&agrave;gines': p&agrave;gines,
+      'temes': temes,
+    };
+  }
+}
+
+void main() {
+  String jsonString = '''
+  {
+    &quot;t&iacute;tol&quot;: &quot;Flutter per a Principiants&quot;,
+    &quot;autor&quot;: &quot;Anna&quot;,
+    &quot;p&agrave;gines&quot;: 200,
+    &quot;temes&quot;: [&quot;Flutter&quot;, &quot;Dart&quot;, &quot;Programaci&oacute;&quot;]
+  }
+  ''';
+
+  // Deserialitzar
+  Map&lt;String, dynamic&gt; bookMap = jsonDecode(jsonString);
+  Book book = Book.fromJson(bookMap);
+
+  print('T&iacute;tol: ${book.t&iacute;tol}');
+  print('Autor: ${book.autor}');
+  print('P&agrave;gines: ${book.p&agrave;gines}');
+  print('Temes: ${book.temes}');
+
+  // Serialitzar
+  String json = jsonEncode(book);
+  print('JSON: $json');
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com treballar amb dades JSON en Flutter utilitzant Dart. Hem vist com deserialitzar i serialitzar dades JSON, així com treballar amb dades JSON complexes mitjançant la definició de classes. Aquestes habilitats són essencials per a la majoria de les aplicacions modernes que necessiten intercanviar dades amb un servidor.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-fetching-data-from-internet' title="Obtenir Dades d'Internet">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-handling-network-errors' title="Gestió d'Errors de Xarxa">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

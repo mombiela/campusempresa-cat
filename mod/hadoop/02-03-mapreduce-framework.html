@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marc MapReduce</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/hadoop/02-03-mapreduce-framework" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/hadoop/02-03-mapreduce-framework" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/hadoop/02-03-mapreduce-framework" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/hadoop/02-03-mapreduce-framework" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/hadoop/02-03-mapreduce-framework" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-02-hdfs' title="HDFS (Sistema de fitxers distribuït de Hadoop)">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Marc MapReduce</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-04-yarn' title="YARN (Yet Another Resource Negotiator)">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>El Marc MapReduce és un dels components fonamentals de l'ecosistema Hadoop. És un model de programació i una plataforma de processament que permet processar grans volums de dades de manera distribuïda i paral·lela. En aquesta secció, explorarem els conceptes clau del Marc MapReduce, la seva arquitectura, i com escriure i executar programes MapReduce.</p>
+</div><h1>Conceptes Clau de MapReduce</h1>
+<div class='content'></div><h2>1. Model de Programació</h2>
+<div class='content'><p>MapReduce es basa en dos passos principals:</p>
+<ul>
+<li><strong>Map</strong>: Aquest pas pren un conjunt de dades d'entrada i el transforma en un conjunt de parells clau-valor intermedi.</li>
+<li><strong>Reduce</strong>: Aquest pas pren els parells clau-valor intermedis generats pel pas Map i els combina per produir un conjunt de resultats finals.</li>
+</ul>
+</div><h2>2. Funcions Map i Reduce</h2>
+<div class='content'><ul>
+<li><strong>Funció Map</strong>: Processa un registre d'entrada a la vegada i genera zero o més parells clau-valor intermedis.</li>
+<li><strong>Funció Reduce</strong>: Agrega els parells clau-valor intermedis amb la mateixa clau i genera el resultat final.</li>
+</ul>
+</div><h2>3. Divisió de Treball</h2>
+<div class='content'><p>MapReduce divideix el treball en tasques més petites que es poden executar en paral·lel en diferents nodes del clúster Hadoop.</p>
+</div><h1>Arquitectura de MapReduce</h1>
+<div class='content'></div><h2>Components Principals</h2>
+<div class='content'><ul>
+<li><strong>JobTracker</strong>: Coordina la distribució de les tasques Map i Reduce als nodes del clúster.</li>
+<li><strong>TaskTracker</strong>: Executa les tasques Map i Reduce assignades pel JobTracker.</li>
+<li><strong>InputFormat</strong>: Defineix com es llegeixen les dades d'entrada.</li>
+<li><strong>OutputFormat</strong>: Defineix com s'escriuen les dades de sortida.</li>
+</ul>
+</div><h2>Flux de Treball de MapReduce</h2>
+<div class='content'><ol>
+<li><strong>Divisió de Dades</strong>: Les dades d'entrada es divideixen en fragments més petits.</li>
+<li><strong>Assignació de Tasques</strong>: El JobTracker assigna tasques Map als TaskTrackers.</li>
+<li><strong>Execució de Map</strong>: Els TaskTrackers executen les tasques Map i generen parells clau-valor intermedis.</li>
+<li><strong>Partició i Ordenació</strong>: Els parells clau-valor intermedis es particionen i ordenen per clau.</li>
+<li><strong>Assignació de Tasques Reduce</strong>: El JobTracker assigna tasques Reduce als TaskTrackers.</li>
+<li><strong>Execució de Reduce</strong>: Els TaskTrackers executen les tasques Reduce i generen els resultats finals.</li>
+</ol>
+</div><h1>Exemple Pràctic: Programa MapReduce</h1>
+<div class='content'></div><h2>Problema: Comptar la freqüència de paraules en un conjunt de documents</h2>
+<div class='content'><h4>1. Funció Map</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEuaW8uSU9FeGNlcHRpb247CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5pby5JbnRXcml0YWJsZTsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmlvLkxvbmdXcml0YWJsZTsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmlvLlRleHQ7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5tYXByZWR1Y2UuTWFwcGVyOwoKcHVibGljIGNsYXNzIFdvcmRDb3VudE1hcHBlciBleHRlbmRzIE1hcHBlcjxMb25nV3JpdGFibGUsIFRleHQsIFRleHQsIEludFdyaXRhYmxlPiB7CiAgICBwcml2YXRlIGZpbmFsIHN0YXRpYyBJbnRXcml0YWJsZSBvbmUgPSBuZXcgSW50V3JpdGFibGUoMSk7CiAgICBwcml2YXRlIFRleHQgd29yZCA9IG5ldyBUZXh0KCk7CgogICAgcHVibGljIHZvaWQgbWFwKExvbmdXcml0YWJsZSBrZXksIFRleHQgdmFsdWUsIENvbnRleHQgY29udGV4dCkgdGhyb3dzIElPRXhjZXB0aW9uLCBJbnRlcnJ1cHRlZEV4Y2VwdGlvbiB7CiAgICAgICAgU3RyaW5nW10gd29yZHMgPSB2YWx1ZS50b1N0cmluZygpLnNwbGl0KCJcXHMrIik7CiAgICAgICAgZm9yIChTdHJpbmcgc3RyIDogd29yZHMpIHsKICAgICAgICAgICAgd29yZC5zZXQoc3RyKTsKICAgICAgICAgICAgY29udGV4dC53cml0ZSh3b3JkLCBvbmUpOwogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.io.IOException;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+public class WordCountMapper extends Mapper&lt;LongWritable, Text, Text, IntWritable&gt; {
+    private final static IntWritable one = new IntWritable(1);
+    private Text word = new Text();
+
+    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+        String[] words = value.toString().split(&quot;\\s+&quot;);
+        for (String str : words) {
+            word.set(str);
+            context.write(word, one);
+        }
+    }
+}</pre></div><div class='content'><p><strong>Explicació</strong>:</p>
+<ul>
+<li><strong>Entrada</strong>: Clau (offset del fitxer), Valor (línia de text).</li>
+<li><strong>Sortida</strong>: Clau (paraula), Valor (1).</li>
+</ul>
+<h4>2. Funció Reduce</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEuaW8uSU9FeGNlcHRpb247CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5pby5JbnRXcml0YWJsZTsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmlvLlRleHQ7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5tYXByZWR1Y2UuUmVkdWNlcjsKCnB1YmxpYyBjbGFzcyBXb3JkQ291bnRSZWR1Y2VyIGV4dGVuZHMgUmVkdWNlcjxUZXh0LCBJbnRXcml0YWJsZSwgVGV4dCwgSW50V3JpdGFibGU+IHsKICAgIHB1YmxpYyB2b2lkIHJlZHVjZShUZXh0IGtleSwgSXRlcmFibGU8SW50V3JpdGFibGU+IHZhbHVlcywgQ29udGV4dCBjb250ZXh0KSB0aHJvd3MgSU9FeGNlcHRpb24sIEludGVycnVwdGVkRXhjZXB0aW9uIHsKICAgICAgICBpbnQgc3VtID0gMDsKICAgICAgICBmb3IgKEludFdyaXRhYmxlIHZhbCA6IHZhbHVlcykgewogICAgICAgICAgICBzdW0gKz0gdmFsLmdldCgpOwogICAgICAgIH0KICAgICAgICBjb250ZXh0LndyaXRlKGtleSwgbmV3IEludFdyaXRhYmxlKHN1bSkpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.io.IOException;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
+public class WordCountReducer extends Reducer&lt;Text, IntWritable, Text, IntWritable&gt; {
+    public void reduce(Text key, Iterable&lt;IntWritable&gt; values, Context context) throws IOException, InterruptedException {
+        int sum = 0;
+        for (IntWritable val : values) {
+            sum += val.get();
+        }
+        context.write(key, new IntWritable(sum));
+    }
+}</pre></div><div class='content'><p><strong>Explicació</strong>:</p>
+<ul>
+<li><strong>Entrada</strong>: Clau (paraula), Valor (iterable d'1s).</li>
+<li><strong>Sortida</strong>: Clau (paraula), Valor (comptador total).</li>
+</ul>
+<h4>3. Programa Principal</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmNvbmYuQ29uZmlndXJhdGlvbjsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmZzLlBhdGg7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5pby5JbnRXcml0YWJsZTsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmlvLlRleHQ7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5tYXByZWR1Y2UuSm9iOwppbXBvcnQgb3JnLmFwYWNoZS5oYWRvb3AubWFwcmVkdWNlLmxpYi5pbnB1dC5GaWxlSW5wdXRGb3JtYXQ7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5tYXByZWR1Y2UubGliLm91dHB1dC5GaWxlT3V0cHV0Rm9ybWF0OwoKcHVibGljIGNsYXNzIFdvcmRDb3VudCB7CiAgICBwdWJsaWMgc3RhdGljIHZvaWQgbWFpbihTdHJpbmdbXSBhcmdzKSB0aHJvd3MgRXhjZXB0aW9uIHsKICAgICAgICBDb25maWd1cmF0aW9uIGNvbmYgPSBuZXcgQ29uZmlndXJhdGlvbigpOwogICAgICAgIEpvYiBqb2IgPSBKb2IuZ2V0SW5zdGFuY2UoY29uZiwgIndvcmQgY291bnQiKTsKICAgICAgICBqb2Iuc2V0SmFyQnlDbGFzcyhXb3JkQ291bnQuY2xhc3MpOwogICAgICAgIGpvYi5zZXRNYXBwZXJDbGFzcyhXb3JkQ291bnRNYXBwZXIuY2xhc3MpOwogICAgICAgIGpvYi5zZXRDb21iaW5lckNsYXNzKFdvcmRDb3VudFJlZHVjZXIuY2xhc3MpOwogICAgICAgIGpvYi5zZXRSZWR1Y2VyQ2xhc3MoV29yZENvdW50UmVkdWNlci5jbGFzcyk7CiAgICAgICAgam9iLnNldE91dHB1dEtleUNsYXNzKFRleHQuY2xhc3MpOwogICAgICAgIGpvYi5zZXRPdXRwdXRWYWx1ZUNsYXNzKEludFdyaXRhYmxlLmNsYXNzKTsKICAgICAgICBGaWxlSW5wdXRGb3JtYXQuYWRkSW5wdXRQYXRoKGpvYiwgbmV3IFBhdGgoYXJnc1swXSkpOwogICAgICAgIEZpbGVPdXRwdXRGb3JtYXQuc2V0T3V0cHV0UGF0aChqb2IsIG5ldyBQYXRoKGFyZ3NbMV0pKTsKICAgICAgICBTeXN0ZW0uZXhpdChqb2Iud2FpdEZvckNvbXBsZXRpb24odHJ1ZSkgPyAwIDogMSk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class WordCount {
+    public static void main(String[] args) throws Exception {
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, &quot;word count&quot;);
+        job.setJarByClass(WordCount.class);
+        job.setMapperClass(WordCountMapper.class);
+        job.setCombinerClass(WordCountReducer.class);
+        job.setReducerClass(WordCountReducer.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
+    }
+}</pre></div><div class='content'><p><strong>Explicació</strong>:</p>
+<ul>
+<li><strong>Configuració del Job</strong>: Es defineixen les classes Mapper, Reducer, i les rutes d'entrada i sortida.</li>
+</ul>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici: Comptar la freqüència de caràcters en un conjunt de documents</h2>
+<div class='content'><h4>1. Escriu la funció Map</h4>
+<ul>
+<li><strong>Entrada</strong>: Clau (offset del fitxer), Valor (línia de text).</li>
+<li><strong>Sortida</strong>: Clau (caràcter), Valor (1).</li>
+</ul>
+<h4>2. Escriu la funció Reduce</h4>
+<ul>
+<li><strong>Entrada</strong>: Clau (caràcter), Valor (iterable d'1s).</li>
+<li><strong>Sortida</strong>: Clau (caràcter), Valor (comptador total).</li>
+</ul>
+<h4>3. Escriu el programa principal</h4>
+<ul>
+<li>Configura el Job per utilitzar les funcions Map i Reduce que has escrit.</li>
+</ul>
+</div><h2>Solució</h2>
+<div class='content'><h4>Funció Map</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEuaW8uSU9FeGNlcHRpb247CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5pby5JbnRXcml0YWJsZTsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmlvLkxvbmdXcml0YWJsZTsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmlvLlRleHQ7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5tYXByZWR1Y2UuTWFwcGVyOwoKcHVibGljIGNsYXNzIENoYXJDb3VudE1hcHBlciBleHRlbmRzIE1hcHBlcjxMb25nV3JpdGFibGUsIFRleHQsIFRleHQsIEludFdyaXRhYmxlPiB7CiAgICBwcml2YXRlIGZpbmFsIHN0YXRpYyBJbnRXcml0YWJsZSBvbmUgPSBuZXcgSW50V3JpdGFibGUoMSk7CiAgICBwcml2YXRlIFRleHQgY2hhcmFjdGVyID0gbmV3IFRleHQoKTsKCiAgICBwdWJsaWMgdm9pZCBtYXAoTG9uZ1dyaXRhYmxlIGtleSwgVGV4dCB2YWx1ZSwgQ29udGV4dCBjb250ZXh0KSB0aHJvd3MgSU9FeGNlcHRpb24sIEludGVycnVwdGVkRXhjZXB0aW9uIHsKICAgICAgICBjaGFyW10gY2hhcnMgPSB2YWx1ZS50b1N0cmluZygpLnRvQ2hhckFycmF5KCk7CiAgICAgICAgZm9yIChjaGFyIGMgOiBjaGFycykgewogICAgICAgICAgICBjaGFyYWN0ZXIuc2V0KENoYXJhY3Rlci50b1N0cmluZyhjKSk7CiAgICAgICAgICAgIGNvbnRleHQud3JpdGUoY2hhcmFjdGVyLCBvbmUpOwogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.io.IOException;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+public class CharCountMapper extends Mapper&lt;LongWritable, Text, Text, IntWritable&gt; {
+    private final static IntWritable one = new IntWritable(1);
+    private Text character = new Text();
+
+    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+        char[] chars = value.toString().toCharArray();
+        for (char c : chars) {
+            character.set(Character.toString(c));
+            context.write(character, one);
+        }
+    }
+}</pre></div><div class='content'><h4>Funció Reduce</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEuaW8uSU9FeGNlcHRpb247CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5pby5JbnRXcml0YWJsZTsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmlvLlRleHQ7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5tYXByZWR1Y2UuUmVkdWNlcjsKCnB1YmxpYyBjbGFzcyBDaGFyQ291bnRSZWR1Y2VyIGV4dGVuZHMgUmVkdWNlcjxUZXh0LCBJbnRXcml0YWJsZSwgVGV4dCwgSW50V3JpdGFibGU+IHsKICAgIHB1YmxpYyB2b2lkIHJlZHVjZShUZXh0IGtleSwgSXRlcmFibGU8SW50V3JpdGFibGU+IHZhbHVlcywgQ29udGV4dCBjb250ZXh0KSB0aHJvd3MgSU9FeGNlcHRpb24sIEludGVycnVwdGVkRXhjZXB0aW9uIHsKICAgICAgICBpbnQgc3VtID0gMDsKICAgICAgICBmb3IgKEludFdyaXRhYmxlIHZhbCA6IHZhbHVlcykgewogICAgICAgICAgICBzdW0gKz0gdmFsLmdldCgpOwogICAgICAgIH0KICAgICAgICBjb250ZXh0LndyaXRlKGtleSwgbmV3IEludFdyaXRhYmxlKHN1bSkpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.io.IOException;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
+public class CharCountReducer extends Reducer&lt;Text, IntWritable, Text, IntWritable&gt; {
+    public void reduce(Text key, Iterable&lt;IntWritable&gt; values, Context context) throws IOException, InterruptedException {
+        int sum = 0;
+        for (IntWritable val : values) {
+            sum += val.get();
+        }
+        context.write(key, new IntWritable(sum));
+    }
+}</pre></div><div class='content'><h4>Programa Principal</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmNvbmYuQ29uZmlndXJhdGlvbjsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmZzLlBhdGg7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5pby5JbnRXcml0YWJsZTsKaW1wb3J0IG9yZy5hcGFjaGUuaGFkb29wLmlvLlRleHQ7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5tYXByZWR1Y2UuSm9iOwppbXBvcnQgb3JnLmFwYWNoZS5oYWRvb3AubWFwcmVkdWNlLmxpYi5pbnB1dC5GaWxlSW5wdXRGb3JtYXQ7CmltcG9ydCBvcmcuYXBhY2hlLmhhZG9vcC5tYXByZWR1Y2UubGliLm91dHB1dC5GaWxlT3V0cHV0Rm9ybWF0OwoKcHVibGljIGNsYXNzIENoYXJDb3VudCB7CiAgICBwdWJsaWMgc3RhdGljIHZvaWQgbWFpbihTdHJpbmdbXSBhcmdzKSB0aHJvd3MgRXhjZXB0aW9uIHsKICAgICAgICBDb25maWd1cmF0aW9uIGNvbmYgPSBuZXcgQ29uZmlndXJhdGlvbigpOwogICAgICAgIEpvYiBqb2IgPSBKb2IuZ2V0SW5zdGFuY2UoY29uZiwgImNoYXIgY291bnQiKTsKICAgICAgICBqb2Iuc2V0SmFyQnlDbGFzcyhDaGFyQ291bnQuY2xhc3MpOwogICAgICAgIGpvYi5zZXRNYXBwZXJDbGFzcyhDaGFyQ291bnRNYXBwZXIuY2xhc3MpOwogICAgICAgIGpvYi5zZXRDb21iaW5lckNsYXNzKENoYXJDb3VudFJlZHVjZXIuY2xhc3MpOwogICAgICAgIGpvYi5zZXRSZWR1Y2VyQ2xhc3MoQ2hhckNvdW50UmVkdWNlci5jbGFzcyk7CiAgICAgICAgam9iLnNldE91dHB1dEtleUNsYXNzKFRleHQuY2xhc3MpOwogICAgICAgIGpvYi5zZXRPdXRwdXRWYWx1ZUNsYXNzKEludFdyaXRhYmxlLmNsYXNzKTsKICAgICAgICBGaWxlSW5wdXRGb3JtYXQuYWRkSW5wdXRQYXRoKGpvYiwgbmV3IFBhdGgoYXJnc1swXSkpOwogICAgICAgIEZpbGVPdXRwdXRGb3JtYXQuc2V0T3V0cHV0UGF0aChqb2IsIG5ldyBQYXRoKGFyZ3NbMV0pKTsKICAgICAgICBTeXN0ZW0uZXhpdChqb2Iud2FpdEZvckNvbXBsZXRpb24odHJ1ZSkgPyAwIDogMSk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class CharCount {
+    public static void main(String[] args) throws Exception {
+        Configuration conf = new Configuration();
+        Job job = Job.getInstance(conf, &quot;char count&quot;);
+        job.setJarByClass(CharCount.class);
+        job.setMapperClass(CharCountMapper.class);
+        job.setCombinerClass(CharCountReducer.class);
+        job.setReducerClass(CharCountReducer.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+        System.exit(job.waitForCompletion(true) ? 0 : 1);
+    }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem explorat el Marc MapReduce, incloent-hi els seus conceptes clau, l'arquitectura i un exemple pràctic de com escriure un programa MapReduce per comptar la freqüència de paraules. També hem proporcionat un exercici pràctic per comptar la freqüència de caràcters, amb la seva solució. Amb aquests coneixements, estàs preparat per començar a escriure els teus propis programes MapReduce i processar grans volums de dades de manera eficient.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-02-hdfs' title="HDFS (Sistema de fitxers distribuït de Hadoop)">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-04-yarn' title="YARN (Yet Another Resource Negotiator)">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

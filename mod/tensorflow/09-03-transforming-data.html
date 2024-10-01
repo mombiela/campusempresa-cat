@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformació de dades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/tensorflow/09-03-transforming-data" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/tensorflow/09-03-transforming-data" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/tensorflow/09-03-transforming-data" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/tensorflow/09-03-transforming-data" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/tensorflow/09-03-transforming-data" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-02-data-validation' title="Validació de dades">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Transformació de dades</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-04-model-analysis' title="Anàlisi de models">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem com transformar dades utilitzant TensorFlow Extended (TFX). La transformació de dades és una part crucial del procés de preparació de dades per a l'entrenament de models de machine learning. Ens permet netejar, normalitzar i augmentar les dades per millorar el rendiment del model.</p>
+</div><h1>Objectius del tema</h1>
+<div class='content'><ul>
+<li>Entendre la importància de la transformació de dades.</li>
+<li>Aprendre a utilitzar <code>tf.Transform</code> per transformar dades.</li>
+<li>Implementar transformacions comunes com la normalització i la codificació.</li>
+<li>Aplicar transformacions a dades d'entrenament i de prova de manera consistent.</li>
+</ul>
+</div><h1>1. Importància de la transformació de dades</h1>
+<div class='content'><p>La transformació de dades és essencial per diverses raons:</p>
+<ul>
+<li><strong>Neteja de dades</strong>: Eliminar valors nuls o erronis.</li>
+<li><strong>Normalització</strong>: Escalar les dades perquè tinguin una distribució uniforme.</li>
+<li><strong>Codificació</strong>: Convertir dades categòriques en un format que els models de machine learning puguin utilitzar.</li>
+<li><strong>Augmentació de dades</strong>: Generar noves mostres a partir de les existents per millorar la generalització del model.</li>
+</ul>
+</div><h1>2. Introducció a `tf.Transform`</h1>
+<div class='content'><p><code>tf.Transform</code> és una biblioteca de TFX que permet definir i aplicar transformacions de dades de manera eficient i consistent. Les transformacions es defineixen en un codi Python i es poden aplicar tant a les dades d'entrenament com a les de prova.</p>
+</div><h2>Instal·lació de `tf.Transform`</h2>
+<div class='content'><p>Abans de començar, assegura't de tenir <code>tf.Transform</code> instal·lat:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgdGVuc29yZmxvdy10cmFuc2Zvcm0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install tensorflow-transform</pre></div><div class='content'></div><h1>3. Definició de transformacions amb `tf.Transform`</h1>
+<div class='content'></div><h2>Exemple de codi: Normalització de dades</h2>
+<div class='content'><p>A continuació, veurem un exemple de com normalitzar dades numèriques utilitzant <code>tf.Transform</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKaW1wb3J0IHRlbnNvcmZsb3dfdHJhbnNmb3JtIGFzIHRmdAppbXBvcnQgdGVuc29yZmxvd190cmFuc2Zvcm0uYmVhbSBhcyB0ZnRfYmVhbQppbXBvcnQgYXBhY2hlX2JlYW0gYXMgYmVhbQoKIyBEZWZpbmltIHVuYSBmdW5jacOzIGRlIHByZXByb2Nlc3NhbWVudApkZWYgcHJlcHJvY2Vzc2luZ19mbihpbnB1dHMpOgogICAgb3V0cHV0cyA9IHt9CiAgICAjIE5vcm1hbGl0emVtIHVuYSBjYXJhY3RlcsOtc3RpY2EgbnVtw6hyaWNhCiAgICBvdXRwdXRzWydub3JtYWxpemVkX2ZlYXR1cmUnXSA9IHRmdC5zY2FsZV90b196X3Njb3JlKGlucHV0c1snZmVhdHVyZSddKQogICAgcmV0dXJuIG91dHB1dHMKCiMgRXhlbXBsZSBkZSBkYWRlcyBkJ2VudHJhZGEKcmF3X2RhdGEgPSBbCiAgICB7J2ZlYXR1cmUnOiAxMC4wfSwKICAgIHsnZmVhdHVyZSc6IDIwLjB9LAogICAgeydmZWF0dXJlJzogMzAuMH0sCl0KCiMgRXNwZWNpZmljYWNpw7MgZGUgbCdlc3F1ZW1hIGRlIGxlcyBkYWRlcwpyYXdfZGF0YV9tZXRhZGF0YSA9IHRmdC50Zl9tZXRhZGF0YS5kYXRhc2V0X21ldGFkYXRhLkRhdGFzZXRNZXRhZGF0YSgKICAgIHRmdC50Zl9tZXRhZGF0YS5zY2hlbWFfdXRpbHMuc2NoZW1hX2Zyb21fZmVhdHVyZV9zcGVjKHsKICAgICAgICAnZmVhdHVyZSc6IHRmLmlvLkZpeGVkTGVuRmVhdHVyZShbXSwgdGYuZmxvYXQzMiksCiAgICB9KQopCgojIEFwbGljYWNpw7MgZGUgbGVzIHRyYW5zZm9ybWFjaW9ucwp3aXRoIGJlYW0uUGlwZWxpbmUoKSBhcyBwaXBlbGluZToKICAgIHdpdGggdGZ0X2JlYW0uQ29udGV4dCh0ZW1wX2Rpcj0nL3RtcCcpOgogICAgICAgIHRyYW5zZm9ybWVkX2RhdGFzZXQsIHRyYW5zZm9ybV9mbiA9ICgKICAgICAgICAgICAgKHJhd19kYXRhLCByYXdfZGF0YV9tZXRhZGF0YSkgfCB0ZnRfYmVhbS5BbmFseXplQW5kVHJhbnNmb3JtRGF0YXNldChwcmVwcm9jZXNzaW5nX2ZuKQogICAgICAgICkKICAgICAgICB0cmFuc2Zvcm1lZF9kYXRhLCB0cmFuc2Zvcm1lZF9tZXRhZGF0YSA9IHRyYW5zZm9ybWVkX2RhdGFzZXQKCiMgTW9zdHJlbSBsZXMgZGFkZXMgdHJhbnNmb3JtYWRlcwpmb3IgZGF0YSBpbiB0cmFuc2Zvcm1lZF9kYXRhOgogICAgcHJpbnQoZGF0YSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+import tensorflow_transform as tft
+import tensorflow_transform.beam as tft_beam
+import apache_beam as beam
+
+# Definim una funci&oacute; de preprocessament
+def preprocessing_fn(inputs):
+    outputs = {}
+    # Normalitzem una caracter&iacute;stica num&egrave;rica
+    outputs['normalized_feature'] = tft.scale_to_z_score(inputs['feature'])
+    return outputs
+
+# Exemple de dades d'entrada
+raw_data = [
+    {'feature': 10.0},
+    {'feature': 20.0},
+    {'feature': 30.0},
+]
+
+# Especificaci&oacute; de l'esquema de les dades
+raw_data_metadata = tft.tf_metadata.dataset_metadata.DatasetMetadata(
+    tft.tf_metadata.schema_utils.schema_from_feature_spec({
+        'feature': tf.io.FixedLenFeature([], tf.float32),
+    })
+)
+
+# Aplicaci&oacute; de les transformacions
+with beam.Pipeline() as pipeline:
+    with tft_beam.Context(temp_dir='/tmp'):
+        transformed_dataset, transform_fn = (
+            (raw_data, raw_data_metadata) | tft_beam.AnalyzeAndTransformDataset(preprocessing_fn)
+        )
+        transformed_data, transformed_metadata = transformed_dataset
+
+# Mostrem les dades transformades
+for data in transformed_data:
+    print(data)</pre></div><div class='content'></div><h2>Explicació del codi</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Definició de la funció de preprocessament</strong>: La funció <code>preprocessing_fn</code> defineix les transformacions que volem aplicar a les dades. En aquest cas, normalitzem una característica numèrica utilitzant <code>tft.scale_to_z_score</code>.</p>
+</li>
+<li>
+<p><strong>Dades d'entrada</strong>: Definim un conjunt de dades d'exemple amb una característica numèrica.</p>
+</li>
+<li>
+<p><strong>Especificació de l'esquema</strong>: Definim l'esquema de les dades d'entrada utilitzant <code>tft.tf_metadata</code>.</p>
+</li>
+<li>
+<p><strong>Aplicació de les transformacions</strong>: Utilitzem Apache Beam per aplicar les transformacions definides a les dades d'entrada.</p>
+</li>
+<li>
+<p><strong>Mostra de les dades transformades</strong>: Imprimim les dades transformades per veure el resultat de les transformacions.</p>
+</li>
+</ol>
+</div><h1>4. Transformacions comunes</h1>
+<div class='content'></div><h2>Codificació de dades categòriques</h2>
+<div class='content'><p>La codificació de dades categòriques és una transformació comuna que converteix valors categòrics en valors numèrics.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIHByZXByb2Nlc3NpbmdfZm4oaW5wdXRzKToKICAgIG91dHB1dHMgPSB7fQogICAgIyBDb2RpZmlxdWVtIHVuYSBjYXJhY3RlcsOtc3RpY2EgY2F0ZWfDsnJpY2EKICAgIG91dHB1dHNbJ2VuY29kZWRfZmVhdHVyZSddID0gdGZ0LmNvbXB1dGVfYW5kX2FwcGx5X3ZvY2FidWxhcnkoaW5wdXRzWydjYXRlZ29yaWNhbF9mZWF0dXJlJ10pCiAgICByZXR1cm4gb3V0cHV0cw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def preprocessing_fn(inputs):
+    outputs = {}
+    # Codifiquem una caracter&iacute;stica categ&ograve;rica
+    outputs['encoded_feature'] = tft.compute_and_apply_vocabulary(inputs['categorical_feature'])
+    return outputs</pre></div><div class='content'></div><h2>Augmentació de dades</h2>
+<div class='content'><p>L'augmentació de dades és una tècnica que genera noves mostres a partir de les existents per millorar la generalització del model.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIHByZXByb2Nlc3NpbmdfZm4oaW5wdXRzKToKICAgIG91dHB1dHMgPSB7fQogICAgIyBBdWdtZW50ZW0gbGVzIGRhZGVzIGFmZWdpbnQgc29yb2xsCiAgICBvdXRwdXRzWydhdWdtZW50ZWRfZmVhdHVyZSddID0gaW5wdXRzWydmZWF0dXJlJ10gKyB0Zi5yYW5kb20udW5pZm9ybShbXSwgLTAuMSwgMC4xKQogICAgcmV0dXJuIG91dHB1dHM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def preprocessing_fn(inputs):
+    outputs = {}
+    # Augmentem les dades afegint soroll
+    outputs['augmented_feature'] = inputs['feature'] + tf.random.uniform([], -0.1, 0.1)
+    return outputs</pre></div><div class='content'></div><h1>Exercici pràctic</h1>
+<div class='content'></div><h2>Exercici</h2>
+<div class='content'><p>Implementa una funció de preprocessament que faci les següents transformacions:</p>
+<ol>
+<li>Normalitzi una característica numèrica.</li>
+<li>Codifiqui una característica categòrica.</li>
+<li>Augmenti una característica numèrica afegint soroll.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIHByZXByb2Nlc3NpbmdfZm4oaW5wdXRzKToKICAgIG91dHB1dHMgPSB7fQogICAgIyBOb3JtYWxpdHphY2nDswogICAgb3V0cHV0c1snbm9ybWFsaXplZF9mZWF0dXJlJ10gPSB0ZnQuc2NhbGVfdG9fel9zY29yZShpbnB1dHNbJ251bWVyaWNfZmVhdHVyZSddKQogICAgIyBDb2RpZmljYWNpw7MKICAgIG91dHB1dHNbJ2VuY29kZWRfZmVhdHVyZSddID0gdGZ0LmNvbXB1dGVfYW5kX2FwcGx5X3ZvY2FidWxhcnkoaW5wdXRzWydjYXRlZ29yaWNhbF9mZWF0dXJlJ10pCiAgICAjIEF1Z21lbnRhY2nDswogICAgb3V0cHV0c1snYXVnbWVudGVkX2ZlYXR1cmUnXSA9IGlucHV0c1snbnVtZXJpY19mZWF0dXJlJ10gKyB0Zi5yYW5kb20udW5pZm9ybShbXSwgLTAuMSwgMC4xKQogICAgcmV0dXJuIG91dHB1dHM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def preprocessing_fn(inputs):
+    outputs = {}
+    # Normalitzaci&oacute;
+    outputs['normalized_feature'] = tft.scale_to_z_score(inputs['numeric_feature'])
+    # Codificaci&oacute;
+    outputs['encoded_feature'] = tft.compute_and_apply_vocabulary(inputs['categorical_feature'])
+    # Augmentaci&oacute;
+    outputs['augmented_feature'] = inputs['numeric_feature'] + tf.random.uniform([], -0.1, 0.1)
+    return outputs</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après la importància de la transformació de dades i com utilitzar <code>tf.Transform</code> per aplicar transformacions comunes com la normalització, la codificació i l'augmentació de dades. Aquestes tècniques són essencials per preparar les dades de manera efectiva i millorar el rendiment dels models de machine learning.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-02-data-validation' title="Validació de dades">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-04-model-analysis' title="Anàlisi de models">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

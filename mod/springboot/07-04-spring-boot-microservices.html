@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring Boot i microserveis</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/springboot/07-04-spring-boot-microservices" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/springboot/07-04-spring-boot-microservices" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/springboot/07-04-spring-boot-microservices" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/springboot/07-04-spring-boot-microservices" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/springboot/07-04-spring-boot-microservices" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-03-spring-boot-docker' title="Spring Boot amb Docker">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Spring Boot i microserveis</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-01-introduction-deployment' title="Introducció al desplegament">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem com utilitzar Spring Boot per crear i gestionar microserveis. Els microserveis són una arquitectura de programari que estructura una aplicació com un conjunt de serveis petits i independents, cadascun executant en el seu propi procés i comunicant-se amb mecanismes lleugers, sovint una API HTTP.</p>
+</div><h1>Continguts</h1>
+<div class='content'><ol>
+<li><a href="#introducció-als-microserveis">Introducció als microserveis</a></li>
+<li><a href="#creant-un-microservei-amb-spring-boot">Creant un microservei amb Spring Boot</a></li>
+<li><a href="#comunicació-entre-microserveis">Comunicació entre microserveis</a></li>
+<li><a href="#gestió-de-configuració-centralitzada">Gestió de configuració centralitzada</a></li>
+<li><a href="#monitorització-i-traçabilitat">Monitorització i traçabilitat</a></li>
+<li><a href="#exercicis-pràctics">Exercicis pràctics</a></li>
+</ol>
+</div><h1>Introducció als microserveis</h1>
+<div class='content'><p>Els microserveis ofereixen diversos avantatges:</p>
+<ul>
+<li><strong>Escalabilitat independent</strong>: Cada servei es pot escalar de manera independent segons les necessitats.</li>
+<li><strong>Desplegament independent</strong>: Els serveis es poden desplegar de manera independent, permetent actualitzacions més ràpides.</li>
+<li><strong>Resiliència</strong>: Un error en un servei no afecta tota l'aplicació.</li>
+<li><strong>Flexibilitat tecnològica</strong>: Cada servei pot utilitzar diferents tecnologies i llenguatges de programació.</li>
+</ul>
+</div><h1>Creant un microservei amb Spring Boot</h1>
+<div class='content'></div><h2>Pas 1: Configuració del projecte</h2>
+<div class='content'><ol>
+<li><strong>Crea un nou projecte Spring Boot</strong> utilitzant Spring Initializr (https://start.spring.io/).</li>
+<li><strong>Selecciona les dependències</strong> següents:
+<ul>
+<li>Spring Web</li>
+<li>Spring Boot Actuator</li>
+<li>Spring Data JPA (opcional, si necessites accés a dades)</li>
+<li>H2 Database (opcional, per a proves)</li>
+</ul>
+</li>
+</ol>
+</div><h2>Pas 2: Estructura del projecte</h2>
+<div class='content'><p>L'estructura del projecte serà similar a la següent:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3JjCuKUlOKUgOKUgCBtYWluCiAgICDilJzilIDilIAgamF2YQogICAg4pSCICAg4pSU4pSA4pSAIGNvbQogICAg4pSCICAgICAgIOKUlOKUgOKUgCBleGVtcGxlCiAgICDilIIgICAgICAgICAgIOKUlOKUgOKUgCBtaWNyb3NlcnZlaQogICAg4pSCICAgICAgICAgICAgICAg4pSc4pSA4pSAIE1pY3Jvc2VydmVpQXBwbGljYXRpb24uamF2YQogICAg4pSCICAgICAgICAgICAgICAg4pSc4pSA4pSAIGNvbnRyb2xhZG9yCiAgICDilIIgICAgICAgICAgICAgICDilIIgICDilJTilIDilIAgU2FsdXRhY2lvQ29udHJvbGFkb3IuamF2YQogICAg4pSCICAgICAgICAgICAgICAg4pSU4pSA4pSAIHNlcnZlaQogICAg4pSCICAgICAgICAgICAgICAgICAgIOKUlOKUgOKUgCBTYWx1dGFjaW9TZXJ2ZWkuamF2YQogICAg4pSU4pSA4pSAIHJlc291cmNlcwogICAgICAgIOKUnOKUgOKUgCBhcHBsaWNhdGlvbi5wcm9wZXJ0aWVzCiAgICAgICAg4pSU4pSA4pSAIGRhdGEuc3FsIChvcGNpb25hbCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>src
+└── main
+    ├── java
+    │   └── com
+    │       └── exemple
+    │           └── microservei
+    │               ├── MicroserveiApplication.java
+    │               ├── controlador
+    │               │   └── SalutacioControlador.java
+    │               └── servei
+    │                   └── SalutacioServei.java
+    └── resources
+        ├── application.properties
+        └── data.sql (opcional)</pre></div><div class='content'></div><h2>Pas 3: Implementació del microservei</h2>
+<div class='content'><h4>MicroserveiApplication.java</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBjb20uZXhlbXBsZS5taWNyb3NlcnZlaTsKCmltcG9ydCBvcmcuc3ByaW5nZnJhbWV3b3JrLmJvb3QuU3ByaW5nQXBwbGljYXRpb247CmltcG9ydCBvcmcuc3ByaW5nZnJhbWV3b3JrLmJvb3QuYXV0b2NvbmZpZ3VyZS5TcHJpbmdCb290QXBwbGljYXRpb247CgpAU3ByaW5nQm9vdEFwcGxpY2F0aW9uCnB1YmxpYyBjbGFzcyBNaWNyb3NlcnZlaUFwcGxpY2F0aW9uIHsKICAgIHB1YmxpYyBzdGF0aWMgdm9pZCBtYWluKFN0cmluZ1tdIGFyZ3MpIHsKICAgICAgICBTcHJpbmdBcHBsaWNhdGlvbi5ydW4oTWljcm9zZXJ2ZWlBcHBsaWNhdGlvbi5jbGFzcywgYXJncyk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package com.exemple.microservei;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class MicroserveiApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MicroserveiApplication.class, args);
+    }
+}</pre></div><div class='content'><h4>SalutacioControlador.java</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBjb20uZXhlbXBsZS5taWNyb3NlcnZlaS5jb250cm9sYWRvcjsKCmltcG9ydCBvcmcuc3ByaW5nZnJhbWV3b3JrLndlYi5iaW5kLmFubm90YXRpb24uR2V0TWFwcGluZzsKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsud2ViLmJpbmQuYW5ub3RhdGlvbi5SZXN0Q29udHJvbGxlcjsKCkBSZXN0Q29udHJvbGxlcgpwdWJsaWMgY2xhc3MgU2FsdXRhY2lvQ29udHJvbGFkb3IgewoKICAgIEBHZXRNYXBwaW5nKCIvc2FsdXRhY2lvIikKICAgIHB1YmxpYyBTdHJpbmcgc2FsdXRhY2lvKCkgewogICAgICAgIHJldHVybiAiSG9sYSwgbcOzbiEiOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package com.exemple.microservei.controlador;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class SalutacioControlador {
+
+    @GetMapping(&quot;/salutacio&quot;)
+    public String salutacio() {
+        return &quot;Hola, m&oacute;n!&quot;;
+    }
+}</pre></div><div class='content'></div><h2>Pas 4: Executar el microservei</h2>
+<div class='content'><p>Executa la classe <code>MicroserveiApplication</code> per iniciar el microservei. Pots accedir a l'endpoint <code>http://localhost:8080/salutacio</code> per veure la resposta &quot;Hola, món!&quot;.</p>
+</div><h1>Comunicació entre microserveis</h1>
+<div class='content'></div><h2>Utilitzant RestTemplate</h2>
+<div class='content'><p>Spring Boot proporciona <code>RestTemplate</code> per a la comunicació sincrònica entre microserveis.</p>
+<h4>Exemple d'ús de RestTemplate</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBjb20uZXhlbXBsZS5taWNyb3NlcnZlaS5zZXJ2ZWk7CgppbXBvcnQgb3JnLnNwcmluZ2ZyYW1ld29yay5zdGVyZW90eXBlLlNlcnZpY2U7CmltcG9ydCBvcmcuc3ByaW5nZnJhbWV3b3JrLndlYi5jbGllbnQuUmVzdFRlbXBsYXRlOwoKQFNlcnZpY2UKcHVibGljIGNsYXNzIFNhbHV0YWNpb1NlcnZlaSB7CgogICAgcHJpdmF0ZSBmaW5hbCBSZXN0VGVtcGxhdGUgcmVzdFRlbXBsYXRlOwoKICAgIHB1YmxpYyBTYWx1dGFjaW9TZXJ2ZWkoUmVzdFRlbXBsYXRlIHJlc3RUZW1wbGF0ZSkgewogICAgICAgIHRoaXMucmVzdFRlbXBsYXRlID0gcmVzdFRlbXBsYXRlOwogICAgfQoKICAgIHB1YmxpYyBTdHJpbmcgb2J0ZW5pclNhbHV0YWNpbygpIHsKICAgICAgICByZXR1cm4gcmVzdFRlbXBsYXRlLmdldEZvck9iamVjdCgiaHR0cDovL2FsdHJlLW1pY3Jvc2VydmVpL3NhbHV0YWNpbyIsIFN0cmluZy5jbGFzcyk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package com.exemple.microservei.servei;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+@Service
+public class SalutacioServei {
+
+    private final RestTemplate restTemplate;
+
+    public SalutacioServei(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
+    public String obtenirSalutacio() {
+        return restTemplate.getForObject(&quot;http://altre-microservei/salutacio&quot;, String.class);
+    }
+}</pre></div><div class='content'></div><h2>Utilitzant Feign Client</h2>
+<div class='content'><p>Feign és una eina declarativa per crear clients HTTP.</p>
+<h4>Configuració de Feign Client</h4>
+<ol>
+<li><strong>Afegeix la dependència de Feign al teu <code>pom.xml</code></strong>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PGRlcGVuZGVuY3k+CiAgICA8Z3JvdXBJZD5vcmcuc3ByaW5nZnJhbWV3b3JrLmNsb3VkPC9ncm91cElkPgogICAgPGFydGlmYWN0SWQ+c3ByaW5nLWNsb3VkLXN0YXJ0ZXItb3BlbmZlaWduPC9hcnRpZmFjdElkPgo8L2RlcGVuZGVuY3k+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-openfeign&lt;/artifactId&gt;
+&lt;/dependency&gt;</pre></div><div class='content'><ol start="2">
+<li><strong>Habilita Feign Client</strong> a la classe principal:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QFNwcmluZ0Jvb3RBcHBsaWNhdGlvbgpARW5hYmxlRmVpZ25DbGllbnRzCnB1YmxpYyBjbGFzcyBNaWNyb3NlcnZlaUFwcGxpY2F0aW9uIHsKICAgIC8vIC4uLgp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@SpringBootApplication
+@EnableFeignClients
+public class MicroserveiApplication {
+    // ...
+}</pre></div><div class='content'><ol start="3">
+<li><strong>Crea una interfície Feign Client</strong>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBjb20uZXhlbXBsZS5taWNyb3NlcnZlaS5jbGllbnQ7CgppbXBvcnQgb3JnLnNwcmluZ2ZyYW1ld29yay5jbG91ZC5vcGVuZmVpZ24uRmVpZ25DbGllbnQ7CmltcG9ydCBvcmcuc3ByaW5nZnJhbWV3b3JrLndlYi5iaW5kLmFubm90YXRpb24uR2V0TWFwcGluZzsKCkBGZWlnbkNsaWVudChuYW1lID0gImFsdHJlLW1pY3Jvc2VydmVpIikKcHVibGljIGludGVyZmFjZSBTYWx1dGFjaW9DbGllbnQgewoKICAgIEBHZXRNYXBwaW5nKCIvc2FsdXRhY2lvIikKICAgIFN0cmluZyBvYnRlbmlyU2FsdXRhY2lvKCk7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package com.exemple.microservei.client;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@FeignClient(name = &quot;altre-microservei&quot;)
+public interface SalutacioClient {
+
+    @GetMapping(&quot;/salutacio&quot;)
+    String obtenirSalutacio();
+}</pre></div><div class='content'></div><h1>Gestió de configuració centralitzada</h1>
+<div class='content'><p>Spring Cloud Config proporciona una solució per gestionar la configuració de manera centralitzada.</p>
+</div><h2>Configuració del servidor de configuració</h2>
+<div class='content'><ol>
+<li><strong>Crea un nou projecte Spring Boot</strong> amb la dependència <code>spring-cloud-config-server</code>.</li>
+<li><strong>Habilita el servidor de configuració</strong>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QFNwcmluZ0Jvb3RBcHBsaWNhdGlvbgpARW5hYmxlQ29uZmlnU2VydmVyCnB1YmxpYyBjbGFzcyBDb25maWdTZXJ2ZXJBcHBsaWNhdGlvbiB7CiAgICBwdWJsaWMgc3RhdGljIHZvaWQgbWFpbihTdHJpbmdbXSBhcmdzKSB7CiAgICAgICAgU3ByaW5nQXBwbGljYXRpb24ucnVuKENvbmZpZ1NlcnZlckFwcGxpY2F0aW9uLmNsYXNzLCBhcmdzKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@SpringBootApplication
+@EnableConfigServer
+public class ConfigServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(ConfigServerApplication.class, args);
+    }
+}</pre></div><div class='content'><ol start="3">
+<li><strong>Configura el repositori de configuració</strong> a <code>application.properties</code>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3ByaW5nLmNsb3VkLmNvbmZpZy5zZXJ2ZXIuZ2l0LnVyaT1odHRwczovL2dpdGh1Yi5jb20vdXN1YXJpL3JlcG8tY29uZmlndXJhY2lv"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>spring.cloud.config.server.git.uri=https://github.com/usuari/repo-configuracio</pre></div><div class='content'></div><h2>Configuració del client de configuració</h2>
+<div class='content'><ol>
+<li><strong>Afegeix la dependència de Config Client</strong> al <code>pom.xml</code> del microservei:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PGRlcGVuZGVuY3k+CiAgICA8Z3JvdXBJZD5vcmcuc3ByaW5nZnJhbWV3b3JrLmNsb3VkPC9ncm91cElkPgogICAgPGFydGlmYWN0SWQ+c3ByaW5nLWNsb3VkLXN0YXJ0ZXItY29uZmlnPC9hcnRpZmFjdElkPgo8L2RlcGVuZGVuY3k+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-config&lt;/artifactId&gt;
+&lt;/dependency&gt;</pre></div><div class='content'><ol start="2">
+<li><strong>Configura el client</strong> a <code>bootstrap.properties</code>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3ByaW5nLmFwcGxpY2F0aW9uLm5hbWU9bWljcm9zZXJ2ZWkKc3ByaW5nLmNsb3VkLmNvbmZpZy51cmk9aHR0cDovL2xvY2FsaG9zdDo4ODg4"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>spring.application.name=microservei
+spring.cloud.config.uri=http://localhost:8888</pre></div><div class='content'></div><h1>Monitorització i traçabilitat</h1>
+<div class='content'></div><h2>Utilitzant Spring Boot Actuator</h2>
+<div class='content'><p>Spring Boot Actuator proporciona endpoints per monitoritzar i gestionar l'aplicació.</p>
+<ol>
+<li><strong>Afegeix la dependència d'Actuator</strong> al <code>pom.xml</code>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PGRlcGVuZGVuY3k+CiAgICA8Z3JvdXBJZD5vcmcuc3ByaW5nZnJhbWV3b3JrLmJvb3Q8L2dyb3VwSWQ+CiAgICA8YXJ0aWZhY3RJZD5zcHJpbmctYm9vdC1zdGFydGVyLWFjdHVhdG9yPC9hcnRpZmFjdElkPgo8L2RlcGVuZGVuY3k+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+&lt;/dependency&gt;</pre></div><div class='content'><ol start="2">
+<li><strong>Configura Actuator</strong> a <code>application.properties</code>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bWFuYWdlbWVudC5lbmRwb2ludHMud2ViLmV4cG9zdXJlLmluY2x1ZGU9Kg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>management.endpoints.web.exposure.include=*</pre></div><div class='content'></div><h2>Utilitzant Zipkin per a traçabilitat distribuïda</h2>
+<div class='content'><ol>
+<li><strong>Afegeix la dependència de Zipkin</strong> al <code>pom.xml</code>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PGRlcGVuZGVuY3k+CiAgICA8Z3JvdXBJZD5vcmcuc3ByaW5nZnJhbWV3b3JrLmNsb3VkPC9ncm91cElkPgogICAgPGFydGlmYWN0SWQ+c3ByaW5nLWNsb3VkLXN0YXJ0ZXItemlwa2luPC9hcnRpZmFjdElkPgo8L2RlcGVuZGVuY3k+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.cloud&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-cloud-starter-zipkin&lt;/artifactId&gt;
+&lt;/dependency&gt;</pre></div><div class='content'><ol start="2">
+<li><strong>Configura Zipkin</strong> a <code>application.properties</code>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3ByaW5nLnppcGtpbi5iYXNlLXVybD1odHRwOi8vbG9jYWxob3N0Ojk0MTEKc3ByaW5nLnNsZXV0aC5zYW1wbGVyLnByb2JhYmlsaXR5PTEuMA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>spring.zipkin.base-url=http://localhost:9411
+spring.sleuth.sampler.probability=1.0</pre></div><div class='content'></div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear un microservei senzill</h2>
+<div class='content'><ol>
+<li><strong>Crea un nou projecte Spring Boot</strong>.</li>
+<li><strong>Implementa un controlador</strong> que retorni un missatge de salutació.</li>
+<li><strong>Executa el microservei</strong> i verifica que l'endpoint funcioni correctament.</li>
+</ol>
+</div><h2>Exercici 2: Comunicació entre microserveis</h2>
+<div class='content'><ol>
+<li><strong>Crea dos microserveis</strong>: <code>microservei-a</code> i <code>microservei-b</code>.</li>
+<li><strong>Implementa un endpoint a <code>microservei-b</code></strong> que retorni un missatge.</li>
+<li><strong>Utilitza RestTemplate o Feign Client a <code>microservei-a</code></strong> per cridar l'endpoint de <code>microservei-b</code>.</li>
+</ol>
+</div><h2>Exercici 3: Configuració centralitzada</h2>
+<div class='content'><ol>
+<li><strong>Configura un servidor de configuració</strong> amb Spring Cloud Config.</li>
+<li><strong>Configura un client de configuració</strong> en un microservei.</li>
+<li><strong>Verifica que el microservei</strong> obtingui la configuració del servidor de configuració.</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com crear i gestionar microserveis amb Spring Boot. Hem explorat la comunicació entre microserveis, la gestió de configuració centralitzada i la monitorització i traçabilitat. Els exercicis pràctics proporcionats t'ajudaran a consolidar els coneixements adquirits. En el següent tema, explorarem com desplegar aplicacions Spring Boot en diferents entorns.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-03-spring-boot-docker' title="Spring Boot amb Docker">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-01-introduction-deployment' title="Introducció al desplegament">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

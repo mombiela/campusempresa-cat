@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desplegament a Heroku</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/flask/08-02-deploying-heroku" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/flask/08-02-deploying-heroku" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/flask/08-02-deploying-heroku" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/flask/08-02-deploying-heroku" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/flask/08-02-deploying-heroku" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-01-configuring-production' title="Configuració de Flask per a Producció">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Desplegament a Heroku</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-03-deploying-aws' title="Desplegament a AWS">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com desplegar una aplicació Flask a Heroku, una plataforma de núvol que permet desplegar, gestionar i escalar aplicacions fàcilment. Heroku és una opció popular per a desenvolupadors gràcies a la seva simplicitat i integració amb Git.</p>
+</div><h1>1. Prerequisits</h1>
+<div class='content'><p>Abans de començar, assegura't de tenir els següents prerequisits:</p>
+<ul>
+<li>Un compte a Heroku (pots registrar-te gratuïtament a <a href="https://www.heroku.com/">Heroku</a>).</li>
+<li>Git instal·lat al teu sistema.</li>
+<li>Heroku CLI instal·lat. Pots descarregar-lo des de <a href="https://devcenter.heroku.com/articles/heroku-cli">Heroku CLI</a>.</li>
+</ul>
+</div><h1>2. Preparació de l'Aplicació Flask</h1>
+<div class='content'></div><h2>2.1. Crear un fitxer `Procfile`</h2>
+<div class='content'><p>Heroku utilitza un fitxer anomenat <code>Procfile</code> per saber com executar la teva aplicació. Crea un fitxer anomenat <code>Procfile</code> a l'arrel del teu projecte amb el següent contingut:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("d2ViOiBndW5pY29ybiBhcHA6YXBw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>web: gunicorn app:app</pre></div><div class='content'><p>En aquest cas, <code>app</code> és el nom del fitxer Python que conté la teva aplicació Flask (<code>app.py</code>), i <code>app</code> és el nom de la instància de Flask dins d'aquest fitxer.</p>
+</div><h2>2.2. Afegir `gunicorn` a les dependències</h2>
+<div class='content'><p>Heroku utilitza <code>gunicorn</code> com a servidor WSGI per a les aplicacions Python. Assegura't d'afegir <code>gunicorn</code> al teu fitxer <code>requirements.txt</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Rmxhc2s9PTIuMC4xCmd1bmljb3JuPT0yMC4xLjA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Flask==2.0.1
+gunicorn==20.1.0</pre></div><div class='content'></div><h2>2.3. Configurar fitxer `runtime.txt`</h2>
+<div class='content'><p>Heroku permet especificar la versió de Python que vols utilitzar. Crea un fitxer anomenat <code>runtime.txt</code> a l'arrel del teu projecte amb el següent contingut:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHl0aG9uLTMuOS42"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>python-3.9.6</pre></div><div class='content'></div><h1>3. Desplegament a Heroku</h1>
+<div class='content'></div><h2>3.1. Crear una nova aplicació a Heroku</h2>
+<div class='content'><p>Obre una terminal i executa el següent comandament per crear una nova aplicació a Heroku:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGVyb2t1IGNyZWF0ZSBub20tZGUtbGEtdGV2YS1hcGxpY2FjaW8="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>heroku create nom-de-la-teva-aplicacio</pre></div><div class='content'></div><h2>3.2. Desplegar l'aplicació</h2>
+<div class='content'><p>Segueix aquests passos per desplegar la teva aplicació:</p>
+<ol>
+<li>
+<p><strong>Inicialitzar un repositori Git (si no ho has fet ja):</strong></p>
+<pre><code class="language-bash">git init
+</code></pre>
+</li>
+<li>
+<p><strong>Afegir els fitxers al repositori:</strong></p>
+<pre><code class="language-bash">git add .
+</code></pre>
+</li>
+<li>
+<p><strong>Fer un commit dels canvis:</strong></p>
+<pre><code class="language-bash">git commit -m &quot;Primera versió de l'aplicació Flask&quot;
+</code></pre>
+</li>
+<li>
+<p><strong>Afegir Heroku com a remot:</strong></p>
+<pre><code class="language-bash">heroku git:remote -a nom-de-la-teva-aplicacio
+</code></pre>
+</li>
+<li>
+<p><strong>Desplegar l'aplicació a Heroku:</strong></p>
+<pre><code class="language-bash">git push heroku master
+</code></pre>
+</li>
+</ol>
+</div><h2>3.3. Configurar variables d'entorn</h2>
+<div class='content'><p>Si la teva aplicació Flask utilitza variables d'entorn, pots configurar-les a Heroku amb el següent comandament:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGVyb2t1IGNvbmZpZzpzZXQgTk9NX1ZBUklBQkxFPXZhbG9y"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>heroku config:set NOM_VARIABLE=valor</pre></div><div class='content'></div><h2>3.4. Accedir a l'aplicació</h2>
+<div class='content'><p>Després de desplegar l'aplicació, pots accedir-hi a través de l'URL proporcionada per Heroku. Executa el següent comandament per obrir l'aplicació al teu navegador:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGVyb2t1IG9wZW4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>heroku open</pre></div><div class='content'></div><h1>4. Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Desplegar una aplicació Flask simple a Heroku.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>
+<p>Crea una aplicació Flask bàsica (<code>app.py</code>):</p>
+<pre><code class="language-python">from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return &quot;Hola, Heroku!&quot;
+
+if __name__ == '__main__':
+    app.run(debug=True)
+</code></pre>
+</li>
+<li>
+<p>Crea els fitxers necessaris (<code>Procfile</code>, <code>requirements.txt</code>, <code>runtime.txt</code>) com s'ha descrit anteriorment.</p>
+</li>
+<li>
+<p>Desplega l'aplicació seguint els passos de la secció 3.</p>
+</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Estructura del projecte:</strong></p>
+<pre><code>my-flask-app/
+├── app.py
+├── Procfile
+├── requirements.txt
+└── runtime.txt
+</code></pre>
+</li>
+<li>
+<p><strong>Contingut dels fitxers:</strong></p>
+<ul>
+<li>
+<p><code>app.py</code>:</p>
+<pre><code class="language-python">from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return &quot;Hola, Heroku!&quot;
+
+if __name__ == '__main__':
+    app.run(debug=True)
+</code></pre>
+</li>
+<li>
+<p><code>Procfile</code>:</p>
+<pre><code>web: gunicorn app:app
+</code></pre>
+</li>
+<li>
+<p><code>requirements.txt</code>:</p>
+<pre><code>Flask==2.0.1
+gunicorn==20.1.0
+</code></pre>
+</li>
+<li>
+<p><code>runtime.txt</code>:</p>
+<pre><code>python-3.9.6
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Desplegament:</strong></p>
+<pre><code class="language-bash">git init
+git add .
+git commit -m &quot;Primera versió de l'aplicació Flask&quot;
+heroku create nom-de-la-teva-aplicacio
+heroku git:remote -a nom-de-la-teva-aplicacio
+git push heroku master
+heroku open
+</code></pre>
+</li>
+</ol>
+</div><h1>5. Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com desplegar una aplicació Flask a Heroku. Hem cobert la preparació de l'aplicació, la creació d'una nova aplicació a Heroku, el desplegament i la configuració de variables d'entorn. Ara estàs preparat per desplegar les teves aplicacions Flask a Heroku i fer-les accessibles al món.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-01-configuring-production' title="Configuració de Flask per a Producció">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-03-deploying-aws' title="Desplegament a AWS">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

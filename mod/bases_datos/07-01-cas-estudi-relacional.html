@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cas d'Estudi: Base de Dades Relacional</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/bases_datos/07-01-caso-estudio-relacional" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/bases_datos/07-01-cas-estudi-relacional" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/bases_datos/07-01-case-study-relational" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/bases_datos/07-01-cas-estudi-relacional" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/bases_datos/07-01-cas-estudi-relacional" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-03-exercicis-normalitzacio' title="Exercicis de Normalització">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Cas d'Estudi: Base de Dades Relacional</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-02-cas-estudi-nosql' title="Cas d'Estudi: Base de Dades No Relacional">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest cas d'estudi, explorarem el disseny, implementació i ús d'una base de dades relacional per a una biblioteca. Aquest exemple pràctic ens permetrà aplicar els conceptes apresos en els mòduls anteriors, com el model relacional, el llenguatge SQL, el disseny d'esquemes i la normalització.</p>
+</div><h1>1. Requisits del Sistema</h1>
+<div class='content'></div><h2>1.1. Descripció del Sistema</h2>
+<div class='content'><p>La biblioteca necessita un sistema per gestionar els llibres, els membres, els préstecs i les devolucions. Els requisits principals són:</p>
+<ul>
+<li>Emmagatzemar informació sobre els llibres, incloent-hi títol, autor, any de publicació i gènere.</li>
+<li>Gestionar la informació dels membres, incloent-hi nom, adreça, telèfon i data d'inscripció.</li>
+<li>Registrar els préstecs de llibres, incloent-hi la data de préstec, la data de devolució prevista i la data de devolució real.</li>
+<li>Permetre la cerca de llibres per títol, autor o gènere.</li>
+<li>Generar informes sobre els llibres prestats i els membres actius.</li>
+</ul>
+</div><h2>1.2. Requisits Funcionals</h2>
+<div class='content'><ul>
+<li><strong>Alta, baixa i modificació de llibres.</strong></li>
+<li><strong>Alta, baixa i modificació de membres.</strong></li>
+<li><strong>Registre de préstecs i devolucions.</strong></li>
+<li><strong>Cerca de llibres per diferents criteris.</strong></li>
+<li><strong>Generació d'informes.</strong></li>
+</ul>
+</div><h1>2. Disseny de l'Esquema</h1>
+<div class='content'></div><h2>2.1. Diagrama Entitat-Relació (ER)</h2>
+<div class='content'><p>Primer, dissenyarem un diagrama ER per representar les entitats i les seves relacions.</p>
+<ul>
+<li>
+<p><strong>Entitats:</strong></p>
+<ul>
+<li>Llibre</li>
+<li>Membre</li>
+<li>Préstec</li>
+</ul>
+</li>
+<li>
+<p><strong>Relacions:</strong></p>
+<ul>
+<li>Un llibre pot ser prestat a zero o més membres.</li>
+<li>Un membre pot tenir zero o més préstecs.</li>
+</ul>
+</li>
+</ul>
+</div><h2>2.2. Transformació del Diagrama ER a Esquema Relacional</h2>
+<div class='content'><p>Transformarem el diagrama ER en taules relacionals.</p>
+<h4>Taula <code>Llibre</code></h4>
+<table>
+<thead>
+<tr>
+<th>Columna</th>
+<th>Tipus de Dada</th>
+<th>Descripció</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id_llibre</td>
+<td>INT</td>
+<td>Clau Primària</td>
+</tr>
+<tr>
+<td>titol</td>
+<td>VARCHAR(255)</td>
+<td>Títol del llibre</td>
+</tr>
+<tr>
+<td>autor</td>
+<td>VARCHAR(255)</td>
+<td>Autor del llibre</td>
+</tr>
+<tr>
+<td>any_publicacio</td>
+<td>INT</td>
+<td>Any de publicació</td>
+</tr>
+<tr>
+<td>genere</td>
+<td>VARCHAR(100)</td>
+<td>Gènere del llibre</td>
+</tr>
+</tbody>
+</table>
+<h4>Taula <code>Membre</code></h4>
+<table>
+<thead>
+<tr>
+<th>Columna</th>
+<th>Tipus de Dada</th>
+<th>Descripció</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id_membre</td>
+<td>INT</td>
+<td>Clau Primària</td>
+</tr>
+<tr>
+<td>nom</td>
+<td>VARCHAR(255)</td>
+<td>Nom del membre</td>
+</tr>
+<tr>
+<td>adreça</td>
+<td>VARCHAR(255)</td>
+<td>Adreça del membre</td>
+</tr>
+<tr>
+<td>telefon</td>
+<td>VARCHAR(20)</td>
+<td>Telèfon del membre</td>
+</tr>
+<tr>
+<td>data_inscripcio</td>
+<td>DATE</td>
+<td>Data d'inscripció</td>
+</tr>
+</tbody>
+</table>
+<h4>Taula <code>Prestec</code></h4>
+<table>
+<thead>
+<tr>
+<th>Columna</th>
+<th>Tipus de Dada</th>
+<th>Descripció</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id_prestec</td>
+<td>INT</td>
+<td>Clau Primària</td>
+</tr>
+<tr>
+<td>id_llibre</td>
+<td>INT</td>
+<td>Clau Forana (Llibre)</td>
+</tr>
+<tr>
+<td>id_membre</td>
+<td>INT</td>
+<td>Clau Forana (Membre)</td>
+</tr>
+<tr>
+<td>data_prestec</td>
+<td>DATE</td>
+<td>Data del préstec</td>
+</tr>
+<tr>
+<td>data_devolucio_prevista</td>
+<td>DATE</td>
+<td>Data de devolució prevista</td>
+</tr>
+<tr>
+<td>data_devolucio_real</td>
+<td>DATE</td>
+<td>Data de devolució real</td>
+</tr>
+</tbody>
+</table>
+</div><h1>3. Implementació en SQL</h1>
+<div class='content'></div><h2>3.1. Creació de Taules</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIExsaWJyZSAoCiAgICBpZF9sbGlicmUgSU5UIFBSSU1BUlkgS0VZLAogICAgdGl0b2wgVkFSQ0hBUigyNTUpIE5PVCBOVUxMLAogICAgYXV0b3IgVkFSQ0hBUigyNTUpIE5PVCBOVUxMLAogICAgYW55X3B1YmxpY2FjaW8gSU5ULAogICAgZ2VuZXJlIFZBUkNIQVIoMTAwKQopOwoKQ1JFQVRFIFRBQkxFIE1lbWJyZSAoCiAgICBpZF9tZW1icmUgSU5UIFBSSU1BUlkgS0VZLAogICAgbm9tIFZBUkNIQVIoMjU1KSBOT1QgTlVMTCwKICAgIGFkcmXDp2EgVkFSQ0hBUigyNTUpLAogICAgdGVsZWZvbiBWQVJDSEFSKDIwKSwKICAgIGRhdGFfaW5zY3JpcGNpbyBEQVRFCik7CgpDUkVBVEUgVEFCTEUgUHJlc3RlYyAoCiAgICBpZF9wcmVzdGVjIElOVCBQUklNQVJZIEtFWSwKICAgIGlkX2xsaWJyZSBJTlQsCiAgICBpZF9tZW1icmUgSU5ULAogICAgZGF0YV9wcmVzdGVjIERBVEUsCiAgICBkYXRhX2Rldm9sdWNpb19wcmV2aXN0YSBEQVRFLAogICAgZGF0YV9kZXZvbHVjaW9fcmVhbCBEQVRFLAogICAgRk9SRUlHTiBLRVkgKGlkX2xsaWJyZSkgUkVGRVJFTkNFUyBMbGlicmUoaWRfbGxpYnJlKSwKICAgIEZPUkVJR04gS0VZIChpZF9tZW1icmUpIFJFRkVSRU5DRVMgTWVtYnJlKGlkX21lbWJyZSkKKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE Llibre (
+    id_llibre INT PRIMARY KEY,
+    titol VARCHAR(255) NOT NULL,
+    autor VARCHAR(255) NOT NULL,
+    any_publicacio INT,
+    genere VARCHAR(100)
+);
+
+CREATE TABLE Membre (
+    id_membre INT PRIMARY KEY,
+    nom VARCHAR(255) NOT NULL,
+    adre&ccedil;a VARCHAR(255),
+    telefon VARCHAR(20),
+    data_inscripcio DATE
+);
+
+CREATE TABLE Prestec (
+    id_prestec INT PRIMARY KEY,
+    id_llibre INT,
+    id_membre INT,
+    data_prestec DATE,
+    data_devolucio_prevista DATE,
+    data_devolucio_real DATE,
+    FOREIGN KEY (id_llibre) REFERENCES Llibre(id_llibre),
+    FOREIGN KEY (id_membre) REFERENCES Membre(id_membre)
+);</pre></div><div class='content'></div><h2>3.2. Inserció de Dades</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gSW5zZXJpciBsbGlicmVzCklOU0VSVCBJTlRPIExsaWJyZSAoaWRfbGxpYnJlLCB0aXRvbCwgYXV0b3IsIGFueV9wdWJsaWNhY2lvLCBnZW5lcmUpClZBTFVFUyAoMSwgJzE5ODQnLCAnR2VvcmdlIE9yd2VsbCcsIDE5NDksICdEaXN0b3BpYScpOwoKSU5TRVJUIElOVE8gTGxpYnJlIChpZF9sbGlicmUsIHRpdG9sLCBhdXRvciwgYW55X3B1YmxpY2FjaW8sIGdlbmVyZSkKVkFMVUVTICgyLCAnVG8gS2lsbCBhIE1vY2tpbmdiaXJkJywgJ0hhcnBlciBMZWUnLCAxOTYwLCAnRmljY2nDsycpOwoKLS0gSW5zZXJpciBtZW1icmVzCklOU0VSVCBJTlRPIE1lbWJyZSAoaWRfbWVtYnJlLCBub20sIGFkcmXDp2EsIHRlbGVmb24sIGRhdGFfaW5zY3JpcGNpbykKVkFMVUVTICgxLCAnSm9hbiBHYXJjaWEnLCAnQ2FycmVyIE1ham9yLCAxJywgJzEyMzQ1Njc4OScsICcyMDIzLTAxLTE1Jyk7CgpJTlNFUlQgSU5UTyBNZW1icmUgKGlkX21lbWJyZSwgbm9tLCBhZHJlw6dhLCB0ZWxlZm9uLCBkYXRhX2luc2NyaXBjaW8pClZBTFVFUyAoMiwgJ01hcmlhIEzDs3BleicsICdDYXJyZXIgTm91LCAyJywgJzk4NzY1NDMyMScsICcyMDIzLTAyLTIwJyk7CgotLSBJbnNlcmlyIHByw6lzdGVjcwpJTlNFUlQgSU5UTyBQcmVzdGVjIChpZF9wcmVzdGVjLCBpZF9sbGlicmUsIGlkX21lbWJyZSwgZGF0YV9wcmVzdGVjLCBkYXRhX2Rldm9sdWNpb19wcmV2aXN0YSwgZGF0YV9kZXZvbHVjaW9fcmVhbCkKVkFMVUVTICgxLCAxLCAxLCAnMjAyMy0wMy0wMScsICcyMDIzLTAzLTE1JywgTlVMTCk7CgpJTlNFUlQgSU5UTyBQcmVzdGVjIChpZF9wcmVzdGVjLCBpZF9sbGlicmUsIGlkX21lbWJyZSwgZGF0YV9wcmVzdGVjLCBkYXRhX2Rldm9sdWNpb19wcmV2aXN0YSwgZGF0YV9kZXZvbHVjaW9fcmVhbCkKVkFMVUVTICgyLCAyLCAyLCAnMjAyMy0wMy0wNScsICcyMDIzLTAzLTE5JywgTlVMTCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Inserir llibres
+INSERT INTO Llibre (id_llibre, titol, autor, any_publicacio, genere)
+VALUES (1, '1984', 'George Orwell', 1949, 'Distopia');
+
+INSERT INTO Llibre (id_llibre, titol, autor, any_publicacio, genere)
+VALUES (2, 'To Kill a Mockingbird', 'Harper Lee', 1960, 'Ficci&oacute;');
+
+-- Inserir membres
+INSERT INTO Membre (id_membre, nom, adre&ccedil;a, telefon, data_inscripcio)
+VALUES (1, 'Joan Garcia', 'Carrer Major, 1', '123456789', '2023-01-15');
+
+INSERT INTO Membre (id_membre, nom, adre&ccedil;a, telefon, data_inscripcio)
+VALUES (2, 'Maria L&oacute;pez', 'Carrer Nou, 2', '987654321', '2023-02-20');
+
+-- Inserir pr&eacute;stecs
+INSERT INTO Prestec (id_prestec, id_llibre, id_membre, data_prestec, data_devolucio_prevista, data_devolucio_real)
+VALUES (1, 1, 1, '2023-03-01', '2023-03-15', NULL);
+
+INSERT INTO Prestec (id_prestec, id_llibre, id_membre, data_prestec, data_devolucio_prevista, data_devolucio_real)
+VALUES (2, 2, 2, '2023-03-05', '2023-03-19', NULL);</pre></div><div class='content'></div><h2>3.3. Consultes SQL</h2>
+<div class='content'><h4>Cerca de Llibres per Autor</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUICogRlJPTSBMbGlicmUgV0hFUkUgYXV0b3IgPSAnR2VvcmdlIE9yd2VsbCc7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT * FROM Llibre WHERE autor = 'George Orwell';</pre></div><div class='content'><h4>Llistat de Préstecs Actius</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUICogRlJPTSBQcmVzdGVjIFdIRVJFIGRhdGFfZGV2b2x1Y2lvX3JlYWwgSVMgTlVMTDs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT * FROM Prestec WHERE data_devolucio_real IS NULL;</pre></div><div class='content'><h4>Informes de Membres Actius</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIE1lbWJyZS5ub20sIENPVU5UKFByZXN0ZWMuaWRfcHJlc3RlYykgQVMgbm9tYnJlX3ByZXN0ZWNzCkZST00gTWVtYnJlCkxFRlQgSk9JTiBQcmVzdGVjIE9OIE1lbWJyZS5pZF9tZW1icmUgPSBQcmVzdGVjLmlkX21lbWJyZQpHUk9VUCBCWSBNZW1icmUubm9tOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT Membre.nom, COUNT(Prestec.id_prestec) AS nombre_prestecs
+FROM Membre
+LEFT JOIN Prestec ON Membre.id_membre = Prestec.id_membre
+GROUP BY Membre.nom;</pre></div><div class='content'></div><h1>4. Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Inserir Nous Llibres i Membres</h2>
+<div class='content'><ul>
+<li>Inserir dos nous llibres a la taula <code>Llibre</code>.</li>
+<li>Inserir dos nous membres a la taula <code>Membre</code>.</li>
+</ul>
+</div><h2>Exercici 2: Registre de Nous Préstecs</h2>
+<div class='content'><ul>
+<li>Registra dos nous préstecs a la taula <code>Prestec</code>.</li>
+</ul>
+</div><h2>Exercici 3: Consultes SQL</h2>
+<div class='content'><ul>
+<li>Escriu una consulta per trobar tots els llibres publicats després de l'any 2000.</li>
+<li>Escriu una consulta per trobar tots els membres que han prestat més d'un llibre.</li>
+</ul>
+</div><h1>5. Solucions als Exercicis</h1>
+<div class='content'></div><h2>Solució a l'Exercici 1</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gTm91cyBsbGlicmVzCklOU0VSVCBJTlRPIExsaWJyZSAoaWRfbGxpYnJlLCB0aXRvbCwgYXV0b3IsIGFueV9wdWJsaWNhY2lvLCBnZW5lcmUpClZBTFVFUyAoMywgJ0JyYXZlIE5ldyBXb3JsZCcsICdBbGRvdXMgSHV4bGV5JywgMTkzMiwgJ0Rpc3RvcGlhJyk7CgpJTlNFUlQgSU5UTyBMbGlicmUgKGlkX2xsaWJyZSwgdGl0b2wsIGF1dG9yLCBhbnlfcHVibGljYWNpbywgZ2VuZXJlKQpWQUxVRVMgKDQsICdUaGUgR3JlYXQgR2F0c2J5JywgJ0YuIFNjb3R0IEZpdHpnZXJhbGQnLCAxOTI1LCAnRmljY2nDsycpOwoKLS0gTm91cyBtZW1icmVzCklOU0VSVCBJTlRPIE1lbWJyZSAoaWRfbWVtYnJlLCBub20sIGFkcmXDp2EsIHRlbGVmb24sIGRhdGFfaW5zY3JpcGNpbykKVkFMVUVTICgzLCAnUGVyZSBQdWlnJywgJ0NhcnJlciBWZWxsLCAzJywgJzExMTIyMjMzMycsICcyMDIzLTAzLTEwJyk7CgpJTlNFUlQgSU5UTyBNZW1icmUgKGlkX21lbWJyZSwgbm9tLCBhZHJlw6dhLCB0ZWxlZm9uLCBkYXRhX2luc2NyaXBjaW8pClZBTFVFUyAoNCwgJ0FubmEgUmllcmEnLCAnQ2FycmVyIE5vdSwgNCcsICc0NDQ1NTU2NjYnLCAnMjAyMy0wMy0xNScpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Nous llibres
+INSERT INTO Llibre (id_llibre, titol, autor, any_publicacio, genere)
+VALUES (3, 'Brave New World', 'Aldous Huxley', 1932, 'Distopia');
+
+INSERT INTO Llibre (id_llibre, titol, autor, any_publicacio, genere)
+VALUES (4, 'The Great Gatsby', 'F. Scott Fitzgerald', 1925, 'Ficci&oacute;');
+
+-- Nous membres
+INSERT INTO Membre (id_membre, nom, adre&ccedil;a, telefon, data_inscripcio)
+VALUES (3, 'Pere Puig', 'Carrer Vell, 3', '111222333', '2023-03-10');
+
+INSERT INTO Membre (id_membre, nom, adre&ccedil;a, telefon, data_inscripcio)
+VALUES (4, 'Anna Riera', 'Carrer Nou, 4', '444555666', '2023-03-15');</pre></div><div class='content'></div><h2>Solució a l'Exercici 2</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gTm91cyBwcsOpc3RlY3MKSU5TRVJUIElOVE8gUHJlc3RlYyAoaWRfcHJlc3RlYywgaWRfbGxpYnJlLCBpZF9tZW1icmUsIGRhdGFfcHJlc3RlYywgZGF0YV9kZXZvbHVjaW9fcHJldmlzdGEsIGRhdGFfZGV2b2x1Y2lvX3JlYWwpClZBTFVFUyAoMywgMywgMywgJzIwMjMtMDMtMjAnLCAnMjAyMy0wNC0wMycsIE5VTEwpOwoKSU5TRVJUIElOVE8gUHJlc3RlYyAoaWRfcHJlc3RlYywgaWRfbGxpYnJlLCBpZF9tZW1icmUsIGRhdGFfcHJlc3RlYywgZGF0YV9kZXZvbHVjaW9fcHJldmlzdGEsIGRhdGFfZGV2b2x1Y2lvX3JlYWwpClZBTFVFUyAoNCwgNCwgNCwgJzIwMjMtMDMtMjInLCAnMjAyMy0wNC0wNScsIE5VTEwpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Nous pr&eacute;stecs
+INSERT INTO Prestec (id_prestec, id_llibre, id_membre, data_prestec, data_devolucio_prevista, data_devolucio_real)
+VALUES (3, 3, 3, '2023-03-20', '2023-04-03', NULL);
+
+INSERT INTO Prestec (id_prestec, id_llibre, id_membre, data_prestec, data_devolucio_prevista, data_devolucio_real)
+VALUES (4, 4, 4, '2023-03-22', '2023-04-05', NULL);</pre></div><div class='content'></div><h2>Solució a l'Exercici 3</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gTGxpYnJlcyBwdWJsaWNhdHMgZGVzcHLDqXMgZGUgbCdhbnkgMjAwMApTRUxFQ1QgKiBGUk9NIExsaWJyZSBXSEVSRSBhbnlfcHVibGljYWNpbyA+IDIwMDA7CgotLSBNZW1icmVzIHF1ZSBoYW4gcHJlc3RhdCBtw6lzIGQndW4gbGxpYnJlClNFTEVDVCBNZW1icmUubm9tLCBDT1VOVChQcmVzdGVjLmlkX3ByZXN0ZWMpIEFTIG5vbWJyZV9wcmVzdGVjcwpGUk9NIE1lbWJyZQpMRUZUIEpPSU4gUHJlc3RlYyBPTiBNZW1icmUuaWRfbWVtYnJlID0gUHJlc3RlYy5pZF9tZW1icmUKR1JPVVAgQlkgTWVtYnJlLm5vbQpIQVZJTkcgQ09VTlQoUHJlc3RlYy5pZF9wcmVzdGVjKSA+IDE7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Llibres publicats despr&eacute;s de l'any 2000
+SELECT * FROM Llibre WHERE any_publicacio &gt; 2000;
+
+-- Membres que han prestat m&eacute;s d'un llibre
+SELECT Membre.nom, COUNT(Prestec.id_prestec) AS nombre_prestecs
+FROM Membre
+LEFT JOIN Prestec ON Membre.id_membre = Prestec.id_membre
+GROUP BY Membre.nom
+HAVING COUNT(Prestec.id_prestec) &gt; 1;</pre></div><div class='content'></div><h1>6. Conclusió</h1>
+<div class='content'><p>Aquest cas d'estudi ha proporcionat una visió pràctica de com dissenyar i implementar una base de dades relacional per a una biblioteca. Hem cobert des de la identificació dels requisits fins a la creació de taules i l'execució de consultes SQL. Els exercicis pràctics han reforçat els conceptes apresos i han proporcionat una oportunitat per aplicar-los en situacions reals.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-03-exercicis-normalitzacio' title="Exercicis de Normalització">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-02-cas-estudi-nosql' title="Cas d'Estudi: Base de Dades No Relacional">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volums</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kubernetes/05-01-volumes" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kubernetes/05-01-volumes" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kubernetes/05-01-volumes" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kubernetes/05-01-volumes" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kubernetes/05-01-volumes" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-04-network-policies' title="Polítiques de Xarxa">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Volums</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-02-persistent-volumes' title="Volums Persistents">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En Kubernetes, els volums són una manera d'emmagatzemar dades que poden ser utilitzades per un o més pods. A diferència dels volums efímers que desapareixen quan el pod es destrueix, els volums en Kubernetes poden persistir més enllà del cicle de vida d'un pod. Això és especialment útil per a aplicacions que necessiten emmagatzemar dades de manera persistent.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Volum</strong>: Un directori accessible per als contenidors d'un pod.</li>
+<li><strong>Volum Persistents (PV)</strong>: Recursos de l'API de Kubernetes que representen l'emmagatzematge proporcionat per un administrador.</li>
+<li><strong>Reclamació de Volum Persistent (PVC)</strong>: Una petició d'emmagatzematge per part d'un usuari.</li>
+</ul>
+</div><h1>Tipus de Volums</h1>
+<div class='content'><p>Kubernetes suporta diversos tipus de volums, cadascun amb les seves pròpies característiques i usos. Alguns dels tipus més comuns són:</p>
+<ul>
+<li><strong>emptyDir</strong>: Un volum que s'inicialitza com un directori buit. Es crea quan es crea el pod i es manté fins que el pod es destrueix.</li>
+<li><strong>hostPath</strong>: Mapa un directori o fitxer del node host al pod.</li>
+<li><strong>nfs</strong>: Utilitza un sistema de fitxers de xarxa (NFS) per a l'emmagatzematge.</li>
+<li><strong>persistentVolumeClaim</strong>: Utilitza una reclamació de volum persistent per muntar un volum persistent.</li>
+</ul>
+</div><h1>Exemple Pràctic</h1>
+<div class='content'><p>A continuació, es mostra un exemple de com definir un volum <code>emptyDir</code> en un pod.</p>
+</div><h2>Definició del Pod amb un Volum `emptyDir`</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUG9kCm1ldGFkYXRhOgogIG5hbWU6IGV4YW1wbGUtcG9kCnNwZWM6CiAgY29udGFpbmVyczoKICAtIG5hbWU6IGV4YW1wbGUtY29udGFpbmVyCiAgICBpbWFnZTogbmdpbngKICAgIHZvbHVtZU1vdW50czoKICAgIC0gbW91bnRQYXRoOiAvdXNyL3NoYXJlL25naW54L2h0bWwKICAgICAgbmFtZTogaHRtbC12b2x1bWUKICB2b2x1bWVzOgogIC0gbmFtZTogaHRtbC12b2x1bWUKICAgIGVtcHR5RGlyOiB7fQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  containers:
+  - name: example-container
+    image: nginx
+    volumeMounts:
+    - mountPath: /usr/share/nginx/html
+      name: html-volume
+  volumes:
+  - name: html-volume
+    emptyDir: {}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><strong>apiVersion</strong>: La versió de l'API de Kubernetes.</li>
+<li><strong>kind</strong>: El tipus de recurs, en aquest cas, un <code>Pod</code>.</li>
+<li><strong>metadata</strong>: Informació sobre el pod, com ara el nom.</li>
+<li><strong>spec</strong>: L'especificació del pod.
+<ul>
+<li><strong>containers</strong>: Una llista de contenidors que s'executaran en el pod.
+<ul>
+<li><strong>name</strong>: El nom del contenidor.</li>
+<li><strong>image</strong>: La imatge del contenidor.</li>
+<li><strong>volumeMounts</strong>: Una llista de volums que es muntaran en el contenidor.
+<ul>
+<li><strong>mountPath</strong>: El camí dins del contenidor on es muntarà el volum.</li>
+<li><strong>name</strong>: El nom del volum.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>volumes</strong>: Una llista de volums que es definiran en el pod.
+<ul>
+<li><strong>name</strong>: El nom del volum.</li>
+<li><strong>emptyDir</strong>: Un volum que s'inicialitza com un directori buit.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Crear un pod que utilitzi un volum <code>hostPath</code> per muntar un directori del node host al pod.</p>
+</div><h2>Instruccions</h2>
+<div class='content'><ol>
+<li>Crea un fitxer YAML anomenat <code>hostpath-pod.yaml</code>.</li>
+<li>Defineix un pod que utilitzi un volum <code>hostPath</code> per muntar el directori <code>/data</code> del node host al camí <code>/mnt/data</code> dins del contenidor.</li>
+<li>Utilitza la imatge <code>busybox</code> i executa el comandament <code>sleep 3600</code> per mantenir el contenidor en execució.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUG9kCm1ldGFkYXRhOgogIG5hbWU6IGhvc3RwYXRoLXBvZApzcGVjOgogIGNvbnRhaW5lcnM6CiAgLSBuYW1lOiBidXN5Ym94LWNvbnRhaW5lcgogICAgaW1hZ2U6IGJ1c3lib3gKICAgIGNvbW1hbmQ6IFsnc2gnLCAnLWMnLCAnc2xlZXAgMzYwMCddCiAgICB2b2x1bWVNb3VudHM6CiAgICAtIG1vdW50UGF0aDogL21udC9kYXRhCiAgICAgIG5hbWU6IGhvc3RwYXRoLXZvbHVtZQogIHZvbHVtZXM6CiAgLSBuYW1lOiBob3N0cGF0aC12b2x1bWUKICAgIGhvc3RQYXRoOgogICAgICBwYXRoOiAvZGF0YQogICAgICB0eXBlOiBEaXJlY3Rvcnk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: Pod
+metadata:
+  name: hostpath-pod
+spec:
+  containers:
+  - name: busybox-container
+    image: busybox
+    command: ['sh', '-c', 'sleep 3600']
+    volumeMounts:
+    - mountPath: /mnt/data
+      name: hostpath-volume
+  volumes:
+  - name: hostpath-volume
+    hostPath:
+      path: /data
+      type: Directory</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><strong>command</strong>: El comandament que s'executarà en el contenidor (<code>sleep 3600</code>).</li>
+<li><strong>hostPath</strong>: Defineix un volum que mapeja un directori del node host (<code>/data</code>) al pod.</li>
+</ul>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après què són els volums en Kubernetes i com es poden utilitzar per emmagatzemar dades de manera persistent. Hem vist diferents tipus de volums i hem treballat amb exemples pràctics per entendre com definir i utilitzar volums en un pod. En la següent secció, explorarem els volums persistents i les reclamacions de volums persistents per a una gestió d'emmagatzematge més avançada.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-04-network-policies' title="Polítiques de Xarxa">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-02-persistent-volumes' title="Volums Persistents">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

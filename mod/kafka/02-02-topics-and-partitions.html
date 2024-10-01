@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temes i Particions</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kafka/02-02-topics-and-partitions" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kafka/02-02-topics-and-partitions" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kafka/02-02-topics-and-partitions" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kafka/02-02-topics-and-partitions" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kafka/02-02-topics-and-partitions" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-producers-and-consumers' title="Productors i Consumidors">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Temes i Particions</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-brokers-and-clusters' title="Brokers i Clústers">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, explorarem dos conceptes fonamentals de Kafka: els temes i les particions. Aquests conceptes són essencials per comprendre com Kafka organitza i distribueix les dades.</p>
+</div><h1>Què és un Tema?</h1>
+<div class='content'><p>Un tema en Kafka és una categoria o flux de dades a la qual es poden enviar missatges. Els temes són l'equivalent a les cues en altres sistemes de missatgeria, però amb algunes diferències clau.</p>
+</div><h2>Característiques dels Temes:</h2>
+<div class='content'><ul>
+<li><strong>Nom</strong>: Cada tema té un nom únic dins del clúster de Kafka.</li>
+<li><strong>Persistència</strong>: Els missatges dins d'un tema es guarden durant un període de temps configurat.</li>
+<li><strong>Lectura Múltiple</strong>: Diversos consumidors poden llegir del mateix tema de manera independent.</li>
+</ul>
+</div><h2>Exemples de Temes:</h2>
+<div class='content'><ul>
+<li><code>logs</code>: Un tema per a missatges de registre.</li>
+<li><code>transactions</code>: Un tema per a missatges de transaccions financeres.</li>
+<li><code>user-signups</code>: Un tema per a missatges de nous registres d'usuaris.</li>
+</ul>
+</div><h1>Què és una Partició?</h1>
+<div class='content'><p>Una partició és una subdivisió d'un tema. Cada tema es pot dividir en múltiples particions, i cada partició és una seqüència ordenada i immutable de missatges que es distribueixen entre els brokers de Kafka.</p>
+</div><h2>Característiques de les Particions:</h2>
+<div class='content'><ul>
+<li><strong>Ordre</strong>: Els missatges dins d'una partició es mantenen en ordre.</li>
+<li><strong>Escalabilitat</strong>: Les particions permeten escalar el sistema distribuint la càrrega entre múltiples brokers.</li>
+<li><strong>Paral·lelisme</strong>: Els consumidors poden llegir de diferents particions en paral·lel, millorant el rendiment.</li>
+</ul>
+</div><h2>Exemples de Particions:</h2>
+<div class='content'><ul>
+<li>Un tema <code>logs</code> pot tenir particions com <code>logs-0</code>, <code>logs-1</code>, <code>logs-2</code>, etc.</li>
+<li>Un tema <code>transactions</code> pot tenir particions com <code>transactions-0</code>, <code>transactions-1</code>, <code>transactions-2</code>, etc.</li>
+</ul>
+</div><h1>Relació entre Temes i Particions</h1>
+<div class='content'><p>Cada tema pot tenir una o més particions. La relació entre temes i particions és crucial per a la distribució i l'escalabilitat de Kafka.</p>
+</div><h2>Taula de Relació:</h2>
+<div class='content'><table>
+<thead>
+<tr>
+<th>Tema</th>
+<th>Particions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>logs</code></td>
+<td><code>logs-0</code>, <code>logs-1</code>, <code>logs-2</code></td>
+</tr>
+<tr>
+<td><code>transactions</code></td>
+<td><code>transactions-0</code>, <code>transactions-1</code>, <code>transactions-2</code></td>
+</tr>
+<tr>
+<td><code>user-signups</code></td>
+<td><code>user-signups-0</code>, <code>user-signups-1</code></td>
+</tr>
+</tbody>
+</table>
+</div><h1>Exemple Pràctic</h1>
+<div class='content'></div><h2>Creació d'un Tema amb Particions</h2>
+<div class='content'><p>Per crear un tema amb particions, utilitzarem la línia de comandes de Kafka.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDcmVhciB1biB0ZW1hIGFub21lbmF0ICdsb2dzJyBhbWIgMyBwYXJ0aWNpb25zCmthZmthLXRvcGljcy5zaCAtLWNyZWF0ZSAtLXRvcGljIGxvZ3MgLS1wYXJ0aXRpb25zIDMgLS1yZXBsaWNhdGlvbi1mYWN0b3IgMSAtLWJvb3RzdHJhcC1zZXJ2ZXIgbG9jYWxob3N0OjkwOTI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Crear un tema anomenat 'logs' amb 3 particions
+kafka-topics.sh --create --topic logs --partitions 3 --replication-factor 1 --bootstrap-server localhost:9092</pre></div><div class='content'></div><h2>Producció de Missatges a un Tema</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBrYWZrYSBpbXBvcnQgS2Fma2FQcm9kdWNlcgoKcHJvZHVjZXIgPSBLYWZrYVByb2R1Y2VyKGJvb3RzdHJhcF9zZXJ2ZXJzPSdsb2NhbGhvc3Q6OTA5MicpCgojIEVudmlhciBtaXNzYXRnZXMgYWwgdGVtYSAnbG9ncycKcHJvZHVjZXIuc2VuZCgnbG9ncycsIGInUHJpbWVyIG1pc3NhdGdlJykKcHJvZHVjZXIuc2VuZCgnbG9ncycsIGInU2Vnb24gbWlzc2F0Z2UnKQpwcm9kdWNlci5zZW5kKCdsb2dzJywgYidUZXJjZXIgbWlzc2F0Z2UnKQoKcHJvZHVjZXIuZmx1c2goKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from kafka import KafkaProducer
+
+producer = KafkaProducer(bootstrap_servers='localhost:9092')
+
+# Enviar missatges al tema 'logs'
+producer.send('logs', b'Primer missatge')
+producer.send('logs', b'Segon missatge')
+producer.send('logs', b'Tercer missatge')
+
+producer.flush()</pre></div><div class='content'></div><h2>Consum de Missatges d'un Tema</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBrYWZrYSBpbXBvcnQgS2Fma2FDb25zdW1lcgoKY29uc3VtZXIgPSBLYWZrYUNvbnN1bWVyKCdsb2dzJywgYm9vdHN0cmFwX3NlcnZlcnM9J2xvY2FsaG9zdDo5MDkyJykKCmZvciBtZXNzYWdlIGluIGNvbnN1bWVyOgogICAgcHJpbnQoZiJSZWJ1dCBtaXNzYXRnZToge21lc3NhZ2UudmFsdWUuZGVjb2RlKCd1dGYtOCcpfSIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from kafka import KafkaConsumer
+
+consumer = KafkaConsumer('logs', bootstrap_servers='localhost:9092')
+
+for message in consumer:
+    print(f&quot;Rebut missatge: {message.value.decode('utf-8')}&quot;)</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear un Tema amb 4 Particions</h2>
+<div class='content'><ol>
+<li>Utilitza la línia de comandes de Kafka per crear un tema anomenat <code>user-activity</code> amb 4 particions.</li>
+<li>Envia 4 missatges diferents al tema <code>user-activity</code>.</li>
+<li>Consumeix els missatges del tema <code>user-activity</code> i imprimeix-los a la consola.</li>
+</ol>
+</div><h2>Solució de l'Exercici 1</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDcmVhciBlbCB0ZW1hICd1c2VyLWFjdGl2aXR5JyBhbWIgNCBwYXJ0aWNpb25zCmthZmthLXRvcGljcy5zaCAtLWNyZWF0ZSAtLXRvcGljIHVzZXItYWN0aXZpdHkgLS1wYXJ0aXRpb25zIDQgLS1yZXBsaWNhdGlvbi1mYWN0b3IgMSAtLWJvb3RzdHJhcC1zZXJ2ZXIgbG9jYWxob3N0OjkwOTI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Crear el tema 'user-activity' amb 4 particions
+kafka-topics.sh --create --topic user-activity --partitions 4 --replication-factor 1 --bootstrap-server localhost:9092</pre></div><div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBQcm9kdWNjacOzIGRlIG1pc3NhdGdlcwpwcm9kdWNlci5zZW5kKCd1c2VyLWFjdGl2aXR5JywgYidBY3Rpdml0YXQgMScpCnByb2R1Y2VyLnNlbmQoJ3VzZXItYWN0aXZpdHknLCBiJ0FjdGl2aXRhdCAyJykKcHJvZHVjZXIuc2VuZCgndXNlci1hY3Rpdml0eScsIGInQWN0aXZpdGF0IDMnKQpwcm9kdWNlci5zZW5kKCd1c2VyLWFjdGl2aXR5JywgYidBY3Rpdml0YXQgNCcpCgpwcm9kdWNlci5mbHVzaCgp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Producci&oacute; de missatges
+producer.send('user-activity', b'Activitat 1')
+producer.send('user-activity', b'Activitat 2')
+producer.send('user-activity', b'Activitat 3')
+producer.send('user-activity', b'Activitat 4')
+
+producer.flush()</pre></div><div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDb25zdW0gZGUgbWlzc2F0Z2VzCmNvbnN1bWVyID0gS2Fma2FDb25zdW1lcigndXNlci1hY3Rpdml0eScsIGJvb3RzdHJhcF9zZXJ2ZXJzPSdsb2NhbGhvc3Q6OTA5MicpCgpmb3IgbWVzc2FnZSBpbiBjb25zdW1lcjoKICAgIHByaW50KGYiUmVidXQgbWlzc2F0Z2U6IHttZXNzYWdlLnZhbHVlLmRlY29kZSgndXRmLTgnKX0iKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Consum de missatges
+consumer = KafkaConsumer('user-activity', bootstrap_servers='localhost:9092')
+
+for message in consumer:
+    print(f&quot;Rebut missatge: {message.value.decode('utf-8')}&quot;)</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après què són els temes i les particions en Kafka, com es relacionen i com es poden utilitzar per organitzar i distribuir dades de manera eficient. Aquests conceptes són fonamentals per treballar amb Kafka i construir sistemes de missatgeria escalables i robustos. En el proper tema, explorarem els brokers i els clústers de Kafka.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-producers-and-consumers' title="Productors i Consumidors">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-brokers-and-clusters' title="Brokers i Clústers">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MapReduce</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/procesamiento_datos_masivos/03-01-mapreduce" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/procesamiento_datos_masivos/03-01-mapreduce" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/procesamiento_datos_masivos/03-01-mapreduce" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/procesamiento_datos_masivos/03-01-mapreduce" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/procesamiento_datos_masivos/03-01-mapreduce" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-03-emmagatzematge-nuvol' title="Emmagatzematge al Núvol">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">MapReduce</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-02-apache-spark' title="Apache Spark">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a MapReduce</h1>
+<div class='content'><p>MapReduce és un model de programació i una plataforma de processament de dades massives desenvolupada per Google. És especialment útil per processar grans volums de dades de manera distribuïda i paral·lela. El model es basa en dos passos fonamentals: <strong>Map</strong> i <strong>Reduce</strong>.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ol>
+<li><strong>Map</strong>: Aquest pas pren un conjunt de dades i el transforma en un altre conjunt de dades, on els elements individuals es descomponen en parelles clau-valor.</li>
+<li><strong>Reduce</strong>: Aquest pas pren les sortides del pas Map i les combina en un conjunt més petit de parelles clau-valor.</li>
+</ol>
+</div><h2>Flux de Treball de MapReduce</h2>
+<div class='content'><ol>
+<li><strong>Entrada</strong>: Les dades d'entrada es divideixen en fragments més petits.</li>
+<li><strong>Map</strong>: Cada fragment es processa per generar parelles clau-valor intermèdies.</li>
+<li><strong>Shuffle and Sort</strong>: Les parelles clau-valor intermèdies es barregen i ordenen per clau.</li>
+<li><strong>Reduce</strong>: Les parelles clau-valor ordenades es processen per generar la sortida final.</li>
+<li><strong>Sortida</strong>: Les dades processades es guarden en un sistema d'emmagatzematge.</li>
+</ol>
+</div><h1>Exemple Pràctic</h1>
+<div class='content'></div><h2>Problema: Comptar la freqüència de paraules en un conjunt de documents</h2>
+<div class='content'><h4>Pas 1: Map</h4>
+<p>El pas Map llegeix cada document i emet una parella clau-valor per cada paraula, on la clau és la paraula i el valor és el número 1.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIG1hcF9mdW5jdGlvbihkb2N1bWVudCk6CiAgICBmb3Igd29yZCBpbiBkb2N1bWVudC5zcGxpdCgpOgogICAgICAgIGVtaXQod29yZCwgMSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def map_function(document):
+    for word in document.split():
+        emit(word, 1)</pre></div><div class='content'><h4>Pas 2: Shuffle and Sort</h4>
+<p>Les sortides del pas Map es barregen i ordenen per clau (paraula).</p>
+<h4>Pas 3: Reduce</h4>
+<p>El pas Reduce suma els valors per a cada clau (paraula) per obtenir el compte total de cada paraula.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIHJlZHVjZV9mdW5jdGlvbih3b3JkLCBjb3VudHMpOgogICAgdG90YWwgPSBzdW0oY291bnRzKQogICAgZW1pdCh3b3JkLCB0b3RhbCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def reduce_function(word, counts):
+    total = sum(counts)
+    emit(word, total)</pre></div><div class='content'></div><h2>Implementació en Hadoop</h2>
+<div class='content'><p>Hadoop és una plataforma que implementa el model MapReduce. A continuació es mostra un exemple de com implementar el comptador de paraules en Hadoop utilitzant Python.</p>
+<h4>Mapper</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHN5cwoKIyBJbnB1dCBjb21lcyBmcm9tIHN0YW5kYXJkIGlucHV0IChzdGRpbikKZm9yIGxpbmUgaW4gc3lzLnN0ZGluOgogICAgIyBSZW1vdmUgbGVhZGluZyBhbmQgdHJhaWxpbmcgd2hpdGVzcGFjZQogICAgbGluZSA9IGxpbmUuc3RyaXAoKQogICAgIyBTcGxpdCB0aGUgbGluZSBpbnRvIHdvcmRzCiAgICB3b3JkcyA9IGxpbmUuc3BsaXQoKQogICAgIyBJbmNyZWFzZSBjb3VudGVycwogICAgZm9yIHdvcmQgaW4gd29yZHM6CiAgICAgICAgIyBXcml0ZSB0aGUgcmVzdWx0cyB0byBzdGFuZGFyZCBvdXRwdXQKICAgICAgICBwcmludChmJ3t3b3JkfVx0MScp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import sys
+
+# Input comes from standard input (stdin)
+for line in sys.stdin:
+    # Remove leading and trailing whitespace
+    line = line.strip()
+    # Split the line into words
+    words = line.split()
+    # Increase counters
+    for word in words:
+        # Write the results to standard output
+        print(f'{word}\t1')</pre></div><div class='content'><h4>Reducer</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHN5cwoKY3VycmVudF93b3JkID0gTm9uZQpjdXJyZW50X2NvdW50ID0gMAp3b3JkID0gTm9uZQoKIyBJbnB1dCBjb21lcyBmcm9tIHN0YW5kYXJkIGlucHV0IChzdGRpbikKZm9yIGxpbmUgaW4gc3lzLnN0ZGluOgogICAgIyBSZW1vdmUgbGVhZGluZyBhbmQgdHJhaWxpbmcgd2hpdGVzcGFjZQogICAgbGluZSA9IGxpbmUuc3RyaXAoKQogICAgIyBQYXJzZSB0aGUgaW5wdXQgd2UgZ290IGZyb20gbWFwcGVyLnB5CiAgICB3b3JkLCBjb3VudCA9IGxpbmUuc3BsaXQoJ1x0JywgMSkKICAgICMgQ29udmVydCBjb3VudCAoY3VycmVudGx5IGEgc3RyaW5nKSB0byBpbnQKICAgIHRyeToKICAgICAgICBjb3VudCA9IGludChjb3VudCkKICAgIGV4Y2VwdCBWYWx1ZUVycm9yOgogICAgICAgICMgQ291bnQgd2FzIG5vdCBhIG51bWJlciwgc28gc2lsZW50bHkgaWdub3JlL2Rpc2NhcmQgdGhpcyBsaW5lCiAgICAgICAgY29udGludWUKCiAgICAjIFRoaXMgSUYtc3dpdGNoIG9ubHkgd29ya3MgYmVjYXVzZSBIYWRvb3Agc29ydHMgbWFwIG91dHB1dAogICAgIyBieSBrZXkgKGhlcmU6IHdvcmQpIGJlZm9yZSBpdCBpcyBwYXNzZWQgdG8gdGhlIHJlZHVjZXIKICAgIGlmIGN1cnJlbnRfd29yZCA9PSB3b3JkOgogICAgICAgIGN1cnJlbnRfY291bnQgKz0gY291bnQKICAgIGVsc2U6CiAgICAgICAgaWYgY3VycmVudF93b3JkOgogICAgICAgICAgICAjIFdyaXRlIHJlc3VsdCB0byBzdGFuZGFyZCBvdXRwdXQKICAgICAgICAgICAgcHJpbnQoZid7Y3VycmVudF93b3JkfVx0e2N1cnJlbnRfY291bnR9JykKICAgICAgICBjdXJyZW50X2NvdW50ID0gY291bnQKICAgICAgICBjdXJyZW50X3dvcmQgPSB3b3JkCgojIERvIG5vdCBmb3JnZXQgdG8gb3V0cHV0IHRoZSBsYXN0IHdvcmQgaWYgbmVlZGVkIQppZiBjdXJyZW50X3dvcmQgPT0gd29yZDoKICAgIHByaW50KGYne2N1cnJlbnRfd29yZH1cdHtjdXJyZW50X2NvdW50fScp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import sys
+
+current_word = None
+current_count = 0
+word = None
+
+# Input comes from standard input (stdin)
+for line in sys.stdin:
+    # Remove leading and trailing whitespace
+    line = line.strip()
+    # Parse the input we got from mapper.py
+    word, count = line.split('\t', 1)
+    # Convert count (currently a string) to int
+    try:
+        count = int(count)
+    except ValueError:
+        # Count was not a number, so silently ignore/discard this line
+        continue
+
+    # This IF-switch only works because Hadoop sorts map output
+    # by key (here: word) before it is passed to the reducer
+    if current_word == word:
+        current_count += count
+    else:
+        if current_word:
+            # Write result to standard output
+            print(f'{current_word}\t{current_count}')
+        current_count = count
+        current_word = word
+
+# Do not forget to output the last word if needed!
+if current_word == word:
+    print(f'{current_word}\t{current_count}')</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici 1: Comptar la Freqüència de Caràcters</h2>
+<div class='content'><p>Implementa una versió de MapReduce que compti la freqüència de cada caràcter en un conjunt de documents.</p>
+<h4>Solució</h4>
+<h4>Mapper</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHN5cwoKZm9yIGxpbmUgaW4gc3lzLnN0ZGluOgogICAgbGluZSA9IGxpbmUuc3RyaXAoKQogICAgZm9yIGNoYXIgaW4gbGluZToKICAgICAgICBwcmludChmJ3tjaGFyfVx0MScp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import sys
+
+for line in sys.stdin:
+    line = line.strip()
+    for char in line:
+        print(f'{char}\t1')</pre></div><div class='content'><h4>Reducer</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHN5cwoKY3VycmVudF9jaGFyID0gTm9uZQpjdXJyZW50X2NvdW50ID0gMApjaGFyID0gTm9uZQoKZm9yIGxpbmUgaW4gc3lzLnN0ZGluOgogICAgbGluZSA9IGxpbmUuc3RyaXAoKQogICAgY2hhciwgY291bnQgPSBsaW5lLnNwbGl0KCdcdCcsIDEpCiAgICB0cnk6CiAgICAgICAgY291bnQgPSBpbnQoY291bnQpCiAgICBleGNlcHQgVmFsdWVFcnJvcjoKICAgICAgICBjb250aW51ZQoKICAgIGlmIGN1cnJlbnRfY2hhciA9PSBjaGFyOgogICAgICAgIGN1cnJlbnRfY291bnQgKz0gY291bnQKICAgIGVsc2U6CiAgICAgICAgaWYgY3VycmVudF9jaGFyOgogICAgICAgICAgICBwcmludChmJ3tjdXJyZW50X2NoYXJ9XHR7Y3VycmVudF9jb3VudH0nKQogICAgICAgIGN1cnJlbnRfY291bnQgPSBjb3VudAogICAgICAgIGN1cnJlbnRfY2hhciA9IGNoYXIKCmlmIGN1cnJlbnRfY2hhciA9PSBjaGFyOgogICAgcHJpbnQoZid7Y3VycmVudF9jaGFyfVx0e2N1cnJlbnRfY291bnR9Jyk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import sys
+
+current_char = None
+current_count = 0
+char = None
+
+for line in sys.stdin:
+    line = line.strip()
+    char, count = line.split('\t', 1)
+    try:
+        count = int(count)
+    except ValueError:
+        continue
+
+    if current_char == char:
+        current_count += count
+    else:
+        if current_char:
+            print(f'{current_char}\t{current_count}')
+        current_count = count
+        current_char = char
+
+if current_char == char:
+    print(f'{current_char}\t{current_count}')</pre></div><div class='content'></div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ol>
+<li><strong>No ordenar les sortides del Mapper</strong>: Assegura't que les sortides del Mapper estiguin ordenades per clau abans de passar-les al Reducer.</li>
+<li><strong>No gestionar correctament les excepcions</strong>: Sempre gestiona les excepcions, especialment quan converteixes tipus de dades.</li>
+<li><strong>No optimitzar el codi</strong>: Utilitza estructures de dades eficients i evita operacions innecessàries per millorar el rendiment.</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>MapReduce és una tècnica poderosa per processar grans volums de dades de manera distribuïda i paral·lela. Comprendre els passos fonamentals i saber implementar-los en plataformes com Hadoop és essencial per a qualsevol professional que treballi amb dades massives.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-03-emmagatzematge-nuvol' title="Emmagatzematge al Núvol">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-02-apache-spark' title="Apache Spark">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eliminant dades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/postgresql/02-05-deleting-data" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/postgresql/02-05-deleting-data" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/postgresql/02-05-deleting-data" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/postgresql/02-05-deleting-data" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/postgresql/02-05-deleting-data" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-04-updating-data' title="Actualitzant dades">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Eliminant dades</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-01-joins' title="Unions">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com eliminar dades d'una base de dades PostgreSQL. L'eliminació de dades és una operació crítica que s'ha de realitzar amb cura per evitar la pèrdua accidental d'informació important. Veurem com utilitzar l'instrucció <code>DELETE</code> per eliminar files específiques d'una taula i com utilitzar condicions per assegurar-nos que només s'eliminen les dades desitjades.</p>
+</div><h1>Conceptes clau</h1>
+<div class='content'><ul>
+<li><strong>Instrucció <code>DELETE</code></strong>: Utilitzada per eliminar files d'una taula.</li>
+<li><strong>Condicions <code>WHERE</code></strong>: Utilitzades per especificar quines files s'han d'eliminar.</li>
+<li><strong>Eliminació de totes les files</strong>: Com eliminar totes les files d'una taula.</li>
+<li><strong>Consideracions de seguretat</strong>: Bones pràctiques per evitar eliminacions accidentals.</li>
+</ul>
+</div><h1>Instrucció `DELETE`</h1>
+<div class='content'><p>L'instrucció <code>DELETE</code> s'utilitza per eliminar files d'una taula. La sintaxi bàsica és la següent:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("REVMRVRFIEZST00gbm9tX3RhdWxhCldIRVJFIGNvbmRpY2nDszs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>DELETE FROM nom_taula
+WHERE condici&oacute;;</pre></div><div class='content'><ul>
+<li><code>nom_taula</code>: El nom de la taula de la qual es volen eliminar les files.</li>
+<li><code>condició</code>: Una condició que especifica quines files s'han d'eliminar. Si no es proporciona cap condició, totes les files de la taula seran eliminades.</li>
+</ul>
+</div><h2>Exemple bàsic</h2>
+<div class='content'><p>Suposem que tenim una taula <code>empleats</code> amb les següents dades:</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>nom</th>
+<th>departament</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Anna</td>
+<td>Vendes</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Joan</td>
+<td>Màrqueting</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Maria</td>
+<td>Vendes</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Pere</td>
+<td>IT</td>
+</tr>
+</tbody>
+</table>
+<p>Per eliminar l'empleat amb <code>id</code> 3, utilitzarem la següent instrucció:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("REVMRVRFIEZST00gZW1wbGVhdHMKV0hFUkUgaWQgPSAzOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>DELETE FROM empleats
+WHERE id = 3;</pre></div><div class='content'><p>Després d'executar aquesta instrucció, la taula <code>empleats</code> quedarà així:</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>nom</th>
+<th>departament</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Anna</td>
+<td>Vendes</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Joan</td>
+<td>Màrqueting</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Pere</td>
+<td>IT</td>
+</tr>
+</tbody>
+</table>
+</div><h2>Eliminació de múltiples files</h2>
+<div class='content'><p>Podem utilitzar condicions més complexes per eliminar múltiples files alhora. Per exemple, per eliminar tots els empleats del departament de Vendes:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("REVMRVRFIEZST00gZW1wbGVhdHMKV0hFUkUgZGVwYXJ0YW1lbnQgPSAnVmVuZGVzJzs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>DELETE FROM empleats
+WHERE departament = 'Vendes';</pre></div><div class='content'><p>Després d'executar aquesta instrucció, la taula <code>empleats</code> quedarà així:</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>nom</th>
+<th>departament</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2</td>
+<td>Joan</td>
+<td>Màrqueting</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Pere</td>
+<td>IT</td>
+</tr>
+</tbody>
+</table>
+</div><h2>Eliminació de totes les files</h2>
+<div class='content'><p>Si volem eliminar totes les files d'una taula, podem ometre la condició <code>WHERE</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("REVMRVRFIEZST00gZW1wbGVhdHM7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>DELETE FROM empleats;</pre></div><div class='content'><p>Després d'executar aquesta instrucció, la taula <code>empleats</code> quedarà buida.</p>
+</div><h1>Consideracions de seguretat</h1>
+<div class='content'><p>Eliminar dades és una operació irreversible, per la qual cosa és important seguir algunes bones pràctiques per evitar errors:</p>
+<ol>
+<li><strong>Fer una còpia de seguretat</strong>: Abans d'eliminar dades importants, és recomanable fer una còpia de seguretat de la taula o base de dades.</li>
+<li><strong>Utilitzar condicions <code>WHERE</code></strong>: Sempre que sigui possible, utilitza condicions <code>WHERE</code> per especificar quines files s'han d'eliminar.</li>
+<li><strong>Provar amb una consulta <code>SELECT</code></strong>: Abans d'executar una instrucció <code>DELETE</code>, prova la condició <code>WHERE</code> amb una consulta <code>SELECT</code> per assegurar-te que només s'eliminaran les files desitjades.</li>
+<li><strong>Revisar les restriccions de claus estrangeres</strong>: Assegura't que l'eliminació de files no violi les restriccions de claus estrangeres, ja que això pot causar errors o eliminacions en cascada no desitjades.</li>
+</ol>
+</div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1</h2>
+<div class='content'><p>Tens una taula <code>productes</code> amb les següents dades:</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>nom</th>
+<th>categoria</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Ordinador</td>
+<td>Electrònica</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Cadira</td>
+<td>Mobles</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Telèfon</td>
+<td>Electrònica</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Taula</td>
+<td>Mobles</td>
+</tr>
+</tbody>
+</table>
+<p>Elimina el producte amb <code>id</code> 2.</p>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("REVMRVRFIEZST00gcHJvZHVjdGVzCldIRVJFIGlkID0gMjs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>DELETE FROM productes
+WHERE id = 2;</pre></div><div class='content'></div><h2>Exercici 2</h2>
+<div class='content'><p>Elimina tots els productes de la categoria <code>Electrònica</code>.</p>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("REVMRVRFIEZST00gcHJvZHVjdGVzCldIRVJFIGNhdGVnb3JpYSA9ICdFbGVjdHLDsm5pY2EnOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>DELETE FROM productes
+WHERE categoria = 'Electr&ograve;nica';</pre></div><div class='content'></div><h2>Exercici 3</h2>
+<div class='content'><p>Elimina totes les files de la taula <code>productes</code>.</p>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("REVMRVRFIEZST00gcHJvZHVjdGVzOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>DELETE FROM productes;</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après com utilitzar l'instrucció <code>DELETE</code> per eliminar files d'una taula en PostgreSQL. Hem vist com utilitzar condicions <code>WHERE</code> per especificar quines files s'han d'eliminar i hem discutit algunes bones pràctiques per evitar errors. També hem practicat amb alguns exercicis per reforçar els conceptes apresos. En el proper tema, explorarem com realitzar consultes SQL avançades utilitzant unions.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-04-updating-data' title="Actualitzant dades">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-01-joins' title="Unions">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprendre l'estat</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/terraform/03-01-understanding-state" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/terraform/03-01-understanding-state" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/terraform/03-01-understanding-state" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/terraform/03-01-understanding-state" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/terraform/03-01-understanding-state" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-04-providers' title="Proveïdors">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Comprendre l'estat</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-02-state-files' title="Fitxers d'estat">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem el concepte de l'estat en Terraform, per què és important i com es gestiona. L'estat és una part fonamental de Terraform, ja que permet a Terraform saber què ha creat, modificar-ho i eliminar-ho de manera eficient.</p>
+</div><h1>Què és l'estat en Terraform?</h1>
+<div class='content'><p>L'estat en Terraform és un fitxer que manté un registre de la infraestructura que Terraform ha creat. Aquest fitxer d'estat conté informació sobre els recursos provisionats, incloent-hi els seus atributs i metadades. L'estat permet a Terraform:</p>
+<ul>
+<li><strong>Saber què ha creat</strong>: Terraform utilitza l'estat per mantenir un registre dels recursos que ha creat en el passat.</li>
+<li><strong>Detectar canvis</strong>: Comparant l'estat actual amb la configuració desitjada, Terraform pot determinar quins canvis són necessaris.</li>
+<li><strong>Optimitzar operacions</strong>: L'estat permet a Terraform aplicar només els canvis necessaris, en lloc de recrear tota la infraestructura.</li>
+</ul>
+</div><h1>Per què és important l'estat?</h1>
+<div class='content'><p>L'estat és crucial per diverses raons:</p>
+<ol>
+<li><strong>Seguiment de recursos</strong>: Sense l'estat, Terraform no podria saber quins recursos ja existeixen i quins necessiten ser creats, modificats o eliminats.</li>
+<li><strong>Optimització de canvis</strong>: L'estat permet a Terraform aplicar canvis de manera incremental, evitant la recreació innecessària de recursos.</li>
+<li><strong>Col·laboració</strong>: L'estat pot ser compartit entre diferents membres de l'equip, permetent una col·laboració eficient en la gestió de la infraestructura.</li>
+</ol>
+</div><h1>Estructura del fitxer d'estat</h1>
+<div class='content'><p>El fitxer d'estat de Terraform és un fitxer JSON que conté diverses seccions clau:</p>
+<ul>
+<li><strong>Version</strong>: La versió del fitxer d'estat.</li>
+<li><strong>Terraform_version</strong>: La versió de Terraform que va crear l'estat.</li>
+<li><strong>Resources</strong>: Una llista de recursos gestionats per Terraform, incloent-hi els seus atributs i metadades.</li>
+</ul>
+</div><h2>Exemple de fitxer d'estat</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJ2ZXJzaW9uIjogNCwKICAidGVycmFmb3JtX3ZlcnNpb24iOiAiMS4wLjAiLAogICJyZXNvdXJjZXMiOiBbCiAgICB7CiAgICAgICJtb2R1bGUiOiAibW9kdWxlLnZwYyIsCiAgICAgICJtb2RlIjogIm1hbmFnZWQiLAogICAgICAidHlwZSI6ICJhd3NfdnBjIiwKICAgICAgIm5hbWUiOiAibWFpbiIsCiAgICAgICJwcm92aWRlciI6ICJwcm92aWRlcltcInJlZ2lzdHJ5LnRlcnJhZm9ybS5pby9oYXNoaWNvcnAvYXdzXCJdIiwKICAgICAgImluc3RhbmNlcyI6IFsKICAgICAgICB7CiAgICAgICAgICAic2NoZW1hX3ZlcnNpb24iOiAwLAogICAgICAgICAgImF0dHJpYnV0ZXMiOiB7CiAgICAgICAgICAgICJpZCI6ICJ2cGMtMTIzNDU2NzgiLAogICAgICAgICAgICAiY2lkcl9ibG9jayI6ICIxMC4wLjAuMC8xNiIsCiAgICAgICAgICAgICJ0YWdzIjogewogICAgICAgICAgICAgICJOYW1lIjogIm1haW4tdnBjIgogICAgICAgICAgICB9CiAgICAgICAgICB9CiAgICAgICAgfQogICAgICBdCiAgICB9CiAgXQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;version&quot;: 4,
+  &quot;terraform_version&quot;: &quot;1.0.0&quot;,
+  &quot;resources&quot;: [
+    {
+      &quot;module&quot;: &quot;module.vpc&quot;,
+      &quot;mode&quot;: &quot;managed&quot;,
+      &quot;type&quot;: &quot;aws_vpc&quot;,
+      &quot;name&quot;: &quot;main&quot;,
+      &quot;provider&quot;: &quot;provider[\&quot;registry.terraform.io/hashicorp/aws\&quot;]&quot;,
+      &quot;instances&quot;: [
+        {
+          &quot;schema_version&quot;: 0,
+          &quot;attributes&quot;: {
+            &quot;id&quot;: &quot;vpc-12345678&quot;,
+            &quot;cidr_block&quot;: &quot;10.0.0.0/16&quot;,
+            &quot;tags&quot;: {
+              &quot;Name&quot;: &quot;main-vpc&quot;
+            }
+          }
+        }
+      ]
+    }
+  ]
+}</pre></div><div class='content'></div><h1>Com es gestiona l'estat?</h1>
+<div class='content'></div><h2>Fitxers d'estat locals</h2>
+<div class='content'><p>Per defecte, Terraform guarda l'estat en un fitxer local anomenat <code>terraform.tfstate</code>. Aquest fitxer es crea a la mateixa carpeta on s'executa Terraform.</p>
+</div><h2>Estat remot</h2>
+<div class='content'><p>Per a equips que treballen col·laborativament, és recomanable utilitzar un backend remot per emmagatzemar l'estat. Alguns backends comuns inclouen:</p>
+<ul>
+<li><strong>Amazon S3</strong>: Per emmagatzemar l'estat en un bucket S3.</li>
+<li><strong>Azure Blob Storage</strong>: Per emmagatzemar l'estat en un contenidor de blobs.</li>
+<li><strong>Google Cloud Storage</strong>: Per emmagatzemar l'estat en un bucket de GCS.</li>
+<li><strong>Terraform Cloud</strong>: Un servei gestionat per HashiCorp per emmagatzemar l'estat i proporcionar funcionalitats addicionals.</li>
+</ul>
+</div><h2>Configuració d'un backend remot</h2>
+<div class='content'><p>A continuació es mostra un exemple de configuració per emmagatzemar l'estat en un bucket S3:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHsKICBiYWNrZW5kICJzMyIgewogICAgYnVja2V0ID0gIm15LXRlcnJhZm9ybS1zdGF0ZSIKICAgIGtleSAgICA9ICJwYXRoL3RvL215L2tleSIKICAgIHJlZ2lvbiA9ICJ1cy13ZXN0LTIiCiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform {
+  backend &quot;s3&quot; {
+    bucket = &quot;my-terraform-state&quot;
+    key    = &quot;path/to/my/key&quot;
+    region = &quot;us-west-2&quot;
+  }
+}</pre></div><div class='content'></div><h1>Exercici pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Configurar un backend remot per emmagatzemar l'estat en un bucket S3.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li><strong>Crear un bucket S3</strong>: Utilitza la consola d'AWS per crear un bucket S3 anomenat <code>my-terraform-state</code>.</li>
+<li><strong>Configurar el backend</strong>: Afegeix la següent configuració al teu fitxer <code>main.tf</code>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHsKICBiYWNrZW5kICJzMyIgewogICAgYnVja2V0ID0gIm15LXRlcnJhZm9ybS1zdGF0ZSIKICAgIGtleSAgICA9ICJwYXRoL3RvL215L2tleSIKICAgIHJlZ2lvbiA9ICJ1cy13ZXN0LTIiCiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform {
+  backend &quot;s3&quot; {
+    bucket = &quot;my-terraform-state&quot;
+    key    = &quot;path/to/my/key&quot;
+    region = &quot;us-west-2&quot;
+  }
+}</pre></div><div class='content'><ol start="3">
+<li><strong>Inicialitzar Terraform</strong>: Executa <code>terraform init</code> per inicialitzar la configuració del backend remot.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHsKICBiYWNrZW5kICJzMyIgewogICAgYnVja2V0ID0gIm15LXRlcnJhZm9ybS1zdGF0ZSIKICAgIGtleSAgICA9ICJwYXRoL3RvL215L2tleSIKICAgIHJlZ2lvbiA9ICJ1cy13ZXN0LTIiCiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform {
+  backend &quot;s3&quot; {
+    bucket = &quot;my-terraform-state&quot;
+    key    = &quot;path/to/my/key&quot;
+    region = &quot;us-west-2&quot;
+  }
+}</pre></div><div class='content'><p>Executa <code>terraform init</code> per inicialitzar la configuració del backend remot.</p>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après què és l'estat en Terraform, per què és important i com es gestiona. Hem vist com es pot emmagatzemar l'estat localment i remotament, i hem configurat un backend remot per emmagatzemar l'estat en un bucket S3. L'estat és una part fonamental de Terraform que permet una gestió eficient i col·laborativa de la infraestructura.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-04-providers' title="Proveïdors">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-02-state-files' title="Fitxers d'estat">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

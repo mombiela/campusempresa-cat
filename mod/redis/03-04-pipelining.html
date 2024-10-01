@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipelining</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/redis/03-04-pipelining" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/redis/03-04-pipelining" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/redis/03-04-pipelining" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/redis/03-04-pipelining" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/redis/03-04-pipelining" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-transactions' title="Transaccions">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Pipelining</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-snapshots-rdb' title="Instantànies (RDB)">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>El pipelining és una tècnica que permet enviar múltiples comandes a Redis sense esperar la resposta de cada una d'elles. Això pot millorar significativament el rendiment en aplicacions que necessiten enviar moltes comandes en un curt període de temps, ja que redueix la latència associada amb la comunicació de xarxa.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Pipelining</strong>: Enviar múltiples comandes a Redis en una sola connexió sense esperar la resposta de cada comanda individualment.</li>
+<li><strong>Latència</strong>: El temps que triga una comanda a viatjar des del client fins al servidor i tornar amb una resposta.</li>
+<li><strong>Rendiment</strong>: La capacitat de Redis per processar comandes de manera eficient.</li>
+</ul>
+</div><h1>Avantatges del Pipelining</h1>
+<div class='content'><ol>
+<li><strong>Reducció de la Latència</strong>: Enviar múltiples comandes en un sol paquet redueix el nombre de viatges de xarxa necessaris.</li>
+<li><strong>Millora del Rendiment</strong>: Redis pot processar les comandes de manera més eficient quan es reben en lots.</li>
+<li><strong>Optimització de Recursos</strong>: Menys viatges de xarxa significa menys ús de recursos de xarxa.</li>
+</ol>
+</div><h1>Exemple Pràctic</h1>
+<div class='content'></div><h2>Sense Pipelining</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHJlZGlzCgojIENvbm5leGnDsyBhIFJlZGlzCmNsaWVudCA9IHJlZGlzLlN0cmljdFJlZGlzKGhvc3Q9J2xvY2FsaG9zdCcsIHBvcnQ9NjM3OSwgZGI9MCkKCiMgRW52aWFyIGNvbWFuZGVzIGluZGl2aWR1YWxtZW50CmNsaWVudC5zZXQoJ2tleTEnLCAndmFsdWUxJykKY2xpZW50LnNldCgna2V5MicsICd2YWx1ZTInKQpjbGllbnQuc2V0KCdrZXkzJywgJ3ZhbHVlMycp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import redis
+
+# Connexi&oacute; a Redis
+client = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+# Enviar comandes individualment
+client.set('key1', 'value1')
+client.set('key2', 'value2')
+client.set('key3', 'value3')</pre></div><div class='content'></div><h2>Amb Pipelining</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHJlZGlzCgojIENvbm5leGnDsyBhIFJlZGlzCmNsaWVudCA9IHJlZGlzLlN0cmljdFJlZGlzKGhvc3Q9J2xvY2FsaG9zdCcsIHBvcnQ9NjM3OSwgZGI9MCkKCiMgQ3JlYXIgdW4gcGlwZWxpbmUKcGlwZWxpbmUgPSBjbGllbnQucGlwZWxpbmUoKQoKIyBBZmVnaXIgY29tYW5kZXMgYWwgcGlwZWxpbmUKcGlwZWxpbmUuc2V0KCdrZXkxJywgJ3ZhbHVlMScpCnBpcGVsaW5lLnNldCgna2V5MicsICd2YWx1ZTInKQpwaXBlbGluZS5zZXQoJ2tleTMnLCAndmFsdWUzJykKCiMgRXhlY3V0YXIgZWwgcGlwZWxpbmUKcGlwZWxpbmUuZXhlY3V0ZSgp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import redis
+
+# Connexi&oacute; a Redis
+client = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+# Crear un pipeline
+pipeline = client.pipeline()
+
+# Afegir comandes al pipeline
+pipeline.set('key1', 'value1')
+pipeline.set('key2', 'value2')
+pipeline.set('key3', 'value3')
+
+# Executar el pipeline
+pipeline.execute()</pre></div><div class='content'></div><h1>Explicació del Codi</h1>
+<div class='content'><ol>
+<li><strong>Connexió a Redis</strong>: Es crea una connexió a Redis utilitzant la llibreria <code>redis</code>.</li>
+<li><strong>Creació del Pipeline</strong>: Es crea un objecte pipeline utilitzant <code>client.pipeline()</code>.</li>
+<li><strong>Afegir Comandes</strong>: Les comandes <code>set</code> s'afegeixen al pipeline en lloc d'enviar-se immediatament.</li>
+<li><strong>Execució del Pipeline</strong>: Totes les comandes s'envien a Redis en un sol paquet amb <code>pipeline.execute()</code>.</li>
+</ol>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici</h2>
+<div class='content'><ol>
+<li>Crea una connexió a Redis.</li>
+<li>Utilitza un pipeline per establir els valors de cinc claus diferents.</li>
+<li>Recupera els valors de les claus utilitzant un altre pipeline.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHJlZGlzCgojIENvbm5leGnDsyBhIFJlZGlzCmNsaWVudCA9IHJlZGlzLlN0cmljdFJlZGlzKGhvc3Q9J2xvY2FsaG9zdCcsIHBvcnQ9NjM3OSwgZGI9MCkKCiMgQ3JlYXIgdW4gcGlwZWxpbmUgcGVyIGVzdGFibGlyIHZhbG9ycwpwaXBlbGluZSA9IGNsaWVudC5waXBlbGluZSgpCnBpcGVsaW5lLnNldCgna2V5MScsICd2YWx1ZTEnKQpwaXBlbGluZS5zZXQoJ2tleTInLCAndmFsdWUyJykKcGlwZWxpbmUuc2V0KCdrZXkzJywgJ3ZhbHVlMycpCnBpcGVsaW5lLnNldCgna2V5NCcsICd2YWx1ZTQnKQpwaXBlbGluZS5zZXQoJ2tleTUnLCAndmFsdWU1JykKcGlwZWxpbmUuZXhlY3V0ZSgpCgojIENyZWFyIHVuIHBpcGVsaW5lIHBlciByZWN1cGVyYXIgdmFsb3JzCnBpcGVsaW5lID0gY2xpZW50LnBpcGVsaW5lKCkKcGlwZWxpbmUuZ2V0KCdrZXkxJykKcGlwZWxpbmUuZ2V0KCdrZXkyJykKcGlwZWxpbmUuZ2V0KCdrZXkzJykKcGlwZWxpbmUuZ2V0KCdrZXk0JykKcGlwZWxpbmUuZ2V0KCdrZXk1JykKcmVzdWx0cyA9IHBpcGVsaW5lLmV4ZWN1dGUoKQoKIyBNb3N0cmFyIGVscyByZXN1bHRhdHMKZm9yIHJlc3VsdCBpbiByZXN1bHRzOgogICAgcHJpbnQocmVzdWx0LmRlY29kZSgndXRmLTgnKSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import redis
+
+# Connexi&oacute; a Redis
+client = redis.StrictRedis(host='localhost', port=6379, db=0)
+
+# Crear un pipeline per establir valors
+pipeline = client.pipeline()
+pipeline.set('key1', 'value1')
+pipeline.set('key2', 'value2')
+pipeline.set('key3', 'value3')
+pipeline.set('key4', 'value4')
+pipeline.set('key5', 'value5')
+pipeline.execute()
+
+# Crear un pipeline per recuperar valors
+pipeline = client.pipeline()
+pipeline.get('key1')
+pipeline.get('key2')
+pipeline.get('key3')
+pipeline.get('key4')
+pipeline.get('key5')
+results = pipeline.execute()
+
+# Mostrar els resultats
+for result in results:
+    print(result.decode('utf-8'))</pre></div><div class='content'></div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ul>
+<li><strong>Oblidar Executar el Pipeline</strong>: Assegura't de cridar <code>pipeline.execute()</code> per enviar les comandes a Redis.</li>
+<li><strong>Maneig d'Errors</strong>: Si una comanda en el pipeline falla, Redis continuarà processant les següents comandes. És important manejar els errors adequadament.</li>
+<li><strong>Limitacions del Pipelining</strong>: El pipelining no és adequat per a totes les situacions, especialment quan necessites la resposta d'una comanda abans d'enviar la següent.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>El pipelining és una tècnica poderosa per millorar el rendiment de les aplicacions que utilitzen Redis. Redueix la latència i optimitza l'ús de recursos de xarxa, permetent enviar múltiples comandes en un sol paquet. Practicar amb exemples i exercicis és clau per dominar aquesta tècnica i aplicar-la de manera efectiva en projectes reals.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-transactions' title="Transaccions">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-snapshots-rdb' title="Instantànies (RDB)">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

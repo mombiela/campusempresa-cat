@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimització del Rendiment</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/flutter/08-05-performance-optimization" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/flutter/08-05-performance-optimization" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/flutter/08-05-performance-optimization" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/flutter/08-05-performance-optimization" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/flutter/08-05-performance-optimization" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-04-isolates-and-concurrency' title="Isolates i Concurrència">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Optimització del Rendiment</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-01-introduction-to-testing' title="Introducció a les Proves">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com optimitzar el rendiment de les aplicacions Flutter per assegurar-nos que siguin ràpides i eficients. L'optimització del rendiment és crucial per proporcionar una experiència d'usuari fluida i responsiva. A continuació, desglossarem els conceptes clau, tècniques i eines per optimitzar el rendiment de les aplicacions Flutter.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Renderització i Fotogrames per Segon (FPS)</strong>:</p>
+<ul>
+<li>La renderització és el procés de dibuixar la interfície d'usuari a la pantalla.</li>
+<li>FPS (Frames Per Second) és una mesura de quants fotogrames es renderitzen per segon. Un FPS alt (idealment 60 FPS) proporciona una experiència d'usuari fluida.</li>
+</ul>
+</li>
+<li>
+<p><strong>Jank</strong>:</p>
+<ul>
+<li>El jank es refereix a les interrupcions o retards en l'animació o la resposta de la interfície d'usuari. Es produeix quan el renderitzat d'un fotograma triga més del temps assignat (16 ms per a 60 FPS).</li>
+</ul>
+</li>
+<li>
+<p><strong>Recomposició</strong>:</p>
+<ul>
+<li>La recomposició és el procés de reconstruir la interfície d'usuari quan hi ha canvis en l'estat. Una recomposició excessiva pot afectar el rendiment.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Tècniques d'Optimització</h1>
+<div class='content'></div><h2>1. Reduir la Recomposició Innecessària</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Utilitzar Widgets Stateless</strong>:</p>
+<ul>
+<li>Els widgets Stateless no es recomponen quan l'estat canvia, a diferència dels widgets Stateful.</li>
+</ul>
+<pre><code class="language-dart">class MyStatelessWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Text('Hello, World!');
+  }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Evitar la Recomposició de Widgets Innecessaris</strong>:</p>
+<ul>
+<li>Utilitza el widget <code>const</code> per a widgets que no canvien.</li>
+</ul>
+<pre><code class="language-dart">const Text('Hello, World!');
+</code></pre>
+</li>
+</ul>
+</div><h2>2. Optimitzar la Gestió de l'Estat</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Utilitzar <code>setState</code> amb Precaució</strong>:</p>
+<ul>
+<li>Limita l'ús de <code>setState</code> a la part mínima necessària del widget.</li>
+</ul>
+<pre><code class="language-dart">class MyStatefulWidget extends StatefulWidget {
+  @override
+  _MyStatefulWidgetState createState() =&gt; _MyStatefulWidgetState();
+}
+
+class _MyStatefulWidgetState extends State&lt;MyStatefulWidget&gt; {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text('Counter: $_counter'),
+        ElevatedButton(
+          onPressed: _incrementCounter,
+          child: Text('Increment'),
+        ),
+      ],
+    );
+  }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Utilitzar Paquets de Gestió de l'Estat</strong>:</p>
+<ul>
+<li>Paquets com <code>Provider</code>, <code>Riverpod</code> o <code>Bloc</code> poden ajudar a gestionar l'estat de manera més eficient.</li>
+</ul>
+</li>
+</ul>
+</div><h2>3. Optimitzar el Renderitzat</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Utilitzar <code>RepaintBoundary</code></strong>:</p>
+<ul>
+<li>El widget <code>RepaintBoundary</code> aïlla parts de la interfície d'usuari que no necessiten ser redibuixades.</li>
+</ul>
+<pre><code class="language-dart">RepaintBoundary(
+  child: MyExpensiveWidget(),
+);
+</code></pre>
+</li>
+<li>
+<p><strong>Utilitzar <code>ListView.builder</code> per a Llistes Grans</strong>:</p>
+<ul>
+<li><code>ListView.builder</code> només construeix els elements visibles, millorant el rendiment.</li>
+</ul>
+<pre><code class="language-dart">ListView.builder(
+  itemCount: 1000,
+  itemBuilder: (context, index) {
+    return ListTile(
+      title: Text('Item $index'),
+    );
+  },
+);
+</code></pre>
+</li>
+</ul>
+</div><h2>4. Optimitzar les Animacions</h2>
+<div class='content'><ul>
+<li><strong>Utilitzar <code>AnimatedBuilder</code></strong>:
+<ul>
+<li><code>AnimatedBuilder</code> permet optimitzar les animacions reutilitzant la lògica de construcció.</li>
+</ul>
+<pre><code class="language-dart">class MyAnimatedWidget extends StatefulWidget {
+  @override
+  _MyAnimatedWidgetState createState() =&gt; _MyAnimatedWidgetState();
+}
+
+class _MyAnimatedWidgetState extends State&lt;MyAnimatedWidget&gt; with SingleTickerProviderStateMixin {
+  AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Transform.rotate(
+          angle: _controller.value * 2.0 * 3.141592653589793,
+          child: child,
+        );
+      },
+      child: FlutterLogo(size: 100),
+    );
+  }
+}
+</code></pre>
+</li>
+</ul>
+</div><h1>Eines d'Optimització</h1>
+<div class='content'></div><h2>1. Flutter DevTools</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Perfomance Overlay</strong>:</p>
+<ul>
+<li>Mostra informació sobre el rendiment de l'aplicació, com ara el temps de renderització de cada fotograma.</li>
+</ul>
+<pre><code class="language-dart">MaterialApp(
+  debugShowCheckedModeBanner: false,
+  showPerformanceOverlay: true,
+  home: MyHomePage(),
+);
+</code></pre>
+</li>
+<li>
+<p><strong>Timeline</strong>:</p>
+<ul>
+<li>Permet analitzar el temps de renderització i identificar colls d'ampolla.</li>
+</ul>
+</li>
+</ul>
+</div><h2>2. Perfomance Profiling</h2>
+<div class='content'><ul>
+<li>
+<p><strong>CPU Profiler</strong>:</p>
+<ul>
+<li>Analitza l'ús de la CPU per identificar funcions que consumeixen molts recursos.</li>
+</ul>
+</li>
+<li>
+<p><strong>Memory Profiler</strong>:</p>
+<ul>
+<li>Monitoritza l'ús de la memòria per detectar fuites de memòria i optimitzar l'ús de recursos.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Optimitzar una Llista Gran</h2>
+<div class='content'><ol>
+<li>Crea una aplicació Flutter amb una llista de 1000 elements.</li>
+<li>Utilitza <code>ListView.builder</code> per optimitzar el rendiment de la llista.</li>
+</ol>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0ICdwYWNrYWdlOmZsdXR0ZXIvbWF0ZXJpYWwuZGFydCc7Cgp2b2lkIG1haW4oKSB7CiAgcnVuQXBwKE15QXBwKCkpOwp9CgpjbGFzcyBNeUFwcCBleHRlbmRzIFN0YXRlbGVzc1dpZGdldCB7CiAgQG92ZXJyaWRlCiAgV2lkZ2V0IGJ1aWxkKEJ1aWxkQ29udGV4dCBjb250ZXh0KSB7CiAgICByZXR1cm4gTWF0ZXJpYWxBcHAoCiAgICAgIGhvbWU6IFNjYWZmb2xkKAogICAgICAgIGFwcEJhcjogQXBwQmFyKAogICAgICAgICAgdGl0bGU6IFRleHQoJ09wdGltaXR6YWNpw7MgZGUgTGxpc3RhJyksCiAgICAgICAgKSwKICAgICAgICBib2R5OiBMaXN0Vmlldy5idWlsZGVyKAogICAgICAgICAgaXRlbUNvdW50OiAxMDAwLAogICAgICAgICAgaXRlbUJ1aWxkZXI6IChjb250ZXh0LCBpbmRleCkgewogICAgICAgICAgICByZXR1cm4gTGlzdFRpbGUoCiAgICAgICAgICAgICAgdGl0bGU6IFRleHQoJ0l0ZW0gJGluZGV4JyksCiAgICAgICAgICAgICk7CiAgICAgICAgICB9LAogICAgICAgICksCiAgICAgICksCiAgICApOwogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Optimitzaci&oacute; de Llista'),
+        ),
+        body: ListView.builder(
+          itemCount: 1000,
+          itemBuilder: (context, index) {
+            return ListTile(
+              title: Text('Item $index'),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}</pre></div><div class='content'></div><h2>Exercici 2: Utilitzar `RepaintBoundary`</h2>
+<div class='content'><ol>
+<li>Crea una aplicació Flutter amb un widget que es redibuixa freqüentment.</li>
+<li>Utilitza <code>RepaintBoundary</code> per aïllar el widget i millorar el rendiment.</li>
+</ol>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0ICdwYWNrYWdlOmZsdXR0ZXIvbWF0ZXJpYWwuZGFydCc7Cgp2b2lkIG1haW4oKSB7CiAgcnVuQXBwKE15QXBwKCkpOwp9CgpjbGFzcyBNeUFwcCBleHRlbmRzIFN0YXRlbGVzc1dpZGdldCB7CiAgQG92ZXJyaWRlCiAgV2lkZ2V0IGJ1aWxkKEJ1aWxkQ29udGV4dCBjb250ZXh0KSB7CiAgICByZXR1cm4gTWF0ZXJpYWxBcHAoCiAgICAgIGhvbWU6IFNjYWZmb2xkKAogICAgICAgIGFwcEJhcjogQXBwQmFyKAogICAgICAgICAgdGl0bGU6IFRleHQoJ1JlcGFpbnRCb3VuZGFyeSBFeGFtcGxlJyksCiAgICAgICAgKSwKICAgICAgICBib2R5OiBDZW50ZXIoCiAgICAgICAgICBjaGlsZDogUmVwYWludEJvdW5kYXJ5KAogICAgICAgICAgICBjaGlsZDogTXlFeHBlbnNpdmVXaWRnZXQoKSwKICAgICAgICAgICksCiAgICAgICAgKSwKICAgICAgKSwKICAgICk7CiAgfQp9CgpjbGFzcyBNeUV4cGVuc2l2ZVdpZGdldCBleHRlbmRzIFN0YXRlbGVzc1dpZGdldCB7CiAgQG92ZXJyaWRlCiAgV2lkZ2V0IGJ1aWxkKEJ1aWxkQ29udGV4dCBjb250ZXh0KSB7CiAgICByZXR1cm4gQ29udGFpbmVyKAogICAgICB3aWR0aDogMTAwLAogICAgICBoZWlnaHQ6IDEwMCwKICAgICAgY29sb3I6IENvbG9ycy5ibHVlLAogICAgKTsKICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('RepaintBoundary Example'),
+        ),
+        body: Center(
+          child: RepaintBoundary(
+            child: MyExpensiveWidget(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class MyExpensiveWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 100,
+      height: 100,
+      color: Colors.blue,
+    );
+  }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>L'optimització del rendiment és essencial per assegurar una experiència d'usuari fluida i responsiva en les aplicacions Flutter. Hem après diverses tècniques per reduir la recomposició innecessària, optimitzar la gestió de l'estat, millorar el renderitzat i optimitzar les animacions. També hem explorat eines com Flutter DevTools per analitzar i millorar el rendiment de les nostres aplicacions. Amb aquestes tècniques i eines, estem ben equipats per crear aplicacions Flutter ràpides i eficients.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-04-isolates-and-concurrency' title="Isolates i Concurrència">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-01-introduction-to-testing' title="Introducció a les Proves">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

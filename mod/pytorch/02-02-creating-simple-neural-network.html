@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creació d'una Xarxa Neuronal Simple</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/pytorch/02-02-creating-simple-neural-network" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/pytorch/02-02-creating-simple-neural-network" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/pytorch/02-02-creating-simple-neural-network" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/pytorch/02-02-creating-simple-neural-network" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/pytorch/02-02-creating-simple-neural-network" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-introduction-to-neural-networks' title="Introducció a les Xarxes Neuronals">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Creació d'una Xarxa Neuronal Simple</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-activation-functions' title="Funcions d'Activació">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a crear una xarxa neuronal simple utilitzant PyTorch. Aquest és un pas fonamental per a qualsevol persona que vulgui treballar amb xarxes neuronals, ja que proporciona una base sòlida per a la construcció de models més complexos en el futur.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre la construcció bàsica d'una xarxa neuronal en PyTorch.</li>
+<li>Aprendre a definir les capes d'una xarxa neuronal.</li>
+<li>Implementar una xarxa neuronal simple per a una tasca de classificació bàsica.</li>
+</ul>
+</div><h1>1. Definició d'una Xarxa Neuronal</h1>
+<div class='content'></div><h2>1.1 Importació de Llibreries Necessàries</h2>
+<div class='content'><p>Primer, importem les llibreries necessàries per a la construcció de la nostra xarxa neuronal.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaC5ubiBhcyBubgppbXBvcnQgdG9yY2gub3B0aW0gYXMgb3B0aW0KaW1wb3J0IHRvcmNoLm5uLmZ1bmN0aW9uYWwgYXMgRg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torch.nn as nn
+import torch.optim as optim
+import torch.nn.functional as F</pre></div><div class='content'></div><h2>1.2 Definició de la Classe de la Xarxa Neuronal</h2>
+<div class='content'><p>En PyTorch, les xarxes neuronals es defineixen com a subclasses de <code>nn.Module</code>. Aquí definirem una xarxa neuronal simple amb una capa d'entrada, una capa oculta i una capa de sortida.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgU2ltcGxlTmV1cmFsTmV0d29yayhubi5Nb2R1bGUpOgogICAgZGVmIF9faW5pdF9fKHNlbGYpOgogICAgICAgIHN1cGVyKFNpbXBsZU5ldXJhbE5ldHdvcmssIHNlbGYpLl9faW5pdF9fKCkKICAgICAgICBzZWxmLmZjMSA9IG5uLkxpbmVhcig3ODQsIDEyOCkgICMgQ2FwYSBkJ2VudHJhZGEgYSBjYXBhIG9jdWx0YQogICAgICAgIHNlbGYuZmMyID0gbm4uTGluZWFyKDEyOCwgMTApICAgIyBDYXBhIG9jdWx0YSBhIGNhcGEgZGUgc29ydGlkYQoKICAgIGRlZiBmb3J3YXJkKHNlbGYsIHgpOgogICAgICAgIHggPSBGLnJlbHUoc2VsZi5mYzEoeCkpICAjIEFwbGljYWNpw7MgZGUgbGEgZnVuY2nDsyBkJ2FjdGl2YWNpw7MgUmVMVQogICAgICAgIHggPSBzZWxmLmZjMih4KSAgICAgICAgICAjIFNvcnRpZGEgZGUgbGEgY2FwYSBvY3VsdGEgYSBsYSBjYXBhIGRlIHNvcnRpZGEKICAgICAgICByZXR1cm4geA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class SimpleNeuralNetwork(nn.Module):
+    def __init__(self):
+        super(SimpleNeuralNetwork, self).__init__()
+        self.fc1 = nn.Linear(784, 128)  # Capa d'entrada a capa oculta
+        self.fc2 = nn.Linear(128, 10)   # Capa oculta a capa de sortida
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))  # Aplicaci&oacute; de la funci&oacute; d'activaci&oacute; ReLU
+        x = self.fc2(x)          # Sortida de la capa oculta a la capa de sortida
+        return x</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>nn.Linear(784, 128)</code>: Defineix una capa lineal (totalment connectada) amb 784 neurones d'entrada i 128 neurones de sortida.</li>
+<li><code>F.relu(self.fc1(x))</code>: Aplica la funció d'activació ReLU a la sortida de la primera capa.</li>
+<li><code>self.fc2(x)</code>: Passa la sortida de la capa oculta a la capa de sortida.</li>
+</ul>
+</div><h1>2. Entrenament de la Xarxa Neuronal</h1>
+<div class='content'></div><h2>2.1 Preparació de les Dades</h2>
+<div class='content'><p>Per a aquest exemple, utilitzarem el conjunt de dades MNIST, que conté imatges de dígits escrits a mà.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSB0b3JjaHZpc2lvbiBpbXBvcnQgZGF0YXNldHMsIHRyYW5zZm9ybXMKCiMgVHJhbnNmb3JtYWNpw7MgZGUgbGVzIGRhZGVzIGEgdGVuc29ycyBpIG5vcm1hbGl0emFjacOzCnRyYW5zZm9ybSA9IHRyYW5zZm9ybXMuQ29tcG9zZShbdHJhbnNmb3Jtcy5Ub1RlbnNvcigpLCB0cmFuc2Zvcm1zLk5vcm1hbGl6ZSgoMC41LCksICgwLjUsKSldKQoKIyBDw6BycmVnYSBkZWwgY29uanVudCBkZSBkYWRlcyBkJ2VudHJlbmFtZW50CnRyYWluc2V0ID0gZGF0YXNldHMuTU5JU1Qocm9vdD0nLi9kYXRhJywgdHJhaW49VHJ1ZSwgZG93bmxvYWQ9VHJ1ZSwgdHJhbnNmb3JtPXRyYW5zZm9ybSkKdHJhaW5sb2FkZXIgPSB0b3JjaC51dGlscy5kYXRhLkRhdGFMb2FkZXIodHJhaW5zZXQsIGJhdGNoX3NpemU9NjQsIHNodWZmbGU9VHJ1ZSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from torchvision import datasets, transforms
+
+# Transformaci&oacute; de les dades a tensors i normalitzaci&oacute;
+transform = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
+
+# C&agrave;rrega del conjunt de dades d'entrenament
+trainset = datasets.MNIST(root='./data', train=True, download=True, transform=transform)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True)</pre></div><div class='content'></div><h2>2.2 Definició de la Funció de Pèrdua i l'Optimitzador</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kZWwgPSBTaW1wbGVOZXVyYWxOZXR3b3JrKCkKY3JpdGVyaW9uID0gbm4uQ3Jvc3NFbnRyb3B5TG9zcygpICAjIEZ1bmNpw7MgZGUgcMOocmR1YSBwZXIgYSBjbGFzc2lmaWNhY2nDswpvcHRpbWl6ZXIgPSBvcHRpbS5TR0QobW9kZWwucGFyYW1ldGVycygpLCBscj0wLjAxKSAgIyBPcHRpbWl0emFkb3IgU0dEIGFtYiB0YXhhIGQnYXByZW5lbnRhdGdlIGRlIDAuMDE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>model = SimpleNeuralNetwork()
+criterion = nn.CrossEntropyLoss()  # Funci&oacute; de p&egrave;rdua per a classificaci&oacute;
+optimizer = optim.SGD(model.parameters(), lr=0.01)  # Optimitzador SGD amb taxa d'aprenentatge de 0.01</pre></div><div class='content'></div><h2>2.3 Bucle d'Entrenament</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZXBvY2hzID0gNQpmb3IgZXBvY2ggaW4gcmFuZ2UoZXBvY2hzKToKICAgIHJ1bm5pbmdfbG9zcyA9IDAuMAogICAgZm9yIGltYWdlcywgbGFiZWxzIGluIHRyYWlubG9hZGVyOgogICAgICAgICMgQXBsYW5hciBsZXMgaW1hdGdlcyBkZSAyOHgyOCBhIDc4NAogICAgICAgIGltYWdlcyA9IGltYWdlcy52aWV3KGltYWdlcy5zaGFwZVswXSwgLTEpCiAgICAgICAgCiAgICAgICAgIyBOZXRlamFyIGVscyBncmFkaWVudHMKICAgICAgICBvcHRpbWl6ZXIuemVyb19ncmFkKCkKICAgICAgICAKICAgICAgICAjIFBhc3NhciBsZXMgaW1hdGdlcyBwZWwgbW9kZWwKICAgICAgICBvdXRwdXRzID0gbW9kZWwoaW1hZ2VzKQogICAgICAgIAogICAgICAgICMgQ2FsY3VsYXIgbGEgcMOocmR1YQogICAgICAgIGxvc3MgPSBjcml0ZXJpb24ob3V0cHV0cywgbGFiZWxzKQogICAgICAgIAogICAgICAgICMgUmV0cm9wcm9wYWdhY2nDswogICAgICAgIGxvc3MuYmFja3dhcmQoKQogICAgICAgIAogICAgICAgICMgQWN0dWFsaXR6YXIgZWxzIHBlc29zCiAgICAgICAgb3B0aW1pemVyLnN0ZXAoKQogICAgICAgIAogICAgICAgIHJ1bm5pbmdfbG9zcyArPSBsb3NzLml0ZW0oKQogICAgcHJpbnQoZiJFcG9jaCB7ZXBvY2grMX0sIExvc3M6IHtydW5uaW5nX2xvc3MvbGVuKHRyYWlubG9hZGVyKX0iKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>epochs = 5
+for epoch in range(epochs):
+    running_loss = 0.0
+    for images, labels in trainloader:
+        # Aplanar les imatges de 28x28 a 784
+        images = images.view(images.shape[0], -1)
+        
+        # Netejar els gradients
+        optimizer.zero_grad()
+        
+        # Passar les imatges pel model
+        outputs = model(images)
+        
+        # Calcular la p&egrave;rdua
+        loss = criterion(outputs, labels)
+        
+        # Retropropagaci&oacute;
+        loss.backward()
+        
+        # Actualitzar els pesos
+        optimizer.step()
+        
+        running_loss += loss.item()
+    print(f&quot;Epoch {epoch+1}, Loss: {running_loss/len(trainloader)}&quot;)</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>images.view(images.shape[0], -1)</code>: Aplana les imatges de 28x28 píxels a vectors de 784 elements.</li>
+<li><code>optimizer.zero_grad()</code>: Neteja els gradients acumulats.</li>
+<li><code>outputs = model(images)</code>: Passa les imatges pel model per obtenir les prediccions.</li>
+<li><code>loss = criterion(outputs, labels)</code>: Calcula la pèrdua entre les prediccions i les etiquetes reals.</li>
+<li><code>loss.backward()</code>: Realitza la retropropagació per calcular els gradients.</li>
+<li><code>optimizer.step()</code>: Actualitza els pesos del model.</li>
+</ul>
+</div><h1>3. Validació del Model</h1>
+<div class='content'><p>Després d'entrenar el model, és important validar-lo per assegurar-nos que generalitza bé a dades no vistes.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDw6BycmVnYSBkZWwgY29uanVudCBkZSBkYWRlcyBkZSBwcm92YQp0ZXN0c2V0ID0gZGF0YXNldHMuTU5JU1Qocm9vdD0nLi9kYXRhJywgdHJhaW49RmFsc2UsIGRvd25sb2FkPVRydWUsIHRyYW5zZm9ybT10cmFuc2Zvcm0pCnRlc3Rsb2FkZXIgPSB0b3JjaC51dGlscy5kYXRhLkRhdGFMb2FkZXIodGVzdHNldCwgYmF0Y2hfc2l6ZT02NCwgc2h1ZmZsZT1GYWxzZSkKCmNvcnJlY3QgPSAwCnRvdGFsID0gMAp3aXRoIHRvcmNoLm5vX2dyYWQoKToKICAgIGZvciBpbWFnZXMsIGxhYmVscyBpbiB0ZXN0bG9hZGVyOgogICAgICAgIGltYWdlcyA9IGltYWdlcy52aWV3KGltYWdlcy5zaGFwZVswXSwgLTEpCiAgICAgICAgb3V0cHV0cyA9IG1vZGVsKGltYWdlcykKICAgICAgICBfLCBwcmVkaWN0ZWQgPSB0b3JjaC5tYXgob3V0cHV0cywgMSkKICAgICAgICB0b3RhbCArPSBsYWJlbHMuc2l6ZSgwKQogICAgICAgIGNvcnJlY3QgKz0gKHByZWRpY3RlZCA9PSBsYWJlbHMpLnN1bSgpLml0ZW0oKQoKcHJpbnQoZidBY2N1cmFjeTogezEwMCAqIGNvcnJlY3QgLyB0b3RhbH0lJyk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># C&agrave;rrega del conjunt de dades de prova
+testset = datasets.MNIST(root='./data', train=False, download=True, transform=transform)
+testloader = torch.utils.data.DataLoader(testset, batch_size=64, shuffle=False)
+
+correct = 0
+total = 0
+with torch.no_grad():
+    for images, labels in testloader:
+        images = images.view(images.shape[0], -1)
+        outputs = model(images)
+        _, predicted = torch.max(outputs, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+print(f'Accuracy: {100 * correct / total}%')</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>torch.no_grad()</code>: Desactiva el càlcul de gradients per a la validació.</li>
+<li><code>torch.max(outputs, 1)</code>: Obté les prediccions del model.</li>
+<li><code>correct += (predicted == labels).sum().item()</code>: Compta el nombre de prediccions correctes.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après a crear una xarxa neuronal simple utilitzant PyTorch. Hem definit les capes de la xarxa, hem entrenat el model amb el conjunt de dades MNIST i hem validat la seva precisió. Aquest coneixement és fonamental per a la construcció de models més complexos i avançats en el futur.</p>
+</div><h2>Exercici Pràctic</h2>
+<div class='content'><p><strong>Exercici:</strong> Modifica la xarxa neuronal per afegir una segona capa oculta amb 64 neurones. Entrena el model de nou i compara la precisió amb la xarxa original.</p>
+<p><strong>Solució:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgTW9kaWZpZWROZXVyYWxOZXR3b3JrKG5uLk1vZHVsZSk6CiAgICBkZWYgX19pbml0X18oc2VsZik6CiAgICAgICAgc3VwZXIoTW9kaWZpZWROZXVyYWxOZXR3b3JrLCBzZWxmKS5fX2luaXRfXygpCiAgICAgICAgc2VsZi5mYzEgPSBubi5MaW5lYXIoNzg0LCAxMjgpCiAgICAgICAgc2VsZi5mYzIgPSBubi5MaW5lYXIoMTI4LCA2NCkKICAgICAgICBzZWxmLmZjMyA9IG5uLkxpbmVhcig2NCwgMTApCgogICAgZGVmIGZvcndhcmQoc2VsZiwgeCk6CiAgICAgICAgeCA9IEYucmVsdShzZWxmLmZjMSh4KSkKICAgICAgICB4ID0gRi5yZWx1KHNlbGYuZmMyKHgpKQogICAgICAgIHggPSBzZWxmLmZjMyh4KQogICAgICAgIHJldHVybiB4Cgptb2RlbCA9IE1vZGlmaWVkTmV1cmFsTmV0d29yaygpCmNyaXRlcmlvbiA9IG5uLkNyb3NzRW50cm9weUxvc3MoKQpvcHRpbWl6ZXIgPSBvcHRpbS5TR0QobW9kZWwucGFyYW1ldGVycygpLCBscj0wLjAxKQoKIyBFbnRyZW5hbWVudCBpIHZhbGlkYWNpw7Mgc2VndWVpeGVuIGVsIG1hdGVpeCBwcm9jw6lzIHF1ZSBhYmFucw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class ModifiedNeuralNetwork(nn.Module):
+    def __init__(self):
+        super(ModifiedNeuralNetwork, self).__init__()
+        self.fc1 = nn.Linear(784, 128)
+        self.fc2 = nn.Linear(128, 64)
+        self.fc3 = nn.Linear(64, 10)
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = F.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+
+model = ModifiedNeuralNetwork()
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(model.parameters(), lr=0.01)
+
+# Entrenament i validaci&oacute; segueixen el mateix proc&eacute;s que abans</pre></div><div class='content'><p>Aquest exercici ajuda a comprendre com afegir capes addicionals a una xarxa neuronal i com això pot afectar el rendiment del model.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-introduction-to-neural-networks' title="Introducció a les Xarxes Neuronals">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-activation-functions' title="Funcions d'Activació">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

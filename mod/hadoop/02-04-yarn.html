@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YARN (Yet Another Resource Negotiator)</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/hadoop/02-04-yarn" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/hadoop/02-04-yarn" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/hadoop/02-04-yarn" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/hadoop/02-04-yarn" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/hadoop/02-04-yarn" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-03-mapreduce-framework' title="Marc MapReduce">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">YARN (Yet Another Resource Negotiator)</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-01-hdfs-architecture' title="Arquitectura de HDFS">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a YARN</h1>
+<div class='content'><p>YARN (Yet Another Resource Negotiator) és un component fonamental de l'ecosistema Hadoop que gestiona els recursos del clúster i programa les aplicacions. Va ser introduït a Hadoop 2.0 per superar les limitacions del model original de MapReduce, permetent una major escalabilitat i flexibilitat.</p>
+</div><h2>Objectius de YARN</h2>
+<div class='content'><ul>
+<li><strong>Gestió de recursos:</strong> Assignar recursos de manera eficient entre les aplicacions que s'executen en el clúster.</li>
+<li><strong>Planificació de tasques:</strong> Programar les tasques de les aplicacions per assegurar-se que s'executen de manera òptima.</li>
+<li><strong>Suport a múltiples models de programació:</strong> Permetre l'execució de diferents tipus d'aplicacions més enllà de MapReduce, com ara Apache Spark, Apache Flink, etc.</li>
+</ul>
+</div><h1>Components de YARN</h1>
+<div class='content'><p>YARN consta de diversos components clau que treballen junts per gestionar els recursos i les aplicacions en el clúster:</p>
+<ol>
+<li>
+<p><strong>ResourceManager (RM):</strong></p>
+<ul>
+<li>És el component central de YARN que gestiona els recursos del clúster.</li>
+<li>Consta de dos subcomponents principals:
+<ul>
+<li><strong>Scheduler:</strong> Assigna recursos a les aplicacions basant-se en polítiques de planificació.</li>
+<li><strong>ApplicationManager:</strong> Gestiona la submissió d'aplicacions i la negociació de recursos per a les aplicacions.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>NodeManager (NM):</strong></p>
+<ul>
+<li>S'executa en cada node del clúster i és responsable de gestionar els recursos locals i supervisar l'execució de les tasques.</li>
+<li>Comunica l'estat dels recursos al ResourceManager.</li>
+</ul>
+</li>
+<li>
+<p><strong>ApplicationMaster (AM):</strong></p>
+<ul>
+<li>És específic per a cada aplicació i s'encarrega de gestionar l'execució de l'aplicació.</li>
+<li>Sol·licita recursos al ResourceManager i treballa amb els NodeManagers per executar i supervisar les tasques.</li>
+</ul>
+</li>
+<li>
+<p><strong>Containers:</strong></p>
+<ul>
+<li>Són les unitats de recursos (CPU, memòria, etc.) assignades a les aplicacions per executar les seves tasques.</li>
+<li>Cada container és gestionat pel NodeManager del node on s'executa.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Flux de treball de YARN</h1>
+<div class='content'><p>El flux de treball de YARN es pot desglossar en els següents passos:</p>
+<ol>
+<li>
+<p><strong>Submissió de l'aplicació:</strong></p>
+<ul>
+<li>L'usuari envia una aplicació al ResourceManager.</li>
+<li>El ResourceManager crea un ApplicationMaster per a l'aplicació.</li>
+</ul>
+</li>
+<li>
+<p><strong>Negociació de recursos:</strong></p>
+<ul>
+<li>L'ApplicationMaster sol·licita recursos al ResourceManager.</li>
+<li>El ResourceManager assigna containers basant-se en la disponibilitat de recursos i les polítiques de planificació.</li>
+</ul>
+</li>
+<li>
+<p><strong>Execució de tasques:</strong></p>
+<ul>
+<li>L'ApplicationMaster treballa amb els NodeManagers per iniciar les tasques en els containers assignats.</li>
+<li>Els NodeManagers supervisen l'execució de les tasques i informen l'ApplicationMaster sobre l'estat de les tasques.</li>
+</ul>
+</li>
+<li>
+<p><strong>Finalització de l'aplicació:</strong></p>
+<ul>
+<li>Quan totes les tasques de l'aplicació han finalitzat, l'ApplicationMaster informa el ResourceManager.</li>
+<li>Els recursos assignats són alliberats i l'ApplicationMaster es tanca.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Exemple pràctic</h1>
+<div class='content'><p>A continuació, es mostra un exemple pràctic de com es pot executar una aplicació MapReduce en un clúster YARN.</p>
+</div><h2>Pas 1: Submissió de l'aplicació</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGFkb29wIGphciBteS1tYXByZWR1Y2Utam9iLmphciBjb20uZXhhbXBsZS5NeU1hcFJlZHVjZUpvYiAvaW5wdXQgL291dHB1dA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>hadoop jar my-mapreduce-job.jar com.example.MyMapReduceJob /input /output</pre></div><div class='content'></div><h2>Pas 2: Negociació de recursos</h2>
+<div class='content'><p>L'ApplicationMaster sol·licita recursos al ResourceManager:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UmVzb3VyY2UgY2FwYWJpbGl0eSA9IFJlc291cmNlLm5ld0luc3RhbmNlKDEwMjQsIDEpOyAvLyAxMDI0IE1CIGRlIG1lbcOycmlhIGkgMSB2Q29yZQpBTVJNQ2xpZW50LkNvbnRhaW5lclJlcXVlc3QgY29udGFpbmVyUmVxdWVzdCA9IG5ldyBBTVJNQ2xpZW50LkNvbnRhaW5lclJlcXVlc3QoY2FwYWJpbGl0eSwgbnVsbCwgbnVsbCwgUHJpb3JpdHkubmV3SW5zdGFuY2UoMCkpOwphbVJNQ2xpZW50LmFkZENvbnRhaW5lclJlcXVlc3QoY29udGFpbmVyUmVxdWVzdCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Resource capability = Resource.newInstance(1024, 1); // 1024 MB de mem&ograve;ria i 1 vCore
+AMRMClient.ContainerRequest containerRequest = new AMRMClient.ContainerRequest(capability, null, null, Priority.newInstance(0));
+amRMClient.addContainerRequest(containerRequest);</pre></div><div class='content'></div><h2>Pas 3: Execució de tasques</h2>
+<div class='content'><p>L'ApplicationMaster treballa amb els NodeManagers per iniciar les tasques:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zm9yIChDb250YWluZXIgY29udGFpbmVyIDogYWxsb2NhdGVkQ29udGFpbmVycykgewogICAgTGF1bmNoQ29udGFpbmVyUnVubmFibGUgcnVubmFibGVMYXVuY2hDb250YWluZXIgPSBuZXcgTGF1bmNoQ29udGFpbmVyUnVubmFibGUoY29udGFpbmVyLCBjb250YWluZXJMaXN0ZW5lcik7CiAgICBUaHJlYWQgbGF1bmNoVGhyZWFkID0gbmV3IFRocmVhZChydW5uYWJsZUxhdW5jaENvbnRhaW5lcik7CiAgICBsYXVuY2hUaHJlYWRzLmFkZChsYXVuY2hUaHJlYWQpOwogICAgbGF1bmNoVGhyZWFkLnN0YXJ0KCk7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>for (Container container : allocatedContainers) {
+    LaunchContainerRunnable runnableLaunchContainer = new LaunchContainerRunnable(container, containerListener);
+    Thread launchThread = new Thread(runnableLaunchContainer);
+    launchThreads.add(launchThread);
+    launchThread.start();
+}</pre></div><div class='content'></div><h2>Pas 4: Finalització de l'aplicació</h2>
+<div class='content'><p>Quan totes les tasques han finalitzat, l'ApplicationMaster informa el ResourceManager:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YW1STUNsaWVudC51bnJlZ2lzdGVyQXBwbGljYXRpb25NYXN0ZXIoRmluYWxBcHBsaWNhdGlvblN0YXR1cy5TVUNDRUVERUQsICIiLCAiIik7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>amRMClient.unregisterApplicationMaster(FinalApplicationStatus.SUCCEEDED, &quot;&quot;, &quot;&quot;);</pre></div><div class='content'></div><h1>Exercici pràctic</h1>
+<div class='content'></div><h2>Exercici 1: Configuració de YARN</h2>
+<div class='content'><ol>
+<li><strong>Configura el ResourceManager i el NodeManager:</strong>
+<ul>
+<li>Edita el fitxer <code>yarn-site.xml</code> per configurar el ResourceManager i el NodeManager.</li>
+<li>Exemple de configuració:</li>
+</ul>
+</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PGNvbmZpZ3VyYXRpb24+CiAgICA8cHJvcGVydHk+CiAgICAgICAgPG5hbWU+eWFybi5yZXNvdXJjZW1hbmFnZXIuaG9zdG5hbWU8L25hbWU+CiAgICAgICAgPHZhbHVlPnJlc291cmNlbWFuYWdlci1ob3N0bmFtZTwvdmFsdWU+CiAgICA8L3Byb3BlcnR5PgogICAgPHByb3BlcnR5PgogICAgICAgIDxuYW1lPnlhcm4ubm9kZW1hbmFnZXIucmVzb3VyY2UubWVtb3J5LW1iPC9uYW1lPgogICAgICAgIDx2YWx1ZT44MTkyPC92YWx1ZT4KICAgIDwvcHJvcGVydHk+CiAgICA8cHJvcGVydHk+CiAgICAgICAgPG5hbWU+eWFybi5ub2RlbWFuYWdlci5yZXNvdXJjZS5jcHUtdmNvcmVzPC9uYW1lPgogICAgICAgIDx2YWx1ZT40PC92YWx1ZT4KICAgIDwvcHJvcGVydHk+CjwvY29uZmlndXJhdGlvbj4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;configuration&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.resourcemanager.hostname&lt;/name&gt;
+        &lt;value&gt;resourcemanager-hostname&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.nodemanager.resource.memory-mb&lt;/name&gt;
+        &lt;value&gt;8192&lt;/value&gt;
+    &lt;/property&gt;
+    &lt;property&gt;
+        &lt;name&gt;yarn.nodemanager.resource.cpu-vcores&lt;/name&gt;
+        &lt;value&gt;4&lt;/value&gt;
+    &lt;/property&gt;
+&lt;/configuration&gt;</pre></div><div class='content'><ol start="2">
+<li><strong>Inicia el ResourceManager i el NodeManager:</strong></li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RhcnQteWFybi5zaA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>start-yarn.sh</pre></div><div class='content'></div><h2>Exercici 2: Executar una aplicació MapReduce en YARN</h2>
+<div class='content'><ol>
+<li><strong>Crea un programa MapReduce senzill:</strong></li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHVibGljIGNsYXNzIFdvcmRDb3VudCBleHRlbmRzIENvbmZpZ3VyZWQgaW1wbGVtZW50cyBUb29sIHsKICAgIHB1YmxpYyBzdGF0aWMgdm9pZCBtYWluKFN0cmluZ1tdIGFyZ3MpIHRocm93cyBFeGNlcHRpb24gewogICAgICAgIGludCByZXMgPSBUb29sUnVubmVyLnJ1bihuZXcgQ29uZmlndXJhdGlvbigpLCBuZXcgV29yZENvdW50KCksIGFyZ3MpOwogICAgICAgIFN5c3RlbS5leGl0KHJlcyk7CiAgICB9CgogICAgcHVibGljIGludCBydW4oU3RyaW5nW10gYXJncykgdGhyb3dzIEV4Y2VwdGlvbiB7CiAgICAgICAgSm9iIGpvYiA9IEpvYi5nZXRJbnN0YW5jZShnZXRDb25mKCksICJ3b3JkY291bnQiKTsKICAgICAgICBqb2Iuc2V0SmFyQnlDbGFzcyh0aGlzLmdldENsYXNzKCkpOwoKICAgICAgICBGaWxlSW5wdXRGb3JtYXQuYWRkSW5wdXRQYXRoKGpvYiwgbmV3IFBhdGgoYXJnc1swXSkpOwogICAgICAgIEZpbGVPdXRwdXRGb3JtYXQuc2V0T3V0cHV0UGF0aChqb2IsIG5ldyBQYXRoKGFyZ3NbMV0pKTsKCiAgICAgICAgam9iLnNldE1hcHBlckNsYXNzKE1hcC5jbGFzcyk7CiAgICAgICAgam9iLnNldFJlZHVjZXJDbGFzcyhSZWR1Y2UuY2xhc3MpOwoKICAgICAgICBqb2Iuc2V0T3V0cHV0S2V5Q2xhc3MoVGV4dC5jbGFzcyk7CiAgICAgICAgam9iLnNldE91dHB1dFZhbHVlQ2xhc3MoSW50V3JpdGFibGUuY2xhc3MpOwoKICAgICAgICByZXR1cm4gam9iLndhaXRGb3JDb21wbGV0aW9uKHRydWUpID8gMCA6IDE7CiAgICB9CgogICAgcHVibGljIHN0YXRpYyBjbGFzcyBNYXAgZXh0ZW5kcyBNYXBwZXI8TG9uZ1dyaXRhYmxlLCBUZXh0LCBUZXh0LCBJbnRXcml0YWJsZT4gewogICAgICAgIHByaXZhdGUgZmluYWwgc3RhdGljIEludFdyaXRhYmxlIG9uZSA9IG5ldyBJbnRXcml0YWJsZSgxKTsKICAgICAgICBwcml2YXRlIFRleHQgd29yZCA9IG5ldyBUZXh0KCk7CgogICAgICAgIHB1YmxpYyB2b2lkIG1hcChMb25nV3JpdGFibGUga2V5LCBUZXh0IHZhbHVlLCBDb250ZXh0IGNvbnRleHQpIHRocm93cyBJT0V4Y2VwdGlvbiwgSW50ZXJydXB0ZWRFeGNlcHRpb24gewogICAgICAgICAgICBTdHJpbmdUb2tlbml6ZXIgaXRyID0gbmV3IFN0cmluZ1Rva2VuaXplcih2YWx1ZS50b1N0cmluZygpKTsKICAgICAgICAgICAgd2hpbGUgKGl0ci5oYXNNb3JlVG9rZW5zKCkpIHsKICAgICAgICAgICAgICAgIHdvcmQuc2V0KGl0ci5uZXh0VG9rZW4oKSk7CiAgICAgICAgICAgICAgICBjb250ZXh0LndyaXRlKHdvcmQsIG9uZSk7CiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9CgogICAgcHVibGljIHN0YXRpYyBjbGFzcyBSZWR1Y2UgZXh0ZW5kcyBSZWR1Y2VyPFRleHQsIEludFdyaXRhYmxlLCBUZXh0LCBJbnRXcml0YWJsZT4gewogICAgICAgIHB1YmxpYyB2b2lkIHJlZHVjZShUZXh0IGtleSwgSXRlcmFibGU8SW50V3JpdGFibGU+IHZhbHVlcywgQ29udGV4dCBjb250ZXh0KSB0aHJvd3MgSU9FeGNlcHRpb24sIEludGVycnVwdGVkRXhjZXB0aW9uIHsKICAgICAgICAgICAgaW50IHN1bSA9IDA7CiAgICAgICAgICAgIGZvciAoSW50V3JpdGFibGUgdmFsIDogdmFsdWVzKSB7CiAgICAgICAgICAgICAgICBzdW0gKz0gdmFsLmdldCgpOwogICAgICAgICAgICB9CiAgICAgICAgICAgIGNvbnRleHQud3JpdGUoa2V5LCBuZXcgSW50V3JpdGFibGUoc3VtKSk7CiAgICAgICAgfQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>public class WordCount extends Configured implements Tool {
+    public static void main(String[] args) throws Exception {
+        int res = ToolRunner.run(new Configuration(), new WordCount(), args);
+        System.exit(res);
+    }
+
+    public int run(String[] args) throws Exception {
+        Job job = Job.getInstance(getConf(), &quot;wordcount&quot;);
+        job.setJarByClass(this.getClass());
+
+        FileInputFormat.addInputPath(job, new Path(args[0]));
+        FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+        job.setMapperClass(Map.class);
+        job.setReducerClass(Reduce.class);
+
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(IntWritable.class);
+
+        return job.waitForCompletion(true) ? 0 : 1;
+    }
+
+    public static class Map extends Mapper&lt;LongWritable, Text, Text, IntWritable&gt; {
+        private final static IntWritable one = new IntWritable(1);
+        private Text word = new Text();
+
+        public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+            StringTokenizer itr = new StringTokenizer(value.toString());
+            while (itr.hasMoreTokens()) {
+                word.set(itr.nextToken());
+                context.write(word, one);
+            }
+        }
+    }
+
+    public static class Reduce extends Reducer&lt;Text, IntWritable, Text, IntWritable&gt; {
+        public void reduce(Text key, Iterable&lt;IntWritable&gt; values, Context context) throws IOException, InterruptedException {
+            int sum = 0;
+            for (IntWritable val : values) {
+                sum += val.get();
+            }
+            context.write(key, new IntWritable(sum));
+        }
+    }
+}</pre></div><div class='content'><ol start="2">
+<li><strong>Compila i executa el programa:</strong></li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGFkb29wIGphciB3b3JkY291bnQuamFyIFdvcmRDb3VudCAvaW5wdXQgL291dHB1dA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>hadoop jar wordcount.jar WordCount /input /output</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>YARN és un component essencial de l'ecosistema Hadoop que permet una gestió eficient dels recursos i la planificació de tasques en un clúster. Amb YARN, Hadoop pot suportar múltiples models de programació i escalar de manera eficient per gestionar grans volums de dades. En aquest mòdul, hem explorat els components clau de YARN, el seu flux de treball i hem proporcionat exemples pràctics per ajudar-te a comprendre com funciona YARN en la pràctica.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-03-mapreduce-framework' title="Marc MapReduce">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-01-hdfs-architecture' title="Arquitectura de HDFS">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

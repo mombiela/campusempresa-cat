@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitorització de la salut de l'aplicació</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nginx/07-03-application-health-monitoring" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nginx/07-03-application-health-monitoring" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nginx/07-03-application-health-monitoring" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nginx/07-03-application-health-monitoring" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nginx/07-03-application-health-monitoring" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-02-advanced-load-balancing' title="Balanceig de càrrega avançat">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Monitorització de la salut de l'aplicació</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-04-dynamic-configuration' title="Configuració dinàmica">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem com NGINX Plus pot ajudar a monitoritzar la salut de les aplicacions que gestiona. La monitorització de la salut és crucial per assegurar que les aplicacions funcionin correctament i per detectar problemes abans que afectin els usuaris finals.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Comprovacions de salut (Health Checks)</strong>: Són sol·licituds periòdiques que NGINX Plus envia als servidors backend per assegurar-se que estan funcionant correctament.</li>
+<li><strong>Tipus de comprovacions de salut</strong>: NGINX Plus suporta diversos tipus de comprovacions de salut, incloent HTTP, HTTPS, TCP i UDP.</li>
+<li><strong>Paràmetres de configuració</strong>: Inclouen la freqüència de les comprovacions, els temps d'espera, i les condicions per considerar un servidor com a saludable o no saludable.</li>
+</ol>
+</div><h1>Configuració de les Comprovacions de Salut</h1>
+<div class='content'></div><h2>Exemple de Configuració</h2>
+<div class='content'><p>A continuació, es mostra un exemple de configuració per a les comprovacions de salut en un entorn HTTP:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aHR0cCB7CiAgICB1cHN0cmVhbSBiYWNrZW5kIHsKICAgICAgICB6b25lIGJhY2tlbmQgNjRrOwogICAgICAgIHNlcnZlciBiYWNrZW5kMS5leGFtcGxlLmNvbTsKICAgICAgICBzZXJ2ZXIgYmFja2VuZDIuZXhhbXBsZS5jb207CgogICAgICAgICMgQ29uZmlndXJhY2nDsyBkZSBsZXMgY29tcHJvdmFjaW9ucyBkZSBzYWx1dAogICAgICAgIGhlYWx0aF9jaGVjayBpbnRlcnZhbD01cyBmYWlscz0zIHBhc3Nlcz0yIHVyaT0vaGVhbHRoX2NoZWNrOwogICAgfQoKICAgIHNlcnZlciB7CiAgICAgICAgbGlzdGVuIDgwOwogICAgICAgIGxvY2F0aW9uIC8gewogICAgICAgICAgICBwcm94eV9wYXNzIGh0dHA6Ly9iYWNrZW5kOwogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>http {
+    upstream backend {
+        zone backend 64k;
+        server backend1.example.com;
+        server backend2.example.com;
+
+        # Configuraci&oacute; de les comprovacions de salut
+        health_check interval=5s fails=3 passes=2 uri=/health_check;
+    }
+
+    server {
+        listen 80;
+        location / {
+            proxy_pass http://backend;
+        }
+    }
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>upstream backend</code>: Defineix un grup de servidors backend.</li>
+<li><code>zone backend 64k</code>: Defineix una zona compartida per a emmagatzemar l'estat dels servidors.</li>
+<li><code>server backend1.example.com</code> i <code>server backend2.example.com</code>: Defineixen els servidors backend.</li>
+<li><code>health_check interval=5s fails=3 passes=2 uri=/health_check</code>: Configura les comprovacions de salut:
+<ul>
+<li><code>interval=5s</code>: Envia una comprovació de salut cada 5 segons.</li>
+<li><code>fails=3</code>: Marca un servidor com a no saludable després de 3 comprovacions fallides.</li>
+<li><code>passes=2</code>: Marca un servidor com a saludable després de 2 comprovacions exitoses.</li>
+<li><code>uri=/health_check</code>: URI que NGINX Plus utilitza per a les comprovacions de salut.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Tipus de Comprovacions de Salut</h1>
+<div class='content'></div><h2>HTTP/HTTPS</h2>
+<div class='content'><p>Les comprovacions de salut HTTP/HTTPS són les més comunes i impliquen enviar una sol·licitud HTTP/HTTPS a un servidor backend i esperar una resposta.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGVhbHRoX2NoZWNrIGludGVydmFsPTVzIGZhaWxzPTMgcGFzc2VzPTIgdXJpPS9oZWFsdGhfY2hlY2sgbWF0Y2g9c3RhdHVzXzJ4eDs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>health_check interval=5s fails=3 passes=2 uri=/health_check match=status_2xx;</pre></div><div class='content'><ul>
+<li><code>match=status_2xx</code>: Defineix una condició de coincidència que considera la resposta com a saludable si el codi d'estat és 2xx.</li>
+</ul>
+</div><h2>TCP</h2>
+<div class='content'><p>Les comprovacions de salut TCP impliquen establir una connexió TCP amb el servidor backend.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RyZWFtIHsKICAgIHVwc3RyZWFtIGJhY2tlbmQgewogICAgICAgIHNlcnZlciBiYWNrZW5kMS5leGFtcGxlLmNvbToxMjM0NTsKICAgICAgICBzZXJ2ZXIgYmFja2VuZDIuZXhhbXBsZS5jb206MTIzNDU7CgogICAgICAgIGhlYWx0aF9jaGVjayBpbnRlcnZhbD01cyBmYWlscz0zIHBhc3Nlcz0yOwogICAgfQoKICAgIHNlcnZlciB7CiAgICAgICAgbGlzdGVuIDEyMzQ1OwogICAgICAgIHByb3h5X3Bhc3MgYmFja2VuZDsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>stream {
+    upstream backend {
+        server backend1.example.com:12345;
+        server backend2.example.com:12345;
+
+        health_check interval=5s fails=3 passes=2;
+    }
+
+    server {
+        listen 12345;
+        proxy_pass backend;
+    }
+}</pre></div><div class='content'></div><h2>UDP</h2>
+<div class='content'><p>Les comprovacions de salut UDP impliquen enviar un paquet UDP al servidor backend i esperar una resposta.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RyZWFtIHsKICAgIHVwc3RyZWFtIGJhY2tlbmQgewogICAgICAgIHNlcnZlciBiYWNrZW5kMS5leGFtcGxlLmNvbToxMjM0NTsKICAgICAgICBzZXJ2ZXIgYmFja2VuZDIuZXhhbXBsZS5jb206MTIzNDU7CgogICAgICAgIGhlYWx0aF9jaGVjayBpbnRlcnZhbD01cyBmYWlscz0zIHBhc3Nlcz0yOwogICAgfQoKICAgIHNlcnZlciB7CiAgICAgICAgbGlzdGVuIDEyMzQ1IHVkcDsKICAgICAgICBwcm94eV9wYXNzIGJhY2tlbmQ7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>stream {
+    upstream backend {
+        server backend1.example.com:12345;
+        server backend2.example.com:12345;
+
+        health_check interval=5s fails=3 passes=2;
+    }
+
+    server {
+        listen 12345 udp;
+        proxy_pass backend;
+    }
+}</pre></div><div class='content'></div><h1>Monitorització i Visualització</h1>
+<div class='content'><p>NGINX Plus proporciona un tauler de control en temps real que permet visualitzar l'estat dels servidors backend i les comprovacions de salut.</p>
+</div><h2>Accés al Tauler de Control</h2>
+<div class='content'><p>Per accedir al tauler de control, afegeix la següent configuració al teu fitxer de configuració de NGINX:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmVyIHsKICAgIGxpc3RlbiA4MDgwOwoKICAgIGxvY2F0aW9uIC9zdGF0dXMgewogICAgICAgIGFwaTsKICAgICAgICBhbGxvdyAxMjcuMC4wLjE7CiAgICAgICAgZGVueSBhbGw7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>server {
+    listen 8080;
+
+    location /status {
+        api;
+        allow 127.0.0.1;
+        deny all;
+    }
+}</pre></div><div class='content'><ul>
+<li><code>api</code>: Habilita l'API de NGINX Plus.</li>
+<li><code>allow 127.0.0.1</code>: Permet l'accés només des de localhost.</li>
+<li><code>deny all</code>: Denega l'accés a tots els altres.</li>
+</ul>
+</div><h2>Visualització del Tauler de Control</h2>
+<div class='content'><p>Accedeix al tauler de control mitjançant el navegador web a <code>http://localhost:8080/status</code>.</p>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici</h2>
+<div class='content'><p>Configura les comprovacions de salut per a un grup de servidors backend HTTP. Utilitza els següents paràmetres:</p>
+<ul>
+<li>Interval: 10 segons</li>
+<li>Fails: 2</li>
+<li>Passes: 1</li>
+<li>URI: <code>/status</code></li>
+</ul>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aHR0cCB7CiAgICB1cHN0cmVhbSBiYWNrZW5kIHsKICAgICAgICB6b25lIGJhY2tlbmQgNjRrOwogICAgICAgIHNlcnZlciBiYWNrZW5kMS5leGFtcGxlLmNvbTsKICAgICAgICBzZXJ2ZXIgYmFja2VuZDIuZXhhbXBsZS5jb207CgogICAgICAgIGhlYWx0aF9jaGVjayBpbnRlcnZhbD0xMHMgZmFpbHM9MiBwYXNzZXM9MSB1cmk9L3N0YXR1czsKICAgIH0KCiAgICBzZXJ2ZXIgewogICAgICAgIGxpc3RlbiA4MDsKICAgICAgICBsb2NhdGlvbiAvIHsKICAgICAgICAgICAgcHJveHlfcGFzcyBodHRwOi8vYmFja2VuZDsKICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>http {
+    upstream backend {
+        zone backend 64k;
+        server backend1.example.com;
+        server backend2.example.com;
+
+        health_check interval=10s fails=2 passes=1 uri=/status;
+    }
+
+    server {
+        listen 80;
+        location / {
+            proxy_pass http://backend;
+        }
+    }
+}</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après com configurar i utilitzar les comprovacions de salut en NGINX Plus per monitoritzar la salut de les aplicacions. Hem vist diferents tipus de comprovacions de salut (HTTP, TCP, UDP) i com visualitzar l'estat dels servidors backend mitjançant el tauler de control de NGINX Plus. Aquestes eines són essencials per mantenir les aplicacions funcionant de manera òptima i detectar problemes de manera proactiva.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-02-advanced-load-balancing' title="Balanceig de càrrega avançat">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-04-dynamic-configuration' title="Configuració dinàmica">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

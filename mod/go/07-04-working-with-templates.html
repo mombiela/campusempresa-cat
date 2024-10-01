@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treballant amb Plantilles</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/go/07-04-working-with-templates" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/go/07-04-working-with-templates" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/go/07-04-working-with-templates" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/go/07-04-working-with-templates" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/go/07-04-working-with-templates" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-03-middleware' title="Middleware">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Treballant amb Plantilles</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-01-connecting-to-a-database' title="Connexió a una Base de Dades">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a treballar amb plantilles en Go per generar contingut dinàmic en aplicacions web. Les plantilles són una eina poderosa per separar la lògica de presentació de la lògica de negoci, permetent una millor organització i mantenibilitat del codi.</p>
+</div><h1>Continguts</h1>
+<div class='content'><ol>
+<li><a href="#introducció-a-les-plantilles">Introducció a les Plantilles</a></li>
+<li><a href="#creació-duna-plantilla-bàsica">Creació d'una Plantilla Bàsica</a></li>
+<li><a href="#passar-dades-a-les-plantilles">Passar Dades a les Plantilles</a></li>
+<li><a href="#plantilles-niuades">Plantilles Niuades</a></li>
+<li><a href="#funcions-de-plantilla">Funcions de Plantilla</a></li>
+<li><a href="#exercicis-pràctics">Exercicis Pràctics</a></li>
+</ol>
+</div><h1>Introducció a les Plantilles</h1>
+<div class='content'><p>Go proporciona el paquet <code>html/template</code> per treballar amb plantilles HTML. Aquest paquet permet definir plantilles amb placeholders que poden ser reemplaçats per dades dinàmiques en temps d'execució.</p>
+</div><h2>Exemple de Plantilla</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CiAgICA8bWV0YSBjaGFyc2V0PSJVVEYtOCI+CiAgICA8dGl0bGU+e3suVGl0bGV9fTwvdGl0bGU+CjwvaGVhZD4KPGJvZHk+CiAgICA8aDE+e3suSGVhZGluZ319PC9oMT4KICAgIDxwPnt7LkNvbnRlbnR9fTwvcD4KPC9ib2R5Pgo8L2h0bWw+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;{{.Title}}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;{{.Heading}}&lt;/h1&gt;
+    &lt;p&gt;{{.Content}}&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'><p>En aquest exemple, <code>{{.Title}}</code>, <code>{{.Heading}}</code> i <code>{{.Content}}</code> són placeholders que seran reemplaçats per dades dinàmiques.</p>
+</div><h1>Creació d'una Plantilla Bàsica</h1>
+<div class='content'></div><h2>Pas 1: Definir la Plantilla</h2>
+<div class='content'><p>Crea un fitxer anomenat <code>template.html</code> amb el següent contingut:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CiAgICA8bWV0YSBjaGFyc2V0PSJVVEYtOCI+CiAgICA8dGl0bGU+e3suVGl0bGV9fTwvdGl0bGU+CjwvaGVhZD4KPGJvZHk+CiAgICA8aDE+e3suSGVhZGluZ319PC9oMT4KICAgIDxwPnt7LkNvbnRlbnR9fTwvcD4KPC9ib2R5Pgo8L2h0bWw+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;{{.Title}}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;{{.Heading}}&lt;/h1&gt;
+    &lt;p&gt;{{.Content}}&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'></div><h2>Pas 2: Carregar i Executar la Plantilla</h2>
+<div class='content'><p>Crea un fitxer Go anomenat <code>main.go</code> amb el següent codi:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImh0bWwvdGVtcGxhdGUiCiAgICAibmV0L2h0dHAiCikKCnR5cGUgUGFnZURhdGEgc3RydWN0IHsKICAgIFRpdGxlICAgc3RyaW5nCiAgICBIZWFkaW5nIHN0cmluZwogICAgQ29udGVudCBzdHJpbmcKfQoKZnVuYyBoYW5kbGVyKHcgaHR0cC5SZXNwb25zZVdyaXRlciwgciAqaHR0cC5SZXF1ZXN0KSB7CiAgICB0bXBsLCBlcnIgOj0gdGVtcGxhdGUuUGFyc2VGaWxlcygidGVtcGxhdGUuaHRtbCIpCiAgICBpZiBlcnIgIT0gbmlsIHsKICAgICAgICBodHRwLkVycm9yKHcsIGVyci5FcnJvcigpLCBodHRwLlN0YXR1c0ludGVybmFsU2VydmVyRXJyb3IpCiAgICAgICAgcmV0dXJuCiAgICB9CgogICAgZGF0YSA6PSBQYWdlRGF0YXsKICAgICAgICBUaXRsZTogICAiUMOgZ2luYSBkJ0V4ZW1wbGUiLAogICAgICAgIEhlYWRpbmc6ICJCZW52aW5ndXQgYSBHbyBUZW1wbGF0ZXMiLAogICAgICAgIENvbnRlbnQ6ICJBcXVlc3RhIMOpcyB1bmEgcMOgZ2luYSBnZW5lcmFkYSBkaW7DoG1pY2FtZW50IGFtYiBwbGFudGlsbGVzLiIsCiAgICB9CgogICAgZXJyID0gdG1wbC5FeGVjdXRlKHcsIGRhdGEpCiAgICBpZiBlcnIgIT0gbmlsIHsKICAgICAgICBodHRwLkVycm9yKHcsIGVyci5FcnJvcigpLCBodHRwLlN0YXR1c0ludGVybmFsU2VydmVyRXJyb3IpCiAgICB9Cn0KCmZ1bmMgbWFpbigpIHsKICAgIGh0dHAuSGFuZGxlRnVuYygiLyIsIGhhbmRsZXIpCiAgICBodHRwLkxpc3RlbkFuZFNlcnZlKCI6ODA4MCIsIG5pbCkKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;html/template&quot;
+    &quot;net/http&quot;
+)
+
+type PageData struct {
+    Title   string
+    Heading string
+    Content string
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+    tmpl, err := template.ParseFiles(&quot;template.html&quot;)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    data := PageData{
+        Title:   &quot;P&agrave;gina d'Exemple&quot;,
+        Heading: &quot;Benvingut a Go Templates&quot;,
+        Content: &quot;Aquesta &eacute;s una p&agrave;gina generada din&agrave;micament amb plantilles.&quot;,
+    }
+
+    err = tmpl.Execute(w, data)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
+}
+
+func main() {
+    http.HandleFunc(&quot;/&quot;, handler)
+    http.ListenAndServe(&quot;:8080&quot;, nil)
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li><strong>Definició de la Plantilla</strong>: El fitxer <code>template.html</code> conté la plantilla HTML amb placeholders.</li>
+<li><strong>Estructura de Dades</strong>: La struct <code>PageData</code> defineix les dades que passarem a la plantilla.</li>
+<li><strong>Handler HTTP</strong>: La funció <code>handler</code> carrega la plantilla, crea una instància de <code>PageData</code> amb les dades, i executa la plantilla passant-li les dades.</li>
+<li><strong>Servidor HTTP</strong>: La funció <code>main</code> configura un servidor HTTP que escolta a la porta 8080 i utilitza el handler definit.</li>
+</ol>
+</div><h1>Passar Dades a les Plantilles</h1>
+<div class='content'><p>Les dades es passen a les plantilles mitjançant una struct o un map. Els placeholders a la plantilla corresponen als camps de la struct o les claus del map.</p>
+</div><h2>Exemple amb Map</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuYyBoYW5kbGVyKHcgaHR0cC5SZXNwb25zZVdyaXRlciwgciAqaHR0cC5SZXF1ZXN0KSB7CiAgICB0bXBsLCBlcnIgOj0gdGVtcGxhdGUuUGFyc2VGaWxlcygidGVtcGxhdGUuaHRtbCIpCiAgICBpZiBlcnIgIT0gbmlsIHsKICAgICAgICBodHRwLkVycm9yKHcsIGVyci5FcnJvcigpLCBodHRwLlN0YXR1c0ludGVybmFsU2VydmVyRXJyb3IpCiAgICAgICAgcmV0dXJuCiAgICB9CgogICAgZGF0YSA6PSBtYXBbc3RyaW5nXXN0cmluZ3sKICAgICAgICAiVGl0bGUiOiAgICJQw6BnaW5hIGQnRXhlbXBsZSIsCiAgICAgICAgIkhlYWRpbmciOiAiQmVudmluZ3V0IGEgR28gVGVtcGxhdGVzIiwKICAgICAgICAiQ29udGVudCI6ICJBcXVlc3RhIMOpcyB1bmEgcMOgZ2luYSBnZW5lcmFkYSBkaW7DoG1pY2FtZW50IGFtYiBwbGFudGlsbGVzLiIsCiAgICB9CgogICAgZXJyID0gdG1wbC5FeGVjdXRlKHcsIGRhdGEpCiAgICBpZiBlcnIgIT0gbmlsIHsKICAgICAgICBodHRwLkVycm9yKHcsIGVyci5FcnJvcigpLCBodHRwLlN0YXR1c0ludGVybmFsU2VydmVyRXJyb3IpCiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>func handler(w http.ResponseWriter, r *http.Request) {
+    tmpl, err := template.ParseFiles(&quot;template.html&quot;)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    data := map[string]string{
+        &quot;Title&quot;:   &quot;P&agrave;gina d'Exemple&quot;,
+        &quot;Heading&quot;: &quot;Benvingut a Go Templates&quot;,
+        &quot;Content&quot;: &quot;Aquesta &eacute;s una p&agrave;gina generada din&agrave;micament amb plantilles.&quot;,
+    }
+
+    err = tmpl.Execute(w, data)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
+}</pre></div><div class='content'></div><h1>Plantilles Niuades</h1>
+<div class='content'><p>Les plantilles niuades permeten reutilitzar components comuns com capçaleres, peus de pàgina, etc.</p>
+</div><h2>Exemple de Plantilles Niuades</h2>
+<div class='content'><p><strong>base.html</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CiAgICA8bWV0YSBjaGFyc2V0PSJVVEYtOCI+CiAgICA8dGl0bGU+e3suVGl0bGV9fTwvdGl0bGU+CjwvaGVhZD4KPGJvZHk+CiAgICB7e3RlbXBsYXRlICJoZWFkZXIiIC59fQogICAge3t0ZW1wbGF0ZSAiY29udGVudCIgLn19CiAgICB7e3RlbXBsYXRlICJmb290ZXIiIC59fQo8L2JvZHk+CjwvaHRtbD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;{{.Title}}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    {{template &quot;header&quot; .}}
+    {{template &quot;content&quot; .}}
+    {{template &quot;footer&quot; .}}
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'><p><strong>header.html</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("e3tkZWZpbmUgImhlYWRlciJ9fQo8aGVhZGVyPgogICAgPGgxPnt7LkhlYWRpbmd9fTwvaDE+CjwvaGVhZGVyPgp7e2VuZH19"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{{define &quot;header&quot;}}
+&lt;header&gt;
+    &lt;h1&gt;{{.Heading}}&lt;/h1&gt;
+&lt;/header&gt;
+{{end}}</pre></div><div class='content'><p><strong>footer.html</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("e3tkZWZpbmUgImZvb3RlciJ9fQo8Zm9vdGVyPgogICAgPHA+UGV1IGRlIHDDoGdpbmE8L3A+CjwvZm9vdGVyPgp7e2VuZH19"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{{define &quot;footer&quot;}}
+&lt;footer&gt;
+    &lt;p&gt;Peu de p&agrave;gina&lt;/p&gt;
+&lt;/footer&gt;
+{{end}}</pre></div><div class='content'><p><strong>content.html</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("e3tkZWZpbmUgImNvbnRlbnQifX0KPG1haW4+CiAgICA8cD57ey5Db250ZW50fX08L3A+CjwvbWFpbj4Ke3tlbmR9fQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{{define &quot;content&quot;}}
+&lt;main&gt;
+    &lt;p&gt;{{.Content}}&lt;/p&gt;
+&lt;/main&gt;
+{{end}}</pre></div><div class='content'></div><h2>Carregar i Executar Plantilles Niuades</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuYyBoYW5kbGVyKHcgaHR0cC5SZXNwb25zZVdyaXRlciwgciAqaHR0cC5SZXF1ZXN0KSB7CiAgICB0bXBsLCBlcnIgOj0gdGVtcGxhdGUuUGFyc2VGaWxlcygiYmFzZS5odG1sIiwgImhlYWRlci5odG1sIiwgImZvb3Rlci5odG1sIiwgImNvbnRlbnQuaHRtbCIpCiAgICBpZiBlcnIgIT0gbmlsIHsKICAgICAgICBodHRwLkVycm9yKHcsIGVyci5FcnJvcigpLCBodHRwLlN0YXR1c0ludGVybmFsU2VydmVyRXJyb3IpCiAgICAgICAgcmV0dXJuCiAgICB9CgogICAgZGF0YSA6PSBQYWdlRGF0YXsKICAgICAgICBUaXRsZTogICAiUMOgZ2luYSBkJ0V4ZW1wbGUiLAogICAgICAgIEhlYWRpbmc6ICJCZW52aW5ndXQgYSBHbyBUZW1wbGF0ZXMiLAogICAgICAgIENvbnRlbnQ6ICJBcXVlc3RhIMOpcyB1bmEgcMOgZ2luYSBnZW5lcmFkYSBkaW7DoG1pY2FtZW50IGFtYiBwbGFudGlsbGVzLiIsCiAgICB9CgogICAgZXJyID0gdG1wbC5FeGVjdXRlKHcsIGRhdGEpCiAgICBpZiBlcnIgIT0gbmlsIHsKICAgICAgICBodHRwLkVycm9yKHcsIGVyci5FcnJvcigpLCBodHRwLlN0YXR1c0ludGVybmFsU2VydmVyRXJyb3IpCiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>func handler(w http.ResponseWriter, r *http.Request) {
+    tmpl, err := template.ParseFiles(&quot;base.html&quot;, &quot;header.html&quot;, &quot;footer.html&quot;, &quot;content.html&quot;)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    data := PageData{
+        Title:   &quot;P&agrave;gina d'Exemple&quot;,
+        Heading: &quot;Benvingut a Go Templates&quot;,
+        Content: &quot;Aquesta &eacute;s una p&agrave;gina generada din&agrave;micament amb plantilles.&quot;,
+    }
+
+    err = tmpl.Execute(w, data)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
+}</pre></div><div class='content'></div><h1>Funcions de Plantilla</h1>
+<div class='content'><p>Go permet definir funcions personalitzades que es poden utilitzar dins de les plantilles.</p>
+</div><h2>Exemple de Funció de Plantilla</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuYyB1cHBlcmNhc2UocyBzdHJpbmcpIHN0cmluZyB7CiAgICByZXR1cm4gc3RyaW5ncy5Ub1VwcGVyKHMpCn0KCmZ1bmMgaGFuZGxlcih3IGh0dHAuUmVzcG9uc2VXcml0ZXIsIHIgKmh0dHAuUmVxdWVzdCkgewogICAgdG1wbCA6PSB0ZW1wbGF0ZS5OZXcoInRlbXBsYXRlLmh0bWwiKS5GdW5jcyh0ZW1wbGF0ZS5GdW5jTWFwewogICAgICAgICJ1cHBlcmNhc2UiOiB1cHBlcmNhc2UsCiAgICB9KQoKICAgIHRtcGwsIGVyciA6PSB0bXBsLlBhcnNlRmlsZXMoInRlbXBsYXRlLmh0bWwiKQogICAgaWYgZXJyICE9IG5pbCB7CiAgICAgICAgaHR0cC5FcnJvcih3LCBlcnIuRXJyb3IoKSwgaHR0cC5TdGF0dXNJbnRlcm5hbFNlcnZlckVycm9yKQogICAgICAgIHJldHVybgogICAgfQoKICAgIGRhdGEgOj0gUGFnZURhdGF7CiAgICAgICAgVGl0bGU6ICAgIlDDoGdpbmEgZCdFeGVtcGxlIiwKICAgICAgICBIZWFkaW5nOiAiQmVudmluZ3V0IGEgR28gVGVtcGxhdGVzIiwKICAgICAgICBDb250ZW50OiAiQXF1ZXN0YSDDqXMgdW5hIHDDoGdpbmEgZ2VuZXJhZGEgZGluw6BtaWNhbWVudCBhbWIgcGxhbnRpbGxlcy4iLAogICAgfQoKICAgIGVyciA9IHRtcGwuRXhlY3V0ZSh3LCBkYXRhKQogICAgaWYgZXJyICE9IG5pbCB7CiAgICAgICAgaHR0cC5FcnJvcih3LCBlcnIuRXJyb3IoKSwgaHR0cC5TdGF0dXNJbnRlcm5hbFNlcnZlckVycm9yKQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>func uppercase(s string) string {
+    return strings.ToUpper(s)
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+    tmpl := template.New(&quot;template.html&quot;).Funcs(template.FuncMap{
+        &quot;uppercase&quot;: uppercase,
+    })
+
+    tmpl, err := tmpl.ParseFiles(&quot;template.html&quot;)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    data := PageData{
+        Title:   &quot;P&agrave;gina d'Exemple&quot;,
+        Heading: &quot;Benvingut a Go Templates&quot;,
+        Content: &quot;Aquesta &eacute;s una p&agrave;gina generada din&agrave;micament amb plantilles.&quot;,
+    }
+
+    err = tmpl.Execute(w, data)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
+}</pre></div><div class='content'><p><strong>template.html</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CiAgICA8bWV0YSBjaGFyc2V0PSJVVEYtOCI+CiAgICA8dGl0bGU+e3suVGl0bGV9fTwvdGl0bGU+CjwvaGVhZD4KPGJvZHk+CiAgICA8aDE+e3t1cHBlcmNhc2UgLkhlYWRpbmd9fTwvaDE+CiAgICA8cD57ey5Db250ZW50fX08L3A+CjwvYm9keT4KPC9odG1sPg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;{{.Title}}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;{{uppercase .Heading}}&lt;/h1&gt;
+    &lt;p&gt;{{.Content}}&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear una Plantilla amb Llista</h2>
+<div class='content'><p>Crea una plantilla que mostri una llista d'elements passats des del servidor.</p>
+<p><strong>template.html</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CiAgICA8bWV0YSBjaGFyc2V0PSJVVEYtOCI+CiAgICA8dGl0bGU+e3suVGl0bGV9fTwvdGl0bGU+CjwvaGVhZD4KPGJvZHk+CiAgICA8aDE+e3suSGVhZGluZ319PC9oMT4KICAgIDx1bD4KICAgICAgICB7e3JhbmdlIC5JdGVtc319CiAgICAgICAgPGxpPnt7Ln19PC9saT4KICAgICAgICB7e2VuZH19CiAgICA8L3VsPgo8L2JvZHk+CjwvaHRtbD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;{{.Title}}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;{{.Heading}}&lt;/h1&gt;
+    &lt;ul&gt;
+        {{range .Items}}
+        &lt;li&gt;{{.}}&lt;/li&gt;
+        {{end}}
+    &lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'><p><strong>main.go</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImh0bWwvdGVtcGxhdGUiCiAgICAibmV0L2h0dHAiCikKCnR5cGUgUGFnZURhdGEgc3RydWN0IHsKICAgIFRpdGxlICAgc3RyaW5nCiAgICBIZWFkaW5nIHN0cmluZwogICAgSXRlbXMgICBbXXN0cmluZwp9CgpmdW5jIGhhbmRsZXIodyBodHRwLlJlc3BvbnNlV3JpdGVyLCByICpodHRwLlJlcXVlc3QpIHsKICAgIHRtcGwsIGVyciA6PSB0ZW1wbGF0ZS5QYXJzZUZpbGVzKCJ0ZW1wbGF0ZS5odG1sIikKICAgIGlmIGVyciAhPSBuaWwgewogICAgICAgIGh0dHAuRXJyb3IodywgZXJyLkVycm9yKCksIGh0dHAuU3RhdHVzSW50ZXJuYWxTZXJ2ZXJFcnJvcikKICAgICAgICByZXR1cm4KICAgIH0KCiAgICBkYXRhIDo9IFBhZ2VEYXRhewogICAgICAgIFRpdGxlOiAgICJMbGlzdGEgZCdFbGVtZW50cyIsCiAgICAgICAgSGVhZGluZzogIkVsZW1lbnRzIiwKICAgICAgICBJdGVtczogICBbXXN0cmluZ3siRWxlbWVudCAxIiwgIkVsZW1lbnQgMiIsICJFbGVtZW50IDMifSwKICAgIH0KCiAgICBlcnIgPSB0bXBsLkV4ZWN1dGUodywgZGF0YSkKICAgIGlmIGVyciAhPSBuaWwgewogICAgICAgIGh0dHAuRXJyb3IodywgZXJyLkVycm9yKCksIGh0dHAuU3RhdHVzSW50ZXJuYWxTZXJ2ZXJFcnJvcikKICAgIH0KfQoKZnVuYyBtYWluKCkgewogICAgaHR0cC5IYW5kbGVGdW5jKCIvIiwgaGFuZGxlcikKICAgIGh0dHAuTGlzdGVuQW5kU2VydmUoIjo4MDgwIiwgbmlsKQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;html/template&quot;
+    &quot;net/http&quot;
+)
+
+type PageData struct {
+    Title   string
+    Heading string
+    Items   []string
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+    tmpl, err := template.ParseFiles(&quot;template.html&quot;)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    data := PageData{
+        Title:   &quot;Llista d'Elements&quot;,
+        Heading: &quot;Elements&quot;,
+        Items:   []string{&quot;Element 1&quot;, &quot;Element 2&quot;, &quot;Element 3&quot;},
+    }
+
+    err = tmpl.Execute(w, data)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
+}
+
+func main() {
+    http.HandleFunc(&quot;/&quot;, handler)
+    http.ListenAndServe(&quot;:8080&quot;, nil)
+}</pre></div><div class='content'></div><h2>Exercici 2: Plantilles Niuades amb Funcions</h2>
+<div class='content'><p>Crea una aplicació que utilitzi plantilles niuades i una funció personalitzada per formatar les dades.</p>
+<p><strong>base.html</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CiAgICA8bWV0YSBjaGFyc2V0PSJVVEYtOCI+CiAgICA8dGl0bGU+e3suVGl0bGV9fTwvdGl0bGU+CjwvaGVhZD4KPGJvZHk+CiAgICB7e3RlbXBsYXRlICJoZWFkZXIiIC59fQogICAge3t0ZW1wbGF0ZSAiY29udGVudCIgLn19CiAgICB7e3RlbXBsYXRlICJmb290ZXIiIC59fQo8L2JvZHk+CjwvaHRtbD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;{{.Title}}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    {{template &quot;header&quot; .}}
+    {{template &quot;content&quot; .}}
+    {{template &quot;footer&quot; .}}
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'><p><strong>header.html</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("e3tkZWZpbmUgImhlYWRlciJ9fQo8aGVhZGVyPgogICAgPGgxPnt7LkhlYWRpbmd9fTwvaDE+CjwvaGVhZGVyPgp7e2VuZH19"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{{define &quot;header&quot;}}
+&lt;header&gt;
+    &lt;h1&gt;{{.Heading}}&lt;/h1&gt;
+&lt;/header&gt;
+{{end}}</pre></div><div class='content'><p><strong>footer.html</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("e3tkZWZpbmUgImZvb3RlciJ9fQo8Zm9vdGVyPgogICAgPHA+UGV1IGRlIHDDoGdpbmE8L3A+CjwvZm9vdGVyPgp7e2VuZH19"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{{define &quot;footer&quot;}}
+&lt;footer&gt;
+    &lt;p&gt;Peu de p&agrave;gina&lt;/p&gt;
+&lt;/footer&gt;
+{{end}}</pre></div><div class='content'><p><strong>content.html</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("e3tkZWZpbmUgImNvbnRlbnQifX0KPG1haW4+CiAgICA8cD57e3VwcGVyY2FzZSAuQ29udGVudH19PC9wPgo8L21haW4+Cnt7ZW5kfX0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{{define &quot;content&quot;}}
+&lt;main&gt;
+    &lt;p&gt;{{uppercase .Content}}&lt;/p&gt;
+&lt;/main&gt;
+{{end}}</pre></div><div class='content'><p><strong>main.go</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImh0bWwvdGVtcGxhdGUiCiAgICAibmV0L2h0dHAiCiAgICAic3RyaW5ncyIKKQoKdHlwZSBQYWdlRGF0YSBzdHJ1Y3QgewogICAgVGl0bGUgICBzdHJpbmcKICAgIEhlYWRpbmcgc3RyaW5nCiAgICBDb250ZW50IHN0cmluZwp9CgpmdW5jIHVwcGVyY2FzZShzIHN0cmluZykgc3RyaW5nIHsKICAgIHJldHVybiBzdHJpbmdzLlRvVXBwZXIocykKfQoKZnVuYyBoYW5kbGVyKHcgaHR0cC5SZXNwb25zZVdyaXRlciwgciAqaHR0cC5SZXF1ZXN0KSB7CiAgICB0bXBsIDo9IHRlbXBsYXRlLk5ldygiYmFzZS5odG1sIikuRnVuY3ModGVtcGxhdGUuRnVuY01hcHsKICAgICAgICAidXBwZXJjYXNlIjogdXBwZXJjYXNlLAogICAgfSkKCiAgICB0bXBsLCBlcnIgOj0gdG1wbC5QYXJzZUZpbGVzKCJiYXNlLmh0bWwiLCAiaGVhZGVyLmh0bWwiLCAiZm9vdGVyLmh0bWwiLCAiY29udGVudC5odG1sIikKICAgIGlmIGVyciAhPSBuaWwgewogICAgICAgIGh0dHAuRXJyb3IodywgZXJyLkVycm9yKCksIGh0dHAuU3RhdHVzSW50ZXJuYWxTZXJ2ZXJFcnJvcikKICAgICAgICByZXR1cm4KICAgIH0KCiAgICBkYXRhIDo9IFBhZ2VEYXRhewogICAgICAgIFRpdGxlOiAgICJQw6BnaW5hIGQnRXhlbXBsZSIsCiAgICAgICAgSGVhZGluZzogIkJlbnZpbmd1dCBhIEdvIFRlbXBsYXRlcyIsCiAgICAgICAgQ29udGVudDogIkFxdWVzdGEgw6lzIHVuYSBww6BnaW5hIGdlbmVyYWRhIGRpbsOgbWljYW1lbnQgYW1iIHBsYW50aWxsZXMuIiwKICAgIH0KCiAgICBlcnIgPSB0bXBsLkV4ZWN1dGUodywgZGF0YSkKICAgIGlmIGVyciAhPSBuaWwgewogICAgICAgIGh0dHAuRXJyb3IodywgZXJyLkVycm9yKCksIGh0dHAuU3RhdHVzSW50ZXJuYWxTZXJ2ZXJFcnJvcikKICAgIH0KfQoKZnVuYyBtYWluKCkgewogICAgaHR0cC5IYW5kbGVGdW5jKCIvIiwgaGFuZGxlcikKICAgIGh0dHAuTGlzdGVuQW5kU2VydmUoIjo4MDgwIiwgbmlsKQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;html/template&quot;
+    &quot;net/http&quot;
+    &quot;strings&quot;
+)
+
+type PageData struct {
+    Title   string
+    Heading string
+    Content string
+}
+
+func uppercase(s string) string {
+    return strings.ToUpper(s)
+}
+
+func handler(w http.ResponseWriter, r *http.Request) {
+    tmpl := template.New(&quot;base.html&quot;).Funcs(template.FuncMap{
+        &quot;uppercase&quot;: uppercase,
+    })
+
+    tmpl, err := tmpl.ParseFiles(&quot;base.html&quot;, &quot;header.html&quot;, &quot;footer.html&quot;, &quot;content.html&quot;)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+        return
+    }
+
+    data := PageData{
+        Title:   &quot;P&agrave;gina d'Exemple&quot;,
+        Heading: &quot;Benvingut a Go Templates&quot;,
+        Content: &quot;Aquesta &eacute;s una p&agrave;gina generada din&agrave;micament amb plantilles.&quot;,
+    }
+
+    err = tmpl.Execute(w, data)
+    if err != nil {
+        http.Error(w, err.Error(), http.StatusInternalServerError)
+    }
+}
+
+func main() {
+    http.HandleFunc(&quot;/&quot;, handler)
+    http.ListenAndServe(&quot;:8080&quot;, nil)
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après a treballar amb plantilles en Go, incloent la creació de plantilles bàsiques, el pas de dades, l'ús de plantilles niuades i la definició de funcions personalitzades. Les plantilles són una eina essencial per a la generació de contingut dinàmic en aplicacions web, i la seva correcta utilització pot millorar significativament l'organització i mantenibilitat del codi.</p>
+<p>En el següent mòdul, explorarem com treballar amb bases de dades en Go, incloent la connexió a bases de dades, operacions CRUD, ús d'ORM i migracions de bases de dades.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-03-middleware' title="Middleware">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-01-connecting-to-a-database' title="Connexió a una Base de Dades">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

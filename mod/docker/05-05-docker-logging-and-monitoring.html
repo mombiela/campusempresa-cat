@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registre i monitoratge de Docker</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/docker/05-05-docker-logging-and-monitoring" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/docker/05-05-docker-logging-and-monitoring" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/docker/05-05-docker-logging-and-monitoring" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/docker/05-05-docker-logging-and-monitoring" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/docker/05-05-docker-logging-and-monitoring" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-optimizing-docker-images' title="Optimitzant imatges Docker">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Registre i monitoratge de Docker</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-01-ci-cd-with-docker' title="CI/CD amb Docker">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem com registrar i monitoritzar els contenidors Docker per assegurar-nos que funcionen correctament i per identificar i resoldre problemes de manera eficient. El registre i el monitoratge són components essencials per mantenir la salut i el rendiment de les aplicacions en entorns de producció.</p>
+</div><h1>1. Introducció al registre de Docker</h1>
+<div class='content'></div><h2>Què és el registre?</h2>
+<div class='content'><p>El registre (logging) és el procés de capturar i emmagatzemar missatges de registre (logs) generats per aplicacions i serveis. Aquests missatges poden incloure informació sobre errors, advertències, informació de depuració i altres esdeveniments importants.</p>
+</div><h2>Per què és important el registre?</h2>
+<div class='content'><ul>
+<li><strong>Depuració:</strong> Ajuden a identificar i resoldre problemes.</li>
+<li><strong>Monitoratge:</strong> Permeten supervisar el rendiment i l'estat de les aplicacions.</li>
+<li><strong>Auditoria:</strong> Proporcionen un historial d'esdeveniments per a la revisió i l'auditoria.</li>
+</ul>
+</div><h2>Com registrar en Docker?</h2>
+<div class='content'><p>Docker proporciona diverses maneres de gestionar els registres dels contenidors:</p>
+<ul>
+<li><strong>stdout i stderr:</strong> Per defecte, Docker captura la sortida estàndard (stdout) i l'error estàndard (stderr) dels contenidors.</li>
+<li><strong>Drivers de registre:</strong> Docker suporta diversos drivers de registre per enviar els logs a diferents destinacions.</li>
+</ul>
+<h4>Exemples de drivers de registre:</h4>
+<table>
+<thead>
+<tr>
+<th>Driver de registre</th>
+<th>Descripció</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>json-file</code></td>
+<td>Emmagatzema els logs en fitxers JSON (per defecte).</td>
+</tr>
+<tr>
+<td><code>syslog</code></td>
+<td>Envia els logs a un servidor syslog.</td>
+</tr>
+<tr>
+<td><code>journald</code></td>
+<td>Envia els logs a systemd-journald.</td>
+</tr>
+<tr>
+<td><code>gelf</code></td>
+<td>Envia els logs a un servidor GELF (Graylog Extended Log Format).</td>
+</tr>
+<tr>
+<td><code>fluentd</code></td>
+<td>Envia els logs a un servidor Fluentd.</td>
+</tr>
+<tr>
+<td><code>awslogs</code></td>
+<td>Envia els logs a Amazon CloudWatch.</td>
+</tr>
+<tr>
+<td><code>splunk</code></td>
+<td>Envia els logs a Splunk.</td>
+</tr>
+</tbody>
+</table>
+</div><h2>Configurant el driver de registre</h2>
+<div class='content'><p>Per configurar un driver de registre, pots utilitzar l'opció <code>--log-driver</code> quan executes un contenidor:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIHJ1biAtLWxvZy1kcml2ZXIgc3lzbG9nIG15LWNvbnRhaW5lcg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker run --log-driver syslog my-container</pre></div><div class='content'><p>També pots configurar el driver de registre per defecte a <code>/etc/docker/daemon.json</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJsb2ctZHJpdmVyIjogInN5c2xvZyIKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;log-driver&quot;: &quot;syslog&quot;
+}</pre></div><div class='content'></div><h1>2. Introducció al monitoratge de Docker</h1>
+<div class='content'></div><h2>Què és el monitoratge?</h2>
+<div class='content'><p>El monitoratge és el procés de supervisar el rendiment, l'ús de recursos i l'estat de les aplicacions i serveis. Això inclou la recopilació de mètriques com l'ús de CPU, memòria, xarxa i disc.</p>
+</div><h2>Per què és important el monitoratge?</h2>
+<div class='content'><ul>
+<li><strong>Rendiment:</strong> Assegura que les aplicacions funcionen de manera òptima.</li>
+<li><strong>Disponibilitat:</strong> Detecta problemes abans que afectin els usuaris.</li>
+<li><strong>Escalabilitat:</strong> Ajuda a planificar la capacitat i l'escalabilitat.</li>
+</ul>
+</div><h2>Eines de monitoratge per a Docker</h2>
+<div class='content'><p>Hi ha diverses eines disponibles per monitoritzar els contenidors Docker:</p>
+<table>
+<thead>
+<tr>
+<th>Eina</th>
+<th>Descripció</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Prometheus</strong></td>
+<td>Sistema de monitoratge i alerta de codi obert.</td>
+</tr>
+<tr>
+<td><strong>Grafana</strong></td>
+<td>Plataforma d'analítica i monitoratge de codi obert.</td>
+</tr>
+<tr>
+<td><strong>cAdvisor</strong></td>
+<td>Monitoritza l'ús de recursos dels contenidors.</td>
+</tr>
+<tr>
+<td><strong>ELK Stack</strong></td>
+<td>Conjunt d'eines per a la cerca, l'anàlisi i la visualització de dades de registre.</td>
+</tr>
+<tr>
+<td><strong>Datadog</strong></td>
+<td>Plataforma de monitoratge i anàlisi de dades.</td>
+</tr>
+<tr>
+<td><strong>New Relic</strong></td>
+<td>Plataforma de monitoratge d'aplicacions i infraestructura.</td>
+</tr>
+</tbody>
+</table>
+</div><h2>Configurant Prometheus i Grafana</h2>
+<div class='content'><h4>Pas 1: Desplegar Prometheus</h4>
+<p>Crea un fitxer <code>prometheus.yml</code> per configurar Prometheus:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xvYmFsOgogIHNjcmFwZV9pbnRlcnZhbDogMTVzCgpzY3JhcGVfY29uZmlnczoKICAtIGpvYl9uYW1lOiAnZG9ja2VyJwogICAgc3RhdGljX2NvbmZpZ3M6CiAgICAgIC0gdGFyZ2V0czogWydsb2NhbGhvc3Q6OTMyMydd"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'docker'
+    static_configs:
+      - targets: ['localhost:9323']</pre></div><div class='content'><p>Després, executa Prometheus amb Docker:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIHJ1biAtZCAtcCA5MDkwOjkwOTAgLXYgJChwd2QpL3Byb21ldGhldXMueW1sOi9ldGMvcHJvbWV0aGV1cy9wcm9tZXRoZXVzLnltbCBwcm9tL3Byb21ldGhldXM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker run -d -p 9090:9090 -v $(pwd)/prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus</pre></div><div class='content'><h4>Pas 2: Desplegar Grafana</h4>
+<p>Executa Grafana amb Docker:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIHJ1biAtZCAtcCAzMDAwOjMwMDAgZ3JhZmFuYS9ncmFmYW5h"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker run -d -p 3000:3000 grafana/grafana</pre></div><div class='content'><p>Accedeix a Grafana a <code>http://localhost:3000</code> i configura Prometheus com a font de dades.</p>
+</div><h1>3. Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Configurar el registre amb `json-file`</h2>
+<div class='content'><ol>
+<li>
+<p>Executa un contenidor amb el driver de registre <code>json-file</code>:</p>
+<pre><code class="language-bash">docker run --log-driver json-file --name my-container nginx
+</code></pre>
+</li>
+<li>
+<p>Consulta els logs del contenidor:</p>
+<pre><code class="language-bash">docker logs my-container
+</code></pre>
+</li>
+</ol>
+</div><h2>Exercici 2: Monitoritzar un contenidor amb cAdvisor</h2>
+<div class='content'><ol>
+<li>
+<p>Executa cAdvisor amb Docker:</p>
+<pre><code class="language-bash">docker run -d -p 8080:8080 --name=cadvisor --volume=/:/rootfs:ro --volume=/var/run:/var/run:ro --volume=/sys:/sys:ro --volume=/var/lib/docker/:/var/lib/docker:ro google/cadvisor:latest
+</code></pre>
+</li>
+<li>
+<p>Accedeix a cAdvisor a <code>http://localhost:8080</code> i explora les mètriques dels contenidors.</p>
+</li>
+</ol>
+</div><h1>4. Resum</h1>
+<div class='content'><p>En aquesta secció, hem après la importància del registre i el monitoratge en Docker, així com les diferents eines i tècniques disponibles per implementar-los. Hem vist com configurar drivers de registre i com utilitzar eines com Prometheus, Grafana i cAdvisor per monitoritzar els contenidors Docker. Aquests coneixements són essencials per mantenir la salut i el rendiment de les aplicacions en entorns de producció.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-optimizing-docker-images' title="Optimitzant imatges Docker">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-01-ci-cd-with-docker' title="CI/CD amb Docker">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

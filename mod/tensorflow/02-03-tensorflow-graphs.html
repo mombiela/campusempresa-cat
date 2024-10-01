@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gràfics de TensorFlow</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/tensorflow/02-03-tensorflow-graphs" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/tensorflow/02-03-tensorflow-graphs" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/tensorflow/02-03-tensorflow-graphs" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/tensorflow/02-03-tensorflow-graphs" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/tensorflow/02-03-tensorflow-graphs" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-02-variables-and-constants' title="Variables i constants">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Gràfics de TensorFlow</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-04-eager-execution' title="Execució immediata">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem els gràfics de TensorFlow, una de les característiques fonamentals que permeten a TensorFlow optimitzar i executar operacions de manera eficient. Els gràfics de TensorFlow són representacions abstractes de les operacions matemàtiques que es realitzen en les dades. Aquests gràfics permeten a TensorFlow optimitzar l'execució de les operacions i distribuir-les en diferents dispositius, com CPU, GPU o TPU.</p>
+</div><h1>Continguts</h1>
+<div class='content'><ol>
+<li><a href="#què-és-un-gràfic-de-tensorflow">Què és un gràfic de TensorFlow?</a></li>
+<li><a href="#creació-dun-gràfic">Creació d'un gràfic</a></li>
+<li><a href="#execució-dun-gràfic">Execució d'un gràfic</a></li>
+<li><a href="#avantatges-dels-gràfics-de-tensorflow">Avantatges dels gràfics de TensorFlow</a></li>
+<li><a href="#exemple-pràctic">Exemple pràctic</a></li>
+<li><a href="#exercicis-pràctics">Exercicis pràctics</a></li>
+</ol>
+</div><h1>Què és un gràfic de TensorFlow?</h1>
+<div class='content'><p>Un gràfic de TensorFlow és una estructura de dades que conté una descripció de les operacions que es realitzaran sobre les dades. Aquestes operacions es representen com a nodes en el gràfic, mentre que les dades que flueixen entre aquestes operacions es representen com a arestes.</p>
+</div><h2>Conceptes clau</h2>
+<div class='content'><ul>
+<li><strong>Node</strong>: Representa una operació matemàtica.</li>
+<li><strong>Aresta</strong>: Representa el flux de dades entre operacions.</li>
+<li><strong>Gràfic</strong>: Una col·lecció de nodes i arestes que defineixen un càlcul.</li>
+</ul>
+</div><h1>Creació d'un gràfic</h1>
+<div class='content'><p>Per crear un gràfic en TensorFlow, utilitzem l'API de TensorFlow per definir les operacions i les relacions entre elles. Aquí teniu un exemple bàsic de com crear un gràfic:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKCiMgQ3JlYXIgdW4gbm91IGdyw6BmaWMKZ3JhcGggPSB0Zi5HcmFwaCgpCgp3aXRoIGdyYXBoLmFzX2RlZmF1bHQoKToKICAgICMgRGVmaW5pciBsZXMgb3BlcmFjaW9ucyBkaW5zIGRlbCBncsOgZmljCiAgICBhID0gdGYuY29uc3RhbnQoNSwgbmFtZT0iYSIpCiAgICBiID0gdGYuY29uc3RhbnQoMywgbmFtZT0iYiIpCiAgICBjID0gdGYuYWRkKGEsIGIsIG5hbWU9ImFkZCIpCgojIEVsIGdyw6BmaWMgY29udMOpIGxlcyBvcGVyYWNpb25zIGRlZmluaWRlcwpwcmludChncmFwaC5hc19ncmFwaF9kZWYoKSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+
+# Crear un nou gr&agrave;fic
+graph = tf.Graph()
+
+with graph.as_default():
+    # Definir les operacions dins del gr&agrave;fic
+    a = tf.constant(5, name=&quot;a&quot;)
+    b = tf.constant(3, name=&quot;b&quot;)
+    c = tf.add(a, b, name=&quot;add&quot;)
+
+# El gr&agrave;fic cont&eacute; les operacions definides
+print(graph.as_graph_def())</pre></div><div class='content'></div><h2>Explicació del codi</h2>
+<div class='content'><ol>
+<li><strong>Importació de TensorFlow</strong>: Importem la llibreria de TensorFlow.</li>
+<li><strong>Creació del gràfic</strong>: Utilitzem <code>tf.Graph()</code> per crear un nou gràfic.</li>
+<li><strong>Definició de les operacions</strong>: Utilitzem <code>tf.constant</code> per crear constants i <code>tf.add</code> per sumar-les.</li>
+<li><strong>Visualització del gràfic</strong>: Utilitzem <code>graph.as_graph_def()</code> per veure la definició del gràfic.</li>
+</ol>
+</div><h1>Execució d'un gràfic</h1>
+<div class='content'><p>Per executar un gràfic, utilitzem una sessió de TensorFlow (<code>tf.Session</code>). Aquí teniu un exemple de com executar el gràfic creat anteriorment:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("d2l0aCB0Zi5TZXNzaW9uKGdyYXBoPWdyYXBoKSBhcyBzZXNzOgogICAgcmVzdWx0ID0gc2Vzcy5ydW4oYykKICAgIHByaW50KCJSZXN1bHRhdCBkZSBsYSBzdW1hOiAiLCByZXN1bHQp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>with tf.Session(graph=graph) as sess:
+    result = sess.run(c)
+    print(&quot;Resultat de la suma: &quot;, result)</pre></div><div class='content'></div><h2>Explicació del codi</h2>
+<div class='content'><ol>
+<li><strong>Creació de la sessió</strong>: Utilitzem <code>tf.Session(graph=graph)</code> per crear una sessió que utilitza el gràfic definit.</li>
+<li><strong>Execució del gràfic</strong>: Utilitzem <code>sess.run(c)</code> per executar el gràfic i obtenir el resultat de la suma.</li>
+<li><strong>Impressió del resultat</strong>: Imprimim el resultat de la suma.</li>
+</ol>
+</div><h1>Avantatges dels gràfics de TensorFlow</h1>
+<div class='content'><ul>
+<li><strong>Optimització</strong>: TensorFlow pot optimitzar l'execució de les operacions en el gràfic.</li>
+<li><strong>Distribució</strong>: Els gràfics permeten distribuir les operacions en diferents dispositius.</li>
+<li><strong>Portabilitat</strong>: Els gràfics es poden desar i carregar per a la seva execució en diferents entorns.</li>
+</ul>
+</div><h1>Exemple pràctic</h1>
+<div class='content'><p>A continuació, es mostra un exemple pràctic de com crear i executar un gràfic més complex que inclou múltiples operacions:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKCiMgQ3JlYXIgdW4gbm91IGdyw6BmaWMKZ3JhcGggPSB0Zi5HcmFwaCgpCgp3aXRoIGdyYXBoLmFzX2RlZmF1bHQoKToKICAgICMgRGVmaW5pciBsZXMgb3BlcmFjaW9ucyBkaW5zIGRlbCBncsOgZmljCiAgICBhID0gdGYuY29uc3RhbnQoNSwgbmFtZT0iYSIpCiAgICBiID0gdGYuY29uc3RhbnQoMywgbmFtZT0iYiIpCiAgICBjID0gdGYubXVsdGlwbHkoYSwgYiwgbmFtZT0ibXVsdGlwbHkiKQogICAgZCA9IHRmLmFkZChhLCBiLCBuYW1lPSJhZGQiKQogICAgZSA9IHRmLnN1YnRyYWN0KGMsIGQsIG5hbWU9InN1YnRyYWN0IikKCiMgRXhlY3V0YXIgZWwgZ3LDoGZpYwp3aXRoIHRmLlNlc3Npb24oZ3JhcGg9Z3JhcGgpIGFzIHNlc3M6CiAgICByZXN1bHQgPSBzZXNzLnJ1bihlKQogICAgcHJpbnQoIlJlc3VsdGF0IGRlIGwnb3BlcmFjacOzOiAiLCByZXN1bHQp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+
+# Crear un nou gr&agrave;fic
+graph = tf.Graph()
+
+with graph.as_default():
+    # Definir les operacions dins del gr&agrave;fic
+    a = tf.constant(5, name=&quot;a&quot;)
+    b = tf.constant(3, name=&quot;b&quot;)
+    c = tf.multiply(a, b, name=&quot;multiply&quot;)
+    d = tf.add(a, b, name=&quot;add&quot;)
+    e = tf.subtract(c, d, name=&quot;subtract&quot;)
+
+# Executar el gr&agrave;fic
+with tf.Session(graph=graph) as sess:
+    result = sess.run(e)
+    print(&quot;Resultat de l'operaci&oacute;: &quot;, result)</pre></div><div class='content'></div><h2>Explicació del codi</h2>
+<div class='content'><ol>
+<li><strong>Definició de constants</strong>: Creem constants <code>a</code> i <code>b</code>.</li>
+<li><strong>Definició d'operacions</strong>: Definim operacions de multiplicació, suma i resta.</li>
+<li><strong>Execució del gràfic</strong>: Executem el gràfic i obtenim el resultat de l'operació de resta.</li>
+</ol>
+</div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1</h2>
+<div class='content'><p>Crea un gràfic que calculi la següent expressió: <code>(a + b) * (c - d)</code>, on <code>a = 2</code>, <code>b = 3</code>, <code>c = 10</code> i <code>d = 4</code>.</p>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKCiMgQ3JlYXIgdW4gbm91IGdyw6BmaWMKZ3JhcGggPSB0Zi5HcmFwaCgpCgp3aXRoIGdyYXBoLmFzX2RlZmF1bHQoKToKICAgICMgRGVmaW5pciBsZXMgY29uc3RhbnRzCiAgICBhID0gdGYuY29uc3RhbnQoMiwgbmFtZT0iYSIpCiAgICBiID0gdGYuY29uc3RhbnQoMywgbmFtZT0iYiIpCiAgICBjID0gdGYuY29uc3RhbnQoMTAsIG5hbWU9ImMiKQogICAgZCA9IHRmLmNvbnN0YW50KDQsIG5hbWU9ImQiKQogICAgCiAgICAjIERlZmluaXIgbGVzIG9wZXJhY2lvbnMKICAgIGFkZCA9IHRmLmFkZChhLCBiLCBuYW1lPSJhZGQiKQogICAgc3VidHJhY3QgPSB0Zi5zdWJ0cmFjdChjLCBkLCBuYW1lPSJzdWJ0cmFjdCIpCiAgICBtdWx0aXBseSA9IHRmLm11bHRpcGx5KGFkZCwgc3VidHJhY3QsIG5hbWU9Im11bHRpcGx5IikKCiMgRXhlY3V0YXIgZWwgZ3LDoGZpYwp3aXRoIHRmLlNlc3Npb24oZ3JhcGg9Z3JhcGgpIGFzIHNlc3M6CiAgICByZXN1bHQgPSBzZXNzLnJ1bihtdWx0aXBseSkKICAgIHByaW50KCJSZXN1bHRhdCBkZSBsJ2V4cHJlc3Npw7M6ICIsIHJlc3VsdCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+
+# Crear un nou gr&agrave;fic
+graph = tf.Graph()
+
+with graph.as_default():
+    # Definir les constants
+    a = tf.constant(2, name=&quot;a&quot;)
+    b = tf.constant(3, name=&quot;b&quot;)
+    c = tf.constant(10, name=&quot;c&quot;)
+    d = tf.constant(4, name=&quot;d&quot;)
+    
+    # Definir les operacions
+    add = tf.add(a, b, name=&quot;add&quot;)
+    subtract = tf.subtract(c, d, name=&quot;subtract&quot;)
+    multiply = tf.multiply(add, subtract, name=&quot;multiply&quot;)
+
+# Executar el gr&agrave;fic
+with tf.Session(graph=graph) as sess:
+    result = sess.run(multiply)
+    print(&quot;Resultat de l'expressi&oacute;: &quot;, result)</pre></div><div class='content'></div><h2>Exercici 2</h2>
+<div class='content'><p>Crea un gràfic que calculi la mitjana de tres nombres <code>a</code>, <code>b</code> i <code>c</code>, on <code>a = 4</code>, <code>b = 8</code> i <code>c = 12</code>.</p>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKCiMgQ3JlYXIgdW4gbm91IGdyw6BmaWMKZ3JhcGggPSB0Zi5HcmFwaCgpCgp3aXRoIGdyYXBoLmFzX2RlZmF1bHQoKToKICAgICMgRGVmaW5pciBsZXMgY29uc3RhbnRzCiAgICBhID0gdGYuY29uc3RhbnQoNCwgbmFtZT0iYSIpCiAgICBiID0gdGYuY29uc3RhbnQoOCwgbmFtZT0iYiIpCiAgICBjID0gdGYuY29uc3RhbnQoMTIsIG5hbWU9ImMiKQogICAgCiAgICAjIERlZmluaXIgbGVzIG9wZXJhY2lvbnMKICAgIHN1bSA9IHRmLmFkZF9uKFthLCBiLCBjXSwgbmFtZT0ic3VtIikKICAgIGNvdW50ID0gdGYuY29uc3RhbnQoMywgbmFtZT0iY291bnQiKQogICAgYXZlcmFnZSA9IHRmLmRpdmlkZShzdW0sIGNvdW50LCBuYW1lPSJhdmVyYWdlIikKCiMgRXhlY3V0YXIgZWwgZ3LDoGZpYwp3aXRoIHRmLlNlc3Npb24oZ3JhcGg9Z3JhcGgpIGFzIHNlc3M6CiAgICByZXN1bHQgPSBzZXNzLnJ1bihhdmVyYWdlKQogICAgcHJpbnQoIk1pdGphbmEgZGVscyBub21icmVzOiAiLCByZXN1bHQp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+
+# Crear un nou gr&agrave;fic
+graph = tf.Graph()
+
+with graph.as_default():
+    # Definir les constants
+    a = tf.constant(4, name=&quot;a&quot;)
+    b = tf.constant(8, name=&quot;b&quot;)
+    c = tf.constant(12, name=&quot;c&quot;)
+    
+    # Definir les operacions
+    sum = tf.add_n([a, b, c], name=&quot;sum&quot;)
+    count = tf.constant(3, name=&quot;count&quot;)
+    average = tf.divide(sum, count, name=&quot;average&quot;)
+
+# Executar el gr&agrave;fic
+with tf.Session(graph=graph) as sess:
+    result = sess.run(average)
+    print(&quot;Mitjana dels nombres: &quot;, result)</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après què són els gràfics de TensorFlow, com crear-los i executar-los, i quins avantatges ofereixen. Els gràfics són una eina poderosa que permet a TensorFlow optimitzar i distribuir les operacions de manera eficient. Amb els exemples i exercicis pràctics, hauríeu de tenir una comprensió sòlida de com treballar amb gràfics en TensorFlow. En la següent secció, explorarem l'execució immediata, una altra característica important de TensorFlow.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-02-variables-and-constants' title="Variables i constants">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-04-eager-execution' title="Execució immediata">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

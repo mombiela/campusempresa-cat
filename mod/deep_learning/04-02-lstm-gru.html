@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LSTM i GRU</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/deep_learning/04-02-lstm-gru" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/deep_learning/04-02-lstm-gru" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/deep_learning/04-02-lstm-gru" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/deep_learning/04-02-lstm-gru" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/deep_learning/04-02-lstm-gru" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-introduccion-rnn' title="Introducció a les RNN">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">LSTM i GRU</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-aplicaciones-rnn-pln' title="Aplicacions de RNN en processament del llenguatge natural">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem les xarxes neuronals recurrents (RNN) avançades, específicament les unitats de memòria a llarg termini (LSTM) i les unitats recurrents acoblades (GRU). Aquestes arquitectures estan dissenyades per abordar les limitacions de les RNN tradicionals, especialment en la gestió de dependències a llarg termini.</p>
+</div><h1>Introducció a les LSTM</h1>
+<div class='content'></div><h2>Què són les LSTM?</h2>
+<div class='content'><p>Les LSTM són una variant de les RNN dissenyada per recordar informació durant períodes de temps més llargs. Això es fa mitjançant una estructura de cel·la especial que pot mantenir i actualitzar informació a través de múltiples passos temporals.</p>
+</div><h2>Components de les LSTM</h2>
+<div class='content'><p>Les LSTM tenen tres components principals:</p>
+<ol>
+<li><strong>Porta d'entrada (Input Gate)</strong>: Controla quanta informació de l'entrada actual ha de ser guardada en l'estat de la cel·la.</li>
+<li><strong>Porta d'oblit (Forget Gate)</strong>: Decideix quanta informació de l'estat de la cel·la anterior ha de ser oblidada.</li>
+<li><strong>Porta de sortida (Output Gate)</strong>: Determina quina part de l'estat de la cel·la ha de ser utilitzada per calcular la sortida actual.</li>
+</ol>
+</div><h2>Funcionament de les LSTM</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Porta d'oblit</strong>:</p>
+<pre><code class="language-python">f_t = σ(W_f * [h_{t-1}, x_t] + b_f)
+</code></pre>
+<p>On <code>σ</code> és la funció sigmoide, <code>W_f</code> són els pesos associats a la porta d'oblit, <code>h_{t-1}</code> és l'estat ocult anterior, <code>x_t</code> és l'entrada actual i <code>b_f</code> és el biaix.</p>
+</li>
+<li>
+<p><strong>Porta d'entrada</strong>:</p>
+<pre><code class="language-python">i_t = σ(W_i * [h_{t-1}, x_t] + b_i)
+</code></pre>
+<p>On <code>W_i</code> són els pesos associats a la porta d'entrada i <code>b_i</code> és el biaix.</p>
+</li>
+<li>
+<p><strong>Actualització de l'estat de la cel·la</strong>:</p>
+<pre><code class="language-python">C_t = f_t * C_{t-1} + i_t * tanh(W_C * [h_{t-1}, x_t] + b_C)
+</code></pre>
+<p>On <code>C_{t-1}</code> és l'estat de la cel·la anterior, <code>W_C</code> són els pesos associats a l'actualització de l'estat de la cel·la i <code>b_C</code> és el biaix.</p>
+</li>
+<li>
+<p><strong>Porta de sortida</strong>:</p>
+<pre><code class="language-python">o_t = σ(W_o * [h_{t-1}, x_t] + b_o)
+</code></pre>
+<p>On <code>W_o</code> són els pesos associats a la porta de sortida i <code>b_o</code> és el biaix.</p>
+</li>
+<li>
+<p><strong>Sortida de l'estat ocult</strong>:</p>
+<pre><code class="language-python">h_t = o_t * tanh(C_t)
+</code></pre>
+</li>
+</ol>
+</div><h2>Exemple de codi amb LSTM en PyTorch</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaC5ubiBhcyBubgoKY2xhc3MgTFNUTU1vZGVsKG5uLk1vZHVsZSk6CiAgICBkZWYgX19pbml0X18oc2VsZiwgaW5wdXRfc2l6ZSwgaGlkZGVuX3NpemUsIG51bV9sYXllcnMpOgogICAgICAgIHN1cGVyKExTVE1Nb2RlbCwgc2VsZikuX19pbml0X18oKQogICAgICAgIHNlbGYubHN0bSA9IG5uLkxTVE0oaW5wdXRfc2l6ZSwgaGlkZGVuX3NpemUsIG51bV9sYXllcnMsIGJhdGNoX2ZpcnN0PVRydWUpCiAgICAgICAgc2VsZi5mYyA9IG5uLkxpbmVhcihoaWRkZW5fc2l6ZSwgMSkKCiAgICBkZWYgZm9yd2FyZChzZWxmLCB4KToKICAgICAgICBoXzAgPSB0b3JjaC56ZXJvcyhudW1fbGF5ZXJzLCB4LnNpemUoMCksIGhpZGRlbl9zaXplKQogICAgICAgIGNfMCA9IHRvcmNoLnplcm9zKG51bV9sYXllcnMsIHguc2l6ZSgwKSwgaGlkZGVuX3NpemUpCiAgICAgICAgb3V0LCBfID0gc2VsZi5sc3RtKHgsIChoXzAsIGNfMCkpCiAgICAgICAgb3V0ID0gc2VsZi5mYyhvdXRbOiwgLTEsIDpdKQogICAgICAgIHJldHVybiBvdXQKCiMgUGFyw6BtZXRyZXMKaW5wdXRfc2l6ZSA9IDEwCmhpZGRlbl9zaXplID0gMjAKbnVtX2xheWVycyA9IDIKCiMgTW9kZWwKbW9kZWwgPSBMU1RNTW9kZWwoaW5wdXRfc2l6ZSwgaGlkZGVuX3NpemUsIG51bV9sYXllcnMp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torch.nn as nn
+
+class LSTMModel(nn.Module):
+    def __init__(self, input_size, hidden_size, num_layers):
+        super(LSTMModel, self).__init__()
+        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
+        self.fc = nn.Linear(hidden_size, 1)
+
+    def forward(self, x):
+        h_0 = torch.zeros(num_layers, x.size(0), hidden_size)
+        c_0 = torch.zeros(num_layers, x.size(0), hidden_size)
+        out, _ = self.lstm(x, (h_0, c_0))
+        out = self.fc(out[:, -1, :])
+        return out
+
+# Par&agrave;metres
+input_size = 10
+hidden_size = 20
+num_layers = 2
+
+# Model
+model = LSTMModel(input_size, hidden_size, num_layers)</pre></div><div class='content'></div><h1>Introducció a les GRU</h1>
+<div class='content'></div><h2>Què són les GRU?</h2>
+<div class='content'><p>Les GRU són una altra variant de les RNN que simplifiquen l'estructura de les LSTM combinant les portes d'entrada i d'oblit en una sola porta de &quot;reset&quot; i una porta de &quot;update&quot;.</p>
+</div><h2>Components de les GRU</h2>
+<div class='content'><ol>
+<li><strong>Porta de reset (Reset Gate)</strong>: Decideix quanta informació de l'estat ocult anterior ha de ser oblidada.</li>
+<li><strong>Porta d'actualització (Update Gate)</strong>: Controla quanta informació de l'estat ocult anterior ha de ser guardada i quanta de l'estat actual ha de ser actualitzada.</li>
+</ol>
+</div><h2>Funcionament de les GRU</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Porta de reset</strong>:</p>
+<pre><code class="language-python">r_t = σ(W_r * [h_{t-1}, x_t] + b_r)
+</code></pre>
+</li>
+<li>
+<p><strong>Porta d'actualització</strong>:</p>
+<pre><code class="language-python">z_t = σ(W_z * [h_{t-1}, x_t] + b_z)
+</code></pre>
+</li>
+<li>
+<p><strong>Càlcul de l'estat candidat</strong>:</p>
+<pre><code class="language-python">n_t = tanh(W_n * [r_t * h_{t-1}, x_t] + b_n)
+</code></pre>
+</li>
+<li>
+<p><strong>Actualització de l'estat ocult</strong>:</p>
+<pre><code class="language-python">h_t = (1 - z_t) * n_t + z_t * h_{t-1}
+</code></pre>
+</li>
+</ol>
+</div><h2>Exemple de codi amb GRU en PyTorch</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaC5ubiBhcyBubgoKY2xhc3MgR1JVTW9kZWwobm4uTW9kdWxlKToKICAgIGRlZiBfX2luaXRfXyhzZWxmLCBpbnB1dF9zaXplLCBoaWRkZW5fc2l6ZSwgbnVtX2xheWVycyk6CiAgICAgICAgc3VwZXIoR1JVTW9kZWwsIHNlbGYpLl9faW5pdF9fKCkKICAgICAgICBzZWxmLmdydSA9IG5uLkdSVShpbnB1dF9zaXplLCBoaWRkZW5fc2l6ZSwgbnVtX2xheWVycywgYmF0Y2hfZmlyc3Q9VHJ1ZSkKICAgICAgICBzZWxmLmZjID0gbm4uTGluZWFyKGhpZGRlbl9zaXplLCAxKQoKICAgIGRlZiBmb3J3YXJkKHNlbGYsIHgpOgogICAgICAgIGhfMCA9IHRvcmNoLnplcm9zKG51bV9sYXllcnMsIHguc2l6ZSgwKSwgaGlkZGVuX3NpemUpCiAgICAgICAgb3V0LCBfID0gc2VsZi5ncnUoeCwgaF8wKQogICAgICAgIG91dCA9IHNlbGYuZmMob3V0WzosIC0xLCA6XSkKICAgICAgICByZXR1cm4gb3V0CgojIFBhcsOgbWV0cmVzCmlucHV0X3NpemUgPSAxMApoaWRkZW5fc2l6ZSA9IDIwCm51bV9sYXllcnMgPSAyCgojIE1vZGVsCm1vZGVsID0gR1JVTW9kZWwoaW5wdXRfc2l6ZSwgaGlkZGVuX3NpemUsIG51bV9sYXllcnMp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torch.nn as nn
+
+class GRUModel(nn.Module):
+    def __init__(self, input_size, hidden_size, num_layers):
+        super(GRUModel, self).__init__()
+        self.gru = nn.GRU(input_size, hidden_size, num_layers, batch_first=True)
+        self.fc = nn.Linear(hidden_size, 1)
+
+    def forward(self, x):
+        h_0 = torch.zeros(num_layers, x.size(0), hidden_size)
+        out, _ = self.gru(x, h_0)
+        out = self.fc(out[:, -1, :])
+        return out
+
+# Par&agrave;metres
+input_size = 10
+hidden_size = 20
+num_layers = 2
+
+# Model
+model = GRUModel(input_size, hidden_size, num_layers)</pre></div><div class='content'></div><h1>Comparació entre LSTM i GRU</h1>
+<div class='content'><table>
+<thead>
+<tr>
+<th>Característica</th>
+<th>LSTM</th>
+<th>GRU</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Complexitat</td>
+<td>Més complexa (3 portes)</td>
+<td>Menys complexa (2 portes)</td>
+</tr>
+<tr>
+<td>Capacitat de memòria</td>
+<td>Pot recordar informació durant més temps</td>
+<td>Pot recordar informació durant menys temps</td>
+</tr>
+<tr>
+<td>Temps d'entrenament</td>
+<td>Més llarg</td>
+<td>Més curt</td>
+</tr>
+<tr>
+<td>Rendiment</td>
+<td>Pot ser millor en tasques amb dependències llargues</td>
+<td>Pot ser millor en tasques amb dependències curtes</td>
+</tr>
+</tbody>
+</table>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici</h2>
+<div class='content'><p>Implementa una xarxa LSTM per predir la següent paraula en una seqüència de text utilitzant PyTorch. Utilitza un conjunt de dades de text senzill per entrenar la teva xarxa.</p>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaC5ubiBhcyBubgppbXBvcnQgdG9yY2gub3B0aW0gYXMgb3B0aW0KCiMgQ29uanVudCBkZSBkYWRlcyBkZSB0ZXh0IHNlbnppbGwKdGV4dCA9ICJoZWxsbyB3b3JsZCBoZWxsbyBweXRvcmNoIGhlbGxvIGRlZXAgbGVhcm5pbmciCmNoYXJzID0gbGlzdChzZXQodGV4dCkpCmNoYXJfdG9faWR4ID0ge2NoYXI6IGlkeCBmb3IgaWR4LCBjaGFyIGluIGVudW1lcmF0ZShjaGFycyl9CmlkeF90b19jaGFyID0ge2lkeDogY2hhciBmb3IgaWR4LCBjaGFyIGluIGVudW1lcmF0ZShjaGFycyl9CgojIFBhcsOgbWV0cmVzCmlucHV0X3NpemUgPSBsZW4oY2hhcnMpCmhpZGRlbl9zaXplID0gMTI4Cm51bV9sYXllcnMgPSAyCnNlcV9sZW5ndGggPSA1CmxlYXJuaW5nX3JhdGUgPSAwLjAxCm51bV9lcG9jaHMgPSA1MDAKCiMgUHJlcGFyYWNpw7MgZGUgbGVzIGRhZGVzCmRlZiBwcmVwYXJlX2RhdGEodGV4dCwgc2VxX2xlbmd0aCk6CiAgICBYID0gW10KICAgIFkgPSBbXQogICAgZm9yIGkgaW4gcmFuZ2UoMCwgbGVuKHRleHQpIC0gc2VxX2xlbmd0aCk6CiAgICAgICAgc2VxX2luID0gdGV4dFtpOmkgKyBzZXFfbGVuZ3RoXQogICAgICAgIHNlcV9vdXQgPSB0ZXh0W2kgKyBzZXFfbGVuZ3RoXQogICAgICAgIFguYXBwZW5kKFtjaGFyX3RvX2lkeFtjaGFyXSBmb3IgY2hhciBpbiBzZXFfaW5dKQogICAgICAgIFkuYXBwZW5kKGNoYXJfdG9faWR4W3NlcV9vdXRdKQogICAgcmV0dXJuIHRvcmNoLnRlbnNvcihYKSwgdG9yY2gudGVuc29yKFkpCgpYLCBZID0gcHJlcGFyZV9kYXRhKHRleHQsIHNlcV9sZW5ndGgpCgojIE1vZGVsCmNsYXNzIExTVE1UZXh0TW9kZWwobm4uTW9kdWxlKToKICAgIGRlZiBfX2luaXRfXyhzZWxmLCBpbnB1dF9zaXplLCBoaWRkZW5fc2l6ZSwgbnVtX2xheWVycyk6CiAgICAgICAgc3VwZXIoTFNUTVRleHRNb2RlbCwgc2VsZikuX19pbml0X18oKQogICAgICAgIHNlbGYubHN0bSA9IG5uLkxTVE0oaW5wdXRfc2l6ZSwgaGlkZGVuX3NpemUsIG51bV9sYXllcnMsIGJhdGNoX2ZpcnN0PVRydWUpCiAgICAgICAgc2VsZi5mYyA9IG5uLkxpbmVhcihoaWRkZW5fc2l6ZSwgaW5wdXRfc2l6ZSkKCiAgICBkZWYgZm9yd2FyZChzZWxmLCB4KToKICAgICAgICBoXzAgPSB0b3JjaC56ZXJvcyhudW1fbGF5ZXJzLCB4LnNpemUoMCksIGhpZGRlbl9zaXplKQogICAgICAgIGNfMCA9IHRvcmNoLnplcm9zKG51bV9sYXllcnMsIHguc2l6ZSgwKSwgaGlkZGVuX3NpemUpCiAgICAgICAgb3V0LCBfID0gc2VsZi5sc3RtKHgsIChoXzAsIGNfMCkpCiAgICAgICAgb3V0ID0gc2VsZi5mYyhvdXRbOiwgLTEsIDpdKQogICAgICAgIHJldHVybiBvdXQKCm1vZGVsID0gTFNUTVRleHRNb2RlbChpbnB1dF9zaXplLCBoaWRkZW5fc2l6ZSwgbnVtX2xheWVycykKY3JpdGVyaW9uID0gbm4uQ3Jvc3NFbnRyb3B5TG9zcygpCm9wdGltaXplciA9IG9wdGltLkFkYW0obW9kZWwucGFyYW1ldGVycygpLCBscj1sZWFybmluZ19yYXRlKQoKIyBFbnRyZW5hbWVudApmb3IgZXBvY2ggaW4gcmFuZ2UobnVtX2Vwb2Nocyk6CiAgICBmb3IgaSBpbiByYW5nZShsZW4oWCkpOgogICAgICAgIGlucHV0cyA9IHRvcmNoLm5uLmZ1bmN0aW9uYWwub25lX2hvdChYW2ldLCBudW1fY2xhc3Nlcz1pbnB1dF9zaXplKS5mbG9hdCgpLnVuc3F1ZWV6ZSgwKQogICAgICAgIHRhcmdldHMgPSBZW2ldLnVuc3F1ZWV6ZSgwKQoKICAgICAgICBvdXRwdXRzID0gbW9kZWwoaW5wdXRzKQogICAgICAgIGxvc3MgPSBjcml0ZXJpb24ob3V0cHV0cywgdGFyZ2V0cykKCiAgICAgICAgb3B0aW1pemVyLnplcm9fZ3JhZCgpCiAgICAgICAgbG9zcy5iYWNrd2FyZCgpCiAgICAgICAgb3B0aW1pemVyLnN0ZXAoKQoKICAgIGlmIChlcG9jaCArIDEpICUgMTAwID09IDA6CiAgICAgICAgcHJpbnQoZidFcG9jaCBbe2Vwb2NoICsgMX0ve251bV9lcG9jaHN9XSwgTG9zczoge2xvc3MuaXRlbSgpOi40Zn0nKQoKIyBQcmVkaWNjacOzCmRlZiBwcmVkaWN0KG1vZGVsLCBjaGFyLCBzZXFfbGVuZ3RoKToKICAgIGlucHV0X3NlcSA9IFtjaGFyX3RvX2lkeFtjaGFyXV0KICAgIGZvciBfIGluIHJhbmdlKHNlcV9sZW5ndGgpOgogICAgICAgIGlucHV0X3RlbnNvciA9IHRvcmNoLm5uLmZ1bmN0aW9uYWwub25lX2hvdCh0b3JjaC50ZW5zb3IoaW5wdXRfc2VxKSwgbnVtX2NsYXNzZXM9aW5wdXRfc2l6ZSkuZmxvYXQoKS51bnNxdWVlemUoMCkKICAgICAgICBvdXRwdXQgPSBtb2RlbChpbnB1dF90ZW5zb3IpCiAgICAgICAgXywgcHJlZGljdGVkX2lkeCA9IHRvcmNoLm1heChvdXRwdXQsIDEpCiAgICAgICAgaW5wdXRfc2VxLmFwcGVuZChwcmVkaWN0ZWRfaWR4Lml0ZW0oKSkKICAgIHJldHVybiAnJy5qb2luKFtpZHhfdG9fY2hhcltpZHhdIGZvciBpZHggaW4gaW5wdXRfc2VxXSkKCnByaW50KHByZWRpY3QobW9kZWwsICdoJywgMTApKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# Conjunt de dades de text senzill
+text = &quot;hello world hello pytorch hello deep learning&quot;
+chars = list(set(text))
+char_to_idx = {char: idx for idx, char in enumerate(chars)}
+idx_to_char = {idx: char for idx, char in enumerate(chars)}
+
+# Par&agrave;metres
+input_size = len(chars)
+hidden_size = 128
+num_layers = 2
+seq_length = 5
+learning_rate = 0.01
+num_epochs = 500
+
+# Preparaci&oacute; de les dades
+def prepare_data(text, seq_length):
+    X = []
+    Y = []
+    for i in range(0, len(text) - seq_length):
+        seq_in = text[i:i + seq_length]
+        seq_out = text[i + seq_length]
+        X.append([char_to_idx[char] for char in seq_in])
+        Y.append(char_to_idx[seq_out])
+    return torch.tensor(X), torch.tensor(Y)
+
+X, Y = prepare_data(text, seq_length)
+
+# Model
+class LSTMTextModel(nn.Module):
+    def __init__(self, input_size, hidden_size, num_layers):
+        super(LSTMTextModel, self).__init__()
+        self.lstm = nn.LSTM(input_size, hidden_size, num_layers, batch_first=True)
+        self.fc = nn.Linear(hidden_size, input_size)
+
+    def forward(self, x):
+        h_0 = torch.zeros(num_layers, x.size(0), hidden_size)
+        c_0 = torch.zeros(num_layers, x.size(0), hidden_size)
+        out, _ = self.lstm(x, (h_0, c_0))
+        out = self.fc(out[:, -1, :])
+        return out
+
+model = LSTMTextModel(input_size, hidden_size, num_layers)
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
+# Entrenament
+for epoch in range(num_epochs):
+    for i in range(len(X)):
+        inputs = torch.nn.functional.one_hot(X[i], num_classes=input_size).float().unsqueeze(0)
+        targets = Y[i].unsqueeze(0)
+
+        outputs = model(inputs)
+        loss = criterion(outputs, targets)
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+    if (epoch + 1) % 100 == 0:
+        print(f'Epoch [{epoch + 1}/{num_epochs}], Loss: {loss.item():.4f}')
+
+# Predicci&oacute;
+def predict(model, char, seq_length):
+    input_seq = [char_to_idx[char]]
+    for _ in range(seq_length):
+        input_tensor = torch.nn.functional.one_hot(torch.tensor(input_seq), num_classes=input_size).float().unsqueeze(0)
+        output = model(input_tensor)
+        _, predicted_idx = torch.max(output, 1)
+        input_seq.append(predicted_idx.item())
+    return ''.join([idx_to_char[idx] for idx in input_seq])
+
+print(predict(model, 'h', 10))</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem explorat les arquitectures LSTM i GRU, les seves diferències i com implementar-les utilitzant PyTorch. Les LSTM i les GRU són eines poderoses per treballar amb dades seqüencials i tenen aplicacions en àrees com el processament del llenguatge natural i la predicció de sèries temporals. A la següent secció, veurem com aplicar aquestes tècniques en aplicacions pràctiques.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-introduccion-rnn' title="Introducció a les RNN">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-aplicaciones-rnn-pln' title="Aplicacions de RNN en processament del llenguatge natural">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

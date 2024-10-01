@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar notificacions</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/firebase/06-02-sending-notifications" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/firebase/06-02-sending-notifications" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/firebase/06-02-sending-notifications" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/firebase/06-02-sending-notifications" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/firebase/06-02-sending-notifications" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-introduction-to-cloud-messaging' title="Introducció a la missatgeria en el núvol">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Enviar notificacions</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-handling-notifications' title="Gestionar notificacions">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com enviar notificacions utilitzant Firebase Cloud Messaging (FCM). Les notificacions són una eina poderosa per mantenir els usuaris compromesos amb la teva aplicació. FCM permet enviar missatges de notificació a dispositius Android, iOS i aplicacions web de manera fiable i escalable.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre els conceptes bàsics de Firebase Cloud Messaging.</li>
+<li>Configurar FCM per enviar notificacions.</li>
+<li>Enviar notificacions des de la consola de Firebase.</li>
+<li>Enviar notificacions programàticament.</li>
+</ul>
+</div><h1>Conceptes bàsics de Firebase Cloud Messaging</h1>
+<div class='content'><p>Firebase Cloud Messaging (FCM) és una solució de missatgeria multiplataforma que permet enviar missatges de notificació i dades a aplicacions client. Els missatges poden ser enviats des de la consola de Firebase o des d'un servidor backend.</p>
+</div><h2>Tipus de missatges</h2>
+<div class='content'><ol>
+<li><strong>Missatges de notificació</strong>: Són missatges que es mostren a l'usuari com a notificacions del sistema.</li>
+<li><strong>Missatges de dades</strong>: Són missatges que contenen dades personalitzades i no es mostren automàticament a l'usuari. L'aplicació client és responsable de gestionar-los.</li>
+</ol>
+</div><h1>Configuració de FCM</h1>
+<div class='content'></div><h2>Pas 1: Afegir Firebase al teu projecte</h2>
+<div class='content'><p>Si encara no has afegit Firebase al teu projecte, segueix els passos del mòdul 1 per configurar Firebase.</p>
+</div><h2>Pas 2: Configurar FCM a la consola de Firebase</h2>
+<div class='content'><ol>
+<li>A la consola de Firebase, selecciona el teu projecte.</li>
+<li>A la barra lateral, fes clic a &quot;Cloud Messaging&quot;.</li>
+<li>Configura les opcions necessàries per a la teva aplicació.</li>
+</ol>
+</div><h2>Pas 3: Integrar FCM al teu projecte</h2>
+<div class='content'><h4>Android</h4>
+<ol>
+<li>Afegeix la dependència de FCM al teu <code>build.gradle</code> (nivell d'aplicació):
+<pre><code class="language-gradle">implementation 'com.google.firebase:firebase-messaging:XX.X.X'
+</code></pre>
+</li>
+<li>Registra el teu servei de missatgeria al manifest:
+<pre><code class="language-xml">&lt;service
+    android:name=&quot;.MyFirebaseMessagingService&quot;
+    android:exported=&quot;false&quot;&gt;
+    &lt;intent-filter&gt;
+        &lt;action android:name=&quot;com.google.firebase.MESSAGING_EVENT&quot;/&gt;
+    &lt;/intent-filter&gt;
+&lt;/service&gt;
+</code></pre>
+</li>
+</ol>
+<h4>iOS</h4>
+<ol>
+<li>Afegeix la dependència de FCM al teu <code>Podfile</code>:
+<pre><code class="language-ruby">pod 'Firebase/Messaging'
+</code></pre>
+</li>
+<li>Configura les notificacions push a Xcode i registra el dispositiu per a notificacions.</li>
+</ol>
+</div><h1>Enviar notificacions des de la consola de Firebase</h1>
+<div class='content'><ol>
+<li>A la consola de Firebase, selecciona el teu projecte.</li>
+<li>A la barra lateral, fes clic a &quot;Cloud Messaging&quot;.</li>
+<li>Fes clic a &quot;Enviar el teu primer missatge&quot;.</li>
+<li>Omple els camps necessaris:
+<ul>
+<li><strong>Títol</strong>: El títol de la notificació.</li>
+<li><strong>Text</strong>: El cos de la notificació.</li>
+<li><strong>Aplicació de destinació</strong>: Selecciona l'aplicació a la qual vols enviar la notificació.</li>
+</ul>
+</li>
+<li>Fes clic a &quot;Enviar&quot;.</li>
+</ol>
+</div><h1>Enviar notificacions programàticament</h1>
+<div class='content'></div><h2>Exemple en Android</h2>
+<div class='content'><h4>MyFirebaseMessagingService.java</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHVibGljIGNsYXNzIE15RmlyZWJhc2VNZXNzYWdpbmdTZXJ2aWNlIGV4dGVuZHMgRmlyZWJhc2VNZXNzYWdpbmdTZXJ2aWNlIHsKICAgIEBPdmVycmlkZQogICAgcHVibGljIHZvaWQgb25NZXNzYWdlUmVjZWl2ZWQoUmVtb3RlTWVzc2FnZSByZW1vdGVNZXNzYWdlKSB7CiAgICAgICAgLy8gR2VzdGlvbmFyIGVsIG1pc3NhdGdlIGRlIG5vdGlmaWNhY2nDswogICAgICAgIGlmIChyZW1vdGVNZXNzYWdlLmdldE5vdGlmaWNhdGlvbigpICE9IG51bGwpIHsKICAgICAgICAgICAgc2hvd05vdGlmaWNhdGlvbihyZW1vdGVNZXNzYWdlLmdldE5vdGlmaWNhdGlvbigpLmdldFRpdGxlKCksIHJlbW90ZU1lc3NhZ2UuZ2V0Tm90aWZpY2F0aW9uKCkuZ2V0Qm9keSgpKTsKICAgICAgICB9CiAgICB9CgogICAgcHJpdmF0ZSB2b2lkIHNob3dOb3RpZmljYXRpb24oU3RyaW5nIHRpdGxlLCBTdHJpbmcgYm9keSkgewogICAgICAgIE5vdGlmaWNhdGlvbkNvbXBhdC5CdWlsZGVyIGJ1aWxkZXIgPSBuZXcgTm90aWZpY2F0aW9uQ29tcGF0LkJ1aWxkZXIodGhpcywgIk15Q2hhbm5lbElkIikKICAgICAgICAgICAgICAgIC5zZXRTbWFsbEljb24oUi5kcmF3YWJsZS5pY19ub3RpZmljYXRpb24pCiAgICAgICAgICAgICAgICAuc2V0Q29udGVudFRpdGxlKHRpdGxlKQogICAgICAgICAgICAgICAgLnNldENvbnRlbnRUZXh0KGJvZHkpCiAgICAgICAgICAgICAgICAuc2V0UHJpb3JpdHkoTm90aWZpY2F0aW9uQ29tcGF0LlBSSU9SSVRZX0RFRkFVTFQpOwoKICAgICAgICBOb3RpZmljYXRpb25NYW5hZ2VyQ29tcGF0IG5vdGlmaWNhdGlvbk1hbmFnZXIgPSBOb3RpZmljYXRpb25NYW5hZ2VyQ29tcGF0LmZyb20odGhpcyk7CiAgICAgICAgbm90aWZpY2F0aW9uTWFuYWdlci5ub3RpZnkoMCwgYnVpbGRlci5idWlsZCgpKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>public class MyFirebaseMessagingService extends FirebaseMessagingService {
+    @Override
+    public void onMessageReceived(RemoteMessage remoteMessage) {
+        // Gestionar el missatge de notificaci&oacute;
+        if (remoteMessage.getNotification() != null) {
+            showNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
+        }
+    }
+
+    private void showNotification(String title, String body) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, &quot;MyChannelId&quot;)
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle(title)
+                .setContentText(body)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(0, builder.build());
+    }
+}</pre></div><div class='content'></div><h2>Exemple en iOS</h2>
+<div class='content'><h4>AppDelegate.swift</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IEZpcmViYXNlCmltcG9ydCBVc2VyTm90aWZpY2F0aW9ucwoKQFVJQXBwbGljYXRpb25NYWluCmNsYXNzIEFwcERlbGVnYXRlOiBVSVJlc3BvbmRlciwgVUlBcHBsaWNhdGlvbkRlbGVnYXRlLCBVTlVzZXJOb3RpZmljYXRpb25DZW50ZXJEZWxlZ2F0ZSwgTWVzc2FnaW5nRGVsZWdhdGUgewogICAgZnVuYyBhcHBsaWNhdGlvbihfIGFwcGxpY2F0aW9uOiBVSUFwcGxpY2F0aW9uLCBkaWRGaW5pc2hMYXVuY2hpbmdXaXRoT3B0aW9ucyBsYXVuY2hPcHRpb25zOiBbVUlBcHBsaWNhdGlvbi5MYXVuY2hPcHRpb25zS2V5OiBBbnldPykgLT4gQm9vbCB7CiAgICAgICAgRmlyZWJhc2VBcHAuY29uZmlndXJlKCkKICAgICAgICBVTlVzZXJOb3RpZmljYXRpb25DZW50ZXIuY3VycmVudCgpLmRlbGVnYXRlID0gc2VsZgogICAgICAgIE1lc3NhZ2luZy5tZXNzYWdpbmcoKS5kZWxlZ2F0ZSA9IHNlbGYKICAgICAgICByZXR1cm4gdHJ1ZQogICAgfQoKICAgIGZ1bmMgbWVzc2FnaW5nKF8gbWVzc2FnaW5nOiBNZXNzYWdpbmcsIGRpZFJlY2VpdmUgcmVtb3RlTWVzc2FnZTogTWVzc2FnaW5nUmVtb3RlTWVzc2FnZSkgewogICAgICAgIC8vIEdlc3Rpb25hciBlbCBtaXNzYXRnZSBkZSBub3RpZmljYWNpw7MKICAgICAgICBwcmludCgiTWVzc2FnZSBkYXRhOiBcKHJlbW90ZU1lc3NhZ2UuYXBwRGF0YSkiKQogICAgfQoKICAgIGZ1bmMgdXNlck5vdGlmaWNhdGlvbkNlbnRlcihfIGNlbnRlcjogVU5Vc2VyTm90aWZpY2F0aW9uQ2VudGVyLCB3aWxsUHJlc2VudCBub3RpZmljYXRpb246IFVOTm90aWZpY2F0aW9uLCB3aXRoQ29tcGxldGlvbkhhbmRsZXIgY29tcGxldGlvbkhhbmRsZXI6IEBlc2NhcGluZyAoVU5Ob3RpZmljYXRpb25QcmVzZW50YXRpb25PcHRpb25zKSAtPiBWb2lkKSB7CiAgICAgICAgY29tcGxldGlvbkhhbmRsZXIoWy5hbGVydCwgLnNvdW5kXSkKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import Firebase
+import UserNotifications
+
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate, MessagingDelegate {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -&gt; Bool {
+        FirebaseApp.configure()
+        UNUserNotificationCenter.current().delegate = self
+        Messaging.messaging().delegate = self
+        return true
+    }
+
+    func messaging(_ messaging: Messaging, didReceive remoteMessage: MessagingRemoteMessage) {
+        // Gestionar el missatge de notificaci&oacute;
+        print(&quot;Message data: \(remoteMessage.appData)&quot;)
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -&gt; Void) {
+        completionHandler([.alert, .sound])
+    }
+}</pre></div><div class='content'></div><h1>Exercici pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Enviar una notificació des de la consola de Firebase i rebre-la a l'aplicació client.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>Configura FCM al teu projecte seguint els passos anteriors.</li>
+<li>Envia una notificació des de la consola de Firebase.</li>
+<li>Verifica que la notificació es rep correctament a l'aplicació client.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><ol>
+<li>Configura FCM al teu projecte.</li>
+<li>Envia una notificació des de la consola de Firebase amb el títol &quot;Hola&quot; i el text &quot;Aquesta és una notificació de prova&quot;.</li>
+<li>Verifica que la notificació es mostra correctament a l'aplicació client.</li>
+</ol>
+</div><h1>Errors comuns i consells</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Error: No es reben notificacions a l'aplicació client.</strong></p>
+<ul>
+<li>Solució: Verifica que has configurat correctament FCM al teu projecte i que el dispositiu està registrat per a notificacions.</li>
+</ul>
+</li>
+<li>
+<p><strong>Error: Les notificacions no es mostren quan l'aplicació està en primer pla.</strong></p>
+<ul>
+<li>Solució: Assegura't de gestionar les notificacions manualment quan l'aplicació està en primer pla.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com enviar notificacions utilitzant Firebase Cloud Messaging. Hem vist com configurar FCM, enviar notificacions des de la consola de Firebase i programàticament, i hem realitzat un exercici pràctic per reforçar els conceptes apresos. Ara estàs preparat per mantenir els teus usuaris compromesos amb notificacions efectives.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-introduction-to-cloud-messaging' title="Introducció a la missatgeria en el núvol">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-handling-notifications' title="Gestionar notificacions">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cerca de Text Complet</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/elasticsearch/03-01-full-text-search" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/elasticsearch/03-01-full-text-search" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/elasticsearch/03-01-full-text-search" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/elasticsearch/03-01-full-text-search" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/elasticsearch/03-01-full-text-search" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-04-elasticsearch-query-dsl' title="Elasticsearch Query DSL">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Cerca de Text Complet</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-02-filtering-sorting' title="Filtratge i Ordenació">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La cerca de text complet és una de les funcionalitats més potents d'Elasticsearch. Permet buscar text dins de documents de manera eficient i precisa, utilitzant una varietat de tècniques i operadors. En aquest tema, explorarem com funciona la cerca de text complet a Elasticsearch, els diferents tipus de cerques que es poden realitzar i com configurar-les.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><p>Abans de començar amb els exemples pràctics, és important entendre alguns conceptes clau:</p>
+<ul>
+<li><strong>Anàlisi de Text</strong>: El procés de descomposar el text en unitats més petites (tokens) i normalitzar-lo per a la cerca.</li>
+<li><strong>Tokenitzador</strong>: Una eina que divideix el text en tokens.</li>
+<li><strong>Filtre de Token</strong>: Un component que modifica els tokens generats pel tokenitzador.</li>
+<li><strong>Camp de Text</strong>: Un tipus de camp en un document que es pot analitzar per a la cerca de text complet.</li>
+</ul>
+</div><h1>Tipus de Cerques de Text Complet</h1>
+<div class='content'><p>Elasticsearch ofereix diversos tipus de cerques de text complet, cadascuna amb les seves pròpies característiques i usos:</p>
+<ol>
+<li><strong>Match Query</strong>: Cerca documents que coincideixin amb el text proporcionat.</li>
+<li><strong>Multi-Match Query</strong>: Cerca en múltiples camps alhora.</li>
+<li><strong>Match Phrase Query</strong>: Cerca una frase exacta dins dels documents.</li>
+<li><strong>Query String Query</strong>: Permet utilitzar una sintaxi de cerca avançada similar a la dels motors de cerca tradicionals.</li>
+</ol>
+</div><h1>Exemples Pràctics</h1>
+<div class='content'></div><h2>1. Match Query</h2>
+<div class='content'><p>La <code>match</code> query és la més bàsica i s'utilitza per cercar documents que continguin el text especificat en un camp determinat.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UE9TVCAvaW5kZXhfbmFtZS9fc2VhcmNoCnsKICAicXVlcnkiOiB7CiAgICAibWF0Y2giOiB7CiAgICAgICJmaWVsZF9uYW1lIjogInRleHQgdG8gc2VhcmNoIgogICAgfQogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>POST /index_name/_search
+{
+  &quot;query&quot;: {
+    &quot;match&quot;: {
+      &quot;field_name&quot;: &quot;text to search&quot;
+    }
+  }
+}</pre></div><div class='content'><p><strong>Explicació</strong>:</p>
+<ul>
+<li><code>index_name</code>: El nom de l'índex on es realitza la cerca.</li>
+<li><code>field_name</code>: El camp dins del document on es busca el text.</li>
+<li><code>&quot;text to search&quot;</code>: El text que es vol cercar.</li>
+</ul>
+</div><h2>2. Multi-Match Query</h2>
+<div class='content'><p>La <code>multi_match</code> query permet cercar en múltiples camps alhora.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UE9TVCAvaW5kZXhfbmFtZS9fc2VhcmNoCnsKICAicXVlcnkiOiB7CiAgICAibXVsdGlfbWF0Y2giOiB7CiAgICAgICJxdWVyeSI6ICJ0ZXh0IHRvIHNlYXJjaCIsCiAgICAgICJmaWVsZHMiOiBbImZpZWxkMSIsICJmaWVsZDIiLCAiZmllbGQzIl0KICAgIH0KICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>POST /index_name/_search
+{
+  &quot;query&quot;: {
+    &quot;multi_match&quot;: {
+      &quot;query&quot;: &quot;text to search&quot;,
+      &quot;fields&quot;: [&quot;field1&quot;, &quot;field2&quot;, &quot;field3&quot;]
+    }
+  }
+}</pre></div><div class='content'><p><strong>Explicació</strong>:</p>
+<ul>
+<li><code>query</code>: El text que es vol cercar.</li>
+<li><code>fields</code>: Una llista de camps on es realitzarà la cerca.</li>
+</ul>
+</div><h2>3. Match Phrase Query</h2>
+<div class='content'><p>La <code>match_phrase</code> query s'utilitza per cercar una frase exacta dins dels documents.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UE9TVCAvaW5kZXhfbmFtZS9fc2VhcmNoCnsKICAicXVlcnkiOiB7CiAgICAibWF0Y2hfcGhyYXNlIjogewogICAgICAiZmllbGRfbmFtZSI6ICJleGFjdCBwaHJhc2UgdG8gc2VhcmNoIgogICAgfQogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>POST /index_name/_search
+{
+  &quot;query&quot;: {
+    &quot;match_phrase&quot;: {
+      &quot;field_name&quot;: &quot;exact phrase to search&quot;
+    }
+  }
+}</pre></div><div class='content'><p><strong>Explicació</strong>:</p>
+<ul>
+<li><code>field_name</code>: El camp dins del document on es busca la frase exacta.</li>
+<li><code>&quot;exact phrase to search&quot;</code>: La frase exacta que es vol cercar.</li>
+</ul>
+</div><h2>4. Query String Query</h2>
+<div class='content'><p>La <code>query_string</code> query permet utilitzar una sintaxi de cerca avançada, incloent operadors booleans, comodins, etc.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UE9TVCAvaW5kZXhfbmFtZS9fc2VhcmNoCnsKICAicXVlcnkiOiB7CiAgICAicXVlcnlfc3RyaW5nIjogewogICAgICAicXVlcnkiOiAiKGZpZWxkMTp0ZXh0IE9SIGZpZWxkMjp0ZXh0KSBBTkQgLWZpZWxkMzp0ZXh0IgogICAgfQogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>POST /index_name/_search
+{
+  &quot;query&quot;: {
+    &quot;query_string&quot;: {
+      &quot;query&quot;: &quot;(field1:text OR field2:text) AND -field3:text&quot;
+    }
+  }
+}</pre></div><div class='content'><p><strong>Explicació</strong>:</p>
+<ul>
+<li><code>query</code>: La cadena de cerca amb la sintaxi avançada.</li>
+<li><code>(field1:text OR field2:text) AND -field3:text</code>: Un exemple de sintaxi avançada que cerca documents on <code>field1</code> o <code>field2</code> continguin <code>text</code>, però <code>field3</code> no contingui <code>text</code>.</li>
+</ul>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Cerca Bàsica amb Match Query</h2>
+<div class='content'><p><strong>Objectiu</strong>: Realitzar una cerca bàsica utilitzant la <code>match</code> query.</p>
+<p><strong>Instruccions</strong>:</p>
+<ol>
+<li>Crea un índex anomenat <code>library</code>.</li>
+<li>Indexa els següents documents:
+<pre><code class="language-json">{ &quot;title&quot;: &quot;Elasticsearch Guide&quot;, &quot;author&quot;: &quot;John Doe&quot; }
+{ &quot;title&quot;: &quot;Learning Elasticsearch&quot;, &quot;author&quot;: &quot;Jane Smith&quot; }
+{ &quot;title&quot;: &quot;Advanced Elasticsearch&quot;, &quot;author&quot;: &quot;John Doe&quot; }
+</code></pre>
+</li>
+<li>Realitza una cerca per trobar tots els documents on el títol contingui la paraula &quot;Elasticsearch&quot;.</li>
+</ol>
+<p><strong>Solució</strong>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UE9TVCAvbGlicmFyeS9fc2VhcmNoCnsKICAicXVlcnkiOiB7CiAgICAibWF0Y2giOiB7CiAgICAgICJ0aXRsZSI6ICJFbGFzdGljc2VhcmNoIgogICAgfQogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>POST /library/_search
+{
+  &quot;query&quot;: {
+    &quot;match&quot;: {
+      &quot;title&quot;: &quot;Elasticsearch&quot;
+    }
+  }
+}</pre></div><div class='content'></div><h2>Exercici 2: Cerca en Múltiples Camps amb Multi-Match Query</h2>
+<div class='content'><p><strong>Objectiu</strong>: Realitzar una cerca en múltiples camps utilitzant la <code>multi_match</code> query.</p>
+<p><strong>Instruccions</strong>:</p>
+<ol>
+<li>Utilitza l'índex <code>library</code> creat anteriorment.</li>
+<li>Realitza una cerca per trobar tots els documents on el títol o l'autor continguin la paraula &quot;John&quot;.</li>
+</ol>
+<p><strong>Solució</strong>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UE9TVCAvbGlicmFyeS9fc2VhcmNoCnsKICAicXVlcnkiOiB7CiAgICAibXVsdGlfbWF0Y2giOiB7CiAgICAgICJxdWVyeSI6ICJKb2huIiwKICAgICAgImZpZWxkcyI6IFsidGl0bGUiLCAiYXV0aG9yIl0KICAgIH0KICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>POST /library/_search
+{
+  &quot;query&quot;: {
+    &quot;multi_match&quot;: {
+      &quot;query&quot;: &quot;John&quot;,
+      &quot;fields&quot;: [&quot;title&quot;, &quot;author&quot;]
+    }
+  }
+}</pre></div><div class='content'></div><h2>Exercici 3: Cerca de Frases amb Match Phrase Query</h2>
+<div class='content'><p><strong>Objectiu</strong>: Realitzar una cerca de frases utilitzant la <code>match_phrase</code> query.</p>
+<p><strong>Instruccions</strong>:</p>
+<ol>
+<li>Utilitza l'índex <code>library</code> creat anteriorment.</li>
+<li>Realitza una cerca per trobar tots els documents on el títol contingui la frase exacta &quot;Advanced Elasticsearch&quot;.</li>
+</ol>
+<p><strong>Solució</strong>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UE9TVCAvbGlicmFyeS9fc2VhcmNoCnsKICAicXVlcnkiOiB7CiAgICAibWF0Y2hfcGhyYXNlIjogewogICAgICAidGl0bGUiOiAiQWR2YW5jZWQgRWxhc3RpY3NlYXJjaCIKICAgIH0KICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>POST /library/_search
+{
+  &quot;query&quot;: {
+    &quot;match_phrase&quot;: {
+      &quot;title&quot;: &quot;Advanced Elasticsearch&quot;
+    }
+  }
+}</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après sobre la cerca de text complet a Elasticsearch, incloent els conceptes clau i els diferents tipus de cerques que es poden realitzar. Hem vist exemples pràctics de com utilitzar les queries <code>match</code>, <code>multi_match</code>, <code>match_phrase</code> i <code>query_string</code>. A més, hem practicat amb exercicis per reforçar els conceptes apresos. En el següent tema, explorarem tècniques de filtratge i ordenació per refinar encara més les nostres cerques.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-04-elasticsearch-query-dsl' title="Elasticsearch Query DSL">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-02-filtering-sorting' title="Filtratge i Ordenació">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

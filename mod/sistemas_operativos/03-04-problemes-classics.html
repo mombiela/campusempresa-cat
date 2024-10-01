@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Problemes Clàssics de Concurrència</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/sistemas_operativos/03-04-problemas-clasicos" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/sistemas_operativos/03-04-problemes-classics" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/sistemas_operativos/03-04-classic-problems" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/sistemas_operativos/03-04-problemes-classics" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/sistemas_operativos/03-04-problemes-classics" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-sincronitzacio-exclusio-mutua' title="Sincronització i Exclusió Mútua">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Problemes Clàssics de Concurrència</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-sistemes-fitxers' title="Sistemes de Fitxers">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem alguns dels problemes clàssics que es presenten en la concurrència dins dels sistemes operatius. Aquests problemes són fonamentals per comprendre els desafiaments i les solucions associades amb la gestió de múltiples processos i fils que s'executen simultàniament. Els problemes clàssics que tractarem són:</p>
+<ol>
+<li><strong>El Problema del Productor-Consumidor</strong></li>
+<li><strong>El Problema dels Filòsofs Sopant</strong></li>
+<li><strong>El Problema dels Lectors i Escriptors</strong></li>
+</ol>
+</div><h1>1. El Problema del Productor-Consumidor</h1>
+<div class='content'></div><h2>Descripció</h2>
+<div class='content'><p>El problema del productor-consumidor, també conegut com a problema del buffer limitat, involucra dos tipus de processos: productors i consumidors. Els productors generen dades i les col·loquen en un buffer, mentre que els consumidors extreuen dades del buffer per processar-les. El repte és assegurar que els productors no afegeixin dades a un buffer ple i que els consumidors no intentin extreure dades d'un buffer buit.</p>
+</div><h2>Solució amb Semàfors</h2>
+<div class='content'><p>Utilitzarem semàfors per sincronitzar l'accés al buffer compartit.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxwdGhyZWFkLmg+CiNpbmNsdWRlIDxzZW1hcGhvcmUuaD4KCiNkZWZpbmUgQlVGRkVSX1NJWkUgMTAKCmludCBidWZmZXJbQlVGRkVSX1NJWkVdOwppbnQgY291bnQgPSAwOwoKc2VtX3QgZW1wdHk7CnNlbV90IGZ1bGw7CnB0aHJlYWRfbXV0ZXhfdCBtdXRleDsKCnZvaWQqIHByb2R1Y2VyKHZvaWQqIGFyZykgewogICAgaW50IGl0ZW07CiAgICB3aGlsZSAoMSkgewogICAgICAgIGl0ZW0gPSByYW5kKCk7IC8vIFByb2R1aXIgdW4gZWxlbWVudAogICAgICAgIHNlbV93YWl0KCZlbXB0eSk7CiAgICAgICAgcHRocmVhZF9tdXRleF9sb2NrKCZtdXRleCk7CiAgICAgICAgYnVmZmVyW2NvdW50KytdID0gaXRlbTsKICAgICAgICBwcmludGYoIlByb2R1Y2VkOiAlZFxuIiwgaXRlbSk7CiAgICAgICAgcHRocmVhZF9tdXRleF91bmxvY2soJm11dGV4KTsKICAgICAgICBzZW1fcG9zdCgmZnVsbCk7CiAgICB9Cn0KCnZvaWQqIGNvbnN1bWVyKHZvaWQqIGFyZykgewogICAgaW50IGl0ZW07CiAgICB3aGlsZSAoMSkgewogICAgICAgIHNlbV93YWl0KCZmdWxsKTsKICAgICAgICBwdGhyZWFkX211dGV4X2xvY2soJm11dGV4KTsKICAgICAgICBpdGVtID0gYnVmZmVyWy0tY291bnRdOwogICAgICAgIHByaW50ZigiQ29uc3VtZWQ6ICVkXG4iLCBpdGVtKTsKICAgICAgICBwdGhyZWFkX211dGV4X3VubG9jaygmbXV0ZXgpOwogICAgICAgIHNlbV9wb3N0KCZlbXB0eSk7CiAgICB9Cn0KCmludCBtYWluKCkgewogICAgcHRocmVhZF90IHByb2QsIGNvbnM7CiAgICBzZW1faW5pdCgmZW1wdHksIDAsIEJVRkZFUl9TSVpFKTsKICAgIHNlbV9pbml0KCZmdWxsLCAwLCAwKTsKICAgIHB0aHJlYWRfbXV0ZXhfaW5pdCgmbXV0ZXgsIE5VTEwpOwoKICAgIHB0aHJlYWRfY3JlYXRlKCZwcm9kLCBOVUxMLCBwcm9kdWNlciwgTlVMTCk7CiAgICBwdGhyZWFkX2NyZWF0ZSgmY29ucywgTlVMTCwgY29uc3VtZXIsIE5VTEwpOwoKICAgIHB0aHJlYWRfam9pbihwcm9kLCBOVUxMKTsKICAgIHB0aHJlYWRfam9pbihjb25zLCBOVUxMKTsKCiAgICBzZW1fZGVzdHJveSgmZW1wdHkpOwogICAgc2VtX2Rlc3Ryb3koJmZ1bGwpOwogICAgcHRocmVhZF9tdXRleF9kZXN0cm95KCZtdXRleCk7CgogICAgcmV0dXJuIDA7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;stdio.h&gt;
+#include &lt;pthread.h&gt;
+#include &lt;semaphore.h&gt;
+
+#define BUFFER_SIZE 10
+
+int buffer[BUFFER_SIZE];
+int count = 0;
+
+sem_t empty;
+sem_t full;
+pthread_mutex_t mutex;
+
+void* producer(void* arg) {
+    int item;
+    while (1) {
+        item = rand(); // Produir un element
+        sem_wait(&amp;empty);
+        pthread_mutex_lock(&amp;mutex);
+        buffer[count++] = item;
+        printf(&quot;Produced: %d\n&quot;, item);
+        pthread_mutex_unlock(&amp;mutex);
+        sem_post(&amp;full);
+    }
+}
+
+void* consumer(void* arg) {
+    int item;
+    while (1) {
+        sem_wait(&amp;full);
+        pthread_mutex_lock(&amp;mutex);
+        item = buffer[--count];
+        printf(&quot;Consumed: %d\n&quot;, item);
+        pthread_mutex_unlock(&amp;mutex);
+        sem_post(&amp;empty);
+    }
+}
+
+int main() {
+    pthread_t prod, cons;
+    sem_init(&amp;empty, 0, BUFFER_SIZE);
+    sem_init(&amp;full, 0, 0);
+    pthread_mutex_init(&amp;mutex, NULL);
+
+    pthread_create(&amp;prod, NULL, producer, NULL);
+    pthread_create(&amp;cons, NULL, consumer, NULL);
+
+    pthread_join(prod, NULL);
+    pthread_join(cons, NULL);
+
+    sem_destroy(&amp;empty);
+    sem_destroy(&amp;full);
+    pthread_mutex_destroy(&amp;mutex);
+
+    return 0;
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><strong>Semàfors <code>empty</code> i <code>full</code></strong>: Controlen el nombre d'espais buits i plens en el buffer, respectivament.</li>
+<li><strong>Mutex <code>mutex</code></strong>: Assegura que només un fil accedeixi al buffer a la vegada.</li>
+<li><strong>Funcions <code>producer</code> i <code>consumer</code></strong>: Implementen la lògica per afegir i extreure elements del buffer.</li>
+</ul>
+</div><h1>2. El Problema dels Filòsofs Sopant</h1>
+<div class='content'></div><h2>Descripció</h2>
+<div class='content'><p>Aquest problema modela cinc filòsofs asseguts al voltant d'una taula circular, on cadascun té un plat de menjar i un palet a cada costat. Els filòsofs poden pensar o menjar, però per menjar necessiten tenir els dos palets. El repte és evitar la fam i la interbloqueig.</p>
+</div><h2>Solució amb Semàfors</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxwdGhyZWFkLmg+CiNpbmNsdWRlIDxzZW1hcGhvcmUuaD4KCiNkZWZpbmUgTiA1CgpzZW1fdCBjaG9wc3RpY2tzW05dOwoKdm9pZCogcGhpbG9zb3BoZXIodm9pZCogbnVtKSB7CiAgICBpbnQgaWQgPSAqKGludCopbnVtOwogICAgd2hpbGUgKDEpIHsKICAgICAgICBwcmludGYoIlBoaWxvc29waGVyICVkIGlzIHRoaW5raW5nLlxuIiwgaWQpOwogICAgICAgIHNlbV93YWl0KCZjaG9wc3RpY2tzW2lkXSk7CiAgICAgICAgc2VtX3dhaXQoJmNob3BzdGlja3NbKGlkICsgMSkgJSBOXSk7CiAgICAgICAgcHJpbnRmKCJQaGlsb3NvcGhlciAlZCBpcyBlYXRpbmcuXG4iLCBpZCk7CiAgICAgICAgc2VtX3Bvc3QoJmNob3BzdGlja3NbaWRdKTsKICAgICAgICBzZW1fcG9zdCgmY2hvcHN0aWNrc1soaWQgKyAxKSAlIE5dKTsKICAgIH0KfQoKaW50IG1haW4oKSB7CiAgICBwdGhyZWFkX3QgcGhpbFtOXTsKICAgIGludCBpZHNbTl07CgogICAgZm9yIChpbnQgaSA9IDA7IGkgPCBOOyBpKyspIHsKICAgICAgICBzZW1faW5pdCgmY2hvcHN0aWNrc1tpXSwgMCwgMSk7CiAgICAgICAgaWRzW2ldID0gaTsKICAgIH0KCiAgICBmb3IgKGludCBpID0gMDsgaSA8IE47IGkrKykgewogICAgICAgIHB0aHJlYWRfY3JlYXRlKCZwaGlsW2ldLCBOVUxMLCBwaGlsb3NvcGhlciwgJmlkc1tpXSk7CiAgICB9CgogICAgZm9yIChpbnQgaSA9IDA7IGkgPCBOOyBpKyspIHsKICAgICAgICBwdGhyZWFkX2pvaW4ocGhpbFtpXSwgTlVMTCk7CiAgICB9CgogICAgZm9yIChpbnQgaSA9IDA7IGkgPCBOOyBpKyspIHsKICAgICAgICBzZW1fZGVzdHJveSgmY2hvcHN0aWNrc1tpXSk7CiAgICB9CgogICAgcmV0dXJuIDA7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;stdio.h&gt;
+#include &lt;pthread.h&gt;
+#include &lt;semaphore.h&gt;
+
+#define N 5
+
+sem_t chopsticks[N];
+
+void* philosopher(void* num) {
+    int id = *(int*)num;
+    while (1) {
+        printf(&quot;Philosopher %d is thinking.\n&quot;, id);
+        sem_wait(&amp;chopsticks[id]);
+        sem_wait(&amp;chopsticks[(id + 1) % N]);
+        printf(&quot;Philosopher %d is eating.\n&quot;, id);
+        sem_post(&amp;chopsticks[id]);
+        sem_post(&amp;chopsticks[(id + 1) % N]);
+    }
+}
+
+int main() {
+    pthread_t phil[N];
+    int ids[N];
+
+    for (int i = 0; i &lt; N; i++) {
+        sem_init(&amp;chopsticks[i], 0, 1);
+        ids[i] = i;
+    }
+
+    for (int i = 0; i &lt; N; i++) {
+        pthread_create(&amp;phil[i], NULL, philosopher, &amp;ids[i]);
+    }
+
+    for (int i = 0; i &lt; N; i++) {
+        pthread_join(phil[i], NULL);
+    }
+
+    for (int i = 0; i &lt; N; i++) {
+        sem_destroy(&amp;chopsticks[i]);
+    }
+
+    return 0;
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><strong>Semàfors <code>chopsticks</code></strong>: Representen els palets, inicialitzats a 1 per indicar que estan disponibles.</li>
+<li><strong>Funció <code>philosopher</code></strong>: Cada filòsof agafa els dos palets necessaris per menjar i després els allibera.</li>
+</ul>
+</div><h1>3. El Problema dels Lectors i Escriptors</h1>
+<div class='content'></div><h2>Descripció</h2>
+<div class='content'><p>Aquest problema involucra múltiples processos lectors i escriptors que accedeixen a una base de dades compartida. Els lectors poden accedir simultàniament, però els escriptors necessiten accés exclusiu. El repte és evitar la fam dels escriptors i assegurar la consistència de les dades.</p>
+</div><h2>Solució amb Semàfors</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxwdGhyZWFkLmg+CiNpbmNsdWRlIDxzZW1hcGhvcmUuaD4KCnNlbV90IHJ3X211dGV4OwpzZW1fdCBtdXRleDsKaW50IHJlYWRfY291bnQgPSAwOwoKdm9pZCogcmVhZGVyKHZvaWQqIGFyZykgewogICAgd2hpbGUgKDEpIHsKICAgICAgICBzZW1fd2FpdCgmbXV0ZXgpOwogICAgICAgIHJlYWRfY291bnQrKzsKICAgICAgICBpZiAocmVhZF9jb3VudCA9PSAxKSB7CiAgICAgICAgICAgIHNlbV93YWl0KCZyd19tdXRleCk7CiAgICAgICAgfQogICAgICAgIHNlbV9wb3N0KCZtdXRleCk7CgogICAgICAgIHByaW50ZigiUmVhZGVyIGlzIHJlYWRpbmcuXG4iKTsKCiAgICAgICAgc2VtX3dhaXQoJm11dGV4KTsKICAgICAgICByZWFkX2NvdW50LS07CiAgICAgICAgaWYgKHJlYWRfY291bnQgPT0gMCkgewogICAgICAgICAgICBzZW1fcG9zdCgmcndfbXV0ZXgpOwogICAgICAgIH0KICAgICAgICBzZW1fcG9zdCgmbXV0ZXgpOwogICAgfQp9Cgp2b2lkKiB3cml0ZXIodm9pZCogYXJnKSB7CiAgICB3aGlsZSAoMSkgewogICAgICAgIHNlbV93YWl0KCZyd19tdXRleCk7CiAgICAgICAgcHJpbnRmKCJXcml0ZXIgaXMgd3JpdGluZy5cbiIpOwogICAgICAgIHNlbV9wb3N0KCZyd19tdXRleCk7CiAgICB9Cn0KCmludCBtYWluKCkgewogICAgcHRocmVhZF90IHIxLCByMiwgdzE7CiAgICBzZW1faW5pdCgmcndfbXV0ZXgsIDAsIDEpOwogICAgc2VtX2luaXQoJm11dGV4LCAwLCAxKTsKCiAgICBwdGhyZWFkX2NyZWF0ZSgmcjEsIE5VTEwsIHJlYWRlciwgTlVMTCk7CiAgICBwdGhyZWFkX2NyZWF0ZSgmcjIsIE5VTEwsIHJlYWRlciwgTlVMTCk7CiAgICBwdGhyZWFkX2NyZWF0ZSgmdzEsIE5VTEwsIHdyaXRlciwgTlVMTCk7CgogICAgcHRocmVhZF9qb2luKHIxLCBOVUxMKTsKICAgIHB0aHJlYWRfam9pbihyMiwgTlVMTCk7CiAgICBwdGhyZWFkX2pvaW4odzEsIE5VTEwpOwoKICAgIHNlbV9kZXN0cm95KCZyd19tdXRleCk7CiAgICBzZW1fZGVzdHJveSgmbXV0ZXgpOwoKICAgIHJldHVybiAwOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;stdio.h&gt;
+#include &lt;pthread.h&gt;
+#include &lt;semaphore.h&gt;
+
+sem_t rw_mutex;
+sem_t mutex;
+int read_count = 0;
+
+void* reader(void* arg) {
+    while (1) {
+        sem_wait(&amp;mutex);
+        read_count++;
+        if (read_count == 1) {
+            sem_wait(&amp;rw_mutex);
+        }
+        sem_post(&amp;mutex);
+
+        printf(&quot;Reader is reading.\n&quot;);
+
+        sem_wait(&amp;mutex);
+        read_count--;
+        if (read_count == 0) {
+            sem_post(&amp;rw_mutex);
+        }
+        sem_post(&amp;mutex);
+    }
+}
+
+void* writer(void* arg) {
+    while (1) {
+        sem_wait(&amp;rw_mutex);
+        printf(&quot;Writer is writing.\n&quot;);
+        sem_post(&amp;rw_mutex);
+    }
+}
+
+int main() {
+    pthread_t r1, r2, w1;
+    sem_init(&amp;rw_mutex, 0, 1);
+    sem_init(&amp;mutex, 0, 1);
+
+    pthread_create(&amp;r1, NULL, reader, NULL);
+    pthread_create(&amp;r2, NULL, reader, NULL);
+    pthread_create(&amp;w1, NULL, writer, NULL);
+
+    pthread_join(r1, NULL);
+    pthread_join(r2, NULL);
+    pthread_join(w1, NULL);
+
+    sem_destroy(&amp;rw_mutex);
+    sem_destroy(&amp;mutex);
+
+    return 0;
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><strong>Semàfors <code>rw_mutex</code> i <code>mutex</code></strong>: <code>rw_mutex</code> controla l'accés exclusiu dels escriptors, mentre que <code>mutex</code> protegeix la variable <code>read_count</code>.</li>
+<li><strong>Funcions <code>reader</code> i <code>writer</code></strong>: Implementen la lògica per permetre l'accés concurrent dels lectors i l'accés exclusiu dels escriptors.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Els problemes clàssics de concurrència són fonamentals per entendre els desafiaments de la programació concurrent i les tècniques de sincronització. Hem vist com utilitzar semàfors per resoldre aquests problemes i assegurar la correcta coordinació entre processos i fils. Aquests conceptes són essencials per desenvolupar sistemes operatius robustos i eficients.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-sincronitzacio-exclusio-mutua' title="Sincronització i Exclusió Mútua">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-sistemes-fitxers' title="Sistemes de Fitxers">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

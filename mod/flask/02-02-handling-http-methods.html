@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió de Mètodes HTTP</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/flask/02-02-handling-http-methods" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/flask/02-02-handling-http-methods" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/flask/02-02-handling-http-methods" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/flask/02-02-handling-http-methods" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/flask/02-02-handling-http-methods" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-routing-url-mapping' title="Enrutament i Mapeig d'URL">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Gestió de Mètodes HTTP</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-rendering-templates' title="Renderització de Plantilles amb Jinja2">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com gestionar diferents mètodes HTTP en una aplicació Flask. Els mètodes HTTP són essencials per a la comunicació entre el client i el servidor, i cada mètode té un propòsit específic. Els mètodes més comuns són GET, POST, PUT, DELETE, PATCH, entre d'altres.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Mètodes HTTP</strong>:</p>
+<ul>
+<li><strong>GET</strong>: Utilitzat per sol·licitar dades del servidor.</li>
+<li><strong>POST</strong>: Utilitzat per enviar dades al servidor.</li>
+<li><strong>PUT</strong>: Utilitzat per actualitzar dades existents al servidor.</li>
+<li><strong>DELETE</strong>: Utilitzat per eliminar dades del servidor.</li>
+<li><strong>PATCH</strong>: Utilitzat per actualitzar parcialment dades existents al servidor.</li>
+</ul>
+</li>
+<li>
+<p><strong>Decoradors de Rutes</strong>:</p>
+<ul>
+<li>Flask utilitza decoradors per associar funcions a rutes específiques i mètodes HTTP.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Exemple Pràctic</h1>
+<div class='content'></div><h2>Configuració de l'Entorn</h2>
+<div class='content'><p>Assegura't de tenir Flask instal·lat. Si no el tens, pots instal·lar-lo amb pip:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgRmxhc2s="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install Flask</pre></div><div class='content'></div><h2>Creació d'una Aplicació Flask</h2>
+<div class='content'><p>Comencem creant una aplicació Flask bàsica que gestioni diferents mètodes HTTP.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2ssIHJlcXVlc3QsIGpzb25pZnkKCmFwcCA9IEZsYXNrKF9fbmFtZV9fKQoKIyBSdXRhIHBlciBnZXN0aW9uYXIgZWwgbcOodG9kZSBHRVQKQGFwcC5yb3V0ZSgnL2l0ZW1zJywgbWV0aG9kcz1bJ0dFVCddKQpkZWYgZ2V0X2l0ZW1zKCk6CiAgICBpdGVtcyA9IFsiaXRlbTEiLCAiaXRlbTIiLCAiaXRlbTMiXQogICAgcmV0dXJuIGpzb25pZnkoaXRlbXMpCgojIFJ1dGEgcGVyIGdlc3Rpb25hciBlbCBtw6h0b2RlIFBPU1QKQGFwcC5yb3V0ZSgnL2l0ZW1zJywgbWV0aG9kcz1bJ1BPU1QnXSkKZGVmIGNyZWF0ZV9pdGVtKCk6CiAgICBuZXdfaXRlbSA9IHJlcXVlc3QuanNvbi5nZXQoJ2l0ZW0nKQogICAgcmV0dXJuIGpzb25pZnkoeyJtZXNzYWdlIjogZiJJdGVtICd7bmV3X2l0ZW19JyBjcmVhdCBhbWIgw6h4aXQhIn0pLCAyMDEKCiMgUnV0YSBwZXIgZ2VzdGlvbmFyIGVsIG3DqHRvZGUgUFVUCkBhcHAucm91dGUoJy9pdGVtcy88aW50Oml0ZW1faWQ+JywgbWV0aG9kcz1bJ1BVVCddKQpkZWYgdXBkYXRlX2l0ZW0oaXRlbV9pZCk6CiAgICB1cGRhdGVkX2l0ZW0gPSByZXF1ZXN0Lmpzb24uZ2V0KCdpdGVtJykKICAgIHJldHVybiBqc29uaWZ5KHsibWVzc2FnZSI6IGYiSXRlbSB7aXRlbV9pZH0gYWN0dWFsaXR6YXQgYSAne3VwZGF0ZWRfaXRlbX0nIn0pLCAyMDAKCiMgUnV0YSBwZXIgZ2VzdGlvbmFyIGVsIG3DqHRvZGUgREVMRVRFCkBhcHAucm91dGUoJy9pdGVtcy88aW50Oml0ZW1faWQ+JywgbWV0aG9kcz1bJ0RFTEVURSddKQpkZWYgZGVsZXRlX2l0ZW0oaXRlbV9pZCk6CiAgICByZXR1cm4ganNvbmlmeSh7Im1lc3NhZ2UiOiBmIkl0ZW0ge2l0ZW1faWR9IGVsaW1pbmF0IGFtYiDDqHhpdCEifSksIDIwMAoKaWYgX19uYW1lX18gPT0gJ19fbWFpbl9fJzoKICAgIGFwcC5ydW4oZGVidWc9VHJ1ZSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+# Ruta per gestionar el m&egrave;tode GET
+@app.route('/items', methods=['GET'])
+def get_items():
+    items = [&quot;item1&quot;, &quot;item2&quot;, &quot;item3&quot;]
+    return jsonify(items)
+
+# Ruta per gestionar el m&egrave;tode POST
+@app.route('/items', methods=['POST'])
+def create_item():
+    new_item = request.json.get('item')
+    return jsonify({&quot;message&quot;: f&quot;Item '{new_item}' creat amb &egrave;xit!&quot;}), 201
+
+# Ruta per gestionar el m&egrave;tode PUT
+@app.route('/items/&lt;int:item_id&gt;', methods=['PUT'])
+def update_item(item_id):
+    updated_item = request.json.get('item')
+    return jsonify({&quot;message&quot;: f&quot;Item {item_id} actualitzat a '{updated_item}'&quot;}), 200
+
+# Ruta per gestionar el m&egrave;tode DELETE
+@app.route('/items/&lt;int:item_id&gt;', methods=['DELETE'])
+def delete_item(item_id):
+    return jsonify({&quot;message&quot;: f&quot;Item {item_id} eliminat amb &egrave;xit!&quot;}), 200
+
+if __name__ == '__main__':
+    app.run(debug=True)</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Importacions</strong>:</p>
+<ul>
+<li><code>Flask</code>: La classe principal de Flask.</li>
+<li><code>request</code>: Per accedir a les dades de la sol·licitud.</li>
+<li><code>jsonify</code>: Per retornar respostes JSON.</li>
+</ul>
+</li>
+<li>
+<p><strong>Creació de l'Aplicació</strong>:</p>
+<ul>
+<li><code>app = Flask(__name__)</code>: Crea una instància de l'aplicació Flask.</li>
+</ul>
+</li>
+<li>
+<p><strong>Rutes i Mètodes</strong>:</p>
+<ul>
+<li><strong>GET</strong>: La ruta <code>/items</code> retorna una llista d'ítems.</li>
+<li><strong>POST</strong>: La ruta <code>/items</code> crea un nou ítem basat en les dades JSON enviades en la sol·licitud.</li>
+<li><strong>PUT</strong>: La ruta <code>/items/&lt;int:item_id&gt;</code> actualitza un ítem existent identificat per <code>item_id</code>.</li>
+<li><strong>DELETE</strong>: La ruta <code>/items/&lt;int:item_id&gt;</code> elimina un ítem existent identificat per <code>item_id</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Execució de l'Aplicació</strong>:</p>
+<ul>
+<li><code>app.run(debug=True)</code>: Executa l'aplicació en mode de depuració.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Afegir un Mètode PATCH</h2>
+<div class='content'><p>Afegiu una ruta que gestioni el mètode PATCH per actualitzar parcialment un ítem.</p>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBSdXRhIHBlciBnZXN0aW9uYXIgZWwgbcOodG9kZSBQQVRDSApAYXBwLnJvdXRlKCcvaXRlbXMvPGludDppdGVtX2lkPicsIG1ldGhvZHM9WydQQVRDSCddKQpkZWYgcGFydGlhbF91cGRhdGVfaXRlbShpdGVtX2lkKToKICAgIHBhcnRpYWxfdXBkYXRlID0gcmVxdWVzdC5qc29uLmdldCgnaXRlbScpCiAgICByZXR1cm4ganNvbmlmeSh7Im1lc3NhZ2UiOiBmIkl0ZW0ge2l0ZW1faWR9IHBhcmNpYWxtZW50IGFjdHVhbGl0emF0IGEgJ3twYXJ0aWFsX3VwZGF0ZX0nIn0pLCAyMDA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Ruta per gestionar el m&egrave;tode PATCH
+@app.route('/items/&lt;int:item_id&gt;', methods=['PATCH'])
+def partial_update_item(item_id):
+    partial_update = request.json.get('item')
+    return jsonify({&quot;message&quot;: f&quot;Item {item_id} parcialment actualitzat a '{partial_update}'&quot;}), 200</pre></div><div class='content'></div><h2>Exercici 2: Validació de Dades</h2>
+<div class='content'><p>Modifiqueu la ruta POST per validar que l'ítem no sigui buit abans de crear-lo.</p>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QGFwcC5yb3V0ZSgnL2l0ZW1zJywgbWV0aG9kcz1bJ1BPU1QnXSkKZGVmIGNyZWF0ZV9pdGVtKCk6CiAgICBuZXdfaXRlbSA9IHJlcXVlc3QuanNvbi5nZXQoJ2l0ZW0nKQogICAgaWYgbm90IG5ld19pdGVtOgogICAgICAgIHJldHVybiBqc29uaWZ5KHsiZXJyb3IiOiAiTCfDrXRlbSBubyBwb3QgZXN0YXIgYnVpdCJ9KSwgNDAwCiAgICByZXR1cm4ganNvbmlmeSh7Im1lc3NhZ2UiOiBmIkl0ZW0gJ3tuZXdfaXRlbX0nIGNyZWF0IGFtYiDDqHhpdCEifSksIDIwMQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@app.route('/items', methods=['POST'])
+def create_item():
+    new_item = request.json.get('item')
+    if not new_item:
+        return jsonify({&quot;error&quot;: &quot;L'&iacute;tem no pot estar buit&quot;}), 400
+    return jsonify({&quot;message&quot;: f&quot;Item '{new_item}' creat amb &egrave;xit!&quot;}), 201</pre></div><div class='content'></div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Error 405 Method Not Allowed</strong>:</p>
+<ul>
+<li>Assegura't que la ruta està configurada per gestionar el mètode HTTP correcte.</li>
+</ul>
+</li>
+<li>
+<p><strong>Error 400 Bad Request</strong>:</p>
+<ul>
+<li>Verifica que les dades enviades en la sol·licitud són correctes i compleixen amb els requisits esperats.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com gestionar diferents mètodes HTTP en una aplicació Flask. Hem vist exemples pràctics de com utilitzar GET, POST, PUT, DELETE i PATCH, i hem practicat amb exercicis per reforçar els conceptes apresos. Ara estàs preparat per gestionar mètodes HTTP en les teves pròpies aplicacions Flask.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-routing-url-mapping' title="Enrutament i Mapeig d'URL">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-rendering-templates' title="Renderització de Plantilles amb Jinja2">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

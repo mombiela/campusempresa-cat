@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multithreading</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/unreal_engine/06-02-multithreading" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/unreal_engine/06-02-multithreading" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/unreal_engine/06-02-multithreading" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/unreal_engine/06-02-multithreading" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/unreal_engine/06-02-multithreading" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-gestio-de-memoria' title="Gestió de Memòria">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Multithreading</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-xarxes-i-multijugador' title="Xarxes i Multijugador">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>El multithreading és una tècnica avançada de programació que permet executar múltiples fils d'execució de manera concurrent dins d'una aplicació. En el context d'Unreal Engine, el multithreading pot ser utilitzat per millorar el rendiment del joc, permetent que diferents tasques es processin simultàniament. Aquest mòdul t'introduirà als conceptes bàsics del multithreading en C++ i com implementar-lo en Unreal Engine.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Fil (Thread)</strong>: Un fil és la unitat bàsica d'execució dins d'un procés. Cada fil té el seu propi conjunt de registres, pila i estat.</li>
+<li><strong>Procés</strong>: Un procés és un programa en execució que pot contenir múltiples fils.</li>
+<li><strong>Sincronització</strong>: La sincronització és el procés de coordinar l'execució de múltiples fils per evitar condicions de carrera i altres problemes de concurrència.</li>
+<li><strong>Mutex</strong>: Un mutex (mutual exclusion) és un mecanisme de sincronització que assegura que només un fil pugui accedir a una secció crítica del codi a la vegada.</li>
+<li><strong>Condició de Carrera</strong>: Una condició de carrera ocorre quan dos o més fils accedeixen i modifiquen dades compartides de manera concurrent, produint resultats inesperats.</li>
+</ol>
+</div><h1>Implementació de Multithreading en Unreal Engine</h1>
+<div class='content'></div><h2>1. Creant un Fil</h2>
+<div class='content'><p>Per crear un fil en Unreal Engine, utilitzarem la classe <code>FRunnable</code> i <code>FRunnableThread</code>. A continuació es mostra un exemple bàsic de com crear i executar un fil.</p>
+<h4>Exemple de Codi</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gTXlSdW5uYWJsZS5oCiNwcmFnbWEgb25jZQoKI2luY2x1ZGUgIkNvcmVNaW5pbWFsLmgiCiNpbmNsdWRlICJIQUwvUnVubmFibGUuaCIKCmNsYXNzIE1ZUFJPSkVDVF9BUEkgTXlSdW5uYWJsZSA6IHB1YmxpYyBGUnVubmFibGUKewpwdWJsaWM6CiAgICBNeVJ1bm5hYmxlKCk7CiAgICB2aXJ0dWFsIH5NeVJ1bm5hYmxlKCk7CgogICAgdmlydHVhbCBib29sIEluaXQoKSBvdmVycmlkZTsKICAgIHZpcnR1YWwgdWludDMyIFJ1bigpIG92ZXJyaWRlOwogICAgdmlydHVhbCB2b2lkIFN0b3AoKSBvdmVycmlkZTsKCnByaXZhdGU6CiAgICBGVGhyZWFkU2FmZUNvdW50ZXIgU3RvcFRhc2tDb3VudGVyOwp9OwoKLy8gTXlSdW5uYWJsZS5jcHAKI2luY2x1ZGUgIk15UnVubmFibGUuaCIKCk15UnVubmFibGU6Ok15UnVubmFibGUoKQp7Cn0KCk15UnVubmFibGU6On5NeVJ1bm5hYmxlKCkKewp9Cgpib29sIE15UnVubmFibGU6OkluaXQoKQp7CiAgICAvLyBJbmljaWFsaXR6YWNpw7MgZGVsIGZpbAogICAgcmV0dXJuIHRydWU7Cn0KCnVpbnQzMiBNeVJ1bm5hYmxlOjpSdW4oKQp7CiAgICAvLyBDb2RpIHF1ZSBzJ2V4ZWN1dGFyw6AgZW4gZWwgZmlsCiAgICB3aGlsZSAoU3RvcFRhc2tDb3VudGVyLkdldFZhbHVlKCkgPT0gMCkKICAgIHsKICAgICAgICAvLyBGZWluYSBkZWwgZmlsCiAgICB9CiAgICByZXR1cm4gMDsKfQoKdm9pZCBNeVJ1bm5hYmxlOjpTdG9wKCkKewogICAgU3RvcFRhc2tDb3VudGVyLkluY3JlbWVudCgpOwp9CgovLyBDcmVhbnQgaSBleGVjdXRhbnQgZWwgZmlsCkZSdW5uYWJsZSogUnVubmFibGUgPSBuZXcgTXlSdW5uYWJsZSgpOwpGUnVubmFibGVUaHJlYWQqIFRocmVhZCA9IEZSdW5uYWJsZVRocmVhZDo6Q3JlYXRlKFJ1bm5hYmxlLCBURVhUKCJNeVJ1bm5hYmxlVGhyZWFkIikpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// MyRunnable.h
+#pragma once
+
+#include &quot;CoreMinimal.h&quot;
+#include &quot;HAL/Runnable.h&quot;
+
+class MYPROJECT_API MyRunnable : public FRunnable
+{
+public:
+    MyRunnable();
+    virtual ~MyRunnable();
+
+    virtual bool Init() override;
+    virtual uint32 Run() override;
+    virtual void Stop() override;
+
+private:
+    FThreadSafeCounter StopTaskCounter;
+};
+
+// MyRunnable.cpp
+#include &quot;MyRunnable.h&quot;
+
+MyRunnable::MyRunnable()
+{
+}
+
+MyRunnable::~MyRunnable()
+{
+}
+
+bool MyRunnable::Init()
+{
+    // Inicialitzaci&oacute; del fil
+    return true;
+}
+
+uint32 MyRunnable::Run()
+{
+    // Codi que s'executar&agrave; en el fil
+    while (StopTaskCounter.GetValue() == 0)
+    {
+        // Feina del fil
+    }
+    return 0;
+}
+
+void MyRunnable::Stop()
+{
+    StopTaskCounter.Increment();
+}
+
+// Creant i executant el fil
+FRunnable* Runnable = new MyRunnable();
+FRunnableThread* Thread = FRunnableThread::Create(Runnable, TEXT(&quot;MyRunnableThread&quot;));</pre></div><div class='content'></div><h2>2. Sincronització amb Mutex</h2>
+<div class='content'><p>Per evitar condicions de carrera, utilitzarem un mutex per sincronitzar l'accés a les dades compartides.</p>
+<h4>Exemple de Codi</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgIkhBTC9UaHJlYWRTYWZlQ291bnRlci5oIgojaW5jbHVkZSAiSEFML1RocmVhZFNhZmVCb29sLmgiCiNpbmNsdWRlICJIQUwvUGxhdGZvcm1Qcm9jZXNzLmgiCgpjbGFzcyBNeVJ1bm5hYmxlIDogcHVibGljIEZSdW5uYWJsZQp7CnB1YmxpYzoKICAgIE15UnVubmFibGUoKTsKICAgIHZpcnR1YWwgfk15UnVubmFibGUoKTsKCiAgICB2aXJ0dWFsIGJvb2wgSW5pdCgpIG92ZXJyaWRlOwogICAgdmlydHVhbCB1aW50MzIgUnVuKCkgb3ZlcnJpZGU7CiAgICB2aXJ0dWFsIHZvaWQgU3RvcCgpIG92ZXJyaWRlOwoKcHJpdmF0ZToKICAgIEZUaHJlYWRTYWZlQ291bnRlciBTdG9wVGFza0NvdW50ZXI7CiAgICBGQ3JpdGljYWxTZWN0aW9uIE11dGV4OwogICAgaW50MzIgU2hhcmVkRGF0YTsKfTsKCmJvb2wgTXlSdW5uYWJsZTo6SW5pdCgpCnsKICAgIFNoYXJlZERhdGEgPSAwOwogICAgcmV0dXJuIHRydWU7Cn0KCnVpbnQzMiBNeVJ1bm5hYmxlOjpSdW4oKQp7CiAgICB3aGlsZSAoU3RvcFRhc2tDb3VudGVyLkdldFZhbHVlKCkgPT0gMCkKICAgIHsKICAgICAgICBGU2NvcGVMb2NrIExvY2soJk11dGV4KTsKICAgICAgICBTaGFyZWREYXRhKys7CiAgICAgICAgRlBsYXRmb3JtUHJvY2Vzczo6U2xlZXAoMC4wMWYpOyAvLyBTaW11bGFudCBmZWluYQogICAgfQogICAgcmV0dXJuIDA7Cn0KCnZvaWQgTXlSdW5uYWJsZTo6U3RvcCgpCnsKICAgIFN0b3BUYXNrQ291bnRlci5JbmNyZW1lbnQoKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &quot;HAL/ThreadSafeCounter.h&quot;
+#include &quot;HAL/ThreadSafeBool.h&quot;
+#include &quot;HAL/PlatformProcess.h&quot;
+
+class MyRunnable : public FRunnable
+{
+public:
+    MyRunnable();
+    virtual ~MyRunnable();
+
+    virtual bool Init() override;
+    virtual uint32 Run() override;
+    virtual void Stop() override;
+
+private:
+    FThreadSafeCounter StopTaskCounter;
+    FCriticalSection Mutex;
+    int32 SharedData;
+};
+
+bool MyRunnable::Init()
+{
+    SharedData = 0;
+    return true;
+}
+
+uint32 MyRunnable::Run()
+{
+    while (StopTaskCounter.GetValue() == 0)
+    {
+        FScopeLock Lock(&amp;Mutex);
+        SharedData++;
+        FPlatformProcess::Sleep(0.01f); // Simulant feina
+    }
+    return 0;
+}
+
+void MyRunnable::Stop()
+{
+    StopTaskCounter.Increment();
+}</pre></div><div class='content'></div><h2>3. Errors Comuns i Consells</h2>
+<div class='content'><ul>
+<li><strong>Condicions de Carrera</strong>: Assegura't d'utilitzar mecanismes de sincronització com mutex per evitar condicions de carrera.</li>
+<li><strong>Bloquejos</strong>: Evita bloquejar el fil principal del joc, ja que això pot afectar el rendiment i la resposta del joc.</li>
+<li><strong>Gestió de Recursos</strong>: Assegura't de gestionar correctament els recursos del fil, com ara la memòria i els descriptors de fil.</li>
+</ul>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Enunciat</h2>
+<div class='content'><p>Crea un fil que incrementi un comptador de manera segura utilitzant un mutex. El fil ha de parar quan el comptador arribi a 1000.</p>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgIkhBTC9UaHJlYWRTYWZlQ291bnRlci5oIgojaW5jbHVkZSAiSEFML1BsYXRmb3JtUHJvY2Vzcy5oIgoKY2xhc3MgSW5jcmVtZW50UnVubmFibGUgOiBwdWJsaWMgRlJ1bm5hYmxlCnsKcHVibGljOgogICAgSW5jcmVtZW50UnVubmFibGUoKTsKICAgIHZpcnR1YWwgfkluY3JlbWVudFJ1bm5hYmxlKCk7CgogICAgdmlydHVhbCBib29sIEluaXQoKSBvdmVycmlkZTsKICAgIHZpcnR1YWwgdWludDMyIFJ1bigpIG92ZXJyaWRlOwogICAgdmlydHVhbCB2b2lkIFN0b3AoKSBvdmVycmlkZTsKCnByaXZhdGU6CiAgICBGVGhyZWFkU2FmZUNvdW50ZXIgU3RvcFRhc2tDb3VudGVyOwogICAgRkNyaXRpY2FsU2VjdGlvbiBNdXRleDsKICAgIGludDMyIENvdW50ZXI7Cn07CgpJbmNyZW1lbnRSdW5uYWJsZTo6SW5jcmVtZW50UnVubmFibGUoKQogICAgOiBDb3VudGVyKDApCnsKfQoKSW5jcmVtZW50UnVubmFibGU6On5JbmNyZW1lbnRSdW5uYWJsZSgpCnsKfQoKYm9vbCBJbmNyZW1lbnRSdW5uYWJsZTo6SW5pdCgpCnsKICAgIHJldHVybiB0cnVlOwp9Cgp1aW50MzIgSW5jcmVtZW50UnVubmFibGU6OlJ1bigpCnsKICAgIHdoaWxlIChTdG9wVGFza0NvdW50ZXIuR2V0VmFsdWUoKSA9PSAwICYmIENvdW50ZXIgPCAxMDAwKQogICAgewogICAgICAgIEZTY29wZUxvY2sgTG9jaygmTXV0ZXgpOwogICAgICAgIENvdW50ZXIrKzsKICAgICAgICBGUGxhdGZvcm1Qcm9jZXNzOjpTbGVlcCgwLjAxZik7IC8vIFNpbXVsYW50IGZlaW5hCiAgICB9CiAgICByZXR1cm4gMDsKfQoKdm9pZCBJbmNyZW1lbnRSdW5uYWJsZTo6U3RvcCgpCnsKICAgIFN0b3BUYXNrQ291bnRlci5JbmNyZW1lbnQoKTsKfQoKLy8gQ3JlYW50IGkgZXhlY3V0YW50IGVsIGZpbApGUnVubmFibGUqIFJ1bm5hYmxlID0gbmV3IEluY3JlbWVudFJ1bm5hYmxlKCk7CkZSdW5uYWJsZVRocmVhZCogVGhyZWFkID0gRlJ1bm5hYmxlVGhyZWFkOjpDcmVhdGUoUnVubmFibGUsIFRFWFQoIkluY3JlbWVudFJ1bm5hYmxlVGhyZWFkIikpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &quot;HAL/ThreadSafeCounter.h&quot;
+#include &quot;HAL/PlatformProcess.h&quot;
+
+class IncrementRunnable : public FRunnable
+{
+public:
+    IncrementRunnable();
+    virtual ~IncrementRunnable();
+
+    virtual bool Init() override;
+    virtual uint32 Run() override;
+    virtual void Stop() override;
+
+private:
+    FThreadSafeCounter StopTaskCounter;
+    FCriticalSection Mutex;
+    int32 Counter;
+};
+
+IncrementRunnable::IncrementRunnable()
+    : Counter(0)
+{
+}
+
+IncrementRunnable::~IncrementRunnable()
+{
+}
+
+bool IncrementRunnable::Init()
+{
+    return true;
+}
+
+uint32 IncrementRunnable::Run()
+{
+    while (StopTaskCounter.GetValue() == 0 &amp;&amp; Counter &lt; 1000)
+    {
+        FScopeLock Lock(&amp;Mutex);
+        Counter++;
+        FPlatformProcess::Sleep(0.01f); // Simulant feina
+    }
+    return 0;
+}
+
+void IncrementRunnable::Stop()
+{
+    StopTaskCounter.Increment();
+}
+
+// Creant i executant el fil
+FRunnable* Runnable = new IncrementRunnable();
+FRunnableThread* Thread = FRunnableThread::Create(Runnable, TEXT(&quot;IncrementRunnableThread&quot;));</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>El multithreading és una tècnica poderosa que pot millorar significativament el rendiment del teu joc en Unreal Engine. En aquest mòdul, hem après els conceptes bàsics del multithreading, com crear i executar fils, i com sincronitzar l'accés a dades compartides per evitar condicions de carrera. Amb aquests coneixements, estaràs preparat per implementar multithreading en els teus projectes d'Unreal Engine.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-gestio-de-memoria' title="Gestió de Memòria">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-xarxes-i-multijugador' title="Xarxes i Multijugador">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

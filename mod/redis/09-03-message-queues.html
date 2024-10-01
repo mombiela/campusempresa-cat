@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cues de Missatges</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/redis/09-03-message-queues" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/redis/09-03-message-queues" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/redis/09-03-message-queues" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/redis/09-03-message-queues" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/redis/09-03-message-queues" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-02-session-storage' title="Emmagatzematge de Sessions">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Cues de Missatges</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-04-real-time-analytics' title="Anàlisi en Temps Real">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Les cues de missatges són una eina fonamental en la programació moderna, especialment en sistemes distribuïts i aplicacions que requereixen una alta escalabilitat i resiliència. Redis ofereix diverses maneres d'implementar cues de missatges de manera eficient. En aquest tema, explorarem com utilitzar Redis per crear i gestionar cues de missatges.</p>
+</div><h1>Què és una Cua de Missatges?</h1>
+<div class='content'><p>Una cua de missatges és una estructura de dades que permet la comunicació asíncrona entre diferents parts d'un sistema. Els missatges s'emmagatzemen en una cua i es processen en l'ordre en què van ser afegits (FIFO - First In, First Out).</p>
+</div><h2>Avantatges de les Cues de Missatges</h2>
+<div class='content'><ul>
+<li><strong>Desacoblament</strong>: Permeten que els productors i consumidors de missatges operin de manera independent.</li>
+<li><strong>Escalabilitat</strong>: Faciliten la distribució de la càrrega de treball entre múltiples consumidors.</li>
+<li><strong>Resiliència</strong>: Ajuden a gestionar fallades temporals, ja que els missatges es poden emmagatzemar fins que es processin.</li>
+</ul>
+</div><h1>Implementació de Cues de Missatges amb Redis</h1>
+<div class='content'><p>Redis proporciona diverses estructures de dades que es poden utilitzar per implementar cues de missatges, com ara llistes i fluxos (streams).</p>
+</div><h2>Utilitzant Llistes</h2>
+<div class='content'><p>Les llistes en Redis són una manera senzilla i eficient de crear cues de missatges. Les comandes principals que utilitzarem són <code>LPUSH</code>, <code>RPUSH</code>, <code>LPOP</code> i <code>RPOP</code>.</p>
+<h4>Exemple de Cua de Missatges amb Llistes</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBBZmVnaXIgdW4gbWlzc2F0Z2UgYSBsYSBjdWEKTFBVU0ggbXlxdWV1ZSAibWlzc2F0Z2UgMSIKTFBVU0ggbXlxdWV1ZSAibWlzc2F0Z2UgMiIKCiMgUHJvY2Vzc2FyIHVuIG1pc3NhdGdlIGRlIGxhIGN1YQpSUE9QIG15cXVldWU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Afegir un missatge a la cua
+LPUSH myqueue &quot;missatge 1&quot;
+LPUSH myqueue &quot;missatge 2&quot;
+
+# Processar un missatge de la cua
+RPOP myqueue</pre></div><div class='content'><h4>Explicació del Codi</h4>
+<ul>
+<li><code>LPUSH myqueue &quot;missatge 1&quot;</code>: Afegeix &quot;missatge 1&quot; al començament de la llista <code>myqueue</code>.</li>
+<li><code>RPOP myqueue</code>: Extreu i retorna l'últim element de la llista <code>myqueue</code>, que en aquest cas seria &quot;missatge 1&quot;.</li>
+</ul>
+</div><h2>Utilitzant Fluxos (Streams)</h2>
+<div class='content'><p>Els fluxos són una estructura de dades més avançada introduïda en Redis 5.0, dissenyada específicament per a la gestió de fluxos de dades i cues de missatges.</p>
+<h4>Exemple de Cua de Missatges amb Fluxos</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBBZmVnaXIgdW4gbWlzc2F0Z2UgYWwgZmx1eApYQUREIG15cXVldWUgKiBtZXNzYWdlICJtaXNzYXRnZSAxIgpYQUREIG15cXVldWUgKiBtZXNzYWdlICJtaXNzYXRnZSAyIgoKIyBMbGVnaXIgbWlzc2F0Z2VzIGRlbCBmbHV4ClhSQU5HRSBteXF1ZXVlIC0gKw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Afegir un missatge al flux
+XADD myqueue * message &quot;missatge 1&quot;
+XADD myqueue * message &quot;missatge 2&quot;
+
+# Llegir missatges del flux
+XRANGE myqueue - +</pre></div><div class='content'><h4>Explicació del Codi</h4>
+<ul>
+<li><code>XADD myqueue * message &quot;missatge 1&quot;</code>: Afegeix un missatge al flux <code>myqueue</code> amb un identificador generat automàticament.</li>
+<li><code>XRANGE myqueue - +</code>: Llegeix tots els missatges del flux <code>myqueue</code>.</li>
+</ul>
+</div><h2>Comparació entre Llistes i Fluxos</h2>
+<div class='content'><table>
+<thead>
+<tr>
+<th>Característica</th>
+<th>Llistes</th>
+<th>Fluxos</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Simplicitat</strong></td>
+<td>Alta</td>
+<td>Mitjana</td>
+</tr>
+<tr>
+<td><strong>Funcionalitats Avançades</strong></td>
+<td>Baixa</td>
+<td>Alta</td>
+</tr>
+<tr>
+<td><strong>Persistència</strong></td>
+<td>Sí</td>
+<td>Sí</td>
+</tr>
+<tr>
+<td><strong>Lectura de Missatges</strong></td>
+<td>FIFO</td>
+<td>FIFO, amb opcions avançades</td>
+</tr>
+</tbody>
+</table>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear una Cua de Missatges amb Llistes</h2>
+<div class='content'><ol>
+<li>Crea una llista anomenada <code>task_queue</code>.</li>
+<li>Afegeix tres tasques a la cua.</li>
+<li>Extreu i mostra les tasques de la cua fins que estigui buida.</li>
+</ol>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDcmVhciBsYSBjdWEgaSBhZmVnaXIgdGFzcXVlcwpMUFVTSCB0YXNrX3F1ZXVlICJ0YXJlYSAxIgpMUFVTSCB0YXNrX3F1ZXVlICJ0YXJlYSAyIgpMUFVTSCB0YXNrX3F1ZXVlICJ0YXJlYSAzIgoKIyBQcm9jZXNzYXIgbGVzIHRhc3F1ZXMKUlBPUCB0YXNrX3F1ZXVlClJQT1AgdGFza19xdWV1ZQpSUE9QIHRhc2tfcXVldWU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Crear la cua i afegir tasques
+LPUSH task_queue &quot;tarea 1&quot;
+LPUSH task_queue &quot;tarea 2&quot;
+LPUSH task_queue &quot;tarea 3&quot;
+
+# Processar les tasques
+RPOP task_queue
+RPOP task_queue
+RPOP task_queue</pre></div><div class='content'></div><h2>Exercici 2: Crear una Cua de Missatges amb Fluxos</h2>
+<div class='content'><ol>
+<li>Crea un flux anomenat <code>event_stream</code>.</li>
+<li>Afegeix dos esdeveniments al flux.</li>
+<li>Llegeix i mostra tots els esdeveniments del flux.</li>
+</ol>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDcmVhciBlbCBmbHV4IGkgYWZlZ2lyIGVzZGV2ZW5pbWVudHMKWEFERCBldmVudF9zdHJlYW0gKiBldmVudCAiZXNkZXZlbmltZW50IDEiClhBREQgZXZlbnRfc3RyZWFtICogZXZlbnQgImVzZGV2ZW5pbWVudCAyIgoKIyBMbGVnaXIgZWxzIGVzZGV2ZW5pbWVudHMKWFJBTkdFIGV2ZW50X3N0cmVhbSAtICs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Crear el flux i afegir esdeveniments
+XADD event_stream * event &quot;esdeveniment 1&quot;
+XADD event_stream * event &quot;esdeveniment 2&quot;
+
+# Llegir els esdeveniments
+XRANGE event_stream - +</pre></div><div class='content'></div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ul>
+<li><strong>No gestionar la cua buida</strong>: Assegura't de comprovar si la cua està buida abans d'intentar extreure un missatge.</li>
+<li><strong>No utilitzar identificadors únics en fluxos</strong>: En fluxos, és important utilitzar identificadors únics per evitar conflictes.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Les cues de missatges són una eina poderosa per a la comunicació asíncrona en sistemes distribuïts. Redis ofereix diverses maneres d'implementar-les, utilitzant llistes per a solucions senzilles i fluxos per a necessitats més avançades. Amb els exemples i exercicis proporcionats, hauríeu de tenir una bona comprensió de com utilitzar Redis per gestionar cues de missatges de manera eficient.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-02-session-storage' title="Emmagatzematge de Sessions">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-04-real-time-analytics' title="Anàlisi en Temps Real">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

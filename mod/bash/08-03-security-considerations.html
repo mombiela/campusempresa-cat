@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consideracions de Seguretat</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/bash/08-03-security-considerations" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/bash/08-03-security-considerations" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/bash/08-03-security-considerations" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/bash/08-03-security-considerations" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/bash/08-03-security-considerations" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-02-optimizing-bash-scripts' title="Optimització de Scripts en Bash">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Consideracions de Seguretat</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-04-version-control-git' title="Control de Versions amb Git">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem les millors pràctiques i tècniques per assegurar els teus scripts de Bash. La seguretat és un aspecte crític en la programació, especialment quan els scripts poden interactuar amb el sistema operatiu i gestionar dades sensibles. A continuació, desglossarem els conceptes clau i proporcionarem exemples pràctics per ajudar-te a escriure scripts segurs.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Validació d'Entrades</strong></li>
+<li><strong>Gestió de Permisos</strong></li>
+<li><strong>Ús de Variables Segures</strong></li>
+<li><strong>Evitar Injeccions de Comandes</strong></li>
+<li><strong>Gestió de Fitxers Temporals</strong></li>
+<li><strong>Xifrat i Desxifrat de Dades</strong></li>
+<li><strong>Auditoria i Registre</strong></li>
+</ol>
+</div><h1>1. Validació d'Entrades</h1>
+<div class='content'><p>És essencial validar totes les entrades que el teu script rep, ja sigui de l'usuari o d'altres fonts. La validació d'entrades ajuda a prevenir injeccions de codi i altres atacs.</p>
+</div><h2>Exemple de Validació d'Entrades</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyEvYmluL2Jhc2gKCnJlYWQgLXAgIkludHJvZHVlaXggdW4gbsO6bWVybyBlbnRyZSAxIGkgMTA6ICIgaW5wdXQKCmlmIFtbICIkaW5wdXQiID1+IF5bMS05XSR8XjEwJCBdXTsgdGhlbgogICAgZWNobyAiRW50cmFkYSB2w6BsaWRhOiAkaW5wdXQiCmVsc2UKICAgIGVjaG8gIkVudHJhZGEgbm8gdsOgbGlkYS4gU2kgdXMgcGxhdSwgaW50cm9kdWVpeCB1biBuw7ptZXJvIGVudHJlIDEgaSAxMC4iCiAgICBleGl0IDEKZmk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#!/bin/bash
+
+read -p &quot;Introdueix un n&uacute;mero entre 1 i 10: &quot; input
+
+if [[ &quot;$input&quot; =~ ^[1-9]$|^10$ ]]; then
+    echo &quot;Entrada v&agrave;lida: $input&quot;
+else
+    echo &quot;Entrada no v&agrave;lida. Si us plau, introdueix un n&uacute;mero entre 1 i 10.&quot;
+    exit 1
+fi</pre></div><div class='content'></div><h1>2. Gestió de Permisos</h1>
+<div class='content'><p>Assegura't que els teus scripts i fitxers només tinguin els permisos necessaris. Evita donar permisos d'execució a tothom si no és necessari.</p>
+</div><h2>Exemple de Configuració de Permisos</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBEb25hciBwZXJtaXNvcyBkJ2V4ZWN1Y2nDsyBub23DqXMgYSBsJ3VzdWFyaQpjaG1vZCA3MDAgc2NyaXB0LnNo"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Donar permisos d'execuci&oacute; nom&eacute;s a l'usuari
+chmod 700 script.sh</pre></div><div class='content'></div><h1>3. Ús de Variables Segures</h1>
+<div class='content'><p>Utilitza variables segures per evitar que es filtrin dades sensibles. Evita utilitzar variables globals quan sigui possible.</p>
+</div><h2>Exemple d'Ús de Variables Segures</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyEvYmluL2Jhc2gKCiMgVXRpbGl0emEgdmFyaWFibGVzIGxvY2FscyBkaW5zIGRlIGZ1bmNpb25zCmZ1bmN0aW9uIHByb2Nlc3NfZGF0YSgpIHsKICAgIGxvY2FsIHNlbnNpdGl2ZV9kYXRhPSJwYXNzd29yZDEyMyIKICAgIGVjaG8gIlByb2Nlc3NhbnQgZGFkZXMuLi4iCn0KCnByb2Nlc3NfZGF0YQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#!/bin/bash
+
+# Utilitza variables locals dins de funcions
+function process_data() {
+    local sensitive_data=&quot;password123&quot;
+    echo &quot;Processant dades...&quot;
+}
+
+process_data</pre></div><div class='content'></div><h1>4. Evitar Injeccions de Comandes</h1>
+<div class='content'><p>Evita l'ús de <code>eval</code> i assegura't que les comandes que s'executen no puguin ser manipulades per l'usuari.</p>
+</div><h2>Exemple d'Evitació d'Injeccions de Comandes</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyEvYmluL2Jhc2gKCiMgRXZpdGEgbCfDunMgZGUgZXZhbAojIGV2YWwgJHVzZXJfaW5wdXQKCiMgVXRpbGl0emEgY29tYW5kZXMgc2VndXJlcwp1c2VyX2lucHV0PSJscyAtbCIKJCgkdXNlcl9pbnB1dCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#!/bin/bash
+
+# Evita l'&uacute;s de eval
+# eval $user_input
+
+# Utilitza comandes segures
+user_input=&quot;ls -l&quot;
+$($user_input)</pre></div><div class='content'></div><h1>5. Gestió de Fitxers Temporals</h1>
+<div class='content'><p>Utilitza fitxers temporals de manera segura per evitar que altres usuaris puguin accedir-hi.</p>
+</div><h2>Exemple de Gestió de Fitxers Temporals</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyEvYmluL2Jhc2gKCiMgQ3JlYSB1biBmaXR4ZXIgdGVtcG9yYWwgZGUgbWFuZXJhIHNlZ3VyYQp0ZW1wX2ZpbGU9JChta3RlbXAgL3RtcC90ZW1wZmlsZS5YWFhYWFgpCgojIFV0aWxpdHphIGVsIGZpdHhlciB0ZW1wb3JhbAplY2hvICJEYWRlcyB0ZW1wb3JhbHMiID4gIiR0ZW1wX2ZpbGUiCgojIEVsaW1pbmEgZWwgZml0eGVyIHRlbXBvcmFsCnJtIC1mICIkdGVtcF9maWxlIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#!/bin/bash
+
+# Crea un fitxer temporal de manera segura
+temp_file=$(mktemp /tmp/tempfile.XXXXXX)
+
+# Utilitza el fitxer temporal
+echo &quot;Dades temporals&quot; &gt; &quot;$temp_file&quot;
+
+# Elimina el fitxer temporal
+rm -f &quot;$temp_file&quot;</pre></div><div class='content'></div><h1>6. Xifrat i Desxifrat de Dades</h1>
+<div class='content'><p>Quan treballis amb dades sensibles, utilitza tècniques de xifrat per protegir-les.</p>
+</div><h2>Exemple de Xifrat i Desxifrat</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyEvYmluL2Jhc2gKCiMgWGlmcmFyIHVuIGZpdHhlcgpncGcgLS1vdXRwdXQgZml0eGVyLnhpZnJhdCAtLXN5bW1ldHJpYyAtLWNpcGhlci1hbGdvIEFFUzI1NiBmaXR4ZXIudHh0CgojIERlc3hpZnJhciB1biBmaXR4ZXIKZ3BnIC0tb3V0cHV0IGZpdHhlci50eHQgLS1kZWNyeXB0IGZpdHhlci54aWZyYXQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#!/bin/bash
+
+# Xifrar un fitxer
+gpg --output fitxer.xifrat --symmetric --cipher-algo AES256 fitxer.txt
+
+# Desxifrar un fitxer
+gpg --output fitxer.txt --decrypt fitxer.xifrat</pre></div><div class='content'></div><h1>7. Auditoria i Registre</h1>
+<div class='content'><p>Mantingues registres d'activitats importants per poder auditar i detectar comportaments sospitosos.</p>
+</div><h2>Exemple de Registre</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyEvYmluL2Jhc2gKCmxvZ19maWxlPSIvdmFyL2xvZy9zY3JpcHQubG9nIgoKZWNobyAiJChkYXRlKSAtIFNjcmlwdCBleGVjdXRhdCBwZXIgbCd1c3VhcmkgJCh3aG9hbWkpIiA+PiAiJGxvZ19maWxlIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#!/bin/bash
+
+log_file=&quot;/var/log/script.log&quot;
+
+echo &quot;$(date) - Script executat per l'usuari $(whoami)&quot; &gt;&gt; &quot;$log_file&quot;</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après diverses tècniques per assegurar els nostres scripts de Bash. Hem cobert la validació d'entrades, la gestió de permisos, l'ús de variables segures, l'evitació d'injeccions de comandes, la gestió de fitxers temporals, el xifrat i desxifrat de dades, i l'auditoria i registre. Seguint aquestes pràctiques, podràs escriure scripts més segurs i protegir millor el teu sistema i les teves dades.</p>
+<p>A la següent secció, explorarem el control de versions amb Git, una eina essencial per gestionar i col·laborar en projectes de programació.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-02-optimizing-bash-scripts' title="Optimització de Scripts en Bash">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-04-version-control-git' title="Control de Versions amb Git">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

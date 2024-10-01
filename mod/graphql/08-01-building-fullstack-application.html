@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construcció d'una aplicació full-stack</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/graphql/08-01-building-fullstack-application" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/graphql/08-01-building-fullstack-application" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/graphql/08-01-building-fullstack-application" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/graphql/08-01-building-fullstack-application" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/graphql/08-01-building-fullstack-application" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-deploying-graphql-servers' title="Desplegament de servidors GraphQL">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Construcció d'una aplicació full-stack</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-graphql-in-microservices' title="GraphQL en microserveis">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a construir una aplicació full-stack utilitzant GraphQL. Aquest procés inclou la creació d'un servidor GraphQL, la connexió a una base de dades, la implementació de resolvers, i la construcció d'un client que consumeixi l'API GraphQL. Utilitzarem Node.js per al servidor i React amb Apollo Client per al client.</p>
+</div><h1>Objectius del tema</h1>
+<div class='content'><ul>
+<li>Configurar un servidor GraphQL amb Node.js.</li>
+<li>Connectar el servidor a una base de dades.</li>
+<li>Implementar resolvers per a consultes i mutacions.</li>
+<li>Construir un client React que consumeixi l'API GraphQL.</li>
+</ul>
+</div><h1>Requisits previs</h1>
+<div class='content'><ul>
+<li>Coneixements bàsics de JavaScript i Node.js.</li>
+<li>Familiaritat amb React.</li>
+<li>Coneixements bàsics de GraphQL.</li>
+</ul>
+</div><h1>Passos per construir l'aplicació full-stack</h1>
+<div class='content'></div><h2>1. Configuració del servidor GraphQL</h2>
+<div class='content'><h4>Instal·lació de dependències</h4>
+<p>Primer, crearem un nou projecte Node.js i instal·larem les dependències necessàries.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bWtkaXIgZnVsbHN0YWNrLWdyYXBocWwKY2QgZnVsbHN0YWNrLWdyYXBocWwKbnBtIGluaXQgLXkKbnBtIGluc3RhbGwgZXhwcmVzcyBleHByZXNzLWdyYXBocWwgZ3JhcGhxbCBtb25nb29zZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>mkdir fullstack-graphql
+cd fullstack-graphql
+npm init -y
+npm install express express-graphql graphql mongoose</pre></div><div class='content'><h4>Configuració del servidor</h4>
+<p>Crearem un fitxer <code>server.js</code> per configurar el servidor GraphQL.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoJ2V4cHJlc3MnKTsKY29uc3QgeyBncmFwaHFsSFRUUCB9ID0gcmVxdWlyZSgnZXhwcmVzcy1ncmFwaHFsJyk7CmNvbnN0IHsgYnVpbGRTY2hlbWEgfSA9IHJlcXVpcmUoJ2dyYXBocWwnKTsKY29uc3QgbW9uZ29vc2UgPSByZXF1aXJlKCdtb25nb29zZScpOwoKLy8gQ29ubmV4acOzIGEgbGEgYmFzZSBkZSBkYWRlcwptb25nb29zZS5jb25uZWN0KCdtb25nb2RiOi8vbG9jYWxob3N0OjI3MDE3L2Z1bGxzdGFjaycsIHsgdXNlTmV3VXJsUGFyc2VyOiB0cnVlLCB1c2VVbmlmaWVkVG9wb2xvZ3k6IHRydWUgfSk7CgovLyBEZWZpbmljacOzIGRlIGwnZXNxdWVtYQpjb25zdCBzY2hlbWEgPSBidWlsZFNjaGVtYShgCiAgdHlwZSBRdWVyeSB7CiAgICBoZWxsbzogU3RyaW5nCiAgfQpgKTsKCi8vIERlZmluaWNpw7MgZGVscyByZXNvbHZlcnMKY29uc3Qgcm9vdCA9IHsKICBoZWxsbzogKCkgPT4gJ0hlbGxvLCB3b3JsZCEnLAp9OwoKLy8gQ29uZmlndXJhY2nDsyBkZWwgc2Vydmlkb3IgRXhwcmVzcwpjb25zdCBhcHAgPSBleHByZXNzKCk7CmFwcC51c2UoJy9ncmFwaHFsJywgZ3JhcGhxbEhUVFAoewogIHNjaGVtYTogc2NoZW1hLAogIHJvb3RWYWx1ZTogcm9vdCwKICBncmFwaGlxbDogdHJ1ZSwKfSkpOwoKYXBwLmxpc3Rlbig0MDAwLCAoKSA9PiBjb25zb2xlLmxvZygnU2Vydmlkb3IgZW4gZnVuY2lvbmFtZW50IGEgaHR0cDovL2xvY2FsaG9zdDo0MDAwL2dyYXBocWwnKSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const express = require('express');
+const { graphqlHTTP } = require('express-graphql');
+const { buildSchema } = require('graphql');
+const mongoose = require('mongoose');
+
+// Connexi&oacute; a la base de dades
+mongoose.connect('mongodb://localhost:27017/fullstack', { useNewUrlParser: true, useUnifiedTopology: true });
+
+// Definici&oacute; de l'esquema
+const schema = buildSchema(`
+  type Query {
+    hello: String
+  }
+`);
+
+// Definici&oacute; dels resolvers
+const root = {
+  hello: () =&gt; 'Hello, world!',
+};
+
+// Configuraci&oacute; del servidor Express
+const app = express();
+app.use('/graphql', graphqlHTTP({
+  schema: schema,
+  rootValue: root,
+  graphiql: true,
+}));
+
+app.listen(4000, () =&gt; console.log('Servidor en funcionament a http://localhost:4000/graphql'));</pre></div><div class='content'></div><h2>2. Connexió a una base de dades</h2>
+<div class='content'><h4>Definició del model</h4>
+<p>Crearem un model de Mongoose per gestionar les dades. Per exemple, un model d'usuari.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgbW9uZ29vc2UgPSByZXF1aXJlKCdtb25nb29zZScpOwoKY29uc3QgdXNlclNjaGVtYSA9IG5ldyBtb25nb29zZS5TY2hlbWEoewogIG5hbWU6IFN0cmluZywKICBlbWFpbDogU3RyaW5nLAp9KTsKCmNvbnN0IFVzZXIgPSBtb25nb29zZS5tb2RlbCgnVXNlcicsIHVzZXJTY2hlbWEpOwoKbW9kdWxlLmV4cG9ydHMgPSBVc2VyOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const mongoose = require('mongoose');
+
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+});
+
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;</pre></div><div class='content'><h4>Actualització de l'esquema i resolvers</h4>
+<p>Actualitzarem l'esquema GraphQL per incloure operacions sobre els usuaris.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgeyBidWlsZFNjaGVtYSB9ID0gcmVxdWlyZSgnZ3JhcGhxbCcpOwpjb25zdCBVc2VyID0gcmVxdWlyZSgnLi9tb2RlbHMvdXNlcicpOwoKY29uc3Qgc2NoZW1hID0gYnVpbGRTY2hlbWEoYAogIHR5cGUgVXNlciB7CiAgICBpZDogSUQhCiAgICBuYW1lOiBTdHJpbmchCiAgICBlbWFpbDogU3RyaW5nIQogIH0KCiAgdHlwZSBRdWVyeSB7CiAgICB1c2VyczogW1VzZXJdCiAgfQoKICB0eXBlIE11dGF0aW9uIHsKICAgIGFkZFVzZXIobmFtZTogU3RyaW5nISwgZW1haWw6IFN0cmluZyEpOiBVc2VyCiAgfQpgKTsKCmNvbnN0IHJvb3QgPSB7CiAgdXNlcnM6IGFzeW5jICgpID0+IHsKICAgIHJldHVybiBhd2FpdCBVc2VyLmZpbmQoKTsKICB9LAogIGFkZFVzZXI6IGFzeW5jICh7IG5hbWUsIGVtYWlsIH0pID0+IHsKICAgIGNvbnN0IHVzZXIgPSBuZXcgVXNlcih7IG5hbWUsIGVtYWlsIH0pOwogICAgYXdhaXQgdXNlci5zYXZlKCk7CiAgICByZXR1cm4gdXNlcjsKICB9LAp9Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const { buildSchema } = require('graphql');
+const User = require('./models/user');
+
+const schema = buildSchema(`
+  type User {
+    id: ID!
+    name: String!
+    email: String!
+  }
+
+  type Query {
+    users: [User]
+  }
+
+  type Mutation {
+    addUser(name: String!, email: String!): User
+  }
+`);
+
+const root = {
+  users: async () =&gt; {
+    return await User.find();
+  },
+  addUser: async ({ name, email }) =&gt; {
+    const user = new User({ name, email });
+    await user.save();
+    return user;
+  },
+};</pre></div><div class='content'></div><h2>3. Construcció del client React</h2>
+<div class='content'><h4>Instal·lació de dependències</h4>
+<p>Crearem un nou projecte React i instal·larem Apollo Client.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnB4IGNyZWF0ZS1yZWFjdC1hcHAgY2xpZW50CmNkIGNsaWVudApucG0gaW5zdGFsbCBAYXBvbGxvL2NsaWVudCBncmFwaHFs"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npx create-react-app client
+cd client
+npm install @apollo/client graphql</pre></div><div class='content'><h4>Configuració d'Apollo Client</h4>
+<p>Configurarem Apollo Client per connectar-se al nostre servidor GraphQL.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3JjL2luZGV4LmpzCmltcG9ydCBSZWFjdCBmcm9tICdyZWFjdCc7CmltcG9ydCBSZWFjdERPTSBmcm9tICdyZWFjdC1kb20nOwppbXBvcnQgeyBBcG9sbG9Qcm92aWRlciwgSW5NZW1vcnlDYWNoZSwgQXBvbGxvQ2xpZW50IH0gZnJvbSAnQGFwb2xsby9jbGllbnQnOwppbXBvcnQgQXBwIGZyb20gJy4vQXBwJzsKCmNvbnN0IGNsaWVudCA9IG5ldyBBcG9sbG9DbGllbnQoewogIHVyaTogJ2h0dHA6Ly9sb2NhbGhvc3Q6NDAwMC9ncmFwaHFsJywKICBjYWNoZTogbmV3IEluTWVtb3J5Q2FjaGUoKSwKfSk7CgpSZWFjdERPTS5yZW5kZXIoCiAgPEFwb2xsb1Byb3ZpZGVyIGNsaWVudD17Y2xpZW50fT4KICAgIDxBcHAgLz4KICA8L0Fwb2xsb1Byb3ZpZGVyPiwKICBkb2N1bWVudC5nZXRFbGVtZW50QnlJZCgncm9vdCcpCik7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// src/index.js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { ApolloProvider, InMemoryCache, ApolloClient } from '@apollo/client';
+import App from './App';
+
+const client = new ApolloClient({
+  uri: 'http://localhost:4000/graphql',
+  cache: new InMemoryCache(),
+});
+
+ReactDOM.render(
+  &lt;ApolloProvider client={client}&gt;
+    &lt;App /&gt;
+  &lt;/ApolloProvider&gt;,
+  document.getElementById('root')
+);</pre></div><div class='content'><h4>Creació de components</h4>
+<p>Crearem components per mostrar i afegir usuaris.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3JjL0FwcC5qcwppbXBvcnQgUmVhY3QgZnJvbSAncmVhY3QnOwppbXBvcnQgeyB1c2VRdWVyeSwgdXNlTXV0YXRpb24sIGdxbCB9IGZyb20gJ0BhcG9sbG8vY2xpZW50JzsKCmNvbnN0IEdFVF9VU0VSUyA9IGdxbGAKICBxdWVyeSBHZXRVc2VycyB7CiAgICB1c2VycyB7CiAgICAgIGlkCiAgICAgIG5hbWUKICAgICAgZW1haWwKICAgIH0KICB9CmA7Cgpjb25zdCBBRERfVVNFUiA9IGdxbGAKICBtdXRhdGlvbiBBZGRVc2VyKCRuYW1lOiBTdHJpbmchLCAkZW1haWw6IFN0cmluZyEpIHsKICAgIGFkZFVzZXIobmFtZTogJG5hbWUsIGVtYWlsOiAkZW1haWwpIHsKICAgICAgaWQKICAgICAgbmFtZQogICAgICBlbWFpbAogICAgfQogIH0KYDsKCmZ1bmN0aW9uIEFwcCgpIHsKICBjb25zdCB7IGxvYWRpbmcsIGVycm9yLCBkYXRhIH0gPSB1c2VRdWVyeShHRVRfVVNFUlMpOwogIGNvbnN0IFthZGRVc2VyXSA9IHVzZU11dGF0aW9uKEFERF9VU0VSKTsKCiAgaWYgKGxvYWRpbmcpIHJldHVybiA8cD5Mb2FkaW5nLi4uPC9wPjsKICBpZiAoZXJyb3IpIHJldHVybiA8cD5FcnJvciA6KDwvcD47CgogIGxldCBuYW1lSW5wdXQsIGVtYWlsSW5wdXQ7CgogIHJldHVybiAoCiAgICA8ZGl2PgogICAgICA8aDE+VXNlcnM8L2gxPgogICAgICA8dWw+CiAgICAgICAge2RhdGEudXNlcnMubWFwKHVzZXIgPT4gKAogICAgICAgICAgPGxpIGtleT17dXNlci5pZH0+e3VzZXIubmFtZX0gLSB7dXNlci5lbWFpbH08L2xpPgogICAgICAgICkpfQogICAgICA8L3VsPgogICAgICA8Zm9ybQogICAgICAgIG9uU3VibWl0PXtlID0+IHsKICAgICAgICAgIGUucHJldmVudERlZmF1bHQoKTsKICAgICAgICAgIGFkZFVzZXIoeyB2YXJpYWJsZXM6IHsgbmFtZTogbmFtZUlucHV0LnZhbHVlLCBlbWFpbDogZW1haWxJbnB1dC52YWx1ZSB9IH0pOwogICAgICAgICAgbmFtZUlucHV0LnZhbHVlID0gJyc7CiAgICAgICAgICBlbWFpbElucHV0LnZhbHVlID0gJyc7CiAgICAgICAgfX0KICAgICAgPgogICAgICAgIDxpbnB1dAogICAgICAgICAgcmVmPXtub2RlID0+IHsKICAgICAgICAgICAgbmFtZUlucHV0ID0gbm9kZTsKICAgICAgICAgIH19CiAgICAgICAgICBwbGFjZWhvbGRlcj0iTmFtZSIKICAgICAgICAvPgogICAgICAgIDxpbnB1dAogICAgICAgICAgcmVmPXtub2RlID0+IHsKICAgICAgICAgICAgZW1haWxJbnB1dCA9IG5vZGU7CiAgICAgICAgICB9fQogICAgICAgICAgcGxhY2Vob2xkZXI9IkVtYWlsIgogICAgICAgIC8+CiAgICAgICAgPGJ1dHRvbiB0eXBlPSJzdWJtaXQiPkFkZCBVc2VyPC9idXR0b24+CiAgICAgIDwvZm9ybT4KICAgIDwvZGl2PgogICk7Cn0KCmV4cG9ydCBkZWZhdWx0IEFwcDs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// src/App.js
+import React from 'react';
+import { useQuery, useMutation, gql } from '@apollo/client';
+
+const GET_USERS = gql`
+  query GetUsers {
+    users {
+      id
+      name
+      email
+    }
+  }
+`;
+
+const ADD_USER = gql`
+  mutation AddUser($name: String!, $email: String!) {
+    addUser(name: $name, email: $email) {
+      id
+      name
+      email
+    }
+  }
+`;
+
+function App() {
+  const { loading, error, data } = useQuery(GET_USERS);
+  const [addUser] = useMutation(ADD_USER);
+
+  if (loading) return &lt;p&gt;Loading...&lt;/p&gt;;
+  if (error) return &lt;p&gt;Error :(&lt;/p&gt;;
+
+  let nameInput, emailInput;
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Users&lt;/h1&gt;
+      &lt;ul&gt;
+        {data.users.map(user =&gt; (
+          &lt;li key={user.id}&gt;{user.name} - {user.email}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+      &lt;form
+        onSubmit={e =&gt; {
+          e.preventDefault();
+          addUser({ variables: { name: nameInput.value, email: emailInput.value } });
+          nameInput.value = '';
+          emailInput.value = '';
+        }}
+      &gt;
+        &lt;input
+          ref={node =&gt; {
+            nameInput = node;
+          }}
+          placeholder=&quot;Name&quot;
+        /&gt;
+        &lt;input
+          ref={node =&gt; {
+            emailInput = node;
+          }}
+          placeholder=&quot;Email&quot;
+        /&gt;
+        &lt;button type=&quot;submit&quot;&gt;Add User&lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</pre></div><div class='content'></div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Afegir un camp d'edat als usuaris</h2>
+<div class='content'><ol>
+<li>Actualitza el model d'usuari per incloure un camp <code>age</code>.</li>
+<li>Actualitza l'esquema GraphQL per incloure el camp <code>age</code> en les consultes i mutacions.</li>
+<li>Actualitza el client React per permetre l'entrada i visualització de l'edat dels usuaris.</li>
+</ol>
+</div><h2>Exercici 2: Implementar una mutació per eliminar usuaris</h2>
+<div class='content'><ol>
+<li>Afegeix una mutació a l'esquema GraphQL per eliminar un usuari per ID.</li>
+<li>Implementa el resolver corresponent.</li>
+<li>Actualitza el client React per permetre l'eliminació d'usuaris.</li>
+</ol>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après a construir una aplicació full-stack utilitzant GraphQL. Hem configurat un servidor GraphQL amb Node.js, connectat a una base de dades, implementat resolvers, i construït un client React que consumeix l'API GraphQL. A més, hem proporcionat exercicis pràctics per reforçar els conceptes apresos.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-deploying-graphql-servers' title="Desplegament de servidors GraphQL">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-graphql-in-microservices' title="GraphQL en microserveis">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

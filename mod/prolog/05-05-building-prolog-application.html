@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construint una Aplicació Prolog</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/prolog/05-05-building-prolog-application" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/prolog/05-05-building-prolog-application" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/prolog/05-05-building-prolog-application" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/prolog/05-05-building-prolog-application" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/prolog/05-05-building-prolog-application" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-interfacing-other-languages' title="Interfície amb Altres Llenguatges">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Construint una Aplicació Prolog</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-01-performance-optimization' title="Optimització del Rendiment">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a construir una aplicació completa en Prolog. Aquest procés inclou la definició de fets i regles, la creació d'una interfície d'usuari bàsica, la gestió de fitxers per a l'entrada i sortida de dades, i la depuració del programa. A més, veurem com integrar Prolog amb altres llenguatges de programació per crear aplicacions més robustes i versàtils.</p>
+</div><h1>1. Definició del Problema</h1>
+<div class='content'><p>Abans de començar a programar, és essencial definir clarament el problema que volem resoldre. Per a aquest exemple, construirem una aplicació de gestió de biblioteques que permetrà als usuaris afegir, eliminar i cercar llibres.</p>
+</div><h2>Requisits de l'Aplicació</h2>
+<div class='content'><ul>
+<li>Afegir nous llibres a la biblioteca.</li>
+<li>Eliminar llibres existents.</li>
+<li>Cercar llibres per títol o autor.</li>
+<li>Guardar i carregar la informació dels llibres des d'un fitxer.</li>
+</ul>
+</div><h1>2. Estructura del Programa</h1>
+<div class='content'></div><h2>Fets i Regles</h2>
+<div class='content'><p>Comencem definint els fets i regles que representaran els llibres i les operacions que podem realitzar sobre ells.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("JSBGZXRzCiUgbGxpYnJlKFTDrXRvbCwgQXV0b3IsIEFueSkuCmxsaWJyZSgnRWwgUXVpeG90JywgJ01pZ3VlbCBkZSBDZXJ2YW50ZXMnLCAxNjA1KS4KbGxpYnJlKCdDaWVuIGHDsW9zIGRlIHNvbGVkYWQnLCAnR2FicmllbCBHYXJjaWEgTWFycXVleicsIDE5NjcpLgoKJSBSZWdsZXMKYWZlZ2lyX2xsaWJyZShUw610b2wsIEF1dG9yLCBBbnkpIDotCiAgICBhc3NlcnR6KGxsaWJyZShUw610b2wsIEF1dG9yLCBBbnkpKS4KCmVsaW1pbmFyX2xsaWJyZShUw610b2wpIDotCiAgICByZXRyYWN0KGxsaWJyZShUw610b2wsIF8sIF8pKS4KCmNlcmNhcl9sbGlicmVfcGVyX3RpdG9sKFTDrXRvbCkgOi0KICAgIGxsaWJyZShUw610b2wsIEF1dG9yLCBBbnkpLAogICAgZm9ybWF0KCdUw610b2w6IH53LCBBdXRvcjogfncsIEFueTogfnd+bicsIFtUw610b2wsIEF1dG9yLCBBbnldKS4KCmNlcmNhcl9sbGlicmVfcGVyX2F1dG9yKEF1dG9yKSA6LQogICAgbGxpYnJlKFTDrXRvbCwgQXV0b3IsIEFueSksCiAgICBmb3JtYXQoJ1TDrXRvbDogfncsIEF1dG9yOiB+dywgQW55OiB+d35uJywgW1TDrXRvbCwgQXV0b3IsIEFueV0pLg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>% Fets
+% llibre(T&iacute;tol, Autor, Any).
+llibre('El Quixot', 'Miguel de Cervantes', 1605).
+llibre('Cien a&ntilde;os de soledad', 'Gabriel Garcia Marquez', 1967).
+
+% Regles
+afegir_llibre(T&iacute;tol, Autor, Any) :-
+    assertz(llibre(T&iacute;tol, Autor, Any)).
+
+eliminar_llibre(T&iacute;tol) :-
+    retract(llibre(T&iacute;tol, _, _)).
+
+cercar_llibre_per_titol(T&iacute;tol) :-
+    llibre(T&iacute;tol, Autor, Any),
+    format('T&iacute;tol: ~w, Autor: ~w, Any: ~w~n', [T&iacute;tol, Autor, Any]).
+
+cercar_llibre_per_autor(Autor) :-
+    llibre(T&iacute;tol, Autor, Any),
+    format('T&iacute;tol: ~w, Autor: ~w, Any: ~w~n', [T&iacute;tol, Autor, Any]).</pre></div><div class='content'></div><h2>Interfície d'Usuari Bàsica</h2>
+<div class='content'><p>Crearem una interfície d'usuari bàsica que permeti als usuaris interactuar amb l'aplicació a través de la línia de comandes.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bWVudSA6LQogICAgd3JpdGVsbignMS4gQWZlZ2lyIGxsaWJyZScpLAogICAgd3JpdGVsbignMi4gRWxpbWluYXIgbGxpYnJlJyksCiAgICB3cml0ZWxuKCczLiBDZXJjYXIgbGxpYnJlIHBlciB0w610b2wnKSwKICAgIHdyaXRlbG4oJzQuIENlcmNhciBsbGlicmUgcGVyIGF1dG9yJyksCiAgICB3cml0ZWxuKCc1LiBTb3J0aXInKSwKICAgIHJlYWQoT3BjacOzKSwKICAgIGV4ZWN1dGFyX29wY2nDsyhPcGNpw7MpLgoKZXhlY3V0YXJfb3BjacOzKDEpIDotCiAgICB3cml0ZWxuKCdJbnRyb2R1ZWl4IGVsIHTDrXRvbDonKSwKICAgIHJlYWQoVMOtdG9sKSwKICAgIHdyaXRlbG4oJ0ludHJvZHVlaXggbFwnYXV0b3I6JyksCiAgICByZWFkKEF1dG9yKSwKICAgIHdyaXRlbG4oJ0ludHJvZHVlaXggbFwnYW55OicpLAogICAgcmVhZChBbnkpLAogICAgYWZlZ2lyX2xsaWJyZShUw610b2wsIEF1dG9yLCBBbnkpLAogICAgd3JpdGVsbignTGxpYnJlIGFmZWdpdCEnKSwKICAgIG1lbnUuCgpleGVjdXRhcl9vcGNpw7MoMikgOi0KICAgIHdyaXRlbG4oJ0ludHJvZHVlaXggZWwgdMOtdG9sIGRlbCBsbGlicmUgYSBlbGltaW5hcjonKSwKICAgIHJlYWQoVMOtdG9sKSwKICAgIGVsaW1pbmFyX2xsaWJyZShUw610b2wpLAogICAgd3JpdGVsbignTGxpYnJlIGVsaW1pbmF0IScpLAogICAgbWVudS4KCmV4ZWN1dGFyX29wY2nDsygzKSA6LQogICAgd3JpdGVsbignSW50cm9kdWVpeCBlbCB0w610b2wgZGVsIGxsaWJyZSBhIGNlcmNhcjonKSwKICAgIHJlYWQoVMOtdG9sKSwKICAgIGNlcmNhcl9sbGlicmVfcGVyX3RpdG9sKFTDrXRvbCksCiAgICBtZW51LgoKZXhlY3V0YXJfb3BjacOzKDQpIDotCiAgICB3cml0ZWxuKCdJbnRyb2R1ZWl4IGxcJ2F1dG9yIGRlbCBsbGlicmUgYSBjZXJjYXI6JyksCiAgICByZWFkKEF1dG9yKSwKICAgIGNlcmNhcl9sbGlicmVfcGVyX2F1dG9yKEF1dG9yKSwKICAgIG1lbnUuCgpleGVjdXRhcl9vcGNpw7MoNSkgOi0KICAgIHdyaXRlbG4oJ1NvcnRpbnQuLi4nKS4KCmV4ZWN1dGFyX29wY2nDsyhfKSA6LQogICAgd3JpdGVsbignT3BjacOzIG5vIHbDoGxpZGEsIHRvcm5hIGEgaW50ZW50YXItaG8uJyksCiAgICBtZW51Lg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>menu :-
+    writeln('1. Afegir llibre'),
+    writeln('2. Eliminar llibre'),
+    writeln('3. Cercar llibre per t&iacute;tol'),
+    writeln('4. Cercar llibre per autor'),
+    writeln('5. Sortir'),
+    read(Opci&oacute;),
+    executar_opci&oacute;(Opci&oacute;).
+
+executar_opci&oacute;(1) :-
+    writeln('Introdueix el t&iacute;tol:'),
+    read(T&iacute;tol),
+    writeln('Introdueix l\'autor:'),
+    read(Autor),
+    writeln('Introdueix l\'any:'),
+    read(Any),
+    afegir_llibre(T&iacute;tol, Autor, Any),
+    writeln('Llibre afegit!'),
+    menu.
+
+executar_opci&oacute;(2) :-
+    writeln('Introdueix el t&iacute;tol del llibre a eliminar:'),
+    read(T&iacute;tol),
+    eliminar_llibre(T&iacute;tol),
+    writeln('Llibre eliminat!'),
+    menu.
+
+executar_opci&oacute;(3) :-
+    writeln('Introdueix el t&iacute;tol del llibre a cercar:'),
+    read(T&iacute;tol),
+    cercar_llibre_per_titol(T&iacute;tol),
+    menu.
+
+executar_opci&oacute;(4) :-
+    writeln('Introdueix l\'autor del llibre a cercar:'),
+    read(Autor),
+    cercar_llibre_per_autor(Autor),
+    menu.
+
+executar_opci&oacute;(5) :-
+    writeln('Sortint...').
+
+executar_opci&oacute;(_) :-
+    writeln('Opci&oacute; no v&agrave;lida, torna a intentar-ho.'),
+    menu.</pre></div><div class='content'></div><h2>Gestió de Fitxers</h2>
+<div class='content'><p>Per guardar i carregar la informació dels llibres, utilitzarem operacions d'entrada/sortida de fitxers.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z3VhcmRhcl9iaWJsaW90ZWNhKE5vbUZpdHhlcikgOi0KICAgIG9wZW4oTm9tRml0eGVyLCB3cml0ZSwgU3RyZWFtKSwKICAgIGZvcmFsbChsbGlicmUoVMOtdG9sLCBBdXRvciwgQW55KSwKICAgICAgICAgICBmb3JtYXQoU3RyZWFtLCAnbGxpYnJlKH5xLCB+cSwgfnEpLn5uJywgW1TDrXRvbCwgQXV0b3IsIEFueV0pKSwKICAgIGNsb3NlKFN0cmVhbSkuCgpjYXJyZWdhcl9iaWJsaW90ZWNhKE5vbUZpdHhlcikgOi0KICAgIG9wZW4oTm9tRml0eGVyLCByZWFkLCBTdHJlYW0pLAogICAgcmVwZWF0LAogICAgcmVhZChTdHJlYW0sIFRlcm0pLAogICAgKCBUZXJtID09IGVuZF9vZl9maWxlIC0+IHRydWUgOyBhc3NlcnR6KFRlcm0pLCBmYWlsICksCiAgICBjbG9zZShTdHJlYW0pLg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>guardar_biblioteca(NomFitxer) :-
+    open(NomFitxer, write, Stream),
+    forall(llibre(T&iacute;tol, Autor, Any),
+           format(Stream, 'llibre(~q, ~q, ~q).~n', [T&iacute;tol, Autor, Any])),
+    close(Stream).
+
+carregar_biblioteca(NomFitxer) :-
+    open(NomFitxer, read, Stream),
+    repeat,
+    read(Stream, Term),
+    ( Term == end_of_file -&gt; true ; assertz(Term), fail ),
+    close(Stream).</pre></div><div class='content'></div><h2>Integració amb Altres Llenguatges</h2>
+<div class='content'><p>Per integrar Prolog amb altres llenguatges, podem utilitzar biblioteques com JPL (Java-Prolog Library) per a Java o PySwip per a Python. Aquí teniu un exemple bàsic d'integració amb Python utilitzant PySwip.</p>
+<h4>Exemple en Python</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBweXN3aXAgaW1wb3J0IFByb2xvZwoKcHJvbG9nID0gUHJvbG9nKCkKcHJvbG9nLmNvbnN1bHQoImJpYmxpb3RlY2EucGwiKQoKIyBBZmVnaXIgdW4gbGxpYnJlCnByb2xvZy5hc3NlcnR6KCJsbGlicmUoJzE5ODQnLCAnR2VvcmdlIE9yd2VsbCcsIDE5NDkpIikKCiMgQ2VyY2FyIGxsaWJyZXMgcGVyIGF1dG9yCmZvciByZXN1bHQgaW4gcHJvbG9nLnF1ZXJ5KCJsbGlicmUoVMOtdG9sLCAnR2VvcmdlIE9yd2VsbCcsIEFueSkiKToKICAgIHByaW50KGYiVMOtdG9sOiB7cmVzdWx0WydUw610b2wnXX0sIEFueToge3Jlc3VsdFsnQW55J119Iik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from pyswip import Prolog
+
+prolog = Prolog()
+prolog.consult(&quot;biblioteca.pl&quot;)
+
+# Afegir un llibre
+prolog.assertz(&quot;llibre('1984', 'George Orwell', 1949)&quot;)
+
+# Cercar llibres per autor
+for result in prolog.query(&quot;llibre(T&iacute;tol, 'George Orwell', Any)&quot;):
+    print(f&quot;T&iacute;tol: {result['T&iacute;tol']}, Any: {result['Any']}&quot;)</pre></div><div class='content'></div><h1>3. Depuració del Programa</h1>
+<div class='content'><p>La depuració és una part crucial del desenvolupament de qualsevol aplicació. Prolog ofereix eines com el traçador (<code>trace/0</code>) per ajudar a identificar i corregir errors.</p>
+</div><h2>Exemple d'ús del traçador</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("JSBBY3RpdmFyIGVsIHRyYcOnYWRvcgp0cmFjZS4KCiUgRXhlY3V0YXIgdW5hIGNvbnN1bHRhIHBlciB2ZXVyZSBlbCB0cmHDpwpjZXJjYXJfbGxpYnJlX3Blcl90aXRvbCgnMTk4NCcpLgoKJSBEZXNhY3RpdmFyIGVsIHRyYcOnYWRvcgpub3RyYWNlLg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>% Activar el tra&ccedil;ador
+trace.
+
+% Executar una consulta per veure el tra&ccedil;
+cercar_llibre_per_titol('1984').
+
+% Desactivar el tra&ccedil;ador
+notrace.</pre></div><div class='content'></div><h1>4. Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après a construir una aplicació completa en Prolog, des de la definició dels fets i regles fins a la creació d'una interfície d'usuari bàsica, la gestió de fitxers i la integració amb altres llenguatges de programació. També hem vist com utilitzar les eines de depuració de Prolog per identificar i corregir errors. Amb aquests coneixements, esteu preparats per desenvolupar aplicacions més complexes i robustes en Prolog.</p>
+</div><h2>Exercici Pràctic</h2>
+<div class='content'><p><strong>Exercici:</strong> Amplieu l'aplicació de gestió de biblioteques per permetre la cerca de llibres per any de publicació i la modificació de la informació d'un llibre existent.</p>
+<p><strong>Solució:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("JSBBZmVnaXIgdW5hIG5vdmEgcmVnbGEgcGVyIGNlcmNhciBsbGlicmVzIHBlciBhbnkKY2VyY2FyX2xsaWJyZV9wZXJfYW55KEFueSkgOi0KICAgIGxsaWJyZShUw610b2wsIEF1dG9yLCBBbnkpLAogICAgZm9ybWF0KCdUw610b2w6IH53LCBBdXRvcjogfncsIEFueTogfnd+bicsIFtUw610b2wsIEF1dG9yLCBBbnldKS4KCiUgQWZlZ2lyIHVuYSBub3ZhIHJlZ2xhIHBlciBtb2RpZmljYXIgbGEgaW5mb3JtYWNpw7MgZCd1biBsbGlicmUKbW9kaWZpY2FyX2xsaWJyZShUw610b2xBbnRpYywgVMOtdG9sTm91LCBBdXRvck5vdSwgQW55Tm91KSA6LQogICAgcmV0cmFjdChsbGlicmUoVMOtdG9sQW50aWMsIF8sIF8pKSwKICAgIGFzc2VydHoobGxpYnJlKFTDrXRvbE5vdSwgQXV0b3JOb3UsIEFueU5vdSkpLgoKJSBBY3R1YWxpdHphciBsYSBpbnRlcmbDrWNpZSBkJ3VzdWFyaSBwZXIgaW5jbG91cmUgbGVzIG5vdmVzIG9wY2lvbnMKbWVudSA6LQogICAgd3JpdGVsbignMS4gQWZlZ2lyIGxsaWJyZScpLAogICAgd3JpdGVsbignMi4gRWxpbWluYXIgbGxpYnJlJyksCiAgICB3cml0ZWxuKCczLiBDZXJjYXIgbGxpYnJlIHBlciB0w610b2wnKSwKICAgIHdyaXRlbG4oJzQuIENlcmNhciBsbGlicmUgcGVyIGF1dG9yJyksCiAgICB3cml0ZWxuKCc1LiBDZXJjYXIgbGxpYnJlIHBlciBhbnknKSwKICAgIHdyaXRlbG4oJzYuIE1vZGlmaWNhciBsbGlicmUnKSwKICAgIHdyaXRlbG4oJzcuIFNvcnRpcicpLAogICAgcmVhZChPcGNpw7MpLAogICAgZXhlY3V0YXJfb3BjacOzKE9wY2nDsykuCgpleGVjdXRhcl9vcGNpw7MoNSkgOi0KICAgIHdyaXRlbG4oJ0ludHJvZHVlaXggbFwnYW55IGRlbCBsbGlicmUgYSBjZXJjYXI6JyksCiAgICByZWFkKEFueSksCiAgICBjZXJjYXJfbGxpYnJlX3Blcl9hbnkoQW55KSwKICAgIG1lbnUuCgpleGVjdXRhcl9vcGNpw7MoNikgOi0KICAgIHdyaXRlbG4oJ0ludHJvZHVlaXggZWwgdMOtdG9sIGRlbCBsbGlicmUgYSBtb2RpZmljYXI6JyksCiAgICByZWFkKFTDrXRvbEFudGljKSwKICAgIHdyaXRlbG4oJ0ludHJvZHVlaXggZWwgbm91IHTDrXRvbDonKSwKICAgIHJlYWQoVMOtdG9sTm91KSwKICAgIHdyaXRlbG4oJ0ludHJvZHVlaXggZWwgbm91IGF1dG9yOicpLAogICAgcmVhZChBdXRvck5vdSksCiAgICB3cml0ZWxuKCdJbnRyb2R1ZWl4IGVsIG5vdSBhbnk6JyksCiAgICByZWFkKEFueU5vdSksCiAgICBtb2RpZmljYXJfbGxpYnJlKFTDrXRvbEFudGljLCBUw610b2xOb3UsIEF1dG9yTm91LCBBbnlOb3UpLAogICAgd3JpdGVsbignTGxpYnJlIG1vZGlmaWNhdCEnKSwKICAgIG1lbnUu"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>% Afegir una nova regla per cercar llibres per any
+cercar_llibre_per_any(Any) :-
+    llibre(T&iacute;tol, Autor, Any),
+    format('T&iacute;tol: ~w, Autor: ~w, Any: ~w~n', [T&iacute;tol, Autor, Any]).
+
+% Afegir una nova regla per modificar la informaci&oacute; d'un llibre
+modificar_llibre(T&iacute;tolAntic, T&iacute;tolNou, AutorNou, AnyNou) :-
+    retract(llibre(T&iacute;tolAntic, _, _)),
+    assertz(llibre(T&iacute;tolNou, AutorNou, AnyNou)).
+
+% Actualitzar la interf&iacute;cie d'usuari per incloure les noves opcions
+menu :-
+    writeln('1. Afegir llibre'),
+    writeln('2. Eliminar llibre'),
+    writeln('3. Cercar llibre per t&iacute;tol'),
+    writeln('4. Cercar llibre per autor'),
+    writeln('5. Cercar llibre per any'),
+    writeln('6. Modificar llibre'),
+    writeln('7. Sortir'),
+    read(Opci&oacute;),
+    executar_opci&oacute;(Opci&oacute;).
+
+executar_opci&oacute;(5) :-
+    writeln('Introdueix l\'any del llibre a cercar:'),
+    read(Any),
+    cercar_llibre_per_any(Any),
+    menu.
+
+executar_opci&oacute;(6) :-
+    writeln('Introdueix el t&iacute;tol del llibre a modificar:'),
+    read(T&iacute;tolAntic),
+    writeln('Introdueix el nou t&iacute;tol:'),
+    read(T&iacute;tolNou),
+    writeln('Introdueix el nou autor:'),
+    read(AutorNou),
+    writeln('Introdueix el nou any:'),
+    read(AnyNou),
+    modificar_llibre(T&iacute;tolAntic, T&iacute;tolNou, AutorNou, AnyNou),
+    writeln('Llibre modificat!'),
+    menu.</pre></div><div class='content'><p>Amb aquesta ampliació, l'aplicació de gestió de biblioteques és encara més completa i funcional.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-interfacing-other-languages' title="Interfície amb Altres Llenguatges">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-01-performance-optimization' title="Optimització del Rendiment">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

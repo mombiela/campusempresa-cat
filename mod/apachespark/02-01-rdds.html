@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RDDs (Resilient Distributed Datasets)</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/apachespark/02-01-rdds" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/apachespark/02-01-rdds" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/apachespark/02-01-rdds" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/apachespark/02-01-rdds" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/apachespark/02-01-rdds" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='01-04-spark-shell' title="Shell de Spark">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">RDDs (Resilient Distributed Datasets)</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-02-transformations-actions' title="Transformacions i Accions">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Els RDDs (Resilient Distributed Datasets) són la unitat fonamental de dades en Apache Spark. Són col·leccions distribuïdes d'objectes que es poden processar en paral·lel. Els RDDs proporcionen una abstracció de dades que permet als programadors treballar amb dades distribuïdes de manera eficient i tolerant a fallades.</p>
+</div><h1>Característiques Clau dels RDDs</h1>
+<div class='content'><ol>
+<li><strong>Immutabilitat</strong>: Un cop creat, un RDD no es pot modificar. Qualsevol transformació sobre un RDD crea un nou RDD.</li>
+<li><strong>Distribució</strong>: Els RDDs es distribueixen a través de múltiples nodes en un clúster, permetent el processament paral·lel.</li>
+<li><strong>Tolerància a Fallades</strong>: Els RDDs poden recuperar-se de fallades gràcies a la seva capacitat de reconstruir-se a partir de les dades originals o de les transformacions aplicades.</li>
+<li><strong>Transformacions i Accions</strong>: Els RDDs suporten dues operacions principals: transformacions (que creen nous RDDs) i accions (que retornen un valor al driver program).</li>
+</ol>
+</div><h1>Creació d'RDDs</h1>
+<div class='content'></div><h2>Des d'una Col·lecció</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIGRhdGEgPSBBcnJheSgxLCAyLCAzLCA0LCA1KQp2YWwgcmRkID0gc2MucGFyYWxsZWxpemUoZGF0YSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val data = Array(1, 2, 3, 4, 5)
+val rdd = sc.parallelize(data)</pre></div><div class='content'></div><h2>Des d'un Fitxer</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIHJkZCA9IHNjLnRleHRGaWxlKCJwYXRoL3RvL2ZpbGUudHh0Iik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val rdd = sc.textFile(&quot;path/to/file.txt&quot;)</pre></div><div class='content'></div><h1>Transformacions</h1>
+<div class='content'><p>Les transformacions són operacions que es realitzen sobre un RDD i retornen un nou RDD. Són de naturalesa &quot;lazy&quot;, és a dir, no s'executen fins que no es crida una acció.</p>
+</div><h2>Map</h2>
+<div class='content'><p>Aplica una funció a cada element de l'RDD i retorna un nou RDD amb els resultats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIHJkZCA9IHNjLnBhcmFsbGVsaXplKEFycmF5KDEsIDIsIDMsIDQpKQp2YWwgcmRkMiA9IHJkZC5tYXAoeCA9PiB4ICogMik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val rdd = sc.parallelize(Array(1, 2, 3, 4))
+val rdd2 = rdd.map(x =&gt; x * 2)</pre></div><div class='content'></div><h2>Filter</h2>
+<div class='content'><p>Filtra els elements de l'RDD segons una condició.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIHJkZCA9IHNjLnBhcmFsbGVsaXplKEFycmF5KDEsIDIsIDMsIDQpKQp2YWwgcmRkMiA9IHJkZC5maWx0ZXIoeCA9PiB4ICUgMiA9PSAwKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val rdd = sc.parallelize(Array(1, 2, 3, 4))
+val rdd2 = rdd.filter(x =&gt; x % 2 == 0)</pre></div><div class='content'></div><h2>FlatMap</h2>
+<div class='content'><p>Aplica una funció a cada element de l'RDD i retorna un nou RDD aplanat.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIHJkZCA9IHNjLnBhcmFsbGVsaXplKEFycmF5KDEsIDIsIDMpKQp2YWwgcmRkMiA9IHJkZC5mbGF0TWFwKHggPT4gQXJyYXkoeCwgeCAqIDIpKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val rdd = sc.parallelize(Array(1, 2, 3))
+val rdd2 = rdd.flatMap(x =&gt; Array(x, x * 2))</pre></div><div class='content'></div><h1>Accions</h1>
+<div class='content'><p>Les accions són operacions que retornen un valor al driver program després de realitzar càlculs sobre l'RDD.</p>
+</div><h2>Collect</h2>
+<div class='content'><p>Recupera tots els elements de l'RDD com una col·lecció.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIHJkZCA9IHNjLnBhcmFsbGVsaXplKEFycmF5KDEsIDIsIDMsIDQpKQp2YWwgcmVzdWx0ID0gcmRkLmNvbGxlY3QoKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val rdd = sc.parallelize(Array(1, 2, 3, 4))
+val result = rdd.collect()</pre></div><div class='content'></div><h2>Reduce</h2>
+<div class='content'><p>Agrega els elements de l'RDD utilitzant una funció de reducció.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIHJkZCA9IHNjLnBhcmFsbGVsaXplKEFycmF5KDEsIDIsIDMsIDQpKQp2YWwgc3VtID0gcmRkLnJlZHVjZSgoYSwgYikgPT4gYSArIGIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val rdd = sc.parallelize(Array(1, 2, 3, 4))
+val sum = rdd.reduce((a, b) =&gt; a + b)</pre></div><div class='content'></div><h2>Count</h2>
+<div class='content'><p>Retorna el nombre d'elements de l'RDD.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIHJkZCA9IHNjLnBhcmFsbGVsaXplKEFycmF5KDEsIDIsIDMsIDQpKQp2YWwgY291bnQgPSByZGQuY291bnQoKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val rdd = sc.parallelize(Array(1, 2, 3, 4))
+val count = rdd.count()</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Creació i Transformació d'RDDs</h2>
+<div class='content'><ol>
+<li>Crea un RDD a partir d'una col·lecció de nombres de l'1 al 10.</li>
+<li>Aplica una transformació <code>map</code> per multiplicar cada nombre per 2.</li>
+<li>Filtra els nombres parells.</li>
+<li>Recull els resultats en una col·lecció.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIGRhdGEgPSAxIHRvIDEwCnZhbCByZGQgPSBzYy5wYXJhbGxlbGl6ZShkYXRhKQp2YWwgcmRkMiA9IHJkZC5tYXAoeCA9PiB4ICogMikKdmFsIHJkZDMgPSByZGQyLmZpbHRlcih4ID0+IHggJSAyID09IDApCnZhbCByZXN1bHQgPSByZGQzLmNvbGxlY3QoKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val data = 1 to 10
+val rdd = sc.parallelize(data)
+val rdd2 = rdd.map(x =&gt; x * 2)
+val rdd3 = rdd2.filter(x =&gt; x % 2 == 0)
+val result = rdd3.collect()</pre></div><div class='content'></div><h2>Exercici 2: Operacions d'Acció</h2>
+<div class='content'><ol>
+<li>Crea un RDD a partir d'una col·lecció de nombres de l'1 al 5.</li>
+<li>Calcula la suma de tots els nombres utilitzant <code>reduce</code>.</li>
+<li>Compta el nombre d'elements en l'RDD.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIGRhdGEgPSAxIHRvIDUKdmFsIHJkZCA9IHNjLnBhcmFsbGVsaXplKGRhdGEpCnZhbCBzdW0gPSByZGQucmVkdWNlKChhLCBiKSA9PiBhICsgYikKdmFsIGNvdW50ID0gcmRkLmNvdW50KCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val data = 1 to 5
+val rdd = sc.parallelize(data)
+val sum = rdd.reduce((a, b) =&gt; a + b)
+val count = rdd.count()</pre></div><div class='content'></div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ul>
+<li><strong>No oblidar accions</strong>: Les transformacions són &quot;lazy&quot; i no s'executen fins que no es crida una acció.</li>
+<li><strong>Gestió de memòria</strong>: Assegura't de gestionar adequadament la memòria, especialment quan treballes amb grans volums de dades.</li>
+<li><strong>Particions</strong>: Ajusta el nombre de particions per optimitzar el rendiment. Utilitza <code>repartition</code> o <code>coalesce</code> segons sigui necessari.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Els RDDs són una eina poderosa per al processament de dades distribuïdes en Apache Spark. Comprendre com crear, transformar i accionar sobre RDDs és fonamental per aprofitar al màxim les capacitats de Spark. En el següent tema, explorarem les transformacions i accions en més detall per aprofundir en el processament de dades amb Spark.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='01-04-spark-shell' title="Shell de Spark">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-02-transformations-actions' title="Transformacions i Accions">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

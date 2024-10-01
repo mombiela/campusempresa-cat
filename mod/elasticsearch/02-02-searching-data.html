@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cercant Dades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/elasticsearch/02-02-searching-data" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/elasticsearch/02-02-searching-data" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/elasticsearch/02-02-searching-data" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/elasticsearch/02-02-searching-data" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/elasticsearch/02-02-searching-data" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-indexing-data' title="Indexant Dades">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Cercant Dades</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-updating-deleting-data' title="Actualitzant i Eliminant Dades">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com cercar dades a Elasticsearch. La cerca és una de les funcionalitats més potents d'Elasticsearch, i comprendre com utilitzar-la eficientment és crucial per treure el màxim profit d'aquesta eina.</p>
+</div><h1>1. Introducció a la Cerca a Elasticsearch</h1>
+<div class='content'><p>Elasticsearch utilitza un llenguatge de consulta anomenat Query DSL (Domain Specific Language) per realitzar cerques. Aquest llenguatge permet construir consultes complexes de manera estructurada.</p>
+</div><h2>Conceptes Clau:</h2>
+<div class='content'><ul>
+<li><strong>Índex</strong>: Un conjunt de documents relacionats.</li>
+<li><strong>Document</strong>: La unitat bàsica d'informació que es pot indexar.</li>
+<li><strong>Tipus</strong>: Una categoria o esquema dins d'un índex (deprecated en versions recents).</li>
+<li><strong>Camp</strong>: Una propietat d'un document.</li>
+</ul>
+</div><h1>2. Tipus de Consultes</h1>
+<div class='content'><p>Elasticsearch ofereix diversos tipus de consultes per cercar dades. Les més comunes són:</p>
+</div><h2>2.1. Match Query</h2>
+<div class='content'><p>La consulta <code>match</code> és utilitzada per cercar documents que coincideixin amb un text determinat en un camp específic.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0VUIC9teV9pbmRleC9fc2VhcmNoCnsKICAicXVlcnkiOiB7CiAgICAibWF0Y2giOiB7CiAgICAgICJtZXNzYWdlIjogIkVsYXN0aWNzZWFyY2giCiAgICB9CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GET /my_index/_search
+{
+  &quot;query&quot;: {
+    &quot;match&quot;: {
+      &quot;message&quot;: &quot;Elasticsearch&quot;
+    }
+  }
+}</pre></div><div class='content'></div><h2>2.2. Term Query</h2>
+<div class='content'><p>La consulta <code>term</code> és utilitzada per cercar documents que continguin un valor exacte en un camp.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0VUIC9teV9pbmRleC9fc2VhcmNoCnsKICAicXVlcnkiOiB7CiAgICAidGVybSI6IHsKICAgICAgInN0YXR1cyI6ICJhY3RpdmUiCiAgICB9CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GET /my_index/_search
+{
+  &quot;query&quot;: {
+    &quot;term&quot;: {
+      &quot;status&quot;: &quot;active&quot;
+    }
+  }
+}</pre></div><div class='content'></div><h2>2.3. Range Query</h2>
+<div class='content'><p>La consulta <code>range</code> és utilitzada per cercar documents amb valors dins d'un rang específic.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0VUIC9teV9pbmRleC9fc2VhcmNoCnsKICAicXVlcnkiOiB7CiAgICAicmFuZ2UiOiB7CiAgICAgICJhZ2UiOiB7CiAgICAgICAgImd0ZSI6IDMwLAogICAgICAgICJsdGUiOiA0MAogICAgICB9CiAgICB9CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GET /my_index/_search
+{
+  &quot;query&quot;: {
+    &quot;range&quot;: {
+      &quot;age&quot;: {
+        &quot;gte&quot;: 30,
+        &quot;lte&quot;: 40
+      }
+    }
+  }
+}</pre></div><div class='content'></div><h1>3. Estructura de la Consulta</h1>
+<div class='content'><p>Una consulta bàsica a Elasticsearch té la següent estructura:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0VUIC9pbmRleF9uYW1lL19zZWFyY2gKewogICJxdWVyeSI6IHsKICAgICJxdWVyeV90eXBlIjogewogICAgICAiZmllbGQiOiAidmFsdWUiCiAgICB9CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GET /index_name/_search
+{
+  &quot;query&quot;: {
+    &quot;query_type&quot;: {
+      &quot;field&quot;: &quot;value&quot;
+    }
+  }
+}</pre></div><div class='content'></div><h2>Exemple Pràctic</h2>
+<div class='content'><p>Suposem que tenim un índex anomenat <code>employees</code> amb documents que contenen informació sobre empleats. Volem cercar tots els empleats que treballen en el departament de &quot;vendes&quot;.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0VUIC9lbXBsb3llZXMvX3NlYXJjaAp7CiAgInF1ZXJ5IjogewogICAgIm1hdGNoIjogewogICAgICAiZGVwYXJ0bWVudCI6ICJ2ZW5kZXMiCiAgICB9CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GET /employees/_search
+{
+  &quot;query&quot;: {
+    &quot;match&quot;: {
+      &quot;department&quot;: &quot;vendes&quot;
+    }
+  }
+}</pre></div><div class='content'></div><h1>4. Filtratge de Resultats</h1>
+<div class='content'><p>Elasticsearch permet filtrar resultats per obtenir només els documents que compleixin certs criteris.</p>
+</div><h2>4.1. Bool Query</h2>
+<div class='content'><p>La consulta <code>bool</code> permet combinar múltiples condicions lògiques (must, should, must_not, filter).</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0VUIC9lbXBsb3llZXMvX3NlYXJjaAp7CiAgInF1ZXJ5IjogewogICAgImJvb2wiOiB7CiAgICAgICJtdXN0IjogWwogICAgICAgIHsgIm1hdGNoIjogeyAiZGVwYXJ0bWVudCI6ICJ2ZW5kZXMiIH0gfQogICAgICBdLAogICAgICAiZmlsdGVyIjogWwogICAgICAgIHsgInJhbmdlIjogeyAiYWdlIjogeyAiZ3RlIjogMzAgfSB9IH0KICAgICAgXQogICAgfQogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GET /employees/_search
+{
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;must&quot;: [
+        { &quot;match&quot;: { &quot;department&quot;: &quot;vendes&quot; } }
+      ],
+      &quot;filter&quot;: [
+        { &quot;range&quot;: { &quot;age&quot;: { &quot;gte&quot;: 30 } } }
+      ]
+    }
+  }
+}</pre></div><div class='content'></div><h1>5. Ordenació de Resultats</h1>
+<div class='content'><p>Podem ordenar els resultats de la cerca utilitzant el paràmetre <code>sort</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0VUIC9lbXBsb3llZXMvX3NlYXJjaAp7CiAgInF1ZXJ5IjogewogICAgIm1hdGNoIjogewogICAgICAiZGVwYXJ0bWVudCI6ICJ2ZW5kZXMiCiAgICB9CiAgfSwKICAic29ydCI6IFsKICAgIHsgImFnZSI6ICJhc2MiIH0KICBdCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GET /employees/_search
+{
+  &quot;query&quot;: {
+    &quot;match&quot;: {
+      &quot;department&quot;: &quot;vendes&quot;
+    }
+  },
+  &quot;sort&quot;: [
+    { &quot;age&quot;: &quot;asc&quot; }
+  ]
+}</pre></div><div class='content'></div><h1>6. Paginació de Resultats</h1>
+<div class='content'><p>Elasticsearch permet paginar els resultats utilitzant els paràmetres <code>from</code> i <code>size</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0VUIC9lbXBsb3llZXMvX3NlYXJjaAp7CiAgInF1ZXJ5IjogewogICAgIm1hdGNoIjogewogICAgICAiZGVwYXJ0bWVudCI6ICJ2ZW5kZXMiCiAgICB9CiAgfSwKICAiZnJvbSI6IDAsCiAgInNpemUiOiAxMAp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GET /employees/_search
+{
+  &quot;query&quot;: {
+    &quot;match&quot;: {
+      &quot;department&quot;: &quot;vendes&quot;
+    }
+  },
+  &quot;from&quot;: 0,
+  &quot;size&quot;: 10
+}</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Cerca Bàsica</h2>
+<div class='content'><p>Cerca tots els documents en l'índex <code>products</code> on el camp <code>category</code> sigui &quot;electronics&quot;.</p>
+</div><h2>Exercici 2: Filtratge i Ordenació</h2>
+<div class='content'><p>Cerca tots els documents en l'índex <code>orders</code> on el camp <code>status</code> sigui &quot;completed&quot; i ordena els resultats per la data de creació de manera descendent.</p>
+</div><h2>Exercici 3: Paginació</h2>
+<div class='content'><p>Cerca tots els documents en l'índex <code>customers</code> on el camp <code>city</code> sigui &quot;Barcelona&quot; i mostra els resultats de la segona pàgina amb 5 resultats per pàgina.</p>
+</div><h1>Solucions</h1>
+<div class='content'></div><h2>Solució Exercici 1</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0VUIC9wcm9kdWN0cy9fc2VhcmNoCnsKICAicXVlcnkiOiB7CiAgICAibWF0Y2giOiB7CiAgICAgICJjYXRlZ29yeSI6ICJlbGVjdHJvbmljcyIKICAgIH0KICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GET /products/_search
+{
+  &quot;query&quot;: {
+    &quot;match&quot;: {
+      &quot;category&quot;: &quot;electronics&quot;
+    }
+  }
+}</pre></div><div class='content'></div><h2>Solució Exercici 2</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0VUIC9vcmRlcnMvX3NlYXJjaAp7CiAgInF1ZXJ5IjogewogICAgIm1hdGNoIjogewogICAgICAic3RhdHVzIjogImNvbXBsZXRlZCIKICAgIH0KICB9LAogICJzb3J0IjogWwogICAgeyAiY3JlYXRlZF9hdCI6ICJkZXNjIiB9CiAgXQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GET /orders/_search
+{
+  &quot;query&quot;: {
+    &quot;match&quot;: {
+      &quot;status&quot;: &quot;completed&quot;
+    }
+  },
+  &quot;sort&quot;: [
+    { &quot;created_at&quot;: &quot;desc&quot; }
+  ]
+}</pre></div><div class='content'></div><h2>Solució Exercici 3</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0VUIC9jdXN0b21lcnMvX3NlYXJjaAp7CiAgInF1ZXJ5IjogewogICAgIm1hdGNoIjogewogICAgICAiY2l0eSI6ICJCYXJjZWxvbmEiCiAgICB9CiAgfSwKICAiZnJvbSI6IDUsCiAgInNpemUiOiA1Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GET /customers/_search
+{
+  &quot;query&quot;: {
+    &quot;match&quot;: {
+      &quot;city&quot;: &quot;Barcelona&quot;
+    }
+  },
+  &quot;from&quot;: 5,
+  &quot;size&quot;: 5
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com cercar dades a Elasticsearch utilitzant diverses consultes, filtrar i ordenar resultats, i paginar-los. Aquestes habilitats són fonamentals per treballar amb Elasticsearch de manera eficient. En el proper tema, explorarem com actualitzar i eliminar dades a Elasticsearch.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-indexing-data' title="Indexant Dades">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-updating-deleting-data' title="Actualitzant i Eliminant Dades">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

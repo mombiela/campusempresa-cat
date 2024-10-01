@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seguretat en Bases de Dades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/php/08-05-database-security" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/php/08-05-database-security" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/php/08-05-database-security" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/php/08-05-database-security" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/php/08-05-database-security" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-04-using-pdo' title="Ús de PDO per a la Interacció amb Bases de Dades">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Seguretat en Bases de Dades</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-01-error-exception-handling' title="Gestió d'Errors i Excepcions">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La seguretat en bases de dades és un aspecte crític en el desenvolupament d'aplicacions web. Una base de dades insegura pot ser vulnerable a atacs que poden comprometre la integritat, confidencialitat i disponibilitat de les dades. En aquest tema, explorarem diverses tècniques i millors pràctiques per assegurar les bases de dades en aplicacions PHP.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Injecció SQL</strong>: Un dels atacs més comuns contra bases de dades. Consisteix en inserir codi SQL maliciós a través de les entrades de l'usuari.</li>
+<li><strong>Autenticació i Autorització</strong>: Assegurar que només els usuaris autoritzats puguin accedir a la base de dades i realitzar operacions específiques.</li>
+<li><strong>Xifrat de Dades</strong>: Protegir les dades sensibles mitjançant tècniques de xifrat.</li>
+<li><strong>Còpies de Seguretat</strong>: Realitzar còpies de seguretat regulars per prevenir la pèrdua de dades.</li>
+<li><strong>Auditoria i Monitoratge</strong>: Supervisar l'activitat de la base de dades per detectar i respondre a activitats sospitoses.</li>
+</ol>
+</div><h1>Injecció SQL</h1>
+<div class='content'></div><h2>Què és la Injecció SQL?</h2>
+<div class='content'><p>La injecció SQL és una tècnica d'atac en la qual un atacant pot executar codi SQL arbitrari en la base de dades de l'aplicació. Això es fa manipulant les entrades de l'usuari per alterar les consultes SQL.</p>
+</div><h2>Exemple d'Injecció SQL</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKLy8gRXhlbXBsZSB2dWxuZXJhYmxlIGEgaW5qZWNjacOzIFNRTAokdXNlcm5hbWUgPSAkX1BPU1RbJ3VzZXJuYW1lJ107CiRwYXNzd29yZCA9ICRfUE9TVFsncGFzc3dvcmQnXTsKCiRxdWVyeSA9ICJTRUxFQ1QgKiBGUk9NIHVzZXJzIFdIRVJFIHVzZXJuYW1lID0gJyR1c2VybmFtZScgQU5EIHBhc3N3b3JkID0gJyRwYXNzd29yZCciOwokcmVzdWx0ID0gbXlzcWxpX3F1ZXJ5KCRjb25uLCAkcXVlcnkpOwo/Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+// Exemple vulnerable a injecci&oacute; SQL
+$username = $_POST['username'];
+$password = $_POST['password'];
+
+$query = &quot;SELECT * FROM users WHERE username = '$username' AND password = '$password'&quot;;
+$result = mysqli_query($conn, $query);
+?&gt;</pre></div><div class='content'><p>En aquest exemple, un atacant podria introduir <code>admin' --</code> com a nom d'usuari i qualsevol cosa com a contrasenya per accedir com a administrador.</p>
+</div><h2>Prevenció de la Injecció SQL</h2>
+<div class='content'><h4>Ús de Sentències Preparades</h4>
+<p>Les sentències preparades són una manera segura de gestionar les consultes SQL, ja que separen el codi SQL de les dades de l'usuari.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKLy8gRXhlbXBsZSBzZWd1ciBhbWIgc2VudMOobmNpZXMgcHJlcGFyYWRlcwokc3RtdCA9ICRjb25uLT5wcmVwYXJlKCJTRUxFQ1QgKiBGUk9NIHVzZXJzIFdIRVJFIHVzZXJuYW1lID0gPyBBTkQgcGFzc3dvcmQgPSA/Iik7CiRzdG10LT5iaW5kX3BhcmFtKCJzcyIsICR1c2VybmFtZSwgJHBhc3N3b3JkKTsKJHN0bXQtPmV4ZWN1dGUoKTsKJHJlc3VsdCA9ICRzdG10LT5nZXRfcmVzdWx0KCk7Cj8+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+// Exemple segur amb sent&egrave;ncies preparades
+$stmt = $conn-&gt;prepare(&quot;SELECT * FROM users WHERE username = ? AND password = ?&quot;);
+$stmt-&gt;bind_param(&quot;ss&quot;, $username, $password);
+$stmt-&gt;execute();
+$result = $stmt-&gt;get_result();
+?&gt;</pre></div><div class='content'><h4>Ús de PDO</h4>
+<p>PDO (PHP Data Objects) és una extensió que proporciona una interfície consistent per accedir a bases de dades en PHP.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKLy8gRXhlbXBsZSBzZWd1ciBhbWIgUERPCiRwZG8gPSBuZXcgUERPKCdteXNxbDpob3N0PWxvY2FsaG9zdDtkYm5hbWU9dGVzdGRiJywgJ3VzZXJuYW1lJywgJ3Bhc3N3b3JkJyk7CiRzdG10ID0gJHBkby0+cHJlcGFyZSgiU0VMRUNUICogRlJPTSB1c2VycyBXSEVSRSB1c2VybmFtZSA9IDp1c2VybmFtZSBBTkQgcGFzc3dvcmQgPSA6cGFzc3dvcmQiKTsKJHN0bXQtPmV4ZWN1dGUoWyd1c2VybmFtZScgPT4gJHVzZXJuYW1lLCAncGFzc3dvcmQnID0+ICRwYXNzd29yZF0pOwokcmVzdWx0ID0gJHN0bXQtPmZldGNoKCk7Cj8+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+// Exemple segur amb PDO
+$pdo = new PDO('mysql:host=localhost;dbname=testdb', 'username', 'password');
+$stmt = $pdo-&gt;prepare(&quot;SELECT * FROM users WHERE username = :username AND password = :password&quot;);
+$stmt-&gt;execute(['username' =&gt; $username, 'password' =&gt; $password]);
+$result = $stmt-&gt;fetch();
+?&gt;</pre></div><div class='content'></div><h1>Autenticació i Autorització</h1>
+<div class='content'></div><h2>Autenticació</h2>
+<div class='content'><p>L'autenticació és el procés de verificar la identitat d'un usuari. Això es fa normalment mitjançant noms d'usuari i contrasenyes.</p>
+</div><h2>Autorització</h2>
+<div class='content'><p>L'autorització determina quines accions pot realitzar un usuari autenticat. Això es pot gestionar mitjançant rols i permisos.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKLy8gRXhlbXBsZSBkZSB2ZXJpZmljYWNpw7MgZGUgcm9sCmlmICgkdXNlcl9yb2xlID09ICdhZG1pbicpIHsKICAgIC8vIFBlcm1ldHJlIGFjY8OpcyBhIGZ1bmNpb25hbGl0YXRzIGQnYWRtaW5pc3RyYWRvcgp9IGVsc2UgewogICAgLy8gRGVuZWdhciBhY2PDqXMKfQo/Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+// Exemple de verificaci&oacute; de rol
+if ($user_role == 'admin') {
+    // Permetre acc&eacute;s a funcionalitats d'administrador
+} else {
+    // Denegar acc&eacute;s
+}
+?&gt;</pre></div><div class='content'></div><h1>Xifrat de Dades</h1>
+<div class='content'></div><h2>Xifrat de Contrasenyes</h2>
+<div class='content'><p>Les contrasenyes han de ser xifrades abans de ser emmagatzemades a la base de dades. PHP proporciona la funció <code>password_hash</code> per a aquest propòsit.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKLy8gWGlmcmFyIHVuYSBjb250cmFzZW55YQokaGFzaGVkX3Bhc3N3b3JkID0gcGFzc3dvcmRfaGFzaCgkcGFzc3dvcmQsIFBBU1NXT1JEX0RFRkFVTFQpOwoKLy8gVmVyaWZpY2FyIHVuYSBjb250cmFzZW55YQppZiAocGFzc3dvcmRfdmVyaWZ5KCRwYXNzd29yZCwgJGhhc2hlZF9wYXNzd29yZCkpIHsKICAgIC8vIENvbnRyYXNlbnlhIGNvcnJlY3RhCn0gZWxzZSB7CiAgICAvLyBDb250cmFzZW55YSBpbmNvcnJlY3RhCn0KPz4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+// Xifrar una contrasenya
+$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+// Verificar una contrasenya
+if (password_verify($password, $hashed_password)) {
+    // Contrasenya correcta
+} else {
+    // Contrasenya incorrecta
+}
+?&gt;</pre></div><div class='content'></div><h2>Xifrat de Dades Sensibles</h2>
+<div class='content'><p>Les dades sensibles, com ara números de targetes de crèdit, també han de ser xifrades.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKLy8gWGlmcmFyIGRhZGVzCiRlbmNyeXB0ZWRfZGF0YSA9IG9wZW5zc2xfZW5jcnlwdCgkZGF0YSwgJ2Flcy0yNTYtY2JjJywgJGVuY3J5cHRpb25fa2V5LCAwLCAkaXYpOwoKLy8gRGVzeGlmcmFyIGRhZGVzCiRkZWNyeXB0ZWRfZGF0YSA9IG9wZW5zc2xfZGVjcnlwdCgkZW5jcnlwdGVkX2RhdGEsICdhZXMtMjU2LWNiYycsICRlbmNyeXB0aW9uX2tleSwgMCwgJGl2KTsKPz4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+// Xifrar dades
+$encrypted_data = openssl_encrypt($data, 'aes-256-cbc', $encryption_key, 0, $iv);
+
+// Desxifrar dades
+$decrypted_data = openssl_decrypt($encrypted_data, 'aes-256-cbc', $encryption_key, 0, $iv);
+?&gt;</pre></div><div class='content'></div><h1>Còpies de Seguretat</h1>
+<div class='content'><p>Realitzar còpies de seguretat regulars és essencial per prevenir la pèrdua de dades. Les còpies de seguretat han de ser emmagatzemades en ubicacions segures i han de ser provades regularment per assegurar la seva integritat.</p>
+</div><h1>Auditoria i Monitoratge</h1>
+<div class='content'></div><h2>Auditoria</h2>
+<div class='content'><p>L'auditoria implica registrar les accions realitzades a la base de dades per poder revisar-les posteriorment.</p>
+</div><h2>Monitoratge</h2>
+<div class='content'><p>El monitoratge implica supervisar l'activitat de la base de dades en temps real per detectar i respondre a activitats sospitoses.</p>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Prevenir Injecció SQL</h2>
+<div class='content'><p>Modifica el següent codi per prevenir la injecció SQL utilitzant sentències preparades.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKJHVzZXJuYW1lID0gJF9QT1NUWyd1c2VybmFtZSddOwokcGFzc3dvcmQgPSAkX1BPU1RbJ3Bhc3N3b3JkJ107CgokcXVlcnkgPSAiU0VMRUNUICogRlJPTSB1c2VycyBXSEVSRSB1c2VybmFtZSA9ICckdXNlcm5hbWUnIEFORCBwYXNzd29yZCA9ICckcGFzc3dvcmQnIjsKJHJlc3VsdCA9IG15c3FsaV9xdWVyeSgkY29ubiwgJHF1ZXJ5KTsKPz4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+$username = $_POST['username'];
+$password = $_POST['password'];
+
+$query = &quot;SELECT * FROM users WHERE username = '$username' AND password = '$password'&quot;;
+$result = mysqli_query($conn, $query);
+?&gt;</pre></div><div class='content'><h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKJHVzZXJuYW1lID0gJF9QT1NUWyd1c2VybmFtZSddOwokcGFzc3dvcmQgPSAkX1BPU1RbJ3Bhc3N3b3JkJ107Cgokc3RtdCA9ICRjb25uLT5wcmVwYXJlKCJTRUxFQ1QgKiBGUk9NIHVzZXJzIFdIRVJFIHVzZXJuYW1lID0gPyBBTkQgcGFzc3dvcmQgPSA/Iik7CiRzdG10LT5iaW5kX3BhcmFtKCJzcyIsICR1c2VybmFtZSwgJHBhc3N3b3JkKTsKJHN0bXQtPmV4ZWN1dGUoKTsKJHJlc3VsdCA9ICRzdG10LT5nZXRfcmVzdWx0KCk7Cj8+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+$username = $_POST['username'];
+$password = $_POST['password'];
+
+$stmt = $conn-&gt;prepare(&quot;SELECT * FROM users WHERE username = ? AND password = ?&quot;);
+$stmt-&gt;bind_param(&quot;ss&quot;, $username, $password);
+$stmt-&gt;execute();
+$result = $stmt-&gt;get_result();
+?&gt;</pre></div><div class='content'></div><h2>Exercici 2: Xifrar Contrasenyes</h2>
+<div class='content'><p>Escriu un codi que xifri una contrasenya abans d'emmagatzemar-la a la base de dades i que la verifiqui durant l'inici de sessió.</p>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKLy8gWGlmcmFyIHVuYSBjb250cmFzZW55YQokcGFzc3dvcmQgPSAkX1BPU1RbJ3Bhc3N3b3JkJ107CiRoYXNoZWRfcGFzc3dvcmQgPSBwYXNzd29yZF9oYXNoKCRwYXNzd29yZCwgUEFTU1dPUkRfREVGQVVMVCk7CgovLyBFbW1hZ2F0emVtYXIgJGhhc2hlZF9wYXNzd29yZCBhIGxhIGJhc2UgZGUgZGFkZXMKCi8vIFZlcmlmaWNhciB1bmEgY29udHJhc2VueWEgZHVyYW50IGwnaW5pY2kgZGUgc2Vzc2nDswokaW5wdXRfcGFzc3dvcmQgPSAkX1BPU1RbJ3Bhc3N3b3JkJ107CmlmIChwYXNzd29yZF92ZXJpZnkoJGlucHV0X3Bhc3N3b3JkLCAkaGFzaGVkX3Bhc3N3b3JkKSkgewogICAgLy8gQ29udHJhc2VueWEgY29ycmVjdGEKfSBlbHNlIHsKICAgIC8vIENvbnRyYXNlbnlhIGluY29ycmVjdGEKfQo/Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+// Xifrar una contrasenya
+$password = $_POST['password'];
+$hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+// Emmagatzemar $hashed_password a la base de dades
+
+// Verificar una contrasenya durant l'inici de sessi&oacute;
+$input_password = $_POST['password'];
+if (password_verify($input_password, $hashed_password)) {
+    // Contrasenya correcta
+} else {
+    // Contrasenya incorrecta
+}
+?&gt;</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>La seguretat en bases de dades és fonamental per protegir les dades sensibles i mantenir la integritat de les aplicacions web. Mitjançant la implementació de tècniques com l'ús de sentències preparades, l'autenticació i autorització adequades, el xifrat de dades i la realització de còpies de seguretat regulars, podem reduir significativament els riscos de seguretat. A més, l'auditoria i el monitoratge continuat ens ajuden a detectar i respondre a activitats sospitoses de manera oportuna.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-04-using-pdo' title="Ús de PDO per a la Interacció amb Bases de Dades">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-01-error-exception-handling' title="Gestió d'Errors i Excepcions">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regressió logística</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/machine_learning/04-02-regresion-logistica" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/machine_learning/04-02-regresion-logistica" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/machine_learning/04-02-logistic-regression" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/machine_learning/04-02-regresion-logistica" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/machine_learning/04-02-regresion-logistica" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-regresion-lineal' title="Regressió lineal">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Regressió logística</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-arboles-decision' title="Arbres de decisió">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>La regressió logística és un algorisme de Machine Learning supervisat utilitzat principalment per a tasques de classificació binària. A diferència de la regressió lineal, que es fa servir per predir valors continus, la regressió logística prediu la probabilitat que una instància pertanyi a una de dues classes possibles.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Funció Sigmoide</strong>: La funció sigmoide és una funció matemàtica que transforma qualsevol valor real en un valor entre 0 i 1. És la base de la regressió logística.</li>
+<li><strong>Logit</strong>: És la funció logarítmica de les probabilitats, també coneguda com la funció log-odds.</li>
+<li><strong>Versemblança</strong>: És una mesura de quina tan bé el model prediu les dades observades. En la regressió logística, s'utilitza la funció de versemblança per ajustar els paràmetres del model.</li>
+</ol>
+</div><h1>Funció Sigmoide</h1>
+<div class='content'><p>La funció sigmoide es defineix com:</p>
+<p>\[ \sigma(z) = \frac{1}{1 + e^{-z}} \]</p>
+<p>On \( z \) és una combinació lineal de les característiques d'entrada.</p>
+</div><h1>Fórmula de la Regressió Logística</h1>
+<div class='content'><p>La fórmula de la regressió logística és:</p>
+<p>\[ P(Y=1|X) = \sigma(\beta_0 + \beta_1X_1 + \beta_2X_2 + \ldots + \beta_nX_n) \]</p>
+<p>On:</p>
+<ul>
+<li>\( P(Y=1|X) \) és la probabilitat que la sortida \( Y \) sigui 1 donades les característiques \( X \).</li>
+<li>\( \beta_0 \) és la intersecció.</li>
+<li>\( \beta_1, \beta_2, \ldots, \beta_n \) són els coeficients de les característiques \( X_1, X_2, \ldots, X_n \).</li>
+</ul>
+</div><h1>Exemple Pràctic</h1>
+<div class='content'></div><h2>Dataset</h2>
+<div class='content'><p>Utilitzarem un dataset fictici per predir si un estudiant serà admès a una universitat en funció de la seva puntuació en dos exàmens.</p>
+</div><h2>Codi en Python</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG51bXB5IGFzIG5wCmltcG9ydCBwYW5kYXMgYXMgcGQKaW1wb3J0IG1hdHBsb3RsaWIucHlwbG90IGFzIHBsdApmcm9tIHNrbGVhcm4ubW9kZWxfc2VsZWN0aW9uIGltcG9ydCB0cmFpbl90ZXN0X3NwbGl0CmZyb20gc2tsZWFybi5saW5lYXJfbW9kZWwgaW1wb3J0IExvZ2lzdGljUmVncmVzc2lvbgpmcm9tIHNrbGVhcm4ubWV0cmljcyBpbXBvcnQgYWNjdXJhY3lfc2NvcmUsIGNvbmZ1c2lvbl9tYXRyaXgsIGNsYXNzaWZpY2F0aW9uX3JlcG9ydAoKIyBHZW5lcmFyIGRhZGVzIGZpY3TDrWNpZXMKZGF0YSA9IHsKICAgICdFeGFtMSc6IFszNCwgNDUsIDUwLCA2MCwgNzAsIDgwLCA4NSwgOTAsIDk1LCAxMDBdLAogICAgJ0V4YW0yJzogWzc4LCA4MiwgODUsIDg4LCA5MCwgOTIsIDk0LCA5NiwgOTgsIDEwMF0sCiAgICAnQWRtaXR0ZWQnOiBbMCwgMCwgMCwgMCwgMSwgMSwgMSwgMSwgMSwgMV0KfQoKZGYgPSBwZC5EYXRhRnJhbWUoZGF0YSkKCiMgRGl2aWRpciBsZXMgZGFkZXMgZW4gY2FyYWN0ZXLDrXN0aXF1ZXMgaSBldGlxdWV0ZXMKWCA9IGRmW1snRXhhbTEnLCAnRXhhbTInXV0KeSA9IGRmWydBZG1pdHRlZCddCgojIERpdmlkaXIgbGVzIGRhZGVzIGVuIGNvbmp1bnRzIGQnZW50cmVuYW1lbnQgaSBwcm92YQpYX3RyYWluLCBYX3Rlc3QsIHlfdHJhaW4sIHlfdGVzdCA9IHRyYWluX3Rlc3Rfc3BsaXQoWCwgeSwgdGVzdF9zaXplPTAuMiwgcmFuZG9tX3N0YXRlPTQyKQoKIyBDcmVhciBlbCBtb2RlbCBkZSByZWdyZXNzacOzIGxvZ8Otc3RpY2EKbW9kZWwgPSBMb2dpc3RpY1JlZ3Jlc3Npb24oKQoKIyBFbnRyZW5hciBlbCBtb2RlbAptb2RlbC5maXQoWF90cmFpbiwgeV90cmFpbikKCiMgUHJlZGlyIGFtYiBlbCBtb2RlbAp5X3ByZWQgPSBtb2RlbC5wcmVkaWN0KFhfdGVzdCkKCiMgQXZhbHVhciBlbCBtb2RlbAphY2N1cmFjeSA9IGFjY3VyYWN5X3Njb3JlKHlfdGVzdCwgeV9wcmVkKQpjb25mX21hdHJpeCA9IGNvbmZ1c2lvbl9tYXRyaXgoeV90ZXN0LCB5X3ByZWQpCmNsYXNzX3JlcG9ydCA9IGNsYXNzaWZpY2F0aW9uX3JlcG9ydCh5X3Rlc3QsIHlfcHJlZCkKCnByaW50KGYnQWNjdXJhY3k6IHthY2N1cmFjeX0nKQpwcmludCgnQ29uZnVzaW9uIE1hdHJpeDonKQpwcmludChjb25mX21hdHJpeCkKcHJpbnQoJ0NsYXNzaWZpY2F0aW9uIFJlcG9ydDonKQpwcmludChjbGFzc19yZXBvcnQp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+# Generar dades fict&iacute;cies
+data = {
+    'Exam1': [34, 45, 50, 60, 70, 80, 85, 90, 95, 100],
+    'Exam2': [78, 82, 85, 88, 90, 92, 94, 96, 98, 100],
+    'Admitted': [0, 0, 0, 0, 1, 1, 1, 1, 1, 1]
+}
+
+df = pd.DataFrame(data)
+
+# Dividir les dades en caracter&iacute;stiques i etiquetes
+X = df[['Exam1', 'Exam2']]
+y = df['Admitted']
+
+# Dividir les dades en conjunts d'entrenament i prova
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Crear el model de regressi&oacute; log&iacute;stica
+model = LogisticRegression()
+
+# Entrenar el model
+model.fit(X_train, y_train)
+
+# Predir amb el model
+y_pred = model.predict(X_test)
+
+# Avaluar el model
+accuracy = accuracy_score(y_test, y_pred)
+conf_matrix = confusion_matrix(y_test, y_pred)
+class_report = classification_report(y_test, y_pred)
+
+print(f'Accuracy: {accuracy}')
+print('Confusion Matrix:')
+print(conf_matrix)
+print('Classification Report:')
+print(class_report)</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li><strong>Importació de Llibreries</strong>: Importem les llibreries necessàries per a la manipulació de dades, visualització i creació del model.</li>
+<li><strong>Generació de Dades</strong>: Creem un dataset fictici amb puntuacions d'exàmens i si l'estudiant ha estat admès o no.</li>
+<li><strong>Divisió de Dades</strong>: Dividim les dades en característiques (X) i etiquetes (y), i després en conjunts d'entrenament i prova.</li>
+<li><strong>Creació del Model</strong>: Utilitzem <code>LogisticRegression</code> de <code>sklearn</code> per crear el model.</li>
+<li><strong>Entrenament del Model</strong>: Entrenem el model amb les dades d'entrenament.</li>
+<li><strong>Predicció i Avaluació</strong>: Prediem les etiquetes per al conjunt de prova i avaluem el model utilitzant mètriques com l'accuracy, la matriu de confusió i l'informe de classificació.</li>
+</ol>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Enunciat</h2>
+<div class='content'><p>Utilitza el mateix dataset fictici per entrenar un model de regressió logística que prediu si un estudiant serà admès a la universitat en funció de la seva puntuació en tres exàmens. Afegeix una nova columna 'Exam3' amb puntuacions fictícies i repeteix el procés d'entrenament i avaluació del model.</p>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBBZmVnaXIgdW5hIG5vdmEgY29sdW1uYSAnRXhhbTMnCmRmWydFeGFtMyddID0gWzY1LCA3MCwgNzUsIDgwLCA4NSwgOTAsIDkyLCA5NCwgOTYsIDk4XQoKIyBEaXZpZGlyIGxlcyBkYWRlcyBlbiBjYXJhY3RlcsOtc3RpcXVlcyBpIGV0aXF1ZXRlcwpYID0gZGZbWydFeGFtMScsICdFeGFtMicsICdFeGFtMyddXQp5ID0gZGZbJ0FkbWl0dGVkJ10KCiMgRGl2aWRpciBsZXMgZGFkZXMgZW4gY29uanVudHMgZCdlbnRyZW5hbWVudCBpIHByb3ZhClhfdHJhaW4sIFhfdGVzdCwgeV90cmFpbiwgeV90ZXN0ID0gdHJhaW5fdGVzdF9zcGxpdChYLCB5LCB0ZXN0X3NpemU9MC4yLCByYW5kb21fc3RhdGU9NDIpCgojIENyZWFyIGVsIG1vZGVsIGRlIHJlZ3Jlc3Npw7MgbG9nw61zdGljYQptb2RlbCA9IExvZ2lzdGljUmVncmVzc2lvbigpCgojIEVudHJlbmFyIGVsIG1vZGVsCm1vZGVsLmZpdChYX3RyYWluLCB5X3RyYWluKQoKIyBQcmVkaXIgYW1iIGVsIG1vZGVsCnlfcHJlZCA9IG1vZGVsLnByZWRpY3QoWF90ZXN0KQoKIyBBdmFsdWFyIGVsIG1vZGVsCmFjY3VyYWN5ID0gYWNjdXJhY3lfc2NvcmUoeV90ZXN0LCB5X3ByZWQpCmNvbmZfbWF0cml4ID0gY29uZnVzaW9uX21hdHJpeCh5X3Rlc3QsIHlfcHJlZCkKY2xhc3NfcmVwb3J0ID0gY2xhc3NpZmljYXRpb25fcmVwb3J0KHlfdGVzdCwgeV9wcmVkKQoKcHJpbnQoZidBY2N1cmFjeToge2FjY3VyYWN5fScpCnByaW50KCdDb25mdXNpb24gTWF0cml4OicpCnByaW50KGNvbmZfbWF0cml4KQpwcmludCgnQ2xhc3NpZmljYXRpb24gUmVwb3J0OicpCnByaW50KGNsYXNzX3JlcG9ydCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Afegir una nova columna 'Exam3'
+df['Exam3'] = [65, 70, 75, 80, 85, 90, 92, 94, 96, 98]
+
+# Dividir les dades en caracter&iacute;stiques i etiquetes
+X = df[['Exam1', 'Exam2', 'Exam3']]
+y = df['Admitted']
+
+# Dividir les dades en conjunts d'entrenament i prova
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Crear el model de regressi&oacute; log&iacute;stica
+model = LogisticRegression()
+
+# Entrenar el model
+model.fit(X_train, y_train)
+
+# Predir amb el model
+y_pred = model.predict(X_test)
+
+# Avaluar el model
+accuracy = accuracy_score(y_test, y_pred)
+conf_matrix = confusion_matrix(y_test, y_pred)
+class_report = classification_report(y_test, y_pred)
+
+print(f'Accuracy: {accuracy}')
+print('Confusion Matrix:')
+print(conf_matrix)
+print('Classification Report:')
+print(class_report)</pre></div><div class='content'></div><h1>Errors Comuns</h1>
+<div class='content'><ol>
+<li><strong>No Normalitzar les Dades</strong>: La regressió logística pot ser sensible a les escales de les característiques. És recomanable normalitzar les dades abans d'entrenar el model.</li>
+<li><strong>Sobreajustament</strong>: Utilitzar massa característiques pot portar a sobreajustar el model. Utilitza tècniques com la validació creuada per evitar-ho.</li>
+<li><strong>Interpretació Incorrecta de les Probabilitats</strong>: Recorda que la sortida de la regressió logística és una probabilitat. Cal establir un llindar per decidir la classe final.</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La regressió logística és una eina poderosa per a tasques de classificació binària. Comprendre els seus fonaments i saber com implementar-la correctament és essencial per a qualsevol professional de Machine Learning. Amb la pràctica i l'experimentació, es poden obtenir models precisos i útils per a una àmplia varietat d'aplicacions.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-regresion-lineal' title="Regressió lineal">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-arboles-decision' title="Arbres de decisió">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

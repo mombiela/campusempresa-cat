@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xarxes i Multijugador</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/unreal_engine/06-03-networking-and-multiplayer" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/unreal_engine/06-03-xarxes-i-multijugador" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/unreal_engine/06-03-networking-and-multiplayer" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/unreal_engine/06-03-xarxes-i-multijugador" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/unreal_engine/06-03-xarxes-i-multijugador" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-multithreading' title="Multithreading">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Xarxes i Multijugador</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-tecniques-d-optimitzacio' title="Tècniques d'Optimització">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem com implementar funcionalitats de xarxa i multijugador en Unreal Engine utilitzant C++. Aprendrem els conceptes bàsics de la programació de xarxes, com configurar un projecte per a multijugador i com gestionar la comunicació entre clients i servidors.</p>
+</div><h1>Conceptes Bàsics de Xarxes</h1>
+<div class='content'><p>Abans de començar a programar, és important entendre alguns conceptes bàsics de xarxes:</p>
+<ul>
+<li><strong>Client-Servidor</strong>: En un joc multijugador, el servidor és responsable de gestionar la lògica del joc i sincronitzar els estats entre els diferents clients (jugadors).</li>
+<li><strong>Replicació</strong>: La replicació és el procés de sincronitzar dades entre el servidor i els clients.</li>
+<li><strong>RPC (Remote Procedure Call)</strong>: Les RPC permeten que els clients i el servidor cridin funcions remotes entre si.</li>
+</ul>
+</div><h1>Configurant el Projecte per a Multijugador</h1>
+<div class='content'></div><h2>Pas 1: Habilitar el Suport de Xarxes</h2>
+<div class='content'><ol>
+<li>Obre el teu projecte a Unreal Engine.</li>
+<li>Ves a <code>Edit</code> &gt; <code>Project Settings</code>.</li>
+<li>A la secció <code>Engine</code> &gt; <code>Network</code>, assegura't que <code>Enable Multiplayer</code> estigui activat.</li>
+</ol>
+</div><h2>Pas 2: Configurar el Mode de Joc</h2>
+<div class='content'><ol>
+<li>Crea una nova classe de C++ derivada de <code>AGameModeBase</code>.</li>
+<li>Configura el mode de joc per utilitzar la nova classe.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gTXlHYW1lTW9kZS5oCiNwcmFnbWEgb25jZQoKI2luY2x1ZGUgIkNvcmVNaW5pbWFsLmgiCiNpbmNsdWRlICJHYW1lRnJhbWV3b3JrL0dhbWVNb2RlQmFzZS5oIgojaW5jbHVkZSAiTXlHYW1lTW9kZS5nZW5lcmF0ZWQuaCIKClVDTEFTUygpCmNsYXNzIE1ZUFJPSkVDVF9BUEkgQU15R2FtZU1vZGUgOiBwdWJsaWMgQUdhbWVNb2RlQmFzZQp7CiAgICBHRU5FUkFURURfQk9EWSgpCgpwdWJsaWM6CiAgICBBTXlHYW1lTW9kZSgpOwp9Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// MyGameMode.h
+#pragma once
+
+#include &quot;CoreMinimal.h&quot;
+#include &quot;GameFramework/GameModeBase.h&quot;
+#include &quot;MyGameMode.generated.h&quot;
+
+UCLASS()
+class MYPROJECT_API AMyGameMode : public AGameModeBase
+{
+    GENERATED_BODY()
+
+public:
+    AMyGameMode();
+};</pre></div><div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gTXlHYW1lTW9kZS5jcHAKI2luY2x1ZGUgIk15R2FtZU1vZGUuaCIKCkFNeUdhbWVNb2RlOjpBTXlHYW1lTW9kZSgpCnsKICAgIC8vIENvbmZpZ3VyYSBlbCBtb2RlIGRlIGpvYyBwZXIgYSBtdWx0aWp1Z2Fkb3IKICAgIGJVc2VTZWFtbGVzc1RyYXZlbCA9IHRydWU7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// MyGameMode.cpp
+#include &quot;MyGameMode.h&quot;
+
+AMyGameMode::AMyGameMode()
+{
+    // Configura el mode de joc per a multijugador
+    bUseSeamlessTravel = true;
+}</pre></div><div class='content'></div><h1>Implementant la Replicació</h1>
+<div class='content'></div><h2>Pas 1: Crear una Classe de Jugador</h2>
+<div class='content'><ol>
+<li>Crea una nova classe de C++ derivada de <code>ACharacter</code>.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gTXlDaGFyYWN0ZXIuaAojcHJhZ21hIG9uY2UKCiNpbmNsdWRlICJDb3JlTWluaW1hbC5oIgojaW5jbHVkZSAiR2FtZUZyYW1ld29yay9DaGFyYWN0ZXIuaCIKI2luY2x1ZGUgIk15Q2hhcmFjdGVyLmdlbmVyYXRlZC5oIgoKVUNMQVNTKCkKY2xhc3MgTVlQUk9KRUNUX0FQSSBBTXlDaGFyYWN0ZXIgOiBwdWJsaWMgQUNoYXJhY3Rlcgp7CiAgICBHRU5FUkFURURfQk9EWSgpCgpwdWJsaWM6CiAgICBBTXlDaGFyYWN0ZXIoKTsKCnByb3RlY3RlZDoKICAgIHZpcnR1YWwgdm9pZCBHZXRMaWZldGltZVJlcGxpY2F0ZWRQcm9wcyhUQXJyYXk8RkxpZmV0aW1lUHJvcGVydHk+JiBPdXRMaWZldGltZVByb3BzKSBjb25zdCBvdmVycmlkZTsKCnB1YmxpYzoKICAgIFVQUk9QRVJUWShSZXBsaWNhdGVkLCBWaXNpYmxlQW55d2hlcmUsIEJsdWVwcmludFJlYWRPbmx5LCBDYXRlZ29yeSA9ICJIZWFsdGgiKQogICAgZmxvYXQgSGVhbHRoOwp9Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// MyCharacter.h
+#pragma once
+
+#include &quot;CoreMinimal.h&quot;
+#include &quot;GameFramework/Character.h&quot;
+#include &quot;MyCharacter.generated.h&quot;
+
+UCLASS()
+class MYPROJECT_API AMyCharacter : public ACharacter
+{
+    GENERATED_BODY()
+
+public:
+    AMyCharacter();
+
+protected:
+    virtual void GetLifetimeReplicatedProps(TArray&lt;FLifetimeProperty&gt;&amp; OutLifetimeProps) const override;
+
+public:
+    UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = &quot;Health&quot;)
+    float Health;
+};</pre></div><div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gTXlDaGFyYWN0ZXIuY3BwCiNpbmNsdWRlICJNeUNoYXJhY3Rlci5oIgojaW5jbHVkZSAiTmV0L1VucmVhbE5ldHdvcmsuaCIKCkFNeUNoYXJhY3Rlcjo6QU15Q2hhcmFjdGVyKCkKewogICAgLy8gSGFiaWxpdGFyIGxhIHJlcGxpY2FjacOzCiAgICBiUmVwbGljYXRlcyA9IHRydWU7CiAgICBIZWFsdGggPSAxMDAuMGY7Cn0KCnZvaWQgQU15Q2hhcmFjdGVyOjpHZXRMaWZldGltZVJlcGxpY2F0ZWRQcm9wcyhUQXJyYXk8RkxpZmV0aW1lUHJvcGVydHk+JiBPdXRMaWZldGltZVByb3BzKSBjb25zdAp7CiAgICBTdXBlcjo6R2V0TGlmZXRpbWVSZXBsaWNhdGVkUHJvcHMoT3V0TGlmZXRpbWVQcm9wcyk7CgogICAgLy8gUmVwbGljYXIgbGEgcHJvcGlldGF0IGRlIHNhbHV0CiAgICBET1JFUExJRkVUSU1FKEFNeUNoYXJhY3RlciwgSGVhbHRoKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// MyCharacter.cpp
+#include &quot;MyCharacter.h&quot;
+#include &quot;Net/UnrealNetwork.h&quot;
+
+AMyCharacter::AMyCharacter()
+{
+    // Habilitar la replicaci&oacute;
+    bReplicates = true;
+    Health = 100.0f;
+}
+
+void AMyCharacter::GetLifetimeReplicatedProps(TArray&lt;FLifetimeProperty&gt;&amp; OutLifetimeProps) const
+{
+    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+    // Replicar la propietat de salut
+    DOREPLIFETIME(AMyCharacter, Health);
+}</pre></div><div class='content'></div><h2>Pas 2: Implementar RPCs</h2>
+<div class='content'><ol>
+<li>Afegir una funció RPC per danyar el jugador.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gTXlDaGFyYWN0ZXIuaApVRlVOQ1RJT04oU2VydmVyLCBSZWxpYWJsZSwgV2l0aFZhbGlkYXRpb24pCnZvaWQgU2VydmVyVGFrZURhbWFnZShmbG9hdCBEYW1hZ2UpOwoKdm9pZCBTZXJ2ZXJUYWtlRGFtYWdlX0ltcGxlbWVudGF0aW9uKGZsb2F0IERhbWFnZSk7CmJvb2wgU2VydmVyVGFrZURhbWFnZV9WYWxpZGF0ZShmbG9hdCBEYW1hZ2UpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// MyCharacter.h
+UFUNCTION(Server, Reliable, WithValidation)
+void ServerTakeDamage(float Damage);
+
+void ServerTakeDamage_Implementation(float Damage);
+bool ServerTakeDamage_Validate(float Damage);</pre></div><div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gTXlDaGFyYWN0ZXIuY3BwCnZvaWQgQU15Q2hhcmFjdGVyOjpTZXJ2ZXJUYWtlRGFtYWdlX0ltcGxlbWVudGF0aW9uKGZsb2F0IERhbWFnZSkKewogICAgSGVhbHRoIC09IERhbWFnZTsKfQoKYm9vbCBBTXlDaGFyYWN0ZXI6OlNlcnZlclRha2VEYW1hZ2VfVmFsaWRhdGUoZmxvYXQgRGFtYWdlKQp7CiAgICAvLyBWYWxpZGFyIGVsIGRhbnkgKHBlciBleGVtcGxlLCBhc3NlZ3VyYXItc2UgcXVlIG5vIMOpcyBuZWdhdGl1KQogICAgcmV0dXJuIERhbWFnZSA+IDA7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// MyCharacter.cpp
+void AMyCharacter::ServerTakeDamage_Implementation(float Damage)
+{
+    Health -= Damage;
+}
+
+bool AMyCharacter::ServerTakeDamage_Validate(float Damage)
+{
+    // Validar el dany (per exemple, assegurar-se que no &eacute;s negatiu)
+    return Damage &gt; 0;
+}</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici 1: Crear un Sistema de Danys Multijugador</h2>
+<div class='content'><ol>
+<li>Crea una nova classe de C++ derivada de <code>AActor</code> anomenada <code>AWeapon</code>.</li>
+<li>Implementa una funció que danyi els jugadors quan són colpejats per l'arma.</li>
+<li>Assegura't que la funció utilitzi RPCs per replicar el dany als clients.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gV2VhcG9uLmgKI3ByYWdtYSBvbmNlCgojaW5jbHVkZSAiQ29yZU1pbmltYWwuaCIKI2luY2x1ZGUgIkdhbWVGcmFtZXdvcmsvQWN0b3IuaCIKI2luY2x1ZGUgIldlYXBvbi5nZW5lcmF0ZWQuaCIKClVDTEFTUygpCmNsYXNzIE1ZUFJPSkVDVF9BUEkgQVdlYXBvbiA6IHB1YmxpYyBBQWN0b3IKewogICAgR0VORVJBVEVEX0JPRFkoKQoKcHVibGljOgogICAgQVdlYXBvbigpOwoKcHJvdGVjdGVkOgogICAgdmlydHVhbCB2b2lkIEJlZ2luUGxheSgpIG92ZXJyaWRlOwoKcHVibGljOgogICAgVUZVTkNUSU9OKFNlcnZlciwgUmVsaWFibGUsIFdpdGhWYWxpZGF0aW9uKQogICAgdm9pZCBTZXJ2ZXJEZWFsRGFtYWdlKEFBY3RvciogSGl0QWN0b3IsIGZsb2F0IERhbWFnZSk7CgogICAgdm9pZCBTZXJ2ZXJEZWFsRGFtYWdlX0ltcGxlbWVudGF0aW9uKEFBY3RvciogSGl0QWN0b3IsIGZsb2F0IERhbWFnZSk7CiAgICBib29sIFNlcnZlckRlYWxEYW1hZ2VfVmFsaWRhdGUoQUFjdG9yKiBIaXRBY3RvciwgZmxvYXQgRGFtYWdlKTsKfTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Weapon.h
+#pragma once
+
+#include &quot;CoreMinimal.h&quot;
+#include &quot;GameFramework/Actor.h&quot;
+#include &quot;Weapon.generated.h&quot;
+
+UCLASS()
+class MYPROJECT_API AWeapon : public AActor
+{
+    GENERATED_BODY()
+
+public:
+    AWeapon();
+
+protected:
+    virtual void BeginPlay() override;
+
+public:
+    UFUNCTION(Server, Reliable, WithValidation)
+    void ServerDealDamage(AActor* HitActor, float Damage);
+
+    void ServerDealDamage_Implementation(AActor* HitActor, float Damage);
+    bool ServerDealDamage_Validate(AActor* HitActor, float Damage);
+};</pre></div><div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gV2VhcG9uLmNwcAojaW5jbHVkZSAiV2VhcG9uLmgiCiNpbmNsdWRlICJNeUNoYXJhY3Rlci5oIgojaW5jbHVkZSAiTmV0L1VucmVhbE5ldHdvcmsuaCIKCkFXZWFwb246OkFXZWFwb24oKQp7CiAgICBiUmVwbGljYXRlcyA9IHRydWU7Cn0KCnZvaWQgQVdlYXBvbjo6QmVnaW5QbGF5KCkKewogICAgU3VwZXI6OkJlZ2luUGxheSgpOwp9Cgp2b2lkIEFXZWFwb246OlNlcnZlckRlYWxEYW1hZ2VfSW1wbGVtZW50YXRpb24oQUFjdG9yKiBIaXRBY3RvciwgZmxvYXQgRGFtYWdlKQp7CiAgICBpZiAoQU15Q2hhcmFjdGVyKiBIaXRDaGFyYWN0ZXIgPSBDYXN0PEFNeUNoYXJhY3Rlcj4oSGl0QWN0b3IpKQogICAgewogICAgICAgIEhpdENoYXJhY3Rlci0+U2VydmVyVGFrZURhbWFnZShEYW1hZ2UpOwogICAgfQp9Cgpib29sIEFXZWFwb246OlNlcnZlckRlYWxEYW1hZ2VfVmFsaWRhdGUoQUFjdG9yKiBIaXRBY3RvciwgZmxvYXQgRGFtYWdlKQp7CiAgICByZXR1cm4gRGFtYWdlID4gMDsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Weapon.cpp
+#include &quot;Weapon.h&quot;
+#include &quot;MyCharacter.h&quot;
+#include &quot;Net/UnrealNetwork.h&quot;
+
+AWeapon::AWeapon()
+{
+    bReplicates = true;
+}
+
+void AWeapon::BeginPlay()
+{
+    Super::BeginPlay();
+}
+
+void AWeapon::ServerDealDamage_Implementation(AActor* HitActor, float Damage)
+{
+    if (AMyCharacter* HitCharacter = Cast&lt;AMyCharacter&gt;(HitActor))
+    {
+        HitCharacter-&gt;ServerTakeDamage(Damage);
+    }
+}
+
+bool AWeapon::ServerDealDamage_Validate(AActor* HitActor, float Damage)
+{
+    return Damage &gt; 0;
+}</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après els conceptes bàsics de la programació de xarxes en Unreal Engine, com configurar un projecte per a multijugador, i com implementar la replicació i les RPCs. També hem creat un sistema de danys multijugador com a exercici pràctic. Amb aquests coneixements, estàs preparat per començar a desenvolupar jocs multijugador complexos en Unreal Engine.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-multithreading' title="Multithreading">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-tecniques-d-optimitzacio' title="Tècniques d'Optimització">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

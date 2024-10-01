@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creant controladors REST</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/springboot/03-02-creating-rest-controllers" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/springboot/03-02-creating-rest-controllers" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/springboot/03-02-creating-rest-controllers" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/springboot/03-02-creating-rest-controllers" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/springboot/03-02-creating-rest-controllers" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-01-introduction-restful-web-services' title="Introducció als serveis web RESTful">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Creant controladors REST</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-03-handling-http-methods' title="Gestionant mètodes HTTP">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a crear controladors REST utilitzant Spring Boot. Els controladors REST són components essencials en una aplicació web que permeten gestionar les sol·licituds HTTP i retornar respostes adequades. A través d'aquest mòdul, veurem com definir rutes, gestionar diferents mètodes HTTP i retornar dades en format JSON.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre què és un controlador REST.</li>
+<li>Aprendre a crear controladors REST amb Spring Boot.</li>
+<li>Gestionar diferents mètodes HTTP (GET, POST, PUT, DELETE).</li>
+<li>Retornar respostes en format JSON.</li>
+</ul>
+</div><h1>1. Què és un controlador REST?</h1>
+<div class='content'><p>Un controlador REST és una classe en una aplicació Spring Boot que gestiona les sol·licituds HTTP entrants i retorna respostes HTTP. Utilitza anotacions per definir rutes i mètodes HTTP específics.</p>
+</div><h1>2. Creant un controlador REST bàsic</h1>
+<div class='content'></div><h2>2.1. Definint la classe del controlador</h2>
+<div class='content'><p>Primer, crearem una classe que actuarà com a controlador. Utilitzarem l'anotació <code>@RestController</code> per indicar que aquesta classe és un controlador REST.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsud2ViLmJpbmQuYW5ub3RhdGlvbi5HZXRNYXBwaW5nOwppbXBvcnQgb3JnLnNwcmluZ2ZyYW1ld29yay53ZWIuYmluZC5hbm5vdGF0aW9uLlJlcXVlc3RNYXBwaW5nOwppbXBvcnQgb3JnLnNwcmluZ2ZyYW1ld29yay53ZWIuYmluZC5hbm5vdGF0aW9uLlJlc3RDb250cm9sbGVyOwoKQFJlc3RDb250cm9sbGVyCkBSZXF1ZXN0TWFwcGluZygiL2FwaSIpCnB1YmxpYyBjbGFzcyBNeVJlc3RDb250cm9sbGVyIHsKCiAgICBAR2V0TWFwcGluZygiL2hlbGxvIikKICAgIHB1YmxpYyBTdHJpbmcgc2F5SGVsbG8oKSB7CiAgICAgICAgcmV0dXJuICJIZWxsbywgV29ybGQhIjsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(&quot;/api&quot;)
+public class MyRestController {
+
+    @GetMapping(&quot;/hello&quot;)
+    public String sayHello() {
+        return &quot;Hello, World!&quot;;
+    }
+}</pre></div><div class='content'></div><h2>Explicació del codi</h2>
+<div class='content'><ul>
+<li><code>@RestController</code>: Indica que aquesta classe és un controlador REST.</li>
+<li><code>@RequestMapping(&quot;/api&quot;)</code>: Defineix el prefix de la ruta per a tots els mètodes dins d'aquesta classe.</li>
+<li><code>@GetMapping(&quot;/hello&quot;)</code>: Defineix una ruta específica per a les sol·licituds GET a <code>/api/hello</code>.</li>
+<li><code>sayHello()</code>: Mètode que gestiona la sol·licitud GET i retorna una cadena de text.</li>
+</ul>
+</div><h2>2.2. Executant l'aplicació</h2>
+<div class='content'><p>Per executar l'aplicació, assegura't que tens configurat el teu entorn de desenvolupament i que el servidor està en funcionament. Després, pots accedir a <code>http://localhost:8080/api/hello</code> des del teu navegador o eines com Postman per veure la resposta &quot;Hello, World!&quot;.</p>
+</div><h1>3. Gestionant diferents mètodes HTTP</h1>
+<div class='content'></div><h2>3.1. Mètode GET</h2>
+<div class='content'><p>El mètode GET s'utilitza per obtenir dades del servidor. Ja hem vist un exemple bàsic anteriorment. Ara, afegirem un mètode GET que retorna un objecte JSON.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsud2ViLmJpbmQuYW5ub3RhdGlvbi5HZXRNYXBwaW5nOwppbXBvcnQgb3JnLnNwcmluZ2ZyYW1ld29yay53ZWIuYmluZC5hbm5vdGF0aW9uLlJlcXVlc3RNYXBwaW5nOwppbXBvcnQgb3JnLnNwcmluZ2ZyYW1ld29yay53ZWIuYmluZC5hbm5vdGF0aW9uLlJlc3RDb250cm9sbGVyOwoKQFJlc3RDb250cm9sbGVyCkBSZXF1ZXN0TWFwcGluZygiL2FwaSIpCnB1YmxpYyBjbGFzcyBNeVJlc3RDb250cm9sbGVyIHsKCiAgICBAR2V0TWFwcGluZygiL2hlbGxvIikKICAgIHB1YmxpYyBTdHJpbmcgc2F5SGVsbG8oKSB7CiAgICAgICAgcmV0dXJuICJIZWxsbywgV29ybGQhIjsKICAgIH0KCiAgICBAR2V0TWFwcGluZygiL3VzZXIiKQogICAgcHVibGljIFVzZXIgZ2V0VXNlcigpIHsKICAgICAgICByZXR1cm4gbmV3IFVzZXIoIkpvaG4iLCAiRG9lIik7CiAgICB9Cn0KCmNsYXNzIFVzZXIgewogICAgcHJpdmF0ZSBTdHJpbmcgZmlyc3ROYW1lOwogICAgcHJpdmF0ZSBTdHJpbmcgbGFzdE5hbWU7CgogICAgcHVibGljIFVzZXIoU3RyaW5nIGZpcnN0TmFtZSwgU3RyaW5nIGxhc3ROYW1lKSB7CiAgICAgICAgdGhpcy5maXJzdE5hbWUgPSBmaXJzdE5hbWU7CiAgICAgICAgdGhpcy5sYXN0TmFtZSA9IGxhc3ROYW1lOwogICAgfQoKICAgIC8vIEdldHRlcnMgYW5kIHNldHRlcnMKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(&quot;/api&quot;)
+public class MyRestController {
+
+    @GetMapping(&quot;/hello&quot;)
+    public String sayHello() {
+        return &quot;Hello, World!&quot;;
+    }
+
+    @GetMapping(&quot;/user&quot;)
+    public User getUser() {
+        return new User(&quot;John&quot;, &quot;Doe&quot;);
+    }
+}
+
+class User {
+    private String firstName;
+    private String lastName;
+
+    public User(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    // Getters and setters
+}</pre></div><div class='content'></div><h2>Explicació del codi</h2>
+<div class='content'><ul>
+<li><code>@GetMapping(&quot;/user&quot;)</code>: Defineix una ruta específica per a les sol·licituds GET a <code>/api/user</code>.</li>
+<li><code>getUser()</code>: Mètode que retorna un objecte <code>User</code> en format JSON.</li>
+</ul>
+</div><h2>3.2. Mètode POST</h2>
+<div class='content'><p>El mètode POST s'utilitza per enviar dades al servidor. Afegirem un mètode POST que rep un objecte JSON i el retorna.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsud2ViLmJpbmQuYW5ub3RhdGlvbi5Qb3N0TWFwcGluZzsKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsud2ViLmJpbmQuYW5ub3RhdGlvbi5SZXF1ZXN0Qm9keTsKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsud2ViLmJpbmQuYW5ub3RhdGlvbi5SZXF1ZXN0TWFwcGluZzsKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsud2ViLmJpbmQuYW5ub3RhdGlvbi5SZXN0Q29udHJvbGxlcjsKCkBSZXN0Q29udHJvbGxlcgpAUmVxdWVzdE1hcHBpbmcoIi9hcGkiKQpwdWJsaWMgY2xhc3MgTXlSZXN0Q29udHJvbGxlciB7CgogICAgQEdldE1hcHBpbmcoIi9oZWxsbyIpCiAgICBwdWJsaWMgU3RyaW5nIHNheUhlbGxvKCkgewogICAgICAgIHJldHVybiAiSGVsbG8sIFdvcmxkISI7CiAgICB9CgogICAgQEdldE1hcHBpbmcoIi91c2VyIikKICAgIHB1YmxpYyBVc2VyIGdldFVzZXIoKSB7CiAgICAgICAgcmV0dXJuIG5ldyBVc2VyKCJKb2huIiwgIkRvZSIpOwogICAgfQoKICAgIEBQb3N0TWFwcGluZygiL3VzZXIiKQogICAgcHVibGljIFVzZXIgY3JlYXRlVXNlcihAUmVxdWVzdEJvZHkgVXNlciB1c2VyKSB7CiAgICAgICAgLy8gQXF1w60gcG9kcsOtZW0gZ3VhcmRhciBsJ3VzdWFyaSBhIGxhIGJhc2UgZGUgZGFkZXMKICAgICAgICByZXR1cm4gdXNlcjsKICAgIH0KfQoKY2xhc3MgVXNlciB7CiAgICBwcml2YXRlIFN0cmluZyBmaXJzdE5hbWU7CiAgICBwcml2YXRlIFN0cmluZyBsYXN0TmFtZTsKCiAgICBwdWJsaWMgVXNlcihTdHJpbmcgZmlyc3ROYW1lLCBTdHJpbmcgbGFzdE5hbWUpIHsKICAgICAgICB0aGlzLmZpcnN0TmFtZSA9IGZpcnN0TmFtZTsKICAgICAgICB0aGlzLmxhc3ROYW1lID0gbGFzdE5hbWU7CiAgICB9CgogICAgLy8gR2V0dGVycyBhbmQgc2V0dGVycwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(&quot;/api&quot;)
+public class MyRestController {
+
+    @GetMapping(&quot;/hello&quot;)
+    public String sayHello() {
+        return &quot;Hello, World!&quot;;
+    }
+
+    @GetMapping(&quot;/user&quot;)
+    public User getUser() {
+        return new User(&quot;John&quot;, &quot;Doe&quot;);
+    }
+
+    @PostMapping(&quot;/user&quot;)
+    public User createUser(@RequestBody User user) {
+        // Aqu&iacute; podr&iacute;em guardar l'usuari a la base de dades
+        return user;
+    }
+}
+
+class User {
+    private String firstName;
+    private String lastName;
+
+    public User(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    // Getters and setters
+}</pre></div><div class='content'></div><h2>Explicació del codi</h2>
+<div class='content'><ul>
+<li><code>@PostMapping(&quot;/user&quot;)</code>: Defineix una ruta específica per a les sol·licituds POST a <code>/api/user</code>.</li>
+<li><code>@RequestBody User user</code>: Indica que el cos de la sol·licitud conté un objecte <code>User</code>.</li>
+<li><code>createUser()</code>: Mètode que rep un objecte <code>User</code> i el retorna.</li>
+</ul>
+</div><h2>3.3. Mètodes PUT i DELETE</h2>
+<div class='content'><p>Els mètodes PUT i DELETE s'utilitzen per actualitzar i eliminar recursos, respectivament. Afegirem exemples per a aquests mètodes.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsud2ViLmJpbmQuYW5ub3RhdGlvbi4qOwoKQFJlc3RDb250cm9sbGVyCkBSZXF1ZXN0TWFwcGluZygiL2FwaSIpCnB1YmxpYyBjbGFzcyBNeVJlc3RDb250cm9sbGVyIHsKCiAgICBAR2V0TWFwcGluZygiL2hlbGxvIikKICAgIHB1YmxpYyBTdHJpbmcgc2F5SGVsbG8oKSB7CiAgICAgICAgcmV0dXJuICJIZWxsbywgV29ybGQhIjsKICAgIH0KCiAgICBAR2V0TWFwcGluZygiL3VzZXIiKQogICAgcHVibGljIFVzZXIgZ2V0VXNlcigpIHsKICAgICAgICByZXR1cm4gbmV3IFVzZXIoIkpvaG4iLCAiRG9lIik7CiAgICB9CgogICAgQFBvc3RNYXBwaW5nKCIvdXNlciIpCiAgICBwdWJsaWMgVXNlciBjcmVhdGVVc2VyKEBSZXF1ZXN0Qm9keSBVc2VyIHVzZXIpIHsKICAgICAgICAvLyBBcXXDrSBwb2Ryw61lbSBndWFyZGFyIGwndXN1YXJpIGEgbGEgYmFzZSBkZSBkYWRlcwogICAgICAgIHJldHVybiB1c2VyOwogICAgfQoKICAgIEBQdXRNYXBwaW5nKCIvdXNlciIpCiAgICBwdWJsaWMgVXNlciB1cGRhdGVVc2VyKEBSZXF1ZXN0Qm9keSBVc2VyIHVzZXIpIHsKICAgICAgICAvLyBBcXXDrSBwb2Ryw61lbSBhY3R1YWxpdHphciBsJ3VzdWFyaSBhIGxhIGJhc2UgZGUgZGFkZXMKICAgICAgICByZXR1cm4gdXNlcjsKICAgIH0KCiAgICBARGVsZXRlTWFwcGluZygiL3VzZXIiKQogICAgcHVibGljIFN0cmluZyBkZWxldGVVc2VyKCkgewogICAgICAgIC8vIEFxdcOtIHBvZHLDrWVtIGVsaW1pbmFyIGwndXN1YXJpIGRlIGxhIGJhc2UgZGUgZGFkZXMKICAgICAgICByZXR1cm4gIlVzZXIgZGVsZXRlZCI7CiAgICB9Cn0KCmNsYXNzIFVzZXIgewogICAgcHJpdmF0ZSBTdHJpbmcgZmlyc3ROYW1lOwogICAgcHJpdmF0ZSBTdHJpbmcgbGFzdE5hbWU7CgogICAgcHVibGljIFVzZXIoU3RyaW5nIGZpcnN0TmFtZSwgU3RyaW5nIGxhc3ROYW1lKSB7CiAgICAgICAgdGhpcy5maXJzdE5hbWUgPSBmaXJzdE5hbWU7CiAgICAgICAgdGhpcy5sYXN0TmFtZSA9IGxhc3ROYW1lOwogICAgfQoKICAgIC8vIEdldHRlcnMgYW5kIHNldHRlcnMKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping(&quot;/api&quot;)
+public class MyRestController {
+
+    @GetMapping(&quot;/hello&quot;)
+    public String sayHello() {
+        return &quot;Hello, World!&quot;;
+    }
+
+    @GetMapping(&quot;/user&quot;)
+    public User getUser() {
+        return new User(&quot;John&quot;, &quot;Doe&quot;);
+    }
+
+    @PostMapping(&quot;/user&quot;)
+    public User createUser(@RequestBody User user) {
+        // Aqu&iacute; podr&iacute;em guardar l'usuari a la base de dades
+        return user;
+    }
+
+    @PutMapping(&quot;/user&quot;)
+    public User updateUser(@RequestBody User user) {
+        // Aqu&iacute; podr&iacute;em actualitzar l'usuari a la base de dades
+        return user;
+    }
+
+    @DeleteMapping(&quot;/user&quot;)
+    public String deleteUser() {
+        // Aqu&iacute; podr&iacute;em eliminar l'usuari de la base de dades
+        return &quot;User deleted&quot;;
+    }
+}
+
+class User {
+    private String firstName;
+    private String lastName;
+
+    public User(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    // Getters and setters
+}</pre></div><div class='content'></div><h2>Explicació del codi</h2>
+<div class='content'><ul>
+<li><code>@PutMapping(&quot;/user&quot;)</code>: Defineix una ruta específica per a les sol·licituds PUT a <code>/api/user</code>.</li>
+<li><code>updateUser()</code>: Mètode que rep un objecte <code>User</code> i el retorna després d'actualitzar-lo.</li>
+<li><code>@DeleteMapping(&quot;/user&quot;)</code>: Defineix una ruta específica per a les sol·licituds DELETE a <code>/api/user</code>.</li>
+<li><code>deleteUser()</code>: Mètode que elimina un usuari i retorna un missatge de confirmació.</li>
+</ul>
+</div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear un controlador REST per gestionar productes</h2>
+<div class='content'><ol>
+<li>Crea una classe <code>Product</code> amb els atributs <code>id</code>, <code>name</code> i <code>price</code>.</li>
+<li>Crea un controlador REST <code>ProductController</code> amb les següents rutes:
+<ul>
+<li><code>GET /api/products</code>: Retorna una llista de productes.</li>
+<li><code>POST /api/products</code>: Afegeix un nou producte.</li>
+<li><code>PUT /api/products</code>: Actualitza un producte existent.</li>
+<li><code>DELETE /api/products</code>: Elimina un producte.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsud2ViLmJpbmQuYW5ub3RhdGlvbi4qOwoKaW1wb3J0IGphdmEudXRpbC5BcnJheUxpc3Q7CmltcG9ydCBqYXZhLnV0aWwuTGlzdDsKCkBSZXN0Q29udHJvbGxlcgpAUmVxdWVzdE1hcHBpbmcoIi9hcGkiKQpwdWJsaWMgY2xhc3MgUHJvZHVjdENvbnRyb2xsZXIgewoKICAgIHByaXZhdGUgTGlzdDxQcm9kdWN0PiBwcm9kdWN0cyA9IG5ldyBBcnJheUxpc3Q8PigpOwoKICAgIEBHZXRNYXBwaW5nKCIvcHJvZHVjdHMiKQogICAgcHVibGljIExpc3Q8UHJvZHVjdD4gZ2V0UHJvZHVjdHMoKSB7CiAgICAgICAgcmV0dXJuIHByb2R1Y3RzOwogICAgfQoKICAgIEBQb3N0TWFwcGluZygiL3Byb2R1Y3RzIikKICAgIHB1YmxpYyBQcm9kdWN0IGFkZFByb2R1Y3QoQFJlcXVlc3RCb2R5IFByb2R1Y3QgcHJvZHVjdCkgewogICAgICAgIHByb2R1Y3RzLmFkZChwcm9kdWN0KTsKICAgICAgICByZXR1cm4gcHJvZHVjdDsKICAgIH0KCiAgICBAUHV0TWFwcGluZygiL3Byb2R1Y3RzIikKICAgIHB1YmxpYyBQcm9kdWN0IHVwZGF0ZVByb2R1Y3QoQFJlcXVlc3RCb2R5IFByb2R1Y3QgcHJvZHVjdCkgewogICAgICAgIC8vIEFxdcOtIHBvZHLDrWVtIGFjdHVhbGl0emFyIGVsIHByb2R1Y3RlIGEgbGEgbGxpc3RhCiAgICAgICAgcmV0dXJuIHByb2R1Y3Q7CiAgICB9CgogICAgQERlbGV0ZU1hcHBpbmcoIi9wcm9kdWN0cyIpCiAgICBwdWJsaWMgU3RyaW5nIGRlbGV0ZVByb2R1Y3QoQFJlcXVlc3RCb2R5IFByb2R1Y3QgcHJvZHVjdCkgewogICAgICAgIHByb2R1Y3RzLnJlbW92ZShwcm9kdWN0KTsKICAgICAgICByZXR1cm4gIlByb2R1Y3QgZGVsZXRlZCI7CiAgICB9Cn0KCmNsYXNzIFByb2R1Y3QgewogICAgcHJpdmF0ZSBpbnQgaWQ7CiAgICBwcml2YXRlIFN0cmluZyBuYW1lOwogICAgcHJpdmF0ZSBkb3VibGUgcHJpY2U7CgogICAgcHVibGljIFByb2R1Y3QoaW50IGlkLCBTdHJpbmcgbmFtZSwgZG91YmxlIHByaWNlKSB7CiAgICAgICAgdGhpcy5pZCA9IGlkOwogICAgICAgIHRoaXMubmFtZSA9IG5hbWU7CiAgICAgICAgdGhpcy5wcmljZSA9IHByaWNlOwogICAgfQoKICAgIC8vIEdldHRlcnMgYW5kIHNldHRlcnMKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api&quot;)
+public class ProductController {
+
+    private List&lt;Product&gt; products = new ArrayList&lt;&gt;();
+
+    @GetMapping(&quot;/products&quot;)
+    public List&lt;Product&gt; getProducts() {
+        return products;
+    }
+
+    @PostMapping(&quot;/products&quot;)
+    public Product addProduct(@RequestBody Product product) {
+        products.add(product);
+        return product;
+    }
+
+    @PutMapping(&quot;/products&quot;)
+    public Product updateProduct(@RequestBody Product product) {
+        // Aqu&iacute; podr&iacute;em actualitzar el producte a la llista
+        return product;
+    }
+
+    @DeleteMapping(&quot;/products&quot;)
+    public String deleteProduct(@RequestBody Product product) {
+        products.remove(product);
+        return &quot;Product deleted&quot;;
+    }
+}
+
+class Product {
+    private int id;
+    private String name;
+    private double price;
+
+    public Product(int id, String name, double price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+
+    // Getters and setters
+}</pre></div><div class='content'></div><h2>Explicació del codi</h2>
+<div class='content'><ul>
+<li><code>ProductController</code>: Controlador REST per gestionar productes.</li>
+<li><code>getProducts()</code>: Retorna una llista de productes.</li>
+<li><code>addProduct()</code>: Afegeix un nou producte a la llista.</li>
+<li><code>updateProduct()</code>: Actualitza un producte existent.</li>
+<li><code>deleteProduct()</code>: Elimina un producte de la llista.</li>
+</ul>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après a crear controladors REST utilitzant Spring Boot. Hem vist com definir rutes, gestionar diferents mètodes HTTP i retornar dades en format JSON. També hem practicat amb un exercici per gestionar productes. Amb aquests coneixements, estàs preparat per crear controladors REST més complexos i gestionar sol·licituds HTTP en les teves aplicacions Spring Boot.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-01-introduction-restful-web-services' title="Introducció als serveis web RESTful">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-03-handling-http-methods' title="Gestionant mètodes HTTP">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

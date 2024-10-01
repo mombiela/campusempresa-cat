@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expressions de taula comunes (CTEs)</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/bigquery/03-03-common-table-expressions" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/bigquery/03-03-common-table-expressions" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/bigquery/03-03-common-table-expressions" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/bigquery/03-03-common-table-expressions" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/bigquery/03-03-common-table-expressions" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-02-subqueries' title="Subconsultes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Expressions de taula comunes (CTEs)</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-04-window-functions' title="Funcions de finestra">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Les Expressions de Taula Comunes (CTEs) són una característica poderosa de SQL que permet definir subconsultes temporals que poden ser referenciades dins de la consulta principal. Les CTEs milloren la llegibilitat i la mantenibilitat del codi SQL, especialment quan es treballa amb consultes complexes.</p>
+</div><h1>Conceptes clau</h1>
+<div class='content'><ul>
+<li><strong>Definició de CTE</strong>: Una CTE és una subconsulta que es defineix una vegada i es pot utilitzar múltiples vegades dins de la consulta principal.</li>
+<li><strong>Sintaxi</strong>: Les CTEs es defineixen utilitzant la clàusula <code>WITH</code> seguida del nom de la CTE i la subconsulta que la defineix.</li>
+</ul>
+</div><h1>Sintaxi bàsica</h1>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("V0lUSCBjdGVfbmFtZSBBUyAoCiAgICBTRUxFQ1QgY29sdW1uMSwgY29sdW1uMgogICAgRlJPTSB0YWJsZV9uYW1lCiAgICBXSEVSRSBjb25kaXRpb24KKQpTRUxFQ1QgY29sdW1uMSwgY29sdW1uMgpGUk9NIGN0ZV9uYW1lCldIRVJFIGFub3RoZXJfY29uZGl0aW9uOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>WITH cte_name AS (
+    SELECT column1, column2
+    FROM table_name
+    WHERE condition
+)
+SELECT column1, column2
+FROM cte_name
+WHERE another_condition;</pre></div><div class='content'></div><h1>Exemple pràctic</h1>
+<div class='content'></div><h2>Escenari</h2>
+<div class='content'><p>Suposem que tenim una taula <code>sales</code> amb les següents columnes: <code>sale_id</code>, <code>product_id</code>, <code>quantity</code>, <code>price</code>, <code>sale_date</code>. Volem calcular el total de vendes per producte i després filtrar els productes que han generat més de 1000 unitats venudes.</p>
+</div><h2>Pas 1: Definir la CTE</h2>
+<div class='content'><p>Primer, definim una CTE per calcular el total de vendes per producte.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("V0lUSCB0b3RhbF9zYWxlcyBBUyAoCiAgICBTRUxFQ1QgcHJvZHVjdF9pZCwgU1VNKHF1YW50aXR5KSBBUyB0b3RhbF9xdWFudGl0eQogICAgRlJPTSBzYWxlcwogICAgR1JPVVAgQlkgcHJvZHVjdF9pZAop"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>WITH total_sales AS (
+    SELECT product_id, SUM(quantity) AS total_quantity
+    FROM sales
+    GROUP BY product_id
+)</pre></div><div class='content'></div><h2>Pas 2: Utilitzar la CTE</h2>
+<div class='content'><p>Després, utilitzem la CTE per filtrar els productes que han venut més de 1000 unitats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("V0lUSCB0b3RhbF9zYWxlcyBBUyAoCiAgICBTRUxFQ1QgcHJvZHVjdF9pZCwgU1VNKHF1YW50aXR5KSBBUyB0b3RhbF9xdWFudGl0eQogICAgRlJPTSBzYWxlcwogICAgR1JPVVAgQlkgcHJvZHVjdF9pZAopClNFTEVDVCBwcm9kdWN0X2lkLCB0b3RhbF9xdWFudGl0eQpGUk9NIHRvdGFsX3NhbGVzCldIRVJFIHRvdGFsX3F1YW50aXR5ID4gMTAwMDs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>WITH total_sales AS (
+    SELECT product_id, SUM(quantity) AS total_quantity
+    FROM sales
+    GROUP BY product_id
+)
+SELECT product_id, total_quantity
+FROM total_sales
+WHERE total_quantity &gt; 1000;</pre></div><div class='content'></div><h2>Explicació del codi</h2>
+<div class='content'><ol>
+<li><strong>Definició de la CTE</strong>: La CTE <code>total_sales</code> calcula el total de quantitats venudes per cada producte.</li>
+<li><strong>Consulta principal</strong>: La consulta principal selecciona els productes de la CTE <code>total_sales</code> on el total de quantitats venudes és superior a 1000.</li>
+</ol>
+</div><h1>Avantatges de les CTEs</h1>
+<div class='content'><ul>
+<li><strong>Millora de la llegibilitat</strong>: Les CTEs permeten dividir consultes complexes en parts més manejables i comprensibles.</li>
+<li><strong>Reutilització de codi</strong>: Les CTEs es poden referenciar múltiples vegades dins de la mateixa consulta, evitant la duplicació de codi.</li>
+<li><strong>Facilitat de depuració</strong>: Les CTEs permeten aïllar parts de la consulta per facilitar la depuració i el manteniment.</li>
+</ul>
+</div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1</h2>
+<div class='content'><p><strong>Descripció</strong>: Utilitza una CTE per calcular el salari mitjà per departament i després filtra els departaments amb un salari mitjà superior a 50000.</p>
+<p><strong>Taula</strong>: <code>employees</code> amb columnes <code>employee_id</code>, <code>department_id</code>, <code>salary</code>.</p>
+<p><strong>Solució</strong>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("V0lUSCBhdmdfc2FsYXJ5IEFTICgKICAgIFNFTEVDVCBkZXBhcnRtZW50X2lkLCBBVkcoc2FsYXJ5KSBBUyBhdmVyYWdlX3NhbGFyeQogICAgRlJPTSBlbXBsb3llZXMKICAgIEdST1VQIEJZIGRlcGFydG1lbnRfaWQKKQpTRUxFQ1QgZGVwYXJ0bWVudF9pZCwgYXZlcmFnZV9zYWxhcnkKRlJPTSBhdmdfc2FsYXJ5CldIRVJFIGF2ZXJhZ2Vfc2FsYXJ5ID4gNTAwMDA7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>WITH avg_salary AS (
+    SELECT department_id, AVG(salary) AS average_salary
+    FROM employees
+    GROUP BY department_id
+)
+SELECT department_id, average_salary
+FROM avg_salary
+WHERE average_salary &gt; 50000;</pre></div><div class='content'></div><h2>Exercici 2</h2>
+<div class='content'><p><strong>Descripció</strong>: Utilitza una CTE per trobar els clients que han fet més de 5 compres en el darrer any.</p>
+<p><strong>Taula</strong>: <code>purchases</code> amb columnes <code>purchase_id</code>, <code>customer_id</code>, <code>purchase_date</code>.</p>
+<p><strong>Solució</strong>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("V0lUSCByZWNlbnRfcHVyY2hhc2VzIEFTICgKICAgIFNFTEVDVCBjdXN0b21lcl9pZCwgQ09VTlQocHVyY2hhc2VfaWQpIEFTIHB1cmNoYXNlX2NvdW50CiAgICBGUk9NIHB1cmNoYXNlcwogICAgV0hFUkUgcHVyY2hhc2VfZGF0ZSA+PSBEQVRFX1NVQihDVVJSRU5UX0RBVEUoKSwgSU5URVJWQUwgMSBZRUFSKQogICAgR1JPVVAgQlkgY3VzdG9tZXJfaWQKKQpTRUxFQ1QgY3VzdG9tZXJfaWQsIHB1cmNoYXNlX2NvdW50CkZST00gcmVjZW50X3B1cmNoYXNlcwpXSEVSRSBwdXJjaGFzZV9jb3VudCA+IDU7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>WITH recent_purchases AS (
+    SELECT customer_id, COUNT(purchase_id) AS purchase_count
+    FROM purchases
+    WHERE purchase_date &gt;= DATE_SUB(CURRENT_DATE(), INTERVAL 1 YEAR)
+    GROUP BY customer_id
+)
+SELECT customer_id, purchase_count
+FROM recent_purchases
+WHERE purchase_count &gt; 5;</pre></div><div class='content'></div><h1>Errors comuns</h1>
+<div class='content'><ul>
+<li><strong>No utilitzar la clàusula <code>WITH</code> correctament</strong>: Assegura't que la clàusula <code>WITH</code> estigui seguida immediatament pel nom de la CTE i la subconsulta.</li>
+<li><strong>Referenciar columnes incorrectament</strong>: Quan utilitzis una CTE, assegura't que les columnes referenciades existeixin en la subconsulta de la CTE.</li>
+</ul>
+</div><h1>Consells addicionals</h1>
+<div class='content'><ul>
+<li><strong>Nesting de CTEs</strong>: Pots definir múltiples CTEs en una sola consulta, separant-les amb comes.</li>
+<li><strong>CTEs recursives</strong>: Les CTEs també poden ser recursives, permetent la definició de subconsultes que es referencien a si mateixes.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Les Expressions de Taula Comunes (CTEs) són una eina essencial per a qualsevol programador SQL que treballi amb consultes complexes. Milloren la llegibilitat, la reutilització del codi i faciliten la depuració. Practicar amb CTEs t'ajudarà a escriure codi SQL més net i eficient.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-02-subqueries' title="Subconsultes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-04-window-functions' title="Funcions de finestra">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

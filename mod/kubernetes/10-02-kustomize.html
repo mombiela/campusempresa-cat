@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kustomize</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kubernetes/10-02-kustomize" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kubernetes/10-02-kustomize" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kubernetes/10-02-kustomize" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kubernetes/10-02-kustomize" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kubernetes/10-02-kustomize" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='10-01-helm' title="Helm">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Kustomize</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-03-kubeadm' title="Kubeadm">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a Kustomize</h1>
+<div class='content'><p>Kustomize és una eina de configuració de Kubernetes que permet gestionar les configuracions de manera declarativa. A diferència d'altres eines com Helm, Kustomize no utilitza plantilles, sinó que es basa en la modificació de fitxers YAML existents mitjançant &quot;patches&quot; i altres tècniques. Això permet una gestió més senzilla i menys propensa a errors de les configuracions de Kubernetes.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Base</strong>: Un conjunt de fitxers YAML que defineixen els recursos bàsics de Kubernetes.</li>
+<li><strong>Overlay</strong>: Un conjunt de modificacions que s'apliquen a una base per adaptar-la a diferents entorns (per exemple, desenvolupament, staging, producció).</li>
+<li><strong>Kustomization File</strong>: Un fitxer <code>kustomization.yaml</code> que defineix com s'han d'aplicar les modificacions a la base.</li>
+</ul>
+</div><h1>Instal·lació de Kustomize</h1>
+<div class='content'><p>Kustomize es pot instal·lar com una eina independent o com una part de <code>kubectl</code>. Per instal·lar Kustomize com una eina independent, segueix aquests passos:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBEZXNjYXJyZWdhIGwnw7psdGltYSB2ZXJzacOzIGRlIEt1c3RvbWl6ZQpjdXJsIC1zICJodHRwczovL2FwaS5naXRodWIuY29tL3JlcG9zL2t1YmVybmV0ZXMtc2lncy9rdXN0b21pemUvcmVsZWFzZXMvbGF0ZXN0IiB8IGdyZXAgYnJvd3Nlcl9kb3dubG9hZF91cmwgfCBncmVwIGxpbnV4IHwgY3V0IC1kICciJyAtZiA0IHwgd2dldCAtcWkgLQoKIyBEZXNjb21wcmltZWl4IGwnYXJ4aXUgZGVzY2FycmVnYXQKdGFyIC14emYga3VzdG9taXplX3YqLnRhci5negoKIyBNb3UgbCdleGVjdXRhYmxlIGEgdW4gZGlyZWN0b3JpIHF1ZSBlc3RpZ3VpIGVuIGVsIFBBVEgKc3VkbyBtdiBrdXN0b21pemUgL3Vzci9sb2NhbC9iaW4v"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Descarrega l'&uacute;ltima versi&oacute; de Kustomize
+curl -s &quot;https://api.github.com/repos/kubernetes-sigs/kustomize/releases/latest&quot; | grep browser_download_url | grep linux | cut -d '&quot;' -f 4 | wget -qi -
+
+# Descomprimeix l'arxiu descarregat
+tar -xzf kustomize_v*.tar.gz
+
+# Mou l'executable a un directori que estigui en el PATH
+sudo mv kustomize /usr/local/bin/</pre></div><div class='content'><p>Alternativament, si ja tens <code>kubectl</code> instal·lat, pots utilitzar Kustomize directament amb <code>kubectl</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a3ViZWN0bCBrdXN0b21pemUgPHBhdGgtdG8ta3VzdG9taXphdGlvbi1kaXJlY3Rvcnk+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>kubectl kustomize &lt;path-to-kustomization-directory&gt;</pre></div><div class='content'></div><h1>Creació d'una Base amb Kustomize</h1>
+<div class='content'><p>Comencem creant una base simple. Suposem que tenim un fitxer <code>deployment.yaml</code> que defineix un Deployment de Kubernetes:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogYXBwcy92MQpraW5kOiBEZXBsb3ltZW50Cm1ldGFkYXRhOgogIG5hbWU6IG15LWFwcApzcGVjOgogIHJlcGxpY2FzOiAzCiAgc2VsZWN0b3I6CiAgICBtYXRjaExhYmVsczoKICAgICAgYXBwOiBteS1hcHAKICB0ZW1wbGF0ZToKICAgIG1ldGFkYXRhOgogICAgICBsYWJlbHM6CiAgICAgICAgYXBwOiBteS1hcHAKICAgIHNwZWM6CiAgICAgIGNvbnRhaW5lcnM6CiAgICAgIC0gbmFtZTogbXktYXBwCiAgICAgICAgaW1hZ2U6IG15LWFwcDoxLjAuMAogICAgICAgIHBvcnRzOgogICAgICAgIC0gY29udGFpbmVyUG9ydDogODA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app
+        image: my-app:1.0.0
+        ports:
+        - containerPort: 80</pre></div><div class='content'><p>Ara, creem un fitxer <code>kustomization.yaml</code> per definir aquesta base:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVzb3VyY2VzOgotIGRlcGxveW1lbnQueWFtbA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>resources:
+- deployment.yaml</pre></div><div class='content'></div><h1>Creació d'Overlays amb Kustomize</h1>
+<div class='content'><p>Suposem que volem crear un overlay per l'entorn de desenvolupament que utilitzi una imatge diferent i un nombre diferent de rèpliques. Creem un directori <code>overlays/development</code> i afegim un fitxer <code>kustomization.yaml</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YmFzZXM6Ci0gLi4vLi4vYmFzZQoKcGF0Y2hlc1N0cmF0ZWdpY01lcmdlOgotIGRlcGxveW1lbnQtcGF0Y2gueWFtbA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>bases:
+- ../../base
+
+patchesStrategicMerge:
+- deployment-patch.yaml</pre></div><div class='content'><p>El fitxer <code>deployment-patch.yaml</code> contindrà les modificacions:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogYXBwcy92MQpraW5kOiBEZXBsb3ltZW50Cm1ldGFkYXRhOgogIG5hbWU6IG15LWFwcApzcGVjOgogIHJlcGxpY2FzOiAxCiAgdGVtcGxhdGU6CiAgICBzcGVjOgogICAgICBjb250YWluZXJzOgogICAgICAtIG5hbWU6IG15LWFwcAogICAgICAgIGltYWdlOiBteS1hcHA6ZGV2"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+      - name: my-app
+        image: my-app:dev</pre></div><div class='content'></div><h1>Aplicació de Configuracions amb Kustomize</h1>
+<div class='content'><p>Per aplicar la configuració de l'overlay de desenvolupament, utilitza el següent comandament:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a3ViZWN0bCBhcHBseSAtayBvdmVybGF5cy9kZXZlbG9wbWVudA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>kubectl apply -k overlays/development</pre></div><div class='content'><p>Aquest comandament generarà la configuració final combinant la base i l'overlay, i la desplegarà al clúster de Kubernetes.</p>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear una Base i un Overlay</h2>
+<div class='content'><ol>
+<li>Crea un directori <code>base</code> amb un fitxer <code>deployment.yaml</code> que defineixi un Deployment amb 3 rèpliques.</li>
+<li>Crea un fitxer <code>kustomization.yaml</code> dins del directori <code>base</code> que inclogui el fitxer <code>deployment.yaml</code>.</li>
+<li>Crea un directori <code>overlays/staging</code> amb un fitxer <code>kustomization.yaml</code> que utilitzi la base i un fitxer <code>deployment-patch.yaml</code> que canviï el nombre de rèpliques a 2 i la imatge a <code>my-app:staging</code>.</li>
+<li>Aplica la configuració de l'overlay de staging al teu clúster de Kubernetes.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><ol>
+<li>
+<p><code>base/deployment.yaml</code>:</p>
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app
+        image: my-app:1.0.0
+        ports:
+        - containerPort: 80
+</code></pre>
+</li>
+<li>
+<p><code>base/kustomization.yaml</code>:</p>
+<pre><code class="language-yaml">resources:
+- deployment.yaml
+</code></pre>
+</li>
+<li>
+<p><code>overlays/staging/kustomization.yaml</code>:</p>
+<pre><code class="language-yaml">bases:
+- ../../base
+
+patchesStrategicMerge:
+- deployment-patch.yaml
+</code></pre>
+</li>
+<li>
+<p><code>overlays/staging/deployment-patch.yaml</code>:</p>
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+      - name: my-app
+        image: my-app:staging
+</code></pre>
+</li>
+<li>
+<p>Aplica la configuració:</p>
+<pre><code class="language-bash">kubectl apply -k overlays/staging
+</code></pre>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Kustomize és una eina poderosa per gestionar configuracions de Kubernetes de manera declarativa i sense l'ús de plantilles. Permet crear configuracions reutilitzables i fàcilment modificables per a diferents entorns, facilitant la gestió i el desplegament d'aplicacions en Kubernetes. Amb la pràctica, Kustomize esdevé una eina indispensable per a qualsevol administrador de Kubernetes.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='10-01-helm' title="Helm">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-03-kubeadm' title="Kubeadm">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapeig d'Entorn</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/open_gl/06-04-environment-mapping" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/open_gl/06-04-environment-mapping" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/open_gl/06-04-environment-mapping" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/open_gl/06-04-environment-mapping" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/open_gl/06-04-environment-mapping" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-03-shadow-mapping' title="Mapeig d'Ombres">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Mapeig d'Entorn</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-01-compute-shaders' title="Shaders de Càlcul">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>El mapeig d'entorn és una tècnica de renderització que permet simular reflexions realistes en superfícies. Aquesta tècnica és àmpliament utilitzada en la creació de materials com el metall, el vidre i altres superfícies reflectants. En aquest tema, aprendrem com implementar el mapeig d'entorn utilitzant OpenGL.</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ul>
+<li>Entendre el concepte de mapeig d'entorn.</li>
+<li>Configurar i utilitzar textures de cub (cube maps).</li>
+<li>Implementar shaders per a mapeig d'entorn.</li>
+<li>Aplicar el mapeig d'entorn a objectes 3D.</li>
+</ul>
+</div><h1>Conceptes Clau</h1>
+<div class='content'></div><h2>Què és el Mapeig d'Entorn?</h2>
+<div class='content'><p>El mapeig d'entorn és una tècnica que utilitza una textura especial anomenada &quot;cube map&quot; per simular reflexions en una superfície. Un cube map és una col·lecció de sis imatges que representen les vistes des d'un punt central en les sis direccions (positiva i negativa dels eixos X, Y i Z).</p>
+</div><h2>Textures de Cub (Cube Maps)</h2>
+<div class='content'><p>Les textures de cub són essencials per al mapeig d'entorn. Aquestes textures contenen sis imatges que formen un cub al voltant d'un objecte, permetent que les reflexions es calculin correctament des de qualsevol angle.</p>
+</div><h2>Shaders per a Mapeig d'Entorn</h2>
+<div class='content'><p>Els shaders són programes que s'executen en la GPU per calcular els efectes visuals. Per al mapeig d'entorn, necessitarem un vertex shader i un fragment shader que utilitzin la textura de cub per calcular les reflexions.</p>
+</div><h1>Implementació Pràctica</h1>
+<div class='content'></div><h2>1. Configuració de la Textura de Cub</h2>
+<div class='content'><p>Primer, hem de carregar les sis imatges que formen la nostra textura de cub i configurar-la en OpenGL.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0x1aW50IGxvYWRDdWJlbWFwKHN0ZDo6dmVjdG9yPHN0ZDo6c3RyaW5nPiBmYWNlcykgewogICAgR0x1aW50IHRleHR1cmVJRDsKICAgIGdsR2VuVGV4dHVyZXMoMSwgJnRleHR1cmVJRCk7CiAgICBnbEJpbmRUZXh0dXJlKEdMX1RFWFRVUkVfQ1VCRV9NQVAsIHRleHR1cmVJRCk7CgogICAgaW50IHdpZHRoLCBoZWlnaHQsIG5yQ2hhbm5lbHM7CiAgICBmb3IgKHVuc2lnbmVkIGludCBpID0gMDsgaSA8IGZhY2VzLnNpemUoKTsgaSsrKSB7CiAgICAgICAgdW5zaWduZWQgY2hhciAqZGF0YSA9IHN0YmlfbG9hZChmYWNlc1tpXS5jX3N0cigpLCAmd2lkdGgsICZoZWlnaHQsICZuckNoYW5uZWxzLCAwKTsKICAgICAgICBpZiAoZGF0YSkgewogICAgICAgICAgICBnbFRleEltYWdlMkQoR0xfVEVYVFVSRV9DVUJFX01BUF9QT1NJVElWRV9YICsgaSwgCiAgICAgICAgICAgICAgICAgICAgICAgICAwLCBHTF9SR0IsIHdpZHRoLCBoZWlnaHQsIDAsIEdMX1JHQiwgR0xfVU5TSUdORURfQllURSwgZGF0YQogICAgICAgICAgICApOwogICAgICAgICAgICBzdGJpX2ltYWdlX2ZyZWUoZGF0YSk7CiAgICAgICAgfSBlbHNlIHsKICAgICAgICAgICAgc3RkOjpjb3V0IDw8ICJGYWlsZWQgdG8gbG9hZCBjdWJlbWFwIHRleHR1cmUgYXQgcGF0aDogIiA8PCBmYWNlc1tpXSA8PCBzdGQ6OmVuZGw7CiAgICAgICAgICAgIHN0YmlfaW1hZ2VfZnJlZShkYXRhKTsKICAgICAgICB9CiAgICB9CiAgICBnbFRleFBhcmFtZXRlcmkoR0xfVEVYVFVSRV9DVUJFX01BUCwgR0xfVEVYVFVSRV9NSU5fRklMVEVSLCBHTF9MSU5FQVIpOwogICAgZ2xUZXhQYXJhbWV0ZXJpKEdMX1RFWFRVUkVfQ1VCRV9NQVAsIEdMX1RFWFRVUkVfTUFHX0ZJTFRFUiwgR0xfTElORUFSKTsKICAgIGdsVGV4UGFyYW1ldGVyaShHTF9URVhUVVJFX0NVQkVfTUFQLCBHTF9URVhUVVJFX1dSQVBfUywgR0xfQ0xBTVBfVE9fRURHRSk7CiAgICBnbFRleFBhcmFtZXRlcmkoR0xfVEVYVFVSRV9DVUJFX01BUCwgR0xfVEVYVFVSRV9XUkFQX1QsIEdMX0NMQU1QX1RPX0VER0UpOwogICAgZ2xUZXhQYXJhbWV0ZXJpKEdMX1RFWFRVUkVfQ1VCRV9NQVAsIEdMX1RFWFRVUkVfV1JBUF9SLCBHTF9DTEFNUF9UT19FREdFKTsKCiAgICByZXR1cm4gdGV4dHVyZUlEOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GLuint loadCubemap(std::vector&lt;std::string&gt; faces) {
+    GLuint textureID;
+    glGenTextures(1, &amp;textureID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+    int width, height, nrChannels;
+    for (unsigned int i = 0; i &lt; faces.size(); i++) {
+        unsigned char *data = stbi_load(faces[i].c_str(), &amp;width, &amp;height, &amp;nrChannels, 0);
+        if (data) {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 
+                         0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+            );
+            stbi_image_free(data);
+        } else {
+            std::cout &lt;&lt; &quot;Failed to load cubemap texture at path: &quot; &lt;&lt; faces[i] &lt;&lt; std::endl;
+            stbi_image_free(data);
+        }
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+    return textureID;
+}</pre></div><div class='content'></div><h2>2. Vertex Shader</h2>
+<div class='content'><p>El vertex shader calcula les coordenades de textura per a la textura de cub.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I3ZlcnNpb24gMzMwIGNvcmUKbGF5b3V0IChsb2NhdGlvbiA9IDApIGluIHZlYzMgYVBvczsKbGF5b3V0IChsb2NhdGlvbiA9IDEpIGluIHZlYzMgYU5vcm1hbDsKCm91dCB2ZWMzIFdvcmxkUG9zOwpvdXQgdmVjMyBOb3JtYWw7Cgp1bmlmb3JtIG1hdDQgbW9kZWw7CnVuaWZvcm0gbWF0NCB2aWV3Owp1bmlmb3JtIG1hdDQgcHJvamVjdGlvbjsKCnZvaWQgbWFpbigpIHsKICAgIFdvcmxkUG9zID0gdmVjMyhtb2RlbCAqIHZlYzQoYVBvcywgMS4wKSk7CiAgICBOb3JtYWwgPSBtYXQzKHRyYW5zcG9zZShpbnZlcnNlKG1vZGVsKSkpICogYU5vcm1hbDsgIAoKICAgIGdsX1Bvc2l0aW9uID0gcHJvamVjdGlvbiAqIHZpZXcgKiB2ZWM0KFdvcmxkUG9zLCAxLjApOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
+
+out vec3 WorldPos;
+out vec3 Normal;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+void main() {
+    WorldPos = vec3(model * vec4(aPos, 1.0));
+    Normal = mat3(transpose(inverse(model))) * aNormal;  
+
+    gl_Position = projection * view * vec4(WorldPos, 1.0);
+}</pre></div><div class='content'></div><h2>3. Fragment Shader</h2>
+<div class='content'><p>El fragment shader utilitza la textura de cub per calcular les reflexions.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I3ZlcnNpb24gMzMwIGNvcmUKb3V0IHZlYzQgRnJhZ0NvbG9yOwoKaW4gdmVjMyBXb3JsZFBvczsKaW4gdmVjMyBOb3JtYWw7Cgp1bmlmb3JtIHNhbXBsZXJDdWJlIHNreWJveDsKdW5pZm9ybSB2ZWMzIGNhbWVyYVBvczsKCnZvaWQgbWFpbigpIHsKICAgIHZlYzMgSSA9IG5vcm1hbGl6ZShXb3JsZFBvcyAtIGNhbWVyYVBvcyk7CiAgICB2ZWMzIFIgPSByZWZsZWN0KEksIG5vcm1hbGl6ZShOb3JtYWwpKTsKICAgIEZyYWdDb2xvciA9IHRleHR1cmUoc2t5Ym94LCBSKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#version 330 core
+out vec4 FragColor;
+
+in vec3 WorldPos;
+in vec3 Normal;
+
+uniform samplerCube skybox;
+uniform vec3 cameraPos;
+
+void main() {
+    vec3 I = normalize(WorldPos - cameraPos);
+    vec3 R = reflect(I, normalize(Normal));
+    FragColor = texture(skybox, R);
+}</pre></div><div class='content'></div><h2>4. Aplicar el Mapeig d'Entorn</h2>
+<div class='content'><p>Finalment, hem d'aplicar el mapeig d'entorn als nostres objectes 3D.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gQ2FycmVnYXIgbGVzIGltYXRnZXMgcGVyIGEgbGEgdGV4dHVyYSBkZSBjdWIKc3RkOjp2ZWN0b3I8c3RkOjpzdHJpbmc+IGZhY2VzIHsKICAgICJyaWdodC5qcGciLAogICAgImxlZnQuanBnIiwKICAgICJ0b3AuanBnIiwKICAgICJib3R0b20uanBnIiwKICAgICJmcm9udC5qcGciLAogICAgImJhY2suanBnIgp9OwpHTHVpbnQgY3ViZW1hcFRleHR1cmUgPSBsb2FkQ3ViZW1hcChmYWNlcyk7CgovLyBDb25maWd1cmFyIGVscyBzaGFkZXJzCnNoYWRlci51c2UoKTsKc2hhZGVyLnNldEludCgic2t5Ym94IiwgMCk7CgovLyBSZW5kZXJpdHphciBsJ29iamVjdGUgYW1iIG1hcGVpZyBkJ2VudG9ybgpnbEFjdGl2ZVRleHR1cmUoR0xfVEVYVFVSRTApOwpnbEJpbmRUZXh0dXJlKEdMX1RFWFRVUkVfQ1VCRV9NQVAsIGN1YmVtYXBUZXh0dXJlKTsKCi8vIFJlbmRlcml0emFyIGVsIHRldSBvYmplY3RlIGFxdcOt"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Carregar les imatges per a la textura de cub
+std::vector&lt;std::string&gt; faces {
+    &quot;right.jpg&quot;,
+    &quot;left.jpg&quot;,
+    &quot;top.jpg&quot;,
+    &quot;bottom.jpg&quot;,
+    &quot;front.jpg&quot;,
+    &quot;back.jpg&quot;
+};
+GLuint cubemapTexture = loadCubemap(faces);
+
+// Configurar els shaders
+shader.use();
+shader.setInt(&quot;skybox&quot;, 0);
+
+// Renderitzar l'objecte amb mapeig d'entorn
+glActiveTexture(GL_TEXTURE0);
+glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+
+// Renderitzar el teu objecte aqu&iacute;</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Carregar i Configurar una Textura de Cub Diferent:</strong></p>
+<ul>
+<li>Troba un conjunt diferent d'imatges per a una textura de cub i carrega-les en el teu programa.</li>
+<li>Assegura't que les imatges estiguin correctament alineades per formar un cub.</li>
+</ul>
+</li>
+<li>
+<p><strong>Implementar Reflexions en un Objecte Diferent:</strong></p>
+<ul>
+<li>Aplica el mapeig d'entorn a un objecte diferent, com una esfera o un cilindre.</li>
+<li>Observa com canvien les reflexions en funció de la forma de l'objecte.</li>
+</ul>
+</li>
+<li>
+<p><strong>Afegir Refracció:</strong></p>
+<ul>
+<li>Modifica el fragment shader per afegir un efecte de refracció en lloc de reflexió.</li>
+<li>Experimenta amb diferents índexs de refracció per veure com afecta el resultat.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ul>
+<li><strong>Error en la Càrrega de Textures:</strong> Assegura't que les rutes de les imatges són correctes i que les imatges estan en el format esperat.</li>
+<li><strong>Coordenades de Textura Incorrectes:</strong> Verifica que les coordenades de textura es calculen correctament en el vertex shader.</li>
+<li><strong>Configuració de la Textura de Cub:</strong> Assegura't que els paràmetres de la textura de cub estan configurats correctament per evitar artefactes visuals.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>El mapeig d'entorn és una tècnica poderosa per crear reflexions realistes en superfícies. En aquest tema, hem après a configurar textures de cub, implementar shaders per a mapeig d'entorn i aplicar aquestes tècniques a objectes 3D. Amb la pràctica, podràs crear materials reflectants impressionants per als teus projectes de renderització.</p>
+<p>En el següent tema, explorarem els <strong>Shaders de Càlcul</strong>, una eina avançada per realitzar càlculs paral·lels en la GPU.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-03-shadow-mapping' title="Mapeig d'Ombres">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-01-compute-shaders' title="Shaders de Càlcul">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

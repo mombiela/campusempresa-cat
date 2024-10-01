@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitorització i manteniment</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/tensorflow/08-04-monitoring-and-maintenance" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/tensorflow/08-04-monitoring-and-maintenance" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/tensorflow/08-04-monitoring-and-maintenance" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/tensorflow/08-04-monitoring-and-maintenance" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/tensorflow/08-04-monitoring-and-maintenance" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-03-deploying-models' title="Desplegament de models">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Monitorització i manteniment</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-01-introduction-to-tfx' title="Introducció a TFX">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com monitoritzar i mantenir models de TensorFlow en producció. La monitorització i el manteniment són aspectes crucials per assegurar que els models funcionin correctament i de manera eficient al llarg del temps. Explorarem eines i tècniques per monitoritzar el rendiment dels models, detectar anomalies i actualitzar els models quan sigui necessari.</p>
+</div><h1>Objectius del tema</h1>
+<div class='content'><ul>
+<li>Entendre la importància de la monitorització i el manteniment dels models de TensorFlow en producció.</li>
+<li>Aprendre a utilitzar TensorBoard per monitoritzar el rendiment dels models.</li>
+<li>Implementar alertes per detectar anomalies en el rendiment dels models.</li>
+<li>Conèixer les millors pràctiques per mantenir els models actualitzats.</li>
+</ul>
+</div><h1>1. Importància de la monitorització i el manteniment</h1>
+<div class='content'></div><h2>Per què és important?</h2>
+<div class='content'><ul>
+<li><strong>Rendiment continuat</strong>: Assegura que el model mantingui un rendiment òptim al llarg del temps.</li>
+<li><strong>Detecció d'anomalies</strong>: Permet identificar problemes com la deriva de dades o la degradació del model.</li>
+<li><strong>Actualitzacions necessàries</strong>: Facilita la implementació d'actualitzacions i millores en el model.</li>
+</ul>
+</div><h1>2. Utilització de TensorBoard per a la monitorització</h1>
+<div class='content'></div><h2>Què és TensorBoard?</h2>
+<div class='content'><p>TensorBoard és una eina de visualització que permet monitoritzar i comprendre el comportament dels models de TensorFlow. Proporciona gràfics i mètriques que ajuden a analitzar el rendiment del model.</p>
+</div><h2>Configuració de TensorBoard</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Instal·lació</strong>:</p>
+<pre><code class="language-bash">pip install tensorboard
+</code></pre>
+</li>
+<li>
+<p><strong>Integració amb TensorFlow</strong>:</p>
+<pre><code class="language-python">import tensorflow as tf
+import datetime
+
+# Definir el directori de logs
+log_dir = &quot;logs/fit/&quot; + datetime.datetime.now().strftime(&quot;%Y%m%d-%H%M%S&quot;)
+tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+
+# Entrenar el model amb el callback de TensorBoard
+model.fit(x_train, y_train, epochs=5, callbacks=[tensorboard_callback])
+</code></pre>
+</li>
+<li>
+<p><strong>Iniciar TensorBoard</strong>:</p>
+<pre><code class="language-bash">tensorboard --logdir=logs/fit
+</code></pre>
+</li>
+</ol>
+</div><h2>Visualització de mètriques</h2>
+<div class='content'><ul>
+<li><strong>Pèrdua i precisió</strong>: Permet veure com evolucionen aquestes mètriques durant l'entrenament.</li>
+<li><strong>Gràfics de distribució</strong>: Mostren la distribució dels pesos i les activacions.</li>
+<li><strong>Gràfics de projecció</strong>: Visualitzen les representacions de les dades en espais de menor dimensió.</li>
+</ul>
+</div><h1>3. Implementació d'alertes per detectar anomalies</h1>
+<div class='content'></div><h2>Configuració d'alertes</h2>
+<div class='content'><ul>
+<li><strong>Alertes basades en mètriques</strong>: Configurar alertes quan les mètriques de rendiment superin certs llindars.</li>
+<li><strong>Integració amb serveis de monitorització</strong>: Utilitzar serveis com Prometheus o Grafana per configurar alertes personalitzades.</li>
+</ul>
+</div><h2>Exemple d'alerta amb Prometheus</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Exportar mètriques</strong>:</p>
+<pre><code class="language-python">from prometheus_client import start_http_server, Summary
+
+# Crear un resum per a la latència
+REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
+
+@REQUEST_TIME.time()
+def process_request(t):
+    time.sleep(t)
+
+if __name__ == '__main__':
+    start_http_server(8000)
+    while True:
+        process_request(random.random())
+</code></pre>
+</li>
+<li>
+<p><strong>Configurar alertes a Prometheus</strong>:</p>
+<pre><code class="language-yaml">groups:
+- name: example
+  rules:
+  - alert: HighRequestLatency
+    expr: request_processing_seconds_sum / request_processing_seconds_count &gt; 0.5
+    for: 5m
+    labels:
+      severity: page
+    annotations:
+      summary: &quot;High request latency&quot;
+      description: &quot;The request latency is above 0.5s for more than 5 minutes.&quot;
+</code></pre>
+</li>
+</ol>
+</div><h1>4. Millors pràctiques per al manteniment dels models</h1>
+<div class='content'></div><h2>Actualització de models</h2>
+<div class='content'><ul>
+<li><strong>Reentrenament periòdic</strong>: Reentrenar el model amb dades noves per mantenir la seva precisió.</li>
+<li><strong>Validació contínua</strong>: Validar el model amb dades de validació per assegurar que no hi ha degradació en el rendiment.</li>
+</ul>
+</div><h2>Documentació i registre</h2>
+<div class='content'><ul>
+<li><strong>Documentar canvis</strong>: Mantenir un registre detallat de les actualitzacions i canvis en el model.</li>
+<li><strong>Versionat de models</strong>: Utilitzar eines de versionat per gestionar diferents versions del model.</li>
+</ul>
+</div><h1>Exercici pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Configurar TensorBoard per monitoritzar un model de TensorFlow i implementar una alerta per detectar anomalies en el rendiment del model.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>Entrenar un model de TensorFlow amb el callback de TensorBoard.</li>
+<li>Visualitzar les mètriques d'entrenament a TensorBoard.</li>
+<li>Configurar una alerta per detectar anomalies en la precisió del model.</li>
+</ol>
+</div><h2>Solució</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKaW1wb3J0IGRhdGV0aW1lCmZyb20gcHJvbWV0aGV1c19jbGllbnQgaW1wb3J0IHN0YXJ0X2h0dHBfc2VydmVyLCBTdW1tYXJ5CgojIERlZmluaXIgZWwgZGlyZWN0b3JpIGRlIGxvZ3MKbG9nX2RpciA9ICJsb2dzL2ZpdC8iICsgZGF0ZXRpbWUuZGF0ZXRpbWUubm93KCkuc3RyZnRpbWUoIiVZJW0lZC0lSCVNJVMiKQp0ZW5zb3Jib2FyZF9jYWxsYmFjayA9IHRmLmtlcmFzLmNhbGxiYWNrcy5UZW5zb3JCb2FyZChsb2dfZGlyPWxvZ19kaXIsIGhpc3RvZ3JhbV9mcmVxPTEpCgojIENyZWFyIHVuIHJlc3VtIHBlciBhIGxhIGxhdMOobmNpYQpSRVFVRVNUX1RJTUUgPSBTdW1tYXJ5KCdyZXF1ZXN0X3Byb2Nlc3Npbmdfc2Vjb25kcycsICdUaW1lIHNwZW50IHByb2Nlc3NpbmcgcmVxdWVzdCcpCgpAUkVRVUVTVF9USU1FLnRpbWUoKQpkZWYgcHJvY2Vzc19yZXF1ZXN0KHQpOgogICAgdGltZS5zbGVlcCh0KQoKIyBEZWZpbmlyIGkgZW50cmVuYXIgZWwgbW9kZWwKbW9kZWwgPSB0Zi5rZXJhcy5tb2RlbHMuU2VxdWVudGlhbChbCiAgICB0Zi5rZXJhcy5sYXllcnMuRmxhdHRlbihpbnB1dF9zaGFwZT0oMjgsIDI4KSksCiAgICB0Zi5rZXJhcy5sYXllcnMuRGVuc2UoMTI4LCBhY3RpdmF0aW9uPSdyZWx1JyksCiAgICB0Zi5rZXJhcy5sYXllcnMuRHJvcG91dCgwLjIpLAogICAgdGYua2VyYXMubGF5ZXJzLkRlbnNlKDEwKQpdKQoKbW9kZWwuY29tcGlsZShvcHRpbWl6ZXI9J2FkYW0nLAogICAgICAgICAgICAgIGxvc3M9dGYua2VyYXMubG9zc2VzLlNwYXJzZUNhdGVnb3JpY2FsQ3Jvc3NlbnRyb3B5KGZyb21fbG9naXRzPVRydWUpLAogICAgICAgICAgICAgIG1ldHJpY3M9WydhY2N1cmFjeSddKQoKbW9kZWwuZml0KHhfdHJhaW4sIHlfdHJhaW4sIGVwb2Nocz01LCBjYWxsYmFja3M9W3RlbnNvcmJvYXJkX2NhbGxiYWNrXSkKCiMgSW5pY2lhciBlbCBzZXJ2aWRvciBkZSBQcm9tZXRoZXVzCmlmIF9fbmFtZV9fID09ICdfX21haW5fXyc6CiAgICBzdGFydF9odHRwX3NlcnZlcig4MDAwKQogICAgd2hpbGUgVHJ1ZToKICAgICAgICBwcm9jZXNzX3JlcXVlc3QocmFuZG9tLnJhbmRvbSgpKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+import datetime
+from prometheus_client import start_http_server, Summary
+
+# Definir el directori de logs
+log_dir = &quot;logs/fit/&quot; + datetime.datetime.now().strftime(&quot;%Y%m%d-%H%M%S&quot;)
+tensorboard_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+
+# Crear un resum per a la lat&egrave;ncia
+REQUEST_TIME = Summary('request_processing_seconds', 'Time spent processing request')
+
+@REQUEST_TIME.time()
+def process_request(t):
+    time.sleep(t)
+
+# Definir i entrenar el model
+model = tf.keras.models.Sequential([
+    tf.keras.layers.Flatten(input_shape=(28, 28)),
+    tf.keras.layers.Dense(128, activation='relu'),
+    tf.keras.layers.Dropout(0.2),
+    tf.keras.layers.Dense(10)
+])
+
+model.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])
+
+model.fit(x_train, y_train, epochs=5, callbacks=[tensorboard_callback])
+
+# Iniciar el servidor de Prometheus
+if __name__ == '__main__':
+    start_http_server(8000)
+    while True:
+        process_request(random.random())</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après la importància de la monitorització i el manteniment dels models de TensorFlow en producció. Hem explorat com utilitzar TensorBoard per monitoritzar el rendiment dels models i com implementar alertes per detectar anomalies. També hem revisat les millors pràctiques per mantenir els models actualitzats i documentats. Amb aquestes eines i tècniques, estarem millor preparats per assegurar que els nostres models funcionin correctament i de manera eficient al llarg del temps.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-03-deploying-models' title="Desplegament de models">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-01-introduction-to-tfx' title="Introducció a TFX">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

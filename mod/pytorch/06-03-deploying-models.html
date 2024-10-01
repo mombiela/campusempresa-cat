@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desplegament de Models PyTorch</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/pytorch/06-03-deploying-models" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/pytorch/06-03-deploying-models" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/pytorch/06-03-deploying-models" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/pytorch/06-03-deploying-models" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/pytorch/06-03-deploying-models" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-reinforcement-learning' title="Aprenentatge per Reforç amb PyTorch">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Desplegament de Models PyTorch</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-optimizing-performance' title="Optimització del Rendiment">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com desplegar models PyTorch en entorns de producció. El desplegament és una part crucial del cicle de vida del desenvolupament de models de machine learning, ja que permet utilitzar els models entrenats per fer prediccions en temps real o per processar grans volums de dades.</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ul>
+<li>Entendre els conceptes bàsics del desplegament de models.</li>
+<li>Aprendre a exportar models PyTorch.</li>
+<li>Conèixer les diferents opcions de desplegament disponibles.</li>
+<li>Implementar un exemple pràctic de desplegament.</li>
+</ul>
+</div><h1>Conceptes Bàsics del Desplegament de Models</h1>
+<div class='content'></div><h2>Per què és important el desplegament?</h2>
+<div class='content'><p>El desplegament permet que els models de machine learning siguin accessibles per a aplicacions reals. Això pot incloure:</p>
+<ul>
+<li>Prediccions en temps real en aplicacions web o mòbils.</li>
+<li>Processament de dades en lots per a anàlisis posteriors.</li>
+<li>Integració amb altres sistemes empresarials.</li>
+</ul>
+</div><h2>Opcions de Desplegament</h2>
+<div class='content'><p>Hi ha diverses maneres de desplegar models PyTorch:</p>
+<ol>
+<li><strong>Exportació a TorchScript</strong>: Permet convertir models PyTorch en un format estàtic que es pot executar en entorns de producció.</li>
+<li><strong>Servei de Models amb Flask o FastAPI</strong>: Crear una API RESTful per servir el model.</li>
+<li><strong>Desplegament en Plataformes de Núvol</strong>: Utilitzar serveis com AWS SageMaker, Google AI Platform, o Azure Machine Learning.</li>
+<li><strong>Contenidors Docker</strong>: Empaquetar el model i el seu entorn en un contenidor Docker per a una fàcil distribució.</li>
+</ol>
+</div><h1>Exportació de Models PyTorch</h1>
+<div class='content'></div><h2>Exportació a TorchScript</h2>
+<div class='content'><p>TorchScript és una manera de convertir models PyTorch en un format que es pot executar en entorns de producció. Hi ha dues maneres principals de convertir un model a TorchScript: traç i script.</p>
+<h4>Exemple de Traç</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaHZpc2lvbi5tb2RlbHMgYXMgbW9kZWxzCgojIENhcnJlZ2FyIHVuIG1vZGVsIHByZWVudHJlbmF0Cm1vZGVsID0gbW9kZWxzLnJlc25ldDE4KHByZXRyYWluZWQ9VHJ1ZSkKbW9kZWwuZXZhbCgpCgojIENyZWFyIHVuIHRlbnNvciBkJ2V4ZW1wbGUKZXhhbXBsZV9pbnB1dCA9IHRvcmNoLnJhbmQoMSwgMywgMjI0LCAyMjQpCgojIENvbnZlcnRpciBlbCBtb2RlbCBhIFRvcmNoU2NyaXB0IG1pdGphbsOnYW50IHRyYcOnCnRyYWNlZF9zY3JpcHRfbW9kdWxlID0gdG9yY2guaml0LnRyYWNlKG1vZGVsLCBleGFtcGxlX2lucHV0KQoKIyBHdWFyZGFyIGVsIG1vZGVsIHRyYcOnYXQKdHJhY2VkX3NjcmlwdF9tb2R1bGUuc2F2ZSgicmVzbmV0MThfdHJhY2VkLnB0Iik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torchvision.models as models
+
+# Carregar un model preentrenat
+model = models.resnet18(pretrained=True)
+model.eval()
+
+# Crear un tensor d'exemple
+example_input = torch.rand(1, 3, 224, 224)
+
+# Convertir el model a TorchScript mitjan&ccedil;ant tra&ccedil;
+traced_script_module = torch.jit.trace(model, example_input)
+
+# Guardar el model tra&ccedil;at
+traced_script_module.save(&quot;resnet18_traced.pt&quot;)</pre></div><div class='content'><h4>Exemple de Script</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCgpjbGFzcyBNeU1vZHVsZSh0b3JjaC5ubi5Nb2R1bGUpOgogICAgZGVmIF9faW5pdF9fKHNlbGYpOgogICAgICAgIHN1cGVyKE15TW9kdWxlLCBzZWxmKS5fX2luaXRfXygpCiAgICAgICAgc2VsZi5saW5lYXIgPSB0b3JjaC5ubi5MaW5lYXIoMiwgMikKCiAgICBkZWYgZm9yd2FyZChzZWxmLCB4KToKICAgICAgICByZXR1cm4gc2VsZi5saW5lYXIoeCkKCiMgQ3JlYXIgdW5hIGluc3TDoG5jaWEgZGVsIG1vZGVsCm1vZGVsID0gTXlNb2R1bGUoKQptb2RlbC5ldmFsKCkKCiMgQ29udmVydGlyIGVsIG1vZGVsIGEgVG9yY2hTY3JpcHQgbWl0amFuw6dhbnQgc2NyaXB0CnNjcmlwdGVkX21vZHVsZSA9IHRvcmNoLmppdC5zY3JpcHQobW9kZWwpCgojIEd1YXJkYXIgZWwgbW9kZWwgZXNjcmlwdGF0CnNjcmlwdGVkX21vZHVsZS5zYXZlKCJteW1vZHVsZV9zY3JpcHRlZC5wdCIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+
+class MyModule(torch.nn.Module):
+    def __init__(self):
+        super(MyModule, self).__init__()
+        self.linear = torch.nn.Linear(2, 2)
+
+    def forward(self, x):
+        return self.linear(x)
+
+# Crear una inst&agrave;ncia del model
+model = MyModule()
+model.eval()
+
+# Convertir el model a TorchScript mitjan&ccedil;ant script
+scripted_module = torch.jit.script(model)
+
+# Guardar el model escriptat
+scripted_module.save(&quot;mymodule_scripted.pt&quot;)</pre></div><div class='content'></div><h1>Servei de Models amb Flask</h1>
+<div class='content'></div><h2>Crear una API RESTful amb Flask</h2>
+<div class='content'><p>Flask és un microframework per a Python que permet crear aplicacions web de manera senzilla. A continuació, es mostra com crear una API RESTful per servir un model PyTorch.</p>
+<h4>Instal·lació de Flask</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgRmxhc2s="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install Flask</pre></div><div class='content'><h4>Exemple de Servei de Model</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2ssIHJlcXVlc3QsIGpzb25pZnkKaW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaHZpc2lvbi5tb2RlbHMgYXMgbW9kZWxzCmltcG9ydCB0b3JjaHZpc2lvbi50cmFuc2Zvcm1zIGFzIHRyYW5zZm9ybXMKZnJvbSBQSUwgaW1wb3J0IEltYWdlCmltcG9ydCBpbwoKYXBwID0gRmxhc2soX19uYW1lX18pCgojIENhcnJlZ2FyIGVsIG1vZGVsCm1vZGVsID0gbW9kZWxzLnJlc25ldDE4KHByZXRyYWluZWQ9VHJ1ZSkKbW9kZWwuZXZhbCgpCgojIERlZmluaXIgbGVzIHRyYW5zZm9ybWFjaW9ucyBkJ2ltYXRnZQp0cmFuc2Zvcm0gPSB0cmFuc2Zvcm1zLkNvbXBvc2UoWwogICAgdHJhbnNmb3Jtcy5SZXNpemUoMjU2KSwKICAgIHRyYW5zZm9ybXMuQ2VudGVyQ3JvcCgyMjQpLAogICAgdHJhbnNmb3Jtcy5Ub1RlbnNvcigpLAogICAgdHJhbnNmb3Jtcy5Ob3JtYWxpemUobWVhbj1bMC40ODUsIDAuNDU2LCAwLjQwNl0sIHN0ZD1bMC4yMjksIDAuMjI0LCAwLjIyNV0pLApdKQoKQGFwcC5yb3V0ZSgnL3ByZWRpY3QnLCBtZXRob2RzPVsnUE9TVCddKQpkZWYgcHJlZGljdCgpOgogICAgaWYgJ2ZpbGUnIG5vdCBpbiByZXF1ZXN0LmZpbGVzOgogICAgICAgIHJldHVybiBqc29uaWZ5KHsnZXJyb3InOiAnTm8gZmlsZSBwcm92aWRlZCd9KSwgNDAwCgogICAgZmlsZSA9IHJlcXVlc3QuZmlsZXNbJ2ZpbGUnXQogICAgaW1nID0gSW1hZ2Uub3Blbihpby5CeXRlc0lPKGZpbGUucmVhZCgpKSkKICAgIGltZyA9IHRyYW5zZm9ybShpbWcpLnVuc3F1ZWV6ZSgwKQoKICAgIHdpdGggdG9yY2gubm9fZ3JhZCgpOgogICAgICAgIG91dHB1dCA9IG1vZGVsKGltZykKICAgICAgICBfLCBwcmVkaWN0ZWQgPSB0b3JjaC5tYXgob3V0cHV0LCAxKQoKICAgIHJldHVybiBqc29uaWZ5KHsncHJlZGljdGlvbic6IHByZWRpY3RlZC5pdGVtKCl9KQoKaWYgX19uYW1lX18gPT0gJ19fbWFpbl9fJzoKICAgIGFwcC5ydW4oZGVidWc9VHJ1ZSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask, request, jsonify
+import torch
+import torchvision.models as models
+import torchvision.transforms as transforms
+from PIL import Image
+import io
+
+app = Flask(__name__)
+
+# Carregar el model
+model = models.resnet18(pretrained=True)
+model.eval()
+
+# Definir les transformacions d'imatge
+transform = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file provided'}), 400
+
+    file = request.files['file']
+    img = Image.open(io.BytesIO(file.read()))
+    img = transform(img).unsqueeze(0)
+
+    with torch.no_grad():
+        output = model(img)
+        _, predicted = torch.max(output, 1)
+
+    return jsonify({'prediction': predicted.item()})
+
+if __name__ == '__main__':
+    app.run(debug=True)</pre></div><div class='content'></div><h1>Desplegament en Plataformes de Núvol</h1>
+<div class='content'></div><h2>AWS SageMaker</h2>
+<div class='content'><p>AWS SageMaker és un servei complet que permet construir, entrenar i desplegar models de machine learning a escala. A continuació es mostra un exemple bàsic de com desplegar un model PyTorch a SageMaker.</p>
+<h4>Instal·lació del SDK de SageMaker</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgc2FnZW1ha2Vy"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install sagemaker</pre></div><div class='content'><h4>Exemple de Desplegament</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHNhZ2VtYWtlcgpmcm9tIHNhZ2VtYWtlci5weXRvcmNoIGltcG9ydCBQeVRvcmNoTW9kZWwKCiMgRGVmaW5pciBlbCBidWNrZXQgUzMgaSBlbCBjYW3DrSBkZWwgbW9kZWwKczNfYnVja2V0ID0gJ215LXMzLWJ1Y2tldCcKbW9kZWxfcGF0aCA9ICdzMzovL3t9L21vZGVsLnRhci5neicuZm9ybWF0KHMzX2J1Y2tldCkKCiMgQ3JlYXIgdW4gb2JqZWN0ZSBQeVRvcmNoTW9kZWwKcHl0b3JjaF9tb2RlbCA9IFB5VG9yY2hNb2RlbChtb2RlbF9kYXRhPW1vZGVsX3BhdGgsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgcm9sZT0nU2FnZU1ha2VyUm9sZScsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZW50cnlfcG9pbnQ9J2luZmVyZW5jZS5weScsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZnJhbWV3b3JrX3ZlcnNpb249JzEuOC4wJywKICAgICAgICAgICAgICAgICAgICAgICAgICAgICBweV92ZXJzaW9uPSdweTMnKQoKIyBEZXNwbGVnYXIgZWwgbW9kZWwKcHJlZGljdG9yID0gcHl0b3JjaF9tb2RlbC5kZXBsb3koaW5zdGFuY2VfdHlwZT0nbWwubTQueGxhcmdlJywgaW5pdGlhbF9pbnN0YW5jZV9jb3VudD0xKQoKIyBGZXIgdW5hIHByZWRpY2Npw7MKcmVzdWx0ID0gcHJlZGljdG9yLnByZWRpY3QoZGF0YSkKcHJpbnQocmVzdWx0KQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import sagemaker
+from sagemaker.pytorch import PyTorchModel
+
+# Definir el bucket S3 i el cam&iacute; del model
+s3_bucket = 'my-s3-bucket'
+model_path = 's3://{}/model.tar.gz'.format(s3_bucket)
+
+# Crear un objecte PyTorchModel
+pytorch_model = PyTorchModel(model_data=model_path,
+                             role='SageMakerRole',
+                             entry_point='inference.py',
+                             framework_version='1.8.0',
+                             py_version='py3')
+
+# Desplegar el model
+predictor = pytorch_model.deploy(instance_type='ml.m4.xlarge', initial_instance_count=1)
+
+# Fer una predicci&oacute;
+result = predictor.predict(data)
+print(result)</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après els conceptes bàsics del desplegament de models PyTorch, incloent-hi com exportar models a TorchScript, crear una API RESTful amb Flask, i desplegar models en plataformes de núvol com AWS SageMaker. El desplegament és una part essencial del cicle de vida del desenvolupament de models de machine learning, ja que permet utilitzar els models en aplicacions reals.</p>
+<p>En el següent tema, explorarem com optimitzar el rendiment dels models PyTorch per assegurar-nos que funcionin de manera eficient en entorns de producció.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-reinforcement-learning' title="Aprenentatge per Reforç amb PyTorch">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-optimizing-performance' title="Optimització del Rendiment">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

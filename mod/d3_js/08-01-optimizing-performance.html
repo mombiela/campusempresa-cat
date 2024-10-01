@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimitzant el Rendiment de D3.js</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/d3_js/08-01-optimizing-performance" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/d3_js/08-01-optimizing-performance" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/d3_js/08-01-optimizing-performance" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/d3_js/08-01-optimizing-performance" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/d3_js/08-01-optimizing-performance" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-case-studies' title="Estudis de Cas i Exemples">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Optimitzant el Rendiment de D3.js</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-handling-large-datasets' title="Gestionant Grans Conjunts de Dades">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem diverses tècniques i estratègies per optimitzar el rendiment de les visualitzacions creades amb D3.js. A mesura que les dades creixen en volum i complexitat, és crucial assegurar-se que les visualitzacions siguin eficients i responsives. Aquest mòdul cobreix conceptes clau, exemples pràctics i exercicis per ajudar-te a millorar el rendiment de les teves visualitzacions.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Reduir el Nombre d'Elements DOM</strong>:</p>
+<ul>
+<li>Evita crear elements DOM innecessaris.</li>
+<li>Utilitza tècniques com l'agrupació d'elements (<code>&lt;g&gt;</code> en SVG) per reduir la complexitat.</li>
+</ul>
+</li>
+<li>
+<p><strong>Utilitzar Escales i Eixos Eficientment</strong>:</p>
+<ul>
+<li>Escales i eixos poden ser costosos en termes de rendiment.</li>
+<li>Reutilitza escales i eixos sempre que sigui possible.</li>
+</ul>
+</li>
+<li>
+<p><strong>Optimitzar les Transicions</strong>:</p>
+<ul>
+<li>Les transicions poden ser costoses si no es gestionen correctament.</li>
+<li>Limita la durada i la complexitat de les transicions.</li>
+</ul>
+</li>
+<li>
+<p><strong>Gestió de Dades</strong>:</p>
+<ul>
+<li>Filtra i agrupa les dades abans de visualitzar-les.</li>
+<li>Utilitza tècniques de mostreig per treballar amb grans conjunts de dades.</li>
+</ul>
+</li>
+<li>
+<p><strong>Utilitzar Canvas en Lloc de SVG</strong>:</p>
+<ul>
+<li>Per a visualitzacions amb molts elements, considera utilitzar Canvas en lloc de SVG.</li>
+<li>Canvas és més eficient per a dibuixar molts elements, però és menys flexible que SVG.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Exemples Pràctics</h1>
+<div class='content'></div><h2>Reduir el Nombre d'Elements DOM</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRXhlbXBsZSBkZSBjcmVhY2nDsyBkJ2VsZW1lbnRzIFNWRyBhbWIgYWdydXBhY2nDswpjb25zdCBzdmcgPSBkMy5zZWxlY3QoImJvZHkiKS5hcHBlbmQoInN2ZyIpCiAgICAuYXR0cigid2lkdGgiLCA1MDApCiAgICAuYXR0cigiaGVpZ2h0IiwgNTAwKTsKCmNvbnN0IGdyb3VwID0gc3ZnLmFwcGVuZCgiZyIpCiAgICAuYXR0cigidHJhbnNmb3JtIiwgInRyYW5zbGF0ZSg1MCw1MCkiKTsKCmdyb3VwLnNlbGVjdEFsbCgiY2lyY2xlIikKICAgIC5kYXRhKFsxMCwgMjAsIDMwLCA0MCwgNTBdKQogICAgLmVudGVyKCkKICAgIC5hcHBlbmQoImNpcmNsZSIpCiAgICAuYXR0cigiY3giLCAoZCwgaSkgPT4gaSAqIDUwKQogICAgLmF0dHIoImN5IiwgNTApCiAgICAuYXR0cigiciIsIGQgPT4gZCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Exemple de creaci&oacute; d'elements SVG amb agrupaci&oacute;
+const svg = d3.select(&quot;body&quot;).append(&quot;svg&quot;)
+    .attr(&quot;width&quot;, 500)
+    .attr(&quot;height&quot;, 500);
+
+const group = svg.append(&quot;g&quot;)
+    .attr(&quot;transform&quot;, &quot;translate(50,50)&quot;);
+
+group.selectAll(&quot;circle&quot;)
+    .data([10, 20, 30, 40, 50])
+    .enter()
+    .append(&quot;circle&quot;)
+    .attr(&quot;cx&quot;, (d, i) =&gt; i * 50)
+    .attr(&quot;cy&quot;, 50)
+    .attr(&quot;r&quot;, d =&gt; d);</pre></div><div class='content'></div><h2>Utilitzar Escales i Eixos Eficientment</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRXhlbXBsZSBkZSByZXV0aWxpdHphY2nDsyBkJ2VzY2FsZXMgaSBlaXhvcwpjb25zdCB4U2NhbGUgPSBkMy5zY2FsZUxpbmVhcigpCiAgICAuZG9tYWluKFswLCAxMDBdKQogICAgLnJhbmdlKFswLCA1MDBdKTsKCmNvbnN0IHlTY2FsZSA9IGQzLnNjYWxlTGluZWFyKCkKICAgIC5kb21haW4oWzAsIDEwMF0pCiAgICAucmFuZ2UoWzUwMCwgMF0pOwoKY29uc3QgeEF4aXMgPSBkMy5heGlzQm90dG9tKHhTY2FsZSk7CmNvbnN0IHlBeGlzID0gZDMuYXhpc0xlZnQoeVNjYWxlKTsKCnN2Zy5hcHBlbmQoImciKQogICAgLmF0dHIoInRyYW5zZm9ybSIsICJ0cmFuc2xhdGUoMCw1MDApIikKICAgIC5jYWxsKHhBeGlzKTsKCnN2Zy5hcHBlbmQoImciKQogICAgLmNhbGwoeUF4aXMpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Exemple de reutilitzaci&oacute; d'escales i eixos
+const xScale = d3.scaleLinear()
+    .domain([0, 100])
+    .range([0, 500]);
+
+const yScale = d3.scaleLinear()
+    .domain([0, 100])
+    .range([500, 0]);
+
+const xAxis = d3.axisBottom(xScale);
+const yAxis = d3.axisLeft(yScale);
+
+svg.append(&quot;g&quot;)
+    .attr(&quot;transform&quot;, &quot;translate(0,500)&quot;)
+    .call(xAxis);
+
+svg.append(&quot;g&quot;)
+    .call(yAxis);</pre></div><div class='content'></div><h2>Optimitzar les Transicions</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRXhlbXBsZSBkZSB0cmFuc2ljacOzIG9wdGltaXR6YWRhCnN2Zy5zZWxlY3RBbGwoImNpcmNsZSIpCiAgICAudHJhbnNpdGlvbigpCiAgICAuZHVyYXRpb24oNTAwKQogICAgLmF0dHIoInIiLCBkID0+IGQgKiAyKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Exemple de transici&oacute; optimitzada
+svg.selectAll(&quot;circle&quot;)
+    .transition()
+    .duration(500)
+    .attr(&quot;r&quot;, d =&gt; d * 2);</pre></div><div class='content'></div><h2>Utilitzar Canvas en Lloc de SVG</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRXhlbXBsZSBkZSBkaWJ1aXggYW1iIENhbnZhcwpjb25zdCBjYW52YXMgPSBkMy5zZWxlY3QoImJvZHkiKS5hcHBlbmQoImNhbnZhcyIpCiAgICAuYXR0cigid2lkdGgiLCA1MDApCiAgICAuYXR0cigiaGVpZ2h0IiwgNTAwKQogICAgLm5vZGUoKTsKCmNvbnN0IGNvbnRleHQgPSBjYW52YXMuZ2V0Q29udGV4dCgiMmQiKTsKCmNvbnN0IGRhdGEgPSBkMy5yYW5nZSgxMDAwKS5tYXAoZCA9PiAoewogICAgeDogTWF0aC5yYW5kb20oKSAqIDUwMCwKICAgIHk6IE1hdGgucmFuZG9tKCkgKiA1MDAsCiAgICByOiBNYXRoLnJhbmRvbSgpICogNQp9KSk7CgpkYXRhLmZvckVhY2goZCA9PiB7CiAgICBjb250ZXh0LmJlZ2luUGF0aCgpOwogICAgY29udGV4dC5hcmMoZC54LCBkLnksIGQuciwgMCwgMiAqIE1hdGguUEkpOwogICAgY29udGV4dC5maWxsKCk7Cn0pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Exemple de dibuix amb Canvas
+const canvas = d3.select(&quot;body&quot;).append(&quot;canvas&quot;)
+    .attr(&quot;width&quot;, 500)
+    .attr(&quot;height&quot;, 500)
+    .node();
+
+const context = canvas.getContext(&quot;2d&quot;);
+
+const data = d3.range(1000).map(d =&gt; ({
+    x: Math.random() * 500,
+    y: Math.random() * 500,
+    r: Math.random() * 5
+}));
+
+data.forEach(d =&gt; {
+    context.beginPath();
+    context.arc(d.x, d.y, d.r, 0, 2 * Math.PI);
+    context.fill();
+});</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Reduir Elements DOM</h2>
+<div class='content'><p><strong>Descripció</strong>: Crea una visualització de cercles utilitzant agrupacions per reduir el nombre d'elements DOM.</p>
+<p><strong>Instruccions</strong>:</p>
+<ol>
+<li>Crea un SVG de 500x500 píxels.</li>
+<li>Afegeix un grup (<code>&lt;g&gt;</code>) per agrupar els cercles.</li>
+<li>Dibuixa 10 cercles dins del grup amb diferents radis.</li>
+</ol>
+<p><strong>Solució</strong>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3Qgc3ZnID0gZDMuc2VsZWN0KCJib2R5IikuYXBwZW5kKCJzdmciKQogICAgLmF0dHIoIndpZHRoIiwgNTAwKQogICAgLmF0dHIoImhlaWdodCIsIDUwMCk7Cgpjb25zdCBncm91cCA9IHN2Zy5hcHBlbmQoImciKQogICAgLmF0dHIoInRyYW5zZm9ybSIsICJ0cmFuc2xhdGUoNTAsNTApIik7Cgpncm91cC5zZWxlY3RBbGwoImNpcmNsZSIpCiAgICAuZGF0YShbMTAsIDIwLCAzMCwgNDAsIDUwLCA2MCwgNzAsIDgwLCA5MCwgMTAwXSkKICAgIC5lbnRlcigpCiAgICAuYXBwZW5kKCJjaXJjbGUiKQogICAgLmF0dHIoImN4IiwgKGQsIGkpID0+IGkgKiA1MCkKICAgIC5hdHRyKCJjeSIsIDUwKQogICAgLmF0dHIoInIiLCBkID0+IGQpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const svg = d3.select(&quot;body&quot;).append(&quot;svg&quot;)
+    .attr(&quot;width&quot;, 500)
+    .attr(&quot;height&quot;, 500);
+
+const group = svg.append(&quot;g&quot;)
+    .attr(&quot;transform&quot;, &quot;translate(50,50)&quot;);
+
+group.selectAll(&quot;circle&quot;)
+    .data([10, 20, 30, 40, 50, 60, 70, 80, 90, 100])
+    .enter()
+    .append(&quot;circle&quot;)
+    .attr(&quot;cx&quot;, (d, i) =&gt; i * 50)
+    .attr(&quot;cy&quot;, 50)
+    .attr(&quot;r&quot;, d =&gt; d);</pre></div><div class='content'></div><h2>Exercici 2: Optimitzar Transicions</h2>
+<div class='content'><p><strong>Descripció</strong>: Implementa una transició optimitzada per canviar la mida dels cercles.</p>
+<p><strong>Instruccions</strong>:</p>
+<ol>
+<li>Crea un SVG de 500x500 píxels.</li>
+<li>Dibuixa 5 cercles amb radis inicials de 10 píxels.</li>
+<li>Implementa una transició que dobli el radi dels cercles en 500 ms.</li>
+</ol>
+<p><strong>Solució</strong>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3Qgc3ZnID0gZDMuc2VsZWN0KCJib2R5IikuYXBwZW5kKCJzdmciKQogICAgLmF0dHIoIndpZHRoIiwgNTAwKQogICAgLmF0dHIoImhlaWdodCIsIDUwMCk7Cgpzdmcuc2VsZWN0QWxsKCJjaXJjbGUiKQogICAgLmRhdGEoWzEwLCAyMCwgMzAsIDQwLCA1MF0pCiAgICAuZW50ZXIoKQogICAgLmFwcGVuZCgiY2lyY2xlIikKICAgIC5hdHRyKCJjeCIsIChkLCBpKSA9PiBpICogMTAwICsgNTApCiAgICAuYXR0cigiY3kiLCAyNTApCiAgICAuYXR0cigiciIsIDEwKQogICAgLnRyYW5zaXRpb24oKQogICAgLmR1cmF0aW9uKDUwMCkKICAgIC5hdHRyKCJyIiwgZCA9PiBkKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const svg = d3.select(&quot;body&quot;).append(&quot;svg&quot;)
+    .attr(&quot;width&quot;, 500)
+    .attr(&quot;height&quot;, 500);
+
+svg.selectAll(&quot;circle&quot;)
+    .data([10, 20, 30, 40, 50])
+    .enter()
+    .append(&quot;circle&quot;)
+    .attr(&quot;cx&quot;, (d, i) =&gt; i * 100 + 50)
+    .attr(&quot;cy&quot;, 250)
+    .attr(&quot;r&quot;, 10)
+    .transition()
+    .duration(500)
+    .attr(&quot;r&quot;, d =&gt; d);</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem explorat diverses tècniques per optimitzar el rendiment de les visualitzacions amb D3.js. Hem après a reduir el nombre d'elements DOM, utilitzar escales i eixos eficientment, optimitzar les transicions i considerar l'ús de Canvas per a grans conjunts de dades. A més, hem practicat aquestes tècniques amb exemples pràctics i exercicis. Aquestes estratègies t'ajudaran a crear visualitzacions més eficients i responsives, millorant l'experiència de l'usuari final.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-case-studies' title="Estudis de Cas i Exemples">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-handling-large-datasets' title="Gestionant Grans Conjunts de Dades">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

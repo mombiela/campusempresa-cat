@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treballant amb JSON</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/fsharp/07-01-working-with-json" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/fsharp/07-01-working-with-json" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/fsharp/07-01-working-with-json" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/fsharp/07-01-working-with-json" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/fsharp/07-01-working-with-json" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-04-concurrency-patterns' title="Patrons de Concurrència">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Treballant amb JSON</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-02-interacting-with-databases' title="Interacció amb Bases de Dades">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com treballar amb JSON en F#. JSON (JavaScript Object Notation) és un format de dades lleuger i fàcil de llegir i escriure per a humans, així com fàcil de parsejar i generar per a màquines. És àmpliament utilitzat per a l'intercanvi de dades en aplicacions web.</p>
+</div><h1>Continguts</h1>
+<div class='content'><ol>
+<li>Introducció a JSON</li>
+<li>Llibreries per treballar amb JSON en F#</li>
+<li>Serialització i Deserialització de JSON</li>
+<li>Manipulació de JSON</li>
+<li>Exercicis pràctics</li>
+</ol>
+</div><h1>1. Introducció a JSON</h1>
+<div class='content'><p>JSON és un format de text que utilitza una notació d'objectes de JavaScript per representar estructures de dades. Aquí teniu un exemple de JSON:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJub20iOiAiSm9hbiIsCiAgImVkYXQiOiAzMCwKICAiaGFiaWxpdGF0cyI6IFsiRiMiLCAiQyMiLCAiSmF2YVNjcmlwdCJdLAogICJhZHJlw6dhIjogewogICAgImNhcnJlciI6ICJDYXJyZXIgTWFqb3IiLAogICAgImNpdXRhdCI6ICJCYXJjZWxvbmEiCiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;nom&quot;: &quot;Joan&quot;,
+  &quot;edat&quot;: 30,
+  &quot;habilitats&quot;: [&quot;F#&quot;, &quot;C#&quot;, &quot;JavaScript&quot;],
+  &quot;adre&ccedil;a&quot;: {
+    &quot;carrer&quot;: &quot;Carrer Major&quot;,
+    &quot;ciutat&quot;: &quot;Barcelona&quot;
+  }
+}</pre></div><div class='content'></div><h1>2. Llibreries per treballar amb JSON en F#</h1>
+<div class='content'><p>En F#, podem utilitzar diverses llibreries per treballar amb JSON. Algunes de les més populars són:</p>
+<ul>
+<li><strong>Newtonsoft.Json (Json.NET)</strong>: Una llibreria molt popular per a la manipulació de JSON en .NET.</li>
+<li><strong>FSharp.Data</strong>: Proporciona proveïdors de tipus per treballar amb JSON de manera segura en temps de compilació.</li>
+</ul>
+</div><h1>3. Serialització i Deserialització de JSON</h1>
+<div class='content'></div><h2>Utilitzant Newtonsoft.Json</h2>
+<div class='content'><h4>Instal·lació</h4>
+<p>Primer, hem d'instal·lar la llibreria <code>Newtonsoft.Json</code> mitjançant NuGet. Podeu fer-ho amb el següent comandament:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG90bmV0IGFkZCBwYWNrYWdlIE5ld3RvbnNvZnQuSnNvbg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>dotnet add package Newtonsoft.Json</pre></div><div class='content'><h4>Exemple de Codi</h4>
+<p>A continuació, es mostra com serialitzar i deserialitzar JSON utilitzant <code>Newtonsoft.Json</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBOZXd0b25zb2Z0Lkpzb24KCnR5cGUgUGVyc29uYSA9IHsKICAgIE5vbTogc3RyaW5nCiAgICBFZGF0OiBpbnQKICAgIEhhYmlsaXRhdHM6IHN0cmluZyBsaXN0CiAgICBBZHJlw6dhOiBBZHJlw6dhCn0KYW5kIEFkcmXDp2EgPSB7CiAgICBDYXJyZXI6IHN0cmluZwogICAgQ2l1dGF0OiBzdHJpbmcKfQoKbGV0IHBlcnNvbmEgPSB7CiAgICBOb20gPSAiSm9hbiIKICAgIEVkYXQgPSAzMAogICAgSGFiaWxpdGF0cyA9IFsiRiMiLCAiQyMiLCAiSmF2YVNjcmlwdCJdCiAgICBBZHJlw6dhID0geyBDYXJyZXIgPSAiQ2FycmVyIE1ham9yIjsgQ2l1dGF0ID0gIkJhcmNlbG9uYSIgfQp9CgovLyBTZXJpYWxpdHphY2nDswpsZXQganNvbiA9IEpzb25Db252ZXJ0LlNlcmlhbGl6ZU9iamVjdChwZXJzb25hKQpwcmludGZuICJKU09OOiAlcyIganNvbgoKLy8gRGVzZXJpYWxpdHphY2nDswpsZXQgcGVyc29uYURlc2VyaWFsaXR6YWRhID0gSnNvbkNvbnZlcnQuRGVzZXJpYWxpemVPYmplY3Q8UGVyc29uYT4oanNvbikKcHJpbnRmbiAiTm9tOiAlcywgRWRhdDogJWQiIHBlcnNvbmFEZXNlcmlhbGl0emFkYS5Ob20gcGVyc29uYURlc2VyaWFsaXR6YWRhLkVkYXQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open Newtonsoft.Json
+
+type Persona = {
+    Nom: string
+    Edat: int
+    Habilitats: string list
+    Adre&ccedil;a: Adre&ccedil;a
+}
+and Adre&ccedil;a = {
+    Carrer: string
+    Ciutat: string
+}
+
+let persona = {
+    Nom = &quot;Joan&quot;
+    Edat = 30
+    Habilitats = [&quot;F#&quot;, &quot;C#&quot;, &quot;JavaScript&quot;]
+    Adre&ccedil;a = { Carrer = &quot;Carrer Major&quot;; Ciutat = &quot;Barcelona&quot; }
+}
+
+// Serialitzaci&oacute;
+let json = JsonConvert.SerializeObject(persona)
+printfn &quot;JSON: %s&quot; json
+
+// Deserialitzaci&oacute;
+let personaDeserialitzada = JsonConvert.DeserializeObject&lt;Persona&gt;(json)
+printfn &quot;Nom: %s, Edat: %d&quot; personaDeserialitzada.Nom personaDeserialitzada.Edat</pre></div><div class='content'></div><h2>Utilitzant FSharp.Data</h2>
+<div class='content'><h4>Instal·lació</h4>
+<p>Primer, hem d'instal·lar la llibreria <code>FSharp.Data</code> mitjançant NuGet. Podeu fer-ho amb el següent comandament:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG90bmV0IGFkZCBwYWNrYWdlIEZTaGFycC5EYXRh"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>dotnet add package FSharp.Data</pre></div><div class='content'><h4>Exemple de Codi</h4>
+<p>A continuació, es mostra com treballar amb JSON utilitzant <code>FSharp.Data</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBGU2hhcnAuRGF0YQoKdHlwZSBQZXJzb25hID0gSnNvblByb3ZpZGVyPCIiIgp7CiAgIm5vbSI6ICJKb2FuIiwKICAiZWRhdCI6IDMwLAogICJoYWJpbGl0YXRzIjogWyJGIyIsICJDIyIsICJKYXZhU2NyaXB0Il0sCiAgImFkcmXDp2EiOiB7CiAgICAiY2FycmVyIjogIkNhcnJlciBNYWpvciIsCiAgICAiY2l1dGF0IjogIkJhcmNlbG9uYSIKICB9Cn0KIiIiPgoKbGV0IGpzb24gPSAiIiIKewogICJub20iOiAiSm9hbiIsCiAgImVkYXQiOiAzMCwKICAiaGFiaWxpdGF0cyI6IFsiRiMiLCAiQyMiLCAiSmF2YVNjcmlwdCJdLAogICJhZHJlw6dhIjogewogICAgImNhcnJlciI6ICJDYXJyZXIgTWFqb3IiLAogICAgImNpdXRhdCI6ICJCYXJjZWxvbmEiCiAgfQp9CiIiIgoKbGV0IHBlcnNvbmEgPSBQZXJzb25hLlBhcnNlKGpzb24pCnByaW50Zm4gIk5vbTogJXMsIEVkYXQ6ICVkIiBwZXJzb25hLk5vbSBwZXJzb25hLkVkYXQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open FSharp.Data
+
+type Persona = JsonProvider&lt;&quot;&quot;&quot;
+{
+  &quot;nom&quot;: &quot;Joan&quot;,
+  &quot;edat&quot;: 30,
+  &quot;habilitats&quot;: [&quot;F#&quot;, &quot;C#&quot;, &quot;JavaScript&quot;],
+  &quot;adre&ccedil;a&quot;: {
+    &quot;carrer&quot;: &quot;Carrer Major&quot;,
+    &quot;ciutat&quot;: &quot;Barcelona&quot;
+  }
+}
+&quot;&quot;&quot;&gt;
+
+let json = &quot;&quot;&quot;
+{
+  &quot;nom&quot;: &quot;Joan&quot;,
+  &quot;edat&quot;: 30,
+  &quot;habilitats&quot;: [&quot;F#&quot;, &quot;C#&quot;, &quot;JavaScript&quot;],
+  &quot;adre&ccedil;a&quot;: {
+    &quot;carrer&quot;: &quot;Carrer Major&quot;,
+    &quot;ciutat&quot;: &quot;Barcelona&quot;
+  }
+}
+&quot;&quot;&quot;
+
+let persona = Persona.Parse(json)
+printfn &quot;Nom: %s, Edat: %d&quot; persona.Nom persona.Edat</pre></div><div class='content'></div><h1>4. Manipulació de JSON</h1>
+<div class='content'></div><h2>Exemple de Manipulació</h2>
+<div class='content'><p>Podem manipular JSON de diverses maneres. A continuació, es mostra un exemple de com afegir un nou camp a un objecte JSON utilitzant <code>Newtonsoft.Json.Linq</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBOZXd0b25zb2Z0Lkpzb24uTGlucQoKbGV0IGpzb24gPSAiIiIKewogICJub20iOiAiSm9hbiIsCiAgImVkYXQiOiAzMCwKICAiaGFiaWxpdGF0cyI6IFsiRiMiLCAiQyMiLCAiSmF2YVNjcmlwdCJdLAogICJhZHJlw6dhIjogewogICAgImNhcnJlciI6ICJDYXJyZXIgTWFqb3IiLAogICAgImNpdXRhdCI6ICJCYXJjZWxvbmEiCiAgfQp9CiIiIgoKbGV0IGpPYmplY3QgPSBKT2JqZWN0LlBhcnNlKGpzb24pCmpPYmplY3QuWyJlbWFpbCJdIDwtIEpWYWx1ZSgiam9hbkBleGFtcGxlLmNvbSIpCgpwcmludGZuICJKU09OIG1vZGlmaWNhdDogJXMiIChqT2JqZWN0LlRvU3RyaW5nKCkp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open Newtonsoft.Json.Linq
+
+let json = &quot;&quot;&quot;
+{
+  &quot;nom&quot;: &quot;Joan&quot;,
+  &quot;edat&quot;: 30,
+  &quot;habilitats&quot;: [&quot;F#&quot;, &quot;C#&quot;, &quot;JavaScript&quot;],
+  &quot;adre&ccedil;a&quot;: {
+    &quot;carrer&quot;: &quot;Carrer Major&quot;,
+    &quot;ciutat&quot;: &quot;Barcelona&quot;
+  }
+}
+&quot;&quot;&quot;
+
+let jObject = JObject.Parse(json)
+jObject.[&quot;email&quot;] &lt;- JValue(&quot;joan@example.com&quot;)
+
+printfn &quot;JSON modificat: %s&quot; (jObject.ToString())</pre></div><div class='content'></div><h1>5. Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Serialització i Deserialització</h2>
+<div class='content'><ol>
+<li>Crea un tipus <code>Producte</code> amb els camps <code>Nom</code>, <code>Preu</code> i <code>EnEstoc</code>.</li>
+<li>Crea una instància de <code>Producte</code> i serialitza-la a JSON.</li>
+<li>Deserialitza el JSON a una instància de <code>Producte</code>.</li>
+</ol>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBOZXd0b25zb2Z0Lkpzb24KCnR5cGUgUHJvZHVjdGUgPSB7CiAgICBOb206IHN0cmluZwogICAgUHJldTogZmxvYXQKICAgIEVuRXN0b2M6IGJvb2wKfQoKbGV0IHByb2R1Y3RlID0gewogICAgTm9tID0gIk9yZGluYWRvciIKICAgIFByZXUgPSA5OTkuOTkKICAgIEVuRXN0b2MgPSB0cnVlCn0KCi8vIFNlcmlhbGl0emFjacOzCmxldCBqc29uID0gSnNvbkNvbnZlcnQuU2VyaWFsaXplT2JqZWN0KHByb2R1Y3RlKQpwcmludGZuICJKU09OOiAlcyIganNvbgoKLy8gRGVzZXJpYWxpdHphY2nDswpsZXQgcHJvZHVjdGVEZXNlcmlhbGl0emF0ID0gSnNvbkNvbnZlcnQuRGVzZXJpYWxpemVPYmplY3Q8UHJvZHVjdGU+KGpzb24pCnByaW50Zm4gIk5vbTogJXMsIFByZXU6ICVmLCBFbiBFc3RvYzogJWIiIHByb2R1Y3RlRGVzZXJpYWxpdHphdC5Ob20gcHJvZHVjdGVEZXNlcmlhbGl0emF0LlByZXUgcHJvZHVjdGVEZXNlcmlhbGl0emF0LkVuRXN0b2M="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open Newtonsoft.Json
+
+type Producte = {
+    Nom: string
+    Preu: float
+    EnEstoc: bool
+}
+
+let producte = {
+    Nom = &quot;Ordinador&quot;
+    Preu = 999.99
+    EnEstoc = true
+}
+
+// Serialitzaci&oacute;
+let json = JsonConvert.SerializeObject(producte)
+printfn &quot;JSON: %s&quot; json
+
+// Deserialitzaci&oacute;
+let producteDeserialitzat = JsonConvert.DeserializeObject&lt;Producte&gt;(json)
+printfn &quot;Nom: %s, Preu: %f, En Estoc: %b&quot; producteDeserialitzat.Nom producteDeserialitzat.Preu producteDeserialitzat.EnEstoc</pre></div><div class='content'></div><h2>Exercici 2: Manipulació de JSON</h2>
+<div class='content'><ol>
+<li>Afegeix un nou camp <code>Descripció</code> a l'objecte JSON del producte creat en l'exercici anterior.</li>
+<li>Imprimeix el JSON modificat.</li>
+</ol>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBOZXd0b25zb2Z0Lkpzb24uTGlucQoKbGV0IGpzb24gPSAiIiIKewogICJOb20iOiAiT3JkaW5hZG9yIiwKICAiUHJldSI6IDk5OS45OSwKICAiRW5Fc3RvYyI6IHRydWUKfQoiIiIKCmxldCBqT2JqZWN0ID0gSk9iamVjdC5QYXJzZShqc29uKQpqT2JqZWN0LlsiRGVzY3JpcGNpw7MiXSA8LSBKVmFsdWUoIlVuIG9yZGluYWRvciBkJ2FsdGEgZ2FtbWEiKQoKcHJpbnRmbiAiSlNPTiBtb2RpZmljYXQ6ICVzIiAoak9iamVjdC5Ub1N0cmluZygpKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open Newtonsoft.Json.Linq
+
+let json = &quot;&quot;&quot;
+{
+  &quot;Nom&quot;: &quot;Ordinador&quot;,
+  &quot;Preu&quot;: 999.99,
+  &quot;EnEstoc&quot;: true
+}
+&quot;&quot;&quot;
+
+let jObject = JObject.Parse(json)
+jObject.[&quot;Descripci&oacute;&quot;] &lt;- JValue(&quot;Un ordinador d'alta gamma&quot;)
+
+printfn &quot;JSON modificat: %s&quot; (jObject.ToString())</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com treballar amb JSON en F# utilitzant les llibreries <code>Newtonsoft.Json</code> i <code>FSharp.Data</code>. Hem vist com serialitzar i deserialitzar JSON, així com com manipular objectes JSON. Els exercicis pràctics ens han ajudat a consolidar aquests conceptes. En el proper tema, explorarem com interactuar amb bases de dades des de F#.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-04-concurrency-patterns' title="Patrons de Concurrència">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-02-interacting-with-databases' title="Interacció amb Bases de Dades">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

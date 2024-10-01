@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexió a una Base de Dades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/go/08-01-connecting-to-a-database" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/go/08-01-connecting-to-a-database" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/go/08-01-connecting-to-a-database" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/go/08-01-connecting-to-a-database" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/go/08-01-connecting-to-a-database" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-working-with-templates' title="Treballant amb Plantilles">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Connexió a una Base de Dades</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-crud-operations' title="Operacions CRUD">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com connectar una aplicació Go a una base de dades. Utilitzarem la biblioteca <code>database/sql</code> de Go juntament amb un controlador específic per a la base de dades que triem (en aquest cas, utilitzarem MySQL com a exemple). Aquest procés inclou la instal·lació del controlador, la configuració de la connexió i la realització de consultes bàsiques.</p>
+</div><h1>1. Instal·lació del Controlador MySQL</h1>
+<div class='content'><p>Per connectar-nos a una base de dades MySQL, necessitem instal·lar el controlador MySQL per a Go. Utilitzarem el paquet <code>go-sql-driver/mysql</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z28gZ2V0IC11IGdpdGh1Yi5jb20vZ28tc3FsLWRyaXZlci9teXNxbA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>go get -u github.com/go-sql-driver/mysql</pre></div><div class='content'></div><h1>2. Configuració de la Connexió</h1>
+<div class='content'><p>Un cop instal·lat el controlador, podem configurar la connexió a la base de dades. A continuació, es mostra un exemple de com fer-ho:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImRhdGFiYXNlL3NxbCIKICAgICJmbXQiCiAgICAibG9nIgoKICAgIF8gImdpdGh1Yi5jb20vZ28tc3FsLWRyaXZlci9teXNxbCIKKQoKZnVuYyBtYWluKCkgewogICAgLy8gQ29uZmlndXJhY2nDsyBkZSBsYSBjYWRlbmEgZGUgY29ubmV4acOzCiAgICBkc24gOj0gInVzdWFyaTpjb250cmFzZW55YUB0Y3AoMTI3LjAuMC4xOjMzMDYpL25vbV9iYXNlX2RlX2RhZGVzIgoKICAgIC8vIE9icmlyIGxhIGNvbm5leGnDsyBhIGxhIGJhc2UgZGUgZGFkZXMKICAgIGRiLCBlcnIgOj0gc3FsLk9wZW4oIm15c3FsIiwgZHNuKQogICAgaWYgZXJyICE9IG5pbCB7CiAgICAgICAgbG9nLkZhdGFsKGVycikKICAgIH0KICAgIGRlZmVyIGRiLkNsb3NlKCkKCiAgICAvLyBDb21wcm92YXIgbGEgY29ubmV4acOzCiAgICBlcnIgPSBkYi5QaW5nKCkKICAgIGlmIGVyciAhPSBuaWwgewogICAgICAgIGxvZy5GYXRhbChlcnIpCiAgICB9CgogICAgZm10LlByaW50bG4oIkNvbm5leGnDsyBhIGxhIGJhc2UgZGUgZGFkZXMgZXN0YWJsZXJ0YSBjb3JyZWN0YW1lbnQhIikKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;database/sql&quot;
+    &quot;fmt&quot;
+    &quot;log&quot;
+
+    _ &quot;github.com/go-sql-driver/mysql&quot;
+)
+
+func main() {
+    // Configuraci&oacute; de la cadena de connexi&oacute;
+    dsn := &quot;usuari:contrasenya@tcp(127.0.0.1:3306)/nom_base_de_dades&quot;
+
+    // Obrir la connexi&oacute; a la base de dades
+    db, err := sql.Open(&quot;mysql&quot;, dsn)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer db.Close()
+
+    // Comprovar la connexi&oacute;
+    err = db.Ping()
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    fmt.Println(&quot;Connexi&oacute; a la base de dades establerta correctament!&quot;)
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Importació de Paquets</strong>: Importem els paquets necessaris, incloent el controlador MySQL (<code>_ &quot;github.com/go-sql-driver/mysql&quot;</code>). L'ús del guió baix (<code>_</code>) indica que importem el paquet només per executar el seu <code>init</code> funció, que registra el controlador MySQL amb la biblioteca <code>database/sql</code>.</p>
+</li>
+<li>
+<p><strong>Configuració de la Cadena de Connexió</strong>: La cadena de connexió (<code>dsn</code>) conté la informació necessària per connectar-se a la base de dades, incloent l'usuari, la contrasenya, l'adreça del servidor i el nom de la base de dades.</p>
+</li>
+<li>
+<p><strong>Obrir la Connexió</strong>: Utilitzem <code>sql.Open</code> per obrir una connexió a la base de dades. Aquesta funció no estableix una connexió immediatament, sinó que prepara l'objecte <code>db</code> per a futures operacions.</p>
+</li>
+<li>
+<p><strong>Comprovar la Connexió</strong>: Utilitzem <code>db.Ping</code> per establir una connexió real amb la base de dades i comprovar que tot funciona correctament.</p>
+</li>
+<li>
+<p><strong>Tancar la Connexió</strong>: Utilitzem <code>defer db.Close()</code> per assegurar-nos que la connexió es tanca quan el programa finalitza.</p>
+</li>
+</ol>
+</div><h1>3. Realització de Consultes Bàsiques</h1>
+<div class='content'><p>Un cop establerta la connexió, podem realitzar consultes a la base de dades. A continuació, es mostra un exemple de com realitzar una consulta SELECT:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuYyBtYWluKCkgewogICAgLy8gQ29uZmlndXJhY2nDsyBkZSBsYSBjYWRlbmEgZGUgY29ubmV4acOzCiAgICBkc24gOj0gInVzdWFyaTpjb250cmFzZW55YUB0Y3AoMTI3LjAuMC4xOjMzMDYpL25vbV9iYXNlX2RlX2RhZGVzIgoKICAgIC8vIE9icmlyIGxhIGNvbm5leGnDsyBhIGxhIGJhc2UgZGUgZGFkZXMKICAgIGRiLCBlcnIgOj0gc3FsLk9wZW4oIm15c3FsIiwgZHNuKQogICAgaWYgZXJyICE9IG5pbCB7CiAgICAgICAgbG9nLkZhdGFsKGVycikKICAgIH0KICAgIGRlZmVyIGRiLkNsb3NlKCkKCiAgICAvLyBDb21wcm92YXIgbGEgY29ubmV4acOzCiAgICBlcnIgPSBkYi5QaW5nKCkKICAgIGlmIGVyciAhPSBuaWwgewogICAgICAgIGxvZy5GYXRhbChlcnIpCiAgICB9CgogICAgLy8gUmVhbGl0emFyIHVuYSBjb25zdWx0YSBTRUxFQ1QKICAgIHJvd3MsIGVyciA6PSBkYi5RdWVyeSgiU0VMRUNUIGlkLCBub20gRlJPTSB1c3VhcmlzIikKICAgIGlmIGVyciAhPSBuaWwgewogICAgICAgIGxvZy5GYXRhbChlcnIpCiAgICB9CiAgICBkZWZlciByb3dzLkNsb3NlKCkKCiAgICAvLyBJdGVyYXIgc29icmUgZWxzIHJlc3VsdGF0cwogICAgZm9yIHJvd3MuTmV4dCgpIHsKICAgICAgICB2YXIgaWQgaW50CiAgICAgICAgdmFyIG5vbSBzdHJpbmcKICAgICAgICBlcnIgOj0gcm93cy5TY2FuKCZpZCwgJm5vbSkKICAgICAgICBpZiBlcnIgIT0gbmlsIHsKICAgICAgICAgICAgbG9nLkZhdGFsKGVycikKICAgICAgICB9CiAgICAgICAgZm10LlByaW50ZigiSUQ6ICVkLCBOb206ICVzXG4iLCBpZCwgbm9tKQogICAgfQoKICAgIC8vIENvbXByb3ZhciBzaSBoaSBoYSBlcnJvcnMgZW4gbGEgaXRlcmFjacOzCiAgICBpZiBlcnIgPSByb3dzLkVycigpOyBlcnIgIT0gbmlsIHsKICAgICAgICBsb2cuRmF0YWwoZXJyKQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>func main() {
+    // Configuraci&oacute; de la cadena de connexi&oacute;
+    dsn := &quot;usuari:contrasenya@tcp(127.0.0.1:3306)/nom_base_de_dades&quot;
+
+    // Obrir la connexi&oacute; a la base de dades
+    db, err := sql.Open(&quot;mysql&quot;, dsn)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer db.Close()
+
+    // Comprovar la connexi&oacute;
+    err = db.Ping()
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // Realitzar una consulta SELECT
+    rows, err := db.Query(&quot;SELECT id, nom FROM usuaris&quot;)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer rows.Close()
+
+    // Iterar sobre els resultats
+    for rows.Next() {
+        var id int
+        var nom string
+        err := rows.Scan(&amp;id, &amp;nom)
+        if err != nil {
+            log.Fatal(err)
+        }
+        fmt.Printf(&quot;ID: %d, Nom: %s\n&quot;, id, nom)
+    }
+
+    // Comprovar si hi ha errors en la iteraci&oacute;
+    if err = rows.Err(); err != nil {
+        log.Fatal(err)
+    }
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Realitzar una Consulta SELECT</strong>: Utilitzem <code>db.Query</code> per executar una consulta SELECT. Aquesta funció retorna un objecte <code>rows</code> que conté els resultats de la consulta.</p>
+</li>
+<li>
+<p><strong>Iterar sobre els Resultats</strong>: Utilitzem <code>rows.Next</code> per iterar sobre cada fila dels resultats. Per a cada fila, utilitzem <code>rows.Scan</code> per copiar els valors de les columnes en variables.</p>
+</li>
+<li>
+<p><strong>Comprovar Errors en la Iteració</strong>: Després de la iteració, utilitzem <code>rows.Err</code> per comprovar si hi ha hagut errors durant la iteració.</p>
+</li>
+</ol>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici</h2>
+<div class='content'><ol>
+<li>Configura una base de dades MySQL local amb una taula anomenada <code>productes</code> que tingui les següents columnes: <code>id</code> (int), <code>nom</code> (varchar), <code>preu</code> (float).</li>
+<li>Escriu un programa en Go que es connecti a aquesta base de dades i mostri tots els productes.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGFja2FnZSBtYWluCgppbXBvcnQgKAogICAgImRhdGFiYXNlL3NxbCIKICAgICJmbXQiCiAgICAibG9nIgoKICAgIF8gImdpdGh1Yi5jb20vZ28tc3FsLWRyaXZlci9teXNxbCIKKQoKZnVuYyBtYWluKCkgewogICAgLy8gQ29uZmlndXJhY2nDsyBkZSBsYSBjYWRlbmEgZGUgY29ubmV4acOzCiAgICBkc24gOj0gInVzdWFyaTpjb250cmFzZW55YUB0Y3AoMTI3LjAuMC4xOjMzMDYpL25vbV9iYXNlX2RlX2RhZGVzIgoKICAgIC8vIE9icmlyIGxhIGNvbm5leGnDsyBhIGxhIGJhc2UgZGUgZGFkZXMKICAgIGRiLCBlcnIgOj0gc3FsLk9wZW4oIm15c3FsIiwgZHNuKQogICAgaWYgZXJyICE9IG5pbCB7CiAgICAgICAgbG9nLkZhdGFsKGVycikKICAgIH0KICAgIGRlZmVyIGRiLkNsb3NlKCkKCiAgICAvLyBDb21wcm92YXIgbGEgY29ubmV4acOzCiAgICBlcnIgPSBkYi5QaW5nKCkKICAgIGlmIGVyciAhPSBuaWwgewogICAgICAgIGxvZy5GYXRhbChlcnIpCiAgICB9CgogICAgLy8gUmVhbGl0emFyIHVuYSBjb25zdWx0YSBTRUxFQ1QKICAgIHJvd3MsIGVyciA6PSBkYi5RdWVyeSgiU0VMRUNUIGlkLCBub20sIHByZXUgRlJPTSBwcm9kdWN0ZXMiKQogICAgaWYgZXJyICE9IG5pbCB7CiAgICAgICAgbG9nLkZhdGFsKGVycikKICAgIH0KICAgIGRlZmVyIHJvd3MuQ2xvc2UoKQoKICAgIC8vIEl0ZXJhciBzb2JyZSBlbHMgcmVzdWx0YXRzCiAgICBmb3Igcm93cy5OZXh0KCkgewogICAgICAgIHZhciBpZCBpbnQKICAgICAgICB2YXIgbm9tIHN0cmluZwogICAgICAgIHZhciBwcmV1IGZsb2F0NjQKICAgICAgICBlcnIgOj0gcm93cy5TY2FuKCZpZCwgJm5vbSwgJnByZXUpCiAgICAgICAgaWYgZXJyICE9IG5pbCB7CiAgICAgICAgICAgIGxvZy5GYXRhbChlcnIpCiAgICAgICAgfQogICAgICAgIGZtdC5QcmludGYoIklEOiAlZCwgTm9tOiAlcywgUHJldTogJS4yZlxuIiwgaWQsIG5vbSwgcHJldSkKICAgIH0KCiAgICAvLyBDb21wcm92YXIgc2kgaGkgaGEgZXJyb3JzIGVuIGxhIGl0ZXJhY2nDswogICAgaWYgZXJyID0gcm93cy5FcnIoKTsgZXJyICE9IG5pbCB7CiAgICAgICAgbG9nLkZhdGFsKGVycikKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>package main
+
+import (
+    &quot;database/sql&quot;
+    &quot;fmt&quot;
+    &quot;log&quot;
+
+    _ &quot;github.com/go-sql-driver/mysql&quot;
+)
+
+func main() {
+    // Configuraci&oacute; de la cadena de connexi&oacute;
+    dsn := &quot;usuari:contrasenya@tcp(127.0.0.1:3306)/nom_base_de_dades&quot;
+
+    // Obrir la connexi&oacute; a la base de dades
+    db, err := sql.Open(&quot;mysql&quot;, dsn)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer db.Close()
+
+    // Comprovar la connexi&oacute;
+    err = db.Ping()
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // Realitzar una consulta SELECT
+    rows, err := db.Query(&quot;SELECT id, nom, preu FROM productes&quot;)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer rows.Close()
+
+    // Iterar sobre els resultats
+    for rows.Next() {
+        var id int
+        var nom string
+        var preu float64
+        err := rows.Scan(&amp;id, &amp;nom, &amp;preu)
+        if err != nil {
+            log.Fatal(err)
+        }
+        fmt.Printf(&quot;ID: %d, Nom: %s, Preu: %.2f\n&quot;, id, nom, preu)
+    }
+
+    // Comprovar si hi ha errors en la iteraci&oacute;
+    if err = rows.Err(); err != nil {
+        log.Fatal(err)
+    }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com connectar una aplicació Go a una base de dades MySQL, configurar la connexió i realitzar consultes bàsiques. Aquestes habilitats són fonamentals per a qualsevol desenvolupador que treballi amb aplicacions que necessiten emmagatzemar i recuperar dades de bases de dades. En el proper tema, explorarem com realitzar operacions CRUD (Crear, Llegir, Actualitzar, Eliminar) amb Go i MySQL.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-working-with-templates' title="Treballant amb Plantilles">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-crud-operations' title="Operacions CRUD">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

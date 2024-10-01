@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interfície de Funcions Estrangeres (FFI)</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/haskell/07-03-ffi" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/haskell/07-03-ffi" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/haskell/07-03-ffi" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/haskell/07-03-ffi" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/haskell/07-03-ffi" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-02-parallelism' title="Paral·lelisme">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Interfície de Funcions Estrangeres (FFI)</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-04-template-haskell' title="Template Haskell">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>La Interfície de Funcions Estrangeres (FFI) en Haskell permet que el codi Haskell interactuï amb biblioteques escrites en altres llenguatges de programació, com C. Això és especialment útil quan necessitem utilitzar funcionalitats que no estan disponibles directament en Haskell o quan volem aprofitar el rendiment de biblioteques optimitzades en altres llenguatges.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Declaració de Funcions Estrangeres</strong>: Com declarar funcions externes en Haskell.</li>
+<li><strong>Tipus de Dades Estrangers</strong>: Com treballar amb tipus de dades que no són natius de Haskell.</li>
+<li><strong>Seguretat i Eficiència</strong>: Consideracions sobre la seguretat i l'eficiència en l'ús de FFI.</li>
+</ol>
+</div><h1>Declaració de Funcions Estrangeres</h1>
+<div class='content'><p>Per declarar una funció estrangera en Haskell, utilitzem la paraula clau <code>foreign import</code>. Aquesta declaració indica a Haskell que la funció es troba en una biblioteca externa.</p>
+</div><h2>Exemple: Crida a una Funció C</h2>
+<div class='content'><p>Suposem que tenim una funció C que suma dos enters:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc3VtLmMKaW50IHN1bShpbnQgYSwgaW50IGIpIHsKICAgIHJldHVybiBhICsgYjsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// sum.c
+int sum(int a, int b) {
+    return a + b;
+}</pre></div><div class='content'><p>Podem declarar aquesta funció en Haskell de la següent manera:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ey0jIExBTkdVQUdFIEZvcmVpZ25GdW5jdGlvbkludGVyZmFjZSAjLX0KCm1vZHVsZSBNYWluIHdoZXJlCgppbXBvcnQgRm9yZWlnbi5DLlR5cGVzCgotLSBEZWNsYXJhY2nDsyBkZSBsYSBmdW5jacOzIGVzdHJhbmdlcmEKZm9yZWlnbiBpbXBvcnQgY2NhbGwgInN1bSIgY19zdW0gOjogQ0ludCAtPiBDSW50IC0+IENJbnQKCm1haW4gOjogSU8gKCkKbWFpbiA9IGRvCiAgICBsZXQgYSA9IDUKICAgIGxldCBiID0gMTAKICAgIGxldCByZXN1bHQgPSBjX3N1bSBhIGIKICAgIHB1dFN0ckxuICQgIkxhIHN1bWEgZGUgIiArKyBzaG93IGEgKysgIiBpICIgKysgc2hvdyBiICsrICIgw6lzICIgKysgc2hvdyByZXN1bHQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{-# LANGUAGE ForeignFunctionInterface #-}
+
+module Main where
+
+import Foreign.C.Types
+
+-- Declaraci&oacute; de la funci&oacute; estrangera
+foreign import ccall &quot;sum&quot; c_sum :: CInt -&gt; CInt -&gt; CInt
+
+main :: IO ()
+main = do
+    let a = 5
+    let b = 10
+    let result = c_sum a b
+    putStrLn $ &quot;La suma de &quot; ++ show a ++ &quot; i &quot; ++ show b ++ &quot; &eacute;s &quot; ++ show result</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>{-# LANGUAGE ForeignFunctionInterface #-}</code>: Habilita l'extensió FFI.</li>
+<li><code>import Foreign.C.Types</code>: Importa els tipus de dades C.</li>
+<li><code>foreign import ccall &quot;sum&quot; c_sum :: CInt -&gt; CInt -&gt; CInt</code>: Declara la funció <code>sum</code> de C com <code>c_sum</code> en Haskell.</li>
+<li><code>CInt</code>: Tipus de dades que representa un enter de C en Haskell.</li>
+</ul>
+</div><h1>Tipus de Dades Estrangers</h1>
+<div class='content'><p>Quan treballem amb FFI, és important utilitzar els tipus de dades adequats per assegurar la compatibilitat entre Haskell i el llenguatge estranger. Haskell proporciona una sèrie de tipus de dades en el mòdul <code>Foreign.C.Types</code> per aquest propòsit.</p>
+</div><h2>Tipus de Dades Comuns</h2>
+<div class='content'><table>
+<thead>
+<tr>
+<th>Tipus Haskell</th>
+<th>Tipus C</th>
+<th>Descripció</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CInt</code></td>
+<td><code>int</code></td>
+<td>Enter</td>
+</tr>
+<tr>
+<td><code>CChar</code></td>
+<td><code>char</code></td>
+<td>Caràcter</td>
+</tr>
+<tr>
+<td><code>CDouble</code></td>
+<td><code>double</code></td>
+<td>Doble precisió</td>
+</tr>
+<tr>
+<td><code>CFloat</code></td>
+<td><code>float</code></td>
+<td>Precisió simple</td>
+</tr>
+<tr>
+<td><code>CLong</code></td>
+<td><code>long</code></td>
+<td>Enter llarg</td>
+</tr>
+<tr>
+<td><code>CShort</code></td>
+<td><code>short</code></td>
+<td>Enter curt</td>
+</tr>
+</tbody>
+</table>
+</div><h1>Seguretat i Eficiència</h1>
+<div class='content'><p>Quan utilitzem FFI, hem de tenir en compte la seguretat i l'eficiència del nostre codi. Aquí hi ha algunes consideracions:</p>
+<ol>
+<li><strong>Seguretat</strong>: Assegura't que les funcions externes siguin segures i no provoquin errors de segmentació o altres problemes de memòria.</li>
+<li><strong>Eficiència</strong>: Les crides a funcions externes poden ser costoses en termes de rendiment. Utilitza FFI només quan sigui necessari i optimitza les crides per minimitzar l'impacte en el rendiment.</li>
+</ol>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici</h2>
+<div class='content'><ol>
+<li>Escriu una funció C que multipliqui dos enters.</li>
+<li>Declara aquesta funció en Haskell utilitzant FFI.</li>
+<li>Escriu un programa Haskell que utilitzi aquesta funció per multiplicar dos enters i imprimeixi el resultat.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><h4>Codi C</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gbXVsdGlwbHkuYwppbnQgbXVsdGlwbHkoaW50IGEsIGludCBiKSB7CiAgICByZXR1cm4gYSAqIGI7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// multiply.c
+int multiply(int a, int b) {
+    return a * b;
+}</pre></div><div class='content'><h4>Codi Haskell</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ey0jIExBTkdVQUdFIEZvcmVpZ25GdW5jdGlvbkludGVyZmFjZSAjLX0KCm1vZHVsZSBNYWluIHdoZXJlCgppbXBvcnQgRm9yZWlnbi5DLlR5cGVzCgotLSBEZWNsYXJhY2nDsyBkZSBsYSBmdW5jacOzIGVzdHJhbmdlcmEKZm9yZWlnbiBpbXBvcnQgY2NhbGwgIm11bHRpcGx5IiBjX211bHRpcGx5IDo6IENJbnQgLT4gQ0ludCAtPiBDSW50CgptYWluIDo6IElPICgpCm1haW4gPSBkbwogICAgbGV0IGEgPSA2CiAgICBsZXQgYiA9IDcKICAgIGxldCByZXN1bHQgPSBjX211bHRpcGx5IGEgYgogICAgcHV0U3RyTG4gJCAiRWwgcHJvZHVjdGUgZGUgIiArKyBzaG93IGEgKysgIiBpICIgKysgc2hvdyBiICsrICIgw6lzICIgKysgc2hvdyByZXN1bHQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{-# LANGUAGE ForeignFunctionInterface #-}
+
+module Main where
+
+import Foreign.C.Types
+
+-- Declaraci&oacute; de la funci&oacute; estrangera
+foreign import ccall &quot;multiply&quot; c_multiply :: CInt -&gt; CInt -&gt; CInt
+
+main :: IO ()
+main = do
+    let a = 6
+    let b = 7
+    let result = c_multiply a b
+    putStrLn $ &quot;El producte de &quot; ++ show a ++ &quot; i &quot; ++ show b ++ &quot; &eacute;s &quot; ++ show result</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>foreign import ccall &quot;multiply&quot; c_multiply :: CInt -&gt; CInt -&gt; CInt</code>: Declara la funció <code>multiply</code> de C com <code>c_multiply</code> en Haskell.</li>
+<li><code>c_multiply a b</code>: Crida la funció <code>multiply</code> amb els arguments <code>a</code> i <code>b</code>.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La Interfície de Funcions Estrangeres (FFI) en Haskell és una eina poderosa que permet integrar codi Haskell amb biblioteques escrites en altres llenguatges de programació. Hem après com declarar funcions externes, treballar amb tipus de dades estrangers i considerar la seguretat i l'eficiència en l'ús de FFI. Amb aquests coneixements, pots començar a explorar la integració de Haskell amb altres llenguatges per aprofitar les seves funcionalitats i rendiment.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-02-parallelism' title="Paral·lelisme">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-04-template-haskell' title="Template Haskell">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

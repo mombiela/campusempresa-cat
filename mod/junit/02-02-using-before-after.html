@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utilitzant @Before i @After</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/junit/02-02-using-before-after" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/junit/02-02-using-before-after" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/junit/02-02-using-before-after" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/junit/02-02-using-before-after" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/junit/02-02-using-before-after" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-understanding-test' title="Entenent @Test">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Utilitzant @Before i @After</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-using-beforeclass-afterclass' title="Utilitzant @BeforeClass i @AfterClass">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a utilitzar les anotacions <code>@Before</code> i <code>@After</code> de JUnit. Aquestes anotacions són fonamentals per preparar l'entorn abans de l'execució dels tests i per netejar-lo després de la seva execució. Això ens permet assegurar que cada test s'executa en un entorn controlat i consistent.</p>
+</div><h1>Què són @Before i @After?</h1>
+<div class='content'><ul>
+<li><strong>@Before</strong>: Aquesta anotació s'utilitza per marcar un mètode que s'executarà abans de cada test. És ideal per inicialitzar recursos que es necessiten per als tests.</li>
+<li><strong>@After</strong>: Aquesta anotació s'utilitza per marcar un mètode que s'executarà després de cada test. És útil per alliberar recursos o netejar l'entorn de test.</li>
+</ul>
+</div><h1>Exemple Pràctic</h1>
+<div class='content'><p>A continuació, veurem un exemple pràctic que il·lustra com utilitzar <code>@Before</code> i <code>@After</code> en un test de JUnit.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5qdW5pdC5CZWZvcmU7CmltcG9ydCBvcmcuanVuaXQuQWZ0ZXI7CmltcG9ydCBvcmcuanVuaXQuVGVzdDsKaW1wb3J0IHN0YXRpYyBvcmcuanVuaXQuQXNzZXJ0LmFzc2VydEVxdWFsczsKCnB1YmxpYyBjbGFzcyBDYWxjdWxhZG9yYVRlc3QgewoKICAgIHByaXZhdGUgQ2FsY3VsYWRvcmEgY2FsY3VsYWRvcmE7CgogICAgQEJlZm9yZQogICAgcHVibGljIHZvaWQgc2V0VXAoKSB7CiAgICAgICAgLy8gQXF1ZXN0IG3DqHRvZGUgcydleGVjdXRhIGFiYW5zIGRlIGNhZGEgdGVzdAogICAgICAgIGNhbGN1bGFkb3JhID0gbmV3IENhbGN1bGFkb3JhKCk7CiAgICAgICAgU3lzdGVtLm91dC5wcmludGxuKCJJbmljaWFudCB1biBub3UgdGVzdC4uLiIpOwogICAgfQoKICAgIEBBZnRlcgogICAgcHVibGljIHZvaWQgdGVhckRvd24oKSB7CiAgICAgICAgLy8gQXF1ZXN0IG3DqHRvZGUgcydleGVjdXRhIGRlc3Byw6lzIGRlIGNhZGEgdGVzdAogICAgICAgIGNhbGN1bGFkb3JhID0gbnVsbDsKICAgICAgICBTeXN0ZW0ub3V0LnByaW50bG4oIlRlc3QgZmluYWxpdHphdC4iKTsKICAgIH0KCiAgICBAVGVzdAogICAgcHVibGljIHZvaWQgdGVzdFN1bWEoKSB7CiAgICAgICAgaW50IHJlc3VsdGF0ID0gY2FsY3VsYWRvcmEuc3VtYSgyLCAzKTsKICAgICAgICBhc3NlcnRFcXVhbHMoNSwgcmVzdWx0YXQpOwogICAgfQoKICAgIEBUZXN0CiAgICBwdWJsaWMgdm9pZCB0ZXN0UmVzdGEoKSB7CiAgICAgICAgaW50IHJlc3VsdGF0ID0gY2FsY3VsYWRvcmEucmVzdGEoNSwgMyk7CiAgICAgICAgYXNzZXJ0RXF1YWxzKDIsIHJlc3VsdGF0KTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
+public class CalculadoraTest {
+
+    private Calculadora calculadora;
+
+    @Before
+    public void setUp() {
+        // Aquest m&egrave;tode s'executa abans de cada test
+        calculadora = new Calculadora();
+        System.out.println(&quot;Iniciant un nou test...&quot;);
+    }
+
+    @After
+    public void tearDown() {
+        // Aquest m&egrave;tode s'executa despr&eacute;s de cada test
+        calculadora = null;
+        System.out.println(&quot;Test finalitzat.&quot;);
+    }
+
+    @Test
+    public void testSuma() {
+        int resultat = calculadora.suma(2, 3);
+        assertEquals(5, resultat);
+    }
+
+    @Test
+    public void testResta() {
+        int resultat = calculadora.resta(5, 3);
+        assertEquals(2, resultat);
+    }
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Declaració de la Classe i Variables</strong>:</p>
+<pre><code class="language-java">public class CalculadoraTest {
+    private Calculadora calculadora;
+}
+</code></pre>
+<ul>
+<li>Declarem una variable <code>calculadora</code> que serà inicialitzada abans de cada test.</li>
+</ul>
+</li>
+<li>
+<p><strong>Mètode <code>setUp</code> amb @Before</strong>:</p>
+<pre><code class="language-java">@Before
+public void setUp() {
+    calculadora = new Calculadora();
+    System.out.println(&quot;Iniciant un nou test...&quot;);
+}
+</code></pre>
+<ul>
+<li>El mètode <code>setUp</code> s'executa abans de cada test. Aquí inicialitzem la instància de <code>Calculadora</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Mètode <code>tearDown</code> amb @After</strong>:</p>
+<pre><code class="language-java">@After
+public void tearDown() {
+    calculadora = null;
+    System.out.println(&quot;Test finalitzat.&quot;);
+}
+</code></pre>
+<ul>
+<li>El mètode <code>tearDown</code> s'executa després de cada test. Aquí alliberem la instància de <code>Calculadora</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Tests</strong>:</p>
+<pre><code class="language-java">@Test
+public void testSuma() {
+    int resultat = calculadora.suma(2, 3);
+    assertEquals(5, resultat);
+}
+
+@Test
+public void testResta() {
+    int resultat = calculadora.resta(5, 3);
+    assertEquals(2, resultat);
+}
+</code></pre>
+<ul>
+<li>Definim dos tests: <code>testSuma</code> i <code>testResta</code>, que comproven les operacions de suma i resta respectivament.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1</h2>
+<div class='content'><p>Crea una classe de test per a una classe <code>Banco</code> que tingui els següents mètodes: <code>depositar</code> i <code>retirar</code>. Utilitza <code>@Before</code> per inicialitzar una instància de <code>Banco</code> i <code>@After</code> per netejar-la.</p>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5qdW5pdC5CZWZvcmU7CmltcG9ydCBvcmcuanVuaXQuQWZ0ZXI7CmltcG9ydCBvcmcuanVuaXQuVGVzdDsKaW1wb3J0IHN0YXRpYyBvcmcuanVuaXQuQXNzZXJ0LmFzc2VydEVxdWFsczsKCnB1YmxpYyBjbGFzcyBCYW5jb1Rlc3QgewoKICAgIHByaXZhdGUgQmFuY28gYmFuY287CgogICAgQEJlZm9yZQogICAgcHVibGljIHZvaWQgc2V0VXAoKSB7CiAgICAgICAgYmFuY28gPSBuZXcgQmFuY28oKTsKICAgIH0KCiAgICBAQWZ0ZXIKICAgIHB1YmxpYyB2b2lkIHRlYXJEb3duKCkgewogICAgICAgIGJhbmNvID0gbnVsbDsKICAgIH0KCiAgICBAVGVzdAogICAgcHVibGljIHZvaWQgdGVzdERlcG9zaXRhcigpIHsKICAgICAgICBiYW5jby5kZXBvc2l0YXIoMTAwKTsKICAgICAgICBhc3NlcnRFcXVhbHMoMTAwLCBiYW5jby5nZXRTYWxkbygpKTsKICAgIH0KCiAgICBAVGVzdAogICAgcHVibGljIHZvaWQgdGVzdFJldGlyYXIoKSB7CiAgICAgICAgYmFuY28uZGVwb3NpdGFyKDEwMCk7CiAgICAgICAgYmFuY28ucmV0aXJhcig1MCk7CiAgICAgICAgYXNzZXJ0RXF1YWxzKDUwLCBiYW5jby5nZXRTYWxkbygpKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
+public class BancoTest {
+
+    private Banco banco;
+
+    @Before
+    public void setUp() {
+        banco = new Banco();
+    }
+
+    @After
+    public void tearDown() {
+        banco = null;
+    }
+
+    @Test
+    public void testDepositar() {
+        banco.depositar(100);
+        assertEquals(100, banco.getSaldo());
+    }
+
+    @Test
+    public void testRetirar() {
+        banco.depositar(100);
+        banco.retirar(50);
+        assertEquals(50, banco.getSaldo());
+    }
+}</pre></div><div class='content'></div><h2>Exercici 2</h2>
+<div class='content'><p>Modifica la classe de test anterior per afegir un mètode <code>reset</code> a la classe <code>Banco</code> que es cridi en el mètode <code>tearDown</code>.</p>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5qdW5pdC5CZWZvcmU7CmltcG9ydCBvcmcuanVuaXQuQWZ0ZXI7CmltcG9ydCBvcmcuanVuaXQuVGVzdDsKaW1wb3J0IHN0YXRpYyBvcmcuanVuaXQuQXNzZXJ0LmFzc2VydEVxdWFsczsKCnB1YmxpYyBjbGFzcyBCYW5jb1Rlc3QgewoKICAgIHByaXZhdGUgQmFuY28gYmFuY287CgogICAgQEJlZm9yZQogICAgcHVibGljIHZvaWQgc2V0VXAoKSB7CiAgICAgICAgYmFuY28gPSBuZXcgQmFuY28oKTsKICAgIH0KCiAgICBAQWZ0ZXIKICAgIHB1YmxpYyB2b2lkIHRlYXJEb3duKCkgewogICAgICAgIGJhbmNvLnJlc2V0KCk7CiAgICAgICAgYmFuY28gPSBudWxsOwogICAgfQoKICAgIEBUZXN0CiAgICBwdWJsaWMgdm9pZCB0ZXN0RGVwb3NpdGFyKCkgewogICAgICAgIGJhbmNvLmRlcG9zaXRhcigxMDApOwogICAgICAgIGFzc2VydEVxdWFscygxMDAsIGJhbmNvLmdldFNhbGRvKCkpOwogICAgfQoKICAgIEBUZXN0CiAgICBwdWJsaWMgdm9pZCB0ZXN0UmV0aXJhcigpIHsKICAgICAgICBiYW5jby5kZXBvc2l0YXIoMTAwKTsKICAgICAgICBiYW5jby5yZXRpcmFyKDUwKTsKICAgICAgICBhc3NlcnRFcXVhbHMoNTAsIGJhbmNvLmdldFNhbGRvKCkpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.junit.Before;
+import org.junit.After;
+import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
+public class BancoTest {
+
+    private Banco banco;
+
+    @Before
+    public void setUp() {
+        banco = new Banco();
+    }
+
+    @After
+    public void tearDown() {
+        banco.reset();
+        banco = null;
+    }
+
+    @Test
+    public void testDepositar() {
+        banco.depositar(100);
+        assertEquals(100, banco.getSaldo());
+    }
+
+    @Test
+    public void testRetirar() {
+        banco.depositar(100);
+        banco.retirar(50);
+        assertEquals(50, banco.getSaldo());
+    }
+}</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après a utilitzar les anotacions <code>@Before</code> i <code>@After</code> per preparar i netejar l'entorn de test. Aquestes anotacions són essencials per assegurar que cada test s'executa en un entorn consistent i controlat. Hem vist exemples pràctics i hem realitzat exercicis per reforçar els conceptes apresos. En el següent tema, explorarem les anotacions <code>@BeforeClass</code> i <code>@AfterClass</code>, que s'utilitzen per configurar i netejar recursos a nivell de classe.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-understanding-test' title="Entenent @Test">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-using-beforeclass-afterclass' title="Utilitzant @BeforeClass i @AfterClass">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

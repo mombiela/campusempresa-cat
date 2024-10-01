@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accés a Bases de Dades amb REXX</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/rexx/05-03-database-access" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/rexx/05-03-database-access" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/rexx/05-03-database-access" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/rexx/05-03-database-access" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/rexx/05-03-database-access" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-02-creating-utilities' title="Creació d'Utilitats REXX">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Accés a Bases de Dades amb REXX</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-04-web-programming' title="Programació Web amb REXX">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com interactuar amb bases de dades utilitzant REXX. Això inclou la connexió a una base de dades, l'execució de consultes SQL, la manipulació de dades i la gestió d'errors. Aquest coneixement és essencial per desenvolupar aplicacions que necessiten emmagatzemar i recuperar dades de manera eficient.</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ul>
+<li>Entendre com connectar-se a una base de dades des de REXX.</li>
+<li>Aprendre a executar consultes SQL.</li>
+<li>Manipular dades de la base de dades.</li>
+<li>Gestionar errors durant les operacions de base de dades.</li>
+</ul>
+</div><h1>1. Connexió a una Base de Dades</h1>
+<div class='content'></div><h2>1.1. Configuració de l'Entorn</h2>
+<div class='content'><p>Abans de començar, assegura't que tens instal·lats els controladors necessaris per a la base de dades amb la qual treballaràs (per exemple, DB2, MySQL, etc.). També necessitaràs les credencials d'accés a la base de dades.</p>
+</div><h2>1.2. Exemple de Connexió</h2>
+<div class='content'><p>A continuació, es mostra un exemple de com connectar-se a una base de dades DB2 utilitzant REXX:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LyogQ29ubmV4acOzIGEgdW5hIGJhc2UgZGUgZGFkZXMgREIyICovCkFERFJFU1MgVFNPICJTVUJDT00gRFNOUkVYWCBMT0FEIgpBRERSRVNTIERTTlJFWFggIkNPTk5FQ1QiICJEU04iICJVU0VSKHVzZXJuYW1lKSIgIlVTSU5HKHBhc3N3b3JkKSIKCklGIFNRTENPREUgXD0gMCBUSEVOCiAgU0FZICJDb25uZXhpw7MgYSBsYSBiYXNlIGRlIGRhZGVzIGZhbGxpZGEuIFNRTENPREU6IiBTUUxDT0RFCkVMU0UKICBTQVkgIkNvbm5leGnDsyBhIGxhIGJhc2UgZGUgZGFkZXMgcmVlaXhpZGEuIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>/* Connexi&oacute; a una base de dades DB2 */
+ADDRESS TSO &quot;SUBCOM DSNREXX LOAD&quot;
+ADDRESS DSNREXX &quot;CONNECT&quot; &quot;DSN&quot; &quot;USER(username)&quot; &quot;USING(password)&quot;
+
+IF SQLCODE \= 0 THEN
+  SAY &quot;Connexi&oacute; a la base de dades fallida. SQLCODE:&quot; SQLCODE
+ELSE
+  SAY &quot;Connexi&oacute; a la base de dades reeixida.&quot;</pre></div><div class='content'><p><strong>Explicació del Codi:</strong></p>
+<ul>
+<li><code>ADDRESS TSO &quot;SUBCOM DSNREXX LOAD&quot;</code>: Carrega el subcomandament DSNREXX.</li>
+<li><code>ADDRESS DSNREXX &quot;CONNECT&quot; &quot;DSN&quot; &quot;USER(username)&quot; &quot;USING(password)&quot;</code>: Intenta connectar-se a la base de dades amb les credencials proporcionades.</li>
+<li><code>IF SQLCODE \= 0 THEN</code>: Comprova si la connexió ha estat reeixida (<code>SQLCODE</code> és 0 si la connexió és reeixida).</li>
+</ul>
+</div><h1>2. Execució de Consultes SQL</h1>
+<div class='content'></div><h2>2.1. Consultes SELECT</h2>
+<div class='content'><p>Per recuperar dades d'una base de dades, utilitzem la instrucció <code>SELECT</code>. A continuació es mostra un exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LyogRXhlY3V0YXIgdW5hIGNvbnN1bHRhIFNFTEVDVCAqLwpBRERSRVNTIERTTlJFWFggIkVYRUNTUUwgREVDTEFSRSBDMSBDVVJTT1IgRk9SIFMxIgpBRERSRVNTIERTTlJFWFggIkVYRUNTUUwgUFJFUEFSRSBTMSBJTlRPIDpTUUxTVE1UIEZST00gOlFVRVJZIgpBRERSRVNTIERTTlJFWFggIkVYRUNTUUwgT1BFTiBDMSIKCkRPIFdISUxFIFNRTENPREUgPSAwCiAgQUREUkVTUyBEU05SRVhYICJFWEVDU1FMIEZFVENIIEMxIElOVE8gOlJFU1VMVCIKICBJRiBTUUxDT0RFID0gMCBUSEVOCiAgICBTQVkgIlJlc3VsdGF0OiAiIFJFU1VMVApFTkQKCkFERFJFU1MgRFNOUkVYWCAiRVhFQ1NRTCBDTE9TRSBDMSI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>/* Executar una consulta SELECT */
+ADDRESS DSNREXX &quot;EXECSQL DECLARE C1 CURSOR FOR S1&quot;
+ADDRESS DSNREXX &quot;EXECSQL PREPARE S1 INTO :SQLSTMT FROM :QUERY&quot;
+ADDRESS DSNREXX &quot;EXECSQL OPEN C1&quot;
+
+DO WHILE SQLCODE = 0
+  ADDRESS DSNREXX &quot;EXECSQL FETCH C1 INTO :RESULT&quot;
+  IF SQLCODE = 0 THEN
+    SAY &quot;Resultat: &quot; RESULT
+END
+
+ADDRESS DSNREXX &quot;EXECSQL CLOSE C1&quot;</pre></div><div class='content'><p><strong>Explicació del Codi:</strong></p>
+<ul>
+<li><code>DECLARE C1 CURSOR FOR S1</code>: Declara un cursor per a la consulta.</li>
+<li><code>PREPARE S1 INTO :SQLSTMT FROM :QUERY</code>: Prepara la consulta SQL.</li>
+<li><code>OPEN C1</code>: Obre el cursor.</li>
+<li><code>FETCH C1 INTO :RESULT</code>: Recupera les files una per una.</li>
+<li><code>CLOSE C1</code>: Tanca el cursor.</li>
+</ul>
+</div><h2>2.2. Consultes INSERT, UPDATE, DELETE</h2>
+<div class='content'><p>Per modificar dades, utilitzem les instruccions <code>INSERT</code>, <code>UPDATE</code> i <code>DELETE</code>. A continuació es mostra un exemple d'inserció:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LyogRXhlY3V0YXIgdW5hIGNvbnN1bHRhIElOU0VSVCAqLwpBRERSRVNTIERTTlJFWFggIkVYRUNTUUwgSU5TRVJUIElOVE8gbXlfdGFibGUgKGNvbDEsIGNvbDIpIFZBTFVFUyAoJ3ZhbHVlMScsICd2YWx1ZTInKSIKCklGIFNRTENPREUgXD0gMCBUSEVOCiAgU0FZICJJbnNlcmNpw7MgZmFsbGlkYS4gU1FMQ09ERToiIFNRTENPREUKRUxTRQogIFNBWSAiSW5zZXJjacOzIHJlZWl4aWRhLiI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>/* Executar una consulta INSERT */
+ADDRESS DSNREXX &quot;EXECSQL INSERT INTO my_table (col1, col2) VALUES ('value1', 'value2')&quot;
+
+IF SQLCODE \= 0 THEN
+  SAY &quot;Inserci&oacute; fallida. SQLCODE:&quot; SQLCODE
+ELSE
+  SAY &quot;Inserci&oacute; reeixida.&quot;</pre></div><div class='content'><p><strong>Explicació del Codi:</strong></p>
+<ul>
+<li><code>INSERT INTO my_table (col1, col2) VALUES ('value1', 'value2')</code>: Insereix una nova fila a la taula <code>my_table</code>.</li>
+</ul>
+</div><h1>3. Manipulació de Dades</h1>
+<div class='content'></div><h2>3.1. Exemple de Manipulació</h2>
+<div class='content'><p>A continuació es mostra un exemple complet que combina la connexió, la consulta i la manipulació de dades:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LyogQ29ubmV4acOzIGEgbGEgYmFzZSBkZSBkYWRlcyAqLwpBRERSRVNTIFRTTyAiU1VCQ09NIERTTlJFWFggTE9BRCIKQUREUkVTUyBEU05SRVhYICJDT05ORUNUIiAiRFNOIiAiVVNFUih1c2VybmFtZSkiICJVU0lORyhwYXNzd29yZCkiCgpJRiBTUUxDT0RFIFw9IDAgVEhFTgogIFNBWSAiQ29ubmV4acOzIGEgbGEgYmFzZSBkZSBkYWRlcyBmYWxsaWRhLiBTUUxDT0RFOiIgU1FMQ09ERQpFTFNFIERPCiAgU0FZICJDb25uZXhpw7MgYSBsYSBiYXNlIGRlIGRhZGVzIHJlZWl4aWRhLiIKCiAgLyogRXhlY3V0YXIgdW5hIGNvbnN1bHRhIFNFTEVDVCAqLwogIFFVRVJZID0gIlNFTEVDVCBjb2wxLCBjb2wyIEZST00gbXlfdGFibGUiCiAgQUREUkVTUyBEU05SRVhYICJFWEVDU1FMIERFQ0xBUkUgQzEgQ1VSU09SIEZPUiBTMSIKICBBRERSRVNTIERTTlJFWFggIkVYRUNTUUwgUFJFUEFSRSBTMSBJTlRPIDpTUUxTVE1UIEZST00gOlFVRVJZIgogIEFERFJFU1MgRFNOUkVYWCAiRVhFQ1NRTCBPUEVOIEMxIgoKICBETyBXSElMRSBTUUxDT0RFID0gMAogICAgQUREUkVTUyBEU05SRVhYICJFWEVDU1FMIEZFVENIIEMxIElOVE8gOlJFU1VMVCIKICAgIElGIFNRTENPREUgPSAwIFRIRU4KICAgICAgU0FZICJSZXN1bHRhdDogIiBSRVNVTFQKICBFTkQKCiAgQUREUkVTUyBEU05SRVhYICJFWEVDU1FMIENMT1NFIEMxIgoKICAvKiBFeGVjdXRhciB1bmEgY29uc3VsdGEgSU5TRVJUICovCiAgQUREUkVTUyBEU05SRVhYICJFWEVDU1FMIElOU0VSVCBJTlRPIG15X3RhYmxlIChjb2wxLCBjb2wyKSBWQUxVRVMgKCd2YWx1ZTEnLCAndmFsdWUyJykiCgogIElGIFNRTENPREUgXD0gMCBUSEVOCiAgICBTQVkgIkluc2VyY2nDsyBmYWxsaWRhLiBTUUxDT0RFOiIgU1FMQ09ERQogIEVMU0UKICAgIFNBWSAiSW5zZXJjacOzIHJlZWl4aWRhLiIKCiAgLyogVGFuY2FyIGxhIGNvbm5leGnDsyAqLwogIEFERFJFU1MgRFNOUkVYWCAiRElTQ09OTkVDVCIKRU5E"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>/* Connexi&oacute; a la base de dades */
+ADDRESS TSO &quot;SUBCOM DSNREXX LOAD&quot;
+ADDRESS DSNREXX &quot;CONNECT&quot; &quot;DSN&quot; &quot;USER(username)&quot; &quot;USING(password)&quot;
+
+IF SQLCODE \= 0 THEN
+  SAY &quot;Connexi&oacute; a la base de dades fallida. SQLCODE:&quot; SQLCODE
+ELSE DO
+  SAY &quot;Connexi&oacute; a la base de dades reeixida.&quot;
+
+  /* Executar una consulta SELECT */
+  QUERY = &quot;SELECT col1, col2 FROM my_table&quot;
+  ADDRESS DSNREXX &quot;EXECSQL DECLARE C1 CURSOR FOR S1&quot;
+  ADDRESS DSNREXX &quot;EXECSQL PREPARE S1 INTO :SQLSTMT FROM :QUERY&quot;
+  ADDRESS DSNREXX &quot;EXECSQL OPEN C1&quot;
+
+  DO WHILE SQLCODE = 0
+    ADDRESS DSNREXX &quot;EXECSQL FETCH C1 INTO :RESULT&quot;
+    IF SQLCODE = 0 THEN
+      SAY &quot;Resultat: &quot; RESULT
+  END
+
+  ADDRESS DSNREXX &quot;EXECSQL CLOSE C1&quot;
+
+  /* Executar una consulta INSERT */
+  ADDRESS DSNREXX &quot;EXECSQL INSERT INTO my_table (col1, col2) VALUES ('value1', 'value2')&quot;
+
+  IF SQLCODE \= 0 THEN
+    SAY &quot;Inserci&oacute; fallida. SQLCODE:&quot; SQLCODE
+  ELSE
+    SAY &quot;Inserci&oacute; reeixida.&quot;
+
+  /* Tancar la connexi&oacute; */
+  ADDRESS DSNREXX &quot;DISCONNECT&quot;
+END</pre></div><div class='content'></div><h1>4. Gestió d'Errors</h1>
+<div class='content'></div><h2>4.1. Exemple de Gestió d'Errors</h2>
+<div class='content'><p>És important gestionar els errors adequadament per assegurar la robustesa de l'aplicació. A continuació es mostra un exemple de com gestionar errors:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LyogQ29ubmV4acOzIGEgbGEgYmFzZSBkZSBkYWRlcyAqLwpBRERSRVNTIFRTTyAiU1VCQ09NIERTTlJFWFggTE9BRCIKQUREUkVTUyBEU05SRVhYICJDT05ORUNUIiAiRFNOIiAiVVNFUih1c2VybmFtZSkiICJVU0lORyhwYXNzd29yZCkiCgpJRiBTUUxDT0RFIFw9IDAgVEhFTgogIFNBWSAiQ29ubmV4acOzIGEgbGEgYmFzZSBkZSBkYWRlcyBmYWxsaWRhLiBTUUxDT0RFOiIgU1FMQ09ERQpFTFNFIERPCiAgU0FZICJDb25uZXhpw7MgYSBsYSBiYXNlIGRlIGRhZGVzIHJlZWl4aWRhLiIKCiAgLyogSW50ZW50YXIgZXhlY3V0YXIgdW5hIGNvbnN1bHRhICovCiAgQUREUkVTUyBEU05SRVhYICJFWEVDU1FMIFNFTEVDVCBjb2wxIEZST00gbXlfdGFibGUgV0hFUkUgY29sMiA9ICd2YWx1ZSciCgogIElGIFNRTENPREUgXD0gMCBUSEVOCiAgICBTQVkgIkNvbnN1bHRhIGZhbGxpZGEuIFNRTENPREU6IiBTUUxDT0RFCiAgRUxTRQogICAgU0FZICJDb25zdWx0YSByZWVpeGlkYS4gUmVzdWx0YXQ6ICIgUkVTVUxUCgogIC8qIFRhbmNhciBsYSBjb25uZXhpw7MgKi8KICBBRERSRVNTIERTTlJFWFggIkRJU0NPTk5FQ1QiCkVORA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>/* Connexi&oacute; a la base de dades */
+ADDRESS TSO &quot;SUBCOM DSNREXX LOAD&quot;
+ADDRESS DSNREXX &quot;CONNECT&quot; &quot;DSN&quot; &quot;USER(username)&quot; &quot;USING(password)&quot;
+
+IF SQLCODE \= 0 THEN
+  SAY &quot;Connexi&oacute; a la base de dades fallida. SQLCODE:&quot; SQLCODE
+ELSE DO
+  SAY &quot;Connexi&oacute; a la base de dades reeixida.&quot;
+
+  /* Intentar executar una consulta */
+  ADDRESS DSNREXX &quot;EXECSQL SELECT col1 FROM my_table WHERE col2 = 'value'&quot;
+
+  IF SQLCODE \= 0 THEN
+    SAY &quot;Consulta fallida. SQLCODE:&quot; SQLCODE
+  ELSE
+    SAY &quot;Consulta reeixida. Resultat: &quot; RESULT
+
+  /* Tancar la connexi&oacute; */
+  ADDRESS DSNREXX &quot;DISCONNECT&quot;
+END</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Connexió i Consulta</h2>
+<div class='content'><ol>
+<li>Connecta't a una base de dades de prova.</li>
+<li>Executa una consulta <code>SELECT</code> per recuperar totes les files d'una taula.</li>
+<li>Mostra els resultats a la consola.</li>
+</ol>
+</div><h2>Exercici 2: Inserció de Dades</h2>
+<div class='content'><ol>
+<li>Connecta't a una base de dades de prova.</li>
+<li>Insereix una nova fila en una taula.</li>
+<li>Verifica que la fila ha estat inserida correctament executant una consulta <code>SELECT</code>.</li>
+</ol>
+</div><h2>Exercici 3: Gestió d'Errors</h2>
+<div class='content'><ol>
+<li>Connecta't a una base de dades de prova.</li>
+<li>Intenta executar una consulta amb un error intencionat (per exemple, una taula que no existeix).</li>
+<li>Gestiona l'error i mostra un missatge adequat a la consola.</li>
+</ol>
+</div><h1>Solucions</h1>
+<div class='content'></div><h2>Solució a l'Exercici 1</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LyogQ29ubmV4acOzIGEgbGEgYmFzZSBkZSBkYWRlcyAqLwpBRERSRVNTIFRTTyAiU1VCQ09NIERTTlJFWFggTE9BRCIKQUREUkVTUyBEU05SRVhYICJDT05ORUNUIiAiRFNOIiAiVVNFUih1c2VybmFtZSkiICJVU0lORyhwYXNzd29yZCkiCgpJRiBTUUxDT0RFIFw9IDAgVEhFTgogIFNBWSAiQ29ubmV4acOzIGEgbGEgYmFzZSBkZSBkYWRlcyBmYWxsaWRhLiBTUUxDT0RFOiIgU1FMQ09ERQpFTFNFIERPCiAgU0FZICJDb25uZXhpw7MgYSBsYSBiYXNlIGRlIGRhZGVzIHJlZWl4aWRhLiIKCiAgLyogRXhlY3V0YXIgdW5hIGNvbnN1bHRhIFNFTEVDVCAqLwogIFFVRVJZID0gIlNFTEVDVCAqIEZST00gdGVzdF90YWJsZSIKICBBRERSRVNTIERTTlJFWFggIkVYRUNTUUwgREVDTEFSRSBDMSBDVVJTT1IgRk9SIFMxIgogIEFERFJFU1MgRFNOUkVYWCAiRVhFQ1NRTCBQUkVQQVJFIFMxIElOVE8gOlNRTFNUTVQgRlJPTSA6UVVFUlkiCiAgQUREUkVTUyBEU05SRVhYICJFWEVDU1FMIE9QRU4gQzEiCgogIERPIFdISUxFIFNRTENPREUgPSAwCiAgICBBRERSRVNTIERTTlJFWFggIkVYRUNTUUwgRkVUQ0ggQzEgSU5UTyA6UkVTVUxUIgogICAgSUYgU1FMQ09ERSA9IDAgVEhFTgogICAgICBTQVkgIlJlc3VsdGF0OiAiIFJFU1VMVAogIEVORAoKICBBRERSRVNTIERTTlJFWFggIkVYRUNTUUwgQ0xPU0UgQzEiCiAgQUREUkVTUyBEU05SRVhYICJESVNDT05ORUNUIgpFTkQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>/* Connexi&oacute; a la base de dades */
+ADDRESS TSO &quot;SUBCOM DSNREXX LOAD&quot;
+ADDRESS DSNREXX &quot;CONNECT&quot; &quot;DSN&quot; &quot;USER(username)&quot; &quot;USING(password)&quot;
+
+IF SQLCODE \= 0 THEN
+  SAY &quot;Connexi&oacute; a la base de dades fallida. SQLCODE:&quot; SQLCODE
+ELSE DO
+  SAY &quot;Connexi&oacute; a la base de dades reeixida.&quot;
+
+  /* Executar una consulta SELECT */
+  QUERY = &quot;SELECT * FROM test_table&quot;
+  ADDRESS DSNREXX &quot;EXECSQL DECLARE C1 CURSOR FOR S1&quot;
+  ADDRESS DSNREXX &quot;EXECSQL PREPARE S1 INTO :SQLSTMT FROM :QUERY&quot;
+  ADDRESS DSNREXX &quot;EXECSQL OPEN C1&quot;
+
+  DO WHILE SQLCODE = 0
+    ADDRESS DSNREXX &quot;EXECSQL FETCH C1 INTO :RESULT&quot;
+    IF SQLCODE = 0 THEN
+      SAY &quot;Resultat: &quot; RESULT
+  END
+
+  ADDRESS DSNREXX &quot;EXECSQL CLOSE C1&quot;
+  ADDRESS DSNREXX &quot;DISCONNECT&quot;
+END</pre></div><div class='content'></div><h2>Solució a l'Exercici 2</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LyogQ29ubmV4acOzIGEgbGEgYmFzZSBkZSBkYWRlcyAqLwpBRERSRVNTIFRTTyAiU1VCQ09NIERTTlJFWFggTE9BRCIKQUREUkVTUyBEU05SRVhYICJDT05ORUNUIiAiRFNOIiAiVVNFUih1c2VybmFtZSkiICJVU0lORyhwYXNzd29yZCkiCgpJRiBTUUxDT0RFIFw9IDAgVEhFTgogIFNBWSAiQ29ubmV4acOzIGEgbGEgYmFzZSBkZSBkYWRlcyBmYWxsaWRhLiBTUUxDT0RFOiIgU1FMQ09ERQpFTFNFIERPCiAgU0FZICJDb25uZXhpw7MgYSBsYSBiYXNlIGRlIGRhZGVzIHJlZWl4aWRhLiIKCiAgLyogRXhlY3V0YXIgdW5hIGNvbnN1bHRhIElOU0VSVCAqLwogIEFERFJFU1MgRFNOUkVYWCAiRVhFQ1NRTCBJTlNFUlQgSU5UTyB0ZXN0X3RhYmxlIChjb2wxLCBjb2wyKSBWQUxVRVMgKCd2YWx1ZTEnLCAndmFsdWUyJykiCgogIElGIFNRTENPREUgXD0gMCBUSEVOCiAgICBTQVkgIkluc2VyY2nDsyBmYWxsaWRhLiBTUUxDT0RFOiIgU1FMQ09ERQogIEVMU0UKICAgIFNBWSAiSW5zZXJjacOzIHJlZWl4aWRhLiIKCiAgLyogVmVyaWZpY2FyIGxhIGluc2VyY2nDsyAqLwogIFFVRVJZID0gIlNFTEVDVCAqIEZST00gdGVzdF90YWJsZSBXSEVSRSBjb2wxID0gJ3ZhbHVlMSciCiAgQUREUkVTUyBEU05SRVhYICJFWEVDU1FMIERFQ0xBUkUgQzEgQ1VSU09SIEZPUiBTMSIKICBBRERSRVNTIERTTlJFWFggIkVYRUNTUUwgUFJFUEFSRSBTMSBJTlRPIDpTUUxTVE1UIEZST00gOlFVRVJZIgogIEFERFJFU1MgRFNOUkVYWCAiRVhFQ1NRTCBPUEVOIEMxIgoKICBETyBXSElMRSBTUUxDT0RFID0gMAogICAgQUREUkVTUyBEU05SRVhYICJFWEVDU1FMIEZFVENIIEMxIElOVE8gOlJFU1VMVCIKICAgIElGIFNRTENPREUgPSAwIFRIRU4KICAgICAgU0FZICJSZXN1bHRhdDogIiBSRVNVTFQKICBFTkQKCiAgQUREUkVTUyBEU05SRVhYICJFWEVDU1FMIENMT1NFIEMxIgogIEFERFJFU1MgRFNOUkVYWCAiRElTQ09OTkVDVCIKRU5E"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>/* Connexi&oacute; a la base de dades */
+ADDRESS TSO &quot;SUBCOM DSNREXX LOAD&quot;
+ADDRESS DSNREXX &quot;CONNECT&quot; &quot;DSN&quot; &quot;USER(username)&quot; &quot;USING(password)&quot;
+
+IF SQLCODE \= 0 THEN
+  SAY &quot;Connexi&oacute; a la base de dades fallida. SQLCODE:&quot; SQLCODE
+ELSE DO
+  SAY &quot;Connexi&oacute; a la base de dades reeixida.&quot;
+
+  /* Executar una consulta INSERT */
+  ADDRESS DSNREXX &quot;EXECSQL INSERT INTO test_table (col1, col2) VALUES ('value1', 'value2')&quot;
+
+  IF SQLCODE \= 0 THEN
+    SAY &quot;Inserci&oacute; fallida. SQLCODE:&quot; SQLCODE
+  ELSE
+    SAY &quot;Inserci&oacute; reeixida.&quot;
+
+  /* Verificar la inserci&oacute; */
+  QUERY = &quot;SELECT * FROM test_table WHERE col1 = 'value1'&quot;
+  ADDRESS DSNREXX &quot;EXECSQL DECLARE C1 CURSOR FOR S1&quot;
+  ADDRESS DSNREXX &quot;EXECSQL PREPARE S1 INTO :SQLSTMT FROM :QUERY&quot;
+  ADDRESS DSNREXX &quot;EXECSQL OPEN C1&quot;
+
+  DO WHILE SQLCODE = 0
+    ADDRESS DSNREXX &quot;EXECSQL FETCH C1 INTO :RESULT&quot;
+    IF SQLCODE = 0 THEN
+      SAY &quot;Resultat: &quot; RESULT
+  END
+
+  ADDRESS DSNREXX &quot;EXECSQL CLOSE C1&quot;
+  ADDRESS DSNREXX &quot;DISCONNECT&quot;
+END</pre></div><div class='content'></div><h2>Solució a l'Exercici 3</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LyogQ29ubmV4acOzIGEgbGEgYmFzZSBkZSBkYWRlcyAqLwpBRERSRVNTIFRTTyAiU1VCQ09NIERTTlJFWFggTE9BRCIKQUREUkVTUyBEU05SRVhYICJDT05ORUNUIiAiRFNOIiAiVVNFUih1c2VybmFtZSkiICJVU0lORyhwYXNzd29yZCkiCgpJRiBTUUxDT0RFIFw9IDAgVEhFTgogIFNBWSAiQ29ubmV4acOzIGEgbGEgYmFzZSBkZSBkYWRlcyBmYWxsaWRhLiBTUUxDT0RFOiIgU1FMQ09ERQpFTFNFIERPCiAgU0FZICJDb25uZXhpw7MgYSBsYSBiYXNlIGRlIGRhZGVzIHJlZWl4aWRhLiIKCiAgLyogSW50ZW50YXIgZXhlY3V0YXIgdW5hIGNvbnN1bHRhIGFtYiBlcnJvciAqLwogIEFERFJFU1MgRFNOUkVYWCAiRVhFQ1NRTCBTRUxFQ1QgKiBGUk9NIG5vbl9leGlzdGVudF90YWJsZSIKCiAgSUYgU1FMQ09ERSBcPSAwIFRIRU4KICAgIFNBWSAiQ29uc3VsdGEgZmFsbGlkYS4gU1FMQ09ERToiIFNRTENPREUKICBFTFNFCiAgICBTQVkgIkNvbnN1bHRhIHJlZWl4aWRhLiBSZXN1bHRhdDogIiBSRVNVTFQKCiAgLyogVGFuY2FyIGxhIGNvbm5leGnDsyAqLwogIEFERFJFU1MgRFNOUkVYWCAiRElTQ09OTkVDVCIKRU5E"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>/* Connexi&oacute; a la base de dades */
+ADDRESS TSO &quot;SUBCOM DSNREXX LOAD&quot;
+ADDRESS DSNREXX &quot;CONNECT&quot; &quot;DSN&quot; &quot;USER(username)&quot; &quot;USING(password)&quot;
+
+IF SQLCODE \= 0 THEN
+  SAY &quot;Connexi&oacute; a la base de dades fallida. SQLCODE:&quot; SQLCODE
+ELSE DO
+  SAY &quot;Connexi&oacute; a la base de dades reeixida.&quot;
+
+  /* Intentar executar una consulta amb error */
+  ADDRESS DSNREXX &quot;EXECSQL SELECT * FROM non_existent_table&quot;
+
+  IF SQLCODE \= 0 THEN
+    SAY &quot;Consulta fallida. SQLCODE:&quot; SQLCODE
+  ELSE
+    SAY &quot;Consulta reeixida. Resultat: &quot; RESULT
+
+  /* Tancar la connexi&oacute; */
+  ADDRESS DSNREXX &quot;DISCONNECT&quot;
+END</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com connectar-nos a una base de dades, executar consultes SQL, manipular dades i gestionar errors utilitzant REXX. Aquestes habilitats són fonamentals per desenvolupar aplicacions que necessiten interactuar amb bases de dades. Practica els exercicis proporcionats per consolidar els teus coneixements i estar preparat per a projectes més avançats.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-02-creating-utilities' title="Creació d'Utilitats REXX">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-04-web-programming' title="Programació Web amb REXX">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

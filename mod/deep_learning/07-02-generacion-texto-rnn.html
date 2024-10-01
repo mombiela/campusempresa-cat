@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generació de text amb RNN</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/deep_learning/07-02-generacion-texto-rnn" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/deep_learning/07-02-generacion-texto-rnn" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/deep_learning/07-02-text-generation-rnn" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/deep_learning/07-02-generacion-texto-rnn" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/deep_learning/07-02-generacion-texto-rnn" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-01-clasificacion-imagenes-cnn' title="Classificació d'imatges amb CNN">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Generació de text amb RNN</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-03-deteccion-anomalias-autoencoders' title="Detecció d'anomalies amb Autoencoders">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, explorarem com utilitzar Xarxes Neuronals Recurrentes (RNN) per a la generació de text. Les RNN són especialment útils per a tasques seqüencials com el processament del llenguatge natural (PLN), ja que poden mantenir informació sobre contextos anteriors en una seqüència. Aprendrem els conceptes bàsics, veurem exemples pràctics i realitzarem exercicis per consolidar els nostres coneixements.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Xarxes Neuronals Recurrentes (RNN)</strong>:</p>
+<ul>
+<li>Les RNN són un tipus de xarxa neuronal dissenyada per treballar amb dades seqüencials.</li>
+<li>Cada unitat de la xarxa té una connexió recurrent que permet mantenir informació sobre els estats anteriors.</li>
+</ul>
+</li>
+<li>
+<p><strong>LSTM (Long Short-Term Memory)</strong>:</p>
+<ul>
+<li>Una variant de les RNN que aborda el problema del gradient que desapareix.</li>
+<li>Utilitza cel·les de memòria per mantenir informació durant períodes de temps més llargs.</li>
+</ul>
+</li>
+<li>
+<p><strong>GRU (Gated Recurrent Unit)</strong>:</p>
+<ul>
+<li>Una altra variant de les RNN que simplifica les cel·les de memòria de les LSTM.</li>
+<li>Té menys paràmetres que les LSTM, cosa que pot fer-les més eficients.</li>
+</ul>
+</li>
+<li>
+<p><strong>Embedding</strong>:</p>
+<ul>
+<li>Una representació vectorial d'elements de text (paraules, caràcters) en un espai de dimensions més baixes.</li>
+<li>Facilita l'aprenentatge de relacions semàntiques entre paraules.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Exemples Pràctics</h1>
+<div class='content'></div><h2>Exemple 1: Generació de text amb una RNN bàsica</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG51bXB5IGFzIG5wCmltcG9ydCB0ZW5zb3JmbG93IGFzIHRmCmZyb20gdGVuc29yZmxvdy5rZXJhcy5tb2RlbHMgaW1wb3J0IFNlcXVlbnRpYWwKZnJvbSB0ZW5zb3JmbG93LmtlcmFzLmxheWVycyBpbXBvcnQgRW1iZWRkaW5nLCBTaW1wbGVSTk4sIERlbnNlCgojIERhZGVzIGQnZXhlbXBsZQp0ZXh0ID0gIkhvbGEsIGJlbnZpbmd1dCBhbCBjdXJzIGRlIERlZXAgTGVhcm5pbmcuIEFwcmVuZHJlbSBtb2x0ZXMgY29zZXMgaW50ZXJlc3NhbnRzLiIKCiMgUHJlcHJvY2Vzc2FtZW50IGRlbCB0ZXh0CmNoYXJzID0gc29ydGVkKGxpc3Qoc2V0KHRleHQpKSkKY2hhcl90b19pbmRleCA9IHtjOiBpIGZvciBpLCBjIGluIGVudW1lcmF0ZShjaGFycyl9CmluZGV4X3RvX2NoYXIgPSB7aTogYyBmb3IgaSwgYyBpbiBlbnVtZXJhdGUoY2hhcnMpfQoKIyBQYXLDoG1ldHJlcwptYXhsZW4gPSA0MApzdGVwID0gMwoKIyBQcmVwYXJhciBsZXMgc2Vxw7zDqG5jaWVzIGQnZW50cmFkYSBpIHNvcnRpZGEKc2VudGVuY2VzID0gW10KbmV4dF9jaGFycyA9IFtdCmZvciBpIGluIHJhbmdlKDAsIGxlbih0ZXh0KSAtIG1heGxlbiwgc3RlcCk6CiAgICBzZW50ZW5jZXMuYXBwZW5kKHRleHRbaTogaSArIG1heGxlbl0pCiAgICBuZXh0X2NoYXJzLmFwcGVuZCh0ZXh0W2kgKyBtYXhsZW5dKQogICAgClggPSBucC56ZXJvcygobGVuKHNlbnRlbmNlcyksIG1heGxlbiwgbGVuKGNoYXJzKSksIGR0eXBlPW5wLmJvb2wpCnkgPSBucC56ZXJvcygobGVuKHNlbnRlbmNlcyksIGxlbihjaGFycykpLCBkdHlwZT1ucC5ib29sKQoKZm9yIGksIHNlbnRlbmNlIGluIGVudW1lcmF0ZShzZW50ZW5jZXMpOgogICAgZm9yIHQsIGNoYXIgaW4gZW51bWVyYXRlKHNlbnRlbmNlKToKICAgICAgICBYW2ksIHQsIGNoYXJfdG9faW5kZXhbY2hhcl1dID0gMQogICAgeVtpLCBjaGFyX3RvX2luZGV4W25leHRfY2hhcnNbaV1dXSA9IDEKCiMgQ29uc3RydWlyIGVsIG1vZGVsCm1vZGVsID0gU2VxdWVudGlhbCgpCm1vZGVsLmFkZChTaW1wbGVSTk4oMTI4LCBpbnB1dF9zaGFwZT0obWF4bGVuLCBsZW4oY2hhcnMpKSkpCm1vZGVsLmFkZChEZW5zZShsZW4oY2hhcnMpLCBhY3RpdmF0aW9uPSdzb2Z0bWF4JykpCgptb2RlbC5jb21waWxlKGxvc3M9J2NhdGVnb3JpY2FsX2Nyb3NzZW50cm9weScsIG9wdGltaXplcj0nYWRhbScpCgojIEVudHJlbmFyIGVsIG1vZGVsCm1vZGVsLmZpdChYLCB5LCBiYXRjaF9zaXplPTEyOCwgZXBvY2hzPTIwKQoKIyBHZW5lcmFyIHRleHQKZGVmIHNhbXBsZShwcmVkcywgdGVtcGVyYXR1cmU9MS4wKToKICAgIHByZWRzID0gbnAuYXNhcnJheShwcmVkcykuYXN0eXBlKCdmbG9hdDY0JykKICAgIHByZWRzID0gbnAubG9nKHByZWRzKSAvIHRlbXBlcmF0dXJlCiAgICBleHBfcHJlZHMgPSBucC5leHAocHJlZHMpCiAgICBwcmVkcyA9IGV4cF9wcmVkcyAvIG5wLnN1bShleHBfcHJlZHMpCiAgICBwcm9iYXMgPSBucC5yYW5kb20ubXVsdGlub21pYWwoMSwgcHJlZHMsIDEpCiAgICByZXR1cm4gbnAuYXJnbWF4KHByb2JhcykKCmdlbmVyYXRlZF90ZXh0ID0gdGV4dFs6bWF4bGVuXQpwcmludCgnLS0tIEdlbmVyYXRpbmcgd2l0aCBzZWVkOiAiJyArIGdlbmVyYXRlZF90ZXh0ICsgJyInKQoKZm9yIGkgaW4gcmFuZ2UoNDAwKToKICAgIHNhbXBsZWQgPSBucC56ZXJvcygoMSwgbWF4bGVuLCBsZW4oY2hhcnMpKSkKICAgIGZvciB0LCBjaGFyIGluIGVudW1lcmF0ZShnZW5lcmF0ZWRfdGV4dCk6CiAgICAgICAgc2FtcGxlZFswLCB0LCBjaGFyX3RvX2luZGV4W2NoYXJdXSA9IDEKCiAgICBwcmVkcyA9IG1vZGVsLnByZWRpY3Qoc2FtcGxlZCwgdmVyYm9zZT0wKVswXQogICAgbmV4dF9pbmRleCA9IHNhbXBsZShwcmVkcywgMC41KQogICAgbmV4dF9jaGFyID0gaW5kZXhfdG9fY2hhcltuZXh0X2luZGV4XQoKICAgIGdlbmVyYXRlZF90ZXh0ICs9IG5leHRfY2hhcgogICAgZ2VuZXJhdGVkX3RleHQgPSBnZW5lcmF0ZWRfdGV4dFsxOl0KCiAgICBwcmludChuZXh0X2NoYXIsIGVuZD0nJykKcHJpbnQoKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import numpy as np
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Embedding, SimpleRNN, Dense
+
+# Dades d'exemple
+text = &quot;Hola, benvingut al curs de Deep Learning. Aprendrem moltes coses interessants.&quot;
+
+# Preprocessament del text
+chars = sorted(list(set(text)))
+char_to_index = {c: i for i, c in enumerate(chars)}
+index_to_char = {i: c for i, c in enumerate(chars)}
+
+# Par&agrave;metres
+maxlen = 40
+step = 3
+
+# Preparar les seq&uuml;&egrave;ncies d'entrada i sortida
+sentences = []
+next_chars = []
+for i in range(0, len(text) - maxlen, step):
+    sentences.append(text[i: i + maxlen])
+    next_chars.append(text[i + maxlen])
+    
+X = np.zeros((len(sentences), maxlen, len(chars)), dtype=np.bool)
+y = np.zeros((len(sentences), len(chars)), dtype=np.bool)
+
+for i, sentence in enumerate(sentences):
+    for t, char in enumerate(sentence):
+        X[i, t, char_to_index[char]] = 1
+    y[i, char_to_index[next_chars[i]]] = 1
+
+# Construir el model
+model = Sequential()
+model.add(SimpleRNN(128, input_shape=(maxlen, len(chars))))
+model.add(Dense(len(chars), activation='softmax'))
+
+model.compile(loss='categorical_crossentropy', optimizer='adam')
+
+# Entrenar el model
+model.fit(X, y, batch_size=128, epochs=20)
+
+# Generar text
+def sample(preds, temperature=1.0):
+    preds = np.asarray(preds).astype('float64')
+    preds = np.log(preds) / temperature
+    exp_preds = np.exp(preds)
+    preds = exp_preds / np.sum(exp_preds)
+    probas = np.random.multinomial(1, preds, 1)
+    return np.argmax(probas)
+
+generated_text = text[:maxlen]
+print('--- Generating with seed: &quot;' + generated_text + '&quot;')
+
+for i in range(400):
+    sampled = np.zeros((1, maxlen, len(chars)))
+    for t, char in enumerate(generated_text):
+        sampled[0, t, char_to_index[char]] = 1
+
+    preds = model.predict(sampled, verbose=0)[0]
+    next_index = sample(preds, 0.5)
+    next_char = index_to_char[next_index]
+
+    generated_text += next_char
+    generated_text = generated_text[1:]
+
+    print(next_char, end='')
+print()</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Preprocessament del text</strong>:</p>
+<ul>
+<li>Convertim el text en una seqüència de caràcters únics.</li>
+<li>Creem diccionaris per mapar caràcters a índexs i viceversa.</li>
+</ul>
+</li>
+<li>
+<p><strong>Preparació de les seqüències d'entrada i sortida</strong>:</p>
+<ul>
+<li>Dividim el text en seqüències de longitud fixa (<code>maxlen</code>).</li>
+<li>Preparem les dades d'entrada (<code>X</code>) i les etiquetes (<code>y</code>).</li>
+</ul>
+</li>
+<li>
+<p><strong>Construcció del model</strong>:</p>
+<ul>
+<li>Utilitzem una capa <code>SimpleRNN</code> amb 128 unitats.</li>
+<li>Afegim una capa <code>Dense</code> amb activació <code>softmax</code> per predir el següent caràcter.</li>
+</ul>
+</li>
+<li>
+<p><strong>Entrenament del model</strong>:</p>
+<ul>
+<li>Compilem el model amb la pèrdua <code>categorical_crossentropy</code> i l'optimitzador <code>adam</code>.</li>
+<li>Entrenem el model durant 20 èpoques.</li>
+</ul>
+</li>
+<li>
+<p><strong>Generació de text</strong>:</p>
+<ul>
+<li>Utilitzem la funció <code>sample</code> per generar el següent caràcter basat en les prediccions del model.</li>
+<li>Generem text de manera iterativa, afegint el nou caràcter a la seqüència generada.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Millorar la Generació de Text amb LSTM</h2>
+<div class='content'><p>Modifica l'exemple anterior per utilitzar una capa <code>LSTM</code> en lloc de <code>SimpleRNN</code>. Compara els resultats obtinguts.</p>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSB0ZW5zb3JmbG93LmtlcmFzLmxheWVycyBpbXBvcnQgTFNUTQoKIyBDb25zdHJ1aXIgZWwgbW9kZWwgYW1iIExTVE0KbW9kZWwgPSBTZXF1ZW50aWFsKCkKbW9kZWwuYWRkKExTVE0oMTI4LCBpbnB1dF9zaGFwZT0obWF4bGVuLCBsZW4oY2hhcnMpKSkpCm1vZGVsLmFkZChEZW5zZShsZW4oY2hhcnMpLCBhY3RpdmF0aW9uPSdzb2Z0bWF4JykpCgptb2RlbC5jb21waWxlKGxvc3M9J2NhdGVnb3JpY2FsX2Nyb3NzZW50cm9weScsIG9wdGltaXplcj0nYWRhbScpCgojIEVudHJlbmFyIGVsIG1vZGVsCm1vZGVsLmZpdChYLCB5LCBiYXRjaF9zaXplPTEyOCwgZXBvY2hzPTIwKQoKIyBHZW5lcmFyIHRleHQKZ2VuZXJhdGVkX3RleHQgPSB0ZXh0WzptYXhsZW5dCnByaW50KCctLS0gR2VuZXJhdGluZyB3aXRoIHNlZWQ6ICInICsgZ2VuZXJhdGVkX3RleHQgKyAnIicpCgpmb3IgaSBpbiByYW5nZSg0MDApOgogICAgc2FtcGxlZCA9IG5wLnplcm9zKCgxLCBtYXhsZW4sIGxlbihjaGFycykpKQogICAgZm9yIHQsIGNoYXIgaW4gZW51bWVyYXRlKGdlbmVyYXRlZF90ZXh0KToKICAgICAgICBzYW1wbGVkWzAsIHQsIGNoYXJfdG9faW5kZXhbY2hhcl1dID0gMQoKICAgIHByZWRzID0gbW9kZWwucHJlZGljdChzYW1wbGVkLCB2ZXJib3NlPTApWzBdCiAgICBuZXh0X2luZGV4ID0gc2FtcGxlKHByZWRzLCAwLjUpCiAgICBuZXh0X2NoYXIgPSBpbmRleF90b19jaGFyW25leHRfaW5kZXhdCgogICAgZ2VuZXJhdGVkX3RleHQgKz0gbmV4dF9jaGFyCiAgICBnZW5lcmF0ZWRfdGV4dCA9IGdlbmVyYXRlZF90ZXh0WzE6XQoKICAgIHByaW50KG5leHRfY2hhciwgZW5kPScnKQpwcmludCgp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from tensorflow.keras.layers import LSTM
+
+# Construir el model amb LSTM
+model = Sequential()
+model.add(LSTM(128, input_shape=(maxlen, len(chars))))
+model.add(Dense(len(chars), activation='softmax'))
+
+model.compile(loss='categorical_crossentropy', optimizer='adam')
+
+# Entrenar el model
+model.fit(X, y, batch_size=128, epochs=20)
+
+# Generar text
+generated_text = text[:maxlen]
+print('--- Generating with seed: &quot;' + generated_text + '&quot;')
+
+for i in range(400):
+    sampled = np.zeros((1, maxlen, len(chars)))
+    for t, char in enumerate(generated_text):
+        sampled[0, t, char_to_index[char]] = 1
+
+    preds = model.predict(sampled, verbose=0)[0]
+    next_index = sample(preds, 0.5)
+    next_char = index_to_char[next_index]
+
+    generated_text += next_char
+    generated_text = generated_text[1:]
+
+    print(next_char, end='')
+print()</pre></div><div class='content'></div><h2>Exercici 2: Ajustar la Temperatura de la Funció de Mostreig</h2>
+<div class='content'><p>Experimenta amb diferents valors de temperatura en la funció <code>sample</code>. Observa com afecta la diversitat del text generat.</p>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBGdW5jacOzIGRlIG1vc3RyZWlnIGFtYiBkaWZlcmVudHMgdGVtcGVyYXR1cmVzCmRlZiBzYW1wbGUocHJlZHMsIHRlbXBlcmF0dXJlPTEuMCk6CiAgICBwcmVkcyA9IG5wLmFzYXJyYXkocHJlZHMpLmFzdHlwZSgnZmxvYXQ2NCcpCiAgICBwcmVkcyA9IG5wLmxvZyhwcmVkcykgLyB0ZW1wZXJhdHVyZQogICAgZXhwX3ByZWRzID0gbnAuZXhwKHByZWRzKQogICAgcHJlZHMgPSBleHBfcHJlZHMgLyBucC5zdW0oZXhwX3ByZWRzKQogICAgcHJvYmFzID0gbnAucmFuZG9tLm11bHRpbm9taWFsKDEsIHByZWRzLCAxKQogICAgcmV0dXJuIG5wLmFyZ21heChwcm9iYXMpCgojIEdlbmVyYXIgdGV4dCBhbWIgZGlmZXJlbnRzIHRlbXBlcmF0dXJlcwpmb3IgdGVtcCBpbiBbMC4yLCAwLjUsIDEuMCwgMS4yXToKICAgIHByaW50KCctLS0gVGVtcGVyYXR1cmU6JywgdGVtcCkKICAgIGdlbmVyYXRlZF90ZXh0ID0gdGV4dFs6bWF4bGVuXQogICAgcHJpbnQoJy0tLSBHZW5lcmF0aW5nIHdpdGggc2VlZDogIicgKyBnZW5lcmF0ZWRfdGV4dCArICciJykKCiAgICBmb3IgaSBpbiByYW5nZSg0MDApOgogICAgICAgIHNhbXBsZWQgPSBucC56ZXJvcygoMSwgbWF4bGVuLCBsZW4oY2hhcnMpKSkKICAgICAgICBmb3IgdCwgY2hhciBpbiBlbnVtZXJhdGUoZ2VuZXJhdGVkX3RleHQpOgogICAgICAgICAgICBzYW1wbGVkWzAsIHQsIGNoYXJfdG9faW5kZXhbY2hhcl1dID0gMQoKICAgICAgICBwcmVkcyA9IG1vZGVsLnByZWRpY3Qoc2FtcGxlZCwgdmVyYm9zZT0wKVswXQogICAgICAgIG5leHRfaW5kZXggPSBzYW1wbGUocHJlZHMsIHRlbXApCiAgICAgICAgbmV4dF9jaGFyID0gaW5kZXhfdG9fY2hhcltuZXh0X2luZGV4XQoKICAgICAgICBnZW5lcmF0ZWRfdGV4dCArPSBuZXh0X2NoYXIKICAgICAgICBnZW5lcmF0ZWRfdGV4dCA9IGdlbmVyYXRlZF90ZXh0WzE6XQoKICAgICAgICBwcmludChuZXh0X2NoYXIsIGVuZD0nJykKICAgIHByaW50KCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Funci&oacute; de mostreig amb diferents temperatures
+def sample(preds, temperature=1.0):
+    preds = np.asarray(preds).astype('float64')
+    preds = np.log(preds) / temperature
+    exp_preds = np.exp(preds)
+    preds = exp_preds / np.sum(exp_preds)
+    probas = np.random.multinomial(1, preds, 1)
+    return np.argmax(probas)
+
+# Generar text amb diferents temperatures
+for temp in [0.2, 0.5, 1.0, 1.2]:
+    print('--- Temperature:', temp)
+    generated_text = text[:maxlen]
+    print('--- Generating with seed: &quot;' + generated_text + '&quot;')
+
+    for i in range(400):
+        sampled = np.zeros((1, maxlen, len(chars)))
+        for t, char in enumerate(generated_text):
+            sampled[0, t, char_to_index[char]] = 1
+
+        preds = model.predict(sampled, verbose=0)[0]
+        next_index = sample(preds, temp)
+        next_char = index_to_char[next_index]
+
+        generated_text += next_char
+        generated_text = generated_text[1:]
+
+        print(next_char, end='')
+    print()</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après com utilitzar RNN per a la generació de text. Hem vist com construir i entrenar un model bàsic de RNN i com millorar-lo utilitzant LSTM. També hem explorat com ajustar la temperatura de la funció de mostreig per controlar la diversitat del text generat. Aquests coneixements són fonamentals per a tasques avançades de processament del llenguatge natural i obren la porta a aplicacions més complexes com la traducció automàtica i la síntesi de text.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-01-clasificacion-imagenes-cnn' title="Classificació d'imatges amb CNN">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-03-deteccion-anomalias-autoencoders' title="Detecció d'anomalies amb Autoencoders">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

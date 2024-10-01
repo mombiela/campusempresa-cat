@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulació de Rigid Bodies</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/fisica_videojuegos/04-02-simulacion-rigid-bodies" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/fisica_videojuegos/04-02-simulacio-rigid-bodies" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/fisica_videojuegos/04-02-rigid-bodies-simulation" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/fisica_videojuegos/04-02-simulacio-rigid-bodies" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/fisica_videojuegos/04-02-simulacio-rigid-bodies" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-introduccio-rigid-bodies' title="Introducció a Rigid Bodies">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Simulació de Rigid Bodies</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-interaccions-rigid-bodies' title="Interaccions entre Rigid Bodies">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem la simulació de rigid bodies, que és fonamental per crear interaccions realistes en els videojocs. Els rigid bodies són objectes que no es deformen quan es mouen o col·lisionen. La seva simulació implica calcular forces, velocitats i col·lisions per representar el moviment de manera precisa.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'></div><h2>1. Definició de Rigid Body</h2>
+<div class='content'><p>Un rigid body és un objecte que manté la seva forma i volum constants durant el moviment. A diferència dels soft bodies, els rigid bodies no es deformen.</p>
+</div><h2>2. Propietats dels Rigid Bodies</h2>
+<div class='content'><p>Les propietats principals que defineixen un rigid body són:</p>
+<ul>
+<li><strong>Massa</strong>: Quantitat de matèria en l'objecte.</li>
+<li><strong>Inèrcia</strong>: Resistència a canvis en el moviment.</li>
+<li><strong>Centre de Massa</strong>: Punt on es pot considerar que tota la massa de l'objecte està concentrada.</li>
+<li><strong>Velocitat Lineal</strong>: Velocitat a la qual es mou l'objecte.</li>
+<li><strong>Velocitat Angular</strong>: Velocitat a la qual l'objecte gira.</li>
+</ul>
+</div><h2>3. Forces i Moments</h2>
+<div class='content'><p>Les forces aplicades a un rigid body poden causar translació (moviment lineal) i rotació (moviment angular). Les forces es poden aplicar en qualsevol punt de l'objecte, i els moments (o torques) són les forces que causen rotació.</p>
+</div><h1>Equacions de Moviment</h1>
+<div class='content'></div><h2>1. Equació de Newton per la Translació</h2>
+<div class='content'><p>La segona llei de Newton per la translació és:
+\[ F = m \cdot a \]
+on \( F \) és la força aplicada, \( m \) és la massa de l'objecte, i \( a \) és l'acceleració resultant.</p>
+</div><h2>2. Equació de Rotació</h2>
+<div class='content'><p>L'equivalent per la rotació és:
+\[ \tau = I \cdot \alpha \]
+on \( \tau \) és el moment (torque), \( I \) és el moment d'inèrcia, i \( \alpha \) és l'acceleració angular.</p>
+</div><h2>3. Actualització de la Posició i Orientació</h2>
+<div class='content'><p>Per actualitzar la posició i l'orientació d'un rigid body, utilitzem les següents equacions:</p>
+<ul>
+<li>Posició: \( \mathbf{p}_{t+1} = \mathbf{p}_t + \mathbf{v}_t \cdot \Delta t \)</li>
+<li>Orientació: \( \mathbf{q}_{t+1} = \mathbf{q}_t + \mathbf{\omega}_t \cdot \Delta t \)</li>
+</ul>
+<p>on \( \mathbf{p} \) és la posició, \( \mathbf{v} \) és la velocitat lineal, \( \mathbf{q} \) és l'orientació (quaternion), \( \mathbf{\omega} \) és la velocitat angular, i \( \Delta t \) és el pas de temps.</p>
+</div><h1>Implementació Pràctica</h1>
+<div class='content'></div><h2>1. Configuració Inicial</h2>
+<div class='content'><p>Abans de començar la simulació, cal definir les propietats inicials del rigid body, com la massa, el centre de massa, i el moment d'inèrcia.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHVibGljIGNsYXNzIFJpZ2lkQm9keQp7CiAgICBwdWJsaWMgZmxvYXQgTWFzcyB7IGdldDsgc2V0OyB9CiAgICBwdWJsaWMgVmVjdG9yMyBQb3NpdGlvbiB7IGdldDsgc2V0OyB9CiAgICBwdWJsaWMgUXVhdGVybmlvbiBPcmllbnRhdGlvbiB7IGdldDsgc2V0OyB9CiAgICBwdWJsaWMgVmVjdG9yMyBWZWxvY2l0eSB7IGdldDsgc2V0OyB9CiAgICBwdWJsaWMgVmVjdG9yMyBBbmd1bGFyVmVsb2NpdHkgeyBnZXQ7IHNldDsgfQogICAgcHVibGljIE1hdHJpeDN4MyBJbmVydGlhVGVuc29yIHsgZ2V0OyBzZXQ7IH0KICAgIAogICAgcHVibGljIFJpZ2lkQm9keShmbG9hdCBtYXNzLCBWZWN0b3IzIHBvc2l0aW9uLCBRdWF0ZXJuaW9uIG9yaWVudGF0aW9uKQogICAgewogICAgICAgIE1hc3MgPSBtYXNzOwogICAgICAgIFBvc2l0aW9uID0gcG9zaXRpb247CiAgICAgICAgT3JpZW50YXRpb24gPSBvcmllbnRhdGlvbjsKICAgICAgICBWZWxvY2l0eSA9IFZlY3RvcjMuemVybzsKICAgICAgICBBbmd1bGFyVmVsb2NpdHkgPSBWZWN0b3IzLnplcm87CiAgICAgICAgSW5lcnRpYVRlbnNvciA9IENhbGN1bGF0ZUluZXJ0aWFUZW5zb3IoKTsKICAgIH0KICAgIAogICAgcHJpdmF0ZSBNYXRyaXgzeDMgQ2FsY3VsYXRlSW5lcnRpYVRlbnNvcigpCiAgICB7CiAgICAgICAgLy8gQ8OgbGN1bCBkZWwgdGVuc29yIGQnaW7DqHJjaWEgYmFzYXQgZW4gbGEgZm9ybWEgZGUgbCdvYmplY3RlCiAgICAgICAgLy8gRXhlbXBsZSBwZXIgYSB1biBjdWIKICAgICAgICBmbG9hdCBJID0gKDEvNikgKiBNYXNzICogKHNpZGVMZW5ndGggKiBzaWRlTGVuZ3RoKTsKICAgICAgICByZXR1cm4gbmV3IE1hdHJpeDN4MyhJLCAwLCAwLCAwLCBJLCAwLCAwLCAwLCBJKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>public class RigidBody
+{
+    public float Mass { get; set; }
+    public Vector3 Position { get; set; }
+    public Quaternion Orientation { get; set; }
+    public Vector3 Velocity { get; set; }
+    public Vector3 AngularVelocity { get; set; }
+    public Matrix3x3 InertiaTensor { get; set; }
+    
+    public RigidBody(float mass, Vector3 position, Quaternion orientation)
+    {
+        Mass = mass;
+        Position = position;
+        Orientation = orientation;
+        Velocity = Vector3.zero;
+        AngularVelocity = Vector3.zero;
+        InertiaTensor = CalculateInertiaTensor();
+    }
+    
+    private Matrix3x3 CalculateInertiaTensor()
+    {
+        // C&agrave;lcul del tensor d'in&egrave;rcia basat en la forma de l'objecte
+        // Exemple per a un cub
+        float I = (1/6) * Mass * (sideLength * sideLength);
+        return new Matrix3x3(I, 0, 0, 0, I, 0, 0, 0, I);
+    }
+}</pre></div><div class='content'></div><h2>2. Aplicació de Forces i Moments</h2>
+<div class='content'><p>Les forces i moments es poden aplicar en qualsevol moment durant la simulació. Això afecta la velocitat lineal i angular del rigid body.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHVibGljIHZvaWQgQXBwbHlGb3JjZShWZWN0b3IzIGZvcmNlLCBWZWN0b3IzIHBvaW50KQp7CiAgICAvLyBBY3R1YWxpdHphciBsYSB2ZWxvY2l0YXQgbGluZWFsCiAgICBWZWN0b3IzIGFjY2VsZXJhdGlvbiA9IGZvcmNlIC8gTWFzczsKICAgIFZlbG9jaXR5ICs9IGFjY2VsZXJhdGlvbiAqIFRpbWUuZGVsdGFUaW1lOwogICAgCiAgICAvLyBBY3R1YWxpdHphciBsYSB2ZWxvY2l0YXQgYW5ndWxhcgogICAgVmVjdG9yMyB0b3JxdWUgPSBWZWN0b3IzLkNyb3NzKHBvaW50IC0gUG9zaXRpb24sIGZvcmNlKTsKICAgIFZlY3RvcjMgYW5ndWxhckFjY2VsZXJhdGlvbiA9IEluZXJ0aWFUZW5zb3IuaW52ZXJzZSAqIHRvcnF1ZTsKICAgIEFuZ3VsYXJWZWxvY2l0eSArPSBhbmd1bGFyQWNjZWxlcmF0aW9uICogVGltZS5kZWx0YVRpbWU7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>public void ApplyForce(Vector3 force, Vector3 point)
+{
+    // Actualitzar la velocitat lineal
+    Vector3 acceleration = force / Mass;
+    Velocity += acceleration * Time.deltaTime;
+    
+    // Actualitzar la velocitat angular
+    Vector3 torque = Vector3.Cross(point - Position, force);
+    Vector3 angularAcceleration = InertiaTensor.inverse * torque;
+    AngularVelocity += angularAcceleration * Time.deltaTime;
+}</pre></div><div class='content'></div><h2>3. Actualització de l'Estat</h2>
+<div class='content'><p>Durant cada pas de temps de la simulació, cal actualitzar la posició i l'orientació del rigid body.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHVibGljIHZvaWQgVXBkYXRlKGZsb2F0IGRlbHRhVGltZSkKewogICAgLy8gQWN0dWFsaXR6YXIgbGEgcG9zaWNpw7MKICAgIFBvc2l0aW9uICs9IFZlbG9jaXR5ICogZGVsdGFUaW1lOwogICAgCiAgICAvLyBBY3R1YWxpdHphciBsJ29yaWVudGFjacOzCiAgICBRdWF0ZXJuaW9uIGRlbHRhUm90YXRpb24gPSBRdWF0ZXJuaW9uLkV1bGVyKEFuZ3VsYXJWZWxvY2l0eSAqIGRlbHRhVGltZSk7CiAgICBPcmllbnRhdGlvbiA9IGRlbHRhUm90YXRpb24gKiBPcmllbnRhdGlvbjsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>public void Update(float deltaTime)
+{
+    // Actualitzar la posici&oacute;
+    Position += Velocity * deltaTime;
+    
+    // Actualitzar l'orientaci&oacute;
+    Quaternion deltaRotation = Quaternion.Euler(AngularVelocity * deltaTime);
+    Orientation = deltaRotation * Orientation;
+}</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici</h2>
+<div class='content'><p>Implementa una simulació bàsica d'un rigid body en un motor de física de la teva elecció (Unity, Unreal Engine, etc.). Defineix un cub amb propietats inicials i aplica una força constant per veure com es mou i rota.</p>
+</div><h2>Solució</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gVW5pdHkgU2NyaXB0CnB1YmxpYyBjbGFzcyBSaWdpZEJvZHlTaW11bGF0aW9uIDogTW9ub0JlaGF2aW91cgp7CiAgICBwdWJsaWMgZmxvYXQgbWFzcyA9IDEuMGY7CiAgICBwdWJsaWMgVmVjdG9yMyBpbml0aWFsUG9zaXRpb24gPSBWZWN0b3IzLnplcm87CiAgICBwdWJsaWMgUXVhdGVybmlvbiBpbml0aWFsT3JpZW50YXRpb24gPSBRdWF0ZXJuaW9uLmlkZW50aXR5OwogICAgcHVibGljIFZlY3RvcjMgZm9yY2UgPSBuZXcgVmVjdG9yMygxMCwgMCwgMCk7CiAgICBwdWJsaWMgVmVjdG9yMyBmb3JjZUFwcGxpY2F0aW9uUG9pbnQgPSBuZXcgVmVjdG9yMygwLCAxLCAwKTsKCiAgICBwcml2YXRlIFJpZ2lkQm9keSByaWdpZEJvZHk7CgogICAgdm9pZCBTdGFydCgpCiAgICB7CiAgICAgICAgcmlnaWRCb2R5ID0gbmV3IFJpZ2lkQm9keShtYXNzLCBpbml0aWFsUG9zaXRpb24sIGluaXRpYWxPcmllbnRhdGlvbik7CiAgICB9CgogICAgdm9pZCBVcGRhdGUoKQogICAgewogICAgICAgIHJpZ2lkQm9keS5BcHBseUZvcmNlKGZvcmNlLCBmb3JjZUFwcGxpY2F0aW9uUG9pbnQpOwogICAgICAgIHJpZ2lkQm9keS5VcGRhdGUoVGltZS5kZWx0YVRpbWUpOwoKICAgICAgICAvLyBBY3R1YWxpdHphciBsYSBwb3NpY2nDsyBpIG9yaWVudGFjacOzIGRlbCBHYW1lT2JqZWN0CiAgICAgICAgdHJhbnNmb3JtLnBvc2l0aW9uID0gcmlnaWRCb2R5LlBvc2l0aW9uOwogICAgICAgIHRyYW5zZm9ybS5yb3RhdGlvbiA9IHJpZ2lkQm9keS5PcmllbnRhdGlvbjsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Unity Script
+public class RigidBodySimulation : MonoBehaviour
+{
+    public float mass = 1.0f;
+    public Vector3 initialPosition = Vector3.zero;
+    public Quaternion initialOrientation = Quaternion.identity;
+    public Vector3 force = new Vector3(10, 0, 0);
+    public Vector3 forceApplicationPoint = new Vector3(0, 1, 0);
+
+    private RigidBody rigidBody;
+
+    void Start()
+    {
+        rigidBody = new RigidBody(mass, initialPosition, initialOrientation);
+    }
+
+    void Update()
+    {
+        rigidBody.ApplyForce(force, forceApplicationPoint);
+        rigidBody.Update(Time.deltaTime);
+
+        // Actualitzar la posici&oacute; i orientaci&oacute; del GameObject
+        transform.position = rigidBody.Position;
+        transform.rotation = rigidBody.Orientation;
+    }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après els conceptes bàsics de la simulació de rigid bodies, incloent les propietats fonamentals, les equacions de moviment, i com implementar una simulació bàsica. Aquest coneixement és essencial per crear interaccions realistes en els videojocs. En la següent secció, explorarem les interaccions entre múltiples rigid bodies i com gestionar les col·lisions entre ells.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-introduccio-rigid-bodies' title="Introducció a Rigid Bodies">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-interaccions-rigid-bodies' title="Interaccions entre Rigid Bodies">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

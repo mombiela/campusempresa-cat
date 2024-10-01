@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control d'Accés Basat en Rols</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nodejs/08-04-role-based-access" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nodejs/08-04-role-based-access" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nodejs/08-04-role-based-access" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nodejs/08-04-role-based-access" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nodejs/08-04-role-based-access" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-03-jwt-authentication' title="Autenticació JWT">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Control d'Accés Basat en Rols</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-01-introduction-testing' title="Introducció a les Proves">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com implementar el control d'accés basat en rols (RBAC) en una aplicació Node.js. El RBAC és una tècnica d'autenticació i autorització que permet assignar permisos a usuaris basats en els seus rols dins d'una organització. Això és especialment útil en aplicacions on diferents usuaris tenen diferents nivells d'accés i permisos.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ol>
+<li>Entendre què és el control d'accés basat en rols.</li>
+<li>Aprendre a definir rols i permisos.</li>
+<li>Implementar RBAC en una aplicació Node.js utilitzant Express.js i middleware.</li>
+<li>Provar el sistema de control d'accés.</li>
+</ol>
+</div><h1>Què és el Control d'Accés Basat en Rols?</h1>
+<div class='content'><p>El control d'accés basat en rols (RBAC) és un mètode per restringir l'accés a recursos basat en els rols dels usuaris dins d'una organització. Els rols són assignats a usuaris i cada rol té un conjunt de permisos associats. Això permet una gestió més fàcil i segura dels permisos d'accés.</p>
+</div><h2>Components Clau de RBAC</h2>
+<div class='content'><ol>
+<li><strong>Rols</strong>: Conjunts de permisos que poden ser assignats a usuaris.</li>
+<li><strong>Permisos</strong>: Accions que un usuari pot realitzar.</li>
+<li><strong>Usuaris</strong>: Entitats que poden tenir un o més rols assignats.</li>
+</ol>
+</div><h1>Definint Rols i Permisos</h1>
+<div class='content'><p>Primer, definirem alguns rols i permisos per a la nostra aplicació. Suposem que tenim una aplicació de gestió de projectes amb els següents rols:</p>
+<ul>
+<li><strong>Admin</strong>: Pot gestionar usuaris i projectes.</li>
+<li><strong>Project Manager</strong>: Pot gestionar projectes.</li>
+<li><strong>Developer</strong>: Pot veure i actualitzar projectes.</li>
+</ul>
+</div><h2>Exemple de Definició de Rols i Permisos</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3Qgcm9sZXMgPSB7CiAgYWRtaW46IFsnbWFuYWdlVXNlcnMnLCAnbWFuYWdlUHJvamVjdHMnXSwKICBwcm9qZWN0TWFuYWdlcjogWydtYW5hZ2VQcm9qZWN0cyddLAogIGRldmVsb3BlcjogWyd2aWV3UHJvamVjdHMnLCAndXBkYXRlUHJvamVjdHMnXQp9Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const roles = {
+  admin: ['manageUsers', 'manageProjects'],
+  projectManager: ['manageProjects'],
+  developer: ['viewProjects', 'updateProjects']
+};</pre></div><div class='content'></div><h1>Implementant RBAC en una Aplicació Node.js</h1>
+<div class='content'></div><h2>Pas 1: Configuració de l'Aplicació</h2>
+<div class='content'><p>Primer, configurem una aplicació bàsica d'Express.js.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoJ2V4cHJlc3MnKTsKY29uc3QgYXBwID0gZXhwcmVzcygpOwpjb25zdCBwb3J0ID0gMzAwMDsKCmFwcC51c2UoZXhwcmVzcy5qc29uKCkpOwoKYXBwLmxpc3Rlbihwb3J0LCAoKSA9PiB7CiAgY29uc29sZS5sb2coYFNlcnZlciBydW5uaW5nIG9uIHBvcnQgJHtwb3J0fWApOwp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const express = require('express');
+const app = express();
+const port = 3000;
+
+app.use(express.json());
+
+app.listen(port, () =&gt; {
+  console.log(`Server running on port ${port}`);
+});</pre></div><div class='content'></div><h2>Pas 2: Middleware d'Autenticació</h2>
+<div class='content'><p>Implementem un middleware d'autenticació que afegeix el rol de l'usuari a la sol·licitud.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgYXV0aGVudGljYXRlID0gKHJlcSwgcmVzLCBuZXh0KSA9PiB7CiAgLy8gU2ltdWxhY2nDsyBkJ2F1dGVudGljYWNpw7MKICBjb25zdCB1c2VyID0gewogICAgaWQ6IDEsCiAgICB1c2VybmFtZTogJ2pvaG5fZG9lJywKICAgIHJvbGU6ICdkZXZlbG9wZXInIC8vIEFxdWVzdCByb2wgaGF1cmlhIGRlIHZlbmlyIGQndW4gc2lzdGVtYSBkJ2F1dGVudGljYWNpw7MgcmVhbAogIH07CgogIHJlcS51c2VyID0gdXNlcjsKICBuZXh0KCk7Cn07CgphcHAudXNlKGF1dGhlbnRpY2F0ZSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const authenticate = (req, res, next) =&gt; {
+  // Simulaci&oacute; d'autenticaci&oacute;
+  const user = {
+    id: 1,
+    username: 'john_doe',
+    role: 'developer' // Aquest rol hauria de venir d'un sistema d'autenticaci&oacute; real
+  };
+
+  req.user = user;
+  next();
+};
+
+app.use(authenticate);</pre></div><div class='content'></div><h2>Pas 3: Middleware d'Autorizació</h2>
+<div class='content'><p>Implementem un middleware d'autorització que verifica si l'usuari té els permisos necessaris per accedir a una ruta.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgYXV0aG9yaXplID0gKHJlcXVpcmVkUGVybWlzc2lvbnMpID0+IHsKICByZXR1cm4gKHJlcSwgcmVzLCBuZXh0KSA9PiB7CiAgICBjb25zdCB1c2VyUm9sZSA9IHJlcS51c2VyLnJvbGU7CiAgICBjb25zdCB1c2VyUGVybWlzc2lvbnMgPSByb2xlc1t1c2VyUm9sZV07CgogICAgY29uc3QgaGFzUGVybWlzc2lvbiA9IHJlcXVpcmVkUGVybWlzc2lvbnMuZXZlcnkocGVybWlzc2lvbiA9PiB1c2VyUGVybWlzc2lvbnMuaW5jbHVkZXMocGVybWlzc2lvbikpOwoKICAgIGlmICghaGFzUGVybWlzc2lvbikgewogICAgICByZXR1cm4gcmVzLnN0YXR1cyg0MDMpLmpzb24oeyBtZXNzYWdlOiAnQWNjZXNzIERlbmllZCcgfSk7CiAgICB9CgogICAgbmV4dCgpOwogIH07Cn07"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const authorize = (requiredPermissions) =&gt; {
+  return (req, res, next) =&gt; {
+    const userRole = req.user.role;
+    const userPermissions = roles[userRole];
+
+    const hasPermission = requiredPermissions.every(permission =&gt; userPermissions.includes(permission));
+
+    if (!hasPermission) {
+      return res.status(403).json({ message: 'Access Denied' });
+    }
+
+    next();
+  };
+};</pre></div><div class='content'></div><h2>Pas 4: Definint Rutes amb Control d'Accés</h2>
+<div class='content'><p>Definim algunes rutes que utilitzen el middleware d'autorització.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBwLmdldCgnL3Byb2plY3RzJywgYXV0aG9yaXplKFsndmlld1Byb2plY3RzJ10pLCAocmVxLCByZXMpID0+IHsKICByZXMuanNvbih7IG1lc3NhZ2U6ICdWaWV3aW5nIHByb2plY3RzJyB9KTsKfSk7CgphcHAucG9zdCgnL3Byb2plY3RzJywgYXV0aG9yaXplKFsnbWFuYWdlUHJvamVjdHMnXSksIChyZXEsIHJlcykgPT4gewogIHJlcy5qc29uKHsgbWVzc2FnZTogJ01hbmFnaW5nIHByb2plY3RzJyB9KTsKfSk7CgphcHAucHV0KCcvcHJvamVjdHMvOmlkJywgYXV0aG9yaXplKFsndXBkYXRlUHJvamVjdHMnXSksIChyZXEsIHJlcykgPT4gewogIHJlcy5qc29uKHsgbWVzc2FnZTogJ1VwZGF0aW5nIHByb2plY3QnIH0pOwp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>app.get('/projects', authorize(['viewProjects']), (req, res) =&gt; {
+  res.json({ message: 'Viewing projects' });
+});
+
+app.post('/projects', authorize(['manageProjects']), (req, res) =&gt; {
+  res.json({ message: 'Managing projects' });
+});
+
+app.put('/projects/:id', authorize(['updateProjects']), (req, res) =&gt; {
+  res.json({ message: 'Updating project' });
+});</pre></div><div class='content'></div><h1>Provar el Sistema de Control d'Accés</h1>
+<div class='content'><p>Per provar el sistema, podem utilitzar eines com Postman o cURL per fer sol·licituds a les rutes definides i verificar que només els usuaris amb els permisos adequats poden accedir-hi.</p>
+</div><h2>Exemple de Prova amb cURL</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBJbnRlbnRhciB2ZXVyZSBwcm9qZWN0ZXMgY29tIGEgZGVzZW52b2x1cGFkb3IgKGhhdXJpYSBkZSB0ZW5pciDDqHhpdCkKY3VybCAtSCAiQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9qc29uIiAtWCBHRVQgaHR0cDovL2xvY2FsaG9zdDozMDAwL3Byb2plY3RzCgojIEludGVudGFyIGdlc3Rpb25hciBwcm9qZWN0ZXMgY29tIGEgZGVzZW52b2x1cGFkb3IgKGhhdXJpYSBkZSBmYWxsYXIpCmN1cmwgLUggIkNvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vanNvbiIgLVggUE9TVCBodHRwOi8vbG9jYWxob3N0OjMwMDAvcHJvamVjdHM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Intentar veure projectes com a desenvolupador (hauria de tenir &egrave;xit)
+curl -H &quot;Content-Type: application/json&quot; -X GET http://localhost:3000/projects
+
+# Intentar gestionar projectes com a desenvolupador (hauria de fallar)
+curl -H &quot;Content-Type: application/json&quot; -X POST http://localhost:3000/projects</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après què és el control d'accés basat en rols i com implementar-lo en una aplicació Node.js utilitzant Express.js. Hem definit rols i permisos, creat middleware d'autenticació i autorització, i provat el sistema per assegurar-nos que funciona correctament. Amb aquest coneixement, podem gestionar de manera segura els permisos d'accés en les nostres aplicacions.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-03-jwt-authentication' title="Autenticació JWT">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-01-introduction-testing' title="Introducció a les Proves">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

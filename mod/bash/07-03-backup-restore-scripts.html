@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scripts de Còpia de Seguretat i Restauració</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/bash/07-03-backup-restore-scripts" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/bash/07-03-backup-restore-scripts" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/bash/07-03-backup-restore-scripts" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/bash/07-03-backup-restore-scripts" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/bash/07-03-backup-restore-scripts" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-02-automating-tasks' title="Automatització de Tasques">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Scripts de Còpia de Seguretat i Restauració</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-04-monitoring-logging' title="Monitorització i Registre">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a crear scripts en Bash per automatitzar les tasques de còpia de seguretat i restauració de dades. Aquestes tasques són essencials per garantir la seguretat i la integritat de la informació en sistemes informàtics.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre la importància de les còpies de seguretat.</li>
+<li>Aprendre a crear scripts per fer còpies de seguretat de fitxers i directoris.</li>
+<li>Aprendre a restaurar dades des de còpies de seguretat.</li>
+<li>Implementar estratègies de còpia de seguretat eficients.</li>
+</ul>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Còpia de Seguretat (Backup):</strong> Procés de copiar dades per protegir-les en cas de pèrdua o dany.</li>
+<li><strong>Restauració (Restore):</strong> Procés de recuperar dades des d'una còpia de seguretat.</li>
+<li><strong>Incremental Backup:</strong> Còpia de seguretat que només inclou els fitxers que han canviat des de l'última còpia de seguretat.</li>
+<li><strong>Full Backup:</strong> Còpia de seguretat completa de tots els fitxers i directoris especificats.</li>
+</ul>
+</div><h1>Estructura del Tema</h1>
+<div class='content'><ol>
+<li><strong>Introducció a les Còpies de Seguretat</strong></li>
+<li><strong>Creació d'un Script de Còpia de Seguretat</strong></li>
+<li><strong>Creació d'un Script de Restauració</strong></li>
+<li><strong>Estratègies de Còpia de Seguretat</strong></li>
+<li><strong>Exercicis Pràctics</strong></li>
+</ol>
+</div><h1>1. Introducció a les Còpies de Seguretat</h1>
+<div class='content'><p>Les còpies de seguretat són essencials per protegir les dades contra pèrdues accidentals, errors humans, fallades de maquinari o atacs maliciosos. Hi ha diverses estratègies de còpia de seguretat, com ara còpies completes, incrementals i diferencials.</p>
+</div><h1>2. Creació d'un Script de Còpia de Seguretat</h1>
+<div class='content'><p>A continuació, crearem un script bàsic per fer una còpia de seguretat d'un directori especificat.</p>
+</div><h2>Exemple de Script de Còpia de Seguretat</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyEvYmluL2Jhc2gKCiMgRGlyZWN0b3JpIGEgZmVyIGxhIGPDsnBpYSBkZSBzZWd1cmV0YXQKU09VUkNFX0RJUj0iL3BhdGgvdG8vc291cmNlIgoKIyBEaXJlY3Rvcmkgb24gZXMgZ3VhcmRhcsOgIGxhIGPDsnBpYSBkZSBzZWd1cmV0YXQKQkFDS1VQX0RJUj0iL3BhdGgvdG8vYmFja3VwIgoKIyBOb20gZGVsIGZpdHhlciBkZSBjw7JwaWEgZGUgc2VndXJldGF0IGFtYiBkYXRhIGkgaG9yYQpCQUNLVVBfRklMRT0iJEJBQ0tVUF9ESVIvYmFja3VwXyQoZGF0ZSArJVklbSVkXyVIJU0lUykudGFyLmd6IgoKIyBDcmVhciBsYSBjw7JwaWEgZGUgc2VndXJldGF0CnRhciAtY3pmICRCQUNLVVBfRklMRSAkU09VUkNFX0RJUgoKIyBWZXJpZmljYXIgc2kgbGEgY8OycGlhIGRlIHNlZ3VyZXRhdCBzJ2hhIGNyZWF0IGNvcnJlY3RhbWVudAppZiBbICQ/IC1lcSAwIF07IHRoZW4KICAgIGVjaG8gIkPDsnBpYSBkZSBzZWd1cmV0YXQgY3JlYWRhIGNvcnJlY3RhbWVudDogJEJBQ0tVUF9GSUxFIgplbHNlCiAgICBlY2hvICJFcnJvciBlbiBjcmVhciBsYSBjw7JwaWEgZGUgc2VndXJldGF0IgpmaQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#!/bin/bash
+
+# Directori a fer la c&ograve;pia de seguretat
+SOURCE_DIR=&quot;/path/to/source&quot;
+
+# Directori on es guardar&agrave; la c&ograve;pia de seguretat
+BACKUP_DIR=&quot;/path/to/backup&quot;
+
+# Nom del fitxer de c&ograve;pia de seguretat amb data i hora
+BACKUP_FILE=&quot;$BACKUP_DIR/backup_$(date +%Y%m%d_%H%M%S).tar.gz&quot;
+
+# Crear la c&ograve;pia de seguretat
+tar -czf $BACKUP_FILE $SOURCE_DIR
+
+# Verificar si la c&ograve;pia de seguretat s'ha creat correctament
+if [ $? -eq 0 ]; then
+    echo &quot;C&ograve;pia de seguretat creada correctament: $BACKUP_FILE&quot;
+else
+    echo &quot;Error en crear la c&ograve;pia de seguretat&quot;
+fi</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>SOURCE_DIR</code>: Directori que volem fer la còpia de seguretat.</li>
+<li><code>BACKUP_DIR</code>: Directori on es guardarà la còpia de seguretat.</li>
+<li><code>BACKUP_FILE</code>: Nom del fitxer de còpia de seguretat, incloent la data i l'hora per identificar-lo fàcilment.</li>
+<li><code>tar -czf</code>: Comanda per crear un arxiu comprimit en format tar.gz.</li>
+<li><code>if [ $? -eq 0 ]; then ... fi</code>: Verifica si la comanda anterior s'ha executat correctament.</li>
+</ul>
+</div><h1>3. Creació d'un Script de Restauració</h1>
+<div class='content'><p>Ara crearem un script per restaurar les dades des d'una còpia de seguretat.</p>
+</div><h2>Exemple de Script de Restauració</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyEvYmluL2Jhc2gKCiMgRml0eGVyIGRlIGPDsnBpYSBkZSBzZWd1cmV0YXQgYSByZXN0YXVyYXIKQkFDS1VQX0ZJTEU9Ii9wYXRoL3RvL2JhY2t1cC9iYWNrdXBfWVlZWU1NRERfSEhNTVNTLnRhci5neiIKCiMgRGlyZWN0b3JpIGRlIGRlc3RpbmFjacOzIHBlciByZXN0YXVyYXIgbGVzIGRhZGVzCkRFU1RfRElSPSIvcGF0aC90by9kZXN0aW5hdGlvbiIKCiMgUmVzdGF1cmFyIGxhIGPDsnBpYSBkZSBzZWd1cmV0YXQKdGFyIC14emYgJEJBQ0tVUF9GSUxFIC1DICRERVNUX0RJUgoKIyBWZXJpZmljYXIgc2kgbGEgcmVzdGF1cmFjacOzIHMnaGEgY29tcGxldGF0IGNvcnJlY3RhbWVudAppZiBbICQ/IC1lcSAwIF07IHRoZW4KICAgIGVjaG8gIlJlc3RhdXJhY2nDsyBjb21wbGV0YWRhIGNvcnJlY3RhbWVudCBhOiAkREVTVF9ESVIiCmVsc2UKICAgIGVjaG8gIkVycm9yIGVuIHJlc3RhdXJhciBsYSBjw7JwaWEgZGUgc2VndXJldGF0IgpmaQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#!/bin/bash
+
+# Fitxer de c&ograve;pia de seguretat a restaurar
+BACKUP_FILE=&quot;/path/to/backup/backup_YYYYMMDD_HHMMSS.tar.gz&quot;
+
+# Directori de destinaci&oacute; per restaurar les dades
+DEST_DIR=&quot;/path/to/destination&quot;
+
+# Restaurar la c&ograve;pia de seguretat
+tar -xzf $BACKUP_FILE -C $DEST_DIR
+
+# Verificar si la restauraci&oacute; s'ha completat correctament
+if [ $? -eq 0 ]; then
+    echo &quot;Restauraci&oacute; completada correctament a: $DEST_DIR&quot;
+else
+    echo &quot;Error en restaurar la c&ograve;pia de seguretat&quot;
+fi</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>BACKUP_FILE</code>: Fitxer de còpia de seguretat que volem restaurar.</li>
+<li><code>DEST_DIR</code>: Directori on es restauraran les dades.</li>
+<li><code>tar -xzf</code>: Comanda per extreure un arxiu comprimit en format tar.gz.</li>
+<li><code>if [ $? -eq 0 ]; then ... fi</code>: Verifica si la comanda anterior s'ha executat correctament.</li>
+</ul>
+</div><h1>4. Estratègies de Còpia de Seguretat</h1>
+<h2>Còpia de Seguretat Completa</h2>
+<div class='content'><ul>
+<li>Avantatges: Senzilla i fàcil de restaurar.</li>
+<li>Desavantatges: Requereix més espai d'emmagatzematge i temps.</li>
+</ul>
+</div><h2>Còpia de Seguretat Incremental</h2>
+<div class='content'><ul>
+<li>Avantatges: Estalvia espai i temps.</li>
+<li>Desavantatges: La restauració pot ser més complexa, ja que requereix múltiples còpies de seguretat.</li>
+</ul>
+</div><h2>Còpia de Seguretat Diferencial</h2>
+<div class='content'><ul>
+<li>Avantatges: Compromís entre còpia completa i incremental.</li>
+<li>Desavantatges: Requereix més espai que la incremental però menys que la completa.</li>
+</ul>
+</div><h1>5. Exercicis Pràctics</h1>
+<h2>Exercici 1: Crear un Script de Còpia de Seguretat Incremental</h2>
+<div class='content'><p>Crea un script que faci còpies de seguretat incrementals dels fitxers modificats en les últimes 24 hores.</p>
+</div><h2>Exercici 2: Automatitzar la Còpia de Seguretat amb Cron</h2>
+<div class='content'><p>Configura una tasca cron per executar el teu script de còpia de seguretat cada dia a les 2:00 AM.</p>
+</div><h2>Solucions</h2>
+<div class='content'><h4>Solució a l'Exercici 1</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyEvYmluL2Jhc2gKCiMgRGlyZWN0b3JpIGEgZmVyIGxhIGPDsnBpYSBkZSBzZWd1cmV0YXQKU09VUkNFX0RJUj0iL3BhdGgvdG8vc291cmNlIgoKIyBEaXJlY3Rvcmkgb24gZXMgZ3VhcmRhcsOgIGxhIGPDsnBpYSBkZSBzZWd1cmV0YXQKQkFDS1VQX0RJUj0iL3BhdGgvdG8vYmFja3VwIgoKIyBOb20gZGVsIGZpdHhlciBkZSBjw7JwaWEgZGUgc2VndXJldGF0IGFtYiBkYXRhIGkgaG9yYQpCQUNLVVBfRklMRT0iJEJBQ0tVUF9ESVIvYmFja3VwX2luY3JlbWVudGFsXyQoZGF0ZSArJVklbSVkXyVIJU0lUykudGFyLmd6IgoKIyBDcmVhciBsYSBjw7JwaWEgZGUgc2VndXJldGF0IGluY3JlbWVudGFsCmZpbmQgJFNPVVJDRV9ESVIgLXR5cGUgZiAtbXRpbWUgLTEgfCB0YXIgLWN6ZiAkQkFDS1VQX0ZJTEUgLVQgLQoKIyBWZXJpZmljYXIgc2kgbGEgY8OycGlhIGRlIHNlZ3VyZXRhdCBzJ2hhIGNyZWF0IGNvcnJlY3RhbWVudAppZiBbICQ/IC1lcSAwIF07IHRoZW4KICAgIGVjaG8gIkPDsnBpYSBkZSBzZWd1cmV0YXQgaW5jcmVtZW50YWwgY3JlYWRhIGNvcnJlY3RhbWVudDogJEJBQ0tVUF9GSUxFIgplbHNlCiAgICBlY2hvICJFcnJvciBlbiBjcmVhciBsYSBjw7JwaWEgZGUgc2VndXJldGF0IGluY3JlbWVudGFsIgpmaQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#!/bin/bash
+
+# Directori a fer la c&ograve;pia de seguretat
+SOURCE_DIR=&quot;/path/to/source&quot;
+
+# Directori on es guardar&agrave; la c&ograve;pia de seguretat
+BACKUP_DIR=&quot;/path/to/backup&quot;
+
+# Nom del fitxer de c&ograve;pia de seguretat amb data i hora
+BACKUP_FILE=&quot;$BACKUP_DIR/backup_incremental_$(date +%Y%m%d_%H%M%S).tar.gz&quot;
+
+# Crear la c&ograve;pia de seguretat incremental
+find $SOURCE_DIR -type f -mtime -1 | tar -czf $BACKUP_FILE -T -
+
+# Verificar si la c&ograve;pia de seguretat s'ha creat correctament
+if [ $? -eq 0 ]; then
+    echo &quot;C&ograve;pia de seguretat incremental creada correctament: $BACKUP_FILE&quot;
+else
+    echo &quot;Error en crear la c&ograve;pia de seguretat incremental&quot;
+fi</pre></div><div class='content'><h4>Solució a l'Exercici 2</h4>
+<p>Edita el fitxer crontab amb <code>crontab -e</code> i afegeix la següent línia:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("MCAyICogKiAqIC9wYXRoL3RvL3lvdXIvYmFja3VwX3NjcmlwdC5zaA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>0 2 * * * /path/to/your/backup_script.sh</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après a crear scripts de còpia de seguretat i restauració en Bash, així com a implementar estratègies de còpia de seguretat eficients. Aquestes habilitats són fonamentals per garantir la seguretat i la integritat de les dades en qualsevol sistema informàtic.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-02-automating-tasks' title="Automatització de Tasques">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-04-monitoring-logging' title="Monitorització i Registre">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

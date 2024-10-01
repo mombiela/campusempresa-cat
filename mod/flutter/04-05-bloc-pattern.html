@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patró Bloc</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/flutter/04-05-bloc-pattern" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/flutter/04-05-bloc-pattern" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/flutter/04-05-bloc-pattern" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/flutter/04-05-bloc-pattern" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/flutter/04-05-bloc-pattern" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-04-riverpod' title="Riverpod">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Patró Bloc</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-01-introduction-to-navigation' title="Introducció a la Navegació">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>El patró Bloc (Business Logic Component) és una de les arquitectures més populars per a la gestió de l'estat en aplicacions Flutter. Aquest patró separa la lògica de negoci de la interfície d'usuari, facilitant la mantenibilitat i la testabilitat del codi.</p>
+</div><h1>Objectius del Patró Bloc</h1>
+<div class='content'><ul>
+<li><strong>Separació de la lògica de negoci i la interfície d'usuari</strong>: Permet que la lògica de negoci es mantingui independent de la interfície d'usuari.</li>
+<li><strong>Reutilització de codi</strong>: Facilita la reutilització de la lògica de negoci en diferents parts de l'aplicació.</li>
+<li><strong>Testabilitat</strong>: Millora la capacitat de testejar la lògica de negoci de manera aïllada.</li>
+</ul>
+</div><h1>Components del Patró Bloc</h1>
+<div class='content'><ol>
+<li><strong>Bloc</strong>: Conté la lògica de negoci i gestiona els esdeveniments i els estats.</li>
+<li><strong>Esdeveniments</strong>: Representen les accions que poden ocórrer en l'aplicació (per exemple, un usuari fa clic en un botó).</li>
+<li><strong>Estats</strong>: Representen els diferents estats possibles de la interfície d'usuari.</li>
+</ol>
+</div><h1>Implementació del Patró Bloc</h1>
+<div class='content'></div><h2>1. Instal·lació del Paquet `flutter_bloc`</h2>
+<div class='content'><p>Per començar a utilitzar el patró Bloc, primer hem d'instal·lar el paquet <code>flutter_bloc</code>. Afegeix la següent línia al fitxer <code>pubspec.yaml</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVwZW5kZW5jaWVzOgogIGZsdXR0ZXI6CiAgICBzZGs6IGZsdXR0ZXIKICBmbHV0dGVyX2Jsb2M6IF44LjAuMA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^8.0.0</pre></div><div class='content'><p>Després, executa <code>flutter pub get</code> per instal·lar el paquet.</p>
+</div><h2>2. Creació dels Esdeveniments</h2>
+<div class='content'><p>Els esdeveniments són accions que poden ocórrer en l'aplicació. Creem una classe abstracta per als esdeveniments i les seves subclasses concretes.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0ICdwYWNrYWdlOmVxdWF0YWJsZS9lcXVhdGFibGUuZGFydCc7CgphYnN0cmFjdCBjbGFzcyBDb3VudGVyRXZlbnQgZXh0ZW5kcyBFcXVhdGFibGUgewogIGNvbnN0IENvdW50ZXJFdmVudCgpOwoKICBAb3ZlcnJpZGUKICBMaXN0PE9iamVjdD4gZ2V0IHByb3BzID0+IFtdOwp9CgpjbGFzcyBJbmNyZW1lbnQgZXh0ZW5kcyBDb3VudGVyRXZlbnQge30KCmNsYXNzIERlY3JlbWVudCBleHRlbmRzIENvdW50ZXJFdmVudCB7fQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import 'package:equatable/equatable.dart';
+
+abstract class CounterEvent extends Equatable {
+  const CounterEvent();
+
+  @override
+  List&lt;Object&gt; get props =&gt; [];
+}
+
+class Increment extends CounterEvent {}
+
+class Decrement extends CounterEvent {}</pre></div><div class='content'></div><h2>3. Creació dels Estats</h2>
+<div class='content'><p>Els estats representen els diferents estats possibles de la interfície d'usuari. Creem una classe abstracta per als estats i les seves subclasses concretes.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0ICdwYWNrYWdlOmVxdWF0YWJsZS9lcXVhdGFibGUuZGFydCc7CgphYnN0cmFjdCBjbGFzcyBDb3VudGVyU3RhdGUgZXh0ZW5kcyBFcXVhdGFibGUgewogIGNvbnN0IENvdW50ZXJTdGF0ZSgpOwoKICBAb3ZlcnJpZGUKICBMaXN0PE9iamVjdD4gZ2V0IHByb3BzID0+IFtdOwp9CgpjbGFzcyBDb3VudGVySW5pdGlhbCBleHRlbmRzIENvdW50ZXJTdGF0ZSB7CiAgZmluYWwgaW50IGNvdW50OwoKICBjb25zdCBDb3VudGVySW5pdGlhbCh0aGlzLmNvdW50KTsKCiAgQG92ZXJyaWRlCiAgTGlzdDxPYmplY3Q+IGdldCBwcm9wcyA9PiBbY291bnRdOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import 'package:equatable/equatable.dart';
+
+abstract class CounterState extends Equatable {
+  const CounterState();
+
+  @override
+  List&lt;Object&gt; get props =&gt; [];
+}
+
+class CounterInitial extends CounterState {
+  final int count;
+
+  const CounterInitial(this.count);
+
+  @override
+  List&lt;Object&gt; get props =&gt; [count];
+}</pre></div><div class='content'></div><h2>4. Creació del Bloc</h2>
+<div class='content'><p>El Bloc conté la lògica de negoci i gestiona els esdeveniments i els estats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0ICdwYWNrYWdlOmJsb2MvYmxvYy5kYXJ0JzsKCmNsYXNzIENvdW50ZXJCbG9jIGV4dGVuZHMgQmxvYzxDb3VudGVyRXZlbnQsIENvdW50ZXJTdGF0ZT4gewogIENvdW50ZXJCbG9jKCkgOiBzdXBlcihjb25zdCBDb3VudGVySW5pdGlhbCgwKSkgewogICAgb248SW5jcmVtZW50PigoZXZlbnQsIGVtaXQpIHsKICAgICAgZmluYWwgY3VycmVudFN0YXRlID0gc3RhdGU7CiAgICAgIGlmIChjdXJyZW50U3RhdGUgaXMgQ291bnRlckluaXRpYWwpIHsKICAgICAgICBlbWl0KENvdW50ZXJJbml0aWFsKGN1cnJlbnRTdGF0ZS5jb3VudCArIDEpKTsKICAgICAgfQogICAgfSk7CgogICAgb248RGVjcmVtZW50PigoZXZlbnQsIGVtaXQpIHsKICAgICAgZmluYWwgY3VycmVudFN0YXRlID0gc3RhdGU7CiAgICAgIGlmIChjdXJyZW50U3RhdGUgaXMgQ291bnRlckluaXRpYWwpIHsKICAgICAgICBlbWl0KENvdW50ZXJJbml0aWFsKGN1cnJlbnRTdGF0ZS5jb3VudCAtIDEpKTsKICAgICAgfQogICAgfSk7CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import 'package:bloc/bloc.dart';
+
+class CounterBloc extends Bloc&lt;CounterEvent, CounterState&gt; {
+  CounterBloc() : super(const CounterInitial(0)) {
+    on&lt;Increment&gt;((event, emit) {
+      final currentState = state;
+      if (currentState is CounterInitial) {
+        emit(CounterInitial(currentState.count + 1));
+      }
+    });
+
+    on&lt;Decrement&gt;((event, emit) {
+      final currentState = state;
+      if (currentState is CounterInitial) {
+        emit(CounterInitial(currentState.count - 1));
+      }
+    });
+  }
+}</pre></div><div class='content'></div><h2>5. Integració del Bloc amb la Interfície d'Usuari</h2>
+<div class='content'><p>Finalment, integrem el Bloc amb la interfície d'usuari utilitzant els widgets <code>BlocProvider</code> i <code>BlocBuilder</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0ICdwYWNrYWdlOmZsdXR0ZXIvbWF0ZXJpYWwuZGFydCc7CmltcG9ydCAncGFja2FnZTpmbHV0dGVyX2Jsb2MvZmx1dHRlcl9ibG9jLmRhcnQnOwoKdm9pZCBtYWluKCkgewogIHJ1bkFwcChNeUFwcCgpKTsKfQoKY2xhc3MgTXlBcHAgZXh0ZW5kcyBTdGF0ZWxlc3NXaWRnZXQgewogIEBvdmVycmlkZQogIFdpZGdldCBidWlsZChCdWlsZENvbnRleHQgY29udGV4dCkgewogICAgcmV0dXJuIE1hdGVyaWFsQXBwKAogICAgICBob21lOiBCbG9jUHJvdmlkZXIoCiAgICAgICAgY3JlYXRlOiAoY29udGV4dCkgPT4gQ291bnRlckJsb2MoKSwKICAgICAgICBjaGlsZDogQ291bnRlclBhZ2UoKSwKICAgICAgKSwKICAgICk7CiAgfQp9CgpjbGFzcyBDb3VudGVyUGFnZSBleHRlbmRzIFN0YXRlbGVzc1dpZGdldCB7CiAgQG92ZXJyaWRlCiAgV2lkZ2V0IGJ1aWxkKEJ1aWxkQ29udGV4dCBjb250ZXh0KSB7CiAgICByZXR1cm4gU2NhZmZvbGQoCiAgICAgIGFwcEJhcjogQXBwQmFyKHRpdGxlOiBUZXh0KCdDb3VudGVyJykpLAogICAgICBib2R5OiBDZW50ZXIoCiAgICAgICAgY2hpbGQ6IEJsb2NCdWlsZGVyPENvdW50ZXJCbG9jLCBDb3VudGVyU3RhdGU+KAogICAgICAgICAgYnVpbGRlcjogKGNvbnRleHQsIHN0YXRlKSB7CiAgICAgICAgICAgIGlmIChzdGF0ZSBpcyBDb3VudGVySW5pdGlhbCkgewogICAgICAgICAgICAgIHJldHVybiBUZXh0KCdDb3VudDogJHtzdGF0ZS5jb3VudH0nKTsKICAgICAgICAgICAgfQogICAgICAgICAgICByZXR1cm4gQ2lyY3VsYXJQcm9ncmVzc0luZGljYXRvcigpOwogICAgICAgICAgfSwKICAgICAgICApLAogICAgICApLAogICAgICBmbG9hdGluZ0FjdGlvbkJ1dHRvbjogQ29sdW1uKAogICAgICAgIG1haW5BeGlzQWxpZ25tZW50OiBNYWluQXhpc0FsaWdubWVudC5lbmQsCiAgICAgICAgY2hpbGRyZW46IFsKICAgICAgICAgIEZsb2F0aW5nQWN0aW9uQnV0dG9uKAogICAgICAgICAgICBvblByZXNzZWQ6ICgpID0+IGNvbnRleHQucmVhZDxDb3VudGVyQmxvYz4oKS5hZGQoSW5jcmVtZW50KCkpLAogICAgICAgICAgICBjaGlsZDogSWNvbihJY29ucy5hZGQpLAogICAgICAgICAgKSwKICAgICAgICAgIFNpemVkQm94KGhlaWdodDogOCksCiAgICAgICAgICBGbG9hdGluZ0FjdGlvbkJ1dHRvbigKICAgICAgICAgICAgb25QcmVzc2VkOiAoKSA9PiBjb250ZXh0LnJlYWQ8Q291bnRlckJsb2M+KCkuYWRkKERlY3JlbWVudCgpKSwKICAgICAgICAgICAgY2hpbGQ6IEljb24oSWNvbnMucmVtb3ZlKSwKICAgICAgICAgICksCiAgICAgICAgXSwKICAgICAgKSwKICAgICk7CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: BlocProvider(
+        create: (context) =&gt; CounterBloc(),
+        child: CounterPage(),
+      ),
+    );
+  }
+}
+
+class CounterPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Counter')),
+      body: Center(
+        child: BlocBuilder&lt;CounterBloc, CounterState&gt;(
+          builder: (context, state) {
+            if (state is CounterInitial) {
+              return Text('Count: ${state.count}');
+            }
+            return CircularProgressIndicator();
+          },
+        ),
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: () =&gt; context.read&lt;CounterBloc&gt;().add(Increment()),
+            child: Icon(Icons.add),
+          ),
+          SizedBox(height: 8),
+          FloatingActionButton(
+            onPressed: () =&gt; context.read&lt;CounterBloc&gt;().add(Decrement()),
+            child: Icon(Icons.remove),
+          ),
+        ],
+      ),
+    );
+  }
+}</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Crear una aplicació Flutter que utilitzi el patró Bloc per gestionar un comptador que es pot incrementar i decrementar.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>Instal·la el paquet <code>flutter_bloc</code>.</li>
+<li>Defineix els esdeveniments <code>Increment</code> i <code>Decrement</code>.</li>
+<li>Defineix l'estat <code>CounterInitial</code>.</li>
+<li>Implementa el Bloc <code>CounterBloc</code>.</li>
+<li>Integra el Bloc amb la interfície d'usuari.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gcHVic3BlYy55YW1sCmRlcGVuZGVuY2llczoKICBmbHV0dGVyOgogICAgc2RrOiBmbHV0dGVyCiAgZmx1dHRlcl9ibG9jOiBeOC4wLjAKCi8vIGNvdW50ZXJfZXZlbnQuZGFydAppbXBvcnQgJ3BhY2thZ2U6ZXF1YXRhYmxlL2VxdWF0YWJsZS5kYXJ0JzsKCmFic3RyYWN0IGNsYXNzIENvdW50ZXJFdmVudCBleHRlbmRzIEVxdWF0YWJsZSB7CiAgY29uc3QgQ291bnRlckV2ZW50KCk7CgogIEBvdmVycmlkZQogIExpc3Q8T2JqZWN0PiBnZXQgcHJvcHMgPT4gW107Cn0KCmNsYXNzIEluY3JlbWVudCBleHRlbmRzIENvdW50ZXJFdmVudCB7fQoKY2xhc3MgRGVjcmVtZW50IGV4dGVuZHMgQ291bnRlckV2ZW50IHt9CgovLyBjb3VudGVyX3N0YXRlLmRhcnQKaW1wb3J0ICdwYWNrYWdlOmVxdWF0YWJsZS9lcXVhdGFibGUuZGFydCc7CgphYnN0cmFjdCBjbGFzcyBDb3VudGVyU3RhdGUgZXh0ZW5kcyBFcXVhdGFibGUgewogIGNvbnN0IENvdW50ZXJTdGF0ZSgpOwoKICBAb3ZlcnJpZGUKICBMaXN0PE9iamVjdD4gZ2V0IHByb3BzID0+IFtdOwp9CgpjbGFzcyBDb3VudGVySW5pdGlhbCBleHRlbmRzIENvdW50ZXJTdGF0ZSB7CiAgZmluYWwgaW50IGNvdW50OwoKICBjb25zdCBDb3VudGVySW5pdGlhbCh0aGlzLmNvdW50KTsKCiAgQG92ZXJyaWRlCiAgTGlzdDxPYmplY3Q+IGdldCBwcm9wcyA9PiBbY291bnRdOwp9CgovLyBjb3VudGVyX2Jsb2MuZGFydAppbXBvcnQgJ3BhY2thZ2U6YmxvYy9ibG9jLmRhcnQnOwoKY2xhc3MgQ291bnRlckJsb2MgZXh0ZW5kcyBCbG9jPENvdW50ZXJFdmVudCwgQ291bnRlclN0YXRlPiB7CiAgQ291bnRlckJsb2MoKSA6IHN1cGVyKGNvbnN0IENvdW50ZXJJbml0aWFsKDApKSB7CiAgICBvbjxJbmNyZW1lbnQ+KChldmVudCwgZW1pdCkgewogICAgICBmaW5hbCBjdXJyZW50U3RhdGUgPSBzdGF0ZTsKICAgICAgaWYgKGN1cnJlbnRTdGF0ZSBpcyBDb3VudGVySW5pdGlhbCkgewogICAgICAgIGVtaXQoQ291bnRlckluaXRpYWwoY3VycmVudFN0YXRlLmNvdW50ICsgMSkpOwogICAgICB9CiAgICB9KTsKCiAgICBvbjxEZWNyZW1lbnQ+KChldmVudCwgZW1pdCkgewogICAgICBmaW5hbCBjdXJyZW50U3RhdGUgPSBzdGF0ZTsKICAgICAgaWYgKGN1cnJlbnRTdGF0ZSBpcyBDb3VudGVySW5pdGlhbCkgewogICAgICAgIGVtaXQoQ291bnRlckluaXRpYWwoY3VycmVudFN0YXRlLmNvdW50IC0gMSkpOwogICAgICB9CiAgICB9KTsKICB9Cn0KCi8vIG1haW4uZGFydAppbXBvcnQgJ3BhY2thZ2U6Zmx1dHRlci9tYXRlcmlhbC5kYXJ0JzsKaW1wb3J0ICdwYWNrYWdlOmZsdXR0ZXJfYmxvYy9mbHV0dGVyX2Jsb2MuZGFydCc7Cgp2b2lkIG1haW4oKSB7CiAgcnVuQXBwKE15QXBwKCkpOwp9CgpjbGFzcyBNeUFwcCBleHRlbmRzIFN0YXRlbGVzc1dpZGdldCB7CiAgQG92ZXJyaWRlCiAgV2lkZ2V0IGJ1aWxkKEJ1aWxkQ29udGV4dCBjb250ZXh0KSB7CiAgICByZXR1cm4gTWF0ZXJpYWxBcHAoCiAgICAgIGhvbWU6IEJsb2NQcm92aWRlcigKICAgICAgICBjcmVhdGU6IChjb250ZXh0KSA9PiBDb3VudGVyQmxvYygpLAogICAgICAgIGNoaWxkOiBDb3VudGVyUGFnZSgpLAogICAgICApLAogICAgKTsKICB9Cn0KCmNsYXNzIENvdW50ZXJQYWdlIGV4dGVuZHMgU3RhdGVsZXNzV2lkZ2V0IHsKICBAb3ZlcnJpZGUKICBXaWRnZXQgYnVpbGQoQnVpbGRDb250ZXh0IGNvbnRleHQpIHsKICAgIHJldHVybiBTY2FmZm9sZCgKICAgICAgYXBwQmFyOiBBcHBCYXIodGl0bGU6IFRleHQoJ0NvdW50ZXInKSksCiAgICAgIGJvZHk6IENlbnRlcigKICAgICAgICBjaGlsZDogQmxvY0J1aWxkZXI8Q291bnRlckJsb2MsIENvdW50ZXJTdGF0ZT4oCiAgICAgICAgICBidWlsZGVyOiAoY29udGV4dCwgc3RhdGUpIHsKICAgICAgICAgICAgaWYgKHN0YXRlIGlzIENvdW50ZXJJbml0aWFsKSB7CiAgICAgICAgICAgICAgcmV0dXJuIFRleHQoJ0NvdW50OiAke3N0YXRlLmNvdW50fScpOwogICAgICAgICAgICB9CiAgICAgICAgICAgIHJldHVybiBDaXJjdWxhclByb2dyZXNzSW5kaWNhdG9yKCk7CiAgICAgICAgICB9LAogICAgICAgICksCiAgICAgICksCiAgICAgIGZsb2F0aW5nQWN0aW9uQnV0dG9uOiBDb2x1bW4oCiAgICAgICAgbWFpbkF4aXNBbGlnbm1lbnQ6IE1haW5BeGlzQWxpZ25tZW50LmVuZCwKICAgICAgICBjaGlsZHJlbjogWwogICAgICAgICAgRmxvYXRpbmdBY3Rpb25CdXR0b24oCiAgICAgICAgICAgIG9uUHJlc3NlZDogKCkgPT4gY29udGV4dC5yZWFkPENvdW50ZXJCbG9jPigpLmFkZChJbmNyZW1lbnQoKSksCiAgICAgICAgICAgIGNoaWxkOiBJY29uKEljb25zLmFkZCksCiAgICAgICAgICApLAogICAgICAgICAgU2l6ZWRCb3goaGVpZ2h0OiA4KSwKICAgICAgICAgIEZsb2F0aW5nQWN0aW9uQnV0dG9uKAogICAgICAgICAgICBvblByZXNzZWQ6ICgpID0+IGNvbnRleHQucmVhZDxDb3VudGVyQmxvYz4oKS5hZGQoRGVjcmVtZW50KCkpLAogICAgICAgICAgICBjaGlsZDogSWNvbihJY29ucy5yZW1vdmUpLAogICAgICAgICAgKSwKICAgICAgICBdLAogICAgICApLAogICAgKTsKICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// pubspec.yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^8.0.0
+
+// counter_event.dart
+import 'package:equatable/equatable.dart';
+
+abstract class CounterEvent extends Equatable {
+  const CounterEvent();
+
+  @override
+  List&lt;Object&gt; get props =&gt; [];
+}
+
+class Increment extends CounterEvent {}
+
+class Decrement extends CounterEvent {}
+
+// counter_state.dart
+import 'package:equatable/equatable.dart';
+
+abstract class CounterState extends Equatable {
+  const CounterState();
+
+  @override
+  List&lt;Object&gt; get props =&gt; [];
+}
+
+class CounterInitial extends CounterState {
+  final int count;
+
+  const CounterInitial(this.count);
+
+  @override
+  List&lt;Object&gt; get props =&gt; [count];
+}
+
+// counter_bloc.dart
+import 'package:bloc/bloc.dart';
+
+class CounterBloc extends Bloc&lt;CounterEvent, CounterState&gt; {
+  CounterBloc() : super(const CounterInitial(0)) {
+    on&lt;Increment&gt;((event, emit) {
+      final currentState = state;
+      if (currentState is CounterInitial) {
+        emit(CounterInitial(currentState.count + 1));
+      }
+    });
+
+    on&lt;Decrement&gt;((event, emit) {
+      final currentState = state;
+      if (currentState is CounterInitial) {
+        emit(CounterInitial(currentState.count - 1));
+      }
+    });
+  }
+}
+
+// main.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: BlocProvider(
+        create: (context) =&gt; CounterBloc(),
+        child: CounterPage(),
+      ),
+    );
+  }
+}
+
+class CounterPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Counter')),
+      body: Center(
+        child: BlocBuilder&lt;CounterBloc, CounterState&gt;(
+          builder: (context, state) {
+            if (state is CounterInitial) {
+              return Text('Count: ${state.count}');
+            }
+            return CircularProgressIndicator();
+          },
+        ),
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: () =&gt; context.read&lt;CounterBloc&gt;().add(Increment()),
+            child: Icon(Icons.add),
+          ),
+          SizedBox(height: 8),
+          FloatingActionButton(
+            onPressed: () =&gt; context.read&lt;CounterBloc&gt;().add(Decrement()),
+            child: Icon(Icons.remove),
+          ),
+        ],
+      ),
+    );
+  }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>El patró Bloc és una eina poderosa per gestionar l'estat en aplicacions Flutter, proporcionant una clara separació entre la lògica de negoci i la interfície d'usuari. Amb aquest patró, podem crear aplicacions més mantenibles, testables i escalables.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-04-riverpod' title="Riverpod">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-01-introduction-to-navigation' title="Introducció a la Navegació">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

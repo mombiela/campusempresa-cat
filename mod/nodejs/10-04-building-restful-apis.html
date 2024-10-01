@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construir APIs RESTful</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nodejs/10-04-building-restful-apis" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nodejs/10-04-building-restful-apis" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nodejs/10-04-building-restful-apis" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nodejs/10-04-building-restful-apis" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nodejs/10-04-building-restful-apis" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='10-03-performance-optimization' title="Optimització del Rendiment">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Construir APIs RESTful</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-05-graphql-nodejs' title="GraphQL amb Node.js">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a construir APIs RESTful utilitzant Node.js. Les APIs RESTful són una manera estàndard de crear serveis web que permeten la comunicació entre diferents aplicacions. Aquest mòdul cobrirà els conceptes bàsics de REST, com configurar un servidor Express per a una API RESTful, i com implementar operacions CRUD (Crear, Llegir, Actualitzar, Eliminar).</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ul>
+<li>Entendre els principis bàsics de REST.</li>
+<li>Configurar un servidor Express per a una API RESTful.</li>
+<li>Implementar operacions CRUD.</li>
+<li>Gestionar errors i respostes HTTP.</li>
+</ul>
+</div><h1>1. Principis Bàsics de REST</h1>
+<div class='content'></div><h2>Què és REST?</h2>
+<div class='content'><p>REST (Representational State Transfer) és un estil d'arquitectura per a dissenyar serveis web. Els serveis RESTful utilitzen els mètodes HTTP estàndard (GET, POST, PUT, DELETE) per a realitzar operacions sobre recursos.</p>
+</div><h2>Principis Clau de REST</h2>
+<div class='content'><ul>
+<li><strong>Client-Servidor</strong>: Separació de les preocupacions entre el client i el servidor.</li>
+<li><strong>Sense Estat</strong>: Cada petició del client al servidor ha de contenir tota la informació necessària per entendre i processar la petició.</li>
+<li><strong>Caché</strong>: Les respostes han de ser marcades com a cachéables o no cachéables.</li>
+<li><strong>Interfície Uniforme</strong>: Utilització d'una interfície uniforme per a la interacció entre el client i el servidor.</li>
+<li><strong>Sistema en Capes</strong>: L'arquitectura pot estar composta per capes que poden ser gestionades de manera independent.</li>
+</ul>
+</div><h1>2. Configurar un Servidor Express per a una API RESTful</h1>
+<div class='content'></div><h2>Instal·lació d'Express</h2>
+<div class='content'><p>Primer, necessitem instal·lar Express. Si no ho has fet ja, pots instal·lar-lo utilitzant npm:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnBtIGluc3RhbGwgZXhwcmVzcw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npm install express</pre></div><div class='content'></div><h2>Crear un Servidor Bàsic</h2>
+<div class='content'><p>Creem un fitxer <code>server.js</code> i configurem un servidor bàsic:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoJ2V4cHJlc3MnKTsKY29uc3QgYXBwID0gZXhwcmVzcygpOwpjb25zdCBwb3J0ID0gMzAwMDsKCmFwcC51c2UoZXhwcmVzcy5qc29uKCkpOwoKYXBwLmdldCgnLycsIChyZXEsIHJlcykgPT4gewogIHJlcy5zZW5kKCdCZW52aW5ndXQgYSBsYSBub3N0cmEgQVBJIFJFU1RmdWwhJyk7Cn0pOwoKYXBwLmxpc3Rlbihwb3J0LCAoKSA9PiB7CiAgY29uc29sZS5sb2coYFNlcnZpZG9yIGVzY29sdGFudCBhIGh0dHA6Ly9sb2NhbGhvc3Q6JHtwb3J0fWApOwp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const express = require('express');
+const app = express();
+const port = 3000;
+
+app.use(express.json());
+
+app.get('/', (req, res) =&gt; {
+  res.send('Benvingut a la nostra API RESTful!');
+});
+
+app.listen(port, () =&gt; {
+  console.log(`Servidor escoltant a http://localhost:${port}`);
+});</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>express.json()</code>: Middleware per a parsejar les peticions JSON.</li>
+<li><code>app.get('/')</code>: Defineix una ruta GET per a la ruta arrel.</li>
+<li><code>app.listen(port)</code>: Inicia el servidor a l'escolta del port especificat.</li>
+</ul>
+</div><h1>3. Implementar Operacions CRUD</h1>
+<div class='content'></div><h2>Crear un Model de Dades</h2>
+<div class='content'><p>Per a aquest exemple, utilitzarem una llista d'usuaris emmagatzemada en memòria:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bGV0IHVzZXJzID0gWwogIHsgaWQ6IDEsIG5hbWU6ICdKb2huIERvZScsIGVtYWlsOiAnam9obkBleGFtcGxlLmNvbScgfSwKICB7IGlkOiAyLCBuYW1lOiAnSmFuZSBEb2UnLCBlbWFpbDogJ2phbmVAZXhhbXBsZS5jb20nIH0KXTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>let users = [
+  { id: 1, name: 'John Doe', email: 'john@example.com' },
+  { id: 2, name: 'Jane Doe', email: 'jane@example.com' }
+];</pre></div><div class='content'></div><h2>Operació GET (Llegir)</h2>
+<div class='content'><p>Afegim una ruta per obtenir tots els usuaris:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBwLmdldCgnL3VzZXJzJywgKHJlcSwgcmVzKSA9PiB7CiAgcmVzLmpzb24odXNlcnMpOwp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>app.get('/users', (req, res) =&gt; {
+  res.json(users);
+});</pre></div><div class='content'></div><h2>Operació POST (Crear)</h2>
+<div class='content'><p>Afegim una ruta per crear un nou usuari:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBwLnBvc3QoJy91c2VycycsIChyZXEsIHJlcykgPT4gewogIGNvbnN0IG5ld1VzZXIgPSB7CiAgICBpZDogdXNlcnMubGVuZ3RoICsgMSwKICAgIG5hbWU6IHJlcS5ib2R5Lm5hbWUsCiAgICBlbWFpbDogcmVxLmJvZHkuZW1haWwKICB9OwogIHVzZXJzLnB1c2gobmV3VXNlcik7CiAgcmVzLnN0YXR1cygyMDEpLmpzb24obmV3VXNlcik7Cn0pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>app.post('/users', (req, res) =&gt; {
+  const newUser = {
+    id: users.length + 1,
+    name: req.body.name,
+    email: req.body.email
+  };
+  users.push(newUser);
+  res.status(201).json(newUser);
+});</pre></div><div class='content'></div><h2>Operació PUT (Actualitzar)</h2>
+<div class='content'><p>Afegim una ruta per actualitzar un usuari existent:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBwLnB1dCgnL3VzZXJzLzppZCcsIChyZXEsIHJlcykgPT4gewogIGNvbnN0IHVzZXJJZCA9IHBhcnNlSW50KHJlcS5wYXJhbXMuaWQpOwogIGNvbnN0IHVzZXIgPSB1c2Vycy5maW5kKHUgPT4gdS5pZCA9PT0gdXNlcklkKTsKICBpZiAodXNlcikgewogICAgdXNlci5uYW1lID0gcmVxLmJvZHkubmFtZTsKICAgIHVzZXIuZW1haWwgPSByZXEuYm9keS5lbWFpbDsKICAgIHJlcy5qc29uKHVzZXIpOwogIH0gZWxzZSB7CiAgICByZXMuc3RhdHVzKDQwNCkuc2VuZCgnVXN1YXJpIG5vIHRyb2JhdCcpOwogIH0KfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>app.put('/users/:id', (req, res) =&gt; {
+  const userId = parseInt(req.params.id);
+  const user = users.find(u =&gt; u.id === userId);
+  if (user) {
+    user.name = req.body.name;
+    user.email = req.body.email;
+    res.json(user);
+  } else {
+    res.status(404).send('Usuari no trobat');
+  }
+});</pre></div><div class='content'></div><h2>Operació DELETE (Eliminar)</h2>
+<div class='content'><p>Afegim una ruta per eliminar un usuari:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBwLmRlbGV0ZSgnL3VzZXJzLzppZCcsIChyZXEsIHJlcykgPT4gewogIGNvbnN0IHVzZXJJZCA9IHBhcnNlSW50KHJlcS5wYXJhbXMuaWQpOwogIHVzZXJzID0gdXNlcnMuZmlsdGVyKHUgPT4gdS5pZCAhPT0gdXNlcklkKTsKICByZXMuc3RhdHVzKDIwNCkuc2VuZCgpOwp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>app.delete('/users/:id', (req, res) =&gt; {
+  const userId = parseInt(req.params.id);
+  users = users.filter(u =&gt; u.id !== userId);
+  res.status(204).send();
+});</pre></div><div class='content'></div><h1>4. Gestionar Errors i Respostes HTTP</h1>
+<div class='content'></div><h2>Gestionar Errors</h2>
+<div class='content'><p>És important gestionar errors i retornar respostes HTTP adequades. Per exemple, si un usuari no es troba, retornem un error 404:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBwLnB1dCgnL3VzZXJzLzppZCcsIChyZXEsIHJlcykgPT4gewogIGNvbnN0IHVzZXJJZCA9IHBhcnNlSW50KHJlcS5wYXJhbXMuaWQpOwogIGNvbnN0IHVzZXIgPSB1c2Vycy5maW5kKHUgPT4gdS5pZCA9PT0gdXNlcklkKTsKICBpZiAodXNlcikgewogICAgdXNlci5uYW1lID0gcmVxLmJvZHkubmFtZTsKICAgIHVzZXIuZW1haWwgPSByZXEuYm9keS5lbWFpbDsKICAgIHJlcy5qc29uKHVzZXIpOwogIH0gZWxzZSB7CiAgICByZXMuc3RhdHVzKDQwNCkuc2VuZCgnVXN1YXJpIG5vIHRyb2JhdCcpOwogIH0KfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>app.put('/users/:id', (req, res) =&gt; {
+  const userId = parseInt(req.params.id);
+  const user = users.find(u =&gt; u.id === userId);
+  if (user) {
+    user.name = req.body.name;
+    user.email = req.body.email;
+    res.json(user);
+  } else {
+    res.status(404).send('Usuari no trobat');
+  }
+});</pre></div><div class='content'></div><h2>Respostes HTTP</h2>
+<div class='content'><p>Utilitzem els codis d'estat HTTP adequats per a cada operació:</p>
+<ul>
+<li><code>200 OK</code>: Operació exitosa.</li>
+<li><code>201 Created</code>: Nou recurs creat.</li>
+<li><code>204 No Content</code>: Operació exitosa, però sense contingut a retornar.</li>
+<li><code>404 Not Found</code>: Recurs no trobat.</li>
+</ul>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Implementar una API RESTful per a gestionar una llista de tasques.</p>
+</div><h2>Requisits</h2>
+<div class='content'><ul>
+<li>Cada tasca ha de tenir un <code>id</code>, <code>title</code>, i <code>completed</code>.</li>
+<li>Implementar operacions CRUD per a les tasques.</li>
+</ul>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoJ2V4cHJlc3MnKTsKY29uc3QgYXBwID0gZXhwcmVzcygpOwpjb25zdCBwb3J0ID0gMzAwMDsKCmFwcC51c2UoZXhwcmVzcy5qc29uKCkpOwoKbGV0IHRhc2tzID0gWwogIHsgaWQ6IDEsIHRpdGxlOiAnQXByZW5kcmUgTm9kZS5qcycsIGNvbXBsZXRlZDogZmFsc2UgfSwKICB7IGlkOiAyLCB0aXRsZTogJ0NvbnN0cnVpciB1bmEgQVBJIFJFU1RmdWwnLCBjb21wbGV0ZWQ6IGZhbHNlIH0KXTsKCmFwcC5nZXQoJy90YXNrcycsIChyZXEsIHJlcykgPT4gewogIHJlcy5qc29uKHRhc2tzKTsKfSk7CgphcHAucG9zdCgnL3Rhc2tzJywgKHJlcSwgcmVzKSA9PiB7CiAgY29uc3QgbmV3VGFzayA9IHsKICAgIGlkOiB0YXNrcy5sZW5ndGggKyAxLAogICAgdGl0bGU6IHJlcS5ib2R5LnRpdGxlLAogICAgY29tcGxldGVkOiByZXEuYm9keS5jb21wbGV0ZWQKICB9OwogIHRhc2tzLnB1c2gobmV3VGFzayk7CiAgcmVzLnN0YXR1cygyMDEpLmpzb24obmV3VGFzayk7Cn0pOwoKYXBwLnB1dCgnL3Rhc2tzLzppZCcsIChyZXEsIHJlcykgPT4gewogIGNvbnN0IHRhc2tJZCA9IHBhcnNlSW50KHJlcS5wYXJhbXMuaWQpOwogIGNvbnN0IHRhc2sgPSB0YXNrcy5maW5kKHQgPT4gdC5pZCA9PT0gdGFza0lkKTsKICBpZiAodGFzaykgewogICAgdGFzay50aXRsZSA9IHJlcS5ib2R5LnRpdGxlOwogICAgdGFzay5jb21wbGV0ZWQgPSByZXEuYm9keS5jb21wbGV0ZWQ7CiAgICByZXMuanNvbih0YXNrKTsKICB9IGVsc2UgewogICAgcmVzLnN0YXR1cyg0MDQpLnNlbmQoJ1Rhc3F1ZXMgbm8gdHJvYmFkZXMnKTsKICB9Cn0pOwoKYXBwLmRlbGV0ZSgnL3Rhc2tzLzppZCcsIChyZXEsIHJlcykgPT4gewogIGNvbnN0IHRhc2tJZCA9IHBhcnNlSW50KHJlcS5wYXJhbXMuaWQpOwogIHRhc2tzID0gdGFza3MuZmlsdGVyKHQgPT4gdC5pZCAhPT0gdGFza0lkKTsKICByZXMuc3RhdHVzKDIwNCkuc2VuZCgpOwp9KTsKCmFwcC5saXN0ZW4ocG9ydCwgKCkgPT4gewogIGNvbnNvbGUubG9nKGBTZXJ2aWRvciBlc2NvbHRhbnQgYSBodHRwOi8vbG9jYWxob3N0OiR7cG9ydH1gKTsKfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const express = require('express');
+const app = express();
+const port = 3000;
+
+app.use(express.json());
+
+let tasks = [
+  { id: 1, title: 'Aprendre Node.js', completed: false },
+  { id: 2, title: 'Construir una API RESTful', completed: false }
+];
+
+app.get('/tasks', (req, res) =&gt; {
+  res.json(tasks);
+});
+
+app.post('/tasks', (req, res) =&gt; {
+  const newTask = {
+    id: tasks.length + 1,
+    title: req.body.title,
+    completed: req.body.completed
+  };
+  tasks.push(newTask);
+  res.status(201).json(newTask);
+});
+
+app.put('/tasks/:id', (req, res) =&gt; {
+  const taskId = parseInt(req.params.id);
+  const task = tasks.find(t =&gt; t.id === taskId);
+  if (task) {
+    task.title = req.body.title;
+    task.completed = req.body.completed;
+    res.json(task);
+  } else {
+    res.status(404).send('Tasques no trobades');
+  }
+});
+
+app.delete('/tasks/:id', (req, res) =&gt; {
+  const taskId = parseInt(req.params.id);
+  tasks = tasks.filter(t =&gt; t.id !== taskId);
+  res.status(204).send();
+});
+
+app.listen(port, () =&gt; {
+  console.log(`Servidor escoltant a http://localhost:${port}`);
+});</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après a construir una API RESTful utilitzant Node.js i Express. Hem cobert els principis bàsics de REST, com configurar un servidor Express, i com implementar operacions CRUD. També hem vist com gestionar errors i respostes HTTP adequades. Amb aquests coneixements, estàs preparat per construir APIs RESTful robustes i escalables.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='10-03-performance-optimization' title="Optimització del Rendiment">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-05-graphql-nodejs' title="GraphQL amb Node.js">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

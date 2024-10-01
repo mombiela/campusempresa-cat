@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reemplaçament de Mòduls en Calent</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/webpack/04-03-hot-module-replacement" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/webpack/04-03-hot-module-replacement" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/webpack/04-03-hot-module-replacement" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/webpack/04-03-hot-module-replacement" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/webpack/04-03-hot-module-replacement" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-02-webpack-dev-server' title="Servidor de Desenvolupament de Webpack">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Reemplaçament de Mòduls en Calent</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-04-debugging' title="Depuració">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>El Reemplaçament de Mòduls en Calent (Hot Module Replacement, HMR) és una característica poderosa de Webpack que permet actualitzar els mòduls d'una aplicació en temps real sense necessitat de recarregar tota la pàgina. Això és especialment útil durant el desenvolupament, ja que permet una experiència de desenvolupament més ràpida i fluida.</p>
+</div><h1>Què és el Reemplaçament de Mòduls en Calent?</h1>
+<div class='content'><p>HMR permet que només els mòduls que han canviat es tornin a carregar, mantenint l'estat de l'aplicació. Això significa que, per exemple, si estàs treballant en una aplicació React, pots modificar un component i veure els canvis immediatament sense perdre l'estat de l'aplicació.</p>
+</div><h1>Configuració de HMR</h1>
+<div class='content'></div><h2>1. Instal·lació de Webpack Dev Server</h2>
+<div class='content'><p>Per utilitzar HMR, necessitem el <code>webpack-dev-server</code>, que proporciona un servidor de desenvolupament amb HMR integrat.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnBtIGluc3RhbGwgLS1zYXZlLWRldiB3ZWJwYWNrLWRldi1zZXJ2ZXI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npm install --save-dev webpack-dev-server</pre></div><div class='content'></div><h2>2. Configuració del Fitxer `webpack.config.js`</h2>
+<div class='content'><p>Afegim la configuració necessària per habilitar HMR en el nostre fitxer de configuració de Webpack.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgcGF0aCA9IHJlcXVpcmUoJ3BhdGgnKTsKY29uc3Qgd2VicGFjayA9IHJlcXVpcmUoJ3dlYnBhY2snKTsKCm1vZHVsZS5leHBvcnRzID0gewogIGVudHJ5OiAnLi9zcmMvaW5kZXguanMnLAogIG91dHB1dDogewogICAgZmlsZW5hbWU6ICdidW5kbGUuanMnLAogICAgcGF0aDogcGF0aC5yZXNvbHZlKF9fZGlybmFtZSwgJ2Rpc3QnKSwKICAgIHB1YmxpY1BhdGg6ICcvJwogIH0sCiAgZGV2U2VydmVyOiB7CiAgICBjb250ZW50QmFzZTogcGF0aC5yZXNvbHZlKF9fZGlybmFtZSwgJ2Rpc3QnKSwKICAgIGhvdDogdHJ1ZQogIH0sCiAgcGx1Z2luczogWwogICAgbmV3IHdlYnBhY2suSG90TW9kdWxlUmVwbGFjZW1lbnRQbHVnaW4oKQogIF0sCiAgbW9kdWxlOiB7CiAgICBydWxlczogWwogICAgICB7CiAgICAgICAgdGVzdDogL1wuanMkLywKICAgICAgICB1c2U6ICdiYWJlbC1sb2FkZXInLAogICAgICAgIGV4Y2x1ZGU6IC9ub2RlX21vZHVsZXMvCiAgICAgIH0KICAgIF0KICB9Cn07"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const path = require('path');
+const webpack = require('webpack');
+
+module.exports = {
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/'
+  },
+  devServer: {
+    contentBase: path.resolve(__dirname, 'dist'),
+    hot: true
+  },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin()
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: 'babel-loader',
+        exclude: /node_modules/
+      }
+    ]
+  }
+};</pre></div><div class='content'></div><h2>3. Script de Desenvolupament en `package.json`</h2>
+<div class='content'><p>Afegim un script per iniciar el servidor de desenvolupament amb HMR.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("InNjcmlwdHMiOiB7CiAgInN0YXJ0IjogIndlYnBhY2sgc2VydmUgLS1vcGVuIC0taG90Igp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&quot;scripts&quot;: {
+  &quot;start&quot;: &quot;webpack serve --open --hot&quot;
+}</pre></div><div class='content'></div><h2>4. Habilitació de HMR en el Codi de l'Aplicació</h2>
+<div class='content'><p>Perquè HMR funcioni correctament, hem d'afegir una mica de codi al nostre punt d'entrada (normalment <code>index.js</code>).</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aWYgKG1vZHVsZS5ob3QpIHsKICBtb2R1bGUuaG90LmFjY2VwdCgnLi9wYXRoL3RvL21vZHVsZScsIGZ1bmN0aW9uKCkgewogICAgLy8gQXF1w60gcG90cyBlc3BlY2lmaWNhciBxdcOoIGZlciBxdWFuIGVsIG3DsmR1bCBlcyByZWVtcGxhw6dhCiAgICBjb25zb2xlLmxvZygnTcOyZHVsIGFjdHVhbGl0emF0IScpOwogIH0pOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>if (module.hot) {
+  module.hot.accept('./path/to/module', function() {
+    // Aqu&iacute; pots especificar qu&egrave; fer quan el m&ograve;dul es reempla&ccedil;a
+    console.log('M&ograve;dul actualitzat!');
+  });
+}</pre></div><div class='content'></div><h1>Exemple Pràctic</h1>
+<div class='content'><p>Suposem que tenim una aplicació React. Aquí teniu un exemple de com configurar HMR per a un component React.</p>
+</div><h2>1. Estructura del Projecte</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("L215LWFwcAogIC9zcmMKICAgIC9jb21wb25lbnRzCiAgICAgIEFwcC5qcwogICAgaW5kZXguanMKICB3ZWJwYWNrLmNvbmZpZy5qcwogIHBhY2thZ2UuanNvbg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>/my-app
+  /src
+    /components
+      App.js
+    index.js
+  webpack.config.js
+  package.json</pre></div><div class='content'></div><h2>2. Fitxer `index.js`</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IFJlYWN0IGZyb20gJ3JlYWN0JzsKaW1wb3J0IFJlYWN0RE9NIGZyb20gJ3JlYWN0LWRvbSc7CmltcG9ydCBBcHAgZnJvbSAnLi9jb21wb25lbnRzL0FwcCc7Cgpjb25zdCByZW5kZXIgPSAoQ29tcG9uZW50KSA9PiB7CiAgUmVhY3RET00ucmVuZGVyKDxDb21wb25lbnQgLz4sIGRvY3VtZW50LmdldEVsZW1lbnRCeUlkKCdyb290JykpOwp9OwoKcmVuZGVyKEFwcCk7CgppZiAobW9kdWxlLmhvdCkgewogIG1vZHVsZS5ob3QuYWNjZXB0KCcuL2NvbXBvbmVudHMvQXBwJywgKCkgPT4gewogICAgY29uc3QgTmV4dEFwcCA9IHJlcXVpcmUoJy4vY29tcG9uZW50cy9BcHAnKS5kZWZhdWx0OwogICAgcmVuZGVyKE5leHRBcHApOwogIH0pOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './components/App';
+
+const render = (Component) =&gt; {
+  ReactDOM.render(&lt;Component /&gt;, document.getElementById('root'));
+};
+
+render(App);
+
+if (module.hot) {
+  module.hot.accept('./components/App', () =&gt; {
+    const NextApp = require('./components/App').default;
+    render(NextApp);
+  });
+}</pre></div><div class='content'></div><h2>3. Fitxer `App.js`</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IFJlYWN0IGZyb20gJ3JlYWN0JzsKCmNvbnN0IEFwcCA9ICgpID0+IHsKICByZXR1cm4gKAogICAgPGRpdj4KICAgICAgPGgxPkhvbGEsIFdlYnBhY2sgSE1SITwvaDE+CiAgICA8L2Rpdj4KICApOwp9OwoKZXhwb3J0IGRlZmF1bHQgQXBwOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import React from 'react';
+
+const App = () =&gt; {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Hola, Webpack HMR!&lt;/h1&gt;
+    &lt;/div&gt;
+  );
+};
+
+export default App;</pre></div><div class='content'></div><h2>4. Fitxer `webpack.config.js`</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgcGF0aCA9IHJlcXVpcmUoJ3BhdGgnKTsKY29uc3Qgd2VicGFjayA9IHJlcXVpcmUoJ3dlYnBhY2snKTsKCm1vZHVsZS5leHBvcnRzID0gewogIGVudHJ5OiAnLi9zcmMvaW5kZXguanMnLAogIG91dHB1dDogewogICAgZmlsZW5hbWU6ICdidW5kbGUuanMnLAogICAgcGF0aDogcGF0aC5yZXNvbHZlKF9fZGlybmFtZSwgJ2Rpc3QnKSwKICAgIHB1YmxpY1BhdGg6ICcvJwogIH0sCiAgZGV2U2VydmVyOiB7CiAgICBjb250ZW50QmFzZTogcGF0aC5yZXNvbHZlKF9fZGlybmFtZSwgJ2Rpc3QnKSwKICAgIGhvdDogdHJ1ZQogIH0sCiAgcGx1Z2luczogWwogICAgbmV3IHdlYnBhY2suSG90TW9kdWxlUmVwbGFjZW1lbnRQbHVnaW4oKQogIF0sCiAgbW9kdWxlOiB7CiAgICBydWxlczogWwogICAgICB7CiAgICAgICAgdGVzdDogL1wuanMkLywKICAgICAgICB1c2U6ICdiYWJlbC1sb2FkZXInLAogICAgICAgIGV4Y2x1ZGU6IC9ub2RlX21vZHVsZXMvCiAgICAgIH0KICAgIF0KICB9Cn07"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const path = require('path');
+const webpack = require('webpack');
+
+module.exports = {
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/'
+  },
+  devServer: {
+    contentBase: path.resolve(__dirname, 'dist'),
+    hot: true
+  },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin()
+  ],
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        use: 'babel-loader',
+        exclude: /node_modules/
+      }
+    ]
+  }
+};</pre></div><div class='content'></div><h2>5. Script de Desenvolupament en `package.json`</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("InNjcmlwdHMiOiB7CiAgInN0YXJ0IjogIndlYnBhY2sgc2VydmUgLS1vcGVuIC0taG90Igp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&quot;scripts&quot;: {
+  &quot;start&quot;: &quot;webpack serve --open --hot&quot;
+}</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Configura HMR en una aplicació simple de JavaScript que mostri un missatge a la pàgina. Quan canviïs el missatge en el codi, hauria d'actualitzar-se automàticament sense recarregar la pàgina.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>
+<p>Crea un nou projecte amb la següent estructura:</p>
+<pre><code>/my-hmr-app
+  /src
+    index.js
+  webpack.config.js
+  package.json
+</code></pre>
+</li>
+<li>
+<p>Instal·la les dependències necessàries:</p>
+<pre><code class="language-bash">npm install --save-dev webpack webpack-cli webpack-dev-server
+</code></pre>
+</li>
+<li>
+<p>Configura el fitxer <code>webpack.config.js</code> per habilitar HMR.</p>
+</li>
+<li>
+<p>Escriu el codi en <code>index.js</code> per mostrar un missatge a la pàgina.</p>
+</li>
+<li>
+<p>Afegeix el codi necessari per habilitar HMR en <code>index.js</code>.</p>
+</li>
+<li>
+<p>Executa el servidor de desenvolupament i comprova que HMR funciona correctament.</p>
+</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><h4>Fitxer <code>webpack.config.js</code></h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgcGF0aCA9IHJlcXVpcmUoJ3BhdGgnKTsKY29uc3Qgd2VicGFjayA9IHJlcXVpcmUoJ3dlYnBhY2snKTsKCm1vZHVsZS5leHBvcnRzID0gewogIGVudHJ5OiAnLi9zcmMvaW5kZXguanMnLAogIG91dHB1dDogewogICAgZmlsZW5hbWU6ICdidW5kbGUuanMnLAogICAgcGF0aDogcGF0aC5yZXNvbHZlKF9fZGlybmFtZSwgJ2Rpc3QnKSwKICAgIHB1YmxpY1BhdGg6ICcvJwogIH0sCiAgZGV2U2VydmVyOiB7CiAgICBjb250ZW50QmFzZTogcGF0aC5yZXNvbHZlKF9fZGlybmFtZSwgJ2Rpc3QnKSwKICAgIGhvdDogdHJ1ZQogIH0sCiAgcGx1Z2luczogWwogICAgbmV3IHdlYnBhY2suSG90TW9kdWxlUmVwbGFjZW1lbnRQbHVnaW4oKQogIF0KfTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const path = require('path');
+const webpack = require('webpack');
+
+module.exports = {
+  entry: './src/index.js',
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+    publicPath: '/'
+  },
+  devServer: {
+    contentBase: path.resolve(__dirname, 'dist'),
+    hot: true
+  },
+  plugins: [
+    new webpack.HotModuleReplacementPlugin()
+  ]
+};</pre></div><div class='content'><h4>Fitxer <code>index.js</code></h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgbWVzc2FnZSA9ICdIb2xhLCBXZWJwYWNrIEhNUiEnOwoKZG9jdW1lbnQuYm9keS5pbm5lckhUTUwgPSBgPGgxPiR7bWVzc2FnZX08L2gxPmA7CgppZiAobW9kdWxlLmhvdCkgewogIG1vZHVsZS5ob3QuYWNjZXB0KCk7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const message = 'Hola, Webpack HMR!';
+
+document.body.innerHTML = `&lt;h1&gt;${message}&lt;/h1&gt;`;
+
+if (module.hot) {
+  module.hot.accept();
+}</pre></div><div class='content'><h4>Fitxer <code>package.json</code></h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJuYW1lIjogIm15LWhtci1hcHAiLAogICJ2ZXJzaW9uIjogIjEuMC4wIiwKICAic2NyaXB0cyI6IHsKICAgICJzdGFydCI6ICJ3ZWJwYWNrIHNlcnZlIC0tb3BlbiAtLWhvdCIKICB9LAogICJkZXZEZXBlbmRlbmNpZXMiOiB7CiAgICAid2VicGFjayI6ICJeNS4wLjAiLAogICAgIndlYnBhY2stY2xpIjogIl40LjAuMCIsCiAgICAid2VicGFjay1kZXYtc2VydmVyIjogIl4zLjAuMCIKICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;name&quot;: &quot;my-hmr-app&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;scripts&quot;: {
+    &quot;start&quot;: &quot;webpack serve --open --hot&quot;
+  },
+  &quot;devDependencies&quot;: {
+    &quot;webpack&quot;: &quot;^5.0.0&quot;,
+    &quot;webpack-cli&quot;: &quot;^4.0.0&quot;,
+    &quot;webpack-dev-server&quot;: &quot;^3.0.0&quot;
+  }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>El Reemplaçament de Mòduls en Calent és una eina essencial per a qualsevol desenvolupador que vulgui millorar la seva eficiència i experiència de desenvolupament. Amb HMR, pots veure els canvis en temps real sense perdre l'estat de l'aplicació, la qual cosa fa que el procés de desenvolupament sigui molt més ràpid i agradable.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-02-webpack-dev-server' title="Servidor de Desenvolupament de Webpack">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-04-debugging' title="Depuració">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

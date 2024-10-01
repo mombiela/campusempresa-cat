@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genèrics</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/rust/07-03-generics" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/rust/07-03-generics" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/rust/07-03-generics" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/rust/07-03-generics" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/rust/07-03-generics" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-02-traits' title="Traits">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Genèrics</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-01-threads' title="Fils">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Els genèrics són una característica poderosa de Rust que permeten escriure codi més flexible i reutilitzable. Amb els genèrics, pots definir funcions, structs, enums i mètodes que poden operar amb diferents tipus de dades sense sacrificar la seguretat de tipus.</p>
+</div><h1>Continguts</h1>
+<div class='content'><ol>
+<li>Introducció als Genèrics</li>
+<li>Genèrics en Funcions</li>
+<li>Genèrics en Structs</li>
+<li>Genèrics en Enums</li>
+<li>Genèrics en Mètodes</li>
+<li>Exercicis Pràctics</li>
+</ol>
+</div><h1>1. Introducció als Genèrics</h1>
+<div class='content'><p>Els genèrics permeten definir tipus o funcions que poden treballar amb qualsevol tipus de dades. Això es fa utilitzant paràmetres de tipus, que són variables de tipus que es defineixen entre els símbols <code>&lt;</code> i <code>&gt;</code>.</p>
+</div><h2>Exemple Bàsic</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zm4gbWFpbigpIHsKICAgIGxldCBudW1iZXJfbGlzdCA9IHZlYyFbMzQsIDUwLCAyNSwgMTAwLCA2NV07CiAgICBsZXQgcmVzdWx0ID0gbGFyZ2VzdCgmbnVtYmVyX2xpc3QpOwogICAgcHJpbnRsbiEoIkVsIG5vbWJyZSBtw6lzIGdyYW4gw6lzIHt9IiwgcmVzdWx0KTsKfQoKZm4gbGFyZ2VzdDxUOiBQYXJ0aWFsT3JkPihsaXN0OiAmW1RdKSAtPiAmVCB7CiAgICBsZXQgbXV0IGxhcmdlc3QgPSAmbGlzdFswXTsKICAgIGZvciBpdGVtIGluIGxpc3QgewogICAgICAgIGlmIGl0ZW0gPiBsYXJnZXN0IHsKICAgICAgICAgICAgbGFyZ2VzdCA9IGl0ZW07CiAgICAgICAgfQogICAgfQogICAgbGFyZ2VzdAp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>fn main() {
+    let number_list = vec![34, 50, 25, 100, 65];
+    let result = largest(&amp;number_list);
+    println!(&quot;El nombre m&eacute;s gran &eacute;s {}&quot;, result);
+}
+
+fn largest&lt;T: PartialOrd&gt;(list: &amp;[T]) -&gt; &amp;T {
+    let mut largest = &amp;list[0];
+    for item in list {
+        if item &gt; largest {
+            largest = item;
+        }
+    }
+    largest
+}</pre></div><div class='content'><p>En aquest exemple, <code>T</code> és un paràmetre de tipus genèric. La funció <code>largest</code> pot treballar amb qualsevol tipus que implementi el trait <code>PartialOrd</code>.</p>
+</div><h1>2. Genèrics en Funcions</h1>
+<div class='content'><p>Els genèrics en funcions permeten que les funcions treballin amb diferents tipus de dades sense duplicar el codi.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zm4gbGFyZ2VzdDxUOiBQYXJ0aWFsT3JkPihsaXN0OiAmW1RdKSAtPiAmVCB7CiAgICBsZXQgbXV0IGxhcmdlc3QgPSAmbGlzdFswXTsKICAgIGZvciBpdGVtIGluIGxpc3QgewogICAgICAgIGlmIGl0ZW0gPiBsYXJnZXN0IHsKICAgICAgICAgICAgbGFyZ2VzdCA9IGl0ZW07CiAgICAgICAgfQogICAgfQogICAgbGFyZ2VzdAp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>fn largest&lt;T: PartialOrd&gt;(list: &amp;[T]) -&gt; &amp;T {
+    let mut largest = &amp;list[0];
+    for item in list {
+        if item &gt; largest {
+            largest = item;
+        }
+    }
+    largest
+}</pre></div><div class='content'><p>En aquest exemple, <code>T</code> és un paràmetre de tipus genèric que ha de satisfer el trait <code>PartialOrd</code> per permetre la comparació.</p>
+</div><h1>3. Genèrics en Structs</h1>
+<div class='content'><p>Els structs també poden utilitzar genèrics per emmagatzemar diferents tipus de dades.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RydWN0IFBvaW50PFQ+IHsKICAgIHg6IFQsCiAgICB5OiBULAp9CgpmbiBtYWluKCkgewogICAgbGV0IGludGVnZXJfcG9pbnQgPSBQb2ludCB7IHg6IDUsIHk6IDEwIH07CiAgICBsZXQgZmxvYXRfcG9pbnQgPSBQb2ludCB7IHg6IDEuMCwgeTogNC4wIH07Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>struct Point&lt;T&gt; {
+    x: T,
+    y: T,
+}
+
+fn main() {
+    let integer_point = Point { x: 5, y: 10 };
+    let float_point = Point { x: 1.0, y: 4.0 };
+}</pre></div><div class='content'><p>En aquest exemple, <code>Point&lt;T&gt;</code> és un struct genèric que pot emmagatzemar qualsevol tipus de dades.</p>
+</div><h1>4. Genèrics en Enums</h1>
+<div class='content'><p>Els enums poden utilitzar genèrics per representar diferents tipus de dades.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZW51bSBPcHRpb248VD4gewogICAgU29tZShUKSwKICAgIE5vbmUsCn0KCmZuIG1haW4oKSB7CiAgICBsZXQgc29tZV9udW1iZXIgPSBPcHRpb246OlNvbWUoNSk7CiAgICBsZXQgc29tZV9zdHJpbmcgPSBPcHRpb246OlNvbWUoIkhlbGxvIik7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>enum Option&lt;T&gt; {
+    Some(T),
+    None,
+}
+
+fn main() {
+    let some_number = Option::Some(5);
+    let some_string = Option::Some(&quot;Hello&quot;);
+}</pre></div><div class='content'><p>En aquest exemple, <code>Option&lt;T&gt;</code> és un enum genèric que pot emmagatzemar qualsevol tipus de dades.</p>
+</div><h1>5. Genèrics en Mètodes</h1>
+<div class='content'><p>Els mètodes també poden utilitzar genèrics per treballar amb diferents tipus de dades.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RydWN0IFBvaW50PFQ+IHsKICAgIHg6IFQsCiAgICB5OiBULAp9CgppbXBsPFQ+IFBvaW50PFQ+IHsKICAgIGZuIHgoJnNlbGYpIC0+ICZUIHsKICAgICAgICAmc2VsZi54CiAgICB9Cn0KCmZuIG1haW4oKSB7CiAgICBsZXQgcCA9IFBvaW50IHsgeDogNSwgeTogMTAgfTsKICAgIHByaW50bG4hKCJwLnggPSB7fSIsIHAueCgpKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>struct Point&lt;T&gt; {
+    x: T,
+    y: T,
+}
+
+impl&lt;T&gt; Point&lt;T&gt; {
+    fn x(&amp;self) -&gt; &amp;T {
+        &amp;self.x
+    }
+}
+
+fn main() {
+    let p = Point { x: 5, y: 10 };
+    println!(&quot;p.x = {}&quot;, p.x());
+}</pre></div><div class='content'><p>En aquest exemple, el mètode <code>x</code> retorna una referència al camp <code>x</code> del struct <code>Point&lt;T&gt;</code>.</p>
+</div><h1>6. Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Funció Genèrica</h2>
+<div class='content'><p>Escriu una funció genèrica <code>smallest</code> que trobi el valor més petit en una llista de qualsevol tipus que implementi el trait <code>PartialOrd</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zm4gc21hbGxlc3Q8VDogUGFydGlhbE9yZD4obGlzdDogJltUXSkgLT4gJlQgewogICAgLy8gSW1wbGVtZW50YSBsYSBmdW5jacOzIGFxdcOtCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>fn smallest&lt;T: PartialOrd&gt;(list: &amp;[T]) -&gt; &amp;T {
+    // Implementa la funci&oacute; aqu&iacute;
+}</pre></div><div class='content'></div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zm4gc21hbGxlc3Q8VDogUGFydGlhbE9yZD4obGlzdDogJltUXSkgLT4gJlQgewogICAgbGV0IG11dCBzbWFsbGVzdCA9ICZsaXN0WzBdOwogICAgZm9yIGl0ZW0gaW4gbGlzdCB7CiAgICAgICAgaWYgaXRlbSA8IHNtYWxsZXN0IHsKICAgICAgICAgICAgc21hbGxlc3QgPSBpdGVtOwogICAgICAgIH0KICAgIH0KICAgIHNtYWxsZXN0Cn0KCmZuIG1haW4oKSB7CiAgICBsZXQgbnVtYmVyX2xpc3QgPSB2ZWMhWzM0LCA1MCwgMjUsIDEwMCwgNjVdOwogICAgbGV0IHJlc3VsdCA9IHNtYWxsZXN0KCZudW1iZXJfbGlzdCk7CiAgICBwcmludGxuISgiRWwgbm9tYnJlIG3DqXMgcGV0aXQgw6lzIHt9IiwgcmVzdWx0KTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>fn smallest&lt;T: PartialOrd&gt;(list: &amp;[T]) -&gt; &amp;T {
+    let mut smallest = &amp;list[0];
+    for item in list {
+        if item &lt; smallest {
+            smallest = item;
+        }
+    }
+    smallest
+}
+
+fn main() {
+    let number_list = vec![34, 50, 25, 100, 65];
+    let result = smallest(&amp;number_list);
+    println!(&quot;El nombre m&eacute;s petit &eacute;s {}&quot;, result);
+}</pre></div><div class='content'></div><h2>Exercici 2: Struct Genèric</h2>
+<div class='content'><p>Defineix un struct genèric <code>Rectangle</code> que emmagatzemi l'amplada i l'alçada de qualsevol tipus de dades.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RydWN0IFJlY3RhbmdsZTxUPiB7CiAgICB3aWR0aDogVCwKICAgIGhlaWdodDogVCwKfQoKZm4gbWFpbigpIHsKICAgIC8vIENyZWEgdW5hIGluc3TDoG5jaWEgZGUgUmVjdGFuZ2xlIGFtYiB0aXB1cyBlbnRlcgogICAgLy8gQ3JlYSB1bmEgaW5zdMOgbmNpYSBkZSBSZWN0YW5nbGUgYW1iIHRpcHVzIGZsb2F0Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>struct Rectangle&lt;T&gt; {
+    width: T,
+    height: T,
+}
+
+fn main() {
+    // Crea una inst&agrave;ncia de Rectangle amb tipus enter
+    // Crea una inst&agrave;ncia de Rectangle amb tipus float
+}</pre></div><div class='content'></div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RydWN0IFJlY3RhbmdsZTxUPiB7CiAgICB3aWR0aDogVCwKICAgIGhlaWdodDogVCwKfQoKZm4gbWFpbigpIHsKICAgIGxldCBpbnRfcmVjdGFuZ2xlID0gUmVjdGFuZ2xlIHsgd2lkdGg6IDMwLCBoZWlnaHQ6IDUwIH07CiAgICBsZXQgZmxvYXRfcmVjdGFuZ2xlID0gUmVjdGFuZ2xlIHsgd2lkdGg6IDMwLjUsIGhlaWdodDogNTAuNSB9Owp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>struct Rectangle&lt;T&gt; {
+    width: T,
+    height: T,
+}
+
+fn main() {
+    let int_rectangle = Rectangle { width: 30, height: 50 };
+    let float_rectangle = Rectangle { width: 30.5, height: 50.5 };
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Els genèrics són una eina poderosa en Rust que permeten escriure codi més flexible i reutilitzable. Hem vist com utilitzar genèrics en funcions, structs, enums i mètodes. Amb aquests coneixements, pots començar a escriure codi més genèric i adaptable a diferents tipus de dades.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-02-traits' title="Traits">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-01-threads' title="Fils">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

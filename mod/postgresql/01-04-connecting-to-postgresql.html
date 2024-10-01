@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connectant-se a PostgreSQL</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/postgresql/01-04-connecting-to-postgresql" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/postgresql/01-04-connecting-to-postgresql" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/postgresql/01-04-connecting-to-postgresql" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/postgresql/01-04-connecting-to-postgresql" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/postgresql/01-04-connecting-to-postgresql" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='01-03-basic-sql-concepts' title="Conceptes bàsics de SQL">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Connectant-se a PostgreSQL</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-01-creating-databases-and-tables' title="Creant bases de dades i taules">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquesta secció, aprendrem com connectar-nos a una base de dades PostgreSQL utilitzant diverses eines i mètodes. La connexió a PostgreSQL és un pas fonamental per començar a treballar amb les bases de dades, ja sigui per executar consultes, administrar esquemes o gestionar dades.</p>
+</div><h1>1. Utilitzant la línia de comandes (psql)</h1>
+<div class='content'></div><h2>Instal·lació de psql</h2>
+<div class='content'><p>El client de línia de comandes <code>psql</code> és una eina poderosa per interactuar amb PostgreSQL. Si no el tens instal·lat, pots fer-ho seguint aquests passos:</p>
+<p><strong>Per a Ubuntu/Debian:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3VkbyBhcHQgdXBkYXRlCnN1ZG8gYXB0IGluc3RhbGwgcG9zdGdyZXNxbCBwb3N0Z3Jlc3FsLWNvbnRyaWI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>sudo apt update
+sudo apt install postgresql postgresql-contrib</pre></div><div class='content'><p><strong>Per a macOS (utilitzant Homebrew):</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YnJldyBpbnN0YWxsIHBvc3RncmVzcWw="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>brew install postgresql</pre></div><div class='content'></div><h2>Connexió a la base de dades</h2>
+<div class='content'><p>Un cop instal·lat, pots connectar-te a la teva base de dades PostgreSQL utilitzant la següent comanda:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHNxbCAtaCBob3N0bmFtZSAtVSB1c2VybmFtZSAtZCBkYXRhYmFzZV9uYW1l"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>psql -h hostname -U username -d database_name</pre></div><div class='content'><ul>
+<li><code>-h hostname</code>: L'adreça del servidor on està executant-se PostgreSQL (per exemple, <code>localhost</code>).</li>
+<li><code>-U username</code>: El nom d'usuari amb el qual vols connectar-te.</li>
+<li><code>-d database_name</code>: El nom de la base de dades a la qual vols accedir.</li>
+</ul>
+<p><strong>Exemple:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHNxbCAtaCBsb2NhbGhvc3QgLVUgcG9zdGdyZXMgLWQgbXlkYXRhYmFzZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>psql -h localhost -U postgres -d mydatabase</pre></div><div class='content'></div><h2>Autenticació</h2>
+<div class='content'><p>Després d'executar la comanda, se't demanarà la contrasenya de l'usuari especificat. Introdueix la contrasenya per completar la connexió.</p>
+</div><h1>2. Utilitzant pgAdmin</h1>
+<div class='content'></div><h2>Instal·lació de pgAdmin</h2>
+<div class='content'><p>pgAdmin és una interfície gràfica d'usuari (GUI) per administrar bases de dades PostgreSQL. Pots descarregar-lo des del <a href="https://www.pgadmin.org/download/">lloc web oficial de pgAdmin</a>.</p>
+</div><h2>Connexió a la base de dades</h2>
+<div class='content'><ol>
+<li>
+<p>Obre pgAdmin i inicia sessió.</p>
+</li>
+<li>
+<p>Fes clic amb el botó dret a &quot;Servers&quot; i selecciona &quot;Create&quot; &gt; &quot;Server...&quot;.</p>
+</li>
+<li>
+<p>A la pestanya &quot;General&quot;, introdueix un nom per al servidor.</p>
+</li>
+<li>
+<p>A la pestanya &quot;Connection&quot;, introdueix la informació de connexió:</p>
+<ul>
+<li><strong>Host name/address</strong>: L'adreça del servidor (per exemple, <code>localhost</code>).</li>
+<li><strong>Port</strong>: El port en què PostgreSQL està escoltant (per defecte, <code>5432</code>).</li>
+<li><strong>Maintenance database</strong>: El nom de la base de dades (per exemple, <code>postgres</code>).</li>
+<li><strong>Username</strong>: El nom d'usuari (per exemple, <code>postgres</code>).</li>
+<li><strong>Password</strong>: La contrasenya de l'usuari.</li>
+</ul>
+</li>
+<li>
+<p>Fes clic a &quot;Save&quot; per guardar la configuració i connectar-te al servidor.</p>
+</li>
+</ol>
+</div><h1>3. Utilitzant llenguatges de programació</h1>
+<div class='content'></div><h2>Connexió amb Python</h2>
+<div class='content'><p>Per connectar-te a PostgreSQL des de Python, pots utilitzar la biblioteca <code>psycopg2</code>. Primer, instal·la la biblioteca:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgcHN5Y29wZzI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install psycopg2</pre></div><div class='content'><p>Després, utilitza el següent codi per establir una connexió:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHBzeWNvcGcyCgp0cnk6CiAgICBjb25uZWN0aW9uID0gcHN5Y29wZzIuY29ubmVjdCgKICAgICAgICB1c2VyPSJ5b3VyX3VzZXJuYW1lIiwKICAgICAgICBwYXNzd29yZD0ieW91cl9wYXNzd29yZCIsCiAgICAgICAgaG9zdD0iMTI3LjAuMC4xIiwKICAgICAgICBwb3J0PSI1NDMyIiwKICAgICAgICBkYXRhYmFzZT0ieW91cl9kYXRhYmFzZSIKICAgICkKICAgIGN1cnNvciA9IGNvbm5lY3Rpb24uY3Vyc29yKCkKICAgIHByaW50KCJDb25uZXhpw7MgZXN0YWJsZXJ0YSBhbWIgw6h4aXQiKQogICAgCiAgICAjIEV4ZWN1dGEgdW5hIGNvbnN1bHRhCiAgICBjdXJzb3IuZXhlY3V0ZSgiU0VMRUNUIHZlcnNpb24oKTsiKQogICAgcmVjb3JkID0gY3Vyc29yLmZldGNob25lKCkKICAgIHByaW50KCJWZXJzacOzIGRlIFBvc3RncmVTUUw6IiwgcmVjb3JkKQoKZXhjZXB0IChFeGNlcHRpb24sIHBzeWNvcGcyLkVycm9yKSBhcyBlcnJvcjoKICAgIHByaW50KCJFcnJvciBlbiBjb25uZWN0YXItc2UgYSBQb3N0Z3JlU1FMIiwgZXJyb3IpCmZpbmFsbHk6CiAgICBpZiBjb25uZWN0aW9uOgogICAgICAgIGN1cnNvci5jbG9zZSgpCiAgICAgICAgY29ubmVjdGlvbi5jbG9zZSgpCiAgICAgICAgcHJpbnQoIkNvbm5leGnDsyB0YW5jYWRhIik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import psycopg2
+
+try:
+    connection = psycopg2.connect(
+        user=&quot;your_username&quot;,
+        password=&quot;your_password&quot;,
+        host=&quot;127.0.0.1&quot;,
+        port=&quot;5432&quot;,
+        database=&quot;your_database&quot;
+    )
+    cursor = connection.cursor()
+    print(&quot;Connexi&oacute; establerta amb &egrave;xit&quot;)
+    
+    # Executa una consulta
+    cursor.execute(&quot;SELECT version();&quot;)
+    record = cursor.fetchone()
+    print(&quot;Versi&oacute; de PostgreSQL:&quot;, record)
+
+except (Exception, psycopg2.Error) as error:
+    print(&quot;Error en connectar-se a PostgreSQL&quot;, error)
+finally:
+    if connection:
+        cursor.close()
+        connection.close()
+        print(&quot;Connexi&oacute; tancada&quot;)</pre></div><div class='content'></div><h2>Connexió amb Java</h2>
+<div class='content'><p>Per connectar-te a PostgreSQL des de Java, utilitza el controlador JDBC. Primer, assegura't de tenir el controlador JDBC al teu projecte. Pots descarregar-lo des del <a href="https://jdbc.postgresql.org/">lloc web oficial de PostgreSQL</a>.</p>
+<p>Després, utilitza el següent codi per establir una connexió:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEuc3FsLkNvbm5lY3Rpb247CmltcG9ydCBqYXZhLnNxbC5Ecml2ZXJNYW5hZ2VyOwppbXBvcnQgamF2YS5zcWwuUmVzdWx0U2V0OwppbXBvcnQgamF2YS5zcWwuU3RhdGVtZW50OwoKcHVibGljIGNsYXNzIFBvc3RncmVTUUxKREJDIHsKICAgIHB1YmxpYyBzdGF0aWMgdm9pZCBtYWluKFN0cmluZyBhcmdzW10pIHsKICAgICAgICBDb25uZWN0aW9uIGMgPSBudWxsOwogICAgICAgIFN0YXRlbWVudCBzdG10ID0gbnVsbDsKICAgICAgICB0cnkgewogICAgICAgICAgICBDbGFzcy5mb3JOYW1lKCJvcmcucG9zdGdyZXNxbC5Ecml2ZXIiKTsKICAgICAgICAgICAgYyA9IERyaXZlck1hbmFnZXIuZ2V0Q29ubmVjdGlvbigiamRiYzpwb3N0Z3Jlc3FsOi8vbG9jYWxob3N0OjU0MzIveW91cl9kYXRhYmFzZSIsICJ5b3VyX3VzZXJuYW1lIiwgInlvdXJfcGFzc3dvcmQiKTsKICAgICAgICAgICAgU3lzdGVtLm91dC5wcmludGxuKCJDb25uZXhpw7MgZXN0YWJsZXJ0YSBhbWIgw6h4aXQiKTsKCiAgICAgICAgICAgIHN0bXQgPSBjLmNyZWF0ZVN0YXRlbWVudCgpOwogICAgICAgICAgICBSZXN1bHRTZXQgcnMgPSBzdG10LmV4ZWN1dGVRdWVyeSgiU0VMRUNUIHZlcnNpb24oKTsiKTsKICAgICAgICAgICAgd2hpbGUgKHJzLm5leHQoKSkgewogICAgICAgICAgICAgICAgU3lzdGVtLm91dC5wcmludGxuKCJWZXJzacOzIGRlIFBvc3RncmVTUUw6ICIgKyBycy5nZXRTdHJpbmcoMSkpOwogICAgICAgICAgICB9CiAgICAgICAgICAgIHJzLmNsb3NlKCk7CiAgICAgICAgICAgIHN0bXQuY2xvc2UoKTsKICAgICAgICAgICAgYy5jbG9zZSgpOwogICAgICAgIH0gY2F0Y2ggKEV4Y2VwdGlvbiBlKSB7CiAgICAgICAgICAgIGUucHJpbnRTdGFja1RyYWNlKCk7CiAgICAgICAgICAgIFN5c3RlbS5lcnIucHJpbnRsbigiRXJyb3IgZW4gY29ubmVjdGFyLXNlIGEgUG9zdGdyZVNRTCIpOwogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+public class PostgreSQLJDBC {
+    public static void main(String args[]) {
+        Connection c = null;
+        Statement stmt = null;
+        try {
+            Class.forName(&quot;org.postgresql.Driver&quot;);
+            c = DriverManager.getConnection(&quot;jdbc:postgresql://localhost:5432/your_database&quot;, &quot;your_username&quot;, &quot;your_password&quot;);
+            System.out.println(&quot;Connexi&oacute; establerta amb &egrave;xit&quot;);
+
+            stmt = c.createStatement();
+            ResultSet rs = stmt.executeQuery(&quot;SELECT version();&quot;);
+            while (rs.next()) {
+                System.out.println(&quot;Versi&oacute; de PostgreSQL: &quot; + rs.getString(1));
+            }
+            rs.close();
+            stmt.close();
+            c.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(&quot;Error en connectar-se a PostgreSQL&quot;);
+        }
+    }
+}</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après com connectar-nos a una base de dades PostgreSQL utilitzant diferents mètodes:</p>
+<ul>
+<li>La línia de comandes amb <code>psql</code>.</li>
+<li>La interfície gràfica d'usuari amb pgAdmin.</li>
+<li>Llenguatges de programació com Python i Java.</li>
+</ul>
+<p>Cada mètode té els seus avantatges i és útil en diferents contextos. Ara que saps com connectar-te a PostgreSQL, estàs preparat per començar a interactuar amb les teves bases de dades i executar operacions SQL. En el següent mòdul, explorarem les operacions bàsiques de SQL, com crear bases de dades i taules, inserir dades i fer consultes.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='01-03-basic-sql-concepts' title="Conceptes bàsics de SQL">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-01-creating-databases-and-tables' title="Creant bases de dades i taules">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

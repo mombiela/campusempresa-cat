@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Càrrega de Fitxers</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/flask/03-03-file-uploads" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/flask/03-03-file-uploads" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/flask/03-03-file-uploads" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/flask/03-03-file-uploads" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/flask/03-03-file-uploads" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-02-form-validation-wtforms' title="Validació de Formularis amb WTForms">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Càrrega de Fitxers</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-intro-flask-sqlalchemy' title="Introducció a Flask-SQLAlchemy">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com permetre als usuaris carregar fitxers a la nostra aplicació Flask. La càrrega de fitxers és una funcionalitat comuna en moltes aplicacions web, com ara formularis de contacte, aplicacions de gestió de documents, etc. Utilitzarem la biblioteca <code>Flask-WTF</code> per gestionar els formularis i <code>Flask-Uploads</code> per gestionar les càrregues de fitxers.</p>
+</div><h1>1. Configuració del Projecte</h1>
+<div class='content'></div><h2>Instal·lació de les Dependències</h2>
+<div class='content'><p>Primer, hem d'assegurar-nos que tenim instal·lades les biblioteques necessàries. Pots instal·lar-les utilitzant <code>pip</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgRmxhc2stV1RGIEZsYXNrLVVwbG9hZHM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install Flask-WTF Flask-Uploads</pre></div><div class='content'></div><h2>Configuració de l'Aplicació</h2>
+<div class='content'><p>Afegim la configuració necessària al nostre fitxer principal de l'aplicació Flask:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2sKZnJvbSBmbGFza193dGYgaW1wb3J0IEZsYXNrRm9ybQpmcm9tIGZsYXNrX3VwbG9hZHMgaW1wb3J0IFVwbG9hZFNldCwgY29uZmlndXJlX3VwbG9hZHMsIElNQUdFUwpmcm9tIGZsYXNrX3d0Zi5maWxlIGltcG9ydCBGaWxlRmllbGQsIEZpbGVBbGxvd2VkLCBGaWxlUmVxdWlyZWQKZnJvbSB3dGZvcm1zIGltcG9ydCBTdWJtaXRGaWVsZAoKYXBwID0gRmxhc2soX19uYW1lX18pCmFwcC5jb25maWdbJ1NFQ1JFVF9LRVknXSA9ICdteXNlY3JldGtleScKYXBwLmNvbmZpZ1snVVBMT0FERURfUEhPVE9TX0RFU1QnXSA9ICd1cGxvYWRzL3Bob3RvcycKCnBob3RvcyA9IFVwbG9hZFNldCgncGhvdG9zJywgSU1BR0VTKQpjb25maWd1cmVfdXBsb2FkcyhhcHAsIHBob3Rvcyk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask
+from flask_wtf import FlaskForm
+from flask_uploads import UploadSet, configure_uploads, IMAGES
+from flask_wtf.file import FileField, FileAllowed, FileRequired
+from wtforms import SubmitField
+
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'mysecretkey'
+app.config['UPLOADED_PHOTOS_DEST'] = 'uploads/photos'
+
+photos = UploadSet('photos', IMAGES)
+configure_uploads(app, photos)</pre></div><div class='content'></div><h1>2. Creació del Formulari de Càrrega</h1>
+<div class='content'><p>Utilitzarem <code>Flask-WTF</code> per crear un formulari que permeti als usuaris carregar fitxers:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgVXBsb2FkRm9ybShGbGFza0Zvcm0pOgogICAgcGhvdG8gPSBGaWxlRmllbGQoJ1Bob3RvJywgdmFsaWRhdG9ycz1bCiAgICAgICAgRmlsZVJlcXVpcmVkKCksCiAgICAgICAgRmlsZUFsbG93ZWQocGhvdG9zLCAnT25seSBpbWFnZXMgYXJlIGFsbG93ZWQhJykKICAgIF0pCiAgICBzdWJtaXQgPSBTdWJtaXRGaWVsZCgnVXBsb2FkJyk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class UploadForm(FlaskForm):
+    photo = FileField('Photo', validators=[
+        FileRequired(),
+        FileAllowed(photos, 'Only images are allowed!')
+    ])
+    submit = SubmitField('Upload')</pre></div><div class='content'></div><h1>3. Creació de la Ruta per a la Càrrega de Fitxers</h1>
+<div class='content'><p>Ara, crearem una ruta que renderitzi el formulari i gestioni la càrrega de fitxers:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgcmVuZGVyX3RlbXBsYXRlLCByZXF1ZXN0LCByZWRpcmVjdCwgdXJsX2ZvcgoKQGFwcC5yb3V0ZSgnL3VwbG9hZCcsIG1ldGhvZHM9WydHRVQnLCAnUE9TVCddKQpkZWYgdXBsb2FkKCk6CiAgICBmb3JtID0gVXBsb2FkRm9ybSgpCiAgICBpZiBmb3JtLnZhbGlkYXRlX29uX3N1Ym1pdCgpOgogICAgICAgIGZpbGVuYW1lID0gcGhvdG9zLnNhdmUoZm9ybS5waG90by5kYXRhKQogICAgICAgIHJldHVybiBmJ0ZpbGUgdXBsb2FkZWQgc3VjY2Vzc2Z1bGx5OiB7ZmlsZW5hbWV9JwogICAgcmV0dXJuIHJlbmRlcl90ZW1wbGF0ZSgndXBsb2FkLmh0bWwnLCBmb3JtPWZvcm0p"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import render_template, request, redirect, url_for
+
+@app.route('/upload', methods=['GET', 'POST'])
+def upload():
+    form = UploadForm()
+    if form.validate_on_submit():
+        filename = photos.save(form.photo.data)
+        return f'File uploaded successfully: {filename}'
+    return render_template('upload.html', form=form)</pre></div><div class='content'></div><h1>4. Creació de la Plantilla HTML</h1>
+<div class='content'><p>Creem una plantilla HTML per al formulari de càrrega de fitxers:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCEtLSB0ZW1wbGF0ZXMvdXBsb2FkLmh0bWwgLS0+CjwhRE9DVFlQRSBodG1sPgo8aHRtbCBsYW5nPSJlbiI+CjxoZWFkPgogICAgPG1ldGEgY2hhcnNldD0iVVRGLTgiPgogICAgPHRpdGxlPlVwbG9hZCBGaWxlPC90aXRsZT4KPC9oZWFkPgo8Ym9keT4KICAgIDxoMT5VcGxvYWQgYSBQaG90bzwvaDE+CiAgICA8Zm9ybSBtZXRob2Q9IlBPU1QiIGVuY3R5cGU9Im11bHRpcGFydC9mb3JtLWRhdGEiPgogICAgICAgIHt7IGZvcm0uaGlkZGVuX3RhZygpIH19CiAgICAgICAge3sgZm9ybS5waG90by5sYWJlbCB9fSB7eyBmb3JtLnBob3RvKCkgfX0KICAgICAgICB7eyBmb3JtLnN1Ym1pdCgpIH19CiAgICA8L2Zvcm0+CjwvYm9keT4KPC9odG1sPg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!-- templates/upload.html --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Upload File&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Upload a Photo&lt;/h1&gt;
+    &lt;form method=&quot;POST&quot; enctype=&quot;multipart/form-data&quot;&gt;
+        {{ form.hidden_tag() }}
+        {{ form.photo.label }} {{ form.photo() }}
+        {{ form.submit() }}
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'></div><h1>5. Prova de la Funcionalitat</h1>
+<div class='content'><p>Ara, podem executar la nostra aplicació Flask i visitar la ruta <code>/upload</code> per veure el formulari de càrrega de fitxers en acció. Quan carreguem un fitxer, aquest es desarà a la carpeta <code>uploads/photos</code>.</p>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici</h2>
+<div class='content'><ol>
+<li>Modifica l'aplicació per permetre la càrrega de múltiples tipus de fitxers (no només imatges).</li>
+<li>Afegeix una funcionalitat que mostri una llista de fitxers carregats a la pàgina principal.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><ol>
+<li>
+<p>Per permetre la càrrega de múltiples tipus de fitxers, podem modificar la configuració de <code>UploadSet</code>:</p>
+<pre><code class="language-python">files = UploadSet('files', ('txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'))
+app.config['UPLOADED_FILES_DEST'] = 'uploads/files'
+configure_uploads(app, files)
+</code></pre>
+<p>I el formulari:</p>
+<pre><code class="language-python">class UploadForm(FlaskForm):
+    file = FileField('File', validators=[
+        FileRequired(),
+        FileAllowed(files, 'Only specific file types are allowed!')
+    ])
+    submit = SubmitField('Upload')
+</code></pre>
+</li>
+<li>
+<p>Per mostrar una llista de fitxers carregats, podem modificar la ruta principal:</p>
+<pre><code class="language-python">import os
+
+@app.route('/')
+def index():
+    files_list = os.listdir(app.config['UPLOADED_FILES_DEST'])
+    return render_template('index.html', files=files_list)
+</code></pre>
+<p>I la plantilla HTML:</p>
+<pre><code class="language-html">&lt;!-- templates/index.html --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;Uploaded Files&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Uploaded Files&lt;/h1&gt;
+    &lt;ul&gt;
+        {% for file in files %}
+            &lt;li&gt;{{ file }}&lt;/li&gt;
+        {% endfor %}
+    &lt;/ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com permetre als usuaris carregar fitxers a la nostra aplicació Flask utilitzant <code>Flask-WTF</code> i <code>Flask-Uploads</code>. Hem configurat l'aplicació, creat un formulari de càrrega, gestionat la càrrega de fitxers i mostrat els fitxers carregats. Aquesta funcionalitat és essencial per a moltes aplicacions web i proporciona una base sòlida per a futures millores i personalitzacions.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-02-form-validation-wtforms' title="Validació de Formularis amb WTForms">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-intro-flask-sqlalchemy' title="Introducció a Flask-SQLAlchemy">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

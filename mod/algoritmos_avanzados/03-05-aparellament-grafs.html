@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algoritmes d'Aparellament en Grafs</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/algoritmos_avanzados/03-05-emparejamiento-grafos" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/algoritmos_avanzados/03-05-aparellament-grafs" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/algoritmos_avanzados/03-05-graph-matching" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/algoritmos_avanzados/03-05-aparellament-grafs" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/algoritmos_avanzados/03-05-aparellament-grafs" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-04-flux-maxim' title="Algoritmes de Flux Màxim">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Algoritmes d'Aparellament en Grafs</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-cerca-binaria' title="Cerca Binària i Variants">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Els algoritmes d'aparellament en grafs són tècniques utilitzades per trobar conjunts de parelles d'arestes en un graf, de manera que no comparteixin cap vèrtex. Aquest tipus de problemes són comuns en diverses aplicacions, com ara l'assignació de tasques, la planificació de recursos i la resolució de problemes de xarxes.</p>
+</div><h1>Conceptes Bàsics</h1>
+<div class='content'></div><h2>Definicions Clau</h2>
+<div class='content'><ul>
+<li><strong>Aparellament (Matching)</strong>: Un conjunt d'arestes en un graf on cap parell d'arestes comparteix un vèrtex comú.</li>
+<li><strong>Aparellament màxim (Maximum Matching)</strong>: Un aparellament que conté el nombre màxim possible d'arestes.</li>
+<li><strong>Aparellament perfecte (Perfect Matching)</strong>: Un aparellament on tots els vèrtexs del graf estan aparellats.</li>
+<li><strong>Aparellament maximal (Maximal Matching)</strong>: Un aparellament que no es pot ampliar afegint més arestes.</li>
+</ul>
+</div><h2>Exemples</h2>
+<div class='content'><p>Considerem el següent graf:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QSAtIEIKfCAgIHwKQyAtIEQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>A - B
+|   |
+C - D</pre></div><div class='content'><ul>
+<li>Un <strong>aparellament</strong> podria ser {A-B, C-D}.</li>
+<li>Un <strong>aparellament màxim</strong> també podria ser {A-B, C-D}, ja que no hi ha més arestes per afegir.</li>
+<li>Un <strong>aparellament perfecte</strong> és el mateix que l'aparellament màxim en aquest cas.</li>
+<li>Un <strong>aparellament maximal</strong> podria ser {A-B}, ja que no es pot afegir més arestes sense compartir vèrtexs.</li>
+</ul>
+</div><h1>Algoritmes Clau</h1>
+<div class='content'></div><h2>Algoritme de Greedy</h2>
+<div class='content'><p>L'algoritme de Greedy és una tècnica senzilla per trobar un aparellament maximal. No garanteix trobar l'aparellament màxim, però és ràpid i fàcil d'implementar.</p>
+<h4>Pseudocodi</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("MS4gSW5pY2lhbGl0emEgbCdhcGFyZWxsYW1lbnQgTSBjb20gYSBidWl0LgoyLiBPcmRlbmEgbGVzIGFyZXN0ZXMgZGVsIGdyYWYgZW4gb3JkcmUgYXJiaXRyYXJpLgozLiBQZXIgYSBjYWRhIGFyZXN0YSAodSwgdikgZW4gbCdvcmRyZToKICAgYS4gU2kgbmkgdSBuaSB2IGVzdGFuIGFwYXJlbGxhdHMgZW4gTToKICAgICAgaS4gQWZlZ2VpeCAodSwgdikgYSBNLgo0LiBSZXRvcm5hIE0u"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>1. Inicialitza l'aparellament M com a buit.
+2. Ordena les arestes del graf en ordre arbitrari.
+3. Per a cada aresta (u, v) en l'ordre:
+   a. Si ni u ni v estan aparellats en M:
+      i. Afegeix (u, v) a M.
+4. Retorna M.</pre></div><div class='content'><h4>Implementació en Python</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIGdyZWVkeV9tYXRjaGluZyhncmFwaCk6CiAgICBtYXRjaGluZyA9IHNldCgpCiAgICBtYXRjaGVkX3ZlcnRpY2VzID0gc2V0KCkKICAgIAogICAgZm9yIHUsIHYgaW4gZ3JhcGguZWRnZXMoKToKICAgICAgICBpZiB1IG5vdCBpbiBtYXRjaGVkX3ZlcnRpY2VzIGFuZCB2IG5vdCBpbiBtYXRjaGVkX3ZlcnRpY2VzOgogICAgICAgICAgICBtYXRjaGluZy5hZGQoKHUsIHYpKQogICAgICAgICAgICBtYXRjaGVkX3ZlcnRpY2VzLmFkZCh1KQogICAgICAgICAgICBtYXRjaGVkX3ZlcnRpY2VzLmFkZCh2KQogICAgCiAgICByZXR1cm4gbWF0Y2hpbmcKCiMgRXhlbXBsZSBkJ8O6cwppbXBvcnQgbmV0d29ya3ggYXMgbngKCkcgPSBueC5HcmFwaCgpCkcuYWRkX2VkZ2VzX2Zyb20oWygxLCAyKSwgKDIsIDMpLCAoMywgNCksICg0LCAxKSwgKDEsIDMpXSkKcHJpbnQoZ3JlZWR5X21hdGNoaW5nKEcpKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def greedy_matching(graph):
+    matching = set()
+    matched_vertices = set()
+    
+    for u, v in graph.edges():
+        if u not in matched_vertices and v not in matched_vertices:
+            matching.add((u, v))
+            matched_vertices.add(u)
+            matched_vertices.add(v)
+    
+    return matching
+
+# Exemple d'&uacute;s
+import networkx as nx
+
+G = nx.Graph()
+G.add_edges_from([(1, 2), (2, 3), (3, 4), (4, 1), (1, 3)])
+print(greedy_matching(G))</pre></div><div class='content'></div><h2>Algoritme de Kuhn-Munkres (Hungarian Algorithm)</h2>
+<div class='content'><p>Aquest algoritme és utilitzat per trobar l'aparellament màxim en grafs bipartits. És més complex que l'algoritme de Greedy, però garanteix trobar l'aparellament màxim.</p>
+<h4>Pseudocodi</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("MS4gSW5pY2lhbGl0emEgbCdhcGFyZWxsYW1lbnQgTSBjb20gYSBidWl0LgoyLiBQZXIgYSBjYWRhIHbDqHJ0ZXggdSBlbiBlbCBjb25qdW50IFU6CiAgIGEuIFNpIHUgbm8gZXN0w6AgYXBhcmVsbGF0OgogICAgICBpLiBSZWFsaXR6YSB1bmEgY2VyY2EgYXVnbWVudGFudCBwZXIgdHJvYmFyIHVuIGNhbcOtIGF1Z21lbnRhbnQuCiAgICAgIGlpLiBTaSBlcyB0cm9iYSB1biBjYW3DrSBhdWdtZW50YW50LCBhY3R1YWxpdHphIE0uCjMuIFJldG9ybmEgTS4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>1. Inicialitza l'aparellament M com a buit.
+2. Per a cada v&egrave;rtex u en el conjunt U:
+   a. Si u no est&agrave; aparellat:
+      i. Realitza una cerca augmentant per trobar un cam&iacute; augmentant.
+      ii. Si es troba un cam&iacute; augmentant, actualitza M.
+3. Retorna M.</pre></div><div class='content'><h4>Implementació en Python</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIGJwbSh1LCBtYXRjaFIsIHNlZW4sIGJwR3JhcGgpOgogICAgZm9yIHYgaW4gcmFuZ2UobGVuKGJwR3JhcGhbMF0pKToKICAgICAgICBpZiBicEdyYXBoW3VdW3ZdIGFuZCBub3Qgc2Vlblt2XToKICAgICAgICAgICAgc2Vlblt2XSA9IFRydWUKICAgICAgICAgICAgaWYgbWF0Y2hSW3ZdID09IC0xIG9yIGJwbShtYXRjaFJbdl0sIG1hdGNoUiwgc2VlbiwgYnBHcmFwaCk6CiAgICAgICAgICAgICAgICBtYXRjaFJbdl0gPSB1CiAgICAgICAgICAgICAgICByZXR1cm4gVHJ1ZQogICAgcmV0dXJuIEZhbHNlCgpkZWYgbWF4QlBNKGJwR3JhcGgpOgogICAgbWF0Y2hSID0gWy0xXSAqIGxlbihicEdyYXBoWzBdKQogICAgcmVzdWx0ID0gMAogICAgZm9yIGkgaW4gcmFuZ2UobGVuKGJwR3JhcGgpKToKICAgICAgICBzZWVuID0gW0ZhbHNlXSAqIGxlbihicEdyYXBoWzBdKQogICAgICAgIGlmIGJwbShpLCBtYXRjaFIsIHNlZW4sIGJwR3JhcGgpOgogICAgICAgICAgICByZXN1bHQgKz0gMQogICAgcmV0dXJuIHJlc3VsdAoKIyBFeGVtcGxlIGQnw7pzCmJwR3JhcGggPSBbWzAsIDEsIDEsIDAsIDAsIDBdLAogICAgICAgICAgIFsxLCAwLCAwLCAxLCAwLCAwXSwKICAgICAgICAgICBbMCwgMCwgMSwgMCwgMCwgMV0sCiAgICAgICAgICAgWzAsIDAsIDAsIDAsIDEsIDBdLAogICAgICAgICAgIFswLCAwLCAwLCAxLCAwLCAwXSwKICAgICAgICAgICBbMCwgMCwgMCwgMCwgMCwgMV1dCgpwcmludCgiRWwgbm9tYnJlIG3DoHhpbSBkJ2FwYXJlbGxhbWVudHMgw6lzIiwgbWF4QlBNKGJwR3JhcGgpKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def bpm(u, matchR, seen, bpGraph):
+    for v in range(len(bpGraph[0])):
+        if bpGraph[u][v] and not seen[v]:
+            seen[v] = True
+            if matchR[v] == -1 or bpm(matchR[v], matchR, seen, bpGraph):
+                matchR[v] = u
+                return True
+    return False
+
+def maxBPM(bpGraph):
+    matchR = [-1] * len(bpGraph[0])
+    result = 0
+    for i in range(len(bpGraph)):
+        seen = [False] * len(bpGraph[0])
+        if bpm(i, matchR, seen, bpGraph):
+            result += 1
+    return result
+
+# Exemple d'&uacute;s
+bpGraph = [[0, 1, 1, 0, 0, 0],
+           [1, 0, 0, 1, 0, 0],
+           [0, 0, 1, 0, 0, 1],
+           [0, 0, 0, 0, 1, 0],
+           [0, 0, 0, 1, 0, 0],
+           [0, 0, 0, 0, 0, 1]]
+
+print(&quot;El nombre m&agrave;xim d'aparellaments &eacute;s&quot;, maxBPM(bpGraph))</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Aparellament Greedy</h2>
+<div class='content'><p>Donat el següent graf, implementa l'algoritme de Greedy per trobar un aparellament maximal.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QSAtIEIKfCAgIHwKQyAtIEQKfCAgIHwKRSAtIEY="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>A - B
+|   |
+C - D
+|   |
+E - F</pre></div><div class='content'></div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RyA9IG54LkdyYXBoKCkKRy5hZGRfZWRnZXNfZnJvbShbKCdBJywgJ0InKSwgKCdBJywgJ0MnKSwgKCdDJywgJ0QnKSwgKCdEJywgJ0UnKSwgKCdFJywgJ0YnKV0pCnByaW50KGdyZWVkeV9tYXRjaGluZyhHKSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>G = nx.Graph()
+G.add_edges_from([('A', 'B'), ('A', 'C'), ('C', 'D'), ('D', 'E'), ('E', 'F')])
+print(greedy_matching(G))</pre></div><div class='content'></div><h2>Exercici 2: Aparellament Màxim en Graf Bipartit</h2>
+<div class='content'><p>Donat el següent graf bipartit, implementa l'algoritme de Kuhn-Munkres per trobar l'aparellament màxim.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("VSA9IHsxLCAyLCAzfQpWID0gezQsIDUsIDZ9CkVkZ2VzID0geygxLCA0KSwgKDEsIDUpLCAoMiwgNSksICgzLCA2KX0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>U = {1, 2, 3}
+V = {4, 5, 6}
+Edges = {(1, 4), (1, 5), (2, 5), (3, 6)}</pre></div><div class='content'></div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YnBHcmFwaCA9IFtbMSwgMSwgMF0sCiAgICAgICAgICAgWzAsIDEsIDBdLAogICAgICAgICAgIFswLCAwLCAxXV0KCnByaW50KCJFbCBub21icmUgbcOgeGltIGQnYXBhcmVsbGFtZW50cyDDqXMiLCBtYXhCUE0oYnBHcmFwaCkp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>bpGraph = [[1, 1, 0],
+           [0, 1, 0],
+           [0, 0, 1]]
+
+print(&quot;El nombre m&agrave;xim d'aparellaments &eacute;s&quot;, maxBPM(bpGraph))</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem explorat els conceptes bàsics dels algoritmes d'aparellament en grafs, incloent-hi les definicions clau i els algoritmes més utilitzats com el Greedy i el Kuhn-Munkres. També hem proporcionat exemples pràctics i exercicis per reforçar els conceptes apresos. Amb aquests coneixements, estàs preparat per abordar problemes d'aparellament en grafs en aplicacions reals.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-04-flux-maxim' title="Algoritmes de Flux Màxim">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-cerca-binaria' title="Cerca Binària i Variants">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

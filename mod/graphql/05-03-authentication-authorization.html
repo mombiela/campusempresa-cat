@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticació i autorització</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/graphql/05-03-authentication-authorization" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/graphql/05-03-authentication-authorization" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/graphql/05-03-authentication-authorization" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/graphql/05-03-authentication-authorization" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/graphql/05-03-authentication-authorization" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-02-rate-limiting' title="Limitació de velocitat">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Autenticació i autorització</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-04-persisted-queries' title="Consultes persistents">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem com implementar l'autenticació i l'autorització en un servidor GraphQL. Aquests dos conceptes són fonamentals per assegurar que només els usuaris autoritzats puguin accedir a les dades i funcionalitats de la teva aplicació.</p>
+</div><h1>Continguts</h1>
+<div class='content'><ol>
+<li><strong>Introducció a l'autenticació i autorització</strong></li>
+<li><strong>Implementació de l'autenticació</strong></li>
+<li><strong>Implementació de l'autorització</strong></li>
+<li><strong>Exemples pràctics</strong></li>
+<li><strong>Exercicis pràctics</strong></li>
+</ol>
+</div><h1>1. Introducció a l'autenticació i autorització</h1>
+<div class='content'></div><h2>Autenticació</h2>
+<div class='content'><p>L'autenticació és el procés de verificar la identitat d'un usuari. Això es fa normalment mitjançant credencials com ara noms d'usuari i contrasenyes, tokens JWT (JSON Web Tokens), o OAuth.</p>
+</div><h2>Autorització</h2>
+<div class='content'><p>L'autorització és el procés de determinar si un usuari autenticat té permís per accedir a un recurs o realitzar una acció específica. Això es fa normalment mitjançant rols i permisos.</p>
+</div><h1>2. Implementació de l'autenticació</h1>
+<div class='content'></div><h2>Utilitzant JWT per a l'autenticació</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Instal·lació de dependències</strong></p>
+<pre><code class="language-bash">npm install jsonwebtoken bcryptjs
+</code></pre>
+</li>
+<li>
+<p><strong>Creació de tokens JWT</strong></p>
+<pre><code class="language-javascript">const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+
+const SECRET_KEY = 'your_secret_key';
+
+// Funció per generar un token JWT
+function generateToken(user) {
+  return jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '1h' });
+}
+
+// Funció per verificar un token JWT
+function verifyToken(token) {
+  try {
+    return jwt.verify(token, SECRET_KEY);
+  } catch (error) {
+    throw new Error('Invalid token');
+  }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Autenticació d'usuaris</strong></p>
+<pre><code class="language-javascript">const users = []; // Simulació d'una base de dades d'usuaris
+
+async function login(email, password) {
+  const user = users.find(user =&gt; user.email === email);
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
+    throw new Error('Invalid password');
+  }
+
+  return generateToken(user);
+}
+
+async function register(email, password) {
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = { id: users.length + 1, email, password: hashedPassword };
+  users.push(newUser);
+  return generateToken(newUser);
+}
+</code></pre>
+</li>
+</ol>
+</div><h1>3. Implementació de l'autorització</h1>
+<div class='content'></div><h2>Utilitzant rols i permisos</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Definició de rols i permisos</strong></p>
+<pre><code class="language-javascript">const roles = {
+  ADMIN: 'ADMIN',
+  USER: 'USER'
+};
+
+const permissions = {
+  READ: 'READ',
+  WRITE: 'WRITE'
+};
+
+const rolePermissions = {
+  [roles.ADMIN]: [permissions.READ, permissions.WRITE],
+  [roles.USER]: [permissions.READ]
+};
+</code></pre>
+</li>
+<li>
+<p><strong>Verificació de permisos</strong></p>
+<pre><code class="language-javascript">function checkPermission(user, permission) {
+  const userPermissions = rolePermissions[user.role];
+  if (!userPermissions.includes(permission)) {
+    throw new Error('Permission denied');
+  }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Integració amb resolvers de GraphQL</strong></p>
+<pre><code class="language-javascript">const resolvers = {
+  Query: {
+    getUser: (parent, args, context) =&gt; {
+      const user = verifyToken(context.token);
+      checkPermission(user, permissions.READ);
+      return users.find(u =&gt; u.id === args.id);
+    }
+  },
+  Mutation: {
+    createUser: (parent, args, context) =&gt; {
+      const user = verifyToken(context.token);
+      checkPermission(user, permissions.WRITE);
+      return register(args.email, args.password);
+    }
+  }
+};
+</code></pre>
+</li>
+</ol>
+</div><h1>4. Exemples pràctics</h1>
+<div class='content'></div><h2>Exemple de resolució d'una consulta amb autenticació i autorització</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgeyBBcG9sbG9TZXJ2ZXIsIGdxbCB9ID0gcmVxdWlyZSgnYXBvbGxvLXNlcnZlcicpOwoKY29uc3QgdHlwZURlZnMgPSBncWxgCiAgdHlwZSBVc2VyIHsKICAgIGlkOiBJRCEKICAgIGVtYWlsOiBTdHJpbmchCiAgfQoKICB0eXBlIFF1ZXJ5IHsKICAgIGdldFVzZXIoaWQ6IElEISk6IFVzZXIKICB9CgogIHR5cGUgTXV0YXRpb24gewogICAgbG9naW4oZW1haWw6IFN0cmluZyEsIHBhc3N3b3JkOiBTdHJpbmchKTogU3RyaW5nCiAgICByZWdpc3RlcihlbWFpbDogU3RyaW5nISwgcGFzc3dvcmQ6IFN0cmluZyEpOiBTdHJpbmcKICB9CmA7Cgpjb25zdCByZXNvbHZlcnMgPSB7CiAgUXVlcnk6IHsKICAgIGdldFVzZXI6IChwYXJlbnQsIGFyZ3MsIGNvbnRleHQpID0+IHsKICAgICAgY29uc3QgdXNlciA9IHZlcmlmeVRva2VuKGNvbnRleHQudG9rZW4pOwogICAgICBjaGVja1Blcm1pc3Npb24odXNlciwgcGVybWlzc2lvbnMuUkVBRCk7CiAgICAgIHJldHVybiB1c2Vycy5maW5kKHUgPT4gdS5pZCA9PT0gYXJncy5pZCk7CiAgICB9CiAgfSwKICBNdXRhdGlvbjogewogICAgbG9naW46IGFzeW5jIChwYXJlbnQsIGFyZ3MpID0+IHsKICAgICAgcmV0dXJuIGF3YWl0IGxvZ2luKGFyZ3MuZW1haWwsIGFyZ3MucGFzc3dvcmQpOwogICAgfSwKICAgIHJlZ2lzdGVyOiBhc3luYyAocGFyZW50LCBhcmdzKSA9PiB7CiAgICAgIHJldHVybiBhd2FpdCByZWdpc3RlcihhcmdzLmVtYWlsLCBhcmdzLnBhc3N3b3JkKTsKICAgIH0KICB9Cn07Cgpjb25zdCBzZXJ2ZXIgPSBuZXcgQXBvbGxvU2VydmVyKHsKICB0eXBlRGVmcywKICByZXNvbHZlcnMsCiAgY29udGV4dDogKHsgcmVxIH0pID0+IHsKICAgIGNvbnN0IHRva2VuID0gcmVxLmhlYWRlcnMuYXV0aG9yaXphdGlvbiB8fCAnJzsKICAgIHJldHVybiB7IHRva2VuIH07CiAgfQp9KTsKCnNlcnZlci5saXN0ZW4oKS50aGVuKCh7IHVybCB9KSA9PiB7CiAgY29uc29sZS5sb2coYFNlcnZlciByZWFkeSBhdCAke3VybH1gKTsKfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const { ApolloServer, gql } = require('apollo-server');
+
+const typeDefs = gql`
+  type User {
+    id: ID!
+    email: String!
+  }
+
+  type Query {
+    getUser(id: ID!): User
+  }
+
+  type Mutation {
+    login(email: String!, password: String!): String
+    register(email: String!, password: String!): String
+  }
+`;
+
+const resolvers = {
+  Query: {
+    getUser: (parent, args, context) =&gt; {
+      const user = verifyToken(context.token);
+      checkPermission(user, permissions.READ);
+      return users.find(u =&gt; u.id === args.id);
+    }
+  },
+  Mutation: {
+    login: async (parent, args) =&gt; {
+      return await login(args.email, args.password);
+    },
+    register: async (parent, args) =&gt; {
+      return await register(args.email, args.password);
+    }
+  }
+};
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  context: ({ req }) =&gt; {
+    const token = req.headers.authorization || '';
+    return { token };
+  }
+});
+
+server.listen().then(({ url }) =&gt; {
+  console.log(`Server ready at ${url}`);
+});</pre></div><div class='content'></div><h1>5. Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Implementar autenticació amb JWT</h2>
+<div class='content'><ol>
+<li>Crea una funció per generar tokens JWT.</li>
+<li>Crea una funció per verificar tokens JWT.</li>
+<li>Implementa la funció de registre d'usuaris amb hash de contrasenya.</li>
+</ol>
+</div><h2>Exercici 2: Implementar autorització basada en rols</h2>
+<div class='content'><ol>
+<li>Defineix rols i permisos.</li>
+<li>Crea una funció per verificar permisos.</li>
+<li>Integra la verificació de permisos en els resolvers de GraphQL.</li>
+</ol>
+</div><h2>Solucions</h2>
+<div class='content'><h4>Solució Exercici 1</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRnVuY2nDsyBwZXIgZ2VuZXJhciB1biB0b2tlbiBKV1QKZnVuY3Rpb24gZ2VuZXJhdGVUb2tlbih1c2VyKSB7CiAgcmV0dXJuIGp3dC5zaWduKHsgaWQ6IHVzZXIuaWQsIGVtYWlsOiB1c2VyLmVtYWlsIH0sIFNFQ1JFVF9LRVksIHsgZXhwaXJlc0luOiAnMWgnIH0pOwp9CgovLyBGdW5jacOzIHBlciB2ZXJpZmljYXIgdW4gdG9rZW4gSldUCmZ1bmN0aW9uIHZlcmlmeVRva2VuKHRva2VuKSB7CiAgdHJ5IHsKICAgIHJldHVybiBqd3QudmVyaWZ5KHRva2VuLCBTRUNSRVRfS0VZKTsKICB9IGNhdGNoIChlcnJvcikgewogICAgdGhyb3cgbmV3IEVycm9yKCdJbnZhbGlkIHRva2VuJyk7CiAgfQp9CgovLyBGdW5jacOzIGRlIHJlZ2lzdHJlIGQndXN1YXJpcwphc3luYyBmdW5jdGlvbiByZWdpc3RlcihlbWFpbCwgcGFzc3dvcmQpIHsKICBjb25zdCBoYXNoZWRQYXNzd29yZCA9IGF3YWl0IGJjcnlwdC5oYXNoKHBhc3N3b3JkLCAxMCk7CiAgY29uc3QgbmV3VXNlciA9IHsgaWQ6IHVzZXJzLmxlbmd0aCArIDEsIGVtYWlsLCBwYXNzd29yZDogaGFzaGVkUGFzc3dvcmQgfTsKICB1c2Vycy5wdXNoKG5ld1VzZXIpOwogIHJldHVybiBnZW5lcmF0ZVRva2VuKG5ld1VzZXIpOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Funci&oacute; per generar un token JWT
+function generateToken(user) {
+  return jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '1h' });
+}
+
+// Funci&oacute; per verificar un token JWT
+function verifyToken(token) {
+  try {
+    return jwt.verify(token, SECRET_KEY);
+  } catch (error) {
+    throw new Error('Invalid token');
+  }
+}
+
+// Funci&oacute; de registre d'usuaris
+async function register(email, password) {
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const newUser = { id: users.length + 1, email, password: hashedPassword };
+  users.push(newUser);
+  return generateToken(newUser);
+}</pre></div><div class='content'><h4>Solució Exercici 2</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRGVmaW5pY2nDsyBkZSByb2xzIGkgcGVybWlzb3MKY29uc3Qgcm9sZXMgPSB7CiAgQURNSU46ICdBRE1JTicsCiAgVVNFUjogJ1VTRVInCn07Cgpjb25zdCBwZXJtaXNzaW9ucyA9IHsKICBSRUFEOiAnUkVBRCcsCiAgV1JJVEU6ICdXUklURScKfTsKCmNvbnN0IHJvbGVQZXJtaXNzaW9ucyA9IHsKICBbcm9sZXMuQURNSU5dOiBbcGVybWlzc2lvbnMuUkVBRCwgcGVybWlzc2lvbnMuV1JJVEVdLAogIFtyb2xlcy5VU0VSXTogW3Blcm1pc3Npb25zLlJFQURdCn07CgovLyBGdW5jacOzIHBlciB2ZXJpZmljYXIgcGVybWlzb3MKZnVuY3Rpb24gY2hlY2tQZXJtaXNzaW9uKHVzZXIsIHBlcm1pc3Npb24pIHsKICBjb25zdCB1c2VyUGVybWlzc2lvbnMgPSByb2xlUGVybWlzc2lvbnNbdXNlci5yb2xlXTsKICBpZiAoIXVzZXJQZXJtaXNzaW9ucy5pbmNsdWRlcyhwZXJtaXNzaW9uKSkgewogICAgdGhyb3cgbmV3IEVycm9yKCdQZXJtaXNzaW9uIGRlbmllZCcpOwogIH0KfQoKLy8gSW50ZWdyYWNpw7MgYW1iIHJlc29sdmVycyBkZSBHcmFwaFFMCmNvbnN0IHJlc29sdmVycyA9IHsKICBRdWVyeTogewogICAgZ2V0VXNlcjogKHBhcmVudCwgYXJncywgY29udGV4dCkgPT4gewogICAgICBjb25zdCB1c2VyID0gdmVyaWZ5VG9rZW4oY29udGV4dC50b2tlbik7CiAgICAgIGNoZWNrUGVybWlzc2lvbih1c2VyLCBwZXJtaXNzaW9ucy5SRUFEKTsKICAgICAgcmV0dXJuIHVzZXJzLmZpbmQodSA9PiB1LmlkID09PSBhcmdzLmlkKTsKICAgIH0KICB9LAogIE11dGF0aW9uOiB7CiAgICBjcmVhdGVVc2VyOiAocGFyZW50LCBhcmdzLCBjb250ZXh0KSA9PiB7CiAgICAgIGNvbnN0IHVzZXIgPSB2ZXJpZnlUb2tlbihjb250ZXh0LnRva2VuKTsKICAgICAgY2hlY2tQZXJtaXNzaW9uKHVzZXIsIHBlcm1pc3Npb25zLldSSVRFKTsKICAgICAgcmV0dXJuIHJlZ2lzdGVyKGFyZ3MuZW1haWwsIGFyZ3MucGFzc3dvcmQpOwogICAgfQogIH0KfTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Definici&oacute; de rols i permisos
+const roles = {
+  ADMIN: 'ADMIN',
+  USER: 'USER'
+};
+
+const permissions = {
+  READ: 'READ',
+  WRITE: 'WRITE'
+};
+
+const rolePermissions = {
+  [roles.ADMIN]: [permissions.READ, permissions.WRITE],
+  [roles.USER]: [permissions.READ]
+};
+
+// Funci&oacute; per verificar permisos
+function checkPermission(user, permission) {
+  const userPermissions = rolePermissions[user.role];
+  if (!userPermissions.includes(permission)) {
+    throw new Error('Permission denied');
+  }
+}
+
+// Integraci&oacute; amb resolvers de GraphQL
+const resolvers = {
+  Query: {
+    getUser: (parent, args, context) =&gt; {
+      const user = verifyToken(context.token);
+      checkPermission(user, permissions.READ);
+      return users.find(u =&gt; u.id === args.id);
+    }
+  },
+  Mutation: {
+    createUser: (parent, args, context) =&gt; {
+      const user = verifyToken(context.token);
+      checkPermission(user, permissions.WRITE);
+      return register(args.email, args.password);
+    }
+  }
+};</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com implementar l'autenticació i l'autorització en un servidor GraphQL utilitzant JWT per a l'autenticació i rols i permisos per a l'autorització. Hem vist exemples pràctics i hem realitzat exercicis per reforçar els conceptes apresos. Amb aquests coneixements, estàs preparat per assegurar la teva aplicació GraphQL i protegir les teves dades de manera efectiva.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-02-rate-limiting' title="Limitació de velocitat">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-04-persisted-queries' title="Consultes persistents">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

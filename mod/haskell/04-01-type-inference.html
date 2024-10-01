@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inferència de Tipus</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/haskell/04-01-type-inference" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/haskell/04-01-type-inference" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/haskell/04-01-type-inference" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/haskell/04-01-type-inference" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/haskell/04-01-type-inference" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-04-list-comprehensions' title="Comprensions de Llistes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Inferència de Tipus</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-02-type-classes' title="Classes de Tipus">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>La inferència de tipus és una característica poderosa de Haskell que permet al compilador deduir automàticament els tipus de les expressions sense necessitat que el programador els especifiqui explícitament. Això fa que el codi sigui més concís i llegible, alhora que manté la seguretat de tipus.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'></div><h2>1. Tipus Implícits vs. Tipus Explícits</h2>
+<div class='content'><ul>
+<li><strong>Tipus Implícits</strong>: Haskell pot deduir el tipus d'una expressió sense que el programador l'especifiqui.</li>
+<li><strong>Tipus Explícits</strong>: El programador pot especificar el tipus d'una expressió de manera explícita.</li>
+</ul>
+</div><h2>2. El Sistema de Tipus de Haskell</h2>
+<div class='content'><ul>
+<li><strong>Tipus Primitus</strong>: <code>Int</code>, <code>Float</code>, <code>Char</code>, <code>Bool</code>, etc.</li>
+<li><strong>Tipus Compostos</strong>: Llistes <code>[a]</code>, tuples <code>(a, b)</code>, etc.</li>
+<li><strong>Tipus Paramètrics</strong>: Tipus que depenen d'un o més paràmetres, com <code>Maybe a</code>, <code>Either a b</code>.</li>
+</ul>
+</div><h2>3. El Compilador GHC</h2>
+<div class='content'><ul>
+<li>GHC (Glasgow Haskell Compiler) és el compilador més utilitzat per Haskell i és capaç de deduir els tipus de la majoria de les expressions.</li>
+</ul>
+</div><h1>Exemples Pràctics</h1>
+<div class='content'></div><h2>Exemple 1: Inferència de Tipus Bàsica</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YWRkIDo6IEludCAtPiBJbnQgLT4gSW50CmFkZCB4IHkgPSB4ICsgeQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>add :: Int -&gt; Int -&gt; Int
+add x y = x + y</pre></div><div class='content'><p>En aquest cas, hem especificat explícitament el tipus de la funció <code>add</code>. No obstant això, Haskell podria deduir el tipus automàticament:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YWRkIHggeSA9IHggKyB5"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>add x y = x + y</pre></div><div class='content'><p>El compilador deduirà que <code>add</code> té el tipus <code>Int -&gt; Int -&gt; Int</code> basant-se en l'operació de suma.</p>
+</div><h2>Exemple 2: Inferència de Tipus en Llistes</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnVtYmVycyA9IFsxLCAyLCAzLCA0LCA1XQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>numbers = [1, 2, 3, 4, 5]</pre></div><div class='content'><p>Haskell deduirà que <code>numbers</code> és una llista d'enters <code>[Int]</code>.</p>
+</div><h2>Exemple 3: Funcions d'Ordre Superior</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBwbHlUd2ljZSBmIHggPSBmIChmIHgp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>applyTwice f x = f (f x)</pre></div><div class='content'><p>El compilador deduirà que <code>applyTwice</code> té el tipus <code>(a -&gt; a) -&gt; a -&gt; a</code>.</p>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Deducció de Tipus</h2>
+<div class='content'><p>Quin tipus deduirà Haskell per a les següents expressions?</p>
+<ol>
+<li><code>double x = x * 2</code></li>
+<li><code>pair x y = (x, y)</code></li>
+<li><code>isEven n = n </code>mod<code> 2 == 0</code></li>
+</ol>
+</div><h2>Solucions</h2>
+<div class='content'><ol>
+<li><code>double :: Num a =&gt; a -&gt; a</code></li>
+<li><code>pair :: a -&gt; b -&gt; (a, b)</code></li>
+<li><code>isEven :: Integral a =&gt; a -&gt; Bool</code></li>
+</ol>
+</div><h1>Errors Comuns i Consells</h1>
+<div class='content'></div><h2>Error 1: Tipus Incompatibles</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YWRkIHggeSA9IHggKyB5Ci0tIEVycm9yOiBObyBpbnN0YW5jZSBmb3IgKE51bSBbQ2hhcl0pIGFyaXNpbmcgZnJvbSBhIHVzZSBvZiDigJgr4oCZ"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>add x y = x + y
+-- Error: No instance for (Num [Char]) arising from a use of &lsquo;+&rsquo;</pre></div><div class='content'><p><strong>Solució</strong>: Assegura't que els tipus de les variables siguin compatibles amb les operacions que estàs realitzant.</p>
+</div><h2>Error 2: Tipus Ambigus</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YW1iaWd1b3VzIHggPSBzaG93IHgKLS0gRXJyb3I6IEFtYmlndW91cyB0eXBlIHZhcmlhYmxlIOKAmGEw4oCZIGFyaXNpbmcgZnJvbSBhIHVzZSBvZiDigJhzaG934oCZ"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ambiguous x = show x
+-- Error: Ambiguous type variable &lsquo;a0&rsquo; arising from a use of &lsquo;show&rsquo;</pre></div><div class='content'><p><strong>Solució</strong>: Especifica el tipus de la variable per evitar ambigüitats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YW1iaWd1b3VzICh4IDo6IEludCkgPSBzaG93IHg="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ambiguous (x :: Int) = show x</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après sobre la inferència de tipus en Haskell, una característica que permet al compilador deduir automàticament els tipus de les expressions. Hem vist exemples pràctics i hem resolt exercicis per reforçar els conceptes apresos. La inferència de tipus fa que el codi sigui més concís i llegible, alhora que manté la seguretat de tipus.</p>
+<p>En el següent tema, explorarem les <strong>Classes de Tipus</strong>, una característica avançada que permet definir comportaments comuns per a diferents tipus de dades.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-04-list-comprehensions' title="Comprensions de Llistes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-02-type-classes' title="Classes de Tipus">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

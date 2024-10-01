@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flux de treball d'una feina MapReduce</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/hadoop/04-02-mapreduce-job-workflow" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/hadoop/04-02-mapreduce-job-workflow" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/hadoop/04-02-mapreduce-job-workflow" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/hadoop/04-02-mapreduce-job-workflow" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/hadoop/04-02-mapreduce-job-workflow" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-introduction-to-mapreduce' title="Introducció a MapReduce">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Flux de treball d'una feina MapReduce</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-writing-a-mapreduce-program' title="Escriure un programa MapReduce">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem el flux de treball d'una feina MapReduce, des de la seva submissió fins a la seva finalització. MapReduce és un model de programació per al processament de grans volums de dades de manera distribuïda. Comprendre el flux de treball és essencial per optimitzar i depurar les feines MapReduce.</p>
+</div><h1>1. Submissió de la feina</h1>
+<div class='content'><p>Quan un usuari vol executar una feina MapReduce, segueix aquests passos:</p>
+<ol>
+<li><strong>Escriure el codi MapReduce</strong>: L'usuari escriu el codi per a les funcions <code>Mapper</code> i <code>Reducer</code>.</li>
+<li><strong>Configuració de la feina</strong>: L'usuari configura la feina especificant els detalls com el nom de la feina, les classes <code>Mapper</code> i <code>Reducer</code>, els camins d'entrada i sortida, etc.</li>
+<li><strong>Submissió de la feina</strong>: L'usuari envia la feina al clúster Hadoop utilitzant l'API de MapReduce o eines de línia de comandes.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Sm9iIGpvYiA9IEpvYi5nZXRJbnN0YW5jZShjb25mLCAid29yZCBjb3VudCIpOwpqb2Iuc2V0SmFyQnlDbGFzcyhXb3JkQ291bnQuY2xhc3MpOwpqb2Iuc2V0TWFwcGVyQ2xhc3MoVG9rZW5pemVyTWFwcGVyLmNsYXNzKTsKam9iLnNldENvbWJpbmVyQ2xhc3MoSW50U3VtUmVkdWNlci5jbGFzcyk7CmpvYi5zZXRSZWR1Y2VyQ2xhc3MoSW50U3VtUmVkdWNlci5jbGFzcyk7CmpvYi5zZXRPdXRwdXRLZXlDbGFzcyhUZXh0LmNsYXNzKTsKam9iLnNldE91dHB1dFZhbHVlQ2xhc3MoSW50V3JpdGFibGUuY2xhc3MpOwpGaWxlSW5wdXRGb3JtYXQuYWRkSW5wdXRQYXRoKGpvYiwgbmV3IFBhdGgoYXJnc1swXSkpOwpGaWxlT3V0cHV0Rm9ybWF0LnNldE91dHB1dFBhdGgoam9iLCBuZXcgUGF0aChhcmdzWzFdKSk7ClN5c3RlbS5leGl0KGpvYi53YWl0Rm9yQ29tcGxldGlvbih0cnVlKSA/IDAgOiAxKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Job job = Job.getInstance(conf, &quot;word count&quot;);
+job.setJarByClass(WordCount.class);
+job.setMapperClass(TokenizerMapper.class);
+job.setCombinerClass(IntSumReducer.class);
+job.setReducerClass(IntSumReducer.class);
+job.setOutputKeyClass(Text.class);
+job.setOutputValueClass(IntWritable.class);
+FileInputFormat.addInputPath(job, new Path(args[0]));
+FileOutputFormat.setOutputPath(job, new Path(args[1]));
+System.exit(job.waitForCompletion(true) ? 0 : 1);</pre></div><div class='content'></div><h1>2. Divisió de les dades d'entrada</h1>
+<div class='content'><p>Un cop la feina és enviada, el sistema Hadoop divideix les dades d'entrada en fragments més petits anomenats &quot;splits&quot;. Cada split és processat per una instància de <code>Mapper</code>.</p>
+<ul>
+<li><strong>InputFormat</strong>: Defineix com les dades d'entrada es divideixen en splits.</li>
+<li><strong>RecordReader</strong>: Llegeix les dades d'entrada i les converteix en parells clau-valor per al <code>Mapper</code>.</li>
+</ul>
+</div><h1>3. Execució del Mapper</h1>
+<div class='content'><p>Cada split és assignat a una instància de <code>Mapper</code> que processa els parells clau-valor d'entrada i genera parells clau-valor intermedis.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHVibGljIGNsYXNzIFRva2VuaXplck1hcHBlciBleHRlbmRzIE1hcHBlcjxPYmplY3QsIFRleHQsIFRleHQsIEludFdyaXRhYmxlPiB7CiAgICBwcml2YXRlIGZpbmFsIHN0YXRpYyBJbnRXcml0YWJsZSBvbmUgPSBuZXcgSW50V3JpdGFibGUoMSk7CiAgICBwcml2YXRlIFRleHQgd29yZCA9IG5ldyBUZXh0KCk7CgogICAgcHVibGljIHZvaWQgbWFwKE9iamVjdCBrZXksIFRleHQgdmFsdWUsIENvbnRleHQgY29udGV4dCkgdGhyb3dzIElPRXhjZXB0aW9uLCBJbnRlcnJ1cHRlZEV4Y2VwdGlvbiB7CiAgICAgICAgU3RyaW5nVG9rZW5pemVyIGl0ciA9IG5ldyBTdHJpbmdUb2tlbml6ZXIodmFsdWUudG9TdHJpbmcoKSk7CiAgICAgICAgd2hpbGUgKGl0ci5oYXNNb3JlVG9rZW5zKCkpIHsKICAgICAgICAgICAgd29yZC5zZXQoaXRyLm5leHRUb2tlbigpKTsKICAgICAgICAgICAgY29udGV4dC53cml0ZSh3b3JkLCBvbmUpOwogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>public class TokenizerMapper extends Mapper&lt;Object, Text, Text, IntWritable&gt; {
+    private final static IntWritable one = new IntWritable(1);
+    private Text word = new Text();
+
+    public void map(Object key, Text value, Context context) throws IOException, InterruptedException {
+        StringTokenizer itr = new StringTokenizer(value.toString());
+        while (itr.hasMoreTokens()) {
+            word.set(itr.nextToken());
+            context.write(word, one);
+        }
+    }
+}</pre></div><div class='content'></div><h1>4. Particionament</h1>
+<div class='content'><p>Els parells clau-valor intermedis generats pels <code>Mapper</code> són particionats segons la clau. Cada partició és assignada a un <code>Reducer</code>.</p>
+<ul>
+<li><strong>Partitioner</strong>: Determina a quin <code>Reducer</code> s'envia cada parell clau-valor intermedi.</li>
+</ul>
+</div><h1>5. Ordenació i combinació</h1>
+<div class='content'><p>Abans que els parells clau-valor intermedis arribin als <code>Reducer</code>, són ordenats per clau. A més, es pot aplicar una combinació local per reduir la quantitat de dades transferides.</p>
+<ul>
+<li><strong>Combiner</strong>: Una versió local del <code>Reducer</code> que s'executa al node <code>Mapper</code> per reduir les dades intermedies.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHVibGljIGNsYXNzIEludFN1bVJlZHVjZXIgZXh0ZW5kcyBSZWR1Y2VyPFRleHQsIEludFdyaXRhYmxlLCBUZXh0LCBJbnRXcml0YWJsZT4gewogICAgcHJpdmF0ZSBJbnRXcml0YWJsZSByZXN1bHQgPSBuZXcgSW50V3JpdGFibGUoKTsKCiAgICBwdWJsaWMgdm9pZCByZWR1Y2UoVGV4dCBrZXksIEl0ZXJhYmxlPEludFdyaXRhYmxlPiB2YWx1ZXMsIENvbnRleHQgY29udGV4dCkgdGhyb3dzIElPRXhjZXB0aW9uLCBJbnRlcnJ1cHRlZEV4Y2VwdGlvbiB7CiAgICAgICAgaW50IHN1bSA9IDA7CiAgICAgICAgZm9yIChJbnRXcml0YWJsZSB2YWwgOiB2YWx1ZXMpIHsKICAgICAgICAgICAgc3VtICs9IHZhbC5nZXQoKTsKICAgICAgICB9CiAgICAgICAgcmVzdWx0LnNldChzdW0pOwogICAgICAgIGNvbnRleHQud3JpdGUoa2V5LCByZXN1bHQpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>public class IntSumReducer extends Reducer&lt;Text, IntWritable, Text, IntWritable&gt; {
+    private IntWritable result = new IntWritable();
+
+    public void reduce(Text key, Iterable&lt;IntWritable&gt; values, Context context) throws IOException, InterruptedException {
+        int sum = 0;
+        for (IntWritable val : values) {
+            sum += val.get();
+        }
+        result.set(sum);
+        context.write(key, result);
+    }
+}</pre></div><div class='content'></div><h1>6. Execució del Reducer</h1>
+<div class='content'><p>Els <code>Reducer</code> processen els parells clau-valor intermedis ordenats i generen els resultats finals.</p>
+<ul>
+<li><strong>Reducer</strong>: Agrega els valors associats a cada clau i escriu els resultats finals.</li>
+</ul>
+</div><h1>7. Escriure els resultats</h1>
+<div class='content'><p>Els resultats finals generats pels <code>Reducer</code> són escrits al sistema de fitxers distribuït (HDFS).</p>
+<ul>
+<li><strong>OutputFormat</strong>: Defineix com els resultats finals es guarden a HDFS.</li>
+</ul>
+</div><h1>8. Finalització de la feina</h1>
+<div class='content'><p>Un cop tots els <code>Mapper</code> i <code>Reducer</code> han completat la seva execució, la feina es marca com a completada. L'usuari pot consultar els resultats a HDFS.</p>
+</div><h1>Resum</h1>
+<div class='content'><p>El flux de treball d'una feina MapReduce implica diversos passos clau: submissió de la feina, divisió de les dades d'entrada, execució del <code>Mapper</code>, particionament, ordenació i combinació, execució del <code>Reducer</code>, i escriptura dels resultats. Comprendre aquest flux és essencial per optimitzar i depurar les feines MapReduce.</p>
+<p>En el següent tema, explorarem com escriure un programa MapReduce detalladament.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-introduction-to-mapreduce' title="Introducció a MapReduce">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-writing-a-mapreduce-program' title="Escriure un programa MapReduce">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

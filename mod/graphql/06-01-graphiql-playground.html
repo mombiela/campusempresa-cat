@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraphiQL i Playground</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/graphql/06-01-graphiql-playground" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/graphql/06-01-graphiql-playground" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/graphql/06-01-graphiql-playground" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/graphql/06-01-graphiql-playground" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/graphql/06-01-graphiql-playground" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-persisted-queries' title="Consultes persistents">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">GraphiQL i Playground</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-02-apollo-client' title="Client Apollo">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>GraphiQL i Playground són dues eines essencials per treballar amb GraphQL. Aquestes eines proporcionen una interfície gràfica per explorar, provar i documentar les API de GraphQL. En aquest tema, aprendrem què són aquestes eines, com utilitzar-les i quins avantatges ofereixen.</p>
+</div><h1>Què és GraphiQL?</h1>
+<div class='content'><p>GraphiQL és un IDE (Entorn de Desenvolupament Integrat) de codi obert per a GraphQL. Proporciona una interfície gràfica per escriure, provar i depurar consultes de GraphQL. Algunes de les seves característiques clau inclouen:</p>
+<ul>
+<li><strong>Autocompletat</strong>: Suggeriments automàtics mentre escrius consultes.</li>
+<li><strong>Documentació integrada</strong>: Accés fàcil a la documentació de l'esquema de GraphQL.</li>
+<li><strong>Historial de consultes</strong>: Guarda les consultes anteriors per a un accés ràpid.</li>
+</ul>
+</div><h2>Instal·lació i Configuració de GraphiQL</h2>
+<div class='content'><p>Per utilitzar GraphiQL, primer hem de configurar un servidor GraphQL. Suposant que ja tens un servidor GraphQL en funcionament, pots integrar GraphiQL de la següent manera:</p>
+<ol>
+<li>
+<p><strong>Instal·lació de dependències</strong>:</p>
+<pre><code class="language-bash">npm install express express-graphql graphiql
+</code></pre>
+</li>
+<li>
+<p><strong>Configuració del servidor</strong>:</p>
+<pre><code class="language-javascript">const express = require('express');
+const { graphqlHTTP } = require('express-graphql');
+const { buildSchema } = require('graphql');
+const { graphiqlExpress } = require('graphql-server-express');
+
+// Definició de l'esquema
+const schema = buildSchema(`
+  type Query {
+    hello: String
+  }
+`);
+
+// Definició dels resolvers
+const root = {
+  hello: () =&gt; 'Hello world!',
+};
+
+const app = express();
+
+// Configuració de GraphQL
+app.use('/graphql', graphqlHTTP({
+  schema: schema,
+  rootValue: root,
+  graphiql: true,
+}));
+
+// Inici del servidor
+app.listen(4000, () =&gt; console.log('Servidor GraphQL en funcionament a http://localhost:4000/graphql'));
+</code></pre>
+</li>
+<li>
+<p><strong>Accés a GraphiQL</strong>:
+Un cop el servidor estigui en funcionament, pots accedir a GraphiQL navegant a <code>http://localhost:4000/graphql</code> en el teu navegador.</p>
+</li>
+</ol>
+</div><h2>Exemple de Consulta en GraphiQL</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cXVlcnkgewogIGhlbGxvCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>query {
+  hello
+}</pre></div><div class='content'><p>Aquest exemple simple retornarà:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJkYXRhIjogewogICAgImhlbGxvIjogIkhlbGxvIHdvcmxkISIKICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;data&quot;: {
+    &quot;hello&quot;: &quot;Hello world!&quot;
+  }
+}</pre></div><div class='content'></div><h1>Què és GraphQL Playground?</h1>
+<div class='content'><p>GraphQL Playground és una altra eina popular per interactuar amb API de GraphQL. És similar a GraphiQL però amb algunes característiques addicionals:</p>
+<ul>
+<li><strong>Interfície d'usuari moderna</strong>: Una interfície més polida i moderna.</li>
+<li><strong>Suport per a múltiples pestanyes</strong>: Permet treballar amb diverses consultes alhora.</li>
+<li><strong>Configuració avançada</strong>: Opcions de configuració més avançades per a l'autenticació, capçaleres, etc.</li>
+</ul>
+</div><h2>Instal·lació i Configuració de GraphQL Playground</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Instal·lació de dependències</strong>:</p>
+<pre><code class="language-bash">npm install graphql-playground-middleware-express
+</code></pre>
+</li>
+<li>
+<p><strong>Configuració del servidor</strong>:</p>
+<pre><code class="language-javascript">const express = require('express');
+const { graphqlHTTP } = require('express-graphql');
+const { buildSchema } = require('graphql');
+const { express: playground } = require('graphql-playground-middleware');
+
+// Definició de l'esquema
+const schema = buildSchema(`
+  type Query {
+    hello: String
+  }
+`);
+
+// Definició dels resolvers
+const root = {
+  hello: () =&gt; 'Hello world!',
+};
+
+const app = express();
+
+// Configuració de GraphQL
+app.use('/graphql', graphqlHTTP({
+  schema: schema,
+  rootValue: root,
+  graphiql: false, // Desactivem GraphiQL
+}));
+
+// Configuració de GraphQL Playground
+app.get('/playground', playground({ endpoint: '/graphql' }));
+
+// Inici del servidor
+app.listen(4000, () =&gt; console.log('Servidor GraphQL en funcionament a http://localhost:4000/playground'));
+</code></pre>
+</li>
+<li>
+<p><strong>Accés a GraphQL Playground</strong>:
+Un cop el servidor estigui en funcionament, pots accedir a GraphQL Playground navegant a <code>http://localhost:4000/playground</code> en el teu navegador.</p>
+</li>
+</ol>
+</div><h2>Exemple de Consulta en GraphQL Playground</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cXVlcnkgewogIGhlbGxvCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>query {
+  hello
+}</pre></div><div class='content'><p>Aquest exemple simple retornarà:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJkYXRhIjogewogICAgImhlbGxvIjogIkhlbGxvIHdvcmxkISIKICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;data&quot;: {
+    &quot;hello&quot;: &quot;Hello world!&quot;
+  }
+}</pre></div><div class='content'></div><h1>Comparació entre GraphiQL i GraphQL Playground</h1>
+<div class='content'><table>
+<thead>
+<tr>
+<th>Característica</th>
+<th>GraphiQL</th>
+<th>GraphQL Playground</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Interfície d'usuari</td>
+<td>Simple</td>
+<td>Moderna i polida</td>
+</tr>
+<tr>
+<td>Suport per a múltiples pestanyes</td>
+<td>No</td>
+<td>Sí</td>
+</tr>
+<tr>
+<td>Configuració avançada</td>
+<td>Limitada</td>
+<td>Sí</td>
+</tr>
+<tr>
+<td>Autocompletat</td>
+<td>Sí</td>
+<td>Sí</td>
+</tr>
+<tr>
+<td>Documentació integrada</td>
+<td>Sí</td>
+<td>Sí</td>
+</tr>
+<tr>
+<td>Historial de consultes</td>
+<td>Sí</td>
+<td>Sí</td>
+</tr>
+</tbody>
+</table>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Configurar un servidor GraphQL amb GraphiQL i GraphQL Playground, i realitzar una consulta simple.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>Configura un servidor GraphQL seguint les instruccions anteriors.</li>
+<li>Integra GraphiQL i GraphQL Playground.</li>
+<li>Realitza una consulta simple (<code>hello</code>) en ambdues eines.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Configuració del servidor</strong>:</p>
+<pre><code class="language-javascript">const express = require('express');
+const { graphqlHTTP } = require('express-graphql');
+const { buildSchema } = require('graphql');
+const { graphiqlExpress } = require('graphql-server-express');
+const { express: playground } = require('graphql-playground-middleware');
+
+const schema = buildSchema(`
+  type Query {
+    hello: String
+  }
+`);
+
+const root = {
+  hello: () =&gt; 'Hello world!',
+};
+
+const app = express();
+
+app.use('/graphql', graphqlHTTP({
+  schema: schema,
+  rootValue: root,
+  graphiql: true,
+}));
+
+app.get('/playground', playground({ endpoint: '/graphql' }));
+
+app.listen(4000, () =&gt; console.log('Servidor GraphQL en funcionament a http://localhost:4000/graphql i http://localhost:4000/playground'));
+</code></pre>
+</li>
+<li>
+<p><strong>Realització de la consulta</strong>:</p>
+<ul>
+<li>Navega a <code>http://localhost:4000/graphql</code> per accedir a GraphiQL i realitza la consulta:
+<pre><code class="language-graphql">query {
+  hello
+}
+</code></pre>
+</li>
+<li>Navega a <code>http://localhost:4000/playground</code> per accedir a GraphQL Playground i realitza la mateixa consulta.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>GraphiQL i GraphQL Playground són eines poderoses per treballar amb API de GraphQL. Proporcionen una interfície gràfica intuïtiva per explorar, provar i documentar les API, facilitant el desenvolupament i la depuració. En aquest tema, hem après a configurar i utilitzar ambdues eines, així com les seves diferències i avantatges.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-persisted-queries' title="Consultes persistents">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-02-apollo-client' title="Client Apollo">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

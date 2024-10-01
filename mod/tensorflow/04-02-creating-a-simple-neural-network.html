@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creació d'una xarxa neuronal simple</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/tensorflow/04-02-creating-a-simple-neural-network" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/tensorflow/04-02-creating-a-simple-neural-network" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/tensorflow/04-02-creating-a-simple-neural-network" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/tensorflow/04-02-creating-a-simple-neural-network" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/tensorflow/04-02-creating-a-simple-neural-network" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-introduction-to-neural-networks' title="Introducció a les xarxes neuronals">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Creació d'una xarxa neuronal simple</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-activation-functions' title="Funcions d'activació">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a crear una xarxa neuronal simple utilitzant TensorFlow i Keras. Aquest és un pas fonamental per a qualsevol persona que vulgui endinsar-se en el món de l'aprenentatge profund (deep learning). Començarem amb una introducció als conceptes bàsics i després passarem a la implementació pràctica.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre els components bàsics d'una xarxa neuronal.</li>
+<li>Aprendre a definir i compilar un model de xarxa neuronal amb Keras.</li>
+<li>Entrenar i avaluar el model utilitzant un conjunt de dades senzill.</li>
+</ul>
+</div><h1>Components d'una xarxa neuronal</h1>
+<div class='content'><p>Una xarxa neuronal està composta per diverses capes de neurones. Els components principals són:</p>
+<ol>
+<li><strong>Capa d'entrada</strong>: Rep les dades d'entrada.</li>
+<li><strong>Capes ocultes</strong>: Realitzen càlculs i transformacions sobre les dades.</li>
+<li><strong>Capa de sortida</strong>: Proporciona la predicció final.</li>
+</ol>
+</div><h1>Passos per crear una xarxa neuronal simple</h1>
+<div class='content'><ol>
+<li><strong>Importar les llibreries necessàries</strong>.</li>
+<li><strong>Preparar el conjunt de dades</strong>.</li>
+<li><strong>Definir el model</strong>.</li>
+<li><strong>Compilar el model</strong>.</li>
+<li><strong>Entrenar el model</strong>.</li>
+<li><strong>Avaluar el model</strong>.</li>
+</ol>
+</div><h2>1. Importar les llibreries necessàries</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKZnJvbSB0ZW5zb3JmbG93LmtlcmFzLm1vZGVscyBpbXBvcnQgU2VxdWVudGlhbApmcm9tIHRlbnNvcmZsb3cua2VyYXMubGF5ZXJzIGltcG9ydCBEZW5zZQpmcm9tIHRlbnNvcmZsb3cua2VyYXMuZGF0YXNldHMgaW1wb3J0IG1uaXN0CmZyb20gdGVuc29yZmxvdy5rZXJhcy51dGlscyBpbXBvcnQgdG9fY2F0ZWdvcmljYWw="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras.utils import to_categorical</pre></div><div class='content'></div><h2>2. Preparar el conjunt de dades</h2>
+<div class='content'><p>Utilitzarem el conjunt de dades MNIST, que conté imatges de dígits escrits a mà.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDYXJyZWdhciBlbCBjb25qdW50IGRlIGRhZGVzIE1OSVNUCih4X3RyYWluLCB5X3RyYWluKSwgKHhfdGVzdCwgeV90ZXN0KSA9IG1uaXN0LmxvYWRfZGF0YSgpCgojIE5vcm1hbGl0emFyIGxlcyBkYWRlcyAoZXNjYWxhIGRlIDAgYSAxKQp4X3RyYWluID0geF90cmFpbiAvIDI1NS4wCnhfdGVzdCA9IHhfdGVzdCAvIDI1NS4wCgojIENvbnZlcnRpciBsZXMgZXRpcXVldGVzIGEgb25lLWhvdCBlbmNvZGluZwp5X3RyYWluID0gdG9fY2F0ZWdvcmljYWwoeV90cmFpbiwgMTApCnlfdGVzdCA9IHRvX2NhdGVnb3JpY2FsKHlfdGVzdCwgMTAp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Carregar el conjunt de dades MNIST
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+
+# Normalitzar les dades (escala de 0 a 1)
+x_train = x_train / 255.0
+x_test = x_test / 255.0
+
+# Convertir les etiquetes a one-hot encoding
+y_train = to_categorical(y_train, 10)
+y_test = to_categorical(y_test, 10)</pre></div><div class='content'></div><h2>3. Definir el model</h2>
+<div class='content'><p>Crearem un model seqüencial amb una capa d'entrada, una capa oculta i una capa de sortida.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kZWwgPSBTZXF1ZW50aWFsKFsKICAgIERlbnNlKDEyOCwgYWN0aXZhdGlvbj0ncmVsdScsIGlucHV0X3NoYXBlPSg3ODQsKSksICAjIENhcGEgb2N1bHRhIGFtYiAxMjggbmV1cm9uZXMKICAgIERlbnNlKDEwLCBhY3RpdmF0aW9uPSdzb2Z0bWF4JykgICMgQ2FwYSBkZSBzb3J0aWRhIGFtYiAxMCBuZXVyb25lcyAodW5hIHBlciBjYWRhIGTDrWdpdCkKXSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>model = Sequential([
+    Dense(128, activation='relu', input_shape=(784,)),  # Capa oculta amb 128 neurones
+    Dense(10, activation='softmax')  # Capa de sortida amb 10 neurones (una per cada d&iacute;git)
+])</pre></div><div class='content'></div><h2>4. Compilar el model</h2>
+<div class='content'><p>Especificarem la funció de pèrdua, l'optimitzador i les mètriques per avaluar el model.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kZWwuY29tcGlsZSgKICAgIG9wdGltaXplcj0nYWRhbScsCiAgICBsb3NzPSdjYXRlZ29yaWNhbF9jcm9zc2VudHJvcHknLAogICAgbWV0cmljcz1bJ2FjY3VyYWN5J10KKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>model.compile(
+    optimizer='adam',
+    loss='categorical_crossentropy',
+    metrics=['accuracy']
+)</pre></div><div class='content'></div><h2>5. Entrenar el model</h2>
+<div class='content'><p>Entrenarem el model amb el conjunt de dades d'entrenament.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kZWwuZml0KHhfdHJhaW4ucmVzaGFwZSgtMSwgNzg0KSwgeV90cmFpbiwgZXBvY2hzPTUsIGJhdGNoX3NpemU9MzIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>model.fit(x_train.reshape(-1, 784), y_train, epochs=5, batch_size=32)</pre></div><div class='content'></div><h2>6. Avaluar el model</h2>
+<div class='content'><p>Avaluarem el model amb el conjunt de dades de prova.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bG9zcywgYWNjdXJhY3kgPSBtb2RlbC5ldmFsdWF0ZSh4X3Rlc3QucmVzaGFwZSgtMSwgNzg0KSwgeV90ZXN0KQpwcmludChmJ0xvc3M6IHtsb3NzfScpCnByaW50KGYnQWNjdXJhY3k6IHthY2N1cmFjeX0nKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>loss, accuracy = model.evaluate(x_test.reshape(-1, 784), y_test)
+print(f'Loss: {loss}')
+print(f'Accuracy: {accuracy}')</pre></div><div class='content'></div><h1>Exemples pràctics</h1>
+<h2>Exemple complet</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKZnJvbSB0ZW5zb3JmbG93LmtlcmFzLm1vZGVscyBpbXBvcnQgU2VxdWVudGlhbApmcm9tIHRlbnNvcmZsb3cua2VyYXMubGF5ZXJzIGltcG9ydCBEZW5zZQpmcm9tIHRlbnNvcmZsb3cua2VyYXMuZGF0YXNldHMgaW1wb3J0IG1uaXN0CmZyb20gdGVuc29yZmxvdy5rZXJhcy51dGlscyBpbXBvcnQgdG9fY2F0ZWdvcmljYWwKCiMgQ2FycmVnYXIgZWwgY29uanVudCBkZSBkYWRlcyBNTklTVAooeF90cmFpbiwgeV90cmFpbiksICh4X3Rlc3QsIHlfdGVzdCkgPSBtbmlzdC5sb2FkX2RhdGEoKQoKIyBOb3JtYWxpdHphciBsZXMgZGFkZXMgKGVzY2FsYSBkZSAwIGEgMSkKeF90cmFpbiA9IHhfdHJhaW4gLyAyNTUuMAp4X3Rlc3QgPSB4X3Rlc3QgLyAyNTUuMAoKIyBDb252ZXJ0aXIgbGVzIGV0aXF1ZXRlcyBhIG9uZS1ob3QgZW5jb2RpbmcKeV90cmFpbiA9IHRvX2NhdGVnb3JpY2FsKHlfdHJhaW4sIDEwKQp5X3Rlc3QgPSB0b19jYXRlZ29yaWNhbCh5X3Rlc3QsIDEwKQoKIyBEZWZpbmlyIGVsIG1vZGVsCm1vZGVsID0gU2VxdWVudGlhbChbCiAgICBEZW5zZSgxMjgsIGFjdGl2YXRpb249J3JlbHUnLCBpbnB1dF9zaGFwZT0oNzg0LCkpLCAgIyBDYXBhIG9jdWx0YSBhbWIgMTI4IG5ldXJvbmVzCiAgICBEZW5zZSgxMCwgYWN0aXZhdGlvbj0nc29mdG1heCcpICAjIENhcGEgZGUgc29ydGlkYSBhbWIgMTAgbmV1cm9uZXMgKHVuYSBwZXIgY2FkYSBkw61naXQpCl0pCgojIENvbXBpbGFyIGVsIG1vZGVsCm1vZGVsLmNvbXBpbGUoCiAgICBvcHRpbWl6ZXI9J2FkYW0nLAogICAgbG9zcz0nY2F0ZWdvcmljYWxfY3Jvc3NlbnRyb3B5JywKICAgIG1ldHJpY3M9WydhY2N1cmFjeSddCikKCiMgRW50cmVuYXIgZWwgbW9kZWwKbW9kZWwuZml0KHhfdHJhaW4ucmVzaGFwZSgtMSwgNzg0KSwgeV90cmFpbiwgZXBvY2hzPTUsIGJhdGNoX3NpemU9MzIpCgojIEF2YWx1YXIgZWwgbW9kZWwKbG9zcywgYWNjdXJhY3kgPSBtb2RlbC5ldmFsdWF0ZSh4X3Rlc3QucmVzaGFwZSgtMSwgNzg0KSwgeV90ZXN0KQpwcmludChmJ0xvc3M6IHtsb3NzfScpCnByaW50KGYnQWNjdXJhY3k6IHthY2N1cmFjeX0nKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras.utils import to_categorical
+
+# Carregar el conjunt de dades MNIST
+(x_train, y_train), (x_test, y_test) = mnist.load_data()
+
+# Normalitzar les dades (escala de 0 a 1)
+x_train = x_train / 255.0
+x_test = x_test / 255.0
+
+# Convertir les etiquetes a one-hot encoding
+y_train = to_categorical(y_train, 10)
+y_test = to_categorical(y_test, 10)
+
+# Definir el model
+model = Sequential([
+    Dense(128, activation='relu', input_shape=(784,)),  # Capa oculta amb 128 neurones
+    Dense(10, activation='softmax')  # Capa de sortida amb 10 neurones (una per cada d&iacute;git)
+])
+
+# Compilar el model
+model.compile(
+    optimizer='adam',
+    loss='categorical_crossentropy',
+    metrics=['accuracy']
+)
+
+# Entrenar el model
+model.fit(x_train.reshape(-1, 784), y_train, epochs=5, batch_size=32)
+
+# Avaluar el model
+loss, accuracy = model.evaluate(x_test.reshape(-1, 784), y_test)
+print(f'Loss: {loss}')
+print(f'Accuracy: {accuracy}')</pre></div><div class='content'></div><h1>Exercicis pràctics</h1>
+<h2>Exercici 1: Modificar el nombre de neurones</h2>
+<div class='content'><p>Prova de modificar el nombre de neurones a la capa oculta i observa com afecta l'exactitud del model.</p>
+</div><h2>Exercici 2: Afegir una capa oculta addicional</h2>
+<div class='content'><p>Afegeix una segona capa oculta al model i compara els resultats amb el model original.</p>
+</div><h2>Solucions</h2>
+<div class='content'><h4>Solució a l'Exercici 1</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kZWwgPSBTZXF1ZW50aWFsKFsKICAgIERlbnNlKDY0LCBhY3RpdmF0aW9uPSdyZWx1JywgaW5wdXRfc2hhcGU9KDc4NCwpKSwgICMgQ2FwYSBvY3VsdGEgYW1iIDY0IG5ldXJvbmVzCiAgICBEZW5zZSgxMCwgYWN0aXZhdGlvbj0nc29mdG1heCcpICAjIENhcGEgZGUgc29ydGlkYSBhbWIgMTAgbmV1cm9uZXMKXSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>model = Sequential([
+    Dense(64, activation='relu', input_shape=(784,)),  # Capa oculta amb 64 neurones
+    Dense(10, activation='softmax')  # Capa de sortida amb 10 neurones
+])</pre></div><div class='content'><h4>Solució a l'Exercici 2</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kZWwgPSBTZXF1ZW50aWFsKFsKICAgIERlbnNlKDEyOCwgYWN0aXZhdGlvbj0ncmVsdScsIGlucHV0X3NoYXBlPSg3ODQsKSksICAjIFByaW1lcmEgY2FwYSBvY3VsdGEgYW1iIDEyOCBuZXVyb25lcwogICAgRGVuc2UoNjQsIGFjdGl2YXRpb249J3JlbHUnKSwgICMgU2Vnb25hIGNhcGEgb2N1bHRhIGFtYiA2NCBuZXVyb25lcwogICAgRGVuc2UoMTAsIGFjdGl2YXRpb249J3NvZnRtYXgnKSAgIyBDYXBhIGRlIHNvcnRpZGEgYW1iIDEwIG5ldXJvbmVzCl0p"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>model = Sequential([
+    Dense(128, activation='relu', input_shape=(784,)),  # Primera capa oculta amb 128 neurones
+    Dense(64, activation='relu'),  # Segona capa oculta amb 64 neurones
+    Dense(10, activation='softmax')  # Capa de sortida amb 10 neurones
+])</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après a crear una xarxa neuronal simple utilitzant TensorFlow i Keras. Hem cobert els passos des de la preparació del conjunt de dades fins a l'avaluació del model. A més, hem proporcionat exercicis pràctics per reforçar els conceptes apresos. En el següent tema, explorarem les funcions d'activació en més detall.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-introduction-to-neural-networks' title="Introducció a les xarxes neuronals">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-activation-functions' title="Funcions d'activació">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

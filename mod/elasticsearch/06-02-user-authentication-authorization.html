@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autenticació i Autorització d'Usuaris</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/elasticsearch/06-02-user-authentication-authorization" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/elasticsearch/06-02-user-authentication-authorization" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/elasticsearch/06-02-user-authentication-authorization" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/elasticsearch/06-02-user-authentication-authorization" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/elasticsearch/06-02-user-authentication-authorization" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-securing-elasticsearch' title="Assegurant Elasticsearch">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Autenticació i Autorització d'Usuaris</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-role-based-access-control' title="Control d'Accés Basat en Rols">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com configurar i gestionar l'autenticació i l'autorització d'usuaris a Elasticsearch. Aquestes funcionalitats són essencials per assegurar que només els usuaris autoritzats puguin accedir i modificar les dades emmagatzemades.</p>
+</div><h1>1. Introducció a la Seguretat a Elasticsearch</h1>
+<div class='content'><p>Elasticsearch ofereix diverses funcionalitats de seguretat per protegir les dades, incloent-hi:</p>
+<ul>
+<li><strong>Autenticació</strong>: Verifica la identitat dels usuaris.</li>
+<li><strong>Autorització</strong>: Controla els permisos dels usuaris autenticats.</li>
+<li><strong>Xifratge</strong>: Protegeix les dades en trànsit i en repòs.</li>
+<li><strong>Auditoria</strong>: Registra les accions dels usuaris per a la supervisió i el compliment.</li>
+</ul>
+</div><h1>2. Configurant l'Autenticació</h1>
+<div class='content'></div><h2>2.1. Mètodes d'Autenticació</h2>
+<div class='content'><p>Elasticsearch suporta diversos mètodes d'autenticació, incloent:</p>
+<ul>
+<li><strong>Autenticació bàsica</strong>: Utilitza noms d'usuari i contrasenyes.</li>
+<li><strong>LDAP</strong>: Integra amb serveis d'autenticació LDAP.</li>
+<li><strong>SAML</strong>: Utilitza el protocol SAML per a l'autenticació única (SSO).</li>
+<li><strong>Kerberos</strong>: Suporta l'autenticació basada en Kerberos.</li>
+</ul>
+</div><h2>2.2. Configuració de l'Autenticació Bàsica</h2>
+<div class='content'><p>Per configurar l'autenticació bàsica, primer hem d'habilitar la seguretat a Elasticsearch. Això es fa editant el fitxer <code>elasticsearch.yml</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBlbGFzdGljc2VhcmNoLnltbAp4cGFjay5zZWN1cml0eS5lbmFibGVkOiB0cnVl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># elasticsearch.yml
+xpack.security.enabled: true</pre></div><div class='content'><p>Després, hem de crear usuaris i assignar-los contrasenyes. Això es pot fer utilitzant l'eina <code>elasticsearch-users</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YmluL2VsYXN0aWNzZWFyY2gtdXNlcnMgdXNlcmFkZCA8bm9tX3VzdWFyaT4gLXAgPGNvbnRyYXNlbnlhPiAtciA8cm9sPg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>bin/elasticsearch-users useradd &lt;nom_usuari&gt; -p &lt;contrasenya&gt; -r &lt;rol&gt;</pre></div><div class='content'></div><h2>2.3. Exemple Pràctic</h2>
+<div class='content'><p>Creem un usuari anomenat <code>admin</code> amb la contrasenya <code>admin123</code> i el rol <code>superuser</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YmluL2VsYXN0aWNzZWFyY2gtdXNlcnMgdXNlcmFkZCBhZG1pbiAtcCBhZG1pbjEyMyAtciBzdXBlcnVzZXI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>bin/elasticsearch-users useradd admin -p admin123 -r superuser</pre></div><div class='content'></div><h1>3. Configurant l'Autorització</h1>
+<div class='content'></div><h2>3.1. Rols i Permisos</h2>
+<div class='content'><p>Els rols defineixen els permisos que tenen els usuaris. Un rol pot incloure permisos per a:</p>
+<ul>
+<li><strong>Índexs</strong>: Lectura, escriptura, esborrat, etc.</li>
+<li><strong>Clúster</strong>: Administració del clúster, gestió de nodes, etc.</li>
+</ul>
+</div><h2>3.2. Creació de Rols</h2>
+<div class='content'><p>Els rols es defineixen en un fitxer JSON o mitjançant l'API REST d'Elasticsearch.</p>
+<h4>Exemple de Rol en JSON</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJsb2dzdGFzaF93cml0ZXIiOiB7CiAgICAiY2x1c3RlciI6IFsibWFuYWdlX2luZGV4X3RlbXBsYXRlcyIsICJtb25pdG9yIl0sCiAgICAiaW5kaWNlcyI6IFsKICAgICAgewogICAgICAgICJuYW1lcyI6IFsibG9nc3Rhc2gtKiJdLAogICAgICAgICJwcml2aWxlZ2VzIjogWyJ3cml0ZSIsICJkZWxldGUiLCAiY3JlYXRlX2luZGV4Il0KICAgICAgfQogICAgXQogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;logstash_writer&quot;: {
+    &quot;cluster&quot;: [&quot;manage_index_templates&quot;, &quot;monitor&quot;],
+    &quot;indices&quot;: [
+      {
+        &quot;names&quot;: [&quot;logstash-*&quot;],
+        &quot;privileges&quot;: [&quot;write&quot;, &quot;delete&quot;, &quot;create_index&quot;]
+      }
+    ]
+  }
+}</pre></div><div class='content'></div><h2>3.3. Assignació de Rols a Usuaris</h2>
+<div class='content'><p>Els rols es poden assignar a usuaris mitjançant l'API REST.</p>
+<h4>Exemple d'Assignació de Rol</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y3VybCAtWCBQT1NUICJsb2NhbGhvc3Q6OTIwMC9fc2VjdXJpdHkvcm9sZS9sb2dzdGFzaF93cml0ZXIiIC1IICJDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24iIC1kJwp7CiAgImNsdXN0ZXIiOiBbIm1hbmFnZV9pbmRleF90ZW1wbGF0ZXMiLCAibW9uaXRvciJdLAogICJpbmRpY2VzIjogWwogICAgewogICAgICAibmFtZXMiOiBbImxvZ3N0YXNoLSoiXSwKICAgICAgInByaXZpbGVnZXMiOiBbIndyaXRlIiwgImRlbGV0ZSIsICJjcmVhdGVfaW5kZXgiXQogICAgfQogIF0KfSc="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>curl -X POST &quot;localhost:9200/_security/role/logstash_writer&quot; -H &quot;Content-Type: application/json&quot; -d'
+{
+  &quot;cluster&quot;: [&quot;manage_index_templates&quot;, &quot;monitor&quot;],
+  &quot;indices&quot;: [
+    {
+      &quot;names&quot;: [&quot;logstash-*&quot;],
+      &quot;privileges&quot;: [&quot;write&quot;, &quot;delete&quot;, &quot;create_index&quot;]
+    }
+  ]
+}'</pre></div><div class='content'><p>Després, assignem el rol a un usuari.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y3VybCAtWCBQT1NUICJsb2NhbGhvc3Q6OTIwMC9fc2VjdXJpdHkvdXNlci9sb2dzdGFzaF91c2VyIiAtSCAiQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9qc29uIiAtZCcKewogICJwYXNzd29yZCIgOiAibG9nc3Rhc2gxMjMiLAogICJyb2xlcyIgOiBbICJsb2dzdGFzaF93cml0ZXIiIF0sCiAgImZ1bGxfbmFtZSIgOiAiTG9nc3Rhc2ggVXNlciIsCiAgImVtYWlsIiA6ICJsb2dzdGFzaF91c2VyQGV4YW1wbGUuY29tIgp9Jw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>curl -X POST &quot;localhost:9200/_security/user/logstash_user&quot; -H &quot;Content-Type: application/json&quot; -d'
+{
+  &quot;password&quot; : &quot;logstash123&quot;,
+  &quot;roles&quot; : [ &quot;logstash_writer&quot; ],
+  &quot;full_name&quot; : &quot;Logstash User&quot;,
+  &quot;email&quot; : &quot;logstash_user@example.com&quot;
+}'</pre></div><div class='content'></div><h1>4. Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear un Usuari i Assignar-li un Rol</h2>
+<div class='content'><ol>
+<li>Habilita la seguretat a Elasticsearch editant el fitxer <code>elasticsearch.yml</code>.</li>
+<li>Crea un usuari anomenat <code>data_analyst</code> amb la contrasenya <code>analyst123</code>.</li>
+<li>Defineix un rol anomenat <code>data_reader</code> que tingui permisos de lectura sobre tots els índexs.</li>
+<li>Assigna el rol <code>data_reader</code> a l'usuari <code>data_analyst</code>.</li>
+</ol>
+<h4>Solució</h4>
+<ol>
+<li>
+<p>Edita <code>elasticsearch.yml</code>:</p>
+<pre><code class="language-yaml">xpack.security.enabled: true
+</code></pre>
+</li>
+<li>
+<p>Crea l'usuari:</p>
+<pre><code class="language-bash">bin/elasticsearch-users useradd data_analyst -p analyst123 -r data_reader
+</code></pre>
+</li>
+<li>
+<p>Defineix el rol:</p>
+<pre><code class="language-bash">curl -X POST &quot;localhost:9200/_security/role/data_reader&quot; -H &quot;Content-Type: application/json&quot; -d'
+{
+  &quot;cluster&quot;: [&quot;monitor&quot;],
+  &quot;indices&quot;: [
+    {
+      &quot;names&quot;: [&quot;*&quot;],
+      &quot;privileges&quot;: [&quot;read&quot;]
+    }
+  ]
+}'
+</code></pre>
+</li>
+<li>
+<p>Assigna el rol a l'usuari:</p>
+<pre><code class="language-bash">curl -X POST &quot;localhost:9200/_security/user/data_analyst&quot; -H &quot;Content-Type: application/json&quot; -d'
+{
+  &quot;password&quot; : &quot;analyst123&quot;,
+  &quot;roles&quot; : [ &quot;data_reader&quot; ],
+  &quot;full_name&quot; : &quot;Data Analyst&quot;,
+  &quot;email&quot; : &quot;data_analyst@example.com&quot;
+}'
+</code></pre>
+</li>
+</ol>
+</div><h1>5. Resum</h1>
+<div class='content'><p>En aquesta secció, hem après com configurar l'autenticació i l'autorització d'usuaris a Elasticsearch. Hem vist com crear usuaris, definir rols i assignar aquests rols als usuaris. Aquestes funcionalitats són essencials per assegurar que només els usuaris autoritzats puguin accedir i modificar les dades emmagatzemades a Elasticsearch.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-securing-elasticsearch' title="Assegurant Elasticsearch">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-role-based-access-control' title="Control d'Accés Basat en Rols">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

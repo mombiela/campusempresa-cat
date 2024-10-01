@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subconsultes correlacionades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/sql/07-02-correlated-subqueries" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/sql/07-02-correlated-subqueries" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/sql/07-02-correlated-subqueries" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/sql/07-02-correlated-subqueries" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/sql/07-02-correlated-subqueries" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-01-introduction-subqueries' title="Introducció a les subconsultes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Subconsultes correlacionades</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-03-exists-not-exists' title="EXISTS i NOT EXISTS">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Les subconsultes correlacionades són un tipus especial de subconsulta on la subconsulta depèn de la consulta principal per a la seva execució. Això significa que la subconsulta s'executa una vegada per cada fila processada per la consulta principal. Aquest tipus de subconsulta pot ser molt potent, però també pot ser més complex i menys eficient que les subconsultes no correlacionades.</p>
+</div><h1>Conceptes clau</h1>
+<div class='content'><ul>
+<li><strong>Subconsulta</strong>: Una consulta dins d'una altra consulta.</li>
+<li><strong>Subconsulta correlacionada</strong>: Una subconsulta que fa referència a una o més columnes de la consulta principal.</li>
+<li><strong>Consulta principal</strong>: La consulta que conté la subconsulta.</li>
+</ul>
+</div><h1>Sintaxi bàsica</h1>
+<div class='content'><p>La sintaxi d'una subconsulta correlacionada és similar a la d'una subconsulta no correlacionada, però amb la diferència que la subconsulta fa referència a columnes de la consulta principal.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGNvbHVtbmExLCBjb2x1bW5hMgpGUk9NIHRhdWxhMSBBUyBhbGlhczEKV0hFUkUgY29sdW1uYTMgb3BlcmFkb3IgKFNFTEVDVCBjb2x1bW5hNAogICAgICAgICAgICAgICAgICAgICAgICAgRlJPTSB0YXVsYTIgQVMgYWxpYXMyCiAgICAgICAgICAgICAgICAgICAgICAgICBXSEVSRSBhbGlhczEuY29sdW1uYTUgPSBhbGlhczIuY29sdW1uYTYpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT columna1, columna2
+FROM taula1 AS alias1
+WHERE columna3 operador (SELECT columna4
+                         FROM taula2 AS alias2
+                         WHERE alias1.columna5 = alias2.columna6);</pre></div><div class='content'></div><h1>Exemple pràctic</h1>
+<div class='content'><p>Suposem que tenim dues taules: <code>empleats</code> i <code>departaments</code>.</p>
+</div><h2>Taula `empleats`</h2>
+<div class='content'><table>
+<thead>
+<tr>
+<th>id</th>
+<th>nom</th>
+<th>departament_id</th>
+<th>salari</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Anna</td>
+<td>1</td>
+<td>50000</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Bernat</td>
+<td>2</td>
+<td>60000</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Carla</td>
+<td>1</td>
+<td>55000</td>
+</tr>
+<tr>
+<td>4</td>
+<td>David</td>
+<td>3</td>
+<td>45000</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Eva</td>
+<td>2</td>
+<td>70000</td>
+</tr>
+</tbody>
+</table>
+</div><h2>Taula `departaments`</h2>
+<div class='content'><table>
+<thead>
+<tr>
+<th>id</th>
+<th>nom</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Recursos Humans</td>
+</tr>
+<tr>
+<td>2</td>
+<td>IT</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Finances</td>
+</tr>
+</tbody>
+</table>
+</div><h2>Objectiu</h2>
+<div class='content'><p>Volem trobar els empleats que tenen un salari superior a la mitjana del seu departament.</p>
+</div><h2>Consulta SQL</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGUubm9tLCBlLnNhbGFyaQpGUk9NIGVtcGxlYXRzIGUKV0hFUkUgZS5zYWxhcmkgPiAoU0VMRUNUIEFWRyhlMi5zYWxhcmkpCiAgICAgICAgICAgICAgICAgIEZST00gZW1wbGVhdHMgZTIKICAgICAgICAgICAgICAgICAgV0hFUkUgZTIuZGVwYXJ0YW1lbnRfaWQgPSBlLmRlcGFydGFtZW50X2lkKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT e.nom, e.salari
+FROM empleats e
+WHERE e.salari &gt; (SELECT AVG(e2.salari)
+                  FROM empleats e2
+                  WHERE e2.departament_id = e.departament_id);</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ol>
+<li><strong>Consulta principal</strong>: Selecciona el nom i el salari dels empleats.</li>
+<li><strong>Subconsulta correlacionada</strong>: Calcula el salari mitjà dels empleats dins del mateix departament que l'empleat actual de la consulta principal.</li>
+<li><strong>Condició</strong>: La consulta principal només retorna els empleats el salari dels quals és superior a la mitjana del seu departament.</li>
+</ol>
+</div><h1>Exercici pràctic</h1>
+<div class='content'></div><h2>Enunciat</h2>
+<div class='content'><p>Utilitzant les taules <code>empleats</code> i <code>departaments</code>, escriu una consulta per trobar els departaments on almenys un empleat té un salari superior a 60000.</p>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGQubm9tCkZST00gZGVwYXJ0YW1lbnRzIGQKV0hFUkUgRVhJU1RTIChTRUxFQ1QgMQogICAgICAgICAgICAgIEZST00gZW1wbGVhdHMgZQogICAgICAgICAgICAgIFdIRVJFIGUuZGVwYXJ0YW1lbnRfaWQgPSBkLmlkCiAgICAgICAgICAgICAgQU5EIGUuc2FsYXJpID4gNjAwMDApOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT d.nom
+FROM departaments d
+WHERE EXISTS (SELECT 1
+              FROM empleats e
+              WHERE e.departament_id = d.id
+              AND e.salari &gt; 60000);</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ol>
+<li><strong>Consulta principal</strong>: Selecciona el nom dels departaments.</li>
+<li><strong>Subconsulta correlacionada</strong>: Verifica si existeix almenys un empleat en el departament actual de la consulta principal amb un salari superior a 60000.</li>
+<li><strong>Condició</strong>: La consulta principal només retorna els departaments que compleixen la condició de la subconsulta.</li>
+</ol>
+</div><h1>Errors comuns</h1>
+<div class='content'><ul>
+<li><strong>No correlacionar correctament</strong>: Assegura't que la subconsulta fa referència a la consulta principal de manera adequada.</li>
+<li><strong>Ineficàcia</strong>: Les subconsultes correlacionades poden ser lentes. Considera alternatives com les unions (JOIN) si el rendiment és un problema.</li>
+<li><strong>Confusió amb subconsultes no correlacionades</strong>: Recorda que les subconsultes correlacionades depenen de la consulta principal, mentre que les no correlacionades no.</li>
+</ul>
+</div><h1>Consells addicionals</h1>
+<div class='content'><ul>
+<li><strong>Optimització</strong>: Utilitza índexs adequats per millorar el rendiment de les subconsultes correlacionades.</li>
+<li><strong>Claredat</strong>: Mantén les subconsultes simples i clares per facilitar la comprensió i el manteniment del codi.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Les subconsultes correlacionades són una eina poderosa en SQL que permeten realitzar consultes complexes que depenen de la consulta principal. Tot i que poden ser menys eficients que altres mètodes, la seva flexibilitat les fa molt útils en moltes situacions. Practicar amb exemples reals i comprendre els seus mecanismes interns és clau per dominar aquesta tècnica.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-01-introduction-subqueries' title="Introducció a les subconsultes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-03-exists-not-exists' title="EXISTS i NOT EXISTS">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

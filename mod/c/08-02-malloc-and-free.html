@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Malloc i Free</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/c/08-02-malloc-and-free" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/c/08-02-malloc-and-free" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/c/08-02-malloc-and-free" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/c/08-02-malloc-and-free" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/c/08-02-malloc-and-free" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-01-memory-management-functions' title="Funcions de Gestió de Memòria">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Malloc i Free</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-03-calloc-and-realloc' title="Calloc i Realloc">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem sobre l'assignació dinàmica de memòria en C utilitzant les funcions <code>malloc</code> i <code>free</code>. Aquestes funcions són fonamentals per gestionar la memòria de manera eficient i flexible durant l'execució d'un programa.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre què és l'assignació dinàmica de memòria.</li>
+<li>Aprendre a utilitzar les funcions <code>malloc</code> i <code>free</code>.</li>
+<li>Evitar errors comuns relacionats amb l'assignació dinàmica de memòria.</li>
+</ul>
+</div><h1>1. Què és l'Assignació Dinàmica de Memòria?</h1>
+<div class='content'><p>L'assignació dinàmica de memòria permet als programes sol·licitar memòria durant l'execució, en lloc de definir la quantitat de memòria necessària en temps de compilació. Això és útil quan la quantitat de memòria necessària no es coneix fins que el programa està en execució.</p>
+</div><h1>2. La Funció `malloc`</h1>
+<div class='content'><p>La funció <code>malloc</code> (memory allocation) s'utilitza per assignar un bloc de memòria de la mida especificada en bytes. La seva sintaxi és:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dm9pZCogbWFsbG9jKHNpemVfdCBzaXplKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>void* malloc(size_t size);</pre></div><div class='content'><ul>
+<li><code>size</code>: La quantitat de memòria en bytes que es vol assignar.</li>
+<li>Retorna un punter al primer byte del bloc de memòria assignat, o <code>NULL</code> si l'assignació falla.</li>
+</ul>
+</div><h2>Exemple Pràctic</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxzdGRsaWIuaD4KCmludCBtYWluKCkgewogICAgaW50ICpwdHI7CiAgICBpbnQgbiwgaTsKCiAgICAvLyBOb21icmUgZCdlbGVtZW50cwogICAgbiA9IDU7CiAgICBwcmludGYoIk5vbWJyZSBkJ2VsZW1lbnRzOiAlZFxuIiwgbik7CgogICAgLy8gQXNzaWduYWNpw7MgZGUgbWVtw7JyaWEgcGVyIGEgbiBlbGVtZW50cyBkZSB0aXB1cyBpbnQKICAgIHB0ciA9IChpbnQqKW1hbGxvYyhuICogc2l6ZW9mKGludCkpOwoKICAgIC8vIENvbXByb3ZhY2nDsyBzaSBsJ2Fzc2lnbmFjacOzIGRlIG1lbcOycmlhIGhhIGVzdGF0IGV4aXRvc2EKICAgIGlmIChwdHIgPT0gTlVMTCkgewogICAgICAgIHByaW50ZigiRXJyb3I6IE5vIHMnaGEgcG9ndXQgYXNzaWduYXIgbWVtw7JyaWEuXG4iKTsKICAgICAgICBleGl0KDEpOwogICAgfQoKICAgIC8vIEluaWNpYWxpdHphY2nDsyBpIHZpc3VhbGl0emFjacOzIGRlbHMgZWxlbWVudHMKICAgIGZvciAoaSA9IDA7IGkgPCBuOyArK2kpIHsKICAgICAgICBwdHJbaV0gPSBpICsgMTsKICAgICAgICBwcmludGYoIiVkICIsIHB0cltpXSk7CiAgICB9CgogICAgLy8gQWxsaWJlcmFtZW50IGRlIGxhIG1lbcOycmlhCiAgICBmcmVlKHB0cik7CgogICAgcmV0dXJuIDA7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main() {
+    int *ptr;
+    int n, i;
+
+    // Nombre d'elements
+    n = 5;
+    printf(&quot;Nombre d'elements: %d\n&quot;, n);
+
+    // Assignaci&oacute; de mem&ograve;ria per a n elements de tipus int
+    ptr = (int*)malloc(n * sizeof(int));
+
+    // Comprovaci&oacute; si l'assignaci&oacute; de mem&ograve;ria ha estat exitosa
+    if (ptr == NULL) {
+        printf(&quot;Error: No s'ha pogut assignar mem&ograve;ria.\n&quot;);
+        exit(1);
+    }
+
+    // Inicialitzaci&oacute; i visualitzaci&oacute; dels elements
+    for (i = 0; i &lt; n; ++i) {
+        ptr[i] = i + 1;
+        printf(&quot;%d &quot;, ptr[i]);
+    }
+
+    // Alliberament de la mem&ograve;ria
+    free(ptr);
+
+    return 0;
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Declaració de Punter i Nombre d'Elements</strong>:</p>
+<pre><code class="language-c">int *ptr;
+int n, i;
+n = 5;
+</code></pre>
+</li>
+<li>
+<p><strong>Assignació de Memòria</strong>:</p>
+<pre><code class="language-c">ptr = (int*)malloc(n * sizeof(int));
+</code></pre>
+<ul>
+<li><code>n * sizeof(int)</code>: Calcula la quantitat de memòria necessària per a <code>n</code> elements de tipus <code>int</code>.</li>
+<li><code>(int*)</code>: Converteix el punter retornat per <code>malloc</code> a un punter a <code>int</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Comprovació de l'Assignació</strong>:</p>
+<pre><code class="language-c">if (ptr == NULL) {
+    printf(&quot;Error: No s'ha pogut assignar memòria.\n&quot;);
+    exit(1);
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Inicialització i Visualització</strong>:</p>
+<pre><code class="language-c">for (i = 0; i &lt; n; ++i) {
+    ptr[i] = i + 1;
+    printf(&quot;%d &quot;, ptr[i]);
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Alliberament de la Memòria</strong>:</p>
+<pre><code class="language-c">free(ptr);
+</code></pre>
+</li>
+</ol>
+</div><h1>3. La Funció `free`</h1>
+<div class='content'><p>La funció <code>free</code> s'utilitza per alliberar un bloc de memòria prèviament assignat amb <code>malloc</code>. La seva sintaxi és:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dm9pZCBmcmVlKHZvaWQqIHB0cik7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>void free(void* ptr);</pre></div><div class='content'><ul>
+<li><code>ptr</code>: Un punter al bloc de memòria que es vol alliberar.</li>
+</ul>
+</div><h2>Exemple Pràctic</h2>
+<div class='content'><p>L'exemple anterior ja inclou l'ús de <code>free</code> per alliberar la memòria assignada.</p>
+</div><h1>4. Errors Comuns i Consells</h1>
+<div class='content'></div><h2>Errors Comuns</h2>
+<div class='content'><ol>
+<li>
+<p><strong>No Alliberar Memòria</strong>:</p>
+<ul>
+<li>No alliberar la memòria assignada pot causar fuites de memòria.</li>
+</ul>
+<pre><code class="language-c">// Error: No s'ha alliberat la memòria
+int *ptr = (int*)malloc(10 * sizeof(int));
+</code></pre>
+</li>
+<li>
+<p><strong>Alliberar Memòria Múltiples Vegades</strong>:</p>
+<ul>
+<li>Alliberar la mateixa memòria més d'una vegada pot causar comportament indefinit.</li>
+</ul>
+<pre><code class="language-c">int *ptr = (int*)malloc(10 * sizeof(int));
+free(ptr);
+free(ptr); // Error: Alliberament múltiple
+</code></pre>
+</li>
+<li>
+<p><strong>Accedir a Memòria Alliberada</strong>:</p>
+<ul>
+<li>Accedir a memòria després d'alliberar-la pot causar errors.</li>
+</ul>
+<pre><code class="language-c">int *ptr = (int*)malloc(10 * sizeof(int));
+free(ptr);
+ptr[0] = 1; // Error: Accés a memòria alliberada
+</code></pre>
+</li>
+</ol>
+</div><h2>Consells</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Inicialitzar Punter a <code>NULL</code> Després d'Alliberar</strong>:</p>
+<pre><code class="language-c">free(ptr);
+ptr = NULL;
+</code></pre>
+</li>
+<li>
+<p><strong>Comprovar Sempre el Retorn de <code>malloc</code></strong>:</p>
+<pre><code class="language-c">if (ptr == NULL) {
+    // Manejar l'error
+}
+</code></pre>
+</li>
+</ul>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1</h2>
+<div class='content'><p>Escriu un programa que assigni memòria per a un array de 10 elements de tipus <code>float</code>, inicialitzi els elements amb valors de 0.0 a 9.0, i després alliberi la memòria.</p>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxzdGRsaWIuaD4KCmludCBtYWluKCkgewogICAgZmxvYXQgKnB0cjsKICAgIGludCBpOwoKICAgIC8vIEFzc2lnbmFjacOzIGRlIG1lbcOycmlhIHBlciBhIDEwIGVsZW1lbnRzIGRlIHRpcHVzIGZsb2F0CiAgICBwdHIgPSAoZmxvYXQqKW1hbGxvYygxMCAqIHNpemVvZihmbG9hdCkpOwoKICAgIC8vIENvbXByb3ZhY2nDsyBzaSBsJ2Fzc2lnbmFjacOzIGRlIG1lbcOycmlhIGhhIGVzdGF0IGV4aXRvc2EKICAgIGlmIChwdHIgPT0gTlVMTCkgewogICAgICAgIHByaW50ZigiRXJyb3I6IE5vIHMnaGEgcG9ndXQgYXNzaWduYXIgbWVtw7JyaWEuXG4iKTsKICAgICAgICBleGl0KDEpOwogICAgfQoKICAgIC8vIEluaWNpYWxpdHphY2nDsyBpIHZpc3VhbGl0emFjacOzIGRlbHMgZWxlbWVudHMKICAgIGZvciAoaSA9IDA7IGkgPCAxMDsgKytpKSB7CiAgICAgICAgcHRyW2ldID0gKGZsb2F0KWk7CiAgICAgICAgcHJpbnRmKCIlLjFmICIsIHB0cltpXSk7CiAgICB9CgogICAgLy8gQWxsaWJlcmFtZW50IGRlIGxhIG1lbcOycmlhCiAgICBmcmVlKHB0cik7CgogICAgcmV0dXJuIDA7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main() {
+    float *ptr;
+    int i;
+
+    // Assignaci&oacute; de mem&ograve;ria per a 10 elements de tipus float
+    ptr = (float*)malloc(10 * sizeof(float));
+
+    // Comprovaci&oacute; si l'assignaci&oacute; de mem&ograve;ria ha estat exitosa
+    if (ptr == NULL) {
+        printf(&quot;Error: No s'ha pogut assignar mem&ograve;ria.\n&quot;);
+        exit(1);
+    }
+
+    // Inicialitzaci&oacute; i visualitzaci&oacute; dels elements
+    for (i = 0; i &lt; 10; ++i) {
+        ptr[i] = (float)i;
+        printf(&quot;%.1f &quot;, ptr[i]);
+    }
+
+    // Alliberament de la mem&ograve;ria
+    free(ptr);
+
+    return 0;
+}</pre></div><div class='content'></div><h2>Exercici 2</h2>
+<div class='content'><p>Escriu un programa que assigni memòria per a un array de 5 elements de tipus <code>char</code>, inicialitzi els elements amb les lletres 'a' a 'e', i després alliberi la memòria.</p>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPHN0ZGlvLmg+CiNpbmNsdWRlIDxzdGRsaWIuaD4KCmludCBtYWluKCkgewogICAgY2hhciAqcHRyOwogICAgaW50IGk7CgogICAgLy8gQXNzaWduYWNpw7MgZGUgbWVtw7JyaWEgcGVyIGEgNSBlbGVtZW50cyBkZSB0aXB1cyBjaGFyCiAgICBwdHIgPSAoY2hhciopbWFsbG9jKDUgKiBzaXplb2YoY2hhcikpOwoKICAgIC8vIENvbXByb3ZhY2nDsyBzaSBsJ2Fzc2lnbmFjacOzIGRlIG1lbcOycmlhIGhhIGVzdGF0IGV4aXRvc2EKICAgIGlmIChwdHIgPT0gTlVMTCkgewogICAgICAgIHByaW50ZigiRXJyb3I6IE5vIHMnaGEgcG9ndXQgYXNzaWduYXIgbWVtw7JyaWEuXG4iKTsKICAgICAgICBleGl0KDEpOwogICAgfQoKICAgIC8vIEluaWNpYWxpdHphY2nDsyBpIHZpc3VhbGl0emFjacOzIGRlbHMgZWxlbWVudHMKICAgIGZvciAoaSA9IDA7IGkgPCA1OyArK2kpIHsKICAgICAgICBwdHJbaV0gPSAnYScgKyBpOwogICAgICAgIHByaW50ZigiJWMgIiwgcHRyW2ldKTsKICAgIH0KCiAgICAvLyBBbGxpYmVyYW1lbnQgZGUgbGEgbWVtw7JyaWEKICAgIGZyZWUocHRyKTsKCiAgICByZXR1cm4gMDsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main() {
+    char *ptr;
+    int i;
+
+    // Assignaci&oacute; de mem&ograve;ria per a 5 elements de tipus char
+    ptr = (char*)malloc(5 * sizeof(char));
+
+    // Comprovaci&oacute; si l'assignaci&oacute; de mem&ograve;ria ha estat exitosa
+    if (ptr == NULL) {
+        printf(&quot;Error: No s'ha pogut assignar mem&ograve;ria.\n&quot;);
+        exit(1);
+    }
+
+    // Inicialitzaci&oacute; i visualitzaci&oacute; dels elements
+    for (i = 0; i &lt; 5; ++i) {
+        ptr[i] = 'a' + i;
+        printf(&quot;%c &quot;, ptr[i]);
+    }
+
+    // Alliberament de la mem&ograve;ria
+    free(ptr);
+
+    return 0;
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com utilitzar les funcions <code>malloc</code> i <code>free</code> per gestionar l'assignació dinàmica de memòria en C. Hem vist exemples pràctics i hem discutit errors comuns i consells per evitar-los. L'assignació dinàmica de memòria és una eina poderosa que, quan s'utilitza correctament, pot fer els nostres programes més flexibles i eficients.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-01-memory-management-functions' title="Funcions de Gestió de Memòria">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-03-calloc-and-realloc' title="Calloc i Realloc">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

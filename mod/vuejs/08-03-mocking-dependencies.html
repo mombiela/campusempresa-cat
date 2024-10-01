@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulació de dependències</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/vuejs/08-03-mocking-dependencies" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/vuejs/08-03-mocking-dependencies" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/vuejs/08-03-mocking-dependencies" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/vuejs/08-03-mocking-dependencies" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/vuejs/08-03-mocking-dependencies" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-02-end-to-end-testing-cypress' title="Proves de punta a punta amb Cypress">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Simulació de dependències</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-01-render-functions-jsx' title="Funcions de renderització i JSX">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com simular dependències en les proves de les nostres aplicacions Vue.js. La simulació de dependències és una tècnica crucial per a les proves unitàries, ja que ens permet aïllar el codi que estem provant i assegurar-nos que les proves són fiables i repetibles.</p>
+</div><h1>Objectius del tema</h1>
+<div class='content'><ul>
+<li>Entendre què és la simulació de dependències i per què és important.</li>
+<li>Aprendre a utilitzar <code>jest.mock</code> per simular mòduls.</li>
+<li>Veure exemples pràctics de simulació de dependències en components Vue.</li>
+<li>Realitzar exercicis pràctics per reforçar els conceptes apresos.</li>
+</ul>
+</div><h1>Què és la simulació de dependències?</h1>
+<div class='content'><p>La simulació de dependències (mocking) és el procés de substituir parts del sistema que estem provant amb versions controlades que imiten el comportament de les dependències reals. Això ens permet:</p>
+<ul>
+<li>Aïllar el codi que estem provant.</li>
+<li>Controlar l'entorn de prova.</li>
+<li>Evitar efectes secundaris no desitjats.</li>
+<li>Millorar la velocitat de les proves.</li>
+</ul>
+</div><h1>Utilitzant `jest.mock` per simular mòduls</h1>
+<div class='content'><p>Jest és un dels marcs de proves més populars per a aplicacions JavaScript, i proporciona una funcionalitat integrada per simular mòduls. Vegem com podem utilitzar <code>jest.mock</code> per simular un mòdul.</p>
+</div><h2>Exemple pràctic</h2>
+<div class='content'><p>Suposem que tenim un mòdul <code>api.js</code> que fa una crida a una API externa:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gYXBpLmpzCmV4cG9ydCBjb25zdCBmZXRjaERhdGEgPSBhc3luYyAoKSA9PiB7CiAgY29uc3QgcmVzcG9uc2UgPSBhd2FpdCBmZXRjaCgnaHR0cHM6Ly9hcGkuZXhhbXBsZS5jb20vZGF0YScpOwogIHJldHVybiByZXNwb25zZS5qc29uKCk7Cn07"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// api.js
+export const fetchData = async () =&gt; {
+  const response = await fetch('https://api.example.com/data');
+  return response.json();
+};</pre></div><div class='content'><p>I tenim un component Vue que utilitza aquest mòdul:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gTXlDb21wb25lbnQudnVlCjx0ZW1wbGF0ZT4KICA8ZGl2PgogICAgPHAgdi1pZj0iZGF0YSI+e3sgZGF0YSB9fTwvcD4KICAgIDxwIHYtZWxzZT5Mb2FkaW5nLi4uPC9wPgogIDwvZGl2Pgo8L3RlbXBsYXRlPgoKPHNjcmlwdD4KaW1wb3J0IHsgZmV0Y2hEYXRhIH0gZnJvbSAnLi9hcGknOwoKZXhwb3J0IGRlZmF1bHQgewogIGRhdGEoKSB7CiAgICByZXR1cm4gewogICAgICBkYXRhOiBudWxsLAogICAgfTsKICB9LAogIGFzeW5jIGNyZWF0ZWQoKSB7CiAgICB0aGlzLmRhdGEgPSBhd2FpdCBmZXRjaERhdGEoKTsKICB9LAp9Owo8L3NjcmlwdD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// MyComponent.vue
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;p v-if=&quot;data&quot;&gt;{{ data }}&lt;/p&gt;
+    &lt;p v-else&gt;Loading...&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import { fetchData } from './api';
+
+export default {
+  data() {
+    return {
+      data: null,
+    };
+  },
+  async created() {
+    this.data = await fetchData();
+  },
+};
+&lt;/script&gt;</pre></div><div class='content'><p>Per provar aquest component, volem simular la funció <code>fetchData</code> per evitar fer una crida real a l'API. Aquí teniu com ho podem fer:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gTXlDb21wb25lbnQudGVzdC5qcwppbXBvcnQgeyBzaGFsbG93TW91bnQgfSBmcm9tICdAdnVlL3Rlc3QtdXRpbHMnOwppbXBvcnQgTXlDb21wb25lbnQgZnJvbSAnLi9NeUNvbXBvbmVudCc7CmltcG9ydCB7IGZldGNoRGF0YSB9IGZyb20gJy4vYXBpJzsKCi8vIFNpbXVsZW0gZWwgbcOyZHVsIGFwaS5qcwpqZXN0Lm1vY2soJy4vYXBpJywgKCkgPT4gKHsKICBmZXRjaERhdGE6IGplc3QuZm4oKSwKfSkpOwoKZGVzY3JpYmUoJ015Q29tcG9uZW50JywgKCkgPT4gewogIGl0KCdtb3N0cmEgbGVzIGRhZGVzIGRlc3Byw6lzIGRlIGNhcnJlZ2FyJywgYXN5bmMgKCkgPT4gewogICAgLy8gRGVmaW5pbSBlbCBjb21wb3J0YW1lbnQgZGUgbGEgZnVuY2nDsyBzaW11bGFkYQogICAgZmV0Y2hEYXRhLm1vY2tSZXNvbHZlZFZhbHVlKHsgbWVzc2FnZTogJ0hlbGxvLCB3b3JsZCEnIH0pOwoKICAgIGNvbnN0IHdyYXBwZXIgPSBzaGFsbG93TW91bnQoTXlDb21wb25lbnQpOwoKICAgIC8vIEVzcGVyZW0gcXVlIGVsIGNvbXBvbmVudCBlcyBjYXJyZWd1aQogICAgYXdhaXQgd3JhcHBlci52bS4kbmV4dFRpY2soKTsKCiAgICAvLyBDb21wcm92ZW0gcXVlIGxlcyBkYWRlcyBlcyBtb3N0cmVuIGNvcnJlY3RhbWVudAogICAgZXhwZWN0KHdyYXBwZXIudGV4dCgpKS50b0NvbnRhaW4oJ0hlbGxvLCB3b3JsZCEnKTsKICB9KTsKfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// MyComponent.test.js
+import { shallowMount } from '@vue/test-utils';
+import MyComponent from './MyComponent';
+import { fetchData } from './api';
+
+// Simulem el m&ograve;dul api.js
+jest.mock('./api', () =&gt; ({
+  fetchData: jest.fn(),
+}));
+
+describe('MyComponent', () =&gt; {
+  it('mostra les dades despr&eacute;s de carregar', async () =&gt; {
+    // Definim el comportament de la funci&oacute; simulada
+    fetchData.mockResolvedValue({ message: 'Hello, world!' });
+
+    const wrapper = shallowMount(MyComponent);
+
+    // Esperem que el component es carregui
+    await wrapper.vm.$nextTick();
+
+    // Comprovem que les dades es mostren correctament
+    expect(wrapper.text()).toContain('Hello, world!');
+  });
+});</pre></div><div class='content'></div><h2>Explicació del codi</h2>
+<div class='content'><ol>
+<li><strong>Simulació del mòdul</strong>: Utilitzem <code>jest.mock</code> per simular el mòdul <code>api.js</code>. Això ens permet definir el comportament de la funció <code>fetchData</code> dins de les nostres proves.</li>
+<li><strong>Definició del comportament de la funció simulada</strong>: Utilitzem <code>fetchData.mockResolvedValue</code> per especificar que la funció simulada ha de retornar <code>{ message: 'Hello, world!' }</code> quan es cridi.</li>
+<li><strong>Prova del component</strong>: Muntem el component amb <code>shallowMount</code> i esperem que es carregui amb <code>await wrapper.vm.$nextTick()</code>. Finalment, comprovem que el text del component conté <code>Hello, world!</code>.</li>
+</ol>
+</div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Simulació d'una funció de mòdul</h2>
+<div class='content'><ol>
+<li>Crea un mòdul <code>userService.js</code> amb una funció <code>getUser</code> que retorni un objecte d'usuari.</li>
+<li>Crea un component Vue que utilitzi aquesta funció per mostrar el nom de l'usuari.</li>
+<li>Escriu una prova per al component, simulant la funció <code>getUser</code> per retornar un nom d'usuari fictici.</li>
+</ol>
+</div><h2>Solució de l'exercici 1</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gdXNlclNlcnZpY2UuanMKZXhwb3J0IGNvbnN0IGdldFVzZXIgPSBhc3luYyAoKSA9PiB7CiAgcmV0dXJuIHsgbmFtZTogJ0pvaG4gRG9lJyB9Owp9OwoKLy8gVXNlckNvbXBvbmVudC52dWUKPHRlbXBsYXRlPgogIDxkaXY+CiAgICA8cCB2LWlmPSJ1c2VyIj57eyB1c2VyLm5hbWUgfX08L3A+CiAgICA8cCB2LWVsc2U+TG9hZGluZy4uLjwvcD4KICA8L2Rpdj4KPC90ZW1wbGF0ZT4KCjxzY3JpcHQ+CmltcG9ydCB7IGdldFVzZXIgfSBmcm9tICcuL3VzZXJTZXJ2aWNlJzsKCmV4cG9ydCBkZWZhdWx0IHsKICBkYXRhKCkgewogICAgcmV0dXJuIHsKICAgICAgdXNlcjogbnVsbCwKICAgIH07CiAgfSwKICBhc3luYyBjcmVhdGVkKCkgewogICAgdGhpcy51c2VyID0gYXdhaXQgZ2V0VXNlcigpOwogIH0sCn07Cjwvc2NyaXB0PgoKLy8gVXNlckNvbXBvbmVudC50ZXN0LmpzCmltcG9ydCB7IHNoYWxsb3dNb3VudCB9IGZyb20gJ0B2dWUvdGVzdC11dGlscyc7CmltcG9ydCBVc2VyQ29tcG9uZW50IGZyb20gJy4vVXNlckNvbXBvbmVudCc7CmltcG9ydCB7IGdldFVzZXIgfSBmcm9tICcuL3VzZXJTZXJ2aWNlJzsKCmplc3QubW9jaygnLi91c2VyU2VydmljZScsICgpID0+ICh7CiAgZ2V0VXNlcjogamVzdC5mbigpLAp9KSk7CgpkZXNjcmliZSgnVXNlckNvbXBvbmVudCcsICgpID0+IHsKICBpdCgnbW9zdHJhIGVsIG5vbSBkZSBsXCd1c3VhcmkgZGVzcHLDqXMgZGUgY2FycmVnYXInLCBhc3luYyAoKSA9PiB7CiAgICBnZXRVc2VyLm1vY2tSZXNvbHZlZFZhbHVlKHsgbmFtZTogJ0phbmUgRG9lJyB9KTsKCiAgICBjb25zdCB3cmFwcGVyID0gc2hhbGxvd01vdW50KFVzZXJDb21wb25lbnQpOwoKICAgIGF3YWl0IHdyYXBwZXIudm0uJG5leHRUaWNrKCk7CgogICAgZXhwZWN0KHdyYXBwZXIudGV4dCgpKS50b0NvbnRhaW4oJ0phbmUgRG9lJyk7CiAgfSk7Cn0pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// userService.js
+export const getUser = async () =&gt; {
+  return { name: 'John Doe' };
+};
+
+// UserComponent.vue
+&lt;template&gt;
+  &lt;div&gt;
+    &lt;p v-if=&quot;user&quot;&gt;{{ user.name }}&lt;/p&gt;
+    &lt;p v-else&gt;Loading...&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/template&gt;
+
+&lt;script&gt;
+import { getUser } from './userService';
+
+export default {
+  data() {
+    return {
+      user: null,
+    };
+  },
+  async created() {
+    this.user = await getUser();
+  },
+};
+&lt;/script&gt;
+
+// UserComponent.test.js
+import { shallowMount } from '@vue/test-utils';
+import UserComponent from './UserComponent';
+import { getUser } from './userService';
+
+jest.mock('./userService', () =&gt; ({
+  getUser: jest.fn(),
+}));
+
+describe('UserComponent', () =&gt; {
+  it('mostra el nom de l\'usuari despr&eacute;s de carregar', async () =&gt; {
+    getUser.mockResolvedValue({ name: 'Jane Doe' });
+
+    const wrapper = shallowMount(UserComponent);
+
+    await wrapper.vm.$nextTick();
+
+    expect(wrapper.text()).toContain('Jane Doe');
+  });
+});</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après què és la simulació de dependències i per què és important en les proves unitàries. Hem vist com utilitzar <code>jest.mock</code> per simular mòduls i hem treballat amb exemples pràctics per entendre millor el procés. Finalment, hem realitzat un exercici pràctic per reforçar els conceptes apresos.</p>
+<p>En el proper tema, explorarem com realitzar proves de punta a punta amb Cypress, una eina poderosa per assegurar-nos que les nostres aplicacions funcionen correctament en un entorn real.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-02-end-to-end-testing-cypress' title="Proves de punta a punta amb Cypress">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-01-render-functions-jsx' title="Funcions de renderització i JSX">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

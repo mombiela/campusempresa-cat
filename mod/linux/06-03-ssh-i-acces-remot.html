@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SSH i Accés Remot</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/linux/06-03-ssh-and-remote-access" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/linux/06-03-ssh-i-acces-remot" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/linux/06-03-ssh-and-remote-access" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/linux/06-03-ssh-i-acces-remot" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/linux/06-03-ssh-i-acces-remot" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-tallafocs-i-seguretat' title="Tallafocs i Seguretat">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">SSH i Accés Remot</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-sistemes-de-deteccio-d-intrusions' title="Sistemes de Detecció d'Intrusions">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>SSH (Secure Shell) és un protocol de xarxa que permet als usuaris accedir de manera segura a un ordinador remot. SSH proporciona un canal segur sobre una xarxa insegura en una arquitectura client-servidor, connectant una aplicació SSH client amb un servidor SSH. En aquest tema, aprendrem a utilitzar SSH per accedir remotament a sistemes Linux, configurar claus SSH per a una autenticació més segura i gestionar sessions remotes.</p>
+</div><h1>Continguts</h1>
+<div class='content'><ol>
+<li><a href="#que-es-ssh">Què és SSH?</a></li>
+<li><a href="#instal·lacio-i-configuracio-del-servei-ssh">Instal·lació i Configuració del Servei SSH</a></li>
+<li><a href="#connexio-a-un-sistema-remot-amb-ssh">Connexió a un Sistema Remot amb SSH</a></li>
+<li><a href="#autenticacio-amb-claus-ssh">Autenticació amb Claus SSH</a></li>
+<li><a href="#transferencia-de-fitxers-amb-scp-i-sftp">Transferència de Fitxers amb SCP i SFTP</a></li>
+<li><a href="#gestio-de-sessions-ssh">Gestió de Sessions SSH</a></li>
+<li><a href="#exercicis-practics">Exercicis Pràctics</a></li>
+</ol>
+</div><h1>Què és SSH?</h1>
+<div class='content'><p>SSH és un protocol que permet la comunicació segura entre dos sistemes. Utilitza criptografia per assegurar que les dades transferides no puguin ser interceptades o modificades per tercers.</p>
+</div><h2>Característiques Clau d’SSH:</h2>
+<div class='content'><ul>
+<li><strong>Autenticació Segura:</strong> Utilitza claus públiques i privades per autenticar els usuaris.</li>
+<li><strong>Xifrat de Dades:</strong> Totes les dades transferides estan xifrades.</li>
+<li><strong>Integritat de Dades:</strong> Assegura que les dades no han estat alterades durant la transmissió.</li>
+<li><strong>Túnels Segurs:</strong> Permet la creació de túnels segurs per a altres protocols.</li>
+</ul>
+</div><h1>Instal·lació i Configuració del Servei SSH</h1>
+<h2>Instal·lació del Servei SSH</h2>
+<div class='content'><p>Per instal·lar el servei SSH en un sistema Linux, utilitza el següent comandament segons la teva distribució:</p>
+<p><strong>Debian/Ubuntu:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3VkbyBhcHQgdXBkYXRlCnN1ZG8gYXB0IGluc3RhbGwgb3BlbnNzaC1zZXJ2ZXI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>sudo apt update
+sudo apt install openssh-server</pre></div><div class='content'><p><strong>CentOS/RHEL:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3VkbyB5dW0gaW5zdGFsbCBvcGVuc3NoLXNlcnZlcg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>sudo yum install openssh-server</pre></div><div class='content'></div><h2>Configuració del Servei SSH</h2>
+<div class='content'><p>El fitxer de configuració principal del servei SSH és <code>/etc/ssh/sshd_config</code>. Aquí pots configurar diversos paràmetres com el port d’escolta, les opcions d’autenticació, etc.</p>
+<p><strong>Exemple de configuració bàsica:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UG9ydCAyMgpQZXJtaXRSb290TG9naW4gbm8KUGFzc3dvcmRBdXRoZW50aWNhdGlvbiB5ZXM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Port 22
+PermitRootLogin no
+PasswordAuthentication yes</pre></div><div class='content'><p>Després de fer canvis en el fitxer de configuració, reinicia el servei SSH:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3VkbyBzeXN0ZW1jdGwgcmVzdGFydCBzc2hk"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>sudo systemctl restart sshd</pre></div><div class='content'></div><h1>Connexió a un Sistema Remot amb SSH</h1>
+<div class='content'><p>Per connectar-te a un sistema remot utilitzant SSH, utilitza el següent comandament:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3NoIHVzdWFyaUBhZHJlw6dhX2lw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ssh usuari@adre&ccedil;a_ip</pre></div><div class='content'><p><strong>Exemple:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3NoIGpvYW5AMTkyLjE2OC4xLjEw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ssh joan@192.168.1.10</pre></div><div class='content'></div><h1>Autenticació amb Claus SSH</h1>
+<div class='content'><p>L’autenticació amb claus SSH és més segura que l’ús de contrasenyes. Consisteix en la generació d’un parell de claus (pública i privada).</p>
+</div><h2>Generació de Claus SSH</h2>
+<div class='content'><p>Per generar un parell de claus SSH, utilitza el següent comandament:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3NoLWtleWdlbiAtdCByc2EgLWIgNDA5NiAtQyAiZWxfdGV1X2VtYWlsQGV4YW1wbGUuY29tIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ssh-keygen -t rsa -b 4096 -C &quot;el_teu_email@example.com&quot;</pre></div><div class='content'></div><h2>Copiar la Clau Pública al Servidor Remot</h2>
+<div class='content'><p>Utilitza el següent comandament per copiar la clau pública al servidor remot:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3NoLWNvcHktaWQgdXN1YXJpQGFkcmXDp2FfaXA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ssh-copy-id usuari@adre&ccedil;a_ip</pre></div><div class='content'></div><h1>Transferència de Fitxers amb SCP i SFTP</h1>
+<h2>SCP (Secure Copy)</h2>
+<div class='content'><p>SCP permet copiar fitxers entre el sistema local i el remot de manera segura.</p>
+<p><strong>Exemple:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2NwIGZpdHhlci50eHQgdXN1YXJpQGFkcmXDp2FfaXA6L3J1dGEvYWwvZGVzdMOt"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>scp fitxer.txt usuari@adre&ccedil;a_ip:/ruta/al/dest&iacute;</pre></div><div class='content'></div><h2>SFTP (SSH File Transfer Protocol)</h2>
+<div class='content'><p>SFTP és un protocol per transferir fitxers de manera segura.</p>
+<p><strong>Exemple:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2Z0cCB1c3VhcmlAYWRyZcOnYV9pcA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>sftp usuari@adre&ccedil;a_ip</pre></div><div class='content'></div><h1>Gestió de Sessions SSH</h1>
+<h2>Mantenir Sessions Actives</h2>
+<div class='content'><p>Per mantenir les sessions SSH actives, pots utilitzar <code>tmux</code> o <code>screen</code>.</p>
+<p><strong>Exemple amb tmux:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dG11eCBuZXcgLXMgc2Vzc2lv"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>tmux new -s sessio</pre></div><div class='content'></div><h2>Tancar Sessions SSH</h2>
+<div class='content'><p>Per tancar una sessió SSH, simplement escriu <code>exit</code> o <code>logout</code>.</p>
+</div><h1>Exercicis Pràctics</h1>
+<h2>Exercici 1: Connexió a un Sistema Remot</h2>
+<div class='content'><ol>
+<li>Instal·la el servei SSH en un sistema Linux.</li>
+<li>Connecta’t al sistema remot utilitzant SSH.</li>
+</ol>
+</div><h2>Exercici 2: Configuració de Claus SSH</h2>
+<div class='content'><ol>
+<li>Genera un parell de claus SSH.</li>
+<li>Copia la clau pública al servidor remot.</li>
+<li>Connecta’t al servidor remot utilitzant la clau SSH.</li>
+</ol>
+</div><h2>Exercici 3: Transferència de Fitxers</h2>
+<div class='content'><ol>
+<li>Utilitza SCP per transferir un fitxer al servidor remot.</li>
+<li>Utilitza SFTP per transferir un fitxer al servidor remot.</li>
+</ol>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après què és SSH i com utilitzar-lo per accedir de manera segura a sistemes remots. Hem vist com instal·lar i configurar el servei SSH, connectar-nos a sistemes remots, utilitzar claus SSH per a una autenticació més segura, transferir fitxers amb SCP i SFTP, i gestionar sessions SSH. Aquests coneixements són fonamentals per a qualsevol administrador de sistemes Linux.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-tallafocs-i-seguretat' title="Tallafocs i Seguretat">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-sistemes-de-deteccio-d-intrusions' title="Sistemes de Detecció d'Intrusions">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

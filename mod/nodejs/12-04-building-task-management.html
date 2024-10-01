@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construir una Eina de Gestió de Tasques</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nodejs/12-04-building-task-management" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nodejs/12-04-building-task-management" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nodejs/12-04-building-task-management" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nodejs/12-04-building-task-management" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nodejs/12-04-building-task-management" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='12-03-developing-blogging-platform' title="Desenvolupar una Plataforma de Blogs">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Construir una Eina de Gestió de Tasques</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a construir una eina de gestió de tasques utilitzant Node.js i Express. Aquest projecte ens permetrà aplicar molts dels conceptes apresos al llarg del curs, com ara la creació de servidors HTTP, la gestió de rutes, l'ús de bases de dades, l'autenticació i més.</p>
+</div><h1>Objectius del Projecte</h1>
+<div class='content'><ul>
+<li>Crear una API RESTful per gestionar tasques.</li>
+<li>Implementar operacions CRUD (Crear, Llegir, Actualitzar, Eliminar).</li>
+<li>Utilitzar MongoDB com a base de dades.</li>
+<li>Implementar autenticació d'usuaris amb JWT.</li>
+<li>Gestionar errors i validar dades.</li>
+</ul>
+</div><h1>Requisits Previs</h1>
+<div class='content'><ul>
+<li>Coneixements bàsics de Node.js i Express.</li>
+<li>Coneixements bàsics de MongoDB.</li>
+<li>Coneixements bàsics d'autenticació amb JWT.</li>
+</ul>
+</div><h1>Passos del Projecte</h1>
+<div class='content'></div><h2>1. Configuració del Projecte</h2>
+<div class='content'><h4>1.1. Crear l'Estructura del Projecte</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bWtkaXIgdGFzay1tYW5hZ2VyCmNkIHRhc2stbWFuYWdlcgpucG0gaW5pdCAteQpucG0gaW5zdGFsbCBleHByZXNzIG1vbmdvb3NlIGJjcnlwdGpzIGpzb253ZWJ0b2tlbgpucG0gaW5zdGFsbCAtLXNhdmUtZGV2IG5vZGVtb24="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>mkdir task-manager
+cd task-manager
+npm init -y
+npm install express mongoose bcryptjs jsonwebtoken
+npm install --save-dev nodemon</pre></div><div class='content'><h4>1.2. Configurar <code>nodemon</code></h4>
+<p>Afegim un script al <code>package.json</code> per utilitzar <code>nodemon</code> durant el desenvolupament:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("InNjcmlwdHMiOiB7CiAgInN0YXJ0IjogIm5vZGUgc3JjL2luZGV4LmpzIiwKICAiZGV2IjogIm5vZGVtb24gc3JjL2luZGV4LmpzIgp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&quot;scripts&quot;: {
+  &quot;start&quot;: &quot;node src/index.js&quot;,
+  &quot;dev&quot;: &quot;nodemon src/index.js&quot;
+}</pre></div><div class='content'><h4>1.3. Crear l'Estructura de Carpetes</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bWtkaXIgc3JjCm1rZGlyIHNyYy9tb2RlbHMKbWtkaXIgc3JjL3JvdXRlcwpta2RpciBzcmMvY29udHJvbGxlcnM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>mkdir src
+mkdir src/models
+mkdir src/routes
+mkdir src/controllers</pre></div><div class='content'></div><h2>2. Configuració de l'Aplicació Express</h2>
+<div class='content'><h4>2.1. Crear el Fitxer Principal <code>index.js</code></h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoJ2V4cHJlc3MnKTsKY29uc3QgbW9uZ29vc2UgPSByZXF1aXJlKCdtb25nb29zZScpOwpjb25zdCB1c2VyUm91dGVyID0gcmVxdWlyZSgnLi9yb3V0ZXMvdXNlcicpOwpjb25zdCB0YXNrUm91dGVyID0gcmVxdWlyZSgnLi9yb3V0ZXMvdGFzaycpOwoKY29uc3QgYXBwID0gZXhwcmVzcygpOwpjb25zdCBwb3J0ID0gcHJvY2Vzcy5lbnYuUE9SVCB8fCAzMDAwOwoKbW9uZ29vc2UuY29ubmVjdCgnbW9uZ29kYjovL2xvY2FsaG9zdDoyNzAxNy90YXNrLW1hbmFnZXInLCB7CiAgdXNlTmV3VXJsUGFyc2VyOiB0cnVlLAogIHVzZVVuaWZpZWRUb3BvbG9neTogdHJ1ZSwKICB1c2VDcmVhdGVJbmRleDogdHJ1ZSwKfSk7CgphcHAudXNlKGV4cHJlc3MuanNvbigpKTsKYXBwLnVzZSh1c2VyUm91dGVyKTsKYXBwLnVzZSh0YXNrUm91dGVyKTsKCmFwcC5saXN0ZW4ocG9ydCwgKCkgPT4gewogIGNvbnNvbGUubG9nKGBTZXJ2ZXIgaXMgcnVubmluZyBvbiBwb3J0ICR7cG9ydH1gKTsKfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const express = require('express');
+const mongoose = require('mongoose');
+const userRouter = require('./routes/user');
+const taskRouter = require('./routes/task');
+
+const app = express();
+const port = process.env.PORT || 3000;
+
+mongoose.connect('mongodb://localhost:27017/task-manager', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
+});
+
+app.use(express.json());
+app.use(userRouter);
+app.use(taskRouter);
+
+app.listen(port, () =&gt; {
+  console.log(`Server is running on port ${port}`);
+});</pre></div><div class='content'></div><h2>3. Models de Dades</h2>
+<div class='content'><h4>3.1. Model d'Usuari (<code>User</code>)</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgbW9uZ29vc2UgPSByZXF1aXJlKCdtb25nb29zZScpOwpjb25zdCBiY3J5cHQgPSByZXF1aXJlKCdiY3J5cHRqcycpOwpjb25zdCBqd3QgPSByZXF1aXJlKCdqc29ud2VidG9rZW4nKTsKCmNvbnN0IHVzZXJTY2hlbWEgPSBuZXcgbW9uZ29vc2UuU2NoZW1hKHsKICBuYW1lOiB7CiAgICB0eXBlOiBTdHJpbmcsCiAgICByZXF1aXJlZDogdHJ1ZSwKICAgIHRyaW06IHRydWUsCiAgfSwKICBlbWFpbDogewogICAgdHlwZTogU3RyaW5nLAogICAgcmVxdWlyZWQ6IHRydWUsCiAgICB1bmlxdWU6IHRydWUsCiAgICB0cmltOiB0cnVlLAogICAgbG93ZXJjYXNlOiB0cnVlLAogIH0sCiAgcGFzc3dvcmQ6IHsKICAgIHR5cGU6IFN0cmluZywKICAgIHJlcXVpcmVkOiB0cnVlLAogICAgbWlubGVuZ3RoOiA3LAogICAgdHJpbTogdHJ1ZSwKICB9LAogIHRva2VuczogW3sKICAgIHRva2VuOiB7CiAgICAgIHR5cGU6IFN0cmluZywKICAgICAgcmVxdWlyZWQ6IHRydWUsCiAgICB9LAogIH1dLAp9LCB7CiAgdGltZXN0YW1wczogdHJ1ZSwKfSk7Cgp1c2VyU2NoZW1hLnByZSgnc2F2ZScsIGFzeW5jIGZ1bmN0aW9uIChuZXh0KSB7CiAgY29uc3QgdXNlciA9IHRoaXM7CiAgaWYgKHVzZXIuaXNNb2RpZmllZCgncGFzc3dvcmQnKSkgewogICAgdXNlci5wYXNzd29yZCA9IGF3YWl0IGJjcnlwdC5oYXNoKHVzZXIucGFzc3dvcmQsIDgpOwogIH0KICBuZXh0KCk7Cn0pOwoKdXNlclNjaGVtYS5tZXRob2RzLmdlbmVyYXRlQXV0aFRva2VuID0gYXN5bmMgZnVuY3Rpb24gKCkgewogIGNvbnN0IHVzZXIgPSB0aGlzOwogIGNvbnN0IHRva2VuID0gand0LnNpZ24oeyBfaWQ6IHVzZXIuX2lkLnRvU3RyaW5nKCkgfSwgJ3NlY3JldGtleScpOwogIHVzZXIudG9rZW5zID0gdXNlci50b2tlbnMuY29uY2F0KHsgdG9rZW4gfSk7CiAgYXdhaXQgdXNlci5zYXZlKCk7CiAgcmV0dXJuIHRva2VuOwp9OwoKY29uc3QgVXNlciA9IG1vbmdvb3NlLm1vZGVsKCdVc2VyJywgdXNlclNjaGVtYSk7Cgptb2R1bGUuZXhwb3J0cyA9IFVzZXI7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    lowercase: true,
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 7,
+    trim: true,
+  },
+  tokens: [{
+    token: {
+      type: String,
+      required: true,
+    },
+  }],
+}, {
+  timestamps: true,
+});
+
+userSchema.pre('save', async function (next) {
+  const user = this;
+  if (user.isModified('password')) {
+    user.password = await bcrypt.hash(user.password, 8);
+  }
+  next();
+});
+
+userSchema.methods.generateAuthToken = async function () {
+  const user = this;
+  const token = jwt.sign({ _id: user._id.toString() }, 'secretkey');
+  user.tokens = user.tokens.concat({ token });
+  await user.save();
+  return token;
+};
+
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;</pre></div><div class='content'><h4>3.2. Model de Tasca (<code>Task</code>)</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgbW9uZ29vc2UgPSByZXF1aXJlKCdtb25nb29zZScpOwoKY29uc3QgdGFza1NjaGVtYSA9IG5ldyBtb25nb29zZS5TY2hlbWEoewogIGRlc2NyaXB0aW9uOiB7CiAgICB0eXBlOiBTdHJpbmcsCiAgICByZXF1aXJlZDogdHJ1ZSwKICAgIHRyaW06IHRydWUsCiAgfSwKICBjb21wbGV0ZWQ6IHsKICAgIHR5cGU6IEJvb2xlYW4sCiAgICBkZWZhdWx0OiBmYWxzZSwKICB9LAogIG93bmVyOiB7CiAgICB0eXBlOiBtb25nb29zZS5TY2hlbWEuVHlwZXMuT2JqZWN0SWQsCiAgICByZXF1aXJlZDogdHJ1ZSwKICAgIHJlZjogJ1VzZXInLAogIH0sCn0sIHsKICB0aW1lc3RhbXBzOiB0cnVlLAp9KTsKCmNvbnN0IFRhc2sgPSBtb25nb29zZS5tb2RlbCgnVGFzaycsIHRhc2tTY2hlbWEpOwoKbW9kdWxlLmV4cG9ydHMgPSBUYXNrOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const mongoose = require('mongoose');
+
+const taskSchema = new mongoose.Schema({
+  description: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  completed: {
+    type: Boolean,
+    default: false,
+  },
+  owner: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User',
+  },
+}, {
+  timestamps: true,
+});
+
+const Task = mongoose.model('Task', taskSchema);
+
+module.exports = Task;</pre></div><div class='content'></div><h2>4. Rutes i Controladors</h2>
+<div class='content'><h4>4.1. Rutes d'Usuari (<code>user.js</code>)</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoJ2V4cHJlc3MnKTsKY29uc3QgVXNlciA9IHJlcXVpcmUoJy4uL21vZGVscy91c2VyJyk7CmNvbnN0IGF1dGggPSByZXF1aXJlKCcuLi9taWRkbGV3YXJlL2F1dGgnKTsKY29uc3Qgcm91dGVyID0gbmV3IGV4cHJlc3MuUm91dGVyKCk7Cgpyb3V0ZXIucG9zdCgnL3VzZXJzJywgYXN5bmMgKHJlcSwgcmVzKSA9PiB7CiAgY29uc3QgdXNlciA9IG5ldyBVc2VyKHJlcS5ib2R5KTsKICB0cnkgewogICAgYXdhaXQgdXNlci5zYXZlKCk7CiAgICBjb25zdCB0b2tlbiA9IGF3YWl0IHVzZXIuZ2VuZXJhdGVBdXRoVG9rZW4oKTsKICAgIHJlcy5zdGF0dXMoMjAxKS5zZW5kKHsgdXNlciwgdG9rZW4gfSk7CiAgfSBjYXRjaCAoZSkgewogICAgcmVzLnN0YXR1cyg0MDApLnNlbmQoZSk7CiAgfQp9KTsKCnJvdXRlci5wb3N0KCcvdXNlcnMvbG9naW4nLCBhc3luYyAocmVxLCByZXMpID0+IHsKICB0cnkgewogICAgY29uc3QgdXNlciA9IGF3YWl0IFVzZXIuZmluZEJ5Q3JlZGVudGlhbHMocmVxLmJvZHkuZW1haWwsIHJlcS5ib2R5LnBhc3N3b3JkKTsKICAgIGNvbnN0IHRva2VuID0gYXdhaXQgdXNlci5nZW5lcmF0ZUF1dGhUb2tlbigpOwogICAgcmVzLnNlbmQoeyB1c2VyLCB0b2tlbiB9KTsKICB9IGNhdGNoIChlKSB7CiAgICByZXMuc3RhdHVzKDQwMCkuc2VuZCgpOwogIH0KfSk7Cgpyb3V0ZXIuZ2V0KCcvdXNlcnMvbWUnLCBhdXRoLCBhc3luYyAocmVxLCByZXMpID0+IHsKICByZXMuc2VuZChyZXEudXNlcik7Cn0pOwoKbW9kdWxlLmV4cG9ydHMgPSByb3V0ZXI7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const express = require('express');
+const User = require('../models/user');
+const auth = require('../middleware/auth');
+const router = new express.Router();
+
+router.post('/users', async (req, res) =&gt; {
+  const user = new User(req.body);
+  try {
+    await user.save();
+    const token = await user.generateAuthToken();
+    res.status(201).send({ user, token });
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+router.post('/users/login', async (req, res) =&gt; {
+  try {
+    const user = await User.findByCredentials(req.body.email, req.body.password);
+    const token = await user.generateAuthToken();
+    res.send({ user, token });
+  } catch (e) {
+    res.status(400).send();
+  }
+});
+
+router.get('/users/me', auth, async (req, res) =&gt; {
+  res.send(req.user);
+});
+
+module.exports = router;</pre></div><div class='content'><h4>4.2. Rutes de Tasca (<code>task.js</code>)</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoJ2V4cHJlc3MnKTsKY29uc3QgVGFzayA9IHJlcXVpcmUoJy4uL21vZGVscy90YXNrJyk7CmNvbnN0IGF1dGggPSByZXF1aXJlKCcuLi9taWRkbGV3YXJlL2F1dGgnKTsKY29uc3Qgcm91dGVyID0gbmV3IGV4cHJlc3MuUm91dGVyKCk7Cgpyb3V0ZXIucG9zdCgnL3Rhc2tzJywgYXV0aCwgYXN5bmMgKHJlcSwgcmVzKSA9PiB7CiAgY29uc3QgdGFzayA9IG5ldyBUYXNrKHsKICAgIC4uLnJlcS5ib2R5LAogICAgb3duZXI6IHJlcS51c2VyLl9pZCwKICB9KTsKCiAgdHJ5IHsKICAgIGF3YWl0IHRhc2suc2F2ZSgpOwogICAgcmVzLnN0YXR1cygyMDEpLnNlbmQodGFzayk7CiAgfSBjYXRjaCAoZSkgewogICAgcmVzLnN0YXR1cyg0MDApLnNlbmQoZSk7CiAgfQp9KTsKCnJvdXRlci5nZXQoJy90YXNrcycsIGF1dGgsIGFzeW5jIChyZXEsIHJlcykgPT4gewogIHRyeSB7CiAgICBhd2FpdCByZXEudXNlci5wb3B1bGF0ZSgndGFza3MnKS5leGVjUG9wdWxhdGUoKTsKICAgIHJlcy5zZW5kKHJlcS51c2VyLnRhc2tzKTsKICB9IGNhdGNoIChlKSB7CiAgICByZXMuc3RhdHVzKDUwMCkuc2VuZCgpOwogIH0KfSk7Cgpyb3V0ZXIuZ2V0KCcvdGFza3MvOmlkJywgYXV0aCwgYXN5bmMgKHJlcSwgcmVzKSA9PiB7CiAgY29uc3QgX2lkID0gcmVxLnBhcmFtcy5pZDsKCiAgdHJ5IHsKICAgIGNvbnN0IHRhc2sgPSBhd2FpdCBUYXNrLmZpbmRPbmUoeyBfaWQsIG93bmVyOiByZXEudXNlci5faWQgfSk7CgogICAgaWYgKCF0YXNrKSB7CiAgICAgIHJldHVybiByZXMuc3RhdHVzKDQwNCkuc2VuZCgpOwogICAgfQoKICAgIHJlcy5zZW5kKHRhc2spOwogIH0gY2F0Y2ggKGUpIHsKICAgIHJlcy5zdGF0dXMoNTAwKS5zZW5kKCk7CiAgfQp9KTsKCnJvdXRlci5wYXRjaCgnL3Rhc2tzLzppZCcsIGF1dGgsIGFzeW5jIChyZXEsIHJlcykgPT4gewogIGNvbnN0IHVwZGF0ZXMgPSBPYmplY3Qua2V5cyhyZXEuYm9keSk7CiAgY29uc3QgYWxsb3dlZFVwZGF0ZXMgPSBbJ2Rlc2NyaXB0aW9uJywgJ2NvbXBsZXRlZCddOwogIGNvbnN0IGlzVmFsaWRPcGVyYXRpb24gPSB1cGRhdGVzLmV2ZXJ5KCh1cGRhdGUpID0+IGFsbG93ZWRVcGRhdGVzLmluY2x1ZGVzKHVwZGF0ZSkpOwoKICBpZiAoIWlzVmFsaWRPcGVyYXRpb24pIHsKICAgIHJldHVybiByZXMuc3RhdHVzKDQwMCkuc2VuZCh7IGVycm9yOiAnSW52YWxpZCB1cGRhdGVzIScgfSk7CiAgfQoKICB0cnkgewogICAgY29uc3QgdGFzayA9IGF3YWl0IFRhc2suZmluZE9uZSh7IF9pZDogcmVxLnBhcmFtcy5pZCwgb3duZXI6IHJlcS51c2VyLl9pZCB9KTsKCiAgICBpZiAoIXRhc2spIHsKICAgICAgcmV0dXJuIHJlcy5zdGF0dXMoNDA0KS5zZW5kKCk7CiAgICB9CgogICAgdXBkYXRlcy5mb3JFYWNoKCh1cGRhdGUpID0+IHRhc2tbdXBkYXRlXSA9IHJlcS5ib2R5W3VwZGF0ZV0pOwogICAgYXdhaXQgdGFzay5zYXZlKCk7CiAgICByZXMuc2VuZCh0YXNrKTsKICB9IGNhdGNoIChlKSB7CiAgICByZXMuc3RhdHVzKDQwMCkuc2VuZChlKTsKICB9Cn0pOwoKcm91dGVyLmRlbGV0ZSgnL3Rhc2tzLzppZCcsIGF1dGgsIGFzeW5jIChyZXEsIHJlcykgPT4gewogIHRyeSB7CiAgICBjb25zdCB0YXNrID0gYXdhaXQgVGFzay5maW5kT25lQW5kRGVsZXRlKHsgX2lkOiByZXEucGFyYW1zLmlkLCBvd25lcjogcmVxLnVzZXIuX2lkIH0pOwoKICAgIGlmICghdGFzaykgewogICAgICByZXR1cm4gcmVzLnN0YXR1cyg0MDQpLnNlbmQoKTsKICAgIH0KCiAgICByZXMuc2VuZCh0YXNrKTsKICB9IGNhdGNoIChlKSB7CiAgICByZXMuc3RhdHVzKDUwMCkuc2VuZCgpOwogIH0KfSk7Cgptb2R1bGUuZXhwb3J0cyA9IHJvdXRlcjs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const express = require('express');
+const Task = require('../models/task');
+const auth = require('../middleware/auth');
+const router = new express.Router();
+
+router.post('/tasks', auth, async (req, res) =&gt; {
+  const task = new Task({
+    ...req.body,
+    owner: req.user._id,
+  });
+
+  try {
+    await task.save();
+    res.status(201).send(task);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+router.get('/tasks', auth, async (req, res) =&gt; {
+  try {
+    await req.user.populate('tasks').execPopulate();
+    res.send(req.user.tasks);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
+router.get('/tasks/:id', auth, async (req, res) =&gt; {
+  const _id = req.params.id;
+
+  try {
+    const task = await Task.findOne({ _id, owner: req.user._id });
+
+    if (!task) {
+      return res.status(404).send();
+    }
+
+    res.send(task);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
+router.patch('/tasks/:id', auth, async (req, res) =&gt; {
+  const updates = Object.keys(req.body);
+  const allowedUpdates = ['description', 'completed'];
+  const isValidOperation = updates.every((update) =&gt; allowedUpdates.includes(update));
+
+  if (!isValidOperation) {
+    return res.status(400).send({ error: 'Invalid updates!' });
+  }
+
+  try {
+    const task = await Task.findOne({ _id: req.params.id, owner: req.user._id });
+
+    if (!task) {
+      return res.status(404).send();
+    }
+
+    updates.forEach((update) =&gt; task[update] = req.body[update]);
+    await task.save();
+    res.send(task);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+router.delete('/tasks/:id', auth, async (req, res) =&gt; {
+  try {
+    const task = await Task.findOneAndDelete({ _id: req.params.id, owner: req.user._id });
+
+    if (!task) {
+      return res.status(404).send();
+    }
+
+    res.send(task);
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
+module.exports = router;</pre></div><div class='content'></div><h2>5. Middleware d'Autenticació</h2>
+<div class='content'><h4>5.1. Middleware <code>auth.js</code></h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3Qgand0ID0gcmVxdWlyZSgnanNvbndlYnRva2VuJyk7CmNvbnN0IFVzZXIgPSByZXF1aXJlKCcuLi9tb2RlbHMvdXNlcicpOwoKY29uc3QgYXV0aCA9IGFzeW5jIChyZXEsIHJlcywgbmV4dCkgPT4gewogIHRyeSB7CiAgICBjb25zdCB0b2tlbiA9IHJlcS5oZWFkZXIoJ0F1dGhvcml6YXRpb24nKS5yZXBsYWNlKCdCZWFyZXIgJywgJycpOwogICAgY29uc3QgZGVjb2RlZCA9IGp3dC52ZXJpZnkodG9rZW4sICdzZWNyZXRrZXknKTsKICAgIGNvbnN0IHVzZXIgPSBhd2FpdCBVc2VyLmZpbmRPbmUoeyBfaWQ6IGRlY29kZWQuX2lkLCAndG9rZW5zLnRva2VuJzogdG9rZW4gfSk7CgogICAgaWYgKCF1c2VyKSB7CiAgICAgIHRocm93IG5ldyBFcnJvcigpOwogICAgfQoKICAgIHJlcS50b2tlbiA9IHRva2VuOwogICAgcmVxLnVzZXIgPSB1c2VyOwogICAgbmV4dCgpOwogIH0gY2F0Y2ggKGUpIHsKICAgIHJlcy5zdGF0dXMoNDAxKS5zZW5kKHsgZXJyb3I6ICdQbGVhc2UgYXV0aGVudGljYXRlLicgfSk7CiAgfQp9OwoKbW9kdWxlLmV4cG9ydHMgPSBhdXRoOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const jwt = require('jsonwebtoken');
+const User = require('../models/user');
+
+const auth = async (req, res, next) =&gt; {
+  try {
+    const token = req.header('Authorization').replace('Bearer ', '');
+    const decoded = jwt.verify(token, 'secretkey');
+    const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
+
+    if (!user) {
+      throw new Error();
+    }
+
+    req.token = token;
+    req.user = user;
+    next();
+  } catch (e) {
+    res.status(401).send({ error: 'Please authenticate.' });
+  }
+};
+
+module.exports = auth;</pre></div><div class='content'></div><h2>6. Proves i Depuració</h2>
+<div class='content'><h4>6.1. Proves Unitàries</h4>
+<p>Utilitzarem <code>mocha</code> i <code>chai</code> per a les proves unitàries. Instal·lem les dependències:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnBtIGluc3RhbGwgLS1zYXZlLWRldiBtb2NoYSBjaGFp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npm install --save-dev mocha chai</pre></div><div class='content'><h4>6.2. Crear Fitxers de Prova</h4>
+<p>Creem una carpeta <code>tests</code> i afegim fitxers de prova per a usuaris i tasques.</p>
+</div><h2>7. Desplegament</h2>
+<div class='content'><h4>7.1. Configurar Variables d'Entorn</h4>
+<p>Utilitzem <code>dotenv</code> per gestionar les variables d'entorn:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnBtIGluc3RhbGwgZG90ZW52"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npm install dotenv</pre></div><div class='content'><p>Afegim el següent codi a <code>index.js</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVxdWlyZSgnZG90ZW52JykuY29uZmlnKCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>require('dotenv').config();</pre></div><div class='content'><h4>7.2. Desplegar a Heroku</h4>
+<p>Seguiu els passos per desplegar l'aplicació a Heroku, assegurant-vos de configurar les variables d'entorn necessàries.</p>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest projecte, hem construït una eina de gestió de tasques completa utilitzant Node.js i Express. Hem implementat operacions CRUD, autenticació amb JWT, i hem après a gestionar errors i validar dades. Aquest projecte ens ha permès aplicar molts dels conceptes apresos al llarg del curs i ens ha preparat per a desenvolupar aplicacions més complexes en el futur.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='12-03-developing-blogging-platform' title="Desenvolupar una Plataforma de Blogs">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

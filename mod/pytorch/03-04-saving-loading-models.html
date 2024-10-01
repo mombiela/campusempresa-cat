@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desament i Càrrega de Models</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/pytorch/03-04-saving-loading-models" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/pytorch/03-04-saving-loading-models" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/pytorch/03-04-saving-loading-models" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/pytorch/03-04-saving-loading-models" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/pytorch/03-04-saving-loading-models" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-validation-testing' title="Validació i Prova">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Desament i Càrrega de Models</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-introduction-to-cnns' title="Introducció a les CNNs">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com desar i carregar models en PyTorch. Aquesta habilitat és essencial per a la reutilització de models entrenats, la compartició de models amb altres persones i la implementació de models en producció.</p>
+</div><h1>1. Introducció</h1>
+<div class='content'><p>Desar i carregar models en PyTorch és un procés senzill però crucial. PyTorch proporciona dues maneres principals de desar models:</p>
+<ol>
+<li>Desar només els pesos del model (state_dict).</li>
+<li>Desar tot el model (estructura + pesos).</li>
+</ol>
+</div><h1>2. Desament de Models</h1>
+<div class='content'></div><h2>2.1 Desar només els pesos del model</h2>
+<div class='content'><p>Desar només els pesos del model és la manera més recomanada, ja que és més flexible i permet reconstruir el model amb diferents configuracions.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaC5ubiBhcyBubgoKIyBEZWZpbmltIHVuYSB4YXJ4YSBuZXVyb25hbCBzaW1wbGUKY2xhc3MgU2ltcGxlTk4obm4uTW9kdWxlKToKICAgIGRlZiBfX2luaXRfXyhzZWxmKToKICAgICAgICBzdXBlcihTaW1wbGVOTiwgc2VsZikuX19pbml0X18oKQogICAgICAgIHNlbGYuZmMxID0gbm4uTGluZWFyKDEwLCA1MCkKICAgICAgICBzZWxmLmZjMiA9IG5uLkxpbmVhcig1MCwgMSkKCiAgICBkZWYgZm9yd2FyZChzZWxmLCB4KToKICAgICAgICB4ID0gdG9yY2gucmVsdShzZWxmLmZjMSh4KSkKICAgICAgICB4ID0gc2VsZi5mYzIoeCkKICAgICAgICByZXR1cm4geAoKIyBDcmVlbSB1bmEgaW5zdMOgbmNpYSBkZWwgbW9kZWwKbW9kZWwgPSBTaW1wbGVOTigpCgojIERlc2VtIGVscyBwZXNvcyBkZWwgbW9kZWwKdG9yY2guc2F2ZShtb2RlbC5zdGF0ZV9kaWN0KCksICdtb2RlbF93ZWlnaHRzLnB0aCcp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torch.nn as nn
+
+# Definim una xarxa neuronal simple
+class SimpleNN(nn.Module):
+    def __init__(self):
+        super(SimpleNN, self).__init__()
+        self.fc1 = nn.Linear(10, 50)
+        self.fc2 = nn.Linear(50, 1)
+
+    def forward(self, x):
+        x = torch.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+
+# Creem una inst&agrave;ncia del model
+model = SimpleNN()
+
+# Desem els pesos del model
+torch.save(model.state_dict(), 'model_weights.pth')</pre></div><div class='content'></div><h2>2.2 Desar tot el model</h2>
+<div class='content'><p>Desar tot el model inclou tant l'estructura com els pesos. Això pot ser útil per a la reproducció exacta del model, però és menys flexible.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBEZXNlbSB0b3QgZWwgbW9kZWwKdG9yY2guc2F2ZShtb2RlbCwgJ21vZGVsX2NvbXBsZXRlLnB0aCcp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Desem tot el model
+torch.save(model, 'model_complete.pth')</pre></div><div class='content'></div><h1>3. Càrrega de Models</h1>
+<div class='content'></div><h2>3.1 Càrrega només dels pesos del model</h2>
+<div class='content'><p>Per carregar només els pesos del model, primer hem de crear una instància del model amb la mateixa estructura i després carregar els pesos.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDcmVlbSB1bmEgbm92YSBpbnN0w6BuY2lhIGRlbCBtb2RlbAptb2RlbCA9IFNpbXBsZU5OKCkKCiMgQ2FycmVndWVtIGVscyBwZXNvcyBkZWwgbW9kZWwKbW9kZWwubG9hZF9zdGF0ZV9kaWN0KHRvcmNoLmxvYWQoJ21vZGVsX3dlaWdodHMucHRoJykpCgojIFBvc2VtIGVsIG1vZGVsIGVuIG1vZGUgZCdhdmFsdWFjacOzCm1vZGVsLmV2YWwoKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Creem una nova inst&agrave;ncia del model
+model = SimpleNN()
+
+# Carreguem els pesos del model
+model.load_state_dict(torch.load('model_weights.pth'))
+
+# Posem el model en mode d'avaluaci&oacute;
+model.eval()</pre></div><div class='content'></div><h2>3.2 Càrrega de tot el model</h2>
+<div class='content'><p>Per carregar tot el model, simplement utilitzem la funció <code>torch.load</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDYXJyZWd1ZW0gdG90IGVsIG1vZGVsCm1vZGVsID0gdG9yY2gubG9hZCgnbW9kZWxfY29tcGxldGUucHRoJykKCiMgUG9zZW0gZWwgbW9kZWwgZW4gbW9kZSBkJ2F2YWx1YWNpw7MKbW9kZWwuZXZhbCgp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Carreguem tot el model
+model = torch.load('model_complete.pth')
+
+# Posem el model en mode d'avaluaci&oacute;
+model.eval()</pre></div><div class='content'></div><h1>4. Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Desar i Carregar un Model Simple</h2>
+<div class='content'><ol>
+<li>Crea una xarxa neuronal simple amb PyTorch.</li>
+<li>Entrena el model amb un conjunt de dades petit.</li>
+<li>Desa els pesos del model.</li>
+<li>Carrega els pesos del model en una nova instància.</li>
+<li>Comprova que el model carregat produeix les mateixes prediccions que el model original.</li>
+</ol>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaC5ubiBhcyBubgppbXBvcnQgdG9yY2gub3B0aW0gYXMgb3B0aW0KCiMgRGVmaW5pbSB1bmEgeGFyeGEgbmV1cm9uYWwgc2ltcGxlCmNsYXNzIFNpbXBsZU5OKG5uLk1vZHVsZSk6CiAgICBkZWYgX19pbml0X18oc2VsZik6CiAgICAgICAgc3VwZXIoU2ltcGxlTk4sIHNlbGYpLl9faW5pdF9fKCkKICAgICAgICBzZWxmLmZjMSA9IG5uLkxpbmVhcigxMCwgNTApCiAgICAgICAgc2VsZi5mYzIgPSBubi5MaW5lYXIoNTAsIDEpCgogICAgZGVmIGZvcndhcmQoc2VsZiwgeCk6CiAgICAgICAgeCA9IHRvcmNoLnJlbHUoc2VsZi5mYzEoeCkpCiAgICAgICAgeCA9IHNlbGYuZmMyKHgpCiAgICAgICAgcmV0dXJuIHgKCiMgQ3JlZW0gdW5hIGluc3TDoG5jaWEgZGVsIG1vZGVsCm1vZGVsID0gU2ltcGxlTk4oKQoKIyBEZWZpbmltIHVuYSBww6hyZHVhIGkgdW4gb3B0aW1pdHphZG9yCmNyaXRlcmlvbiA9IG5uLk1TRUxvc3MoKQpvcHRpbWl6ZXIgPSBvcHRpbS5TR0QobW9kZWwucGFyYW1ldGVycygpLCBscj0wLjAxKQoKIyBHZW5lcmVtIGRhZGVzIGFsZWF0w7JyaWVzIHBlciBlbnRyZW5hcgppbnB1dHMgPSB0b3JjaC5yYW5kbigxMDAsIDEwKQp0YXJnZXRzID0gdG9yY2gucmFuZG4oMTAwLCAxKQoKIyBFbnRyZW5lbSBlbCBtb2RlbApmb3IgZXBvY2ggaW4gcmFuZ2UoMTAwKToKICAgIG9wdGltaXplci56ZXJvX2dyYWQoKQogICAgb3V0cHV0cyA9IG1vZGVsKGlucHV0cykKICAgIGxvc3MgPSBjcml0ZXJpb24ob3V0cHV0cywgdGFyZ2V0cykKICAgIGxvc3MuYmFja3dhcmQoKQogICAgb3B0aW1pemVyLnN0ZXAoKQoKIyBEZXNhIGVscyBwZXNvcyBkZWwgbW9kZWwKdG9yY2guc2F2ZShtb2RlbC5zdGF0ZV9kaWN0KCksICdzaW1wbGVfbW9kZWxfd2VpZ2h0cy5wdGgnKQoKIyBDcmVlbSB1bmEgbm92YSBpbnN0w6BuY2lhIGRlbCBtb2RlbApuZXdfbW9kZWwgPSBTaW1wbGVOTigpCgojIENhcnJlZ3VlbSBlbHMgcGVzb3MgZGVsIG1vZGVsCm5ld19tb2RlbC5sb2FkX3N0YXRlX2RpY3QodG9yY2gubG9hZCgnc2ltcGxlX21vZGVsX3dlaWdodHMucHRoJykpCgojIFBvc2VtIGVsIG1vZGVsIGVuIG1vZGUgZCdhdmFsdWFjacOzCm5ld19tb2RlbC5ldmFsKCkKCiMgQ29tcHJvdmVtIHF1ZSBlbCBtb2RlbCBjYXJyZWdhdCBwcm9kdWVpeCBsZXMgbWF0ZWl4ZXMgcHJlZGljY2lvbnMKd2l0aCB0b3JjaC5ub19ncmFkKCk6CiAgICBvcmlnaW5hbF9vdXRwdXRzID0gbW9kZWwoaW5wdXRzKQogICAgbG9hZGVkX291dHB1dHMgPSBuZXdfbW9kZWwoaW5wdXRzKQogICAgcHJpbnQodG9yY2guYWxsY2xvc2Uob3JpZ2luYWxfb3V0cHV0cywgbG9hZGVkX291dHB1dHMpKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# Definim una xarxa neuronal simple
+class SimpleNN(nn.Module):
+    def __init__(self):
+        super(SimpleNN, self).__init__()
+        self.fc1 = nn.Linear(10, 50)
+        self.fc2 = nn.Linear(50, 1)
+
+    def forward(self, x):
+        x = torch.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
+
+# Creem una inst&agrave;ncia del model
+model = SimpleNN()
+
+# Definim una p&egrave;rdua i un optimitzador
+criterion = nn.MSELoss()
+optimizer = optim.SGD(model.parameters(), lr=0.01)
+
+# Generem dades aleat&ograve;ries per entrenar
+inputs = torch.randn(100, 10)
+targets = torch.randn(100, 1)
+
+# Entrenem el model
+for epoch in range(100):
+    optimizer.zero_grad()
+    outputs = model(inputs)
+    loss = criterion(outputs, targets)
+    loss.backward()
+    optimizer.step()
+
+# Desa els pesos del model
+torch.save(model.state_dict(), 'simple_model_weights.pth')
+
+# Creem una nova inst&agrave;ncia del model
+new_model = SimpleNN()
+
+# Carreguem els pesos del model
+new_model.load_state_dict(torch.load('simple_model_weights.pth'))
+
+# Posem el model en mode d'avaluaci&oacute;
+new_model.eval()
+
+# Comprovem que el model carregat produeix les mateixes prediccions
+with torch.no_grad():
+    original_outputs = model(inputs)
+    loaded_outputs = new_model(inputs)
+    print(torch.allclose(original_outputs, loaded_outputs))</pre></div><div class='content'></div><h1>5. Resum</h1>
+<div class='content'><p>En aquesta secció, hem après com desar i carregar models en PyTorch. Hem vist dues maneres principals de desar models: desar només els pesos i desar tot el model. També hem practicat com carregar models desats i hem realitzat un exercici pràctic per reforçar aquests conceptes. Aquestes habilitats són fonamentals per a la reutilització i la implementació de models en aplicacions reals.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-validation-testing' title="Validació i Prova">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-introduction-to-cnns' title="Introducció a les CNNs">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

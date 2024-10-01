@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expressions de taula comunes (CTEs)</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/sql/10-04-common-table-expressions" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/sql/10-04-common-table-expressions" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/sql/10-04-common-table-expressions" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/sql/10-04-common-table-expressions" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/sql/10-04-common-table-expressions" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='10-03-views' title="Vistes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Expressions de taula comunes (CTEs)</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-05-window-functions' title="Funcions de finestra">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Les Expressions de Taula Comunes (CTEs) són una característica poderosa de SQL que permet definir una taula temporal dins d'una consulta. Les CTEs poden fer que les consultes siguin més llegibles i fàcils de mantenir, especialment quan es treballa amb consultes complexes o subconsultes repetides.</p>
+</div><h1>Què és una CTE?</h1>
+<div class='content'><p>Una CTE és una consulta temporal que es defineix al començament d'una instrucció <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code> o <code>DELETE</code>. Les CTEs es defineixen utilitzant la clàusula <code>WITH</code> i poden ser referenciades dins de la consulta principal.</p>
+</div><h2>Sintaxi bàsica</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("V0lUSCBjdGVfbmFtZSBBUyAoCiAgICAtLSBTdWJjb25zdWx0YQogICAgU0VMRUNUIGNvbHVtbjEsIGNvbHVtbjIsIC4uLgogICAgRlJPTSB0YWJsZV9uYW1lCiAgICBXSEVSRSBjb25kaXRpb24KKQpTRUxFQ1QgY29sdW1uMSwgY29sdW1uMiwgLi4uCkZST00gY3RlX25hbWUKV0hFUkUgY29uZGl0aW9uOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>WITH cte_name AS (
+    -- Subconsulta
+    SELECT column1, column2, ...
+    FROM table_name
+    WHERE condition
+)
+SELECT column1, column2, ...
+FROM cte_name
+WHERE condition;</pre></div><div class='content'></div><h2>Exemple pràctic</h2>
+<div class='content'><p>Suposem que tenim una taula <code>employees</code> amb les següents columnes: <code>employee_id</code>, <code>first_name</code>, <code>last_name</code>, <code>department_id</code>, i <code>salary</code>. Volem trobar els empleats que tenen un salari superior a la mitjana del seu departament.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("V0lUSCBhdmdfc2FsYXJ5IEFTICgKICAgIFNFTEVDVCBkZXBhcnRtZW50X2lkLCBBVkcoc2FsYXJ5KSBBUyBhdmdfZGVwdF9zYWxhcnkKICAgIEZST00gZW1wbG95ZWVzCiAgICBHUk9VUCBCWSBkZXBhcnRtZW50X2lkCikKU0VMRUNUIGUuZW1wbG95ZWVfaWQsIGUuZmlyc3RfbmFtZSwgZS5sYXN0X25hbWUsIGUuc2FsYXJ5LCBhLmF2Z19kZXB0X3NhbGFyeQpGUk9NIGVtcGxveWVlcyBlCkpPSU4gYXZnX3NhbGFyeSBhIE9OIGUuZGVwYXJ0bWVudF9pZCA9IGEuZGVwYXJ0bWVudF9pZApXSEVSRSBlLnNhbGFyeSA+IGEuYXZnX2RlcHRfc2FsYXJ5Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>WITH avg_salary AS (
+    SELECT department_id, AVG(salary) AS avg_dept_salary
+    FROM employees
+    GROUP BY department_id
+)
+SELECT e.employee_id, e.first_name, e.last_name, e.salary, a.avg_dept_salary
+FROM employees e
+JOIN avg_salary a ON e.department_id = a.department_id
+WHERE e.salary &gt; a.avg_dept_salary;</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li>Definim una CTE anomenada <code>avg_salary</code> que calcula el salari mitjà per a cada departament.</li>
+<li>Utilitzem aquesta CTE en la consulta principal per trobar els empleats que tenen un salari superior a la mitjana del seu departament.</li>
+</ul>
+</div><h1>Avantatges de les CTEs</h1>
+<div class='content'><ol>
+<li><strong>Millora de la llegibilitat</strong>: Les CTEs permeten dividir consultes complexes en parts més petites i manejables.</li>
+<li><strong>Reutilització de codi</strong>: Les CTEs poden ser referenciades múltiples vegades dins de la mateixa consulta, evitant la duplicació de codi.</li>
+<li><strong>Facilitat de depuració</strong>: Les CTEs permeten aïllar parts de la consulta per a una depuració més fàcil.</li>
+</ol>
+</div><h1>CTEs recursives</h1>
+<div class='content'><p>Les CTEs també poden ser recursives, és a dir, poden referenciar-se a si mateixes. Això és útil per treballar amb dades jeràrquiques, com ara estructures d'arbre.</p>
+</div><h2>Sintaxi de CTE recursiva</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("V0lUSCBSRUNVUlNJVkUgY3RlX25hbWUgQVMgKAogICAgLS0gUGFydCBkJ2FuY29yYXRnZQogICAgU0VMRUNUIGNvbHVtbjEsIGNvbHVtbjIsIC4uLgogICAgRlJPTSB0YWJsZV9uYW1lCiAgICBXSEVSRSBjb25kaXRpb24KCiAgICBVTklPTiBBTEwKCiAgICAtLSBQYXJ0IHJlY3Vyc2l2YQogICAgU0VMRUNUIGNvbHVtbjEsIGNvbHVtbjIsIC4uLgogICAgRlJPTSB0YWJsZV9uYW1lCiAgICBKT0lOIGN0ZV9uYW1lIE9OIHRhYmxlX25hbWUuY29sdW1uID0gY3RlX25hbWUuY29sdW1uCikKU0VMRUNUIGNvbHVtbjEsIGNvbHVtbjIsIC4uLgpGUk9NIGN0ZV9uYW1lOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>WITH RECURSIVE cte_name AS (
+    -- Part d'ancoratge
+    SELECT column1, column2, ...
+    FROM table_name
+    WHERE condition
+
+    UNION ALL
+
+    -- Part recursiva
+    SELECT column1, column2, ...
+    FROM table_name
+    JOIN cte_name ON table_name.column = cte_name.column
+)
+SELECT column1, column2, ...
+FROM cte_name;</pre></div><div class='content'></div><h2>Exemple pràctic de CTE recursiva</h2>
+<div class='content'><p>Suposem que tenim una taula <code>employees</code> amb les columnes <code>employee_id</code>, <code>first_name</code>, <code>last_name</code>, <code>manager_id</code>. Volem trobar la jerarquia de gestió per a cada empleat.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("V0lUSCBSRUNVUlNJVkUgbWFuYWdlbWVudF9oaWVyYXJjaHkgQVMgKAogICAgLS0gUGFydCBkJ2FuY29yYXRnZTogc2VsZWNjaW9uYSBlbHMgZW1wbGVhdHMgcXVlIG5vIHRlbmVuIHVuIG1hbmFnZXIKICAgIFNFTEVDVCBlbXBsb3llZV9pZCwgZmlyc3RfbmFtZSwgbGFzdF9uYW1lLCBtYW5hZ2VyX2lkLCAxIEFTIGxldmVsCiAgICBGUk9NIGVtcGxveWVlcwogICAgV0hFUkUgbWFuYWdlcl9pZCBJUyBOVUxMCgogICAgVU5JT04gQUxMCgogICAgLS0gUGFydCByZWN1cnNpdmE6IHNlbGVjY2lvbmEgZWxzIGVtcGxlYXRzIGkgZWxzIHVuZWl4IGFtYiBlbHMgc2V1cyBtYW5hZ2VycwogICAgU0VMRUNUIGUuZW1wbG95ZWVfaWQsIGUuZmlyc3RfbmFtZSwgZS5sYXN0X25hbWUsIGUubWFuYWdlcl9pZCwgbWgubGV2ZWwgKyAxCiAgICBGUk9NIGVtcGxveWVlcyBlCiAgICBKT0lOIG1hbmFnZW1lbnRfaGllcmFyY2h5IG1oIE9OIGUubWFuYWdlcl9pZCA9IG1oLmVtcGxveWVlX2lkCikKU0VMRUNUIGVtcGxveWVlX2lkLCBmaXJzdF9uYW1lLCBsYXN0X25hbWUsIG1hbmFnZXJfaWQsIGxldmVsCkZST00gbWFuYWdlbWVudF9oaWVyYXJjaHkKT1JERVIgQlkgbGV2ZWwsIG1hbmFnZXJfaWQ7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>WITH RECURSIVE management_hierarchy AS (
+    -- Part d'ancoratge: selecciona els empleats que no tenen un manager
+    SELECT employee_id, first_name, last_name, manager_id, 1 AS level
+    FROM employees
+    WHERE manager_id IS NULL
+
+    UNION ALL
+
+    -- Part recursiva: selecciona els empleats i els uneix amb els seus managers
+    SELECT e.employee_id, e.first_name, e.last_name, e.manager_id, mh.level + 1
+    FROM employees e
+    JOIN management_hierarchy mh ON e.manager_id = mh.employee_id
+)
+SELECT employee_id, first_name, last_name, manager_id, level
+FROM management_hierarchy
+ORDER BY level, manager_id;</pre></div><div class='content'><p>En aquest exemple:</p>
+<ul>
+<li>La part d'ancoratge selecciona els empleats que no tenen un manager (<code>manager_id IS NULL</code>).</li>
+<li>La part recursiva uneix els empleats amb els seus managers i incrementa el nivell de jerarquia.</li>
+<li>La consulta final selecciona tots els empleats amb el seu nivell de jerarquia.</li>
+</ul>
+</div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1</h2>
+<div class='content'><p>Crea una CTE que calculi el salari mitjà per a cada departament i després utilitza aquesta CTE per trobar els empleats que tenen un salari inferior a la mitjana del seu departament.</p>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("V0lUSCBhdmdfc2FsYXJ5IEFTICgKICAgIFNFTEVDVCBkZXBhcnRtZW50X2lkLCBBVkcoc2FsYXJ5KSBBUyBhdmdfZGVwdF9zYWxhcnkKICAgIEZST00gZW1wbG95ZWVzCiAgICBHUk9VUCBCWSBkZXBhcnRtZW50X2lkCikKU0VMRUNUIGUuZW1wbG95ZWVfaWQsIGUuZmlyc3RfbmFtZSwgZS5sYXN0X25hbWUsIGUuc2FsYXJ5LCBhLmF2Z19kZXB0X3NhbGFyeQpGUk9NIGVtcGxveWVlcyBlCkpPSU4gYXZnX3NhbGFyeSBhIE9OIGUuZGVwYXJ0bWVudF9pZCA9IGEuZGVwYXJ0bWVudF9pZApXSEVSRSBlLnNhbGFyeSA8IGEuYXZnX2RlcHRfc2FsYXJ5Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>WITH avg_salary AS (
+    SELECT department_id, AVG(salary) AS avg_dept_salary
+    FROM employees
+    GROUP BY department_id
+)
+SELECT e.employee_id, e.first_name, e.last_name, e.salary, a.avg_dept_salary
+FROM employees e
+JOIN avg_salary a ON e.department_id = a.department_id
+WHERE e.salary &lt; a.avg_dept_salary;</pre></div><div class='content'></div><h2>Exercici 2</h2>
+<div class='content'><p>Utilitza una CTE recursiva per trobar tots els subordinats directes i indirectes d'un manager específic.</p>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("V0lUSCBSRUNVUlNJVkUgc3Vib3JkaW5hdGVzIEFTICgKICAgIC0tIFBhcnQgZCdhbmNvcmF0Z2U6IHNlbGVjY2lvbmEgZWxzIGVtcGxlYXRzIGRpcmVjdGFtZW50IHN1Ym9yZGluYXRzIGFsIG1hbmFnZXIgYW1iIElEIDEKICAgIFNFTEVDVCBlbXBsb3llZV9pZCwgZmlyc3RfbmFtZSwgbGFzdF9uYW1lLCBtYW5hZ2VyX2lkCiAgICBGUk9NIGVtcGxveWVlcwogICAgV0hFUkUgbWFuYWdlcl9pZCA9IDEKCiAgICBVTklPTiBBTEwKCiAgICAtLSBQYXJ0IHJlY3Vyc2l2YTogc2VsZWNjaW9uYSBlbHMgZW1wbGVhdHMgaSBlbHMgdW5laXggYW1iIGVscyBzZXVzIG1hbmFnZXJzCiAgICBTRUxFQ1QgZS5lbXBsb3llZV9pZCwgZS5maXJzdF9uYW1lLCBlLmxhc3RfbmFtZSwgZS5tYW5hZ2VyX2lkCiAgICBGUk9NIGVtcGxveWVlcyBlCiAgICBKT0lOIHN1Ym9yZGluYXRlcyBzIE9OIGUubWFuYWdlcl9pZCA9IHMuZW1wbG95ZWVfaWQKKQpTRUxFQ1QgZW1wbG95ZWVfaWQsIGZpcnN0X25hbWUsIGxhc3RfbmFtZSwgbWFuYWdlcl9pZApGUk9NIHN1Ym9yZGluYXRlczs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>WITH RECURSIVE subordinates AS (
+    -- Part d'ancoratge: selecciona els empleats directament subordinats al manager amb ID 1
+    SELECT employee_id, first_name, last_name, manager_id
+    FROM employees
+    WHERE manager_id = 1
+
+    UNION ALL
+
+    -- Part recursiva: selecciona els empleats i els uneix amb els seus managers
+    SELECT e.employee_id, e.first_name, e.last_name, e.manager_id
+    FROM employees e
+    JOIN subordinates s ON e.manager_id = s.employee_id
+)
+SELECT employee_id, first_name, last_name, manager_id
+FROM subordinates;</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Les Expressions de Taula Comunes (CTEs) són una eina poderosa per millorar la llegibilitat i mantenibilitat de les consultes SQL. Les CTEs recursives són especialment útils per treballar amb dades jeràrquiques. Practicar amb CTEs i CTEs recursives t'ajudarà a comprendre millor com estructurar i optimitzar les teves consultes SQL.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='10-03-views' title="Vistes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-05-window-functions' title="Funcions de finestra">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

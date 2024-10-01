@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entendre les Coordenades i les Transformacions</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/open_gl/02-02-coordinates-transformations" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/open_gl/02-02-coordinates-transformations" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/open_gl/02-02-coordinates-transformations" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/open_gl/02-02-coordinates-transformations" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/open_gl/02-02-coordinates-transformations" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-drawing-basic-shapes' title="Dibuixar Formes Bàsiques">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Entendre les Coordenades i les Transformacions</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-coloring-shading' title="Coloració i Ombrejat">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem sobre les coordenades i les transformacions en OpenGL. Aquestes són conceptes fonamentals per a la renderització de gràfics 3D. Entendre com funcionen les coordenades i les transformacions ens permetrà manipular objectes en l'espai 3D de manera efectiva.</p>
+</div><h1>Índex</h1>
+<div class='content'><ol>
+<li><a href="#sistema-de-coordenades">Sistema de Coordenades</a></li>
+<li><a href="#transformacions-bàsiques">Transformacions Bàsiques</a></li>
+<li><a href="#matrius-de-transformació">Matrius de Transformació</a></li>
+<li><a href="#aplicació-de-transformacions-en-opengl">Aplicació de Transformacions en OpenGL</a></li>
+<li><a href="#exercicis-pràctics">Exercicis Pràctics</a></li>
+</ol>
+</div><h1>Sistema de Coordenades</h1>
+<div class='content'></div><h2>Coordenades del Món</h2>
+<div class='content'><p>Les coordenades del món defineixen la posició dels objectes en l'espai 3D global. Aquest sistema de coordenades és absolut i no canvia.</p>
+</div><h2>Coordenades de Vista</h2>
+<div class='content'><p>Les coordenades de vista (o coordenades de càmera) són les coordenades des de la perspectiva de la càmera. Això implica transformar les coordenades del món perquè la càmera es trobi en l'origen.</p>
+</div><h2>Coordenades de Clip</h2>
+<div class='content'><p>Les coordenades de clip són el resultat de transformar les coordenades de vista mitjançant la matriu de projecció. Aquestes coordenades es troben en un espai normalitzat on els valors x, y i z estan entre -1 i 1.</p>
+</div><h2>Coordenades de Dispositiu Normalitzades</h2>
+<div class='content'><p>Després de la divisió per la component w, les coordenades de clip es converteixen en coordenades de dispositiu normalitzades (NDC). Aquestes coordenades es mapegen a l'espai de la finestra.</p>
+</div><h2>Coordenades de la Finestra</h2>
+<div class='content'><p>Finalment, les coordenades de la finestra són les coordenades 2D en píxels que es mostren a la pantalla.</p>
+</div><h1>Transformacions Bàsiques</h1>
+<div class='content'></div><h2>Translació</h2>
+<div class='content'><p>La translació desplaça un objecte d'una posició a una altra en l'espai 3D.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xtOjptYXQ0IHRyYW5zbGF0aW9uID0gZ2xtOjp0cmFuc2xhdGUoZ2xtOjptYXQ0KDEuMGYpLCBnbG06OnZlYzMoeCwgeSwgeikpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glm::mat4 translation = glm::translate(glm::mat4(1.0f), glm::vec3(x, y, z));</pre></div><div class='content'></div><h2>Rotació</h2>
+<div class='content'><p>La rotació gira un objecte al voltant d'un eix especificat.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xtOjptYXQ0IHJvdGF0aW9uID0gZ2xtOjpyb3RhdGUoZ2xtOjptYXQ0KDEuMGYpLCBnbG06OnJhZGlhbnMoYW5nbGUpLCBnbG06OnZlYzMoeCwgeSwgeikpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glm::mat4 rotation = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(x, y, z));</pre></div><div class='content'></div><h2>Escalat</h2>
+<div class='content'><p>L'escalat canvia la mida d'un objecte.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xtOjptYXQ0IHNjYWxlID0gZ2xtOjpzY2FsZShnbG06Om1hdDQoMS4wZiksIGdsbTo6dmVjMyh4LCB5LCB6KSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(x, y, z));</pre></div><div class='content'></div><h1>Matrius de Transformació</h1>
+<div class='content'><p>Les transformacions es representen mitjançant matrius 4x4. Aquestes matrius es poden combinar per aplicar múltiples transformacions a un objecte.</p>
+</div><h2>Matriu de Translació</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xtOjptYXQ0IHRyYW5zbGF0aW9uID0gZ2xtOjptYXQ0KDEuMGYpOwp0cmFuc2xhdGlvbiA9IGdsbTo6dHJhbnNsYXRlKHRyYW5zbGF0aW9uLCBnbG06OnZlYzMoeCwgeSwgeikpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glm::mat4 translation = glm::mat4(1.0f);
+translation = glm::translate(translation, glm::vec3(x, y, z));</pre></div><div class='content'></div><h2>Matriu de Rotació</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xtOjptYXQ0IHJvdGF0aW9uID0gZ2xtOjptYXQ0KDEuMGYpOwpyb3RhdGlvbiA9IGdsbTo6cm90YXRlKHJvdGF0aW9uLCBnbG06OnJhZGlhbnMoYW5nbGUpLCBnbG06OnZlYzMoeCwgeSwgeikpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glm::mat4 rotation = glm::mat4(1.0f);
+rotation = glm::rotate(rotation, glm::radians(angle), glm::vec3(x, y, z));</pre></div><div class='content'></div><h2>Matriu d'Escalat</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xtOjptYXQ0IHNjYWxlID0gZ2xtOjptYXQ0KDEuMGYpOwpzY2FsZSA9IGdsbTo6c2NhbGUoc2NhbGUsIGdsbTo6dmVjMyh4LCB5LCB6KSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glm::mat4 scale = glm::mat4(1.0f);
+scale = glm::scale(scale, glm::vec3(x, y, z));</pre></div><div class='content'></div><h2>Combinació de Matrius</h2>
+<div class='content'><p>Les matrius es poden combinar multiplicant-les. L'ordre de multiplicació és important.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xtOjptYXQ0IG1vZGVsID0gdHJhbnNsYXRpb24gKiByb3RhdGlvbiAqIHNjYWxlOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glm::mat4 model = translation * rotation * scale;</pre></div><div class='content'></div><h1>Aplicació de Transformacions en OpenGL</h1>
+<div class='content'></div><h2>Configuració de la Matriu de Model</h2>
+<div class='content'><p>La matriu de model transforma les coordenades locals d'un objecte a coordenades del món.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xtOjptYXQ0IG1vZGVsID0gZ2xtOjptYXQ0KDEuMGYpOwptb2RlbCA9IGdsbTo6dHJhbnNsYXRlKG1vZGVsLCBnbG06OnZlYzMoeCwgeSwgeikpOwptb2RlbCA9IGdsbTo6cm90YXRlKG1vZGVsLCBnbG06OnJhZGlhbnMoYW5nbGUpLCBnbG06OnZlYzMoeCwgeSwgeikpOwptb2RlbCA9IGdsbTo6c2NhbGUobW9kZWwsIGdsbTo6dmVjMyh4LCB5LCB6KSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glm::mat4 model = glm::mat4(1.0f);
+model = glm::translate(model, glm::vec3(x, y, z));
+model = glm::rotate(model, glm::radians(angle), glm::vec3(x, y, z));
+model = glm::scale(model, glm::vec3(x, y, z));</pre></div><div class='content'></div><h2>Configuració de la Matriu de Vista</h2>
+<div class='content'><p>La matriu de vista transforma les coordenades del món a coordenades de vista.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xtOjptYXQ0IHZpZXcgPSBnbG06Omxvb2tBdChjYW1lcmFQb3MsIGNhbWVyYVBvcyArIGNhbWVyYUZyb250LCBjYW1lcmFVcCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glm::mat4 view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);</pre></div><div class='content'></div><h2>Configuració de la Matriu de Projecció</h2>
+<div class='content'><p>La matriu de projecció transforma les coordenades de vista a coordenades de clip.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xtOjptYXQ0IHByb2plY3Rpb24gPSBnbG06OnBlcnNwZWN0aXZlKGdsbTo6cmFkaWFucyhmb3YpLCBhc3BlY3RSYXRpbywgbmVhclBsYW5lLCBmYXJQbGFuZSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glm::mat4 projection = glm::perspective(glm::radians(fov), aspectRatio, nearPlane, farPlane);</pre></div><div class='content'></div><h2>Enviament de Matrius als Shaders</h2>
+<div class='content'><p>Les matrius es passen als shaders com a uniformes.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dW5zaWduZWQgaW50IG1vZGVsTG9jID0gZ2xHZXRVbmlmb3JtTG9jYXRpb24oc2hhZGVyUHJvZ3JhbSwgIm1vZGVsIik7CmdsVW5pZm9ybU1hdHJpeDRmdihtb2RlbExvYywgMSwgR0xfRkFMU0UsIGdsbTo6dmFsdWVfcHRyKG1vZGVsKSk7Cgp1bnNpZ25lZCBpbnQgdmlld0xvYyA9IGdsR2V0VW5pZm9ybUxvY2F0aW9uKHNoYWRlclByb2dyYW0sICJ2aWV3Iik7CmdsVW5pZm9ybU1hdHJpeDRmdih2aWV3TG9jLCAxLCBHTF9GQUxTRSwgZ2xtOjp2YWx1ZV9wdHIodmlldykpOwoKdW5zaWduZWQgaW50IHByb2plY3Rpb25Mb2MgPSBnbEdldFVuaWZvcm1Mb2NhdGlvbihzaGFkZXJQcm9ncmFtLCAicHJvamVjdGlvbiIpOwpnbFVuaWZvcm1NYXRyaXg0ZnYocHJvamVjdGlvbkxvYywgMSwgR0xfRkFMU0UsIGdsbTo6dmFsdWVfcHRyKHByb2plY3Rpb24pKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>unsigned int modelLoc = glGetUniformLocation(shaderProgram, &quot;model&quot;);
+glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+unsigned int viewLoc = glGetUniformLocation(shaderProgram, &quot;view&quot;);
+glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+unsigned int projectionLoc = glGetUniformLocation(shaderProgram, &quot;projection&quot;);
+glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Translació</h2>
+<div class='content'><p>Crea un programa que tradueixi un quadrat al llarg de l'eix X.</p>
+<p><strong>Solució:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xtOjptYXQ0IG1vZGVsID0gZ2xtOjptYXQ0KDEuMGYpOwptb2RlbCA9IGdsbTo6dHJhbnNsYXRlKG1vZGVsLCBnbG06OnZlYzMoMS4wZiwgMC4wZiwgMC4wZikpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glm::mat4 model = glm::mat4(1.0f);
+model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));</pre></div><div class='content'></div><h2>Exercici 2: Rotació</h2>
+<div class='content'><p>Crea un programa que giri un triangle al voltant de l'eix Z.</p>
+<p><strong>Solució:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xtOjptYXQ0IG1vZGVsID0gZ2xtOjptYXQ0KDEuMGYpOwptb2RlbCA9IGdsbTo6cm90YXRlKG1vZGVsLCBnbG06OnJhZGlhbnMoNDUuMGYpLCBnbG06OnZlYzMoMC4wZiwgMC4wZiwgMS4wZikpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glm::mat4 model = glm::mat4(1.0f);
+model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));</pre></div><div class='content'></div><h2>Exercici 3: Escalat</h2>
+<div class='content'><p>Crea un programa que escali un cub al doble de la seva mida original.</p>
+<p><strong>Solució:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xtOjptYXQ0IG1vZGVsID0gZ2xtOjptYXQ0KDEuMGYpOwptb2RlbCA9IGdsbTo6c2NhbGUobW9kZWwsIGdsbTo6dmVjMygyLjBmLCAyLjBmLCAyLjBmKSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glm::mat4 model = glm::mat4(1.0f);
+model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après sobre els diferents sistemes de coordenades i les transformacions bàsiques en OpenGL. Hem vist com utilitzar matrius per aplicar translacions, rotacions i escalats als objectes. També hem après com enviar aquestes matrius als shaders per a la renderització. Aquests conceptes són fonamentals per a la creació de gràfics 3D i seran la base per a temes més avançats en els següents mòduls.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-drawing-basic-shapes' title="Dibuixar Formes Bàsiques">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-coloring-shading' title="Coloració i Ombrejat">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

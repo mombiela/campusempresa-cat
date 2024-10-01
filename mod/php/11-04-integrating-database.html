@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integració amb una Base de Dades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/php/11-04-integrating-database" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/php/11-04-integrating-database" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/php/11-04-integrating-database" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/php/11-04-integrating-database" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/php/11-04-integrating-database" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='11-03-implementing-backend' title="Implementació de la Lògica del Backend">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Integració amb una Base de Dades</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='11-05-testing-deployment' title="Proves i Desplegament">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquesta secció, aprendrem com integrar una base de dades en la nostra aplicació web PHP. Això inclou la configuració de la connexió, la realització d'operacions bàsiques i la gestió de dades de manera eficient i segura.</p>
+</div><h1>Objectius d'Aprenentatge</h1>
+<div class='content'><ul>
+<li>Configurar la connexió a una base de dades MySQL.</li>
+<li>Realitzar operacions CRUD (Crear, Llegir, Actualitzar, Esborrar).</li>
+<li>Utilitzar PDO per a una interacció segura amb la base de dades.</li>
+<li>Implementar pràctiques de seguretat per protegir les dades.</li>
+</ul>
+</div><h1>1. Configuració de la Connexió a la Base de Dades</h1>
+<div class='content'></div><h2>Exemple de Connexió amb MySQL Utilitzant PDO</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKJGhvc3QgPSAnMTI3LjAuMC4xJzsKJGRiID0gJ25vbV9kZV9sYV9iYXNlX2RlX2RhZGVzJzsKJHVzZXIgPSAndXN1YXJpJzsKJHBhc3MgPSAnY29udHJhc2VueWEnOwokY2hhcnNldCA9ICd1dGY4bWI0JzsKCiRkc24gPSAibXlzcWw6aG9zdD0kaG9zdDtkYm5hbWU9JGRiO2NoYXJzZXQ9JGNoYXJzZXQiOwokb3B0aW9ucyA9IFsKICAgIFBETzo6QVRUUl9FUlJNT0RFICAgICAgICAgICAgPT4gUERPOjpFUlJNT0RFX0VYQ0VQVElPTiwKICAgIFBETzo6QVRUUl9ERUZBVUxUX0ZFVENIX01PREUgPT4gUERPOjpGRVRDSF9BU1NPQywKICAgIFBETzo6QVRUUl9FTVVMQVRFX1BSRVBBUkVTICAgPT4gZmFsc2UsCl07Cgp0cnkgewogICAgJHBkbyA9IG5ldyBQRE8oJGRzbiwgJHVzZXIsICRwYXNzLCAkb3B0aW9ucyk7CiAgICBlY2hvICJDb25uZXhpw7MgZXN0YWJsZXJ0YSEiOwp9IGNhdGNoIChcUERPRXhjZXB0aW9uICRlKSB7CiAgICB0aHJvdyBuZXcgXFBET0V4Y2VwdGlvbigkZS0+Z2V0TWVzc2FnZSgpLCAoaW50KSRlLT5nZXRDb2RlKCkpOwp9Cj8+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+$host = '127.0.0.1';
+$db = 'nom_de_la_base_de_dades';
+$user = 'usuari';
+$pass = 'contrasenya';
+$charset = 'utf8mb4';
+
+$dsn = &quot;mysql:host=$host;dbname=$db;charset=$charset&quot;;
+$options = [
+    PDO::ATTR_ERRMODE            =&gt; PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE =&gt; PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   =&gt; false,
+];
+
+try {
+    $pdo = new PDO($dsn, $user, $pass, $options);
+    echo &quot;Connexi&oacute; establerta!&quot;;
+} catch (\PDOException $e) {
+    throw new \PDOException($e-&gt;getMessage(), (int)$e-&gt;getCode());
+}
+?&gt;</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><strong>$host</strong>: L'adreça del servidor de la base de dades.</li>
+<li><strong>$db</strong>: El nom de la base de dades.</li>
+<li><strong>$user</strong>: El nom d'usuari per accedir a la base de dades.</li>
+<li><strong>$pass</strong>: La contrasenya per a l'usuari.</li>
+<li><strong>$charset</strong>: El conjunt de caràcters utilitzat per la base de dades.</li>
+<li><strong>$dsn</strong>: La cadena de connexió que inclou el tipus de base de dades, l'host, el nom de la base de dades i el conjunt de caràcters.</li>
+<li><strong>$options</strong>: Opcions per configurar el comportament de PDO.</li>
+<li><strong>try-catch</strong>: Bloc per gestionar errors de connexió.</li>
+</ul>
+</div><h1>2. Realització d'Operacions CRUD</h1>
+<div class='content'></div><h2>Crear (Insertar Dades)</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKJHNxbCA9ICJJTlNFUlQgSU5UTyB1c3VhcmlzIChub20sIGVtYWlsKSBWQUxVRVMgKD8sID8pIjsKJHN0bXQ9ICRwZG8tPnByZXBhcmUoJHNxbCk7CiRzdG10LT5leGVjdXRlKFsnTm9tIGQnVXN1YXJpJywgJ2VtYWlsQGV4ZW1wbGUuY29tJ10pOwo/Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+$sql = &quot;INSERT INTO usuaris (nom, email) VALUES (?, ?)&quot;;
+$stmt= $pdo-&gt;prepare($sql);
+$stmt-&gt;execute(['Nom d'Usuari', 'email@exemple.com']);
+?&gt;</pre></div><div class='content'></div><h2>Llegir (Recuperar Dades)</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKJHNxbCA9ICJTRUxFQ1QgKiBGUk9NIHVzdWFyaXMgV0hFUkUgZW1haWwgPSA/IjsKJHN0bXQgPSAkcGRvLT5wcmVwYXJlKCRzcWwpOwokc3RtdC0+ZXhlY3V0ZShbJ2VtYWlsQGV4ZW1wbGUuY29tJ10pOwokdXN1YXJpID0gJHN0bXQtPmZldGNoKCk7CnByaW50X3IoJHVzdWFyaSk7Cj8+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+$sql = &quot;SELECT * FROM usuaris WHERE email = ?&quot;;
+$stmt = $pdo-&gt;prepare($sql);
+$stmt-&gt;execute(['email@exemple.com']);
+$usuari = $stmt-&gt;fetch();
+print_r($usuari);
+?&gt;</pre></div><div class='content'></div><h2>Actualitzar Dades</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKJHNxbCA9ICJVUERBVEUgdXN1YXJpcyBTRVQgbm9tID0gPyBXSEVSRSBlbWFpbCA9ID8iOwokc3RtdD0gJHBkby0+cHJlcGFyZSgkc3FsKTsKJHN0bXQtPmV4ZWN1dGUoWydOb3UgTm9tJywgJ2VtYWlsQGV4ZW1wbGUuY29tJ10pOwo/Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+$sql = &quot;UPDATE usuaris SET nom = ? WHERE email = ?&quot;;
+$stmt= $pdo-&gt;prepare($sql);
+$stmt-&gt;execute(['Nou Nom', 'email@exemple.com']);
+?&gt;</pre></div><div class='content'></div><h2>Esborrar Dades</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKJHNxbCA9ICJERUxFVEUgRlJPTSB1c3VhcmlzIFdIRVJFIGVtYWlsID0gPyI7CiRzdG10PSAkcGRvLT5wcmVwYXJlKCRzcWwpOwokc3RtdC0+ZXhlY3V0ZShbJ2VtYWlsQGV4ZW1wbGUuY29tJ10pOwo/Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+$sql = &quot;DELETE FROM usuaris WHERE email = ?&quot;;
+$stmt= $pdo-&gt;prepare($sql);
+$stmt-&gt;execute(['email@exemple.com']);
+?&gt;</pre></div><div class='content'></div><h1>3. Ús de PDO per a la Interacció amb Bases de Dades</h1>
+<div class='content'></div><h2>Avantatges de PDO</h2>
+<div class='content'><ul>
+<li><strong>Seguretat</strong>: Protegeix contra injeccions SQL utilitzant sentències preparades.</li>
+<li><strong>Portabilitat</strong>: Suporta múltiples tipus de bases de dades (MySQL, PostgreSQL, SQLite, etc.).</li>
+<li><strong>Flexibilitat</strong>: Proporciona una API consistent per a la interacció amb bases de dades.</li>
+</ul>
+</div><h2>Sentències Preparades</h2>
+<div class='content'><p>Les sentències preparades són una manera segura d'executar consultes SQL amb paràmetres. Això ajuda a prevenir injeccions SQL.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKJHNxbCA9ICJTRUxFQ1QgKiBGUk9NIHVzdWFyaXMgV0hFUkUgZW1haWwgPSA/IjsKJHN0bXQgPSAkcGRvLT5wcmVwYXJlKCRzcWwpOwokc3RtdC0+ZXhlY3V0ZShbJ2VtYWlsQGV4ZW1wbGUuY29tJ10pOwokdXN1YXJpID0gJHN0bXQtPmZldGNoKCk7Cj8+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+$sql = &quot;SELECT * FROM usuaris WHERE email = ?&quot;;
+$stmt = $pdo-&gt;prepare($sql);
+$stmt-&gt;execute(['email@exemple.com']);
+$usuari = $stmt-&gt;fetch();
+?&gt;</pre></div><div class='content'></div><h1>4. Seguretat en Bases de Dades</h1>
+<div class='content'></div><h2>Pràctiques Recomanades</h2>
+<div class='content'><ul>
+<li><strong>Utilitzar Sentències Preparades</strong>: Sempre utilitzar sentències preparades per evitar injeccions SQL.</li>
+<li><strong>Validar i Sanitzar Dades</strong>: Validar i sanitzar totes les dades d'entrada abans de processar-les.</li>
+<li><strong>Gestió d'Errors</strong>: No mostrar missatges d'error detallats a l'usuari final. Utilitzar registres d'errors per a la depuració.</li>
+</ul>
+</div><h2>Exemple de Validació i Sanitització</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKJGVtYWlsID0gZmlsdGVyX2lucHV0KElOUFVUX1BPU1QsICdlbWFpbCcsIEZJTFRFUl9WQUxJREFURV9FTUFJTCk7CmlmICgkZW1haWwgPT09IGZhbHNlKSB7CiAgICBkaWUoJ0VtYWlsIG5vIHbDoGxpZCcpOwp9Cgokbm9tID0gZmlsdGVyX2lucHV0KElOUFVUX1BPU1QsICdub20nLCBGSUxURVJfU0FOSVRJWkVfU1RSSU5HKTsKPz4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+$email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
+if ($email === false) {
+    die('Email no v&agrave;lid');
+}
+
+$nom = filter_input(INPUT_POST, 'nom', FILTER_SANITIZE_STRING);
+?&gt;</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Tasca</h2>
+<div class='content'><ol>
+<li>Crea una base de dades anomenada <code>biblioteca</code> amb una taula <code>llibres</code> que tingui les següents columnes: <code>id</code>, <code>títol</code>, <code>autor</code>, <code>any</code>.</li>
+<li>Escriu un script PHP per connectar-te a la base de dades <code>biblioteca</code>.</li>
+<li>Implementa operacions CRUD per a la taula <code>llibres</code>.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PD9waHAKLy8gQ29ubmV4acOzIGEgbGEgYmFzZSBkZSBkYWRlcwokaG9zdCA9ICcxMjcuMC4wLjEnOwokZGIgPSAnYmlibGlvdGVjYSc7CiR1c2VyID0gJ3VzdWFyaSc7CiRwYXNzID0gJ2NvbnRyYXNlbnlhJzsKJGNoYXJzZXQgPSAndXRmOG1iNCc7CgokZHNuID0gIm15c3FsOmhvc3Q9JGhvc3Q7ZGJuYW1lPSRkYjtjaGFyc2V0PSRjaGFyc2V0IjsKJG9wdGlvbnMgPSBbCiAgICBQRE86OkFUVFJfRVJSTU9ERSAgICAgICAgICAgID0+IFBETzo6RVJSTU9ERV9FWENFUFRJT04sCiAgICBQRE86OkFUVFJfREVGQVVMVF9GRVRDSF9NT0RFID0+IFBETzo6RkVUQ0hfQVNTT0MsCiAgICBQRE86OkFUVFJfRU1VTEFURV9QUkVQQVJFUyAgID0+IGZhbHNlLApdOwoKdHJ5IHsKICAgICRwZG8gPSBuZXcgUERPKCRkc24sICR1c2VyLCAkcGFzcywgJG9wdGlvbnMpOwogICAgZWNobyAiQ29ubmV4acOzIGVzdGFibGVydGEhIjsKfSBjYXRjaCAoXFBET0V4Y2VwdGlvbiAkZSkgewogICAgdGhyb3cgbmV3IFxQRE9FeGNlcHRpb24oJGUtPmdldE1lc3NhZ2UoKSwgKGludCkkZS0+Z2V0Q29kZSgpKTsKfQoKLy8gQ3JlYXIgKEluc2VydGFyIERhZGVzKQokc3FsID0gIklOU0VSVCBJTlRPIGxsaWJyZXMgKHTDrXRvbCwgYXV0b3IsIGFueSkgVkFMVUVTICg/LCA/LCA/KSI7CiRzdG10PSAkcGRvLT5wcmVwYXJlKCRzcWwpOwokc3RtdC0+ZXhlY3V0ZShbJ0VsIFF1aXhvdCcsICdNaWd1ZWwgZGUgQ2VydmFudGVzJywgMTYwNV0pOwoKLy8gTGxlZ2lyIChSZWN1cGVyYXIgRGFkZXMpCiRzcWwgPSAiU0VMRUNUICogRlJPTSBsbGlicmVzIFdIRVJFIGF1dG9yID0gPyI7CiRzdG10ID0gJHBkby0+cHJlcGFyZSgkc3FsKTsKJHN0bXQtPmV4ZWN1dGUoWydNaWd1ZWwgZGUgQ2VydmFudGVzJ10pOwokbGxpYnJlID0gJHN0bXQtPmZldGNoKCk7CnByaW50X3IoJGxsaWJyZSk7CgovLyBBY3R1YWxpdHphciBEYWRlcwokc3FsID0gIlVQREFURSBsbGlicmVzIFNFVCBhbnkgPSA/IFdIRVJFIHTDrXRvbCA9ID8iOwokc3RtdD0gJHBkby0+cHJlcGFyZSgkc3FsKTsKJHN0bXQtPmV4ZWN1dGUoWzE2MTUsICdFbCBRdWl4b3QnXSk7CgovLyBFc2JvcnJhciBEYWRlcwokc3FsID0gIkRFTEVURSBGUk9NIGxsaWJyZXMgV0hFUkUgdMOtdG9sID0gPyI7CiRzdG10PSAkcGRvLT5wcmVwYXJlKCRzcWwpOwokc3RtdC0+ZXhlY3V0ZShbJ0VsIFF1aXhvdCddKTsKPz4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;?php
+// Connexi&oacute; a la base de dades
+$host = '127.0.0.1';
+$db = 'biblioteca';
+$user = 'usuari';
+$pass = 'contrasenya';
+$charset = 'utf8mb4';
+
+$dsn = &quot;mysql:host=$host;dbname=$db;charset=$charset&quot;;
+$options = [
+    PDO::ATTR_ERRMODE            =&gt; PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE =&gt; PDO::FETCH_ASSOC,
+    PDO::ATTR_EMULATE_PREPARES   =&gt; false,
+];
+
+try {
+    $pdo = new PDO($dsn, $user, $pass, $options);
+    echo &quot;Connexi&oacute; establerta!&quot;;
+} catch (\PDOException $e) {
+    throw new \PDOException($e-&gt;getMessage(), (int)$e-&gt;getCode());
+}
+
+// Crear (Insertar Dades)
+$sql = &quot;INSERT INTO llibres (t&iacute;tol, autor, any) VALUES (?, ?, ?)&quot;;
+$stmt= $pdo-&gt;prepare($sql);
+$stmt-&gt;execute(['El Quixot', 'Miguel de Cervantes', 1605]);
+
+// Llegir (Recuperar Dades)
+$sql = &quot;SELECT * FROM llibres WHERE autor = ?&quot;;
+$stmt = $pdo-&gt;prepare($sql);
+$stmt-&gt;execute(['Miguel de Cervantes']);
+$llibre = $stmt-&gt;fetch();
+print_r($llibre);
+
+// Actualitzar Dades
+$sql = &quot;UPDATE llibres SET any = ? WHERE t&iacute;tol = ?&quot;;
+$stmt= $pdo-&gt;prepare($sql);
+$stmt-&gt;execute([1615, 'El Quixot']);
+
+// Esborrar Dades
+$sql = &quot;DELETE FROM llibres WHERE t&iacute;tol = ?&quot;;
+$stmt= $pdo-&gt;prepare($sql);
+$stmt-&gt;execute(['El Quixot']);
+?&gt;</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com integrar una base de dades en una aplicació PHP utilitzant PDO. Hem cobert la configuració de la connexió, la realització d'operacions CRUD i les pràctiques de seguretat. Aquestes habilitats són fonamentals per desenvolupar aplicacions web robustes i segures. En la següent secció, ens centrarem en les proves i el desplegament de la nostra aplicació.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='11-03-implementing-backend' title="Implementació de la Lògica del Backend">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='11-05-testing-deployment' title="Proves i Desplegament">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

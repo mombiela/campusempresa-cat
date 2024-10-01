@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automatització de fluxos de treball amb Cloud Functions</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/bigquery/08-03-automating-workflows" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/bigquery/08-03-automating-workflows" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/bigquery/08-03-automating-workflows" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/bigquery/08-03-automating-workflows" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/bigquery/08-03-automating-workflows" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-02-using-dataflow' title="Ús de BigQuery amb Dataflow">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Automatització de fluxos de treball amb Cloud Functions</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-04-scheduling-queries' title="Programació de consultes amb Cloud Scheduler">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, aprendrem com automatitzar fluxos de treball a BigQuery utilitzant Google Cloud Functions. Les Cloud Functions són funcions de codi que s'executen en resposta a esdeveniments, permetent-nos crear solucions escalables i sense servidor per a diverses tasques, incloent-hi l'automatització de processos a BigQuery.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Comprendre què són les Cloud Functions i com funcionen.</li>
+<li>Aprendre a crear i desplegar una Cloud Function.</li>
+<li>Integrar Cloud Functions amb BigQuery per automatitzar fluxos de treball.</li>
+<li>Veure exemples pràctics d'automatització.</li>
+</ul>
+</div><h1>Què són les Cloud Functions?</h1>
+<div class='content'><p>Google Cloud Functions és un servei de computació sense servidor que permet executar codi en resposta a esdeveniments sense gestionar servidors. Les funcions poden ser desencadenades per diversos esdeveniments, com ara canvis en un bucket de Cloud Storage, missatges en una cua de Pub/Sub, o fins i tot peticions HTTP.</p>
+</div><h2>Característiques clau</h2>
+<div class='content'><ul>
+<li><strong>Sense servidor</strong>: No cal gestionar ni escalar servidors.</li>
+<li><strong>Desencadenadors basats en esdeveniments</strong>: Les funcions s'executen en resposta a esdeveniments específics.</li>
+<li><strong>Escalabilitat automàtica</strong>: Les funcions s'escalen automàticament segons la demanda.</li>
+<li><strong>Integració amb altres serveis de Google Cloud</strong>: Facilita la creació de solucions integrades.</li>
+</ul>
+</div><h1>Crear i desplegar una Cloud Function</h1>
+<div class='content'></div><h2>Pas 1: Configurar l'entorn</h2>
+<div class='content'><p>Abans de crear una Cloud Function, assegura't de tenir el SDK de Google Cloud instal·lat i configurat al teu entorn. Pots seguir les instruccions oficials de Google per a la instal·lació i configuració.</p>
+</div><h2>Pas 2: Escriure la funció</h2>
+<div class='content'><p>A continuació, escriurem una funció simple que s'executa en resposta a una petició HTTP i executa una consulta a BigQuery.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGdvb2dsZS5jbG91ZC5iaWdxdWVyeSBhcyBiaWdxdWVyeQpmcm9tIGZsYXNrIGltcG9ydCBlc2NhcGUKCmRlZiBiaWdxdWVyeV9xdWVyeShyZXF1ZXN0KToKICAgIGNsaWVudCA9IGJpZ3F1ZXJ5LkNsaWVudCgpCiAgICBxdWVyeSA9ICIiIgogICAgICAgIFNFTEVDVCBuYW1lLCBDT1VOVCgqKSBhcyBuYW1lX2NvdW50CiAgICAgICAgRlJPTSBgcHJvamVjdF9pZC5kYXRhc2V0LnRhYmxlYAogICAgICAgIEdST1VQIEJZIG5hbWUKICAgICAgICBPUkRFUiBCWSBuYW1lX2NvdW50IERFU0MKICAgICAgICBMSU1JVCAxMAogICAgIiIiCiAgICBxdWVyeV9qb2IgPSBjbGllbnQucXVlcnkocXVlcnkpCiAgICByZXN1bHRzID0gcXVlcnlfam9iLnJlc3VsdCgpCiAgICAKICAgIG91dHB1dCA9IFtdCiAgICBmb3Igcm93IGluIHJlc3VsdHM6CiAgICAgICAgb3V0cHV0LmFwcGVuZChmIntyb3cubmFtZX06IHtyb3cubmFtZV9jb3VudH0iKQogICAgCiAgICByZXR1cm4gZXNjYXBlKCJcbiIuam9pbihvdXRwdXQpKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import google.cloud.bigquery as bigquery
+from flask import escape
+
+def bigquery_query(request):
+    client = bigquery.Client()
+    query = &quot;&quot;&quot;
+        SELECT name, COUNT(*) as name_count
+        FROM `project_id.dataset.table`
+        GROUP BY name
+        ORDER BY name_count DESC
+        LIMIT 10
+    &quot;&quot;&quot;
+    query_job = client.query(query)
+    results = query_job.result()
+    
+    output = []
+    for row in results:
+        output.append(f&quot;{row.name}: {row.name_count}&quot;)
+    
+    return escape(&quot;\n&quot;.join(output))</pre></div><div class='content'></div><h2>Pas 3: Desplegar la funció</h2>
+<div class='content'><p>Per desplegar la funció, utilitza la següent comanda del SDK de Google Cloud:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2Nsb3VkIGZ1bmN0aW9ucyBkZXBsb3kgYmlncXVlcnlfcXVlcnkgXAotLXJ1bnRpbWUgcHl0aG9uMzkgXAotLXRyaWdnZXItaHR0cCBcCi0tYWxsb3ctdW5hdXRoZW50aWNhdGVk"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>gcloud functions deploy bigquery_query \
+--runtime python39 \
+--trigger-http \
+--allow-unauthenticated</pre></div><div class='content'></div><h2>Pas 4: Provar la funció</h2>
+<div class='content'><p>Un cop desplegada, pots provar la funció fent una petició HTTP a l'URL proporcionat per Google Cloud Functions.</p>
+</div><h1>Integració amb BigQuery</h1>
+<div class='content'></div><h2>Exemple pràctic: Automatització de l'actualització de taules</h2>
+<div class='content'><p>Suposem que volem automatitzar l'actualització d'una taula a BigQuery cada vegada que es carrega un nou fitxer CSV a un bucket de Cloud Storage. Podem crear una Cloud Function que s'executi en resposta a aquest esdeveniment.</p>
+<h4>Pas 1: Escriure la funció</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGdvb2dsZS5jbG91ZC5iaWdxdWVyeSBhcyBiaWdxdWVyeQppbXBvcnQgZ29vZ2xlLmNsb3VkLnN0b3JhZ2UgYXMgc3RvcmFnZQoKZGVmIHVwZGF0ZV90YWJsZShldmVudCwgY29udGV4dCk6CiAgICBjbGllbnQgPSBiaWdxdWVyeS5DbGllbnQoKQogICAgYnVja2V0X25hbWUgPSBldmVudFsnYnVja2V0J10KICAgIGZpbGVfbmFtZSA9IGV2ZW50WyduYW1lJ10KICAgIAogICAgZGF0YXNldF9pZCA9ICd5b3VyX2RhdGFzZXRfaWQnCiAgICB0YWJsZV9pZCA9ICd5b3VyX3RhYmxlX2lkJwogICAgCiAgICB1cmkgPSBmImdzOi8ve2J1Y2tldF9uYW1lfS97ZmlsZV9uYW1lfSIKICAgIAogICAgam9iX2NvbmZpZyA9IGJpZ3F1ZXJ5LkxvYWRKb2JDb25maWcoCiAgICAgICAgc291cmNlX2Zvcm1hdD1iaWdxdWVyeS5Tb3VyY2VGb3JtYXQuQ1NWLAogICAgICAgIHNraXBfbGVhZGluZ19yb3dzPTEsCiAgICAgICAgYXV0b2RldGVjdD1UcnVlLAogICAgKQogICAgCiAgICBsb2FkX2pvYiA9IGNsaWVudC5sb2FkX3RhYmxlX2Zyb21fdXJpKAogICAgICAgIHVyaSwgZiJ7ZGF0YXNldF9pZH0ue3RhYmxlX2lkfSIsIGpvYl9jb25maWc9am9iX2NvbmZpZwogICAgKQogICAgCiAgICBsb2FkX2pvYi5yZXN1bHQoKQogICAgcHJpbnQoZiJMb2FkZWQge2ZpbGVfbmFtZX0gaW50byB7ZGF0YXNldF9pZH0ue3RhYmxlX2lkfSIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import google.cloud.bigquery as bigquery
+import google.cloud.storage as storage
+
+def update_table(event, context):
+    client = bigquery.Client()
+    bucket_name = event['bucket']
+    file_name = event['name']
+    
+    dataset_id = 'your_dataset_id'
+    table_id = 'your_table_id'
+    
+    uri = f&quot;gs://{bucket_name}/{file_name}&quot;
+    
+    job_config = bigquery.LoadJobConfig(
+        source_format=bigquery.SourceFormat.CSV,
+        skip_leading_rows=1,
+        autodetect=True,
+    )
+    
+    load_job = client.load_table_from_uri(
+        uri, f&quot;{dataset_id}.{table_id}&quot;, job_config=job_config
+    )
+    
+    load_job.result()
+    print(f&quot;Loaded {file_name} into {dataset_id}.{table_id}&quot;)</pre></div><div class='content'><h4>Pas 2: Desplegar la funció</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2Nsb3VkIGZ1bmN0aW9ucyBkZXBsb3kgdXBkYXRlX3RhYmxlIFwKLS1ydW50aW1lIHB5dGhvbjM5IFwKLS10cmlnZ2VyLXJlc291cmNlIHlvdXItYnVja2V0LW5hbWUgXAotLXRyaWdnZXItZXZlbnQgZ29vZ2xlLnN0b3JhZ2Uub2JqZWN0LmZpbmFsaXpl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>gcloud functions deploy update_table \
+--runtime python39 \
+--trigger-resource your-bucket-name \
+--trigger-event google.storage.object.finalize</pre></div><div class='content'></div><h1>Exercici pràctic</h1>
+<div class='content'></div><h2>Descripció</h2>
+<div class='content'><p>Crea una Cloud Function que s'executi en resposta a un missatge Pub/Sub i executi una consulta a BigQuery per obtenir les 5 primeres files d'una taula específica. La funció ha de retornar els resultats com una resposta HTTP.</p>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGdvb2dsZS5jbG91ZC5iaWdxdWVyeSBhcyBiaWdxdWVyeQpmcm9tIGdvb2dsZS5jbG91ZCBpbXBvcnQgcHVic3ViX3YxCmZyb20gZmxhc2sgaW1wb3J0IGVzY2FwZQoKZGVmIHF1ZXJ5X2JpZ3F1ZXJ5KGV2ZW50LCBjb250ZXh0KToKICAgIGNsaWVudCA9IGJpZ3F1ZXJ5LkNsaWVudCgpCiAgICBxdWVyeSA9ICIiIgogICAgICAgIFNFTEVDVCAqCiAgICAgICAgRlJPTSBgcHJvamVjdF9pZC5kYXRhc2V0LnRhYmxlYAogICAgICAgIExJTUlUIDUKICAgICIiIgogICAgcXVlcnlfam9iID0gY2xpZW50LnF1ZXJ5KHF1ZXJ5KQogICAgcmVzdWx0cyA9IHF1ZXJ5X2pvYi5yZXN1bHQoKQogICAgCiAgICBvdXRwdXQgPSBbXQogICAgZm9yIHJvdyBpbiByZXN1bHRzOgogICAgICAgIG91dHB1dC5hcHBlbmQoZGljdChyb3cpKQogICAgCiAgICByZXR1cm4gZXNjYXBlKHN0cihvdXRwdXQpKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import google.cloud.bigquery as bigquery
+from google.cloud import pubsub_v1
+from flask import escape
+
+def query_bigquery(event, context):
+    client = bigquery.Client()
+    query = &quot;&quot;&quot;
+        SELECT *
+        FROM `project_id.dataset.table`
+        LIMIT 5
+    &quot;&quot;&quot;
+    query_job = client.query(query)
+    results = query_job.result()
+    
+    output = []
+    for row in results:
+        output.append(dict(row))
+    
+    return escape(str(output))</pre></div><div class='content'><p>Desplega la funció amb:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2Nsb3VkIGZ1bmN0aW9ucyBkZXBsb3kgcXVlcnlfYmlncXVlcnkgXAotLXJ1bnRpbWUgcHl0aG9uMzkgXAotLXRyaWdnZXItdG9waWMgeW91ci10b3BpYy1uYW1l"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>gcloud functions deploy query_bigquery \
+--runtime python39 \
+--trigger-topic your-topic-name</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com utilitzar Google Cloud Functions per automatitzar fluxos de treball a BigQuery. Hem vist com crear i desplegar funcions que s'executen en resposta a esdeveniments i com integrar-les amb BigQuery per executar consultes automàticament. Aquestes habilitats són essencials per crear solucions escalables i eficients en entorns de dades moderns.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-02-using-dataflow' title="Ús de BigQuery amb Dataflow">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-04-scheduling-queries' title="Programació de consultes amb Cloud Scheduler">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

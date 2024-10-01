@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NGINX i HTTP/2</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nginx/05-03-nginx-http2" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nginx/05-03-nginx-http2" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nginx/05-03-nginx-http2" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nginx/05-03-nginx-http2" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nginx/05-03-nginx-http2" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-02-using-nginx-docker' title="Utilitzant NGINX amb Docker">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">NGINX i HTTP/2</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-04-nginx-grpc' title="NGINX i gRPC">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>HTTP/2 és la segona versió principal del protocol de xarxa HTTP, utilitzat per la World Wide Web. HTTP/2 introdueix diverses millores en comparació amb HTTP/1.1, incloent la compressió de capçaleres, la multiplexació de fluxos i la priorització de recursos, que milloren significativament el rendiment i l'eficiència de les comunicacions web.</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ul>
+<li>Entendre què és HTTP/2 i les seves avantatges.</li>
+<li>Aprendre a configurar NGINX per suportar HTTP/2.</li>
+<li>Veure exemples pràctics de configuració.</li>
+<li>Realitzar exercicis pràctics per reforçar els conceptes apresos.</li>
+</ul>
+</div><h1>Què és HTTP/2?</h1>
+<div class='content'><p>HTTP/2 és una actualització del protocol HTTP/1.1 que ofereix diverses millores:</p>
+<ul>
+<li><strong>Multiplexació de fluxos</strong>: Permet enviar múltiples sol·licituds per una única connexió TCP, eliminant la necessitat de múltiples connexions paral·leles.</li>
+<li><strong>Compressió de capçaleres</strong>: Utilitza HPACK per comprimir les capçaleres HTTP, reduint la quantitat de dades transmeses.</li>
+<li><strong>Priorització de recursos</strong>: Permet assignar prioritats a les sol·licituds, millorant l'eficiència en la càrrega de pàgines.</li>
+<li><strong>Push del servidor</strong>: Permet al servidor enviar recursos al client abans que aquest els sol·liciti explícitament.</li>
+</ul>
+</div><h1>Configurant NGINX per HTTP/2</h1>
+<div class='content'></div><h2>Requisits previs</h2>
+<div class='content'><ul>
+<li>Assegura't que tens una versió de NGINX que suporti HTTP/2 (NGINX 1.9.5 o superior).</li>
+<li>Necessites tenir configurat SSL/TLS, ja que HTTP/2 requereix una connexió segura.</li>
+</ul>
+</div><h2>Configuració bàsica</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Edita el fitxer de configuració de NGINX</strong>: Normalment es troba a <code>/etc/nginx/nginx.conf</code> o en un fitxer de configuració específic del lloc a <code>/etc/nginx/sites-available/</code>.</p>
+</li>
+<li>
+<p><strong>Habilita HTTP/2</strong>: Afegeix la directiva <code>http2</code> al bloc <code>listen</code> del servidor.</p>
+</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmVyIHsKICAgIGxpc3RlbiA0NDMgc3NsIGh0dHAyOwogICAgc2VydmVyX25hbWUgZXhhbXBsZS5jb207CgogICAgc3NsX2NlcnRpZmljYXRlIC9wYXRoL3RvL2NlcnQucGVtOwogICAgc3NsX2NlcnRpZmljYXRlX2tleSAvcGF0aC90by9rZXkucGVtOwoKICAgICMgQWx0cmVzIGNvbmZpZ3VyYWNpb25zIFNTTC4uLgoKICAgIGxvY2F0aW9uIC8gewogICAgICAgIHJvb3QgL3Zhci93d3cvaHRtbDsKICAgICAgICBpbmRleCBpbmRleC5odG1sOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>server {
+    listen 443 ssl http2;
+    server_name example.com;
+
+    ssl_certificate /path/to/cert.pem;
+    ssl_certificate_key /path/to/key.pem;
+
+    # Altres configuracions SSL...
+
+    location / {
+        root /var/www/html;
+        index index.html;
+    }
+}</pre></div><div class='content'></div><h2>Explicació del codi</h2>
+<div class='content'><ul>
+<li><code>listen 443 ssl http2;</code>: Habilita HTTP/2 en el port 443 (port per defecte per HTTPS).</li>
+<li><code>ssl_certificate</code> i <code>ssl_certificate_key</code>: Especifica els fitxers del certificat SSL i la clau privada.</li>
+</ul>
+</div><h2>Verificant la configuració</h2>
+<div class='content'><p>Després de fer els canvis, verifica la configuració de NGINX i reinicia el servei:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3VkbyBuZ2lueCAtdApzdWRvIHN5c3RlbWN0bCByZXN0YXJ0IG5naW54"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>sudo nginx -t
+sudo systemctl restart nginx</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Habilitar HTTP/2 en un servidor existent</h2>
+<div class='content'><ol>
+<li><strong>Objectiu</strong>: Habilitar HTTP/2 en un servidor NGINX existent que ja utilitza SSL/TLS.</li>
+<li><strong>Passos</strong>:
+<ul>
+<li>Edita el fitxer de configuració del servidor.</li>
+<li>Afegeix <code>http2</code> a la directiva <code>listen</code>.</li>
+<li>Guarda els canvis i reinicia NGINX.</li>
+</ul>
+</li>
+<li><strong>Verificació</strong>: Utilitza eines com <a href="https://tools.keycdn.com/http2-test">https://tools.keycdn.com/http2-test</a> per verificar que el teu lloc web està servint contingut via HTTP/2.</li>
+</ol>
+</div><h2>Exercici 2: Configurar HTTP/2 amb priorització de recursos</h2>
+<div class='content'><ol>
+<li><strong>Objectiu</strong>: Configurar HTTP/2 i assignar prioritats a diferents recursos.</li>
+<li><strong>Passos</strong>:
+<ul>
+<li>Edita el fitxer de configuració del servidor.</li>
+<li>Habilita HTTP/2.</li>
+<li>Utilitza la directiva <code>http2_push_preload</code> per prioritzar recursos.</li>
+</ul>
+</li>
+<li><strong>Exemple de configuració</strong>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmVyIHsKICAgIGxpc3RlbiA0NDMgc3NsIGh0dHAyOwogICAgc2VydmVyX25hbWUgZXhhbXBsZS5jb207CgogICAgc3NsX2NlcnRpZmljYXRlIC9wYXRoL3RvL2NlcnQucGVtOwogICAgc3NsX2NlcnRpZmljYXRlX2tleSAvcGF0aC90by9rZXkucGVtOwoKICAgIGxvY2F0aW9uIC8gewogICAgICAgIHJvb3QgL3Zhci93d3cvaHRtbDsKICAgICAgICBpbmRleCBpbmRleC5odG1sOwogICAgICAgIGh0dHAyX3B1c2hfcHJlbG9hZCBvbjsKICAgIH0KCiAgICBsb2NhdGlvbiA9IC9zdHlsZS5jc3MgewogICAgICAgIGFkZF9oZWFkZXIgTGluayAiPC9zdHlsZS5jc3M+OyByZWw9cHJlbG9hZDsgYXM9c3R5bGUiOwogICAgfQoKICAgIGxvY2F0aW9uID0gL3NjcmlwdC5qcyB7CiAgICAgICAgYWRkX2hlYWRlciBMaW5rICI8L3NjcmlwdC5qcz47IHJlbD1wcmVsb2FkOyBhcz1zY3JpcHQiOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>server {
+    listen 443 ssl http2;
+    server_name example.com;
+
+    ssl_certificate /path/to/cert.pem;
+    ssl_certificate_key /path/to/key.pem;
+
+    location / {
+        root /var/www/html;
+        index index.html;
+        http2_push_preload on;
+    }
+
+    location = /style.css {
+        add_header Link &quot;&lt;/style.css&gt;; rel=preload; as=style&quot;;
+    }
+
+    location = /script.js {
+        add_header Link &quot;&lt;/script.js&gt;; rel=preload; as=script&quot;;
+    }
+}</pre></div><div class='content'></div><h2>Solució</h2>
+<div class='content'><ul>
+<li><code>http2_push_preload on;</code>: Habilita el push del servidor per HTTP/2.</li>
+<li><code>add_header Link &quot;&lt;/style.css&gt;; rel=preload; as=style&quot;;</code>: Indica al navegador que pre-carregui el fitxer <code>style.css</code> com a estil.</li>
+</ul>
+</div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ul>
+<li><strong>Error: &quot;ssl&quot; directive is duplicate</strong>: Assegura't que no tens múltiples directrius <code>listen</code> amb <code>ssl</code> en el mateix bloc de servidor.</li>
+<li><strong>Consell</strong>: Utilitza eines de monitorització com <code>nghttp</code> per depurar i verificar les connexions HTTP/2.</li>
+</ul>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après què és HTTP/2 i com configurar NGINX per suportar aquest protocol. Hem vist exemples pràctics de configuració i hem realitzat exercicis per reforçar els conceptes apresos. HTTP/2 ofereix millores significatives en el rendiment i l'eficiència de les comunicacions web, i habilitar-lo en el teu servidor NGINX pot proporcionar una experiència d'usuari més ràpida i fluida.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-02-using-nginx-docker' title="Utilitzant NGINX amb Docker">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-04-nginx-grpc' title="NGINX i gRPC">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

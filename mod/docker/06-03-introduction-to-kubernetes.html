@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducció a Kubernetes</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/docker/06-03-introduction-to-kubernetes" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/docker/06-03-introduction-to-kubernetes" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/docker/06-03-introduction-to-kubernetes" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/docker/06-03-introduction-to-kubernetes" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/docker/06-03-introduction-to-kubernetes" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-orchestrating-containers-with-docker-swarm' title="Orquestrant contenidors amb Docker Swarm">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Introducció a Kubernetes</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-deploying-docker-containers-in-kubernetes' title="Desplegant contenidors Docker a Kubernetes">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Què és Kubernetes?</h1>
+<div class='content'><p>Kubernetes és una plataforma de codi obert per a l'orquestració de contenidors que automatitza la gestió, el desplegament, l'escalat i les operacions de les aplicacions contenidoritzades. Va ser desenvolupada per Google i ara és mantinguda per la Cloud Native Computing Foundation (CNCF).</p>
+</div><h2>Conceptes Clau de Kubernetes</h2>
+<div class='content'><ol>
+<li><strong>Clúster de Kubernetes</strong>: Un conjunt de màquines (nodes) que executen aplicacions contenidoritzades gestionades per Kubernetes.</li>
+<li><strong>Node</strong>: Una màquina individual dins del clúster de Kubernetes. Pot ser una màquina física o virtual.</li>
+<li><strong>Pod</strong>: La unitat bàsica de desplegament en Kubernetes. Un pod pot contenir un o més contenidors que comparteixen el mateix espai de xarxa i emmagatzematge.</li>
+<li><strong>Controlador</strong>: Un component que gestiona l'estat dels pods. Exemples inclouen Deployment, StatefulSet, i DaemonSet.</li>
+<li><strong>Service</strong>: Una abstracció que defineix una política d'accés a un conjunt de pods. Proporciona un punt d'entrada estable per accedir als pods.</li>
+<li><strong>Namespace</strong>: Una manera de dividir un clúster de Kubernetes en múltiples entorns virtuals.</li>
+</ol>
+</div><h2>Arquitectura de Kubernetes</h2>
+<div class='content'><table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Descripció</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Master Node</strong></td>
+<td>Gestiona el clúster de Kubernetes. Inclou components com l'API Server, etcd, Scheduler, i Controller Manager.</td>
+</tr>
+<tr>
+<td><strong>Worker Node</strong></td>
+<td>Executa les aplicacions contenidoritzades. Inclou components com el kubelet, kube-proxy, i el runtime de contenidors.</td>
+</tr>
+</tbody>
+</table>
+</div><h2>Components del Master Node</h2>
+<div class='content'><ol>
+<li><strong>API Server</strong>: Punt d'entrada per a totes les operacions administratives del clúster.</li>
+<li><strong>etcd</strong>: Emmagatzematge de dades distribuït que guarda tota la informació del clúster.</li>
+<li><strong>Scheduler</strong>: Assigna els pods als nodes disponibles.</li>
+<li><strong>Controller Manager</strong>: Gestiona els controladors que regulen l'estat del clúster.</li>
+</ol>
+</div><h2>Components del Worker Node</h2>
+<div class='content'><ol>
+<li><strong>kubelet</strong>: Agent que s'executa en cada node i garanteix que els contenidors estan executant-se dins dels pods.</li>
+<li><strong>kube-proxy</strong>: Gestiona les regles de xarxa en cada node.</li>
+<li><strong>Container Runtime</strong>: Software que executa els contenidors (per exemple, Docker, containerd).</li>
+</ol>
+</div><h1>Instal·lació de Kubernetes</h1>
+<div class='content'></div><h2>Prerequisits</h2>
+<div class='content'><ul>
+<li>Coneixements bàsics de Docker.</li>
+<li>Accés a màquines virtuals o físiques per crear un clúster.</li>
+</ul>
+</div><h2>Instal·lació amb Minikube</h2>
+<div class='content'><p>Minikube és una eina que permet executar un clúster de Kubernetes localment. És ideal per a l'aprenentatge i el desenvolupament.</p>
+<ol>
+<li>
+<p><strong>Instal·la Minikube</strong>:</p>
+<pre><code class="language-bash">curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+chmod +x minikube
+sudo mv minikube /usr/local/bin/
+</code></pre>
+</li>
+<li>
+<p><strong>Inicia Minikube</strong>:</p>
+<pre><code class="language-bash">minikube start
+</code></pre>
+</li>
+<li>
+<p><strong>Verifica l'estat del clúster</strong>:</p>
+<pre><code class="language-bash">kubectl get nodes
+</code></pre>
+</li>
+</ol>
+</div><h1>Comandes Bàsiques de Kubernetes</h1>
+<div class='content'></div><h2>Crear un Pod</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUG9kCm1ldGFkYXRhOgogIG5hbWU6IG15LXBvZApzcGVjOgogIGNvbnRhaW5lcnM6CiAgLSBuYW1lOiBteS1jb250YWluZXIKICAgIGltYWdlOiBuZ2lueA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+  - name: my-container
+    image: nginx</pre></div><div class='content'><p>Desa aquest fitxer com <code>pod.yaml</code> i crea el pod amb la següent comanda:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a3ViZWN0bCBhcHBseSAtZiBwb2QueWFtbA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>kubectl apply -f pod.yaml</pre></div><div class='content'></div><h2>Llistar Pods</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a3ViZWN0bCBnZXQgcG9kcw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>kubectl get pods</pre></div><div class='content'></div><h2>Obtenir Detalls d'un Pod</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a3ViZWN0bCBkZXNjcmliZSBwb2QgbXktcG9k"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>kubectl describe pod my-pod</pre></div><div class='content'></div><h2>Eliminar un Pod</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a3ViZWN0bCBkZWxldGUgcG9kIG15LXBvZA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>kubectl delete pod my-pod</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Crear un clúster de Kubernetes amb Minikube i desplegar un pod que executi un servidor web Nginx.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Inicia Minikube</strong>:</p>
+<pre><code class="language-bash">minikube start
+</code></pre>
+</li>
+<li>
+<p><strong>Crea un fitxer <code>nginx-pod.yaml</code> amb el següent contingut</strong>:</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
+</code></pre>
+</li>
+<li>
+<p><strong>Desplega el pod</strong>:</p>
+<pre><code class="language-bash">kubectl apply -f nginx-pod.yaml
+</code></pre>
+</li>
+<li>
+<p><strong>Verifica que el pod està en execució</strong>:</p>
+<pre><code class="language-bash">kubectl get pods
+</code></pre>
+</li>
+<li>
+<p><strong>Accedeix al pod</strong>:</p>
+<pre><code class="language-bash">kubectl port-forward nginx-pod 8080:80
+</code></pre>
+</li>
+<li>
+<p><strong>Obre un navegador i visita <code>http://localhost:8080</code> per veure la pàgina de benvinguda de Nginx</strong>.</p>
+</li>
+</ol>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem introduït Kubernetes, una plataforma d'orquestració de contenidors. Hem explorat la seva arquitectura, components clau i comandes bàsiques. També hem realitzat un exercici pràctic per desplegar un pod amb un servidor web Nginx utilitzant Minikube. En el següent tema, aprofundirem en el desplegament de contenidors Docker a Kubernetes.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-orchestrating-containers-with-docker-swarm' title="Orquestrant contenidors amb Docker Swarm">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-deploying-docker-containers-in-kubernetes' title="Desplegant contenidors Docker a Kubernetes">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

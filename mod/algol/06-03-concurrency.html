@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Concurrència en ALGOL</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/algol/06-03-concurrency" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/algol/06-03-concurrency" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/algol/06-03-concurrency" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/algol/06-03-concurrency" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/algol/06-03-concurrency" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-memory-management' title="Gestió de Memòria">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Concurrència en ALGOL</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-error-handling-debugging' title="Gestió d'Errors i Depuració">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La concurrència és un concepte avançat en programació que permet l'execució simultània de múltiples tasques o processos. En ALGOL, la concurrència es pot gestionar mitjançant diverses tècniques i estructures de control. Aquest tema és crucial per a la creació de programes eficients i responsius, especialment en sistemes multiprocés o distribuïts.</p>
+</div><h1>Conceptes Clau de la Concurrència</h1>
+<div class='content'><p>Abans d'entrar en els detalls de la implementació de la concurrència en ALGOL, és important comprendre alguns conceptes clau:</p>
+<ul>
+<li><strong>Procés</strong>: Un programa en execució. Pot tenir múltiples fils d'execució.</li>
+<li><strong>Fil (Thread)</strong>: La unitat més petita d'execució dins d'un procés.</li>
+<li><strong>Sincronització</strong>: Coordinació de l'execució de múltiples fils per evitar conflictes.</li>
+<li><strong>Exclusió Mútua</strong>: Garantir que només un fil accedeixi a una secció crítica del codi alhora.</li>
+<li><strong>Deadlock</strong>: Una situació en què dos o més fils esperen indefinidament per recursos que estan bloquejats per altres fils.</li>
+</ul>
+</div><h1>Estructures de Control per a la Concurrència</h1>
+<div class='content'></div><h2>1. Creació de Fils</h2>
+<div class='content'><p>En ALGOL, els fils es poden crear utilitzant procediments especials. A continuació es mostra un exemple bàsic de com crear i iniciar un fil:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHJvY2VkdXJlIFN0YXJ0VGhyZWFkKHByb2M6IHByb2NlZHVyZSk7CmJlZ2luCiAgICAhIENvZGkgcGVyIGluaWNpYXIgdW4gbm91IGZpbCBxdWUgZXhlY3V0YSBlbCBwcm9jZWRpbWVudCAncHJvYycKZW5kOwoKcHJvY2VkdXJlIFRhc2sxOwpiZWdpbgogICAgISBDb2RpIGRlIGxhIHRhc2NhIDEKZW5kOwoKcHJvY2VkdXJlIFRhc2syOwpiZWdpbgogICAgISBDb2RpIGRlIGxhIHRhc2NhIDIKZW5kOwoKYmVnaW4KICAgIFN0YXJ0VGhyZWFkKFRhc2sxKTsKICAgIFN0YXJ0VGhyZWFkKFRhc2syKTsKZW5kOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>procedure StartThread(proc: procedure);
+begin
+    ! Codi per iniciar un nou fil que executa el procediment 'proc'
+end;
+
+procedure Task1;
+begin
+    ! Codi de la tasca 1
+end;
+
+procedure Task2;
+begin
+    ! Codi de la tasca 2
+end;
+
+begin
+    StartThread(Task1);
+    StartThread(Task2);
+end;</pre></div><div class='content'></div><h2>2. Sincronització</h2>
+<div class='content'><p>La sincronització és essencial per evitar conflictes quan múltiples fils accedeixen a recursos compartits. Un mètode comú és utilitzar semàfors:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VtYXBob3JlIFMgOj0gMTsKCnByb2NlZHVyZSBDcml0aWNhbFNlY3Rpb247CmJlZ2luCiAgICBQKFMpOyAgISBXYWl0IChkZWNyZW1lbnRhIGVsIHNlbcOgZm9yKQogICAgISBDb2RpIGRlIGxhIHNlY2Npw7MgY3LDrXRpY2EKICAgIFYoUyk7ICAhIFNpZ25hbCAoaW5jcmVtZW50YSBlbCBzZW3DoGZvcikKZW5kOwoKcHJvY2VkdXJlIFRhc2s7CmJlZ2luCiAgICB3aGlsZSB0cnVlIGRvCiAgICBiZWdpbgogICAgICAgIENyaXRpY2FsU2VjdGlvbjsKICAgICAgICAhIEFsdHJlcyBvcGVyYWNpb25zCiAgICBlbmQ7CmVuZDs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>semaphore S := 1;
+
+procedure CriticalSection;
+begin
+    P(S);  ! Wait (decrementa el sem&agrave;for)
+    ! Codi de la secci&oacute; cr&iacute;tica
+    V(S);  ! Signal (incrementa el sem&agrave;for)
+end;
+
+procedure Task;
+begin
+    while true do
+    begin
+        CriticalSection;
+        ! Altres operacions
+    end;
+end;</pre></div><div class='content'></div><h2>3. Exclusió Mútua</h2>
+<div class='content'><p>L'exclusió mútua es pot aconseguir utilitzant semàfors o altres mecanismes de bloqueig. Aquí es mostra un exemple utilitzant un semàfor per garantir que només un fil accedeixi a una secció crítica alhora:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VtYXBob3JlIG11dGV4IDo9IDE7Cgpwcm9jZWR1cmUgQ3JpdGljYWxTZWN0aW9uOwpiZWdpbgogICAgUChtdXRleCk7ICAhIFdhaXQgKGRlY3JlbWVudGEgZWwgc2Vtw6Bmb3IpCiAgICAhIENvZGkgZGUgbGEgc2VjY2nDsyBjcsOtdGljYQogICAgVihtdXRleCk7ICAhIFNpZ25hbCAoaW5jcmVtZW50YSBlbCBzZW3DoGZvcikKZW5kOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>semaphore mutex := 1;
+
+procedure CriticalSection;
+begin
+    P(mutex);  ! Wait (decrementa el sem&agrave;for)
+    ! Codi de la secci&oacute; cr&iacute;tica
+    V(mutex);  ! Signal (incrementa el sem&agrave;for)
+end;</pre></div><div class='content'></div><h2>4. Evitar Deadlocks</h2>
+<div class='content'><p>Per evitar deadlocks, és important seguir algunes pràctiques recomanades, com ara:</p>
+<ul>
+<li><strong>Evitar l'espera circular</strong>: Assegurar-se que els fils no esperin recursos en un cicle.</li>
+<li><strong>Adquirir tots els recursos alhora</strong>: Intentar adquirir tots els recursos necessaris al mateix temps.</li>
+<li><strong>Utilitzar un ordre global</strong>: Assegurar-se que tots els fils adquireixin els recursos en el mateix ordre.</li>
+</ul>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici 1: Implementació de Fils i Sincronització</h2>
+<div class='content'><p><strong>Objectiu</strong>: Crear dos fils que incrementin un comptador compartit de manera segura utilitzant semàfors.</p>
+<p><strong>Codi Inicial</strong>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW50ZWdlciBjb3VudGVyIDo9IDA7CnNlbWFwaG9yZSBtdXRleCA6PSAxOwoKcHJvY2VkdXJlIEluY3JlbWVudENvdW50ZXI7CmJlZ2luCiAgICBQKG11dGV4KTsKICAgIGNvdW50ZXIgOj0gY291bnRlciArIDE7CiAgICBWKG11dGV4KTsKZW5kOwoKcHJvY2VkdXJlIFRhc2s7CmJlZ2luCiAgICBmb3IgaSA6PSAxIHRvIDEwMDAgZG8KICAgICAgICBJbmNyZW1lbnRDb3VudGVyOwplbmQ7CgpiZWdpbgogICAgU3RhcnRUaHJlYWQoVGFzayk7CiAgICBTdGFydFRocmVhZChUYXNrKTsKICAgICEgRXNwZXJhciBxdWUgZWxzIGZpbHMgYWNhYmluCiAgICAhIE1vc3RyYXIgZWwgdmFsb3IgZmluYWwgZGVsIGNvbXB0YWRvcgplbmQ7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>integer counter := 0;
+semaphore mutex := 1;
+
+procedure IncrementCounter;
+begin
+    P(mutex);
+    counter := counter + 1;
+    V(mutex);
+end;
+
+procedure Task;
+begin
+    for i := 1 to 1000 do
+        IncrementCounter;
+end;
+
+begin
+    StartThread(Task);
+    StartThread(Task);
+    ! Esperar que els fils acabin
+    ! Mostrar el valor final del comptador
+end;</pre></div><div class='content'><p><strong>Solució</strong>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW50ZWdlciBjb3VudGVyIDo9IDA7CnNlbWFwaG9yZSBtdXRleCA6PSAxOwoKcHJvY2VkdXJlIEluY3JlbWVudENvdW50ZXI7CmJlZ2luCiAgICBQKG11dGV4KTsKICAgIGNvdW50ZXIgOj0gY291bnRlciArIDE7CiAgICBWKG11dGV4KTsKZW5kOwoKcHJvY2VkdXJlIFRhc2s7CmJlZ2luCiAgICBmb3IgaSA6PSAxIHRvIDEwMDAgZG8KICAgICAgICBJbmNyZW1lbnRDb3VudGVyOwplbmQ7CgpiZWdpbgogICAgU3RhcnRUaHJlYWQoVGFzayk7CiAgICBTdGFydFRocmVhZChUYXNrKTsKICAgICEgRXNwZXJhciBxdWUgZWxzIGZpbHMgYWNhYmluCiAgICAhIE1vc3RyYXIgZWwgdmFsb3IgZmluYWwgZGVsIGNvbXB0YWRvcgogICAgISBOb3RhOiBMYSBpbXBsZW1lbnRhY2nDsyBkZSBsJ2VzcGVyYSBkZWxzIGZpbHMgaSBsYSB2aXN1YWxpdHphY2nDsyBkZWwgY29tcHRhZG9yCiAgICAhIGRlcGVuZHLDoCBkZSBsZXMgY2FwYWNpdGF0cyBlc3BlY8OtZmlxdWVzIGRlIGwnZW50b3JuIEFMR09MIHV0aWxpdHphdC4KZW5kOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>integer counter := 0;
+semaphore mutex := 1;
+
+procedure IncrementCounter;
+begin
+    P(mutex);
+    counter := counter + 1;
+    V(mutex);
+end;
+
+procedure Task;
+begin
+    for i := 1 to 1000 do
+        IncrementCounter;
+end;
+
+begin
+    StartThread(Task);
+    StartThread(Task);
+    ! Esperar que els fils acabin
+    ! Mostrar el valor final del comptador
+    ! Nota: La implementaci&oacute; de l'espera dels fils i la visualitzaci&oacute; del comptador
+    ! dependr&agrave; de les capacitats espec&iacute;fiques de l'entorn ALGOL utilitzat.
+end;</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem explorat els conceptes bàsics de la concurrència en ALGOL, incloent la creació de fils, la sincronització, l'exclusió mútua i l'evitació de deadlocks. A més, hem proporcionat un exercici pràctic per reforçar aquests conceptes. La comprensió i l'aplicació correcta de la concurrència són essencials per desenvolupar programes eficients i segurs en entorns multiprocés.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-memory-management' title="Gestió de Memòria">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-error-handling-debugging' title="Gestió d'Errors i Depuració">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

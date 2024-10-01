@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StatefulSets</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kubernetes/06-01-statefulsets" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kubernetes/06-01-statefulsets" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kubernetes/06-01-statefulsets" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kubernetes/06-01-statefulsets" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kubernetes/06-01-statefulsets" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-storage-classes' title="Classes d'Emmagatzematge">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">StatefulSets</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-02-daemonsets' title="DaemonSets">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, explorarem els StatefulSets, un component avançat de Kubernetes que s'utilitza per gestionar aplicacions amb estat. A diferència dels Deployments, que són ideals per a aplicacions sense estat, els StatefulSets proporcionen garanties i funcionalitats addicionals necessàries per a aplicacions que requereixen un estat persistent i una identitat estable.</p>
+</div><h1>Objectius d'Aprenentatge</h1>
+<div class='content'><p>Al final d'aquest tema, hauràs après:</p>
+<ul>
+<li>Què és un StatefulSet i quan utilitzar-lo.</li>
+<li>Com crear i gestionar StatefulSets.</li>
+<li>Les diferències clau entre StatefulSets i Deployments.</li>
+<li>Com utilitzar PersistentVolumeClaims (PVCs) amb StatefulSets.</li>
+</ul>
+</div><h1>Què és un StatefulSet?</h1>
+<div class='content'><p>Un StatefulSet és un objecte de Kubernetes que s'utilitza per gestionar aplicacions amb estat. Proporciona garanties sobre l'ordre i la identitat dels Pods, cosa que és crucial per a aplicacions com bases de dades, sistemes de fitxers distribuïts i altres serveis que requereixen un estat persistent.</p>
+</div><h2>Característiques Clau dels StatefulSets</h2>
+<div class='content'><ul>
+<li><strong>Identitat Estable</strong>: Cada Pod en un StatefulSet té una identitat única i estable que es manté al llarg del temps.</li>
+<li><strong>Ordre de Creació i Eliminació</strong>: Els Pods es creen i s'eliminen en un ordre específic.</li>
+<li><strong>Emmagatzematge Persistent</strong>: Els StatefulSets treballen amb PersistentVolumeClaims (PVCs) per assegurar que cada Pod tingui el seu propi emmagatzematge persistent.</li>
+</ul>
+</div><h1>Creació d'un StatefulSet</h1>
+<div class='content'><p>A continuació, veurem un exemple pràctic de com crear un StatefulSet. Suposem que volem desplegar una base de dades MySQL amb un StatefulSet.</p>
+</div><h2>Exemple de YAML per a un StatefulSet</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogYXBwcy92MQpraW5kOiBTdGF0ZWZ1bFNldAptZXRhZGF0YToKICBuYW1lOiBteXNxbApzcGVjOgogIHNlcnZpY2VOYW1lOiAibXlzcWwiCiAgcmVwbGljYXM6IDMKICBzZWxlY3RvcjoKICAgIG1hdGNoTGFiZWxzOgogICAgICBhcHA6IG15c3FsCiAgdGVtcGxhdGU6CiAgICBtZXRhZGF0YToKICAgICAgbGFiZWxzOgogICAgICAgIGFwcDogbXlzcWwKICAgIHNwZWM6CiAgICAgIGNvbnRhaW5lcnM6CiAgICAgIC0gbmFtZTogbXlzcWwKICAgICAgICBpbWFnZTogbXlzcWw6NS43CiAgICAgICAgcG9ydHM6CiAgICAgICAgLSBjb250YWluZXJQb3J0OiAzMzA2CiAgICAgICAgICBuYW1lOiBteXNxbAogICAgICAgIHZvbHVtZU1vdW50czoKICAgICAgICAtIG5hbWU6IG15c3FsLXBlcnNpc3RlbnQtc3RvcmFnZQogICAgICAgICAgbW91bnRQYXRoOiAvdmFyL2xpYi9teXNxbAogIHZvbHVtZUNsYWltVGVtcGxhdGVzOgogIC0gbWV0YWRhdGE6CiAgICAgIG5hbWU6IG15c3FsLXBlcnNpc3RlbnQtc3RvcmFnZQogICAgc3BlYzoKICAgICAgYWNjZXNzTW9kZXM6IFsgIlJlYWRXcml0ZU9uY2UiIF0KICAgICAgcmVzb3VyY2VzOgogICAgICAgIHJlcXVlc3RzOgogICAgICAgICAgc3RvcmFnZTogMUdp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  serviceName: &quot;mysql&quot;
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:5.7
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-persistent-storage
+    spec:
+      accessModes: [ &quot;ReadWriteOnce&quot; ]
+      resources:
+        requests:
+          storage: 1Gi</pre></div><div class='content'></div><h2>Explicació del YAML</h2>
+<div class='content'><ul>
+<li><strong>apiVersion</strong>: La versió de l'API que estem utilitzant.</li>
+<li><strong>kind</strong>: El tipus de recurs, en aquest cas, StatefulSet.</li>
+<li><strong>metadata</strong>: Informació sobre el StatefulSet, com el nom.</li>
+<li><strong>spec</strong>: La especificació del StatefulSet.
+<ul>
+<li><strong>serviceName</strong>: El nom del servei associat amb aquest StatefulSet.</li>
+<li><strong>replicas</strong>: El nombre de rèpliques (Pods) que volem.</li>
+<li><strong>selector</strong>: Els selectors d'etiquetes per identificar els Pods gestionats per aquest StatefulSet.</li>
+<li><strong>template</strong>: El template per als Pods.
+<ul>
+<li><strong>metadata</strong>: Les etiquetes per als Pods.</li>
+<li><strong>spec</strong>: La especificació dels contenidors dins dels Pods.
+<ul>
+<li><strong>containers</strong>: La llista de contenidors.
+<ul>
+<li><strong>name</strong>: El nom del contenidor.</li>
+<li><strong>image</strong>: La imatge del contenidor.</li>
+<li><strong>ports</strong>: Els ports exposats pel contenidor.</li>
+<li><strong>volumeMounts</strong>: Els volums muntats dins del contenidor.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>volumeClaimTemplates</strong>: Els templates per als PersistentVolumeClaims.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Diferències Clau entre StatefulSets i Deployments</h1>
+<div class='content'><table>
+<thead>
+<tr>
+<th>Característica</th>
+<th>StatefulSet</th>
+<th>Deployment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Identitat dels Pods</strong></td>
+<td>Estable i única</td>
+<td>No garantida</td>
+</tr>
+<tr>
+<td><strong>Ordre de Creació</strong></td>
+<td>Seqüencial</td>
+<td>Paral·lel</td>
+</tr>
+<tr>
+<td><strong>Emmagatzematge</strong></td>
+<td>PersistentVolumeClaims per Pod</td>
+<td>Compartit o no persistent</td>
+</tr>
+<tr>
+<td><strong>Ús Comú</strong></td>
+<td>Bases de dades, sistemes distribuïts</td>
+<td>Aplicacions sense estat</td>
+</tr>
+</tbody>
+</table>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici 1: Crear un StatefulSet</h2>
+<div class='content'><ol>
+<li>Crea un fitxer YAML anomenat <code>statefulset-mysql.yaml</code> amb el contingut proporcionat a l'exemple anterior.</li>
+<li>Aplica el fitxer al teu clúster de Kubernetes utilitzant el següent comandament:
+<pre><code class="language-sh">kubectl apply -f statefulset-mysql.yaml
+</code></pre>
+</li>
+<li>Verifica que els Pods s'han creat en l'ordre correcte i tenen identitats estables:
+<pre><code class="language-sh">kubectl get pods -l app=mysql
+</code></pre>
+</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><p>Després d'aplicar el fitxer YAML, hauries de veure tres Pods amb noms com <code>mysql-0</code>, <code>mysql-1</code>, i <code>mysql-2</code>. Aquests noms es mantindran estables fins i tot si els Pods es reinicien.</p>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après què són els StatefulSets i com s'utilitzen per gestionar aplicacions amb estat en Kubernetes. Hem vist un exemple pràctic de com crear un StatefulSet per a una base de dades MySQL i hem explorat les diferències clau entre StatefulSets i Deployments. Amb aquests coneixements, estàs preparat per gestionar aplicacions amb estat en el teu clúster de Kubernetes.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-storage-classes' title="Classes d'Emmagatzematge">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-02-daemonsets' title="DaemonSets">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

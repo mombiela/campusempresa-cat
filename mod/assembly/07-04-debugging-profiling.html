@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Depuració i Perfilat del Codi Assembly</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/assembly/07-04-debugging-profiling" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/assembly/07-04-debugging-profiling" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/assembly/07-04-debugging-profiling" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/assembly/07-04-debugging-profiling" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/assembly/07-04-debugging-profiling" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-03-interfacing-hardware' title="Interfície amb el Maquinari">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Depuració i Perfilat del Codi Assembly</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-01-project-proposal' title="Proposta i Planificació del Projecte">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com depurar i perfilar el codi Assembly per identificar i corregir errors, així com optimitzar el rendiment del nostre codi. La depuració i el perfilat són habilitats essencials per a qualsevol programador, especialment quan es treballa amb llenguatges de baix nivell com l'Assembly.</p>
+</div><h1>1. Introducció a la Depuració</h1>
+<div class='content'></div><h2>1.1. Què és la Depuració?</h2>
+<div class='content'><p>La depuració és el procés de trobar i corregir errors (bugs) en el codi. En el context de l'Assembly, això pot incloure errors de lògica, errors de sintaxi, o problemes amb la gestió de la memòria.</p>
+</div><h2>1.2. Eines de Depuració</h2>
+<div class='content'><p>Algunes eines populars per a la depuració de codi Assembly inclouen:</p>
+<ul>
+<li><strong>GDB (GNU Debugger)</strong>: Una eina de depuració potent que permet inspeccionar el codi en execució, establir punts de ruptura, i examinar registres i memòria.</li>
+<li><strong>LLDB</strong>: Un depurador de codi obert que forma part del projecte LLVM.</li>
+<li><strong>OllyDbg</strong>: Un depurador de codi binari per a Windows, útil per a la depuració de codi Assembly x86.</li>
+</ul>
+</div><h2>1.3. Conceptes Bàsics de Depuració</h2>
+<div class='content'><ul>
+<li><strong>Punts de Ruptura (Breakpoints)</strong>: Permeten aturar l'execució del programa en un punt específic per inspeccionar l'estat del sistema.</li>
+<li><strong>Passar per Sobre (Step Over)</strong>: Executa la següent instrucció, però no entra en subrutines.</li>
+<li><strong>Passar per Dins (Step Into)</strong>: Executa la següent instrucció i entra en subrutines.</li>
+<li><strong>Inspecció de Registres</strong>: Permet veure el contingut dels registres de la CPU en temps real.</li>
+<li><strong>Inspecció de Memòria</strong>: Permet veure i modificar el contingut de la memòria.</li>
+</ul>
+</div><h1>2. Depuració amb GDB</h1>
+<div class='content'></div><h2>2.1. Configuració de GDB</h2>
+<div class='content'><p>Per utilitzar GDB amb codi Assembly, primer hem de compilar el nostre codi amb informació de depuració. Això es fa afegint l'opció <code>-g</code> al compilador.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2NjIC1nIC1vIHByb2dyYW1hIHByb2dyYW1hLnM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>gcc -g -o programa programa.s</pre></div><div class='content'></div><h2>2.2. Començant una Sessió de Depuració</h2>
+<div class='content'><p>Per iniciar GDB, simplement executem:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2RiIC4vcHJvZ3JhbWE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>gdb ./programa</pre></div><div class='content'></div><h2>2.3. Comandes Bàsiques de GDB</h2>
+<div class='content'><ul>
+<li><strong>Establir un Punt de Ruptura</strong>: <code>break [nom_de_funció | línia]</code>
+<pre><code class="language-gdb">(gdb) break main
+</code></pre>
+</li>
+<li><strong>Executar el Programa</strong>: <code>run</code>
+<pre><code class="language-gdb">(gdb) run
+</code></pre>
+</li>
+<li><strong>Passar per Dins</strong>: <code>step</code>
+<pre><code class="language-gdb">(gdb) step
+</code></pre>
+</li>
+<li><strong>Passar per Sobre</strong>: <code>next</code>
+<pre><code class="language-gdb">(gdb) next
+</code></pre>
+</li>
+<li><strong>Inspeccionar Registres</strong>: <code>info registers</code>
+<pre><code class="language-gdb">(gdb) info registers
+</code></pre>
+</li>
+<li><strong>Inspeccionar Memòria</strong>: <code>x/[n][format] [direcció]</code>
+<pre><code class="language-gdb">(gdb) x/10x $esp
+</code></pre>
+</li>
+</ul>
+</div><h1>3. Introducció al Perfilat</h1>
+<div class='content'></div><h2>3.1. Què és el Perfilat?</h2>
+<div class='content'><p>El perfilat és el procés d'analitzar el rendiment del codi per identificar colls d'ampolla i optimitzar l'eficiència. Això inclou mesurar el temps d'execució de diferents parts del codi i l'ús de recursos.</p>
+</div><h2>3.2. Eines de Perfilat</h2>
+<div class='content'><p>Algunes eines populars per al perfilat de codi Assembly inclouen:</p>
+<ul>
+<li><strong>gprof</strong>: Una eina de perfilat per a programes compilats amb GCC.</li>
+<li><strong>perf</strong>: Una eina de perfilat per a sistemes Linux que proporciona informació detallada sobre el rendiment del sistema.</li>
+</ul>
+</div><h2>3.3. Utilitzant gprof</h2>
+<div class='content'><p>Per utilitzar gprof, primer hem de compilar el nostre codi amb l'opció <code>-pg</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2NjIC1wZyAtbyBwcm9ncmFtYSBwcm9ncmFtYS5z"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>gcc -pg -o programa programa.s</pre></div><div class='content'><p>Després d'executar el programa, es generarà un fitxer <code>gmon.out</code> que conté les dades de perfilat. Podem analitzar aquestes dades amb la comanda:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z3Byb2YgLi9wcm9ncmFtYSBnbW9uLm91dCA+IHBlcmZpbC50eHQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>gprof ./programa gmon.out &gt; perfil.txt</pre></div><div class='content'></div><h2>3.4. Interpretant els Resultats de gprof</h2>
+<div class='content'><p>El fitxer de sortida conté informació sobre el temps d'execució de cada funció, el nombre de crides a cada funció, i altres dades útils per a l'optimització.</p>
+</div><h1>4. Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Depuració amb GDB</h2>
+<div class='content'><ol>
+<li>Escriu un programa Assembly senzill que realitzi operacions aritmètiques bàsiques.</li>
+<li>Compila el programa amb informació de depuració.</li>
+<li>Utilitza GDB per establir punts de ruptura, inspeccionar registres, i corregir qualsevol error.</li>
+</ol>
+</div><h2>Exercici 2: Perfilat amb gprof</h2>
+<div class='content'><ol>
+<li>Escriu un programa Assembly que realitzi una sèrie de càlculs intensius.</li>
+<li>Compila el programa amb l'opció <code>-pg</code>.</li>
+<li>Executa el programa i analitza les dades de perfilat amb gprof.</li>
+<li>Identifica colls d'ampolla i proposa millores per optimitzar el rendiment.</li>
+</ol>
+</div><h1>5. Errors Comuns i Consells</h1>
+<div class='content'></div><h2>Errors Comuns</h2>
+<div class='content'><ul>
+<li><strong>No Compilar amb Informació de Depuració</strong>: Assegura't d'utilitzar l'opció <code>-g</code> per incloure informació de depuració.</li>
+<li><strong>Oblidar Establir Punts de Ruptura</strong>: Els punts de ruptura són essencials per aturar l'execució i inspeccionar l'estat del programa.</li>
+<li><strong>No Analitzar Correctament els Resultats de Perfilat</strong>: Interpreta correctament les dades de perfilat per identificar colls d'ampolla reals.</li>
+</ul>
+</div><h2>Consells Addicionals</h2>
+<div class='content'><ul>
+<li><strong>Utilitza Comentaris</strong>: Afegeix comentaris al teu codi Assembly per facilitar la depuració.</li>
+<li><strong>Divideix i Vèncer</strong>: Divideix el teu codi en parts més petites i depura cada part per separat.</li>
+<li><strong>Revisa la Documentació</strong>: Consulta la documentació de les eines de depuració i perfilat per aprofitar totes les seves funcionalitats.</li>
+</ul>
+</div><h1>6. Conclusió</h1>
+<div class='content'><p>La depuració i el perfilat són habilitats essencials per a qualsevol programador Assembly. Amb les eines i tècniques adequades, pots identificar i corregir errors, així com optimitzar el rendiment del teu codi. Practica regularment amb exercicis pràctics per millorar les teves habilitats en aquestes àrees.</p>
+<hr />
+<p>Amb això, hem completat el tema de depuració i perfilat del codi Assembly. En el proper tema, explorarem aplicacions pràctiques i projectes per posar en pràctica tot el que hem après fins ara.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-03-interfacing-hardware' title="Interfície amb el Maquinari">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-01-project-proposal' title="Proposta i Planificació del Projecte">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

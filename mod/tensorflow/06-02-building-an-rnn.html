@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construcció d'una RNN</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/tensorflow/06-02-building-an-rnn" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/tensorflow/06-02-building-an-rnn" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/tensorflow/06-02-building-an-rnn" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/tensorflow/06-02-building-an-rnn" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/tensorflow/06-02-building-an-rnn" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-introduction-to-rnns' title="Introducció a les RNNs">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Construcció d'una RNN</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-long-short-term-memory' title="Memòria a llarg termini (LSTM)">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a construir una Xarxa Neuronal Recurrent (RNN) utilitzant TensorFlow. Les RNNs són especialment útils per a tasques que impliquen dades seqüencials, com ara el processament de llenguatge natural, la predicció de sèries temporals i la generació de text.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre la estructura bàsica d'una RNN.</li>
+<li>Aprendre a construir una RNN simple amb TensorFlow.</li>
+<li>Implementar una RNN per a una tasca de predicció de sèries temporals.</li>
+</ul>
+</div><h1>1. Estructura bàsica d'una RNN</h1>
+<div class='content'><p>Una RNN és una xarxa neuronal que té connexions recurrents, és a dir, connexions que permeten que la sortida d'una capa es retroalimenti com a entrada per a la mateixa capa en el següent pas temporal. Això permet que la xarxa tingui una &quot;memòria&quot; dels passos anteriors.</p>
+</div><h2>Components clau d'una RNN:</h2>
+<div class='content'><ul>
+<li><strong>Unitat recurrent</strong>: La unitat bàsica que processa una entrada en cada pas temporal.</li>
+<li><strong>Estat ocult</strong>: La memòria de la xarxa que es manté i s'actualitza en cada pas temporal.</li>
+<li><strong>Sortida</strong>: La predicció o resultat de la xarxa en cada pas temporal.</li>
+</ul>
+</div><h1>2. Construcció d'una RNN simple amb TensorFlow</h1>
+<div class='content'></div><h2>Pas 1: Importar les llibreries necessàries</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKZnJvbSB0ZW5zb3JmbG93LmtlcmFzLm1vZGVscyBpbXBvcnQgU2VxdWVudGlhbApmcm9tIHRlbnNvcmZsb3cua2VyYXMubGF5ZXJzIGltcG9ydCBTaW1wbGVSTk4sIERlbnNlCmltcG9ydCBudW1weSBhcyBucA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import SimpleRNN, Dense
+import numpy as np</pre></div><div class='content'></div><h2>Pas 2: Preparar les dades</h2>
+<div class='content'><p>Per a aquest exemple, utilitzarem una seqüència sintètica simple per a la predicció de sèries temporals.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBHZW5lcmFyIGRhZGVzIHNpbnTDqHRpcXVlcwpkZWYgZ2VuZXJhdGVfZGF0YShzZXFfbGVuZ3RoLCBudW1fc2FtcGxlcyk6CiAgICBYID0gW10KICAgIHkgPSBbXQogICAgZm9yIF8gaW4gcmFuZ2UobnVtX3NhbXBsZXMpOgogICAgICAgIHN0YXJ0ID0gbnAucmFuZG9tLnJhbmQoKQogICAgICAgIHNlcXVlbmNlID0gbnAuYXJyYXkoW3N0YXJ0ICsgaSAqIDAuMSBmb3IgaSBpbiByYW5nZShzZXFfbGVuZ3RoKV0pCiAgICAgICAgWC5hcHBlbmQoc2VxdWVuY2VbOi0xXSkKICAgICAgICB5LmFwcGVuZChzZXF1ZW5jZVstMV0pCiAgICByZXR1cm4gbnAuYXJyYXkoWCksIG5wLmFycmF5KHkpCgpzZXFfbGVuZ3RoID0gMTAKbnVtX3NhbXBsZXMgPSAxMDAwClgsIHkgPSBnZW5lcmF0ZV9kYXRhKHNlcV9sZW5ndGgsIG51bV9zYW1wbGVzKQoKIyBSZXNoYXBlIHBlciBhIFJOTiAoc2FtcGxlcywgdGltZXN0ZXBzLCBmZWF0dXJlcykKWCA9IFgucmVzaGFwZSgoWC5zaGFwZVswXSwgWC5zaGFwZVsxXSwgMSkp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Generar dades sint&egrave;tiques
+def generate_data(seq_length, num_samples):
+    X = []
+    y = []
+    for _ in range(num_samples):
+        start = np.random.rand()
+        sequence = np.array([start + i * 0.1 for i in range(seq_length)])
+        X.append(sequence[:-1])
+        y.append(sequence[-1])
+    return np.array(X), np.array(y)
+
+seq_length = 10
+num_samples = 1000
+X, y = generate_data(seq_length, num_samples)
+
+# Reshape per a RNN (samples, timesteps, features)
+X = X.reshape((X.shape[0], X.shape[1], 1))</pre></div><div class='content'></div><h2>Pas 3: Construir el model</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kZWwgPSBTZXF1ZW50aWFsKCkKbW9kZWwuYWRkKFNpbXBsZVJOTig1MCwgYWN0aXZhdGlvbj0ncmVsdScsIGlucHV0X3NoYXBlPShzZXFfbGVuZ3RoLTEsIDEpKSkKbW9kZWwuYWRkKERlbnNlKDEpKQptb2RlbC5jb21waWxlKG9wdGltaXplcj0nYWRhbScsIGxvc3M9J21zZScp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>model = Sequential()
+model.add(SimpleRNN(50, activation='relu', input_shape=(seq_length-1, 1)))
+model.add(Dense(1))
+model.compile(optimizer='adam', loss='mse')</pre></div><div class='content'></div><h2>Pas 4: Entrenar el model</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kZWwuZml0KFgsIHksIGVwb2Nocz0yMCwgYmF0Y2hfc2l6ZT0zMik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>model.fit(X, y, epochs=20, batch_size=32)</pre></div><div class='content'></div><h2>Pas 5: Avaluar el model</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBHZW5lcmFyIG5vdmVzIGRhZGVzIHBlciBhIGxhIHZhbGlkYWNpw7MKWF90ZXN0LCB5X3Rlc3QgPSBnZW5lcmF0ZV9kYXRhKHNlcV9sZW5ndGgsIDEwMCkKWF90ZXN0ID0gWF90ZXN0LnJlc2hhcGUoKFhfdGVzdC5zaGFwZVswXSwgWF90ZXN0LnNoYXBlWzFdLCAxKSkKCiMgUHJlZGlyCnByZWRpY3Rpb25zID0gbW9kZWwucHJlZGljdChYX3Rlc3QpCgojIENvbXBhcmFyIHByZWRpY2Npb25zIGFtYiB2YWxvcnMgcmVhbHMKZm9yIGkgaW4gcmFuZ2UoNSk6CiAgICBwcmludChmIlByZWRpY2Npw7M6IHtwcmVkaWN0aW9uc1tpXVswXX0sIFZhbG9yIHJlYWw6IHt5X3Rlc3RbaV19Iik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Generar noves dades per a la validaci&oacute;
+X_test, y_test = generate_data(seq_length, 100)
+X_test = X_test.reshape((X_test.shape[0], X_test.shape[1], 1))
+
+# Predir
+predictions = model.predict(X_test)
+
+# Comparar prediccions amb valors reals
+for i in range(5):
+    print(f&quot;Predicci&oacute;: {predictions[i][0]}, Valor real: {y_test[i]}&quot;)</pre></div><div class='content'></div><h1>3. Exercici pràctic</h1>
+<div class='content'></div><h2>Exercici 1: Millorar la RNN</h2>
+<div class='content'><p>Prova de millorar la precisió de la RNN ajustant els hiperparàmetres següents:</p>
+<ul>
+<li>Nombre de neurones a la capa SimpleRNN.</li>
+<li>Nombre d'epochs.</li>
+<li>Mida del batch.</li>
+</ul>
+</div><h2>Solució suggerida</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kZWwgPSBTZXF1ZW50aWFsKCkKbW9kZWwuYWRkKFNpbXBsZVJOTigxMDAsIGFjdGl2YXRpb249J3JlbHUnLCBpbnB1dF9zaGFwZT0oc2VxX2xlbmd0aC0xLCAxKSkpCm1vZGVsLmFkZChEZW5zZSgxKSkKbW9kZWwuY29tcGlsZShvcHRpbWl6ZXI9J2FkYW0nLCBsb3NzPSdtc2UnKQoKbW9kZWwuZml0KFgsIHksIGVwb2Nocz01MCwgYmF0Y2hfc2l6ZT0xNik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>model = Sequential()
+model.add(SimpleRNN(100, activation='relu', input_shape=(seq_length-1, 1)))
+model.add(Dense(1))
+model.compile(optimizer='adam', loss='mse')
+
+model.fit(X, y, epochs=50, batch_size=16)</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après a construir una RNN simple utilitzant TensorFlow. Hem vist com preparar les dades, construir el model, entrenar-lo i avaluar-lo. Les RNNs són molt potents per a tasques que impliquen dades seqüencials, i amb TensorFlow, podem construir i entrenar aquests models de manera eficient. En el següent tema, explorarem les memòries a llarg termini (LSTM), una variant de les RNNs que aborda alguns dels seus problemes comuns.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-introduction-to-rnns' title="Introducció a les RNNs">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-long-short-term-memory' title="Memòria a llarg termini (LSTM)">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

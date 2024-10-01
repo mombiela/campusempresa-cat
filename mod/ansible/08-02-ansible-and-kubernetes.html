@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ansible i Kubernetes</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/ansible/08-02-ansible-and-kubernetes" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/ansible/08-02-ansible-and-kubernetes" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/ansible/08-02-ansible-and-kubernetes" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/ansible/08-02-ansible-and-kubernetes" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/ansible/08-02-ansible-and-kubernetes" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-01-ansible-and-docker' title="Ansible i Docker">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Ansible i Kubernetes</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-03-ci-cd-with-ansible' title="CI/CD amb Ansible">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, explorarem com Ansible pot ser utilitzat per gestionar i automatitzar Kubernetes, una plataforma de codi obert per a l'orquestració de contenidors. Aprendrem a desplegar aplicacions, gestionar configuracions i mantenir la infraestructura de Kubernetes utilitzant Ansible.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre com Ansible pot interactuar amb Kubernetes.</li>
+<li>Aprendre a utilitzar mòduls d'Ansible per gestionar recursos de Kubernetes.</li>
+<li>Desplegar aplicacions en un clúster de Kubernetes utilitzant Playbooks d'Ansible.</li>
+<li>Gestionar configuracions i mantenir la infraestructura de Kubernetes amb Ansible.</li>
+</ul>
+</div><h1>Requisits Prèvis</h1>
+<div class='content'><ul>
+<li>Coneixements bàsics de Kubernetes.</li>
+<li>Coneixements bàsics d'Ansible.</li>
+<li>Un clúster de Kubernetes operatiu.</li>
+<li>Ansible instal·lat en la teva màquina local.</li>
+</ul>
+</div><h1>Mòduls d'Ansible per Kubernetes</h1>
+<div class='content'><p>Ansible proporciona diversos mòduls per interactuar amb Kubernetes. A continuació, es mostren alguns dels mòduls més utilitzats:</p>
+<table>
+<thead>
+<tr>
+<th>Mòdul</th>
+<th>Descripció</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>k8s</code></td>
+<td>Gestiona recursos de Kubernetes (crea, actualitza, elimina).</td>
+</tr>
+<tr>
+<td><code>k8s_facts</code></td>
+<td>Obté informació sobre els recursos de Kubernetes.</td>
+</tr>
+<tr>
+<td><code>k8s_auth</code></td>
+<td>Gestiona l'autenticació amb el clúster de Kubernetes.</td>
+</tr>
+<tr>
+<td><code>k8s_scale</code></td>
+<td>Escala un objecte de Kubernetes (per exemple, un Deployment).</td>
+</tr>
+<tr>
+<td><code>k8s_service</code></td>
+<td>Gestiona serveis de Kubernetes.</td>
+</tr>
+</tbody>
+</table>
+</div><h1>Exemple Pràctic: Desplegant una Aplicació en Kubernetes</h1>
+<div class='content'></div><h2>1. Configuració del Fitxer d'Inventari</h2>
+<div class='content'><p>Primer, hem de definir el nostre inventari. Crearem un fitxer <code>inventory.ini</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("W2s4c19jbHVzdGVyXQprOHMtbWFzdGVyIGFuc2libGVfaG9zdD0xOTIuMTY4LjEuMTAwIGFuc2libGVfdXNlcj1yb290"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>[k8s_cluster]
+k8s-master ansible_host=192.168.1.100 ansible_user=root</pre></div><div class='content'></div><h2>2. Playbook per Desplegar una Aplicació</h2>
+<div class='content'><p>Crearem un Playbook d'Ansible per desplegar una aplicació en el nostre clúster de Kubernetes. Crearem un fitxer <code>deploy_app.yml</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0tCi0gbmFtZTogRGVzcGxlZ2FyIGFwbGljYWNpw7MgZW4gS3ViZXJuZXRlcwogIGhvc3RzOiBrOHNfY2x1c3RlcgogIHRhc2tzOgogICAgLSBuYW1lOiBBdXRlbnRpY2FyLXNlIGFtYiBlbCBjbMO6c3RlciBkZSBLdWJlcm5ldGVzCiAgICAgIGs4c19hdXRoOgogICAgICAgIGt1YmVjb25maWc6IC9yb290Ly5rdWJlL2NvbmZpZwoKICAgIC0gbmFtZTogQ3JlYXIgdW4gTmFtZXNwYWNlCiAgICAgIGs4czoKICAgICAgICBzdGF0ZTogcHJlc2VudAogICAgICAgIGRlZmluaXRpb246CiAgICAgICAgICBhcGlWZXJzaW9uOiB2MQogICAgICAgICAga2luZDogTmFtZXNwYWNlCiAgICAgICAgICBtZXRhZGF0YToKICAgICAgICAgICAgbmFtZTogbXktbmFtZXNwYWNlCgogICAgLSBuYW1lOiBEZXNwbGVnYXIgdW4gRGVwbG95bWVudAogICAgICBrOHM6CiAgICAgICAgc3RhdGU6IHByZXNlbnQKICAgICAgICBkZWZpbml0aW9uOgogICAgICAgICAgYXBpVmVyc2lvbjogYXBwcy92MQogICAgICAgICAga2luZDogRGVwbG95bWVudAogICAgICAgICAgbWV0YWRhdGE6CiAgICAgICAgICAgIG5hbWU6IG15LWFwcAogICAgICAgICAgICBuYW1lc3BhY2U6IG15LW5hbWVzcGFjZQogICAgICAgICAgc3BlYzoKICAgICAgICAgICAgcmVwbGljYXM6IDMKICAgICAgICAgICAgc2VsZWN0b3I6CiAgICAgICAgICAgICAgbWF0Y2hMYWJlbHM6CiAgICAgICAgICAgICAgICBhcHA6IG15LWFwcAogICAgICAgICAgICB0ZW1wbGF0ZToKICAgICAgICAgICAgICBtZXRhZGF0YToKICAgICAgICAgICAgICAgIGxhYmVsczoKICAgICAgICAgICAgICAgICAgYXBwOiBteS1hcHAKICAgICAgICAgICAgICBzcGVjOgogICAgICAgICAgICAgICAgY29udGFpbmVyczoKICAgICAgICAgICAgICAgIC0gbmFtZTogbXktYXBwCiAgICAgICAgICAgICAgICAgIGltYWdlOiBuZ2lueDpsYXRlc3QKICAgICAgICAgICAgICAgICAgcG9ydHM6CiAgICAgICAgICAgICAgICAgIC0gY29udGFpbmVyUG9ydDogODAKCiAgICAtIG5hbWU6IENyZWFyIHVuIFNlcnZpY2UKICAgICAgazhzOgogICAgICAgIHN0YXRlOiBwcmVzZW50CiAgICAgICAgZGVmaW5pdGlvbjoKICAgICAgICAgIGFwaVZlcnNpb246IHYxCiAgICAgICAgICBraW5kOiBTZXJ2aWNlCiAgICAgICAgICBtZXRhZGF0YToKICAgICAgICAgICAgbmFtZTogbXktYXBwLXNlcnZpY2UKICAgICAgICAgICAgbmFtZXNwYWNlOiBteS1uYW1lc3BhY2UKICAgICAgICAgIHNwZWM6CiAgICAgICAgICAgIHNlbGVjdG9yOgogICAgICAgICAgICAgIGFwcDogbXktYXBwCiAgICAgICAgICAgIHBvcnRzOgogICAgICAgICAgICAtIHByb3RvY29sOiBUQ1AKICAgICAgICAgICAgICBwb3J0OiA4MAogICAgICAgICAgICAgIHRhcmdldFBvcnQ6IDgw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>---
+- name: Desplegar aplicaci&oacute; en Kubernetes
+  hosts: k8s_cluster
+  tasks:
+    - name: Autenticar-se amb el cl&uacute;ster de Kubernetes
+      k8s_auth:
+        kubeconfig: /root/.kube/config
+
+    - name: Crear un Namespace
+      k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: my-namespace
+
+    - name: Desplegar un Deployment
+      k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: my-app
+            namespace: my-namespace
+          spec:
+            replicas: 3
+            selector:
+              matchLabels:
+                app: my-app
+            template:
+              metadata:
+                labels:
+                  app: my-app
+              spec:
+                containers:
+                - name: my-app
+                  image: nginx:latest
+                  ports:
+                  - containerPort: 80
+
+    - name: Crear un Service
+      k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: my-app-service
+            namespace: my-namespace
+          spec:
+            selector:
+              app: my-app
+            ports:
+            - protocol: TCP
+              port: 80
+              targetPort: 80</pre></div><div class='content'></div><h2>3. Executar el Playbook</h2>
+<div class='content'><p>Per executar el Playbook, utilitzarem la següent comanda:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YW5zaWJsZS1wbGF5Ym9vayAtaSBpbnZlbnRvcnkuaW5pIGRlcGxveV9hcHAueW1s"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ansible-playbook -i inventory.ini deploy_app.yml</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Desplegar una Aplicació amb ConfigMap</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Objectiu:</strong> Desplegar una aplicació en Kubernetes que utilitzi un ConfigMap per a la seva configuració.</p>
+</li>
+<li>
+<p><strong>Passos:</strong></p>
+<ul>
+<li>Crear un ConfigMap.</li>
+<li>Desplegar un Deployment que utilitzi el ConfigMap.</li>
+<li>Crear un Service per exposar l'aplicació.</li>
+</ul>
+</li>
+<li>
+<p><strong>Playbook:</strong></p>
+</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0tCi0gbmFtZTogRGVzcGxlZ2FyIGFwbGljYWNpw7MgYW1iIENvbmZpZ01hcCBlbiBLdWJlcm5ldGVzCiAgaG9zdHM6IGs4c19jbHVzdGVyCiAgdGFza3M6CiAgICAtIG5hbWU6IEF1dGVudGljYXItc2UgYW1iIGVsIGNsw7pzdGVyIGRlIEt1YmVybmV0ZXMKICAgICAgazhzX2F1dGg6CiAgICAgICAga3ViZWNvbmZpZzogL3Jvb3QvLmt1YmUvY29uZmlnCgogICAgLSBuYW1lOiBDcmVhciB1biBDb25maWdNYXAKICAgICAgazhzOgogICAgICAgIHN0YXRlOiBwcmVzZW50CiAgICAgICAgZGVmaW5pdGlvbjoKICAgICAgICAgIGFwaVZlcnNpb246IHYxCiAgICAgICAgICBraW5kOiBDb25maWdNYXAKICAgICAgICAgIG1ldGFkYXRhOgogICAgICAgICAgICBuYW1lOiBteS1jb25maWcKICAgICAgICAgICAgbmFtZXNwYWNlOiBteS1uYW1lc3BhY2UKICAgICAgICAgIGRhdGE6CiAgICAgICAgICAgIG15X2tleTogbXlfdmFsdWUKCiAgICAtIG5hbWU6IERlc3BsZWdhciB1biBEZXBsb3ltZW50IHF1ZSB1dGlsaXR6aSBlbCBDb25maWdNYXAKICAgICAgazhzOgogICAgICAgIHN0YXRlOiBwcmVzZW50CiAgICAgICAgZGVmaW5pdGlvbjoKICAgICAgICAgIGFwaVZlcnNpb246IGFwcHMvdjEKICAgICAgICAgIGtpbmQ6IERlcGxveW1lbnQKICAgICAgICAgIG1ldGFkYXRhOgogICAgICAgICAgICBuYW1lOiBteS1hcHAKICAgICAgICAgICAgbmFtZXNwYWNlOiBteS1uYW1lc3BhY2UKICAgICAgICAgIHNwZWM6CiAgICAgICAgICAgIHJlcGxpY2FzOiAzCiAgICAgICAgICAgIHNlbGVjdG9yOgogICAgICAgICAgICAgIG1hdGNoTGFiZWxzOgogICAgICAgICAgICAgICAgYXBwOiBteS1hcHAKICAgICAgICAgICAgdGVtcGxhdGU6CiAgICAgICAgICAgICAgbWV0YWRhdGE6CiAgICAgICAgICAgICAgICBsYWJlbHM6CiAgICAgICAgICAgICAgICAgIGFwcDogbXktYXBwCiAgICAgICAgICAgICAgc3BlYzoKICAgICAgICAgICAgICAgIGNvbnRhaW5lcnM6CiAgICAgICAgICAgICAgICAtIG5hbWU6IG15LWFwcAogICAgICAgICAgICAgICAgICBpbWFnZTogbmdpbng6bGF0ZXN0CiAgICAgICAgICAgICAgICAgIHBvcnRzOgogICAgICAgICAgICAgICAgICAtIGNvbnRhaW5lclBvcnQ6IDgwCiAgICAgICAgICAgICAgICAgIGVudjoKICAgICAgICAgICAgICAgICAgLSBuYW1lOiBNWV9FTlZfVkFSCiAgICAgICAgICAgICAgICAgICAgdmFsdWVGcm9tOgogICAgICAgICAgICAgICAgICAgICAgY29uZmlnTWFwS2V5UmVmOgogICAgICAgICAgICAgICAgICAgICAgICBuYW1lOiBteS1jb25maWcKICAgICAgICAgICAgICAgICAgICAgICAga2V5OiBteV9rZXkKCiAgICAtIG5hbWU6IENyZWFyIHVuIFNlcnZpY2UKICAgICAgazhzOgogICAgICAgIHN0YXRlOiBwcmVzZW50CiAgICAgICAgZGVmaW5pdGlvbjoKICAgICAgICAgIGFwaVZlcnNpb246IHYxCiAgICAgICAgICBraW5kOiBTZXJ2aWNlCiAgICAgICAgICBtZXRhZGF0YToKICAgICAgICAgICAgbmFtZTogbXktYXBwLXNlcnZpY2UKICAgICAgICAgICAgbmFtZXNwYWNlOiBteS1uYW1lc3BhY2UKICAgICAgICAgIHNwZWM6CiAgICAgICAgICAgIHNlbGVjdG9yOgogICAgICAgICAgICAgIGFwcDogbXktYXBwCiAgICAgICAgICAgIHBvcnRzOgogICAgICAgICAgICAtIHByb3RvY29sOiBUQ1AKICAgICAgICAgICAgICBwb3J0OiA4MAogICAgICAgICAgICAgIHRhcmdldFBvcnQ6IDgw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>---
+- name: Desplegar aplicaci&oacute; amb ConfigMap en Kubernetes
+  hosts: k8s_cluster
+  tasks:
+    - name: Autenticar-se amb el cl&uacute;ster de Kubernetes
+      k8s_auth:
+        kubeconfig: /root/.kube/config
+
+    - name: Crear un ConfigMap
+      k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: my-config
+            namespace: my-namespace
+          data:
+            my_key: my_value
+
+    - name: Desplegar un Deployment que utilitzi el ConfigMap
+      k8s:
+        state: present
+        definition:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: my-app
+            namespace: my-namespace
+          spec:
+            replicas: 3
+            selector:
+              matchLabels:
+                app: my-app
+            template:
+              metadata:
+                labels:
+                  app: my-app
+              spec:
+                containers:
+                - name: my-app
+                  image: nginx:latest
+                  ports:
+                  - containerPort: 80
+                  env:
+                  - name: MY_ENV_VAR
+                    valueFrom:
+                      configMapKeyRef:
+                        name: my-config
+                        key: my_key
+
+    - name: Crear un Service
+      k8s:
+        state: present
+        definition:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: my-app-service
+            namespace: my-namespace
+          spec:
+            selector:
+              app: my-app
+            ports:
+            - protocol: TCP
+              port: 80
+              targetPort: 80</pre></div><div class='content'></div><h2>Solució</h2>
+<div class='content'><p>Executa el Playbook anterior utilitzant la següent comanda:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YW5zaWJsZS1wbGF5Ym9vayAtaSBpbnZlbnRvcnkuaW5pIGRlcGxveV9hcHBfd2l0aF9jb25maWdtYXAueW1s"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ansible-playbook -i inventory.ini deploy_app_with_configmap.yml</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après com utilitzar Ansible per gestionar i automatitzar Kubernetes. Hem vist com utilitzar mòduls d'Ansible per crear i gestionar recursos de Kubernetes, i hem desplegat una aplicació en un clúster de Kubernetes utilitzant un Playbook d'Ansible. També hem realitzat un exercici pràctic per reforçar els conceptes apresos. En el proper tema, explorarem com integrar Ansible amb altres eines de DevOps.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-01-ansible-and-docker' title="Ansible i Docker">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-03-ci-cd-with-ansible' title="CI/CD amb Ansible">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

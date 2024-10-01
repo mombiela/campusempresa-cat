@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orquestració amb Kubernetes</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/microservicios/05-02-orquestacion-kubernetes" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/microservicios/05-02-orquestacion-kubernetes" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/microservicios/05-02-orchestration-kubernetes" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/microservicios/05-02-orquestacion-kubernetes" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/microservicios/05-02-orquestacion-kubernetes" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-01-contenedores-docker' title="Contenidors i Docker">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Orquestració amb Kubernetes</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-03-cicd-microservicios' title="CI/CD per a Microserveis">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Kubernetes és una plataforma d'orquestració de contenidors que automatitza el desplegament, l'escalat i la gestió d'aplicacions contenidoritzades. És una eina essencial per gestionar microserveis en entorns de producció, ja que proporciona eines per assegurar la disponibilitat, la resiliència i l'escalabilitat dels serveis.</p>
+</div><h1>Conceptes Clau de Kubernetes</h1>
+<div class='content'></div><h2>1. Clúster</h2>
+<div class='content'><p>Un clúster de Kubernetes està format per un conjunt de màquines (nodes) que executen aplicacions contenidoritzades. Hi ha dos tipus de nodes:</p>
+<ul>
+<li><strong>Node Mestre</strong>: Gestiona el clúster i coordina totes les activitats, com ara l'escalat i el desplegament.</li>
+<li><strong>Nodes de Treball</strong>: Executen les aplicacions contenidoritzades.</li>
+</ul>
+</div><h2>2. Pod</h2>
+<div class='content'><p>Un Pod és la unitat bàsica de desplegament en Kubernetes. Un Pod pot contenir un o més contenidors que comparteixen el mateix espai de xarxa i emmagatzematge.</p>
+</div><h2>3. ReplicaSet</h2>
+<div class='content'><p>Un ReplicaSet assegura que un nombre específic de rèpliques d'un Pod estiguin executant-se en tot moment. Si un Pod falla, el ReplicaSet crea un nou Pod per reemplaçar-lo.</p>
+</div><h2>4. Deployment</h2>
+<div class='content'><p>Un Deployment proporciona actualitzacions declaratives per als Pods i els ReplicaSets. Permet desplegar noves versions de l'aplicació de manera controlada.</p>
+</div><h2>5. Service</h2>
+<div class='content'><p>Un Service és una abstracció que defineix un conjunt lògic de Pods i una política per accedir-hi. Els serveis permeten la comunicació entre diferents components de l'aplicació.</p>
+</div><h2>6. ConfigMap i Secret</h2>
+<div class='content'><ul>
+<li><strong>ConfigMap</strong>: Emmagatzema dades de configuració no confidencials en parelles clau-valor.</li>
+<li><strong>Secret</strong>: Emmagatzema dades confidencials, com ara contrasenyes i claus d'API, de manera segura.</li>
+</ul>
+</div><h1>Desplegament d'un Microservei amb Kubernetes</h1>
+<div class='content'></div><h2>Pas 1: Crear un Fitxer de Configuració de Deployment</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogYXBwcy92MQpraW5kOiBEZXBsb3ltZW50Cm1ldGFkYXRhOgogIG5hbWU6IG1pY3Jvc2VydmVpLWV4ZW1wbGUKc3BlYzoKICByZXBsaWNhczogMwogIHNlbGVjdG9yOgogICAgbWF0Y2hMYWJlbHM6CiAgICAgIGFwcDogbWljcm9zZXJ2ZWktZXhlbXBsZQogIHRlbXBsYXRlOgogICAgbWV0YWRhdGE6CiAgICAgIGxhYmVsczoKICAgICAgICBhcHA6IG1pY3Jvc2VydmVpLWV4ZW1wbGUKICAgIHNwZWM6CiAgICAgIGNvbnRhaW5lcnM6CiAgICAgIC0gbmFtZTogbWljcm9zZXJ2ZWktZXhlbXBsZQogICAgICAgIGltYWdlOiBleGVtcGxlL21pY3Jvc2VydmVpOmxhdGVzdAogICAgICAgIHBvcnRzOgogICAgICAgIC0gY29udGFpbmVyUG9ydDogODA4MA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservei-exemple
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: microservei-exemple
+  template:
+    metadata:
+      labels:
+        app: microservei-exemple
+    spec:
+      containers:
+      - name: microservei-exemple
+        image: exemple/microservei:latest
+        ports:
+        - containerPort: 8080</pre></div><div class='content'></div><h2>Explicació del Fitxer de Configuració</h2>
+<div class='content'><ul>
+<li><strong>apiVersion</strong>: La versió de l'API de Kubernetes que s'utilitza.</li>
+<li><strong>kind</strong>: El tipus de recurs que es crea, en aquest cas, un Deployment.</li>
+<li><strong>metadata</strong>: Informació sobre el Deployment, com ara el nom.</li>
+<li><strong>spec</strong>: L'especificació del Deployment.
+<ul>
+<li><strong>replicas</strong>: El nombre de rèpliques del Pod.</li>
+<li><strong>selector</strong>: Defineix com seleccionar els Pods gestionats per aquest Deployment.</li>
+<li><strong>template</strong>: El model per crear els Pods.
+<ul>
+<li><strong>metadata</strong>: Etiquetes per identificar els Pods.</li>
+<li><strong>spec</strong>: L'especificació dels contenidors dins del Pod.
+<ul>
+<li><strong>containers</strong>: Una llista de contenidors que s'executaran dins del Pod.
+<ul>
+<li><strong>name</strong>: El nom del contenidor.</li>
+<li><strong>image</strong>: La imatge del contenidor.</li>
+<li><strong>ports</strong>: Els ports exposats pel contenidor.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div><h2>Pas 2: Crear un Fitxer de Configuració de Service</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogU2VydmljZQptZXRhZGF0YToKICBuYW1lOiBtaWNyb3NlcnZlaS1leGVtcGxlLXNlcnZpY2UKc3BlYzoKICBzZWxlY3RvcjoKICAgIGFwcDogbWljcm9zZXJ2ZWktZXhlbXBsZQogIHBvcnRzOgogICAgLSBwcm90b2NvbDogVENQCiAgICAgIHBvcnQ6IDgwCiAgICAgIHRhcmdldFBvcnQ6IDgwODAKICB0eXBlOiBMb2FkQmFsYW5jZXI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: Service
+metadata:
+  name: microservei-exemple-service
+spec:
+  selector:
+    app: microservei-exemple
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer</pre></div><div class='content'></div><h2>Explicació del Fitxer de Configuració</h2>
+<div class='content'><ul>
+<li><strong>apiVersion</strong>: La versió de l'API de Kubernetes que s'utilitza.</li>
+<li><strong>kind</strong>: El tipus de recurs que es crea, en aquest cas, un Service.</li>
+<li><strong>metadata</strong>: Informació sobre el Service, com ara el nom.</li>
+<li><strong>spec</strong>: L'especificació del Service.
+<ul>
+<li><strong>selector</strong>: Defineix com seleccionar els Pods gestionats per aquest Service.</li>
+<li><strong>ports</strong>: Els ports exposats pel Service.
+<ul>
+<li><strong>protocol</strong>: El protocol utilitzat (TCP en aquest cas).</li>
+<li><strong>port</strong>: El port exposat pel Service.</li>
+<li><strong>targetPort</strong>: El port al qual el Service redirigeix el tràfic dins del Pod.</li>
+</ul>
+</li>
+<li><strong>type</strong>: El tipus de Service (LoadBalancer en aquest cas).</li>
+</ul>
+</li>
+</ul>
+</div><h2>Pas 3: Desplegar el Microservei</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Aplicar el Deployment</strong>:</p>
+<pre><code class="language-bash">kubectl apply -f deployment.yaml
+</code></pre>
+</li>
+<li>
+<p><strong>Aplicar el Service</strong>:</p>
+<pre><code class="language-bash">kubectl apply -f service.yaml
+</code></pre>
+</li>
+</ol>
+</div><h2>Verificar el Desplegament</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Llistar els Pods</strong>:</p>
+<pre><code class="language-bash">kubectl get pods
+</code></pre>
+</li>
+<li>
+<p><strong>Llistar els Services</strong>:</p>
+<pre><code class="language-bash">kubectl get services
+</code></pre>
+</li>
+</ul>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Desplegar un microservei simple utilitzant Kubernetes i verificar que està funcionant correctament.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>Crear un fitxer <code>deployment.yaml</code> amb la configuració del Deployment.</li>
+<li>Crear un fitxer <code>service.yaml</code> amb la configuració del Service.</li>
+<li>Aplicar els fitxers de configuració utilitzant <code>kubectl</code>.</li>
+<li>Verificar que els Pods i el Service estan funcionant correctament.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Fitxer <code>deployment.yaml</code></strong>:</p>
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservei-exemple
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: microservei-exemple
+  template:
+    metadata:
+      labels:
+        app: microservei-exemple
+    spec:
+      containers:
+      - name: microservei-exemple
+        image: exemple/microservei:latest
+        ports:
+        - containerPort: 8080
+</code></pre>
+</li>
+<li>
+<p><strong>Fitxer <code>service.yaml</code></strong>:</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: microservei-exemple-service
+spec:
+  selector:
+    app: microservei-exemple
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: LoadBalancer
+</code></pre>
+</li>
+<li>
+<p><strong>Aplicar els fitxers de configuració</strong>:</p>
+<pre><code class="language-bash">kubectl apply -f deployment.yaml
+kubectl apply -f service.yaml
+</code></pre>
+</li>
+<li>
+<p><strong>Verificar el desplegament</strong>:</p>
+<pre><code class="language-bash">kubectl get pods
+kubectl get services
+</code></pre>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après els conceptes clau de Kubernetes i com utilitzar-los per desplegar un microservei. Hem creat fitxers de configuració per a un Deployment i un Service, i hem aplicat aquests fitxers per desplegar el microservei en un clúster de Kubernetes. Aquest coneixement és fonamental per gestionar aplicacions de microserveis en entorns de producció, assegurant la seva disponibilitat, resiliència i escalabilitat.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-01-contenedores-docker' title="Contenidors i Docker">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-03-cicd-microservicios' title="CI/CD per a Microserveis">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projecte 3: Sistema de Còpia de Seguretat Automatitzat</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/bash/09-03-automated-backup-system" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/bash/09-03-automated-backup-system" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/bash/09-03-automated-backup-system" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/bash/09-03-automated-backup-system" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/bash/09-03-automated-backup-system" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-02-log-file-analyzer' title="Projecte 2: Analitzador de Fitxers de Registre">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Projecte 3: Sistema de Còpia de Seguretat Automatitzat</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-04-network-monitoring-tool' title="Projecte 4: Eina de Monitorització de Xarxa">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest projecte, crearem un sistema de còpia de seguretat automatitzat utilitzant Bash. Aquest sistema permetrà fer còpies de seguretat de fitxers i directoris importants de manera regular i automàtica, assegurant que les dades estiguin protegides contra pèrdues.</p>
+</div><h1>Objectius del Projecte</h1>
+<div class='content'><ol>
+<li><strong>Entendre la importància de les còpies de seguretat.</strong></li>
+<li><strong>Aprendre a utilitzar comandes de Bash per copiar fitxers i directoris.</strong></li>
+<li><strong>Configurar un script per executar-se automàticament amb cron.</strong></li>
+<li><strong>Implementar notificacions per assegurar que les còpies de seguretat s'han realitzat correctament.</strong></li>
+</ol>
+</div><h1>Passos del Projecte</h1>
+<div class='content'></div><h2>1. Planificació de la Còpia de Seguretat</h2>
+<div class='content'><p>Abans de començar a escriure el script, és important planificar què es vol copiar i on es vol emmagatzemar la còpia de seguretat.</p>
+<ul>
+<li><strong>Directoris a copiar:</strong> <code>/home/usuari/documents</code>, <code>/home/usuari/pictures</code></li>
+<li><strong>Destinació de la còpia de seguretat:</strong> <code>/mnt/backup</code></li>
+</ul>
+</div><h2>2. Crear l'Script de Còpia de Seguretat</h2>
+<div class='content'><h4>2.1. Estructura Bàsica de l'Script</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyEvYmluL2Jhc2gKCiMgRGlyZWN0b3JpIGRlIGRlc3RpbmFjacOzIGRlIGxhIGPDsnBpYSBkZSBzZWd1cmV0YXQKREVTVElOQVRJT049Ii9tbnQvYmFja3VwIgoKIyBEYXRhIGFjdHVhbApEQVRFPSQoZGF0ZSArJVktJW0tJWQpCgojIENyZWFyIHVuIGRpcmVjdG9yaSBhbWIgbGEgZGF0YSBhY3R1YWwKQkFDS1VQX0RJUj0iJERFU1RJTkFUSU9OL2JhY2t1cC0kREFURSIKbWtkaXIgLXAgIiRCQUNLVVBfRElSIgoKIyBEaXJlY3RvcmlzIGEgY29waWFyCkRJUkVDVE9SSUVTPSgKICAgICIvaG9tZS91c3VhcmkvZG9jdW1lbnRzIgogICAgIi9ob21lL3VzdWFyaS9waWN0dXJlcyIKKQoKIyBGdW5jacOzIHBlciBjb3BpYXIgZWxzIGRpcmVjdG9yaXMKYmFja3VwKCkgewogICAgZm9yIERJUiBpbiAiJHtESVJFQ1RPUklFU1tAXX0iOyBkbwogICAgICAgIGNwIC1yICIkRElSIiAiJEJBQ0tVUF9ESVIiCiAgICBkb25lCn0KCiMgRXhlY3V0YXIgbGEgZnVuY2nDsyBkZSBjw7JwaWEgZGUgc2VndXJldGF0CmJhY2t1cAoKIyBOb3RpZmljYWNpw7MgZGUgZmluYWxpdHphY2nDswplY2hvICJDw7JwaWEgZGUgc2VndXJldGF0IGNvbXBsZXRhZGEgZWwgJERBVEUiIHwgbWFpbCAtcyAiQ8OycGlhIGRlIFNlZ3VyZXRhdCIgdXN1YXJpQGV4YW1wbGUuY29t"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#!/bin/bash
+
+# Directori de destinaci&oacute; de la c&ograve;pia de seguretat
+DESTINATION=&quot;/mnt/backup&quot;
+
+# Data actual
+DATE=$(date +%Y-%m-%d)
+
+# Crear un directori amb la data actual
+BACKUP_DIR=&quot;$DESTINATION/backup-$DATE&quot;
+mkdir -p &quot;$BACKUP_DIR&quot;
+
+# Directoris a copiar
+DIRECTORIES=(
+    &quot;/home/usuari/documents&quot;
+    &quot;/home/usuari/pictures&quot;
+)
+
+# Funci&oacute; per copiar els directoris
+backup() {
+    for DIR in &quot;${DIRECTORIES[@]}&quot;; do
+        cp -r &quot;$DIR&quot; &quot;$BACKUP_DIR&quot;
+    done
+}
+
+# Executar la funci&oacute; de c&ograve;pia de seguretat
+backup
+
+# Notificaci&oacute; de finalitzaci&oacute;
+echo &quot;C&ograve;pia de seguretat completada el $DATE&quot; | mail -s &quot;C&ograve;pia de Seguretat&quot; usuari@example.com</pre></div><div class='content'><h4>2.2. Explicació del Codi</h4>
+<ul>
+<li><strong>DESTINATION:</strong> Defineix el directori on es guardaran les còpies de seguretat.</li>
+<li><strong>DATE:</strong> Obté la data actual en format <code>YYYY-MM-DD</code>.</li>
+<li><strong>BACKUP_DIR:</strong> Crea un directori nou dins de <code>DESTINATION</code> amb la data actual.</li>
+<li><strong>DIRECTORIES:</strong> Llista dels directoris que es copiaran.</li>
+<li><strong>backup():</strong> Funció que recorre la llista de directoris i els copia al directori de còpia de seguretat.</li>
+<li><strong>mail:</strong> Envia un correu electrònic de notificació quan la còpia de seguretat s'ha completat.</li>
+</ul>
+</div><h2>3. Automatitzar l'Script amb cron</h2>
+<div class='content'><h4>3.1. Editar el Crontab</h4>
+<p>Per automatitzar l'execució de l'script, utilitzarem cron. Editem el crontab amb la comanda:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y3JvbnRhYiAtZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>crontab -e</pre></div><div class='content'><h4>3.2. Afegir una Entrada al Crontab</h4>
+<p>Afegim una entrada per executar l'script cada dia a les 2:00 AM:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("MCAyICogKiAqIC9wYXRoL3RvL2JhY2t1cC1zY3JpcHQuc2g="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>0 2 * * * /path/to/backup-script.sh</pre></div><div class='content'></div><h2>4. Provar l'Script</h2>
+<div class='content'><p>És important provar l'script manualment abans de confiar en l'automatització per assegurar-se que funciona correctament.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YmFzaCAvcGF0aC90by9iYWNrdXAtc2NyaXB0LnNo"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>bash /path/to/backup-script.sh</pre></div><div class='content'></div><h2>5. Millores i Optimitzacions</h2>
+<div class='content'><h4>5.1. Comprimir les Còpies de Seguretat</h4>
+<p>Per estalviar espai, podem comprimir les còpies de seguretat utilitzant <code>tar</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGFyIC1jemYgIiRCQUNLVVBfRElSLnRhci5neiIgLUMgIiRCQUNLVVBfRElSIiAuCnJtIC1yZiAiJEJBQ0tVUF9ESVIi"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>tar -czf &quot;$BACKUP_DIR.tar.gz&quot; -C &quot;$BACKUP_DIR&quot; .
+rm -rf &quot;$BACKUP_DIR&quot;</pre></div><div class='content'><h4>5.2. Gestió d'Errors</h4>
+<p>Afegir gestió d'errors per assegurar que l'script no falla silenciosament:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YmFja3VwKCkgewogICAgZm9yIERJUiBpbiAiJHtESVJFQ1RPUklFU1tAXX0iOyBkbwogICAgICAgIGlmIGNwIC1yICIkRElSIiAiJEJBQ0tVUF9ESVIiOyB0aGVuCiAgICAgICAgICAgIGVjaG8gIkPDsnBpYSBkZSAkRElSIGNvbXBsZXRhZGEuIgogICAgICAgIGVsc2UKICAgICAgICAgICAgZWNobyAiRXJyb3IgY29waWFudCAkRElSLiIgfCBtYWlsIC1zICJFcnJvciBkZSBDw7JwaWEgZGUgU2VndXJldGF0IiB1c3VhcmlAZXhhbXBsZS5jb20KICAgICAgICBmaQogICAgZG9uZQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>backup() {
+    for DIR in &quot;${DIRECTORIES[@]}&quot;; do
+        if cp -r &quot;$DIR&quot; &quot;$BACKUP_DIR&quot;; then
+            echo &quot;C&ograve;pia de $DIR completada.&quot;
+        else
+            echo &quot;Error copiant $DIR.&quot; | mail -s &quot;Error de C&ograve;pia de Seguretat&quot; usuari@example.com
+        fi
+    done
+}</pre></div><div class='content'></div><h2>6. Resum</h2>
+<div class='content'><p>En aquest projecte, hem creat un sistema de còpia de seguretat automatitzat utilitzant Bash. Hem après a planificar la còpia de seguretat, escriure un script bàsic, automatitzar-lo amb cron, i implementar millores com la compressió i la gestió d'errors. Aquest sistema assegura que les dades importants estiguin protegides de manera regular i automàtica.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-02-log-file-analyzer' title="Projecte 2: Analitzador de Fitxers de Registre">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-04-network-monitoring-tool' title="Projecte 4: Eina de Monitorització de Xarxa">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

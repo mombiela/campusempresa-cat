@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proveïment de recursos AWS</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/terraform/05-02-provisioning-aws-resources" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/terraform/05-02-provisioning-aws-resources" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/terraform/05-02-provisioning-aws-resources" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/terraform/05-02-provisioning-aws-resources" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/terraform/05-02-provisioning-aws-resources" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-01-provisioning-basics' title="Conceptes bàsics de proveïment">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Proveïment de recursos AWS</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-03-provisioning-azure-resources' title="Proveïment de recursos Azure">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com utilitzar Terraform per proveir recursos a Amazon Web Services (AWS). AWS és una de les plataformes de núvol més populars i Terraform facilita la gestió de la seva infraestructura com a codi (IaC). Explorarem els conceptes bàsics, veurem exemples pràctics i realitzarem exercicis per consolidar els coneixements.</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ul>
+<li>Comprendre com configurar Terraform per treballar amb AWS.</li>
+<li>Aprendre a definir i gestionar recursos AWS amb Terraform.</li>
+<li>Realitzar exercicis pràctics per crear i gestionar recursos AWS.</li>
+</ul>
+</div><h1>Requisits Previs</h1>
+<div class='content'><ul>
+<li>Coneixements bàsics de Terraform.</li>
+<li>Un compte d'AWS actiu.</li>
+<li>AWS CLI instal·lat i configurat.</li>
+</ul>
+</div><h1>Configuració Inicial</h1>
+<div class='content'></div><h2>1. Configurar AWS CLI</h2>
+<div class='content'><p>Abans de començar, assegura't que tens l'AWS CLI instal·lat i configurat. Pots seguir les instruccions oficials d'AWS per a la instal·lació i configuració.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXdzIGNvbmZpZ3VyZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>aws configure</pre></div><div class='content'></div><h2>2. Crear un fitxer de configuració de Terraform</h2>
+<div class='content'><p>Crea un directori per al teu projecte i un fitxer <code>main.tf</code> dins d'aquest directori.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bWtkaXIgdGVycmFmb3JtLWF3cwpjZCB0ZXJyYWZvcm0tYXdzCnRvdWNoIG1haW4udGY="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>mkdir terraform-aws
+cd terraform-aws
+touch main.tf</pre></div><div class='content'></div><h1>Definició de Proveïdor AWS</h1>
+<div class='content'><p>El primer pas és definir el proveïdor AWS en el fitxer <code>main.tf</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHJvdmlkZXIgImF3cyIgewogIHJlZ2lvbiA9ICJ1cy13ZXN0LTIiCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>provider &quot;aws&quot; {
+  region = &quot;us-west-2&quot;
+}</pre></div><div class='content'><p>Aquest bloc indica a Terraform que utilitzarà AWS com a proveïdor i especifica la regió on es crearan els recursos.</p>
+</div><h1>Creació d'un Recurs AWS: EC2 Instance</h1>
+<div class='content'></div><h2>1. Definir un recurs EC2</h2>
+<div class='content'><p>Afegim un bloc de recurs per crear una instància EC2.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVzb3VyY2UgImF3c19pbnN0YW5jZSIgImV4YW1wbGUiIHsKICBhbWkgICAgICAgICAgID0gImFtaS0wYzU1YjE1OWNiZmFmZTFmMCIgIyBBTUkgZCdBbWF6b24gTGludXggMgogIGluc3RhbmNlX3R5cGUgPSAidDIubWljcm8iCgogIHRhZ3MgPSB7CiAgICBOYW1lID0gIkV4YW1wbGVJbnN0YW5jZSIKICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>resource &quot;aws_instance&quot; &quot;example&quot; {
+  ami           = &quot;ami-0c55b159cbfafe1f0&quot; # AMI d'Amazon Linux 2
+  instance_type = &quot;t2.micro&quot;
+
+  tags = {
+    Name = &quot;ExampleInstance&quot;
+  }
+}</pre></div><div class='content'></div><h2>2. Explicació del codi</h2>
+<div class='content'><ul>
+<li><code>resource &quot;aws_instance&quot; &quot;example&quot;</code>: Defineix un recurs d'instància EC2 amb el nom &quot;example&quot;.</li>
+<li><code>ami</code>: Identificador de la imatge d'Amazon Machine (AMI) que s'utilitzarà per crear la instància.</li>
+<li><code>instance_type</code>: Tipus d'instància (en aquest cas, <code>t2.micro</code>).</li>
+<li><code>tags</code>: Etiquetes per identificar la instància.</li>
+</ul>
+</div><h2>3. Inicialitzar i aplicar la configuració</h2>
+<div class='content'><p>Inicialitza el directori de treball de Terraform.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIGluaXQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform init</pre></div><div class='content'><p>Aplica la configuració per crear la instància EC2.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIGFwcGx5"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform apply</pre></div><div class='content'><p>Confirma l'aplicació escrivint <code>yes</code> quan se't demani.</p>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Crear una instància EC2 amb un grup de seguretat que permeti el trànsit HTTP i SSH.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li><strong>Definir el grup de seguretat</strong></li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVzb3VyY2UgImF3c19zZWN1cml0eV9ncm91cCIgImV4YW1wbGUiIHsKICBuYW1lX3ByZWZpeCA9ICJleGFtcGxlLSIKCiAgaW5ncmVzcyB7CiAgICBmcm9tX3BvcnQgICA9IDIyCiAgICB0b19wb3J0ICAgICA9IDIyCiAgICBwcm90b2NvbCAgICA9ICJ0Y3AiCiAgICBjaWRyX2Jsb2NrcyA9IFsiMC4wLjAuMC8wIl0KICB9CgogIGluZ3Jlc3MgewogICAgZnJvbV9wb3J0ICAgPSA4MAogICAgdG9fcG9ydCAgICAgPSA4MAogICAgcHJvdG9jb2wgICAgPSAidGNwIgogICAgY2lkcl9ibG9ja3MgPSBbIjAuMC4wLjAvMCJdCiAgfQoKICBlZ3Jlc3MgewogICAgZnJvbV9wb3J0ICAgPSAwCiAgICB0b19wb3J0ICAgICA9IDAKICAgIHByb3RvY29sICAgID0gIi0xIgogICAgY2lkcl9ibG9ja3MgPSBbIjAuMC4wLjAvMCJdCiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>resource &quot;aws_security_group&quot; &quot;example&quot; {
+  name_prefix = &quot;example-&quot;
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = &quot;tcp&quot;
+    cidr_blocks = [&quot;0.0.0.0/0&quot;]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = &quot;tcp&quot;
+    cidr_blocks = [&quot;0.0.0.0/0&quot;]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = &quot;-1&quot;
+    cidr_blocks = [&quot;0.0.0.0/0&quot;]
+  }
+}</pre></div><div class='content'><ol start="2">
+<li><strong>Associar el grup de seguretat a la instància EC2</strong></li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVzb3VyY2UgImF3c19pbnN0YW5jZSIgImV4YW1wbGUiIHsKICBhbWkgICAgICAgICAgID0gImFtaS0wYzU1YjE1OWNiZmFmZTFmMCIKICBpbnN0YW5jZV90eXBlID0gInQyLm1pY3JvIgogIHNlY3VyaXR5X2dyb3VwcyA9IFthd3Nfc2VjdXJpdHlfZ3JvdXAuZXhhbXBsZS5uYW1lXQoKICB0YWdzID0gewogICAgTmFtZSA9ICJFeGFtcGxlSW5zdGFuY2UiCiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>resource &quot;aws_instance&quot; &quot;example&quot; {
+  ami           = &quot;ami-0c55b159cbfafe1f0&quot;
+  instance_type = &quot;t2.micro&quot;
+  security_groups = [aws_security_group.example.name]
+
+  tags = {
+    Name = &quot;ExampleInstance&quot;
+  }
+}</pre></div><div class='content'><ol start="3">
+<li><strong>Aplicar la configuració</strong></li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIGFwcGx5"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform apply</pre></div><div class='content'></div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHJvdmlkZXIgImF3cyIgewogIHJlZ2lvbiA9ICJ1cy13ZXN0LTIiCn0KCnJlc291cmNlICJhd3Nfc2VjdXJpdHlfZ3JvdXAiICJleGFtcGxlIiB7CiAgbmFtZV9wcmVmaXggPSAiZXhhbXBsZS0iCgogIGluZ3Jlc3MgewogICAgZnJvbV9wb3J0ICAgPSAyMgogICAgdG9fcG9ydCAgICAgPSAyMgogICAgcHJvdG9jb2wgICAgPSAidGNwIgogICAgY2lkcl9ibG9ja3MgPSBbIjAuMC4wLjAvMCJdCiAgfQoKICBpbmdyZXNzIHsKICAgIGZyb21fcG9ydCAgID0gODAKICAgIHRvX3BvcnQgICAgID0gODAKICAgIHByb3RvY29sICAgID0gInRjcCIKICAgIGNpZHJfYmxvY2tzID0gWyIwLjAuMC4wLzAiXQogIH0KCiAgZWdyZXNzIHsKICAgIGZyb21fcG9ydCAgID0gMAogICAgdG9fcG9ydCAgICAgPSAwCiAgICBwcm90b2NvbCAgICA9ICItMSIKICAgIGNpZHJfYmxvY2tzID0gWyIwLjAuMC4wLzAiXQogIH0KfQoKcmVzb3VyY2UgImF3c19pbnN0YW5jZSIgImV4YW1wbGUiIHsKICBhbWkgICAgICAgICAgID0gImFtaS0wYzU1YjE1OWNiZmFmZTFmMCIKICBpbnN0YW5jZV90eXBlID0gInQyLm1pY3JvIgogIHNlY3VyaXR5X2dyb3VwcyA9IFthd3Nfc2VjdXJpdHlfZ3JvdXAuZXhhbXBsZS5uYW1lXQoKICB0YWdzID0gewogICAgTmFtZSA9ICJFeGFtcGxlSW5zdGFuY2UiCiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>provider &quot;aws&quot; {
+  region = &quot;us-west-2&quot;
+}
+
+resource &quot;aws_security_group&quot; &quot;example&quot; {
+  name_prefix = &quot;example-&quot;
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = &quot;tcp&quot;
+    cidr_blocks = [&quot;0.0.0.0/0&quot;]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = &quot;tcp&quot;
+    cidr_blocks = [&quot;0.0.0.0/0&quot;]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = &quot;-1&quot;
+    cidr_blocks = [&quot;0.0.0.0/0&quot;]
+  }
+}
+
+resource &quot;aws_instance&quot; &quot;example&quot; {
+  ami           = &quot;ami-0c55b159cbfafe1f0&quot;
+  instance_type = &quot;t2.micro&quot;
+  security_groups = [aws_security_group.example.name]
+
+  tags = {
+    Name = &quot;ExampleInstance&quot;
+  }
+}</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après a configurar Terraform per treballar amb AWS i a crear una instància EC2 amb un grup de seguretat. Hem vist com definir recursos i aplicar configuracions utilitzant Terraform. A més, hem realitzat un exercici pràctic per consolidar els coneixements adquirits. En el proper tema, explorarem com proveir recursos a Azure amb Terraform.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-01-provisioning-basics' title="Conceptes bàsics de proveïment">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-03-provisioning-azure-resources' title="Proveïment de recursos Azure">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

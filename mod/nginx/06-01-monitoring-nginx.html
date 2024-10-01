@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitoritzant NGINX</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nginx/06-01-monitoring-nginx" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nginx/06-01-monitoring-nginx" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nginx/06-01-monitoring-nginx" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nginx/06-01-monitoring-nginx" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nginx/06-01-monitoring-nginx" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-nginx-grpc' title="NGINX i gRPC">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Monitoritzant NGINX</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-02-common-issues-solutions' title="Problemes comuns i solucions">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La monitorització de NGINX és essencial per assegurar que el servidor web funcioni de manera òptima i per detectar i resoldre problemes abans que afectin els usuaris finals. En aquesta secció, aprendrem com monitoritzar NGINX utilitzant diverses eines i tècniques.</p>
+</div><h1>Objectius d'Aprenentatge</h1>
+<div class='content'><ul>
+<li>Entendre la importància de la monitorització de NGINX.</li>
+<li>Aprendre a utilitzar les eines de monitorització integrades de NGINX.</li>
+<li>Configurar i interpretar els registres d'accés i d'error.</li>
+<li>Utilitzar eines externes per a la monitorització avançada.</li>
+</ul>
+</div><h1>1. Importància de la Monitorització</h1>
+<div class='content'><p>Monitoritzar NGINX és crucial per:</p>
+<ul>
+<li><strong>Detectar problemes de rendiment</strong>: Identificar colls d'ampolla i optimitzar el rendiment.</li>
+<li><strong>Assegurar la disponibilitat</strong>: Garantir que el servidor estigui operatiu i accessible.</li>
+<li><strong>Analitzar el trànsit</strong>: Comprendre els patrons de trànsit i ajustar la configuració segons sigui necessari.</li>
+<li><strong>Seguretat</strong>: Detectar intents d'intrusió i altres activitats malicioses.</li>
+</ul>
+</div><h1>2. Eines de Monitorització Integrades</h1>
+<div class='content'></div><h2>2.1. Registres d'Accés i d'Error</h2>
+<div class='content'><p>NGINX proporciona dos tipus principals de registres:</p>
+<ul>
+<li><strong>Registres d'accés</strong>: Contenen informació sobre cada sol·licitud HTTP que NGINX processa.</li>
+<li><strong>Registres d'error</strong>: Contenen informació sobre errors que es produeixen durant el funcionament de NGINX.</li>
+</ul>
+<h4>Configuració dels Registres</h4>
+<p>Per configurar els registres, edita el fitxer de configuració de NGINX (<code>nginx.conf</code>):</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aHR0cCB7CiAgICBsb2dfZm9ybWF0IG1haW4gJyRyZW1vdGVfYWRkciAtICRyZW1vdGVfdXNlciBbJHRpbWVfbG9jYWxdICIkcmVxdWVzdCIgJwogICAgICAgICAgICAgICAgICAgICAgJyRzdGF0dXMgJGJvZHlfYnl0ZXNfc2VudCAiJGh0dHBfcmVmZXJlciIgJwogICAgICAgICAgICAgICAgICAgICAgJyIkaHR0cF91c2VyX2FnZW50IiAiJGh0dHBfeF9mb3J3YXJkZWRfZm9yIic7CgogICAgYWNjZXNzX2xvZyAvdmFyL2xvZy9uZ2lueC9hY2Nlc3MubG9nIG1haW47CiAgICBlcnJvcl9sb2cgL3Zhci9sb2cvbmdpbngvZXJyb3IubG9nIHdhcm47Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>http {
+    log_format main '$remote_addr - $remote_user [$time_local] &quot;$request&quot; '
+                      '$status $body_bytes_sent &quot;$http_referer&quot; '
+                      '&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;';
+
+    access_log /var/log/nginx/access.log main;
+    error_log /var/log/nginx/error.log warn;
+}</pre></div><div class='content'><ul>
+<li><strong>log_format</strong>: Defineix el format dels registres d'accés.</li>
+<li><strong>access_log</strong>: Especifica la ubicació del fitxer de registre d'accés.</li>
+<li><strong>error_log</strong>: Especifica la ubicació del fitxer de registre d'error i el nivell de registre (per exemple, <code>warn</code>, <code>error</code>, <code>crit</code>).</li>
+</ul>
+</div><h2>2.2. Estat de NGINX</h2>
+<div class='content'><p>NGINX té un mòdul integrat per mostrar l'estat del servidor en temps real. Per habilitar-lo, afegeix la següent configuració al fitxer <code>nginx.conf</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aHR0cCB7CiAgICBzZXJ2ZXIgewogICAgICAgIGxpc3RlbiA4MDgwOwogICAgICAgIHNlcnZlcl9uYW1lIGxvY2FsaG9zdDsKCiAgICAgICAgbG9jYXRpb24gL25naW54X3N0YXR1cyB7CiAgICAgICAgICAgIHN0dWJfc3RhdHVzIG9uOwogICAgICAgICAgICBhbGxvdyAxMjcuMC4wLjE7ICAjIFBlcm1ldCBub23DqXMgbGVzIHNvbMK3bGljaXR1ZHMgZGVzIGRlIGxvY2FsaG9zdAogICAgICAgICAgICBkZW55IGFsbDsgICAgICAgICAjIERlbmVnYSB0b3RlcyBsZXMgYWx0cmVzIHNvbMK3bGljaXR1ZHMKICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>http {
+    server {
+        listen 8080;
+        server_name localhost;
+
+        location /nginx_status {
+            stub_status on;
+            allow 127.0.0.1;  # Permet nom&eacute;s les sol&middot;licituds des de localhost
+            deny all;         # Denega totes les altres sol&middot;licituds
+        }
+    }
+}</pre></div><div class='content'><p>Després de reiniciar NGINX, pots accedir a l'estat del servidor visitant <code>http://localhost:8080/nginx_status</code>. La sortida serà similar a:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QWN0aXZlIGNvbm5lY3Rpb25zOiAyOTEKc2VydmVyIGFjY2VwdHMgaGFuZGxlZCByZXF1ZXN0cwogIDEwNDIgMTA0MiA4MjEKUmVhZGluZzogMCBXcml0aW5nOiAxIFdhaXRpbmc6IDI5MA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Active connections: 291
+server accepts handled requests
+  1042 1042 821
+Reading: 0 Writing: 1 Waiting: 290</pre></div><div class='content'><ul>
+<li><strong>Active connections</strong>: Nombre de connexions actives.</li>
+<li><strong>accepts</strong>: Nombre total de connexions acceptades.</li>
+<li><strong>handled</strong>: Nombre total de connexions gestionades.</li>
+<li><strong>requests</strong>: Nombre total de sol·licituds processades.</li>
+<li><strong>Reading</strong>: Nombre de connexions llegint la sol·licitud del client.</li>
+<li><strong>Writing</strong>: Nombre de connexions enviant la resposta al client.</li>
+<li><strong>Waiting</strong>: Nombre de connexions mantenint-se en espera.</li>
+</ul>
+</div><h1>3. Eines de Monitorització Externes</h1>
+<div class='content'></div><h2>3.1. Grafana i Prometheus</h2>
+<div class='content'><p>Grafana i Prometheus són eines populars per a la monitorització i visualització de dades. Per utilitzar-les amb NGINX, necessitaràs el mòdul <code>nginx-vts-exporter</code> per exportar les mètriques de NGINX a Prometheus.</p>
+<h4>Instal·lació de <code>nginx-vts-exporter</code></h4>
+<ol>
+<li>
+<p><strong>Instal·la el mòdul <code>nginx-module-vts</code></strong>:</p>
+<pre><code class="language-bash">sudo apt-get install nginx-module-vts
+</code></pre>
+</li>
+<li>
+<p><strong>Configura el mòdul en <code>nginx.conf</code></strong>:</p>
+<pre><code class="language-nginx">http {
+    vhost_traffic_status_zone;
+
+    server {
+        listen 8080;
+        server_name localhost;
+
+        location /status {
+            vhost_traffic_status_display;
+            vhost_traffic_status_display_format html;
+        }
+    }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Instal·la <code>nginx-vts-exporter</code></strong>:</p>
+<pre><code class="language-bash">wget https://github.com/hnlq715/nginx-vts-exporter/releases/download/v0.10.3/nginx-vts-exporter-0.10.3.linux-amd64.tar.gz
+tar -xzf nginx-vts-exporter-0.10.3.linux-amd64.tar.gz
+./nginx-vts-exporter
+</code></pre>
+</li>
+<li>
+<p><strong>Configura Prometheus per recollir les mètriques</strong>:</p>
+<pre><code class="language-yaml">scrape_configs:
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['localhost:9913']
+</code></pre>
+</li>
+<li>
+<p><strong>Configura Grafana per visualitzar les mètriques</strong>: Afegeix Prometheus com a font de dades i crea panells per visualitzar les mètriques de NGINX.</p>
+</li>
+</ol>
+</div><h2>3.2. ELK Stack (Elasticsearch, Logstash, Kibana)</h2>
+<div class='content'><p>L'ELK Stack és una altra solució popular per a la monitorització i anàlisi de registres.</p>
+<h4>Configuració bàsica de l'ELK Stack</h4>
+<ol>
+<li>
+<p><strong>Instal·la Elasticsearch, Logstash i Kibana</strong>:</p>
+<pre><code class="language-bash">sudo apt-get install elasticsearch logstash kibana
+</code></pre>
+</li>
+<li>
+<p><strong>Configura Logstash per processar els registres de NGINX</strong>:</p>
+<pre><code class="language-bash">input {
+    file {
+        path =&gt; &quot;/var/log/nginx/access.log&quot;
+        start_position =&gt; &quot;beginning&quot;
+    }
+}
+
+filter {
+    grok {
+        match =&gt; { &quot;message&quot; =&gt; &quot;%{COMBINEDAPACHELOG}&quot; }
+    }
+}
+
+output {
+    elasticsearch {
+        hosts =&gt; [&quot;localhost:9200&quot;]
+    }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Inicia Elasticsearch, Logstash i Kibana</strong>:</p>
+<pre><code class="language-bash">sudo systemctl start elasticsearch
+sudo systemctl start logstash
+sudo systemctl start kibana
+</code></pre>
+</li>
+<li>
+<p><strong>Accedeix a Kibana</strong>: Visita <code>http://localhost:5601</code> per començar a visualitzar els registres de NGINX.</p>
+</li>
+</ol>
+</div><h1>4. Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Configurar els Registres de NGINX</h2>
+<div class='content'><ol>
+<li>Edita el fitxer <code>nginx.conf</code> per configurar els registres d'accés i d'error.</li>
+<li>Reinicia NGINX i genera algunes sol·licituds HTTP.</li>
+<li>Revisa els fitxers de registre per assegurar-te que les sol·licituds es registren correctament.</li>
+</ol>
+</div><h2>Exercici 2: Habilitar l'Estat de NGINX</h2>
+<div class='content'><ol>
+<li>Afegeix la configuració necessària per habilitar l'estat de NGINX.</li>
+<li>Accedeix a la pàgina d'estat i interpreta la informació mostrada.</li>
+</ol>
+</div><h2>Exercici 3: Configurar Prometheus i Grafana</h2>
+<div class='content'><ol>
+<li>Instal·la i configura <code>nginx-vts-exporter</code>.</li>
+<li>Configura Prometheus per recollir les mètriques de NGINX.</li>
+<li>Configura Grafana per visualitzar les mètriques recollides per Prometheus.</li>
+</ol>
+</div><h1>5. Resum</h1>
+<div class='content'><p>En aquesta secció, hem après la importància de monitoritzar NGINX i hem explorat diverses eines i tècniques per fer-ho. Hem configurat els registres d'accés i d'error, hem habilitat l'estat de NGINX i hem utilitzat eines externes com Prometheus, Grafana i l'ELK Stack per a la monitorització avançada. La monitorització efectiva de NGINX ens permet detectar i resoldre problemes de manera proactiva, assegurant un rendiment òptim i una alta disponibilitat del servidor web.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-nginx-grpc' title="NGINX i gRPC">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-02-common-issues-solutions' title="Problemes comuns i solucions">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

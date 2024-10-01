@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creant i Compartint Rols</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/ansible/06-03-creating-and-sharing-roles" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/ansible/06-03-creating-and-sharing-roles" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/ansible/06-03-creating-and-sharing-roles" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/ansible/06-03-creating-and-sharing-roles" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/ansible/06-03-creating-and-sharing-roles" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-using-ansible-galaxy' title="Utilitzant Ansible Galaxy">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Creant i Compartint Rols</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-01-introduction-to-ansible-tower' title="Introducció a Ansible Tower">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com crear rols en Ansible i com compartir-los amb la comunitat mitjançant Ansible Galaxy. Els rols són una manera d'organitzar i reutilitzar el codi d'Ansible, facilitant la gestió de configuracions complexes.</p>
+</div><h1>1. Introducció als Rols</h1>
+<div class='content'></div><h2>Què és un Rol?</h2>
+<div class='content'><p>Un rol en Ansible és una col·lecció d'elements que poden ser utilitzats per configurar un sistema. Aquests elements inclouen:</p>
+<ul>
+<li><strong>Tasques</strong>: Accions que Ansible ha de realitzar.</li>
+<li><strong>Fitxers</strong>: Fitxers que han de ser copiats al sistema remot.</li>
+<li><strong>Plantilles</strong>: Fitxers Jinja2 que poden ser renderitzats amb variables.</li>
+<li><strong>Variables</strong>: Valors que poden ser utilitzats dins de les tasques i plantilles.</li>
+<li><strong>Handlers</strong>: Tasques que s'executen en resposta a notificacions.</li>
+<li><strong>Meta</strong>: Informació sobre el rol, com ara les seves dependències.</li>
+</ul>
+</div><h1>2. Creant un Rol</h1>
+<div class='content'></div><h2>Estructura del Directori de Rols</h2>
+<div class='content'><p>La creació d'un rol implica seguir una estructura de directori específica. Aquesta estructura ajuda a mantenir el codi organitzat i fàcil de gestionar.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bXlfcm9sZS8K4pSc4pSA4pSAIGRlZmF1bHRzLwrilIIgICDilJTilIDilIAgbWFpbi55bWwK4pSc4pSA4pSAIGZpbGVzLwrilJzilIDilIAgaGFuZGxlcnMvCuKUgiAgIOKUlOKUgOKUgCBtYWluLnltbArilJzilIDilIAgbWV0YS8K4pSCICAg4pSU4pSA4pSAIG1haW4ueW1sCuKUnOKUgOKUgCB0YXNrcy8K4pSCICAg4pSU4pSA4pSAIG1haW4ueW1sCuKUnOKUgOKUgCB0ZW1wbGF0ZXMvCuKUnOKUgOKUgCB0ZXN0cy8K4pSCICAg4pSc4pSA4pSAIGludmVudG9yeQrilIIgICDilJTilIDilIAgdGVzdC55bWwK4pSU4pSA4pSAIHZhcnMvCiAgICDilJTilIDilIAgbWFpbi55bWw="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>my_role/
+├── defaults/
+│   └── main.yml
+├── files/
+├── handlers/
+│   └── main.yml
+├── meta/
+│   └── main.yml
+├── tasks/
+│   └── main.yml
+├── templates/
+├── tests/
+│   ├── inventory
+│   └── test.yml
+└── vars/
+    └── main.yml</pre></div><div class='content'></div><h2>Creant el Rol Pas a Pas</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear el Directori del Rol</strong>:</p>
+<pre><code class="language-bash">ansible-galaxy init my_role
+</code></pre>
+</li>
+<li>
+<p><strong>Definir les Tasques</strong>:
+Editem <code>tasks/main.yml</code> per definir les tasques que el rol ha de realitzar.</p>
+<pre><code class="language-yaml">---
+- name: Instal·lar Apache
+  apt:
+    name: apache2
+    state: present
+</code></pre>
+</li>
+<li>
+<p><strong>Definir les Variables</strong>:
+Editem <code>vars/main.yml</code> per definir les variables que seran utilitzades en el rol.</p>
+<pre><code class="language-yaml">---
+apache_port: 80
+</code></pre>
+</li>
+<li>
+<p><strong>Definir els Handlers</strong>:
+Editem <code>handlers/main.yml</code> per definir els handlers que seran notificats per les tasques.</p>
+<pre><code class="language-yaml">---
+- name: Reiniciar Apache
+  service:
+    name: apache2
+    state: restarted
+</code></pre>
+</li>
+<li>
+<p><strong>Definir les Plantilles</strong>:
+Creem una plantilla a <code>templates/apache.conf.j2</code> que serà utilitzada per configurar Apache.</p>
+<pre><code class="language-plaintext">Listen {{ apache_port }}
+</code></pre>
+</li>
+<li>
+<p><strong>Definir els Fitxers</strong>:
+Copiem qualsevol fitxer necessari a <code>files/</code>.</p>
+</li>
+<li>
+<p><strong>Definir la Meta</strong>:
+Editem <code>meta/main.yml</code> per definir les metadades del rol, com ara les seves dependències.</p>
+<pre><code class="language-yaml">---
+dependencies: []
+</code></pre>
+</li>
+</ol>
+</div><h1>3. Compartint Rols amb Ansible Galaxy</h1>
+<div class='content'></div><h2>Què és Ansible Galaxy?</h2>
+<div class='content'><p>Ansible Galaxy és una plataforma per compartir rols d'Ansible amb la comunitat. Permet als usuaris trobar, descarregar i utilitzar rols creats per altres.</p>
+</div><h2>Publicant un Rol a Ansible Galaxy</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear un Compte a Ansible Galaxy</strong>:
+Registra't a <a href="https://galaxy.ansible.com/">Ansible Galaxy</a>.</p>
+</li>
+<li>
+<p><strong>Configurar el Fitxer <code>meta/main.yml</code></strong>:
+Assegura't que el fitxer <code>meta/main.yml</code> conté tota la informació necessària, incloent-hi el nom del rol, l'autor, la descripció, etc.</p>
+<pre><code class="language-yaml">---
+galaxy_info:
+  author: &quot;El teu Nom&quot;
+  description: &quot;Un rol per instal·lar i configurar Apache&quot;
+  company: &quot;La teva Empresa&quot;
+  license: &quot;MIT&quot;
+  min_ansible_version: 2.9
+  platforms:
+    - name: Ubuntu
+      versions:
+        - bionic
+        - focal
+</code></pre>
+</li>
+<li>
+<p><strong>Publicar el Rol</strong>:
+Utilitza la comanda <code>ansible-galaxy</code> per publicar el rol.</p>
+<pre><code class="language-bash">ansible-galaxy role import &lt;el_teu_usuari&gt; my_role
+</code></pre>
+</li>
+<li>
+<p><strong>Utilitzar el Rol</strong>:
+Un cop publicat, altres usuaris poden instal·lar el rol utilitzant la comanda següent:</p>
+<pre><code class="language-bash">ansible-galaxy install &lt;el_teu_usuari&gt;.my_role
+</code></pre>
+</li>
+</ol>
+</div><h1>4. Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Crea un rol que instal·li i configuri Nginx en un servidor Ubuntu.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear el Directori del Rol</strong>:</p>
+<pre><code class="language-bash">ansible-galaxy init nginx_role
+</code></pre>
+</li>
+<li>
+<p><strong>Definir les Tasques</strong>:
+Editem <code>tasks/main.yml</code> per instal·lar Nginx.</p>
+<pre><code class="language-yaml">---
+- name: Instal·lar Nginx
+  apt:
+    name: nginx
+    state: present
+</code></pre>
+</li>
+<li>
+<p><strong>Definir les Variables</strong>:
+Editem <code>vars/main.yml</code> per definir el port de Nginx.</p>
+<pre><code class="language-yaml">---
+nginx_port: 80
+</code></pre>
+</li>
+<li>
+<p><strong>Definir els Handlers</strong>:
+Editem <code>handlers/main.yml</code> per reiniciar Nginx.</p>
+<pre><code class="language-yaml">---
+- name: Reiniciar Nginx
+  service:
+    name: nginx
+    state: restarted
+</code></pre>
+</li>
+<li>
+<p><strong>Definir les Plantilles</strong>:
+Creem una plantilla a <code>templates/nginx.conf.j2</code> per configurar Nginx.</p>
+<pre><code class="language-plaintext">server {
+    listen {{ nginx_port }};
+    server_name localhost;
+    location / {
+        root /var/www/html;
+        index index.html index.htm;
+    }
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Provar el Rol</strong>:
+Crea un fitxer de prova a <code>tests/test.yml</code> i executa'l per assegurar-te que el rol funciona correctament.</p>
+<pre><code class="language-yaml">---
+- hosts: localhost
+  roles:
+    - nginx_role
+</code></pre>
+</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0tCi0gbmFtZTogSW5zdGFswrdsYXIgTmdpbngKICBhcHQ6CiAgICBuYW1lOiBuZ2lueAogICAgc3RhdGU6IHByZXNlbnQKCi0gbmFtZTogQ29waWFyIGxhIGNvbmZpZ3VyYWNpw7MgZGUgTmdpbngKICB0ZW1wbGF0ZToKICAgIHNyYzogbmdpbnguY29uZi5qMgogICAgZGVzdDogL2V0Yy9uZ2lueC9zaXRlcy1hdmFpbGFibGUvZGVmYXVsdAogIG5vdGlmeToKICAgIC0gUmVpbmljaWFyIE5naW54CgotIG5hbWU6IFJlaW5pY2lhciBOZ2lueAogIHNlcnZpY2U6CiAgICBuYW1lOiBuZ2lueAogICAgc3RhdGU6IHJlc3RhcnRlZA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>---
+- name: Instal&middot;lar Nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: Copiar la configuraci&oacute; de Nginx
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/sites-available/default
+  notify:
+    - Reiniciar Nginx
+
+- name: Reiniciar Nginx
+  service:
+    name: nginx
+    state: restarted</pre></div><div class='content'></div><h1>5. Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com crear rols en Ansible i com compartir-los amb la comunitat mitjançant Ansible Galaxy. Els rols són una eina poderosa per organitzar i reutilitzar el codi d'Ansible, facilitant la gestió de configuracions complexes. Practica creant i compartint els teus propis rols per millorar les teves habilitats amb Ansible.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-using-ansible-galaxy' title="Utilitzant Ansible Galaxy">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-01-introduction-to-ansible-tower' title="Introducció a Ansible Tower">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

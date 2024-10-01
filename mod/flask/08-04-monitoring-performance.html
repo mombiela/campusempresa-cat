@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitorització i Optimització del Rendiment</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/flask/08-04-monitoring-performance" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/flask/08-04-monitoring-performance" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/flask/08-04-monitoring-performance" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/flask/08-04-monitoring-performance" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/flask/08-04-monitoring-performance" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-03-deploying-aws' title="Desplegament a AWS">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Monitorització i Optimització del Rendiment</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-01-unit-testing' title="Proves Unitàries amb Flask">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com monitoritzar i optimitzar el rendiment de les aplicacions Flask en un entorn de producció. La monitorització ens permet detectar problemes de rendiment i colls d'ampolla, mentre que l'optimització ens ajuda a millorar l'eficiència i la velocitat de la nostra aplicació.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre la importància de la monitorització i l'optimització del rendiment.</li>
+<li>Aprendre a utilitzar eines de monitorització.</li>
+<li>Implementar tècniques d'optimització per millorar el rendiment de l'aplicació.</li>
+</ul>
+</div><h1>1. Importància de la Monitorització i l'Optimització</h1>
+<div class='content'></div><h2>Per què és important?</h2>
+<div class='content'><ul>
+<li><strong>Detecció de Problemes:</strong> Identificar i resoldre problemes abans que afectin els usuaris.</li>
+<li><strong>Millora de l'Experiència d'Usuari:</strong> Aplicacions més ràpides i fiables proporcionen una millor experiència d'usuari.</li>
+<li><strong>Eficiència de Recursos:</strong> Reduir l'ús de recursos del servidor, cosa que pot disminuir els costos operatius.</li>
+</ul>
+</div><h1>2. Eines de Monitorització</h1>
+<div class='content'></div><h2>2.1. Prometheus i Grafana</h2>
+<div class='content'><p>Prometheus és una eina de monitorització i alerta de codi obert, mentre que Grafana és una plataforma d'analítica i monitorització que permet visualitzar les dades recollides per Prometheus.</p>
+<h4>Instal·lació de Prometheus</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBEZXNjYXJyZWdhciBpIGluc3RhbMK3bGFyIFByb21ldGhldXMKd2dldCBodHRwczovL2dpdGh1Yi5jb20vcHJvbWV0aGV1cy9wcm9tZXRoZXVzL3JlbGVhc2VzL2Rvd25sb2FkL3YyLjI2LjAvcHJvbWV0aGV1cy0yLjI2LjAubGludXgtYW1kNjQudGFyLmd6CnRhciB4dmZ6IHByb21ldGhldXMtKi50YXIuZ3oKY2QgcHJvbWV0aGV1cy0qCgojIEV4ZWN1dGFyIFByb21ldGhldXMKLi9wcm9tZXRoZXVzIC0tY29uZmlnLmZpbGU9cHJvbWV0aGV1cy55bWw="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Descarregar i instal&middot;lar Prometheus
+wget https://github.com/prometheus/prometheus/releases/download/v2.26.0/prometheus-2.26.0.linux-amd64.tar.gz
+tar xvfz prometheus-*.tar.gz
+cd prometheus-*
+
+# Executar Prometheus
+./prometheus --config.file=prometheus.yml</pre></div><div class='content'><h4>Instal·lació de Grafana</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBEZXNjYXJyZWdhciBpIGluc3RhbMK3bGFyIEdyYWZhbmEKd2dldCBodHRwczovL2RsLmdyYWZhbmEuY29tL29zcy9yZWxlYXNlL2dyYWZhbmEtNy41LjIubGludXgtYW1kNjQudGFyLmd6CnRhciAtenh2ZiBncmFmYW5hLTcuNS4yLmxpbnV4LWFtZDY0LnRhci5negpjZCBncmFmYW5hLTcuNS4yCgojIEV4ZWN1dGFyIEdyYWZhbmEKLi9iaW4vZ3JhZmFuYS1zZXJ2ZXI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Descarregar i instal&middot;lar Grafana
+wget https://dl.grafana.com/oss/release/grafana-7.5.2.linux-amd64.tar.gz
+tar -zxvf grafana-7.5.2.linux-amd64.tar.gz
+cd grafana-7.5.2
+
+# Executar Grafana
+./bin/grafana-server</pre></div><div class='content'></div><h2>2.2. New Relic</h2>
+<div class='content'><p>New Relic és una plataforma de monitorització de rendiment d'aplicacions (APM) que proporciona informació detallada sobre el rendiment de la teva aplicació.</p>
+<h4>Integració amb Flask</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBJbnN0YWzCt2xhciBlbCBwYXF1ZXQgZGUgTmV3IFJlbGljCnBpcCBpbnN0YWxsIG5ld3JlbGljCgojIENvbmZpZ3VyYXIgTmV3IFJlbGljCm5ld3JlbGljLWFkbWluIGdlbmVyYXRlLWNvbmZpZyBZT1VSX0xJQ0VOU0VfS0VZIG5ld3JlbGljLmluaQoKIyBFeGVjdXRhciBsJ2FwbGljYWNpw7MgRmxhc2sgYW1iIE5ldyBSZWxpYwpORVdfUkVMSUNfQ09ORklHX0ZJTEU9bmV3cmVsaWMuaW5pIG5ld3JlbGljLWFkbWluIHJ1bi1wcm9ncmFtIHB5dGhvbiBhcHAucHk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Instal&middot;lar el paquet de New Relic
+pip install newrelic
+
+# Configurar New Relic
+newrelic-admin generate-config YOUR_LICENSE_KEY newrelic.ini
+
+# Executar l'aplicaci&oacute; Flask amb New Relic
+NEW_RELIC_CONFIG_FILE=newrelic.ini newrelic-admin run-program python app.py</pre></div><div class='content'></div><h1>3. Tècniques d'Optimització</h1>
+<div class='content'></div><h2>3.1. Caching</h2>
+<div class='content'><p>El caching pot reduir significativament el temps de resposta de la teva aplicació.</p>
+<h4>Utilització de Flask-Caching</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2sKZnJvbSBmbGFza19jYWNoaW5nIGltcG9ydCBDYWNoZQoKYXBwID0gRmxhc2soX19uYW1lX18pCmNhY2hlID0gQ2FjaGUoYXBwLCBjb25maWc9eydDQUNIRV9UWVBFJzogJ3NpbXBsZSd9KQoKQGFwcC5yb3V0ZSgnLycpCkBjYWNoZS5jYWNoZWQodGltZW91dD02MCkKZGVmIGluZGV4KCk6CiAgICByZXR1cm4gIkFxdWVzdGEgcMOgZ2luYSBlc3TDoCBlbiBjYWNoZSBkdXJhbnQgNjAgc2Vnb25zLiIKCmlmIF9fbmFtZV9fID09ICdfX21haW5fXyc6CiAgICBhcHAucnVuKCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask
+from flask_caching import Cache
+
+app = Flask(__name__)
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+
+@app.route('/')
+@cache.cached(timeout=60)
+def index():
+    return &quot;Aquesta p&agrave;gina est&agrave; en cache durant 60 segons.&quot;
+
+if __name__ == '__main__':
+    app.run()</pre></div><div class='content'></div><h2>3.2. Optimització de Consultes a la Base de Dades</h2>
+<div class='content'><p>Utilitzar consultes eficients i evitar consultes innecessàries pot millorar el rendiment de la teva aplicació.</p>
+<h4>Exemple d'optimització amb SQLAlchemy</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFza19zcWxhbGNoZW15IGltcG9ydCBTUUxBbGNoZW15CgpkYiA9IFNRTEFsY2hlbXkoKQoKY2xhc3MgVXNlcihkYi5Nb2RlbCk6CiAgICBpZCA9IGRiLkNvbHVtbihkYi5JbnRlZ2VyLCBwcmltYXJ5X2tleT1UcnVlKQogICAgbmFtZSA9IGRiLkNvbHVtbihkYi5TdHJpbmcoODApLCB1bmlxdWU9VHJ1ZSwgbnVsbGFibGU9RmFsc2UpCiAgICBwb3N0cyA9IGRiLnJlbGF0aW9uc2hpcCgnUG9zdCcsIGJhY2tyZWY9J2F1dGhvcicsIGxhenk9J2R5bmFtaWMnKQoKY2xhc3MgUG9zdChkYi5Nb2RlbCk6CiAgICBpZCA9IGRiLkNvbHVtbihkYi5JbnRlZ2VyLCBwcmltYXJ5X2tleT1UcnVlKQogICAgdGl0bGUgPSBkYi5Db2x1bW4oZGIuU3RyaW5nKDEyMCksIG51bGxhYmxlPUZhbHNlKQogICAgdXNlcl9pZCA9IGRiLkNvbHVtbihkYi5JbnRlZ2VyLCBkYi5Gb3JlaWduS2V5KCd1c2VyLmlkJyksIG51bGxhYmxlPUZhbHNlKQoKIyBFdml0YXIgY29uc3VsdGVzIGlubmVjZXNzw6ByaWVzCnVzZXJzID0gVXNlci5xdWVyeS5vcHRpb25zKGRiLmpvaW5lZGxvYWQoJ3Bvc3RzJykpLmFsbCgp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80), unique=True, nullable=False)
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(120), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+# Evitar consultes innecess&agrave;ries
+users = User.query.options(db.joinedload('posts')).all()</pre></div><div class='content'></div><h2>3.3. Compressió de Respostes</h2>
+<div class='content'><p>La compressió de respostes HTTP pot reduir la mida de les dades transferides i millorar el temps de càrrega.</p>
+<h4>Utilització de Flask-Compress</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2sKZnJvbSBmbGFza19jb21wcmVzcyBpbXBvcnQgQ29tcHJlc3MKCmFwcCA9IEZsYXNrKF9fbmFtZV9fKQpDb21wcmVzcyhhcHApCgpAYXBwLnJvdXRlKCcvJykKZGVmIGluZGV4KCk6CiAgICByZXR1cm4gIkFxdWVzdGEgcmVzcG9zdGEgZXN0w6AgY29tcHJpbWlkYS4iCgppZiBfX25hbWVfXyA9PSAnX19tYWluX18nOgogICAgYXBwLnJ1bigp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask
+from flask_compress import Compress
+
+app = Flask(__name__)
+Compress(app)
+
+@app.route('/')
+def index():
+    return &quot;Aquesta resposta est&agrave; comprimida.&quot;
+
+if __name__ == '__main__':
+    app.run()</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Implementar Monitorització amb Prometheus i Grafana</h2>
+<div class='content'><ol>
+<li>Instal·la Prometheus i Grafana.</li>
+<li>Configura Prometheus per recollir dades de la teva aplicació Flask.</li>
+<li>Crea un dashboard a Grafana per visualitzar les dades recollides.</li>
+</ol>
+</div><h2>Exercici 2: Optimitzar una Consulta a la Base de Dades</h2>
+<div class='content'><ol>
+<li>Identifica una consulta lenta a la teva aplicació Flask.</li>
+<li>Utilitza SQLAlchemy per optimitzar la consulta.</li>
+<li>Mesura el temps de resposta abans i després de l'optimització.</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après la importància de la monitorització i l'optimització del rendiment de les aplicacions Flask. Hem explorat diverses eines de monitorització com Prometheus, Grafana i New Relic, i hem implementat tècniques d'optimització com el caching, l'optimització de consultes a la base de dades i la compressió de respostes. Amb aquestes eines i tècniques, podràs assegurar-te que la teva aplicació Flask funcioni de manera eficient i fiable en un entorn de producció.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-03-deploying-aws' title="Desplegament a AWS">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-01-unit-testing' title="Proves Unitàries amb Flask">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

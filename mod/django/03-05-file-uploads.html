@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Càrrega de Fitxers</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/django/03-05-file-uploads" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/django/03-05-file-uploads" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/django/03-05-file-uploads" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/django/03-05-file-uploads" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/django/03-05-file-uploads" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-04-middleware' title="Middleware">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Càrrega de Fitxers</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-advanced-querying' title="Consultes Avançades amb Django ORM">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com gestionar la càrrega de fitxers en una aplicació Django. La càrrega de fitxers és una funcionalitat comuna en moltes aplicacions web, com ara la càrrega d'imatges de perfil, documents, etc. Django proporciona eines senzilles i eficients per gestionar aquest procés.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Comprendre com configurar Django per permetre la càrrega de fitxers.</li>
+<li>Aprendre a crear formularis per carregar fitxers.</li>
+<li>Gestionar la visualització i l'emmagatzematge de fitxers carregats.</li>
+</ul>
+</div><h1>Configuració Inicial</h1>
+<div class='content'></div><h2>1. Configuració de `settings.py`</h2>
+<div class='content'><p>Primer, hem de configurar el nostre fitxer <code>settings.py</code> per especificar on es guardaran els fitxers carregats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBzZXR0aW5ncy5weQoKaW1wb3J0IG9zCgojIERpcmVjdG9yaSBvbiBlcyBndWFyZGFyYW4gZWxzIGZpdHhlcnMgY2FycmVnYXRzCk1FRElBX1VSTCA9ICcvbWVkaWEvJwpNRURJQV9ST09UID0gb3MucGF0aC5qb2luKEJBU0VfRElSLCAnbWVkaWEnKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># settings.py
+
+import os
+
+# Directori on es guardaran els fitxers carregats
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')</pre></div><div class='content'></div><h2>2. Configuració de `urls.py`</h2>
+<div class='content'><p>A continuació, hem d'assegurar-nos que Django serveixi els fitxers carregats durant el desenvolupament. Afegirem una configuració a <code>urls.py</code> per gestionar això.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBwcm9qZWN0L3VybHMucHkKCmZyb20gZGphbmdvLmNvbmYgaW1wb3J0IHNldHRpbmdzCmZyb20gZGphbmdvLmNvbmYudXJscy5zdGF0aWMgaW1wb3J0IHN0YXRpYwpmcm9tIGRqYW5nby51cmxzIGltcG9ydCBwYXRoLCBpbmNsdWRlCgp1cmxwYXR0ZXJucyA9IFsKICAgIHBhdGgoJ2FkbWluLycsIGFkbWluLnNpdGUudXJscyksCiAgICBwYXRoKCcnLCBpbmNsdWRlKCdhcHAudXJscycpKSwKXQoKaWYgc2V0dGluZ3MuREVCVUc6CiAgICB1cmxwYXR0ZXJucyArPSBzdGF0aWMoc2V0dGluZ3MuTUVESUFfVVJMLCBkb2N1bWVudF9yb290PXNldHRpbmdzLk1FRElBX1JPT1Qp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># project/urls.py
+
+from django.conf import settings
+from django.conf.urls.static import static
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('app.urls')),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)</pre></div><div class='content'></div><h1>Creació del Formulari de Càrrega de Fitxers</h1>
+<div class='content'></div><h2>1. Definició del Model</h2>
+<div class='content'><p>Crearem un model per emmagatzemar informació sobre els fitxers carregats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhcHAvbW9kZWxzLnB5Cgpmcm9tIGRqYW5nby5kYiBpbXBvcnQgbW9kZWxzCgpjbGFzcyBEb2N1bWVudChtb2RlbHMuTW9kZWwpOgogICAgdGl0bGUgPSBtb2RlbHMuQ2hhckZpZWxkKG1heF9sZW5ndGg9MTAwKQogICAgdXBsb2FkZWRfZmlsZSA9IG1vZGVscy5GaWxlRmllbGQodXBsb2FkX3RvPSdkb2N1bWVudHMvJykKICAgIHVwbG9hZGVkX2F0ID0gbW9kZWxzLkRhdGVUaW1lRmllbGQoYXV0b19ub3dfYWRkPVRydWUp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># app/models.py
+
+from django.db import models
+
+class Document(models.Model):
+    title = models.CharField(max_length=100)
+    uploaded_file = models.FileField(upload_to='documents/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)</pre></div><div class='content'></div><h2>2. Creació del Formulari</h2>
+<div class='content'><p>Crearem un formulari per permetre als usuaris carregar fitxers.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhcHAvZm9ybXMucHkKCmZyb20gZGphbmdvIGltcG9ydCBmb3Jtcwpmcm9tIC5tb2RlbHMgaW1wb3J0IERvY3VtZW50CgpjbGFzcyBEb2N1bWVudEZvcm0oZm9ybXMuTW9kZWxGb3JtKToKICAgIGNsYXNzIE1ldGE6CiAgICAgICAgbW9kZWwgPSBEb2N1bWVudAogICAgICAgIGZpZWxkcyA9ICgndGl0bGUnLCAndXBsb2FkZWRfZmlsZScsKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># app/forms.py
+
+from django import forms
+from .models import Document
+
+class DocumentForm(forms.ModelForm):
+    class Meta:
+        model = Document
+        fields = ('title', 'uploaded_file',)</pre></div><div class='content'></div><h2>3. Creació de la Vista</h2>
+<div class='content'><p>Crearem una vista per gestionar la càrrega de fitxers.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhcHAvdmlld3MucHkKCmZyb20gZGphbmdvLnNob3J0Y3V0cyBpbXBvcnQgcmVuZGVyLCByZWRpcmVjdApmcm9tIC5mb3JtcyBpbXBvcnQgRG9jdW1lbnRGb3JtCgpkZWYgdXBsb2FkX2ZpbGUocmVxdWVzdCk6CiAgICBpZiByZXF1ZXN0Lm1ldGhvZCA9PSAnUE9TVCc6CiAgICAgICAgZm9ybSA9IERvY3VtZW50Rm9ybShyZXF1ZXN0LlBPU1QsIHJlcXVlc3QuRklMRVMpCiAgICAgICAgaWYgZm9ybS5pc192YWxpZCgpOgogICAgICAgICAgICBmb3JtLnNhdmUoKQogICAgICAgICAgICByZXR1cm4gcmVkaXJlY3QoJ2ZpbGVfdXBsb2FkX3N1Y2Nlc3MnKQogICAgZWxzZToKICAgICAgICBmb3JtID0gRG9jdW1lbnRGb3JtKCkKICAgIHJldHVybiByZW5kZXIocmVxdWVzdCwgJ3VwbG9hZC5odG1sJywgeydmb3JtJzogZm9ybX0p"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># app/views.py
+
+from django.shortcuts import render, redirect
+from .forms import DocumentForm
+
+def upload_file(request):
+    if request.method == 'POST':
+        form = DocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('file_upload_success')
+    else:
+        form = DocumentForm()
+    return render(request, 'upload.html', {'form': form})</pre></div><div class='content'></div><h2>4. Creació de la Plantilla</h2>
+<div class='content'><p>Crearem una plantilla per mostrar el formulari de càrrega de fitxers.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCEtLSB0ZW1wbGF0ZXMvdXBsb2FkLmh0bWwgLS0+Cgo8IURPQ1RZUEUgaHRtbD4KPGh0bWw+CjxoZWFkPgogICAgPHRpdGxlPkNhcnJlZ2EgZGUgRml0eGVyczwvdGl0bGU+CjwvaGVhZD4KPGJvZHk+CiAgICA8aDE+Q2FycmVnYSBkZSBGaXR4ZXJzPC9oMT4KICAgIDxmb3JtIG1ldGhvZD0icG9zdCIgZW5jdHlwZT0ibXVsdGlwYXJ0L2Zvcm0tZGF0YSI+CiAgICAgICAgeyUgY3NyZl90b2tlbiAlfQogICAgICAgIHt7IGZvcm0uYXNfcCB9fQogICAgICAgIDxidXR0b24gdHlwZT0ic3VibWl0Ij5DYXJyZWdhcjwvYnV0dG9uPgogICAgPC9mb3JtPgo8L2JvZHk+CjwvaHRtbD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!-- templates/upload.html --&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Carrega de Fitxers&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Carrega de Fitxers&lt;/h1&gt;
+    &lt;form method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;
+        {% csrf_token %}
+        {{ form.as_p }}
+        &lt;button type=&quot;submit&quot;&gt;Carregar&lt;/button&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'></div><h2>5. Configuració de les URL</h2>
+<div class='content'><p>Finalment, configurarem les URL per accedir a la vista de càrrega de fitxers.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhcHAvdXJscy5weQoKZnJvbSBkamFuZ28udXJscyBpbXBvcnQgcGF0aApmcm9tIC52aWV3cyBpbXBvcnQgdXBsb2FkX2ZpbGUKCnVybHBhdHRlcm5zID0gWwogICAgcGF0aCgndXBsb2FkLycsIHVwbG9hZF9maWxlLCBuYW1lPSdmaWxlX3VwbG9hZCcpLApd"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># app/urls.py
+
+from django.urls import path
+from .views import upload_file
+
+urlpatterns = [
+    path('upload/', upload_file, name='file_upload'),
+]</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici 1: Carrega d'Imatges de Perfil</h2>
+<div class='content'><ol>
+<li><strong>Objectiu:</strong> Crear una funcionalitat per permetre als usuaris carregar una imatge de perfil.</li>
+<li><strong>Passos:</strong>
+<ul>
+<li>Crear un model <code>Profile</code> amb un camp <code>image</code>.</li>
+<li>Crear un formulari per carregar la imatge de perfil.</li>
+<li>Crear una vista per gestionar la càrrega de la imatge.</li>
+<li>Crear una plantilla per mostrar el formulari de càrrega de la imatge.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><h4>Model</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhcHAvbW9kZWxzLnB5CgpjbGFzcyBQcm9maWxlKG1vZGVscy5Nb2RlbCk6CiAgICB1c2VyID0gbW9kZWxzLk9uZVRvT25lRmllbGQoVXNlciwgb25fZGVsZXRlPW1vZGVscy5DQVNDQURFKQogICAgaW1hZ2UgPSBtb2RlbHMuSW1hZ2VGaWVsZCh1cGxvYWRfdG89J3Byb2ZpbGVfaW1hZ2VzLycp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># app/models.py
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='profile_images/')</pre></div><div class='content'><h4>Formulari</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhcHAvZm9ybXMucHkKCmNsYXNzIFByb2ZpbGVGb3JtKGZvcm1zLk1vZGVsRm9ybSk6CiAgICBjbGFzcyBNZXRhOgogICAgICAgIG1vZGVsID0gUHJvZmlsZQogICAgICAgIGZpZWxkcyA9ICgnaW1hZ2UnLCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># app/forms.py
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ('image',)</pre></div><div class='content'><h4>Vista</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhcHAvdmlld3MucHkKCmRlZiB1cGxvYWRfcHJvZmlsZV9pbWFnZShyZXF1ZXN0KToKICAgIGlmIHJlcXVlc3QubWV0aG9kID09ICdQT1NUJzoKICAgICAgICBmb3JtID0gUHJvZmlsZUZvcm0ocmVxdWVzdC5QT1NULCByZXF1ZXN0LkZJTEVTKQogICAgICAgIGlmIGZvcm0uaXNfdmFsaWQoKToKICAgICAgICAgICAgZm9ybS5zYXZlKCkKICAgICAgICAgICAgcmV0dXJuIHJlZGlyZWN0KCdwcm9maWxlX3VwbG9hZF9zdWNjZXNzJykKICAgIGVsc2U6CiAgICAgICAgZm9ybSA9IFByb2ZpbGVGb3JtKCkKICAgIHJldHVybiByZW5kZXIocmVxdWVzdCwgJ3VwbG9hZF9wcm9maWxlLmh0bWwnLCB7J2Zvcm0nOiBmb3JtfSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># app/views.py
+
+def upload_profile_image(request):
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('profile_upload_success')
+    else:
+        form = ProfileForm()
+    return render(request, 'upload_profile.html', {'form': form})</pre></div><div class='content'><h4>Plantilla</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCEtLSB0ZW1wbGF0ZXMvdXBsb2FkX3Byb2ZpbGUuaHRtbCAtLT4KCjwhRE9DVFlQRSBodG1sPgo8aHRtbD4KPGhlYWQ+CiAgICA8dGl0bGU+Q2FycmVnYSBkJ0ltYXRnZSBkZSBQZXJmaWw8L3RpdGxlPgo8L2hlYWQ+Cjxib2R5PgogICAgPGgxPkNhcnJlZ2EgZCdJbWF0Z2UgZGUgUGVyZmlsPC9oMT4KICAgIDxmb3JtIG1ldGhvZD0icG9zdCIgZW5jdHlwZT0ibXVsdGlwYXJ0L2Zvcm0tZGF0YSI+CiAgICAgICAgeyUgY3NyZl90b2tlbiAlfQogICAgICAgIHt7IGZvcm0uYXNfcCB9fQogICAgICAgIDxidXR0b24gdHlwZT0ic3VibWl0Ij5DYXJyZWdhcjwvYnV0dG9uPgogICAgPC9mb3JtPgo8L2JvZHk+CjwvaHRtbD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!-- templates/upload_profile.html --&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Carrega d'Imatge de Perfil&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Carrega d'Imatge de Perfil&lt;/h1&gt;
+    &lt;form method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;
+        {% csrf_token %}
+        {{ form.as_p }}
+        &lt;button type=&quot;submit&quot;&gt;Carregar&lt;/button&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'><h4>URL</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhcHAvdXJscy5weQoKdXJscGF0dGVybnMgPSBbCiAgICBwYXRoKCd1cGxvYWRfcHJvZmlsZS8nLCB1cGxvYWRfcHJvZmlsZV9pbWFnZSwgbmFtZT0ncHJvZmlsZV91cGxvYWQnKSwKXQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># app/urls.py
+
+urlpatterns = [
+    path('upload_profile/', upload_profile_image, name='profile_upload'),
+]</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com gestionar la càrrega de fitxers en una aplicació Django. Hem configurat el nostre projecte per permetre la càrrega de fitxers, hem creat models, formularis, vistes i plantilles per gestionar aquest procés. A més, hem practicat amb un exercici per carregar imatges de perfil. Amb aquests coneixements, estàs preparat per implementar funcionalitats de càrrega de fitxers en les teves pròpies aplicacions Django.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-04-middleware' title="Middleware">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-advanced-querying' title="Consultes Avançades amb Django ORM">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

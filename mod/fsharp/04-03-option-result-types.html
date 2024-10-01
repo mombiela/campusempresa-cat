@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tipus Option i Result</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/fsharp/04-03-option-result-types" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/fsharp/04-03-option-result-types" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/fsharp/04-03-option-result-types" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/fsharp/04-03-option-result-types" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/fsharp/04-03-option-result-types" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-02-discriminated-unions' title="Unions Discriminades">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Tipus Option i Result</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-04-maps-sets' title="Treballant amb Mapes i Conjunts">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem dos tipus molt importants en F#: <code>Option</code> i <code>Result</code>. Aquests tipus són fonamentals per gestionar valors que poden ser absents o operacions que poden fallar, respectivament. Aprendre a utilitzar-los correctament és essencial per escriure codi robust i segur.</p>
+</div><h1>Tipus Option</h1>
+<div class='content'><p>El tipus <code>Option</code> s'utilitza per representar un valor que pot o no estar present. És similar a <code>Nullable</code> en altres llenguatges, però més potent i segur.</p>
+</div><h2>Definició</h2>
+<div class='content'><p>El tipus <code>Option</code> es defineix de la següent manera:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHlwZSBPcHRpb248J1Q+ID0KICAgIHwgU29tZSBvZiAnVAogICAgfCBOb25l"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>type Option&lt;'T&gt; =
+    | Some of 'T
+    | None</pre></div><div class='content'></div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bGV0IGRpdmlkZSB4IHkgPQogICAgaWYgeSA9IDAgdGhlbiBOb25lCiAgICBlbHNlIFNvbWUgKHggLyB5KQoKbGV0IHJlc3VsdDEgPSBkaXZpZGUgMTAgMgpsZXQgcmVzdWx0MiA9IGRpdmlkZSAxMCAwCgptYXRjaCByZXN1bHQxIHdpdGgKfCBTb21lIHZhbHVlIC0+IHByaW50Zm4gIlJlc3VsdDogJWQiIHZhbHVlCnwgTm9uZSAtPiBwcmludGZuICJEaXZpc2lvbiBieSB6ZXJvIgoKbWF0Y2ggcmVzdWx0MiB3aXRoCnwgU29tZSB2YWx1ZSAtPiBwcmludGZuICJSZXN1bHQ6ICVkIiB2YWx1ZQp8IE5vbmUgLT4gcHJpbnRmbiAiRGl2aXNpb24gYnkgemVybyI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>let divide x y =
+    if y = 0 then None
+    else Some (x / y)
+
+let result1 = divide 10 2
+let result2 = divide 10 0
+
+match result1 with
+| Some value -&gt; printfn &quot;Result: %d&quot; value
+| None -&gt; printfn &quot;Division by zero&quot;
+
+match result2 with
+| Some value -&gt; printfn &quot;Result: %d&quot; value
+| None -&gt; printfn &quot;Division by zero&quot;</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><code>divide</code> és una funció que retorna <code>Some</code> si la divisió és possible i <code>None</code> si no ho és.</li>
+<li><code>match</code> s'utilitza per gestionar els diferents casos de <code>Option</code>.</li>
+</ul>
+</div><h2>Exercici Pràctic</h2>
+<div class='content'><p>Escriu una funció <code>findElement</code> que busqui un element en una llista i retorni <code>Some</code> si l'element es troba i <code>None</code> si no.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bGV0IGZpbmRFbGVtZW50IGxpc3QgZWxlbWVudCA9CiAgICAvLyBJbXBsZW1lbnRhIGxhIGZ1bmNpw7MgYXF1w60KCi8vIFByb3ZhIGxhIGZ1bmNpw7MKbGV0IGxpc3QgPSBbMTsgMjsgMzsgNDsgNV0KbGV0IHJlc3VsdCA9IGZpbmRFbGVtZW50IGxpc3QgMwptYXRjaCByZXN1bHQgd2l0aAp8IFNvbWUgdmFsdWUgLT4gcHJpbnRmbiAiRWxlbWVudCBmb3VuZDogJWQiIHZhbHVlCnwgTm9uZSAtPiBwcmludGZuICJFbGVtZW50IG5vdCBmb3VuZCI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>let findElement list element =
+    // Implementa la funci&oacute; aqu&iacute;
+
+// Prova la funci&oacute;
+let list = [1; 2; 3; 4; 5]
+let result = findElement list 3
+match result with
+| Some value -&gt; printfn &quot;Element found: %d&quot; value
+| None -&gt; printfn &quot;Element not found&quot;</pre></div><div class='content'></div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bGV0IGZpbmRFbGVtZW50IGxpc3QgZWxlbWVudCA9CiAgICBpZiBMaXN0LmNvbnRhaW5zIGVsZW1lbnQgbGlzdCB0aGVuIFNvbWUgZWxlbWVudAogICAgZWxzZSBOb25lCgovLyBQcm92YSBsYSBmdW5jacOzCmxldCBsaXN0ID0gWzE7IDI7IDM7IDQ7IDVdCmxldCByZXN1bHQgPSBmaW5kRWxlbWVudCBsaXN0IDMKbWF0Y2ggcmVzdWx0IHdpdGgKfCBTb21lIHZhbHVlIC0+IHByaW50Zm4gIkVsZW1lbnQgZm91bmQ6ICVkIiB2YWx1ZQp8IE5vbmUgLT4gcHJpbnRmbiAiRWxlbWVudCBub3QgZm91bmQi"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>let findElement list element =
+    if List.contains element list then Some element
+    else None
+
+// Prova la funci&oacute;
+let list = [1; 2; 3; 4; 5]
+let result = findElement list 3
+match result with
+| Some value -&gt; printfn &quot;Element found: %d&quot; value
+| None -&gt; printfn &quot;Element not found&quot;</pre></div><div class='content'></div><h1>Tipus Result</h1>
+<div class='content'><p>El tipus <code>Result</code> s'utilitza per representar el resultat d'una operació que pot tenir èxit o fallar. És similar a <code>Either</code> en altres llenguatges funcionals.</p>
+</div><h2>Definició</h2>
+<div class='content'><p>El tipus <code>Result</code> es defineix de la següent manera:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHlwZSBSZXN1bHQ8J1QsICdFcnJvcj4gPQogICAgfCBPayBvZiAnVAogICAgfCBFcnJvciBvZiAnRXJyb3I="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>type Result&lt;'T, 'Error&gt; =
+    | Ok of 'T
+    | Error of 'Error</pre></div><div class='content'></div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bGV0IHBhcnNlTnVtYmVyIHN0ciA9CiAgICBtYXRjaCBTeXN0ZW0uSW50MzIuVHJ5UGFyc2Uoc3RyKSB3aXRoCiAgICB8ICh0cnVlLCBudW1iZXIpIC0+IE9rIG51bWJlcgogICAgfCAoZmFsc2UsIF8pIC0+IEVycm9yICJJbnZhbGlkIG51bWJlciIKCmxldCByZXN1bHQxID0gcGFyc2VOdW1iZXIgIjEyMyIKbGV0IHJlc3VsdDIgPSBwYXJzZU51bWJlciAiYWJjIgoKbWF0Y2ggcmVzdWx0MSB3aXRoCnwgT2sgdmFsdWUgLT4gcHJpbnRmbiAiUGFyc2VkIG51bWJlcjogJWQiIHZhbHVlCnwgRXJyb3IgbXNnIC0+IHByaW50Zm4gIkVycm9yOiAlcyIgbXNnCgptYXRjaCByZXN1bHQyIHdpdGgKfCBPayB2YWx1ZSAtPiBwcmludGZuICJQYXJzZWQgbnVtYmVyOiAlZCIgdmFsdWUKfCBFcnJvciBtc2cgLT4gcHJpbnRmbiAiRXJyb3I6ICVzIiBtc2c="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>let parseNumber str =
+    match System.Int32.TryParse(str) with
+    | (true, number) -&gt; Ok number
+    | (false, _) -&gt; Error &quot;Invalid number&quot;
+
+let result1 = parseNumber &quot;123&quot;
+let result2 = parseNumber &quot;abc&quot;
+
+match result1 with
+| Ok value -&gt; printfn &quot;Parsed number: %d&quot; value
+| Error msg -&gt; printfn &quot;Error: %s&quot; msg
+
+match result2 with
+| Ok value -&gt; printfn &quot;Parsed number: %d&quot; value
+| Error msg -&gt; printfn &quot;Error: %s&quot; msg</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><code>parseNumber</code> és una funció que retorna <code>Ok</code> si la conversió és exitosa i <code>Error</code> si no ho és.</li>
+<li><code>match</code> s'utilitza per gestionar els diferents casos de <code>Result</code>.</li>
+</ul>
+</div><h2>Exercici Pràctic</h2>
+<div class='content'><p>Escriu una funció <code>safeDivide</code> que divideixi dos nombres i retorni <code>Ok</code> si la divisió és possible i <code>Error</code> si no.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bGV0IHNhZmVEaXZpZGUgeCB5ID0KICAgIC8vIEltcGxlbWVudGEgbGEgZnVuY2nDsyBhcXXDrQoKLy8gUHJvdmEgbGEgZnVuY2nDswpsZXQgcmVzdWx0ID0gc2FmZURpdmlkZSAxMCAyCm1hdGNoIHJlc3VsdCB3aXRoCnwgT2sgdmFsdWUgLT4gcHJpbnRmbiAiUmVzdWx0OiAlZCIgdmFsdWUKfCBFcnJvciBtc2cgLT4gcHJpbnRmbiAiRXJyb3I6ICVzIiBtc2c="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>let safeDivide x y =
+    // Implementa la funci&oacute; aqu&iacute;
+
+// Prova la funci&oacute;
+let result = safeDivide 10 2
+match result with
+| Ok value -&gt; printfn &quot;Result: %d&quot; value
+| Error msg -&gt; printfn &quot;Error: %s&quot; msg</pre></div><div class='content'></div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bGV0IHNhZmVEaXZpZGUgeCB5ID0KICAgIGlmIHkgPSAwIHRoZW4gRXJyb3IgIkRpdmlzaW9uIGJ5IHplcm8iCiAgICBlbHNlIE9rICh4IC8geSkKCi8vIFByb3ZhIGxhIGZ1bmNpw7MKbGV0IHJlc3VsdCA9IHNhZmVEaXZpZGUgMTAgMgptYXRjaCByZXN1bHQgd2l0aAp8IE9rIHZhbHVlIC0+IHByaW50Zm4gIlJlc3VsdDogJWQiIHZhbHVlCnwgRXJyb3IgbXNnIC0+IHByaW50Zm4gIkVycm9yOiAlcyIgbXNn"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>let safeDivide x y =
+    if y = 0 then Error &quot;Division by zero&quot;
+    else Ok (x / y)
+
+// Prova la funci&oacute;
+let result = safeDivide 10 2
+match result with
+| Ok value -&gt; printfn &quot;Result: %d&quot; value
+| Error msg -&gt; printfn &quot;Error: %s&quot; msg</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après sobre els tipus <code>Option</code> i <code>Result</code> en F#. Aquests tipus són essencials per gestionar valors opcionals i operacions que poden fallar, respectivament. Hem vist com definir i utilitzar aquests tipus amb exemples pràctics i exercicis.</p>
+<p>En el següent tema, explorarem com treballar amb mapes i conjunts en F#.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-02-discriminated-unions' title="Unions Discriminades">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-04-maps-sets' title="Treballant amb Mapes i Conjunts">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

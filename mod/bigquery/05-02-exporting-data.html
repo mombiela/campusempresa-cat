@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exportar dades de BigQuery</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/bigquery/05-02-exporting-data" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/bigquery/05-02-exporting-data" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/bigquery/05-02-exporting-data" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/bigquery/05-02-exporting-data" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/bigquery/05-02-exporting-data" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-01-loading-data' title="Carregar dades a BigQuery">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Exportar dades de BigQuery</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-03-data-transformation-cleaning' title="Transformació i neteja de dades">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com exportar dades des de BigQuery a diferents formats i ubicacions. Exportar dades és una tasca essencial per compartir resultats, fer còpies de seguretat o integrar dades amb altres sistemes.</p>
+</div><h1>Objectius d'aprenentatge</h1>
+<div class='content'><ul>
+<li>Comprendre els diferents formats d'exportació disponibles a BigQuery.</li>
+<li>Aprendre a exportar dades a Google Cloud Storage.</li>
+<li>Conèixer les millors pràctiques per a l'exportació de dades.</li>
+</ul>
+</div><h1>Formats d'exportació disponibles</h1>
+<div class='content'><p>BigQuery permet exportar dades en diversos formats. Els formats més comuns són:</p>
+<ul>
+<li><strong>CSV (Comma-Separated Values)</strong></li>
+<li><strong>JSON (JavaScript Object Notation)</strong></li>
+<li><strong>Avro</strong></li>
+<li><strong>Parquet</strong></li>
+</ul>
+</div><h2>Comparació de formats</h2>
+<div class='content'><table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Avantatges</th>
+<th>Desavantatges</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CSV</td>
+<td>Fàcil de llegir i escriure, àmpliament suportat</td>
+<td>No suporta dades complexes, pot ser gran en mida</td>
+</tr>
+<tr>
+<td>JSON</td>
+<td>Suporta estructures de dades complexes</td>
+<td>Pot ser més lent de processar, major mida de fitxer</td>
+</tr>
+<tr>
+<td>Avro</td>
+<td>Eficient en emmagatzematge, suporta esquemes</td>
+<td>Menys suportat per eines no especialitzades</td>
+</tr>
+<tr>
+<td>Parquet</td>
+<td>Optimitzat per a l'emmagatzematge i la consulta</td>
+<td>Menys suportat per eines no especialitzades</td>
+</tr>
+</tbody>
+</table>
+</div><h1>Exportar dades a Google Cloud Storage</h1>
+<div class='content'></div><h2>Pas 1: Configurar Google Cloud Storage</h2>
+<div class='content'><p>Abans d'exportar dades, necessitem un bucket a Google Cloud Storage (GCS) on emmagatzemar els fitxers exportats.</p>
+<ol>
+<li><strong>Crear un bucket a GCS:</strong>
+<ul>
+<li>Aneu a la consola de Google Cloud.</li>
+<li>Navegueu a &quot;Storage&quot; i feu clic a &quot;Create bucket&quot;.</li>
+<li>Seguiu les instruccions per crear un bucket nou.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Pas 2: Exportar dades des de BigQuery</h2>
+<div class='content'><h4>Exemple pràctic: Exportar dades a CSV</h4>
+<ol>
+<li>
+<p><strong>Obrir la consola de BigQuery:</strong></p>
+<ul>
+<li>Aneu a la consola de Google Cloud i seleccioneu BigQuery.</li>
+</ul>
+</li>
+<li>
+<p><strong>Executar una consulta:</strong></p>
+<ul>
+<li>Executeu la consulta SQL que desitgeu exportar. Per exemple:
+<pre><code class="language-sql">SELECT name, age, email
+FROM `project_id.dataset_id.table_id`
+WHERE age &gt; 30;
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Exportar els resultats:</strong></p>
+<ul>
+<li>Després d'executar la consulta, feu clic a &quot;Export&quot; a la part superior dreta dels resultats.</li>
+<li>Seleccioneu &quot;Export to Google Cloud Storage&quot;.</li>
+<li>Trieu el bucket i el nom del fitxer (per exemple, <code>gs://my-bucket/exported_data.csv</code>).</li>
+<li>Seleccioneu el format de fitxer (CSV, JSON, Avro, Parquet).</li>
+<li>Feu clic a &quot;Export&quot;.</li>
+</ul>
+</li>
+</ol>
+<h4>Exemple pràctic: Exportar dades a JSON</h4>
+<ol>
+<li>
+<p><strong>Executar una consulta:</strong></p>
+<ul>
+<li>Executeu la consulta SQL que desitgeu exportar. Per exemple:
+<pre><code class="language-sql">SELECT name, age, email
+FROM `project_id.dataset_id.table_id`
+WHERE age &gt; 30;
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Exportar els resultats:</strong></p>
+<ul>
+<li>Després d'executar la consulta, feu clic a &quot;Export&quot; a la part superior dreta dels resultats.</li>
+<li>Seleccioneu &quot;Export to Google Cloud Storage&quot;.</li>
+<li>Trieu el bucket i el nom del fitxer (per exemple, <code>gs://my-bucket/exported_data.json</code>).</li>
+<li>Seleccioneu el format de fitxer (CSV, JSON, Avro, Parquet).</li>
+<li>Feu clic a &quot;Export&quot;.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Exportar dades utilitzant la línia de comandes</h2>
+<div class='content'><p>També podeu utilitzar la línia de comandes de gcloud per exportar dades. Aquí teniu un exemple per exportar dades a un fitxer CSV:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YnEgZXh0cmFjdCAtLWRlc3RpbmF0aW9uX2Zvcm1hdD1DU1YgJ3Byb2plY3RfaWQ6ZGF0YXNldF9pZC50YWJsZV9pZCcgZ3M6Ly9teS1idWNrZXQvZXhwb3J0ZWRfZGF0YS5jc3Y="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>bq extract --destination_format=CSV 'project_id:dataset_id.table_id' gs://my-bucket/exported_data.csv</pre></div><div class='content'></div><h1>Millors pràctiques per a l'exportació de dades</h1>
+<div class='content'><ul>
+<li><strong>Dividir fitxers grans:</strong> Si exporteu grans volums de dades, considereu dividir els fitxers per evitar problemes de rendiment.</li>
+<li><strong>Utilitzar formats adequats:</strong> Trieu el format d'exportació que millor s'adapti a les vostres necessitats. Per exemple, utilitzeu Parquet per a grans volums de dades que necessiten ser processats ràpidament.</li>
+<li><strong>Automatitzar exportacions:</strong> Utilitzeu eines com Cloud Scheduler i Cloud Functions per automatitzar les exportacions periòdiques.</li>
+</ul>
+</div><h1>Exercici pràctic</h1>
+<div class='content'></div><h2>Exercici 1: Exportar dades a CSV</h2>
+<div class='content'><ol>
+<li>Creeu una consulta SQL que seleccioni dades d'una taula de BigQuery.</li>
+<li>Exporteu els resultats de la consulta a un fitxer CSV a Google Cloud Storage.</li>
+</ol>
+<h4>Solució</h4>
+<ol>
+<li>
+<p><strong>Consulta SQL:</strong></p>
+<pre><code class="language-sql">SELECT name, age, email
+FROM `project_id.dataset_id.table_id`
+WHERE age &gt; 30;
+</code></pre>
+</li>
+<li>
+<p><strong>Exportar a CSV:</strong></p>
+<ul>
+<li>Després d'executar la consulta, feu clic a &quot;Export&quot;.</li>
+<li>Seleccioneu &quot;Export to Google Cloud Storage&quot;.</li>
+<li>Trieu el bucket i el nom del fitxer (per exemple, <code>gs://my-bucket/exported_data.csv</code>).</li>
+<li>Seleccioneu el format de fitxer (CSV).</li>
+<li>Feu clic a &quot;Export&quot;.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Exercici 2: Exportar dades a JSON utilitzant la línia de comandes</h2>
+<div class='content'><ol>
+<li>Utilitzeu la línia de comandes de gcloud per exportar dades a un fitxer JSON.</li>
+</ol>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YnEgZXh0cmFjdCAtLWRlc3RpbmF0aW9uX2Zvcm1hdD1ORVdMSU5FX0RFTElNSVRFRF9KU09OICdwcm9qZWN0X2lkOmRhdGFzZXRfaWQudGFibGVfaWQnIGdzOi8vbXktYnVja2V0L2V4cG9ydGVkX2RhdGEuanNvbg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>bq extract --destination_format=NEWLINE_DELIMITED_JSON 'project_id:dataset_id.table_id' gs://my-bucket/exported_data.json</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com exportar dades des de BigQuery a diferents formats i ubicacions, incloent Google Cloud Storage. Hem vist exemples pràctics d'exportació a CSV i JSON, i hem conegut les millors pràctiques per a l'exportació de dades. Aquestes habilitats són essencials per gestionar i compartir dades de manera eficient.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-01-loading-data' title="Carregar dades a BigQuery">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-03-data-transformation-cleaning' title="Transformació i neteja de dades">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

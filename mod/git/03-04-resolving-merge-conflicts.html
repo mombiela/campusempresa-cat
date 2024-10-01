@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resolent Conflictes de Fusió</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/git/03-04-resolving-merge-conflicts" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/git/03-04-resolving-merge-conflicts" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/git/03-04-resolving-merge-conflicts" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/git/03-04-resolving-merge-conflicts" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/git/03-04-resolving-merge-conflicts" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-merging-branches' title="Fusionant Branques">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Resolent Conflictes de Fusió</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-05-branch-management' title="Gestió de Branques">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Quan es treballa amb Git, és comú trobar-se amb conflictes de fusió, especialment quan múltiples desenvolupadors treballen en el mateix projecte. Un conflicte de fusió ocorre quan Git no pot fusionar automàticament els canvis de dues branques perquè hi ha canvis contradictoris en els mateixos fitxers. En aquesta secció, aprendrem com identificar, resoldre i evitar conflictes de fusió.</p>
+</div><h1>Identificant Conflictes de Fusió</h1>
+<div class='content'></div><h2>Quan Ocorren els Conflictes de Fusió?</h2>
+<div class='content'><p>Els conflictes de fusió poden ocórrer en diverses situacions, com ara:</p>
+<ul>
+<li>Dos desenvolupadors editen la mateixa línia en un fitxer.</li>
+<li>Un desenvolupador elimina un fitxer que un altre desenvolupador ha editat.</li>
+<li>Canvis contradictoris en la mateixa àrea d'un fitxer.</li>
+</ul>
+</div><h2>Com Identificar un Conflicte de Fusió?</h2>
+<div class='content'><p>Quan intentes fusionar una branca i Git troba un conflicte, rebràs un missatge d'error similar a aquest:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("JCBnaXQgbWVyZ2UgZmVhdHVyZS1icmFuY2gKQXV0by1tZXJnaW5nIGZpbGUudHh0CkNPTkZMSUNUIChjb250ZW50KTogTWVyZ2UgY29uZmxpY3QgaW4gZmlsZS50eHQKQXV0b21hdGljIG1lcmdlIGZhaWxlZDsgZml4IGNvbmZsaWN0cyBhbmQgdGhlbiBjb21taXQgdGhlIHJlc3VsdC4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>$ git merge feature-branch
+Auto-merging file.txt
+CONFLICT (content): Merge conflict in file.txt
+Automatic merge failed; fix conflicts and then commit the result.</pre></div><div class='content'><p>Git també marcarà els fitxers conflictius amb el següent format:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PDw8PDw8PCBIRUFECkNvbnRpbmd1dCBkZSBsYSBicmFuY2EgYWN0dWFsLgo9PT09PT09CkNvbnRpbmd1dCBkZSBsYSBicmFuY2EgZnVzaW9uYWRhLgo+Pj4+Pj4+IGZlYXR1cmUtYnJhbmNo"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+Contingut de la branca actual.
+=======
+Contingut de la branca fusionada.
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature-branch</pre></div><div class='content'></div><h1>Resolent Conflictes de Fusió</h1>
+<div class='content'></div><h2>Passos per Resoldre un Conflicte de Fusió</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Identificar els fitxers conflictius</strong>: Utilitza <code>git status</code> per veure quins fitxers tenen conflictes.</p>
+<pre><code class="language-bash">$ git status
+On branch main
+You have unmerged paths.
+  (fix conflicts and run &quot;git commit&quot;)
+  (use &quot;git merge --abort&quot; to abort the merge)
+
+Unmerged paths:
+  (use &quot;git add &lt;file&gt;...&quot; to mark resolution)
+  both modified:   file.txt
+</code></pre>
+</li>
+<li>
+<p><strong>Editar els fitxers conflictius</strong>: Obre els fitxers conflictius en el teu editor de text preferit i busca les marques de conflicte (<code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code>, <code>=======</code>, <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code>). Decideix quina part del codi conservar, eliminar o combinar.</p>
+</li>
+<li>
+<p><strong>Eliminar les marques de conflicte</strong>: Després de resoldre el conflicte, elimina les marques de conflicte del fitxer.</p>
+</li>
+<li>
+<p><strong>Afegir els fitxers resolts a l'índex</strong>: Utilitza <code>git add</code> per marcar els fitxers com a resolts.</p>
+<pre><code class="language-bash">$ git add file.txt
+</code></pre>
+</li>
+<li>
+<p><strong>Finalitzar la fusió</strong>: Finalment, realitza un commit per completar la fusió.</p>
+<pre><code class="language-bash">$ git commit -m &quot;Resolt conflicte de fusió entre main i feature-branch&quot;
+</code></pre>
+</li>
+</ol>
+</div><h2>Exemple Pràctic</h2>
+<div class='content'><p>Suposem que tenim un fitxer <code>index.html</code> amb el següent contingut en la branca <code>main</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sPgo8aGVhZD4KICAgIDx0aXRsZT5Qw6BnaW5hIFByaW5jaXBhbDwvdGl0bGU+CjwvaGVhZD4KPGJvZHk+CiAgICA8aDE+QmVudmluZ3V0IGEgbGEgUMOgZ2luYSBQcmluY2lwYWw8L2gxPgo8L2JvZHk+CjwvaHRtbD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;P&agrave;gina Principal&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Benvingut a la P&agrave;gina Principal&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'><p>I en la branca <code>feature-branch</code>, el mateix fitxer ha estat modificat així:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sPgo8aGVhZD4KICAgIDx0aXRsZT5Qw6BnaW5hIFByaW5jaXBhbDwvdGl0bGU+CjwvaGVhZD4KPGJvZHk+CiAgICA8aDE+QmVudmluZ3V0IGEgbGEgTm92YSBQw6BnaW5hIFByaW5jaXBhbDwvaDE+CjwvYm9keT4KPC9odG1sPg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;P&agrave;gina Principal&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Benvingut a la Nova P&agrave;gina Principal&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'><p>Quan intentem fusionar <code>feature-branch</code> a <code>main</code>, obtindrem un conflicte:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("JCBnaXQgbWVyZ2UgZmVhdHVyZS1icmFuY2gKQXV0by1tZXJnaW5nIGluZGV4Lmh0bWwKQ09ORkxJQ1QgKGNvbnRlbnQpOiBNZXJnZSBjb25mbGljdCBpbiBpbmRleC5odG1sCkF1dG9tYXRpYyBtZXJnZSBmYWlsZWQ7IGZpeCBjb25mbGljdHMgYW5kIHRoZW4gY29tbWl0IHRoZSByZXN1bHQu"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>$ git merge feature-branch
+Auto-merging index.html
+CONFLICT (content): Merge conflict in index.html
+Automatic merge failed; fix conflicts and then commit the result.</pre></div><div class='content'><p>El fitxer <code>index.html</code> es veurà així:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sPgo8aGVhZD4KICAgIDx0aXRsZT5Qw6BnaW5hIFByaW5jaXBhbDwvdGl0bGU+CjwvaGVhZD4KPGJvZHk+Cjw8PDw8PDwgSEVBRAogICAgPGgxPkJlbnZpbmd1dCBhIGxhIFDDoGdpbmEgUHJpbmNpcGFsPC9oMT4KPT09PT09PQogICAgPGgxPkJlbnZpbmd1dCBhIGxhIE5vdmEgUMOgZ2luYSBQcmluY2lwYWw8L2gxPgo+Pj4+Pj4+IGZlYXR1cmUtYnJhbmNoCjwvYm9keT4KPC9odG1sPg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;P&agrave;gina Principal&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+    &lt;h1&gt;Benvingut a la P&agrave;gina Principal&lt;/h1&gt;
+=======
+    &lt;h1&gt;Benvingut a la Nova P&agrave;gina Principal&lt;/h1&gt;
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature-branch
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'><p>Per resoldre el conflicte, decidim combinar els canvis:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sPgo8aGVhZD4KICAgIDx0aXRsZT5Qw6BnaW5hIFByaW5jaXBhbDwvdGl0bGU+CjwvaGVhZD4KPGJvZHk+CiAgICA8aDE+QmVudmluZ3V0IGEgbGEgTm92YSBQw6BnaW5hIFByaW5jaXBhbDwvaDE+CjwvYm9keT4KPC9odG1sPg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;P&agrave;gina Principal&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Benvingut a la Nova P&agrave;gina Principal&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'><p>Després, afegim el fitxer resolt a l'índex i finalitzem la fusió:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("JCBnaXQgYWRkIGluZGV4Lmh0bWwKJCBnaXQgY29tbWl0IC1tICJSZXNvbHQgY29uZmxpY3RlIGRlIGZ1c2nDsyBlbiBpbmRleC5odG1sIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>$ git add index.html
+$ git commit -m &quot;Resolt conflicte de fusi&oacute; en index.html&quot;</pre></div><div class='content'></div><h1>Consells per Evitar Conflictes de Fusió</h1>
+<div class='content'><ul>
+<li><strong>Comunica't amb el teu equip</strong>: Assegura't que tots els membres de l'equip estiguin al corrent dels canvis que s'estan fent.</li>
+<li><strong>Fes commits petits i freqüents</strong>: Això facilita la fusió de canvis i redueix la probabilitat de conflictes.</li>
+<li><strong>Actualitza la teva branca sovint</strong>: Fes <code>git pull</code> regularment per mantenir la teva branca actualitzada amb els canvis de la branca principal.</li>
+</ul>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici</h2>
+<div class='content'><ol>
+<li>Crea dues branques a partir de <code>main</code>: <code>branch1</code> i <code>branch2</code>.</li>
+<li>Modifica el mateix fitxer en ambdues branques de manera que es generi un conflicte de fusió.</li>
+<li>Intenta fusionar <code>branch2</code> a <code>branch1</code> i resol el conflicte.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><ol>
+<li>
+<p>Crea les branques:</p>
+<pre><code class="language-bash">$ git checkout -b branch1
+$ git checkout main
+$ git checkout -b branch2
+</code></pre>
+</li>
+<li>
+<p>Modifica el fitxer <code>example.txt</code> en <code>branch1</code>:</p>
+<pre><code class="language-bash">$ echo &quot;Línia de branch1&quot; &gt; example.txt
+$ git add example.txt
+$ git commit -m &quot;Afegida línia en branch1&quot;
+</code></pre>
+</li>
+<li>
+<p>Modifica el fitxer <code>example.txt</code> en <code>branch2</code>:</p>
+<pre><code class="language-bash">$ echo &quot;Línia de branch2&quot; &gt; example.txt
+$ git add example.txt
+$ git commit -m &quot;Afegida línia en branch2&quot;
+</code></pre>
+</li>
+<li>
+<p>Intenta fusionar <code>branch2</code> a <code>branch1</code>:</p>
+<pre><code class="language-bash">$ git checkout branch1
+$ git merge branch2
+</code></pre>
+</li>
+<li>
+<p>Resol el conflicte editant <code>example.txt</code> i eliminant les marques de conflicte:</p>
+<pre><code class="language-plaintext">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+Línia de branch1
+=======
+Línia de branch2
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; branch2
+</code></pre>
+<p>Decideix quina línia conservar o combina-les:</p>
+<pre><code class="language-plaintext">Línia de branch1 i branch2
+</code></pre>
+</li>
+<li>
+<p>Finalitza la fusió:</p>
+<pre><code class="language-bash">$ git add example.txt
+$ git commit -m &quot;Resolt conflicte de fusió en example.txt&quot;
+</code></pre>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Resoldre conflictes de fusió és una habilitat essencial per a qualsevol desenvolupador que treballi en equips col·laboratius. Amb la pràctica, esdevindràs més eficient en la identificació i resolució de conflictes, assegurant un flux de treball més suau i productiu. En la següent secció, explorarem la gestió de branques per mantenir el teu projecte organitzat i eficient.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-merging-branches' title="Fusionant Branques">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-05-branch-management' title="Gestió de Branques">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistemes de Partícules</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/open_gl/06-01-particle-systems" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/open_gl/06-01-particle-systems" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/open_gl/06-01-particle-systems" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/open_gl/06-01-particle-systems" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/open_gl/06-01-particle-systems" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-profiling-debugging' title="Perfilat i Depuració">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Sistemes de Partícules</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-02-post-processing' title="Efectes de Postprocessament">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Els sistemes de partícules són una tècnica utilitzada en gràfics per ordinador per simular fenòmens complexos com el foc, la fum, la pluja, les explosions, entre d'altres. En aquest tema, aprendrem com crear i gestionar un sistema de partícules utilitzant OpenGL.</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ul>
+<li>Entendre què és un sistema de partícules.</li>
+<li>Aprendre a crear un sistema de partícules bàsic.</li>
+<li>Implementar la física bàsica per a les partícules.</li>
+<li>Renderitzar partícules utilitzant OpenGL.</li>
+</ul>
+</div><h1>Què és un Sistema de Partícules?</h1>
+<div class='content'><p>Un sistema de partícules és una col·lecció de petits elements gràfics (partícules) que es comporten de manera individual però que, en conjunt, creen un efecte visual complex. Cada partícula té propietats com la posició, velocitat, color, vida útil, etc.</p>
+</div><h1>Crear un Sistema de Partícules Bàsic</h1>
+<div class='content'></div><h2>1. Estructura de Dades per a les Partícules</h2>
+<div class='content'><p>Primer, definirem una estructura per a les partícules. Aquesta estructura contindrà les propietats bàsiques de cada partícula.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RydWN0IFBhcnRpY2xlIHsKICAgIGdsbTo6dmVjMyBwb3NpdGlvbjsKICAgIGdsbTo6dmVjMyB2ZWxvY2l0eTsKICAgIGdsbTo6dmVjNCBjb2xvcjsKICAgIGZsb2F0IGxpZmU7Cn07"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>struct Particle {
+    glm::vec3 position;
+    glm::vec3 velocity;
+    glm::vec4 color;
+    float life;
+};</pre></div><div class='content'></div><h2>2. Inicialitzar les Partícules</h2>
+<div class='content'><p>Crearem una funció per inicialitzar les partícules. Aquesta funció assignarà valors inicials a les propietats de cada partícula.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dm9pZCBpbml0UGFydGljbGUoUGFydGljbGUgJnApIHsKICAgIHAucG9zaXRpb24gPSBnbG06OnZlYzMoMC4wZik7CiAgICBwLnZlbG9jaXR5ID0gZ2xtOjp2ZWMzKAogICAgICAgIChyYW5kKCkgJSAxMDAgLSA1MCkgLyA1MC4wZiwKICAgICAgICAocmFuZCgpICUgMTAwIC0gNTApIC8gNTAuMGYsCiAgICAgICAgKHJhbmQoKSAlIDEwMCAtIDUwKSAvIDUwLjBmCiAgICApOwogICAgcC5jb2xvciA9IGdsbTo6dmVjNCgxLjBmKTsKICAgIHAubGlmZSA9IDEuMGY7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>void initParticle(Particle &amp;p) {
+    p.position = glm::vec3(0.0f);
+    p.velocity = glm::vec3(
+        (rand() % 100 - 50) / 50.0f,
+        (rand() % 100 - 50) / 50.0f,
+        (rand() % 100 - 50) / 50.0f
+    );
+    p.color = glm::vec4(1.0f);
+    p.life = 1.0f;
+}</pre></div><div class='content'></div><h2>3. Actualitzar les Partícules</h2>
+<div class='content'><p>Crearem una funció per actualitzar les partícules. Aquesta funció actualitzarà la posició de cada partícula en funció de la seva velocitat i reduirà la seva vida útil.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dm9pZCB1cGRhdGVQYXJ0aWNsZXMoc3RkOjp2ZWN0b3I8UGFydGljbGU+ICZwYXJ0aWNsZXMsIGZsb2F0IGRlbHRhVGltZSkgewogICAgZm9yIChhdXRvICZwIDogcGFydGljbGVzKSB7CiAgICAgICAgcC5wb3NpdGlvbiArPSBwLnZlbG9jaXR5ICogZGVsdGFUaW1lOwogICAgICAgIHAubGlmZSAtPSBkZWx0YVRpbWU7CiAgICAgICAgaWYgKHAubGlmZSA8PSAwLjBmKSB7CiAgICAgICAgICAgIGluaXRQYXJ0aWNsZShwKTsKICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>void updateParticles(std::vector&lt;Particle&gt; &amp;particles, float deltaTime) {
+    for (auto &amp;p : particles) {
+        p.position += p.velocity * deltaTime;
+        p.life -= deltaTime;
+        if (p.life &lt;= 0.0f) {
+            initParticle(p);
+        }
+    }
+}</pre></div><div class='content'></div><h2>4. Renderitzar les Partícules</h2>
+<div class='content'><p>Finalment, crearem una funció per renderitzar les partícules utilitzant OpenGL.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dm9pZCByZW5kZXJQYXJ0aWNsZXMoY29uc3Qgc3RkOjp2ZWN0b3I8UGFydGljbGU+ICZwYXJ0aWNsZXMsIEdMdWludCBzaGFkZXJQcm9ncmFtKSB7CiAgICBnbFVzZVByb2dyYW0oc2hhZGVyUHJvZ3JhbSk7CiAgICBmb3IgKGNvbnN0IGF1dG8gJnAgOiBwYXJ0aWNsZXMpIHsKICAgICAgICAvLyBDb25maWd1cmFyIGxlcyBwcm9waWV0YXRzIGRlIGxhIHBhcnTDrWN1bGEgZW4gZWwgc2hhZGVyCiAgICAgICAgZ2xVbmlmb3JtM2Z2KGdsR2V0VW5pZm9ybUxvY2F0aW9uKHNoYWRlclByb2dyYW0sICJwYXJ0aWNsZVBvc2l0aW9uIiksIDEsIGdsbTo6dmFsdWVfcHRyKHAucG9zaXRpb24pKTsKICAgICAgICBnbFVuaWZvcm00ZnYoZ2xHZXRVbmlmb3JtTG9jYXRpb24oc2hhZGVyUHJvZ3JhbSwgInBhcnRpY2xlQ29sb3IiKSwgMSwgZ2xtOjp2YWx1ZV9wdHIocC5jb2xvcikpOwogICAgICAgIAogICAgICAgIC8vIFJlbmRlcml0emFyIGxhIHBhcnTDrWN1bGEgKHBlciBleGVtcGxlLCBjb20gdW4gcHVudCkKICAgICAgICBnbERyYXdBcnJheXMoR0xfUE9JTlRTLCAwLCAxKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>void renderParticles(const std::vector&lt;Particle&gt; &amp;particles, GLuint shaderProgram) {
+    glUseProgram(shaderProgram);
+    for (const auto &amp;p : particles) {
+        // Configurar les propietats de la part&iacute;cula en el shader
+        glUniform3fv(glGetUniformLocation(shaderProgram, &quot;particlePosition&quot;), 1, glm::value_ptr(p.position));
+        glUniform4fv(glGetUniformLocation(shaderProgram, &quot;particleColor&quot;), 1, glm::value_ptr(p.color));
+        
+        // Renderitzar la part&iacute;cula (per exemple, com un punt)
+        glDrawArrays(GL_POINTS, 0, 1);
+    }
+}</pre></div><div class='content'></div><h1>Exemple Complet</h1>
+<div class='content'><p>A continuació, es mostra un exemple complet que integra totes les funcions anteriors.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPHZlY3Rvcj4KI2luY2x1ZGUgPGdsbS9nbG0uaHBwPgojaW5jbHVkZSA8Z2xtL2d0Yy90eXBlX3B0ci5ocHA+CiNpbmNsdWRlIDxHTC9nbGV3Lmg+CiNpbmNsdWRlIDxHTEZXL2dsZnczLmg+CgpzdHJ1Y3QgUGFydGljbGUgewogICAgZ2xtOjp2ZWMzIHBvc2l0aW9uOwogICAgZ2xtOjp2ZWMzIHZlbG9jaXR5OwogICAgZ2xtOjp2ZWM0IGNvbG9yOwogICAgZmxvYXQgbGlmZTsKfTsKCnZvaWQgaW5pdFBhcnRpY2xlKFBhcnRpY2xlICZwKSB7CiAgICBwLnBvc2l0aW9uID0gZ2xtOjp2ZWMzKDAuMGYpOwogICAgcC52ZWxvY2l0eSA9IGdsbTo6dmVjMygKICAgICAgICAocmFuZCgpICUgMTAwIC0gNTApIC8gNTAuMGYsCiAgICAgICAgKHJhbmQoKSAlIDEwMCAtIDUwKSAvIDUwLjBmLAogICAgICAgIChyYW5kKCkgJSAxMDAgLSA1MCkgLyA1MC4wZgogICAgKTsKICAgIHAuY29sb3IgPSBnbG06OnZlYzQoMS4wZik7CiAgICBwLmxpZmUgPSAxLjBmOwp9Cgp2b2lkIHVwZGF0ZVBhcnRpY2xlcyhzdGQ6OnZlY3RvcjxQYXJ0aWNsZT4gJnBhcnRpY2xlcywgZmxvYXQgZGVsdGFUaW1lKSB7CiAgICBmb3IgKGF1dG8gJnAgOiBwYXJ0aWNsZXMpIHsKICAgICAgICBwLnBvc2l0aW9uICs9IHAudmVsb2NpdHkgKiBkZWx0YVRpbWU7CiAgICAgICAgcC5saWZlIC09IGRlbHRhVGltZTsKICAgICAgICBpZiAocC5saWZlIDw9IDAuMGYpIHsKICAgICAgICAgICAgaW5pdFBhcnRpY2xlKHApOwogICAgICAgIH0KICAgIH0KfQoKdm9pZCByZW5kZXJQYXJ0aWNsZXMoY29uc3Qgc3RkOjp2ZWN0b3I8UGFydGljbGU+ICZwYXJ0aWNsZXMsIEdMdWludCBzaGFkZXJQcm9ncmFtKSB7CiAgICBnbFVzZVByb2dyYW0oc2hhZGVyUHJvZ3JhbSk7CiAgICBmb3IgKGNvbnN0IGF1dG8gJnAgOiBwYXJ0aWNsZXMpIHsKICAgICAgICBnbFVuaWZvcm0zZnYoZ2xHZXRVbmlmb3JtTG9jYXRpb24oc2hhZGVyUHJvZ3JhbSwgInBhcnRpY2xlUG9zaXRpb24iKSwgMSwgZ2xtOjp2YWx1ZV9wdHIocC5wb3NpdGlvbikpOwogICAgICAgIGdsVW5pZm9ybTRmdihnbEdldFVuaWZvcm1Mb2NhdGlvbihzaGFkZXJQcm9ncmFtLCAicGFydGljbGVDb2xvciIpLCAxLCBnbG06OnZhbHVlX3B0cihwLmNvbG9yKSk7CiAgICAgICAgZ2xEcmF3QXJyYXlzKEdMX1BPSU5UUywgMCwgMSk7CiAgICB9Cn0KCmludCBtYWluKCkgewogICAgLy8gSW5pY2lhbGl0emFyIEdMRlcgaSBHTEVXLCBjcmVhciB1bmEgZmluZXN0cmEsIGV0Yy4KICAgIC8vIC4uLgoKICAgIEdMdWludCBzaGFkZXJQcm9ncmFtID0gLy8gQ29tcGlsYXIgaSBlbmxsYcOnYXIgZWwgc2hhZGVyIHByb2dyYW0KICAgIC8vIC4uLgoKICAgIHN0ZDo6dmVjdG9yPFBhcnRpY2xlPiBwYXJ0aWNsZXMoMTAwMCk7CiAgICBmb3IgKGF1dG8gJnAgOiBwYXJ0aWNsZXMpIHsKICAgICAgICBpbml0UGFydGljbGUocCk7CiAgICB9CgogICAgd2hpbGUgKCFnbGZ3V2luZG93U2hvdWxkQ2xvc2Uod2luZG93KSkgewogICAgICAgIGZsb2F0IGRlbHRhVGltZSA9IC8vIENhbGN1bGFyIGVsIHRlbXBzIHRyYW5zY29ycmVndXQKICAgICAgICAvLyAuLi4KCiAgICAgICAgdXBkYXRlUGFydGljbGVzKHBhcnRpY2xlcywgZGVsdGFUaW1lKTsKCiAgICAgICAgZ2xDbGVhcihHTF9DT0xPUl9CVUZGRVJfQklUIHwgR0xfREVQVEhfQlVGRkVSX0JJVCk7CiAgICAgICAgcmVuZGVyUGFydGljbGVzKHBhcnRpY2xlcywgc2hhZGVyUHJvZ3JhbSk7CgogICAgICAgIGdsZndTd2FwQnVmZmVycyh3aW5kb3cpOwogICAgICAgIGdsZndQb2xsRXZlbnRzKCk7CiAgICB9CgogICAgZ2xmd1Rlcm1pbmF0ZSgpOwogICAgcmV0dXJuIDA7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;vector&gt;
+#include &lt;glm/glm.hpp&gt;
+#include &lt;glm/gtc/type_ptr.hpp&gt;
+#include &lt;GL/glew.h&gt;
+#include &lt;GLFW/glfw3.h&gt;
+
+struct Particle {
+    glm::vec3 position;
+    glm::vec3 velocity;
+    glm::vec4 color;
+    float life;
+};
+
+void initParticle(Particle &amp;p) {
+    p.position = glm::vec3(0.0f);
+    p.velocity = glm::vec3(
+        (rand() % 100 - 50) / 50.0f,
+        (rand() % 100 - 50) / 50.0f,
+        (rand() % 100 - 50) / 50.0f
+    );
+    p.color = glm::vec4(1.0f);
+    p.life = 1.0f;
+}
+
+void updateParticles(std::vector&lt;Particle&gt; &amp;particles, float deltaTime) {
+    for (auto &amp;p : particles) {
+        p.position += p.velocity * deltaTime;
+        p.life -= deltaTime;
+        if (p.life &lt;= 0.0f) {
+            initParticle(p);
+        }
+    }
+}
+
+void renderParticles(const std::vector&lt;Particle&gt; &amp;particles, GLuint shaderProgram) {
+    glUseProgram(shaderProgram);
+    for (const auto &amp;p : particles) {
+        glUniform3fv(glGetUniformLocation(shaderProgram, &quot;particlePosition&quot;), 1, glm::value_ptr(p.position));
+        glUniform4fv(glGetUniformLocation(shaderProgram, &quot;particleColor&quot;), 1, glm::value_ptr(p.color));
+        glDrawArrays(GL_POINTS, 0, 1);
+    }
+}
+
+int main() {
+    // Inicialitzar GLFW i GLEW, crear una finestra, etc.
+    // ...
+
+    GLuint shaderProgram = // Compilar i enlla&ccedil;ar el shader program
+    // ...
+
+    std::vector&lt;Particle&gt; particles(1000);
+    for (auto &amp;p : particles) {
+        initParticle(p);
+    }
+
+    while (!glfwWindowShouldClose(window)) {
+        float deltaTime = // Calcular el temps transcorregut
+        // ...
+
+        updateParticles(particles, deltaTime);
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        renderParticles(particles, shaderProgram);
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+
+    glfwTerminate();
+    return 0;
+}</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'><ol>
+<li><strong>Afegir Gravetat</strong>: Modifica el sistema de partícules per afegir un efecte de gravetat que faci que les partícules caiguin cap avall amb el temps.</li>
+<li><strong>Canvi de Color</strong>: Fes que les partícules canviïn de color a mesura que la seva vida útil disminueix.</li>
+<li><strong>Texturització de Partícules</strong>: Utilitza textures per a les partícules en lloc de punts simples.</li>
+</ol>
+</div><h2>Solucions</h2>
+<div class='content'><ol>
+<li><strong>Afegir Gravetat</strong>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dm9pZCB1cGRhdGVQYXJ0aWNsZXMoc3RkOjp2ZWN0b3I8UGFydGljbGU+ICZwYXJ0aWNsZXMsIGZsb2F0IGRlbHRhVGltZSkgewogICAgZ2xtOjp2ZWMzIGdyYXZpdHkoMC4wZiwgLTkuODFmLCAwLjBmKTsKICAgIGZvciAoYXV0byAmcCA6IHBhcnRpY2xlcykgewogICAgICAgIHAudmVsb2NpdHkgKz0gZ3Jhdml0eSAqIGRlbHRhVGltZTsKICAgICAgICBwLnBvc2l0aW9uICs9IHAudmVsb2NpdHkgKiBkZWx0YVRpbWU7CiAgICAgICAgcC5saWZlIC09IGRlbHRhVGltZTsKICAgICAgICBpZiAocC5saWZlIDw9IDAuMGYpIHsKICAgICAgICAgICAgaW5pdFBhcnRpY2xlKHApOwogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>void updateParticles(std::vector&lt;Particle&gt; &amp;particles, float deltaTime) {
+    glm::vec3 gravity(0.0f, -9.81f, 0.0f);
+    for (auto &amp;p : particles) {
+        p.velocity += gravity * deltaTime;
+        p.position += p.velocity * deltaTime;
+        p.life -= deltaTime;
+        if (p.life &lt;= 0.0f) {
+            initParticle(p);
+        }
+    }
+}</pre></div><div class='content'><ol start="2">
+<li><strong>Canvi de Color</strong>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dm9pZCB1cGRhdGVQYXJ0aWNsZXMoc3RkOjp2ZWN0b3I8UGFydGljbGU+ICZwYXJ0aWNsZXMsIGZsb2F0IGRlbHRhVGltZSkgewogICAgZm9yIChhdXRvICZwIDogcGFydGljbGVzKSB7CiAgICAgICAgcC5wb3NpdGlvbiArPSBwLnZlbG9jaXR5ICogZGVsdGFUaW1lOwogICAgICAgIHAubGlmZSAtPSBkZWx0YVRpbWU7CiAgICAgICAgcC5jb2xvciA9IGdsbTo6dmVjNCgxLjBmLCBwLmxpZmUsIHAubGlmZSwgMS4wZik7IC8vIENhbnZpIGRlIGNvbG9yCiAgICAgICAgaWYgKHAubGlmZSA8PSAwLjBmKSB7CiAgICAgICAgICAgIGluaXRQYXJ0aWNsZShwKTsKICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>void updateParticles(std::vector&lt;Particle&gt; &amp;particles, float deltaTime) {
+    for (auto &amp;p : particles) {
+        p.position += p.velocity * deltaTime;
+        p.life -= deltaTime;
+        p.color = glm::vec4(1.0f, p.life, p.life, 1.0f); // Canvi de color
+        if (p.life &lt;= 0.0f) {
+            initParticle(p);
+        }
+    }
+}</pre></div><div class='content'><ol start="3">
+<li><strong>Texturització de Partícules</strong>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dm9pZCByZW5kZXJQYXJ0aWNsZXMoY29uc3Qgc3RkOjp2ZWN0b3I8UGFydGljbGU+ICZwYXJ0aWNsZXMsIEdMdWludCBzaGFkZXJQcm9ncmFtLCBHTHVpbnQgdGV4dHVyZSkgewogICAgZ2xVc2VQcm9ncmFtKHNoYWRlclByb2dyYW0pOwogICAgZ2xCaW5kVGV4dHVyZShHTF9URVhUVVJFXzJELCB0ZXh0dXJlKTsKICAgIGZvciAoY29uc3QgYXV0byAmcCA6IHBhcnRpY2xlcykgewogICAgICAgIGdsVW5pZm9ybTNmdihnbEdldFVuaWZvcm1Mb2NhdGlvbihzaGFkZXJQcm9ncmFtLCAicGFydGljbGVQb3NpdGlvbiIpLCAxLCBnbG06OnZhbHVlX3B0cihwLnBvc2l0aW9uKSk7CiAgICAgICAgZ2xVbmlmb3JtNGZ2KGdsR2V0VW5pZm9ybUxvY2F0aW9uKHNoYWRlclByb2dyYW0sICJwYXJ0aWNsZUNvbG9yIiksIDEsIGdsbTo6dmFsdWVfcHRyKHAuY29sb3IpKTsKICAgICAgICBnbERyYXdBcnJheXMoR0xfUE9JTlRTLCAwLCAxKTsKICAgIH0KICAgIGdsQmluZFRleHR1cmUoR0xfVEVYVFVSRV8yRCwgMCk7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>void renderParticles(const std::vector&lt;Particle&gt; &amp;particles, GLuint shaderProgram, GLuint texture) {
+    glUseProgram(shaderProgram);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    for (const auto &amp;p : particles) {
+        glUniform3fv(glGetUniformLocation(shaderProgram, &quot;particlePosition&quot;), 1, glm::value_ptr(p.position));
+        glUniform4fv(glGetUniformLocation(shaderProgram, &quot;particleColor&quot;), 1, glm::value_ptr(p.color));
+        glDrawArrays(GL_POINTS, 0, 1);
+    }
+    glBindTexture(GL_TEXTURE_2D, 0);
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après a crear un sistema de partícules bàsic utilitzant OpenGL. Hem vist com inicialitzar, actualitzar i renderitzar partícules, així com algunes millores i exercicis pràctics per aprofundir en el tema. Els sistemes de partícules són una eina poderosa per crear efectes visuals realistes i dinàmics en aplicacions gràfiques.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-profiling-debugging' title="Perfilat i Depuració">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-02-post-processing' title="Efectes de Postprocessament">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

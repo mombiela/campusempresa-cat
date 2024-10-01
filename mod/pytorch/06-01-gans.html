@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xarxes Generatives Adversàries (GANs)</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/pytorch/06-01-gans" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/pytorch/06-01-gans" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/pytorch/06-01-gans" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/pytorch/06-01-gans" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/pytorch/06-01-gans" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-gru-networks' title="Unitats Recurrents Gated (GRUs)">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Xarxes Generatives Adversàries (GANs)</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-02-reinforcement-learning' title="Aprenentatge per Reforç amb PyTorch">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Les Xarxes Generatives Adversàries (GANs) són un tipus de model d'aprenentatge automàtic que consisteix en dues xarxes neuronals que competeixen entre si: una xarxa generadora i una xarxa discriminadora. Aquestes xarxes s'entrenen conjuntament en un procés adversarial, on la xarxa generadora intenta crear dades falses que semblin reals, mentre que la xarxa discriminadora intenta distingir entre dades reals i falses.</p>
+</div><h1>Objectius d'Aprenentatge</h1>
+<div class='content'><ul>
+<li>Comprendre la teoria darrere de les GANs.</li>
+<li>Aprendre a construir i entrenar una GAN bàsica amb PyTorch.</li>
+<li>Explorar aplicacions pràctiques de les GANs.</li>
+</ul>
+</div><h1>Contingut</h1>
+<div class='content'></div><h2>1. Teoria de les GANs</h2>
+<div class='content'><h4>1.1. Components de les GANs</h4>
+<ul>
+<li><strong>Generador (G)</strong>: Crea dades falses a partir d'un soroll aleatori.</li>
+<li><strong>Discriminador (D)</strong>: Avalua si les dades són reals o falses.</li>
+</ul>
+<h4>1.2. Procés d'Entrenament</h4>
+<ul>
+<li><strong>Objectiu del Generador</strong>: Enganyar el discriminador perquè classifiqui les dades generades com a reals.</li>
+<li><strong>Objectiu del Discriminador</strong>: Distingir correctament entre dades reals i generades.</li>
+</ul>
+<h4>1.3. Funció de Pèrdua</h4>
+<ul>
+<li><strong>Pèrdua del Discriminador</strong>:
+\[
+\mathcal{L}<em>D = -\mathbb{E}</em>{x \sim p_{\text{data}}(x)}[\log D(x)] - \mathbb{E}_{z \sim p_z(z)}[\log (1 - D(G(z)))]
+\]</li>
+<li><strong>Pèrdua del Generador</strong>:
+\[
+\mathcal{L}<em>G = -\mathbb{E}</em>{z \sim p_z(z)}[\log D(G(z))]
+\]</li>
+</ul>
+</div><h2>2. Construcció d'una GAN amb PyTorch</h2>
+<div class='content'><h4>2.1. Importació de Llibreries Necessàries</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaC5ubiBhcyBubgppbXBvcnQgdG9yY2gub3B0aW0gYXMgb3B0aW0KaW1wb3J0IHRvcmNodmlzaW9uLmRhdGFzZXRzIGFzIGRzZXRzCmltcG9ydCB0b3JjaHZpc2lvbi50cmFuc2Zvcm1zIGFzIHRyYW5zZm9ybXMKZnJvbSB0b3JjaC51dGlscy5kYXRhIGltcG9ydCBEYXRhTG9hZGVy"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torch.nn as nn
+import torch.optim as optim
+import torchvision.datasets as dsets
+import torchvision.transforms as transforms
+from torch.utils.data import DataLoader</pre></div><div class='content'><h4>2.2. Definició del Generador</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgR2VuZXJhZG9yKG5uLk1vZHVsZSk6CiAgICBkZWYgX19pbml0X18oc2VsZiwgaW5wdXRfc2l6ZSwgaGlkZGVuX3NpemUsIG91dHB1dF9zaXplKToKICAgICAgICBzdXBlcihHZW5lcmFkb3IsIHNlbGYpLl9faW5pdF9fKCkKICAgICAgICBzZWxmLm1haW4gPSBubi5TZXF1ZW50aWFsKAogICAgICAgICAgICBubi5MaW5lYXIoaW5wdXRfc2l6ZSwgaGlkZGVuX3NpemUpLAogICAgICAgICAgICBubi5SZUxVKFRydWUpLAogICAgICAgICAgICBubi5MaW5lYXIoaGlkZGVuX3NpemUsIGhpZGRlbl9zaXplKSwKICAgICAgICAgICAgbm4uUmVMVShUcnVlKSwKICAgICAgICAgICAgbm4uTGluZWFyKGhpZGRlbl9zaXplLCBvdXRwdXRfc2l6ZSksCiAgICAgICAgICAgIG5uLlRhbmgoKQogICAgICAgICkKCiAgICBkZWYgZm9yd2FyZChzZWxmLCB4KToKICAgICAgICByZXR1cm4gc2VsZi5tYWluKHgp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class Generador(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(Generador, self).__init__()
+        self.main = nn.Sequential(
+            nn.Linear(input_size, hidden_size),
+            nn.ReLU(True),
+            nn.Linear(hidden_size, hidden_size),
+            nn.ReLU(True),
+            nn.Linear(hidden_size, output_size),
+            nn.Tanh()
+        )
+
+    def forward(self, x):
+        return self.main(x)</pre></div><div class='content'><h4>2.3. Definició del Discriminador</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgRGlzY3JpbWluYWRvcihubi5Nb2R1bGUpOgogICAgZGVmIF9faW5pdF9fKHNlbGYsIGlucHV0X3NpemUsIGhpZGRlbl9zaXplLCBvdXRwdXRfc2l6ZSk6CiAgICAgICAgc3VwZXIoRGlzY3JpbWluYWRvciwgc2VsZikuX19pbml0X18oKQogICAgICAgIHNlbGYubWFpbiA9IG5uLlNlcXVlbnRpYWwoCiAgICAgICAgICAgIG5uLkxpbmVhcihpbnB1dF9zaXplLCBoaWRkZW5fc2l6ZSksCiAgICAgICAgICAgIG5uLlJlTFUoVHJ1ZSksCiAgICAgICAgICAgIG5uLkxpbmVhcihoaWRkZW5fc2l6ZSwgaGlkZGVuX3NpemUpLAogICAgICAgICAgICBubi5SZUxVKFRydWUpLAogICAgICAgICAgICBubi5MaW5lYXIoaGlkZGVuX3NpemUsIG91dHB1dF9zaXplKSwKICAgICAgICAgICAgbm4uU2lnbW9pZCgpCiAgICAgICAgKQoKICAgIGRlZiBmb3J3YXJkKHNlbGYsIHgpOgogICAgICAgIHJldHVybiBzZWxmLm1haW4oeCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class Discriminador(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(Discriminador, self).__init__()
+        self.main = nn.Sequential(
+            nn.Linear(input_size, hidden_size),
+            nn.ReLU(True),
+            nn.Linear(hidden_size, hidden_size),
+            nn.ReLU(True),
+            nn.Linear(hidden_size, output_size),
+            nn.Sigmoid()
+        )
+
+    def forward(self, x):
+        return self.main(x)</pre></div><div class='content'><h4>2.4. Inicialització de Models i Optimitzadors</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW5wdXRfc2l6ZSA9IDEwMApoaWRkZW5fc2l6ZSA9IDI1NgpvdXRwdXRfc2l6ZSA9IDc4NCAgIyBQZXIgYSBpbWF0Z2VzIGRlIDI4eDI4CgpHID0gR2VuZXJhZG9yKGlucHV0X3NpemUsIGhpZGRlbl9zaXplLCBvdXRwdXRfc2l6ZSkKRCA9IERpc2NyaW1pbmFkb3Iob3V0cHV0X3NpemUsIGhpZGRlbl9zaXplLCAxKQoKY3JpdGVyaW9uID0gbm4uQkNFTG9zcygpCm9wdGltaXplckQgPSBvcHRpbS5BZGFtKEQucGFyYW1ldGVycygpLCBscj0wLjAwMDIpCm9wdGltaXplckcgPSBvcHRpbS5BZGFtKEcucGFyYW1ldGVycygpLCBscj0wLjAwMDIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>input_size = 100
+hidden_size = 256
+output_size = 784  # Per a imatges de 28x28
+
+G = Generador(input_size, hidden_size, output_size)
+D = Discriminador(output_size, hidden_size, 1)
+
+criterion = nn.BCELoss()
+optimizerD = optim.Adam(D.parameters(), lr=0.0002)
+optimizerG = optim.Adam(G.parameters(), lr=0.0002)</pre></div><div class='content'><h4>2.5. Entrenament de la GAN</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnVtX2Vwb2NocyA9IDEwMApiYXRjaF9zaXplID0gMTAwCnRyYW5zZm9ybSA9IHRyYW5zZm9ybXMuQ29tcG9zZShbCiAgICB0cmFuc2Zvcm1zLlRvVGVuc29yKCksCiAgICB0cmFuc2Zvcm1zLk5vcm1hbGl6ZShtZWFuPSgwLjUsKSwgc3RkPSgwLjUsKSkKXSkKCm1uaXN0ID0gZHNldHMuTU5JU1Qocm9vdD0nLi9kYXRhJywgdHJhaW49VHJ1ZSwgdHJhbnNmb3JtPXRyYW5zZm9ybSwgZG93bmxvYWQ9VHJ1ZSkKZGF0YV9sb2FkZXIgPSBEYXRhTG9hZGVyKGRhdGFzZXQ9bW5pc3QsIGJhdGNoX3NpemU9YmF0Y2hfc2l6ZSwgc2h1ZmZsZT1UcnVlKQoKZm9yIGVwb2NoIGluIHJhbmdlKG51bV9lcG9jaHMpOgogICAgZm9yIGksIChpbWFnZXMsIF8pIGluIGVudW1lcmF0ZShkYXRhX2xvYWRlcik6CiAgICAgICAgIyBFbnRyZW5hbWVudCBkZWwgRGlzY3JpbWluYWRvcgogICAgICAgIEQuemVyb19ncmFkKCkKICAgICAgICByZWFsX2ltYWdlcyA9IGltYWdlcy52aWV3KC0xLCAyOCoyOCkKICAgICAgICByZWFsX2xhYmVscyA9IHRvcmNoLm9uZXMoYmF0Y2hfc2l6ZSwgMSkKICAgICAgICBmYWtlX2xhYmVscyA9IHRvcmNoLnplcm9zKGJhdGNoX3NpemUsIDEpCgogICAgICAgIG91dHB1dHMgPSBEKHJlYWxfaW1hZ2VzKQogICAgICAgIGRfbG9zc19yZWFsID0gY3JpdGVyaW9uKG91dHB1dHMsIHJlYWxfbGFiZWxzKQogICAgICAgIGRfbG9zc19yZWFsLmJhY2t3YXJkKCkKCiAgICAgICAgeiA9IHRvcmNoLnJhbmRuKGJhdGNoX3NpemUsIGlucHV0X3NpemUpCiAgICAgICAgZmFrZV9pbWFnZXMgPSBHKHopCiAgICAgICAgb3V0cHV0cyA9IEQoZmFrZV9pbWFnZXMuZGV0YWNoKCkpCiAgICAgICAgZF9sb3NzX2Zha2UgPSBjcml0ZXJpb24ob3V0cHV0cywgZmFrZV9sYWJlbHMpCiAgICAgICAgZF9sb3NzX2Zha2UuYmFja3dhcmQoKQogICAgICAgIG9wdGltaXplckQuc3RlcCgpCgogICAgICAgICMgRW50cmVuYW1lbnQgZGVsIEdlbmVyYWRvcgogICAgICAgIEcuemVyb19ncmFkKCkKICAgICAgICBvdXRwdXRzID0gRChmYWtlX2ltYWdlcykKICAgICAgICBnX2xvc3MgPSBjcml0ZXJpb24ob3V0cHV0cywgcmVhbF9sYWJlbHMpCiAgICAgICAgZ19sb3NzLmJhY2t3YXJkKCkKICAgICAgICBvcHRpbWl6ZXJHLnN0ZXAoKQoKICAgICAgICBpZiAoaSsxKSAlIDIwMCA9PSAwOgogICAgICAgICAgICBwcmludChmJ0Vwb2NoIFt7ZXBvY2grMX0ve251bV9lcG9jaHN9XSwgU3RlcCBbe2krMX0ve2xlbihkYXRhX2xvYWRlcil9XSwgZF9sb3NzOiB7ZF9sb3NzX3JlYWwuaXRlbSgpK2RfbG9zc19mYWtlLml0ZW0oKTouNGZ9LCBnX2xvc3M6IHtnX2xvc3MuaXRlbSgpOi40Zn0nKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>num_epochs = 100
+batch_size = 100
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize(mean=(0.5,), std=(0.5,))
+])
+
+mnist = dsets.MNIST(root='./data', train=True, transform=transform, download=True)
+data_loader = DataLoader(dataset=mnist, batch_size=batch_size, shuffle=True)
+
+for epoch in range(num_epochs):
+    for i, (images, _) in enumerate(data_loader):
+        # Entrenament del Discriminador
+        D.zero_grad()
+        real_images = images.view(-1, 28*28)
+        real_labels = torch.ones(batch_size, 1)
+        fake_labels = torch.zeros(batch_size, 1)
+
+        outputs = D(real_images)
+        d_loss_real = criterion(outputs, real_labels)
+        d_loss_real.backward()
+
+        z = torch.randn(batch_size, input_size)
+        fake_images = G(z)
+        outputs = D(fake_images.detach())
+        d_loss_fake = criterion(outputs, fake_labels)
+        d_loss_fake.backward()
+        optimizerD.step()
+
+        # Entrenament del Generador
+        G.zero_grad()
+        outputs = D(fake_images)
+        g_loss = criterion(outputs, real_labels)
+        g_loss.backward()
+        optimizerG.step()
+
+        if (i+1) % 200 == 0:
+            print(f'Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{len(data_loader)}], d_loss: {d_loss_real.item()+d_loss_fake.item():.4f}, g_loss: {g_loss.item():.4f}')</pre></div><div class='content'></div><h2>3. Aplicacions Pràctiques de les GANs</h2>
+<div class='content'><ul>
+<li><strong>Generació d'Imatges</strong>: Crear imatges realistes a partir de soroll aleatori.</li>
+<li><strong>Augmentació de Dades</strong>: Generar dades sintètiques per millorar l'entrenament de models.</li>
+<li><strong>Superresolució d'Imatges</strong>: Millorar la resolució d'imatges de baixa qualitat.</li>
+<li><strong>Traducció d'Imatges</strong>: Convertir imatges d'un domini a un altre (per exemple, de fotos a pintures).</li>
+</ul>
+</div><h2>4. Exercicis Pràctics</h2>
+<div class='content'><h4>Exercici 1: Modificar la Xarxa Generadora</h4>
+<ul>
+<li><strong>Objectiu</strong>: Afegir més capes al generador i observar com afecta la qualitat de les imatges generades.</li>
+<li><strong>Solució</strong>:</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgR2VuZXJhZG9yKG5uLk1vZHVsZSk6CiAgICBkZWYgX19pbml0X18oc2VsZiwgaW5wdXRfc2l6ZSwgaGlkZGVuX3NpemUsIG91dHB1dF9zaXplKToKICAgICAgICBzdXBlcihHZW5lcmFkb3IsIHNlbGYpLl9faW5pdF9fKCkKICAgICAgICBzZWxmLm1haW4gPSBubi5TZXF1ZW50aWFsKAogICAgICAgICAgICBubi5MaW5lYXIoaW5wdXRfc2l6ZSwgaGlkZGVuX3NpemUpLAogICAgICAgICAgICBubi5SZUxVKFRydWUpLAogICAgICAgICAgICBubi5MaW5lYXIoaGlkZGVuX3NpemUsIGhpZGRlbl9zaXplKSwKICAgICAgICAgICAgbm4uUmVMVShUcnVlKSwKICAgICAgICAgICAgbm4uTGluZWFyKGhpZGRlbl9zaXplLCBoaWRkZW5fc2l6ZSksCiAgICAgICAgICAgIG5uLlJlTFUoVHJ1ZSksCiAgICAgICAgICAgIG5uLkxpbmVhcihoaWRkZW5fc2l6ZSwgb3V0cHV0X3NpemUpLAogICAgICAgICAgICBubi5UYW5oKCkKICAgICAgICApCgogICAgZGVmIGZvcndhcmQoc2VsZiwgeCk6CiAgICAgICAgcmV0dXJuIHNlbGYubWFpbih4KQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class Generador(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(Generador, self).__init__()
+        self.main = nn.Sequential(
+            nn.Linear(input_size, hidden_size),
+            nn.ReLU(True),
+            nn.Linear(hidden_size, hidden_size),
+            nn.ReLU(True),
+            nn.Linear(hidden_size, hidden_size),
+            nn.ReLU(True),
+            nn.Linear(hidden_size, output_size),
+            nn.Tanh()
+        )
+
+    def forward(self, x):
+        return self.main(x)</pre></div><div class='content'><h4>Exercici 2: Utilitzar un Dataset Diferent</h4>
+<ul>
+<li><strong>Objectiu</strong>: Entrenar la GAN amb un dataset diferent, com CIFAR-10.</li>
+<li><strong>Solució</strong>:</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHJhbnNmb3JtID0gdHJhbnNmb3Jtcy5Db21wb3NlKFsKICAgIHRyYW5zZm9ybXMuUmVzaXplKDMyKSwKICAgIHRyYW5zZm9ybXMuVG9UZW5zb3IoKSwKICAgIHRyYW5zZm9ybXMuTm9ybWFsaXplKG1lYW49KDAuNSwgMC41LCAwLjUpLCBzdGQ9KDAuNSwgMC41LCAwLjUpKQpdKQoKY2lmYXIxMCA9IGRzZXRzLkNJRkFSMTAocm9vdD0nLi9kYXRhJywgdHJhaW49VHJ1ZSwgdHJhbnNmb3JtPXRyYW5zZm9ybSwgZG93bmxvYWQ9VHJ1ZSkKZGF0YV9sb2FkZXIgPSBEYXRhTG9hZGVyKGRhdGFzZXQ9Y2lmYXIxMCwgYmF0Y2hfc2l6ZT1iYXRjaF9zaXplLCBzaHVmZmxlPVRydWUp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>transform = transforms.Compose([
+    transforms.Resize(32),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))
+])
+
+cifar10 = dsets.CIFAR10(root='./data', train=True, transform=transform, download=True)
+data_loader = DataLoader(dataset=cifar10, batch_size=batch_size, shuffle=True)</pre></div><div class='content'></div><h2>5. Errors Comuns i Consells</h2>
+<div class='content'><ul>
+<li><strong>Mode Collapse</strong>: El generador produeix una varietat limitada de mostres. Solució: Ajustar els hiperparàmetres o utilitzar tècniques com el gradient penalty.</li>
+<li><strong>Entrenament Desbalancejat</strong>: El discriminador o el generador aprenen massa ràpidament. Solució: Ajustar les taxes d'aprenentatge o entrenar el discriminador més sovint.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Les GANs són una eina poderosa per a la generació de dades sintètiques i tenen aplicacions en una àmplia varietat de camps. Amb PyTorch, és possible construir i entrenar GANs de manera eficient, permetent als desenvolupadors explorar noves fronteres en l'aprenentatge automàtic.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-gru-networks' title="Unitats Recurrents Gated (GRUs)">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-02-reinforcement-learning' title="Aprenentatge per Reforç amb PyTorch">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

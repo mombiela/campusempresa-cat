@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitorització amb Spring Boot Actuator</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/springboot/09-02-monitoring-spring-boot-actuator" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/springboot/09-02-monitoring-spring-boot-actuator" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/springboot/09-02-monitoring-spring-boot-actuator" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/springboot/09-02-monitoring-spring-boot-actuator" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/springboot/09-02-monitoring-spring-boot-actuator" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-01-performance-tuning' title="Optimització del rendiment">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Monitorització amb Spring Boot Actuator</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-03-using-prometheus-grafana' title="Utilitzant Prometheus i Grafana">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Spring Boot Actuator és una eina poderosa que proporciona funcionalitats de monitorització i gestió per a les aplicacions Spring Boot. En aquesta secció, aprendrem com utilitzar Spring Boot Actuator per monitoritzar la nostra aplicació, veure mètriques, informació del sistema i molt més.</p>
+</div><h1>1. Introducció a Spring Boot Actuator</h1>
+<div class='content'><p>Spring Boot Actuator ofereix una sèrie de punts finals (endpoints) que ens permeten accedir a informació sobre l'estat de l'aplicació, mètriques, informació del sistema, etc. Alguns dels punts finals més comuns són:</p>
+<ul>
+<li><code>/actuator/health</code>: Proporciona informació sobre l'estat de l'aplicació.</li>
+<li><code>/actuator/metrics</code>: Mostra mètriques detallades de l'aplicació.</li>
+<li><code>/actuator/info</code>: Proporciona informació personalitzada sobre l'aplicació.</li>
+</ul>
+</div><h1>2. Configuració de Spring Boot Actuator</h1>
+<div class='content'></div><h2>2.1. Afegint la dependència</h2>
+<div class='content'><p>Per començar a utilitzar Spring Boot Actuator, primer hem d'afegir la dependència al nostre projecte. Si estem utilitzant Maven, afegirem el següent al nostre <code>pom.xml</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PGRlcGVuZGVuY3k+CiAgICA8Z3JvdXBJZD5vcmcuc3ByaW5nZnJhbWV3b3JrLmJvb3Q8L2dyb3VwSWQ+CiAgICA8YXJ0aWZhY3RJZD5zcHJpbmctYm9vdC1zdGFydGVyLWFjdHVhdG9yPC9hcnRpZmFjdElkPgo8L2RlcGVuZGVuY3k+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+&lt;/dependency&gt;</pre></div><div class='content'><p>Si estem utilitzant Gradle, afegirem el següent al nostre <code>build.gradle</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wbGVtZW50YXRpb24gJ29yZy5zcHJpbmdmcmFtZXdvcmsuYm9vdDpzcHJpbmctYm9vdC1zdGFydGVyLWFjdHVhdG9yJw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>implementation 'org.springframework.boot:spring-boot-starter-actuator'</pre></div><div class='content'></div><h2>2.2. Configurant els punts finals</h2>
+<div class='content'><p>Per defecte, alguns punts finals d'Actuator estan deshabilitats o restringits. Podem configurar quins punts finals volem habilitar al fitxer <code>application.properties</code> o <code>application.yml</code>.</p>
+<p>Exemple en <code>application.properties</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bWFuYWdlbWVudC5lbmRwb2ludHMud2ViLmV4cG9zdXJlLmluY2x1ZGU9Kg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>management.endpoints.web.exposure.include=*</pre></div><div class='content'><p>Exemple en <code>application.yml</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bWFuYWdlbWVudDoKICBlbmRwb2ludHM6CiAgICB3ZWI6CiAgICAgIGV4cG9zdXJlOgogICAgICAgIGluY2x1ZGU6ICIqIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>management:
+  endpoints:
+    web:
+      exposure:
+        include: &quot;*&quot;</pre></div><div class='content'><p>Aquesta configuració habilita tots els punts finals d'Actuator.</p>
+</div><h1>3. Explorant els punts finals d'Actuator</h1>
+<div class='content'></div><h2>3.1. Punt final de salut (`/actuator/health`)</h2>
+<div class='content'><p>Aquest punt final proporciona informació sobre l'estat de l'aplicació. Per exemple, podem accedir a <code>http://localhost:8080/actuator/health</code> i veure una resposta com aquesta:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJzdGF0dXMiOiAiVVAiCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;status&quot;: &quot;UP&quot;
+}</pre></div><div class='content'><p>Podem personalitzar la informació de salut afegint components de salut personalitzats.</p>
+</div><h2>3.2. Punt final de mètriques (`/actuator/metrics`)</h2>
+<div class='content'><p>Aquest punt final mostra mètriques detallades de l'aplicació. Per exemple, podem accedir a <code>http://localhost:8080/actuator/metrics</code> i veure una llista de totes les mètriques disponibles.</p>
+<p>Podem obtenir detalls d'una mètrica específica accedint a <code>http://localhost:8080/actuator/metrics/{nom_de_la_mètrica}</code>. Per exemple, <code>http://localhost:8080/actuator/metrics/jvm.memory.used</code> mostrarà informació sobre la memòria utilitzada per la JVM.</p>
+</div><h2>3.3. Punt final d'informació (`/actuator/info`)</h2>
+<div class='content'><p>Aquest punt final proporciona informació personalitzada sobre l'aplicació. Podem afegir informació personalitzada al fitxer <code>application.properties</code> o <code>application.yml</code>.</p>
+<p>Exemple en <code>application.properties</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW5mby5hcHAubmFtZT1NeSBTcHJpbmcgQm9vdCBBcHBsaWNhdGlvbgppbmZvLmFwcC52ZXJzaW9uPTEuMC4wCmluZm8uYXBwLmRlc2NyaXB0aW9uPVRoaXMgaXMgYSBzYW1wbGUgU3ByaW5nIEJvb3QgYXBwbGljYXRpb24u"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>info.app.name=My Spring Boot Application
+info.app.version=1.0.0
+info.app.description=This is a sample Spring Boot application.</pre></div><div class='content'><p>Exemple en <code>application.yml</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW5mbzoKICBhcHA6CiAgICBuYW1lOiBNeSBTcHJpbmcgQm9vdCBBcHBsaWNhdGlvbgogICAgdmVyc2lvbjogMS4wLjAKICAgIGRlc2NyaXB0aW9uOiBUaGlzIGlzIGEgc2FtcGxlIFNwcmluZyBCb290IGFwcGxpY2F0aW9uLg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>info:
+  app:
+    name: My Spring Boot Application
+    version: 1.0.0
+    description: This is a sample Spring Boot application.</pre></div><div class='content'><p>Accedint a <code>http://localhost:8080/actuator/info</code>, veurem la informació personalitzada:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJhcHAiOiB7CiAgICAibmFtZSI6ICJNeSBTcHJpbmcgQm9vdCBBcHBsaWNhdGlvbiIsCiAgICAidmVyc2lvbiI6ICIxLjAuMCIsCiAgICAiZGVzY3JpcHRpb24iOiAiVGhpcyBpcyBhIHNhbXBsZSBTcHJpbmcgQm9vdCBhcHBsaWNhdGlvbi4iCiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;app&quot;: {
+    &quot;name&quot;: &quot;My Spring Boot Application&quot;,
+    &quot;version&quot;: &quot;1.0.0&quot;,
+    &quot;description&quot;: &quot;This is a sample Spring Boot application.&quot;
+  }
+}</pre></div><div class='content'></div><h1>4. Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Configurar i explorar Actuator</h2>
+<div class='content'><ol>
+<li>Afegiu la dependència de Spring Boot Actuator al vostre projecte.</li>
+<li>Configureu els punts finals d'Actuator per estar disponibles.</li>
+<li>Accediu als punts finals <code>/actuator/health</code>, <code>/actuator/metrics</code> i <code>/actuator/info</code> i observeu la informació proporcionada.</li>
+</ol>
+</div><h2>Exercici 2: Personalitzar la informació de salut</h2>
+<div class='content'><ol>
+<li>Creeu un component de salut personalitzat que comprovi l'estat d'una base de dades fictícia.</li>
+<li>Afegiu el component de salut personalitzat a la configuració de salut d'Actuator.</li>
+<li>Accediu al punt final <code>/actuator/health</code> i verifiqueu que la informació de salut inclou l'estat de la base de dades fictícia.</li>
+</ol>
+</div><h2>Solucions</h2>
+<div class='content'><h4>Solució a l'Exercici 1</h4>
+<ol>
+<li>
+<p>Afegiu la dependència al <code>pom.xml</code>:</p>
+<pre><code class="language-xml">&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+&lt;/dependency&gt;
+</code></pre>
+</li>
+<li>
+<p>Configureu els punts finals a <code>application.properties</code>:</p>
+<pre><code class="language-properties">management.endpoints.web.exposure.include=*
+</code></pre>
+</li>
+<li>
+<p>Accediu als punts finals:</p>
+<ul>
+<li><code>http://localhost:8080/actuator/health</code></li>
+<li><code>http://localhost:8080/actuator/metrics</code></li>
+<li><code>http://localhost:8080/actuator/info</code></li>
+</ul>
+</li>
+</ol>
+<h4>Solució a l'Exercici 2</h4>
+<ol>
+<li>
+<p>Creeu un component de salut personalitzat:</p>
+<pre><code class="language-java">import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.stereotype.Component;
+
+@Component
+public class DatabaseHealthIndicator implements HealthIndicator {
+
+    @Override
+    public Health health() {
+        // Simulació de la comprovació de l'estat de la base de dades
+        boolean databaseIsUp = checkDatabaseHealth();
+        if (databaseIsUp) {
+            return Health.up().withDetail(&quot;database&quot;, &quot;Available&quot;).build();
+        } else {
+            return Health.down().withDetail(&quot;database&quot;, &quot;Not Available&quot;).build();
+        }
+    }
+
+    private boolean checkDatabaseHealth() {
+        // Simulació de la lògica de comprovació de l'estat de la base de dades
+        return true; // Suposem que la base de dades està disponible
+    }
+}
+</code></pre>
+</li>
+<li>
+<p>Afegiu el component de salut personalitzat a la configuració de salut d'Actuator (ja està fet automàticament amb l'anotació <code>@Component</code>).</p>
+</li>
+<li>
+<p>Accediu al punt final <code>http://localhost:8080/actuator/health</code> i verifiqueu la informació de salut:</p>
+<pre><code class="language-json">{
+  &quot;status&quot;: &quot;UP&quot;,
+  &quot;components&quot;: {
+    &quot;database&quot;: {
+      &quot;status&quot;: &quot;UP&quot;,
+      &quot;details&quot;: {
+        &quot;database&quot;: &quot;Available&quot;
+      }
+    }
+  }
+}
+</code></pre>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com utilitzar Spring Boot Actuator per monitoritzar la nostra aplicació. Hem vist com configurar Actuator, explorar els punts finals disponibles i personalitzar la informació de salut. Amb aquestes eines, podem obtenir una visió detallada de l'estat i el rendiment de la nostra aplicació, la qual cosa ens ajuda a mantenir-la en bon estat i a detectar problemes de manera proactiva.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-01-performance-tuning' title="Optimització del rendiment">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-03-using-prometheus-grafana' title="Utilitzant Prometheus i Grafana">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

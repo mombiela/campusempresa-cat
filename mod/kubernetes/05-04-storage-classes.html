@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classes d'Emmagatzematge</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kubernetes/05-04-storage-classes" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kubernetes/05-04-storage-classes" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kubernetes/05-04-storage-classes" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kubernetes/05-04-storage-classes" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kubernetes/05-04-storage-classes" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-03-persistent-volume-claims' title="Reclamacions de Volums Persistents">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Classes d'Emmagatzematge</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-01-statefulsets' title="StatefulSets">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Les classes d'emmagatzematge (Storage Classes) en Kubernetes proporcionen una manera de definir diferents nivells d'emmagatzematge que es poden utilitzar dins d'un clúster. Aquestes classes permeten als administradors definir polítiques d'emmagatzematge que poden ser utilitzades pels usuaris per sol·licitar emmagatzematge persistent amb característiques específiques.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>StorageClass</strong>: Un objecte de Kubernetes que defineix una classe d'emmagatzematge amb paràmetres específics.</li>
+<li><strong>Provisioner</strong>: El component que crea els volums persistents (PVs) basats en la StorageClass.</li>
+<li><strong>Parameters</strong>: Paràmetres específics per al provisioner que defineixen les característiques del volum.</li>
+<li><strong>Reclaim Policy</strong>: Política que defineix què passa amb el volum persistent quan es suprimeix la PersistentVolumeClaim (PVC).</li>
+</ul>
+</div><h1>Creació d'una StorageClass</h1>
+<div class='content'></div><h2>Exemple de YAML per a una StorageClass</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogc3RvcmFnZS5rOHMuaW8vdjEKa2luZDogU3RvcmFnZUNsYXNzCm1ldGFkYXRhOgogIG5hbWU6IGZhc3QKcHJvdmlzaW9uZXI6IGt1YmVybmV0ZXMuaW8vYXdzLWVicwpwYXJhbWV0ZXJzOgogIHR5cGU6IGdwMgogIHpvbmVzOiAidXMtd2VzdC0xYSwgdXMtd2VzdC0xYiIKcmVjbGFpbVBvbGljeTogUmV0YWlu"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: fast
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+  zones: &quot;us-west-1a, us-west-1b&quot;
+reclaimPolicy: Retain</pre></div><div class='content'></div><h2>Explicació del YAML</h2>
+<div class='content'><ul>
+<li><strong>apiVersion</strong>: La versió de l'API de Kubernetes.</li>
+<li><strong>kind</strong>: El tipus de recurs, en aquest cas, StorageClass.</li>
+<li><strong>metadata</strong>: Informació sobre la StorageClass, com ara el nom.</li>
+<li><strong>provisioner</strong>: El provisioner que s'utilitzarà per crear els volums. En aquest exemple, s'utilitza <code>kubernetes.io/aws-ebs</code> per a Amazon EBS.</li>
+<li><strong>parameters</strong>: Paràmetres específics per al provisioner. En aquest cas, <code>type</code> defineix el tipus de disc EBS (gp2) i <code>zones</code> especifica les zones de disponibilitat.</li>
+<li><strong>reclaimPolicy</strong>: Defineix què passa amb el volum quan es suprimeix la PVC. Les opcions són <code>Retain</code>, <code>Delete</code> i <code>Recycle</code>.</li>
+</ul>
+</div><h1>Utilització d'una StorageClass</h1>
+<div class='content'></div><h2>Creació d'una PersistentVolumeClaim (PVC) amb una StorageClass</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUGVyc2lzdGVudFZvbHVtZUNsYWltCm1ldGFkYXRhOgogIG5hbWU6IG15LWZhc3QtcHZjCnNwZWM6CiAgYWNjZXNzTW9kZXM6CiAgICAtIFJlYWRXcml0ZU9uY2UKICByZXNvdXJjZXM6CiAgICByZXF1ZXN0czoKICAgICAgc3RvcmFnZTogMTBHaQogIHN0b3JhZ2VDbGFzc05hbWU6IGZhc3Q="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-fast-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: fast</pre></div><div class='content'></div><h2>Explicació del YAML</h2>
+<div class='content'><ul>
+<li><strong>apiVersion</strong>: La versió de l'API de Kubernetes.</li>
+<li><strong>kind</strong>: El tipus de recurs, en aquest cas, PersistentVolumeClaim.</li>
+<li><strong>metadata</strong>: Informació sobre la PVC, com ara el nom.</li>
+<li><strong>spec</strong>: L'especificació de la PVC.
+<ul>
+<li><strong>accessModes</strong>: Defineix els modes d'accés al volum. <code>ReadWriteOnce</code> permet que el volum sigui muntat en mode lectura-escriptura per un únic node.</li>
+<li><strong>resources</strong>: Defineix els recursos sol·licitats, en aquest cas, 10Gi de capacitat d'emmagatzematge.</li>
+<li><strong>storageClassName</strong>: El nom de la StorageClass que s'utilitzarà per crear el volum.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear una StorageClass i una PVC</h2>
+<div class='content'><ol>
+<li><strong>Crea una StorageClass anomenada <code>standard</code> amb el provisioner <code>kubernetes.io/gce-pd</code> i el tipus <code>pd-standard</code>.</strong></li>
+<li><strong>Crea una PVC anomenada <code>my-standard-pvc</code> que utilitzi la StorageClass <code>standard</code> i sol·liciti 5Gi d'emmagatzematge.</strong></li>
+</ol>
+<h4>Solució</h4>
+<p><strong>StorageClass YAML:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogc3RvcmFnZS5rOHMuaW8vdjEKa2luZDogU3RvcmFnZUNsYXNzCm1ldGFkYXRhOgogIG5hbWU6IHN0YW5kYXJkCnByb3Zpc2lvbmVyOiBrdWJlcm5ldGVzLmlvL2djZS1wZApwYXJhbWV0ZXJzOgogIHR5cGU6IHBkLXN0YW5kYXJkCnJlY2xhaW1Qb2xpY3k6IFJldGFpbg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: standard
+provisioner: kubernetes.io/gce-pd
+parameters:
+  type: pd-standard
+reclaimPolicy: Retain</pre></div><div class='content'><p><strong>PersistentVolumeClaim YAML:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUGVyc2lzdGVudFZvbHVtZUNsYWltCm1ldGFkYXRhOgogIG5hbWU6IG15LXN0YW5kYXJkLXB2YwpzcGVjOgogIGFjY2Vzc01vZGVzOgogICAgLSBSZWFkV3JpdGVPbmNlCiAgcmVzb3VyY2VzOgogICAgcmVxdWVzdHM6CiAgICAgIHN0b3JhZ2U6IDVHaQogIHN0b3JhZ2VDbGFzc05hbWU6IHN0YW5kYXJk"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-standard-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: standard</pre></div><div class='content'></div><h2>Exercici 2: Modificar la Reclaim Policy</h2>
+<div class='content'><ol>
+<li><strong>Modifica la StorageClass <code>standard</code> per utilitzar la política de reclamació <code>Delete</code>.</strong></li>
+<li><strong>Crea una nova PVC anomenada <code>my-deletable-pvc</code> que utilitzi la StorageClass <code>standard</code> i sol·liciti 2Gi d'emmagatzematge.</strong></li>
+</ol>
+<h4>Solució</h4>
+<p><strong>StorageClass YAML:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogc3RvcmFnZS5rOHMuaW8vdjEKa2luZDogU3RvcmFnZUNsYXNzCm1ldGFkYXRhOgogIG5hbWU6IHN0YW5kYXJkCnByb3Zpc2lvbmVyOiBrdWJlcm5ldGVzLmlvL2djZS1wZApwYXJhbWV0ZXJzOgogIHR5cGU6IHBkLXN0YW5kYXJkCnJlY2xhaW1Qb2xpY3k6IERlbGV0ZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: standard
+provisioner: kubernetes.io/gce-pd
+parameters:
+  type: pd-standard
+reclaimPolicy: Delete</pre></div><div class='content'><p><strong>PersistentVolumeClaim YAML:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUGVyc2lzdGVudFZvbHVtZUNsYWltCm1ldGFkYXRhOgogIG5hbWU6IG15LWRlbGV0YWJsZS1wdmMKc3BlYzoKICBhY2Nlc3NNb2RlczoKICAgIC0gUmVhZFdyaXRlT25jZQogIHJlc291cmNlczoKICAgIHJlcXVlc3RzOgogICAgICBzdG9yYWdlOiAyR2kKICBzdG9yYWdlQ2xhc3NOYW1lOiBzdGFuZGFyZA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-deletable-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: standard</pre></div><div class='content'></div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ul>
+<li><strong>Error: &quot;no persistent volumes available for this claim and no storage class is set&quot;</strong>: Assegura't que la PVC especifica una StorageClass existent.</li>
+<li><strong>Error: &quot;invalid reclaim policy&quot;</strong>: La política de reclamació ha de ser <code>Retain</code>, <code>Delete</code> o <code>Recycle</code>.</li>
+<li><strong>Consell</strong>: Utilitza noms descriptius per a les StorageClasses per facilitar la seva identificació i ús.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Les classes d'emmagatzematge en Kubernetes permeten una gestió flexible i eficient dels recursos d'emmagatzematge dins d'un clúster. Amb l'ús de StorageClasses, els administradors poden definir diferents nivells d'emmagatzematge i els usuaris poden sol·licitar emmagatzematge amb característiques específiques de manera senzilla. En el proper mòdul, explorarem els StatefulSets, que permeten gestionar aplicacions amb estat de manera eficient en Kubernetes.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-03-persistent-volume-claims' title="Reclamacions de Volums Persistents">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-01-statefulsets' title="StatefulSets">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

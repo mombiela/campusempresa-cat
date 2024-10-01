@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurant una Pipeline de CD</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/jenkins/07-03-setting-up-a-cd-pipeline" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/jenkins/07-03-setting-up-a-cd-pipeline" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/jenkins/07-03-setting-up-a-cd-pipeline" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/jenkins/07-03-setting-up-a-cd-pipeline" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/jenkins/07-03-setting-up-a-cd-pipeline" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-02-setting-up-a-ci-pipeline' title="Configurant una Pipeline de CI">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Configurant una Pipeline de CD</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-04-automating-deployments' title="Automatitzant Desplegaments">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a configurar una pipeline de lliurament continu (CD) amb Jenkins. El lliurament continu és una pràctica de desenvolupament de programari on els canvis de codi es construeixen, es proven i es despleguen automàticament a un entorn de producció. Això permet als equips de desenvolupament lliurar programari de manera més ràpida i fiable.</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ul>
+<li>Entendre els conceptes bàsics del lliurament continu.</li>
+<li>Configurar una pipeline de CD a Jenkins.</li>
+<li>Integrar la pipeline amb eines de desplegament.</li>
+<li>Automatitzar el procés de desplegament.</li>
+</ul>
+</div><h1>Conceptes Bàsics del Lliurament Continu</h1>
+<div class='content'><p>Abans de començar amb la configuració, és important entendre alguns conceptes clau:</p>
+<ul>
+<li><strong>Lliurament Continu (CD)</strong>: És la pràctica de mantenir el codi en un estat que es pot desplegar en qualsevol moment. Això implica que el codi es construeix, es prova i es desplega automàticament.</li>
+<li><strong>Pipeline de CD</strong>: És una seqüència d'etapes que automatitzen el procés de desplegament del codi a un entorn de producció.</li>
+</ul>
+</div><h1>Configurant una Pipeline de CD a Jenkins</h1>
+<div class='content'></div><h2>Pas 1: Crear una Nova Pipeline</h2>
+<div class='content'><ol>
+<li><strong>Accedeix al Tauler de Jenkins</strong>: Inicia sessió al teu servidor Jenkins.</li>
+<li><strong>Crea una Nova Feina</strong>: Fes clic a &quot;New Item&quot; (Nou Element) i selecciona &quot;Pipeline&quot;. Dona-li un nom a la teva pipeline, per exemple, <code>CD-Pipeline</code>.</li>
+</ol>
+</div><h2>Pas 2: Definir la Pipeline</h2>
+<div class='content'><p>A la configuració de la pipeline, defineix les etapes necessàries per al desplegament continu. Utilitzarem una pipeline declarativa per a aquest exemple.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwZWxpbmUgewogICAgYWdlbnQgYW55CgogICAgc3RhZ2VzIHsKICAgICAgICBzdGFnZSgnQnVpbGQnKSB7CiAgICAgICAgICAgIHN0ZXBzIHsKICAgICAgICAgICAgICAgIGVjaG8gJ0J1aWxkaW5nLi4uJwogICAgICAgICAgICAgICAgLy8gQWZlZ2VpeCBhcXXDrSBlbHMgcGFzc29zIHBlciBjb25zdHJ1aXIgZWwgdGV1IHByb2plY3RlCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICAgICAgc3RhZ2UoJ1Rlc3QnKSB7CiAgICAgICAgICAgIHN0ZXBzIHsKICAgICAgICAgICAgICAgIGVjaG8gJ1Rlc3RpbmcuLi4nCiAgICAgICAgICAgICAgICAvLyBBZmVnZWl4IGFxdcOtIGVscyBwYXNzb3MgcGVyIHByb3ZhciBlbCB0ZXUgcHJvamVjdGUKICAgICAgICAgICAgfQogICAgICAgIH0KICAgICAgICBzdGFnZSgnRGVwbG95JykgewogICAgICAgICAgICBzdGVwcyB7CiAgICAgICAgICAgICAgICBlY2hvICdEZXBsb3lpbmcuLi4nCiAgICAgICAgICAgICAgICAvLyBBZmVnZWl4IGFxdcOtIGVscyBwYXNzb3MgcGVyIGRlc3BsZWdhciBlbCB0ZXUgcHJvamVjdGUKICAgICAgICAgICAgfQogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                // Afegeix aqu&iacute; els passos per construir el teu projecte
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                // Afegeix aqu&iacute; els passos per provar el teu projecte
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+                // Afegeix aqu&iacute; els passos per desplegar el teu projecte
+            }
+        }
+    }
+}</pre></div><div class='content'></div><h2>Pas 3: Integrar amb Eines de Desplegament</h2>
+<div class='content'><p>Per desplegar el codi, necessitem integrar la pipeline amb eines de desplegament com Docker, Kubernetes, o serveis de núvol com AWS, Azure, etc.</p>
+<h4>Exemple: Desplegament amb Docker</h4>
+<p>Si utilitzes Docker per desplegar la teva aplicació, pots afegir els passos de desplegament a la secció <code>Deploy</code> de la pipeline.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwZWxpbmUgewogICAgYWdlbnQgYW55CgogICAgc3RhZ2VzIHsKICAgICAgICBzdGFnZSgnQnVpbGQnKSB7CiAgICAgICAgICAgIHN0ZXBzIHsKICAgICAgICAgICAgICAgIGVjaG8gJ0J1aWxkaW5nLi4uJwogICAgICAgICAgICAgICAgLy8gQWZlZ2VpeCBhcXXDrSBlbHMgcGFzc29zIHBlciBjb25zdHJ1aXIgZWwgdGV1IHByb2plY3RlCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICAgICAgc3RhZ2UoJ1Rlc3QnKSB7CiAgICAgICAgICAgIHN0ZXBzIHsKICAgICAgICAgICAgICAgIGVjaG8gJ1Rlc3RpbmcuLi4nCiAgICAgICAgICAgICAgICAvLyBBZmVnZWl4IGFxdcOtIGVscyBwYXNzb3MgcGVyIHByb3ZhciBlbCB0ZXUgcHJvamVjdGUKICAgICAgICAgICAgfQogICAgICAgIH0KICAgICAgICBzdGFnZSgnRGVwbG95JykgewogICAgICAgICAgICBzdGVwcyB7CiAgICAgICAgICAgICAgICBlY2hvICdEZXBsb3lpbmcuLi4nCiAgICAgICAgICAgICAgICBzY3JpcHQgewogICAgICAgICAgICAgICAgICAgIC8vIENvbnN0cnVpciBsYSBpbWF0Z2UgRG9ja2VyCiAgICAgICAgICAgICAgICAgICAgc2ggJ2RvY2tlciBidWlsZCAtdCBteWFwcDpsYXRlc3QgLicKICAgICAgICAgICAgICAgICAgICAvLyBQdWphciBsYSBpbWF0Z2UgYSB1biByZWdpc3RyZSBEb2NrZXIKICAgICAgICAgICAgICAgICAgICBzaCAnZG9ja2VyIHB1c2ggbXlhcHA6bGF0ZXN0JwogICAgICAgICAgICAgICAgICAgIC8vIERlc3BsZWdhciBsYSBpbWF0Z2UgYSB1biBlbnRvcm4gZGUgcHJvZHVjY2nDswogICAgICAgICAgICAgICAgICAgIHNoICdkb2NrZXIgcnVuIC1kIC1wIDgwOjgwIG15YXBwOmxhdGVzdCcKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pipeline {
+    agent any
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                // Afegeix aqu&iacute; els passos per construir el teu projecte
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                // Afegeix aqu&iacute; els passos per provar el teu projecte
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+                script {
+                    // Construir la imatge Docker
+                    sh 'docker build -t myapp:latest .'
+                    // Pujar la imatge a un registre Docker
+                    sh 'docker push myapp:latest'
+                    // Desplegar la imatge a un entorn de producci&oacute;
+                    sh 'docker run -d -p 80:80 myapp:latest'
+                }
+            }
+        }
+    }
+}</pre></div><div class='content'></div><h2>Pas 4: Automatitzar el Procés de Desplegament</h2>
+<div class='content'><p>Per assegurar que el desplegament es realitzi automàticament després de cada canvi de codi, pots configurar triggers a la pipeline. Per exemple, pots utilitzar un trigger basat en canvis a un repositori de control de versions com Git.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwZWxpbmUgewogICAgYWdlbnQgYW55CgogICAgdHJpZ2dlcnMgewogICAgICAgIC8vIFRyaWdnZXIgYmFzYXQgZW4gY2FudmlzIGEgR2l0CiAgICAgICAgcG9sbFNDTSgnSC81ICogKiAqIConKQogICAgfQoKICAgIHN0YWdlcyB7CiAgICAgICAgc3RhZ2UoJ0J1aWxkJykgewogICAgICAgICAgICBzdGVwcyB7CiAgICAgICAgICAgICAgICBlY2hvICdCdWlsZGluZy4uLicKICAgICAgICAgICAgICAgIC8vIEFmZWdlaXggYXF1w60gZWxzIHBhc3NvcyBwZXIgY29uc3RydWlyIGVsIHRldSBwcm9qZWN0ZQogICAgICAgICAgICB9CiAgICAgICAgfQogICAgICAgIHN0YWdlKCdUZXN0JykgewogICAgICAgICAgICBzdGVwcyB7CiAgICAgICAgICAgICAgICBlY2hvICdUZXN0aW5nLi4uJwogICAgICAgICAgICAgICAgLy8gQWZlZ2VpeCBhcXXDrSBlbHMgcGFzc29zIHBlciBwcm92YXIgZWwgdGV1IHByb2plY3RlCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICAgICAgc3RhZ2UoJ0RlcGxveScpIHsKICAgICAgICAgICAgc3RlcHMgewogICAgICAgICAgICAgICAgZWNobyAnRGVwbG95aW5nLi4uJwogICAgICAgICAgICAgICAgc2NyaXB0IHsKICAgICAgICAgICAgICAgICAgICAvLyBDb25zdHJ1aXIgbGEgaW1hdGdlIERvY2tlcgogICAgICAgICAgICAgICAgICAgIHNoICdkb2NrZXIgYnVpbGQgLXQgbXlhcHA6bGF0ZXN0IC4nCiAgICAgICAgICAgICAgICAgICAgLy8gUHVqYXIgbGEgaW1hdGdlIGEgdW4gcmVnaXN0cmUgRG9ja2VyCiAgICAgICAgICAgICAgICAgICAgc2ggJ2RvY2tlciBwdXNoIG15YXBwOmxhdGVzdCcKICAgICAgICAgICAgICAgICAgICAvLyBEZXNwbGVnYXIgbGEgaW1hdGdlIGEgdW4gZW50b3JuIGRlIHByb2R1Y2Npw7MKICAgICAgICAgICAgICAgICAgICBzaCAnZG9ja2VyIHJ1biAtZCAtcCA4MDo4MCBteWFwcDpsYXRlc3QnCiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pipeline {
+    agent any
+
+    triggers {
+        // Trigger basat en canvis a Git
+        pollSCM('H/5 * * * *')
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                // Afegeix aqu&iacute; els passos per construir el teu projecte
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                // Afegeix aqu&iacute; els passos per provar el teu projecte
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+                script {
+                    // Construir la imatge Docker
+                    sh 'docker build -t myapp:latest .'
+                    // Pujar la imatge a un registre Docker
+                    sh 'docker push myapp:latest'
+                    // Desplegar la imatge a un entorn de producci&oacute;
+                    sh 'docker run -d -p 80:80 myapp:latest'
+                }
+            }
+        }
+    }
+}</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Configurar una pipeline de CD que construeixi, provi i desplegui una aplicació simple utilitzant Docker.</p>
+</div><h2>Instruccions</h2>
+<div class='content'><ol>
+<li>Crea una nova pipeline a Jenkins anomenada <code>MyCDPipeline</code>.</li>
+<li>Defineix les etapes de <code>Build</code>, <code>Test</code> i <code>Deploy</code> a la pipeline.</li>
+<li>Afegeix els passos necessaris per construir, provar i desplegar una aplicació Docker.</li>
+<li>Configura un trigger per automatitzar el desplegament després de cada canvi de codi.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwZWxpbmUgewogICAgYWdlbnQgYW55CgogICAgdHJpZ2dlcnMgewogICAgICAgIHBvbGxTQ00oJ0gvNSAqICogKiAqJykKICAgIH0KCiAgICBzdGFnZXMgewogICAgICAgIHN0YWdlKCdCdWlsZCcpIHsKICAgICAgICAgICAgc3RlcHMgewogICAgICAgICAgICAgICAgZWNobyAnQnVpbGRpbmcuLi4nCiAgICAgICAgICAgICAgICBzaCAnZG9ja2VyIGJ1aWxkIC10IG15YXBwOmxhdGVzdCAuJwogICAgICAgICAgICB9CiAgICAgICAgfQogICAgICAgIHN0YWdlKCdUZXN0JykgewogICAgICAgICAgICBzdGVwcyB7CiAgICAgICAgICAgICAgICBlY2hvICdUZXN0aW5nLi4uJwogICAgICAgICAgICAgICAgLy8gQWZlZ2VpeCBhcXXDrSBlbHMgcGFzc29zIHBlciBwcm92YXIgZWwgdGV1IHByb2plY3RlCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICAgICAgc3RhZ2UoJ0RlcGxveScpIHsKICAgICAgICAgICAgc3RlcHMgewogICAgICAgICAgICAgICAgZWNobyAnRGVwbG95aW5nLi4uJwogICAgICAgICAgICAgICAgc2NyaXB0IHsKICAgICAgICAgICAgICAgICAgICBzaCAnZG9ja2VyIHB1c2ggbXlhcHA6bGF0ZXN0JwogICAgICAgICAgICAgICAgICAgIHNoICdkb2NrZXIgcnVuIC1kIC1wIDgwOjgwIG15YXBwOmxhdGVzdCcKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pipeline {
+    agent any
+
+    triggers {
+        pollSCM('H/5 * * * *')
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                echo 'Building...'
+                sh 'docker build -t myapp:latest .'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                // Afegeix aqu&iacute; els passos per provar el teu projecte
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo 'Deploying...'
+                script {
+                    sh 'docker push myapp:latest'
+                    sh 'docker run -d -p 80:80 myapp:latest'
+                }
+            }
+        }
+    }
+}</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après a configurar una pipeline de CD a Jenkins. Hem vist com definir les etapes de construcció, prova i desplegament, i com integrar la pipeline amb eines de desplegament com Docker. També hem après a automatitzar el procés de desplegament utilitzant triggers basats en canvis de codi. Amb aquests coneixements, estàs preparat per implementar pipelines de CD eficients i fiables per als teus projectes.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-02-setting-up-a-ci-pipeline' title="Configurant una Pipeline de CI">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-04-automating-deployments' title="Automatitzant Desplegaments">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

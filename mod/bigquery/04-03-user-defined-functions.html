@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funcions definides per l'usuari (UDFs)</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/bigquery/04-03-user-defined-functions" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/bigquery/04-03-user-defined-functions" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/bigquery/04-03-user-defined-functions" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/bigquery/04-03-user-defined-functions" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/bigquery/04-03-user-defined-functions" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-02-nested-repeated-fields' title="Camps niats i repetits">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Funcions definides per l'usuari (UDFs)</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-04-partitioning-clustering' title="Particionament i agrupament">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Les Funcions Definides per l'Usuari (UDFs) a BigQuery permeten als usuaris crear funcions personalitzades utilitzant JavaScript o SQL. Aquestes funcions poden ser utilitzades per realitzar càlculs complexos o transformar dades de maneres que no són possibles amb les funcions integrades de BigQuery.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>UDFs en JavaScript</strong>: Permeten escriure funcions personalitzades en JavaScript que es poden utilitzar dins de les consultes SQL.</li>
+<li><strong>UDFs en SQL</strong>: Permeten definir funcions personalitzades utilitzant SQL pur.</li>
+<li><strong>Persistents vs Temporals</strong>: Les UDFs poden ser persistents (emmagatzemades a la base de dades) o temporals (definides dins d'una consulta).</li>
+</ul>
+</div><h1>Creació d'UDFs en JavaScript</h1>
+<div class='content'></div><h2>Exemple Bàsic</h2>
+<div class='content'><p>A continuació es mostra un exemple de com crear una UDF en JavaScript que calcula el quadrat d'un nombre:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRFTVAgRlVOQ1RJT04gc3F1YXJlKHggRkxPQVQ2NCkgUkVUVVJOUyBGTE9BVDY0IExBTkdVQUdFIGpzIEFTICIiIgogIHJldHVybiB4ICogeDsKIiIiOwoKU0VMRUNUIHNxdWFyZSgzKSBBUyByZXN1bHQ7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TEMP FUNCTION square(x FLOAT64) RETURNS FLOAT64 LANGUAGE js AS &quot;&quot;&quot;
+  return x * x;
+&quot;&quot;&quot;;
+
+SELECT square(3) AS result;</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li><strong>CREATE TEMP FUNCTION</strong>: Defineix una funció temporal.</li>
+<li><strong>square(x FLOAT64)</strong>: El nom de la funció és <code>square</code> i pren un argument de tipus <code>FLOAT64</code>.</li>
+<li><strong>RETURNS FLOAT64</strong>: La funció retorna un valor de tipus <code>FLOAT64</code>.</li>
+<li><strong>LANGUAGE js</strong>: Indica que la funció està escrita en JavaScript.</li>
+<li><strong>AS &quot;&quot;&quot; ... &quot;&quot;&quot;</strong>: El codi JavaScript de la funció es troba entre cometes triples.</li>
+</ol>
+</div><h2>Exercici Pràctic</h2>
+<div class='content'><p><strong>Exercici</strong>: Crea una UDF en JavaScript que converteixi una cadena de text a majúscules.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRFTVAgRlVOQ1RJT04gdG9VcHBlckNhc2Uoc3RyIFNUUklORykgUkVUVVJOUyBTVFJJTkcgTEFOR1VBR0UganMgQVMgIiIiCiAgcmV0dXJuIHN0ci50b1VwcGVyQ2FzZSgpOwoiIiI7CgpTRUxFQ1QgdG9VcHBlckNhc2UoJ2hlbGxvIHdvcmxkJykgQVMgcmVzdWx0Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TEMP FUNCTION toUpperCase(str STRING) RETURNS STRING LANGUAGE js AS &quot;&quot;&quot;
+  return str.toUpperCase();
+&quot;&quot;&quot;;
+
+SELECT toUpperCase('hello world') AS result;</pre></div><div class='content'><p><strong>Solució</strong>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRFTVAgRlVOQ1RJT04gdG9VcHBlckNhc2Uoc3RyIFNUUklORykgUkVUVVJOUyBTVFJJTkcgTEFOR1VBR0UganMgQVMgIiIiCiAgcmV0dXJuIHN0ci50b1VwcGVyQ2FzZSgpOwoiIiI7CgpTRUxFQ1QgdG9VcHBlckNhc2UoJ2hlbGxvIHdvcmxkJykgQVMgcmVzdWx0Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TEMP FUNCTION toUpperCase(str STRING) RETURNS STRING LANGUAGE js AS &quot;&quot;&quot;
+  return str.toUpperCase();
+&quot;&quot;&quot;;
+
+SELECT toUpperCase('hello world') AS result;</pre></div><div class='content'></div><h1>Creació d'UDFs en SQL</h1>
+<div class='content'></div><h2>Exemple Bàsic</h2>
+<div class='content'><p>A continuació es mostra un exemple de com crear una UDF en SQL que calcula el factorial d'un nombre:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRFTVAgRlVOQ1RJT04gZmFjdG9yaWFsKG4gSU5UNjQpIFJFVFVSTlMgSU5UNjQgQVMgKAogIENBU0UKICAgIFdIRU4gbiA9IDAgVEhFTiAxCiAgICBFTFNFIG4gKiBmYWN0b3JpYWwobiAtIDEpCiAgRU5ECik7CgpTRUxFQ1QgZmFjdG9yaWFsKDUpIEFTIHJlc3VsdDs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TEMP FUNCTION factorial(n INT64) RETURNS INT64 AS (
+  CASE
+    WHEN n = 0 THEN 1
+    ELSE n * factorial(n - 1)
+  END
+);
+
+SELECT factorial(5) AS result;</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li><strong>CREATE TEMP FUNCTION</strong>: Defineix una funció temporal.</li>
+<li><strong>factorial(n INT64)</strong>: El nom de la funció és <code>factorial</code> i pren un argument de tipus <code>INT64</code>.</li>
+<li><strong>RETURNS INT64</strong>: La funció retorna un valor de tipus <code>INT64</code>.</li>
+<li><strong>AS ( ... )</strong>: El codi SQL de la funció es troba entre parèntesis.</li>
+<li><strong>CASE ... END</strong>: Utilitza una estructura <code>CASE</code> per definir la lògica de la funció.</li>
+</ol>
+</div><h2>Exercici Pràctic</h2>
+<div class='content'><p><strong>Exercici</strong>: Crea una UDF en SQL que calculi la suma dels primers <code>n</code> nombres naturals.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRFTVAgRlVOQ1RJT04gc3VtT2ZOYXR1cmFscyhuIElOVDY0KSBSRVRVUk5TIElOVDY0IEFTICgKICAobiAqIChuICsgMSkpIC8gMgopOwoKU0VMRUNUIHN1bU9mTmF0dXJhbHMoMTApIEFTIHJlc3VsdDs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TEMP FUNCTION sumOfNaturals(n INT64) RETURNS INT64 AS (
+  (n * (n + 1)) / 2
+);
+
+SELECT sumOfNaturals(10) AS result;</pre></div><div class='content'><p><strong>Solució</strong>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRFTVAgRlVOQ1RJT04gc3VtT2ZOYXR1cmFscyhuIElOVDY0KSBSRVRVUk5TIElOVDY0IEFTICgKICAobiAqIChuICsgMSkpIC8gMgopOwoKU0VMRUNUIHN1bU9mTmF0dXJhbHMoMTApIEFTIHJlc3VsdDs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TEMP FUNCTION sumOfNaturals(n INT64) RETURNS INT64 AS (
+  (n * (n + 1)) / 2
+);
+
+SELECT sumOfNaturals(10) AS result;</pre></div><div class='content'></div><h1>Persistència de les UDFs</h1>
+<div class='content'></div><h2>Creació d'UDFs Persistents</h2>
+<div class='content'><p>Les UDFs persistents es poden crear utilitzant la següent sintaxi:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIEZVTkNUSU9OIHByb2plY3RfaWQuZGF0YXNldF9pZC5mdW5jdGlvbl9uYW1lKHggRkxPQVQ2NCkgUkVUVVJOUyBGTE9BVDY0IExBTkdVQUdFIGpzIEFTICIiIgogIHJldHVybiB4ICogeDsKIiIiOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE FUNCTION project_id.dataset_id.function_name(x FLOAT64) RETURNS FLOAT64 LANGUAGE js AS &quot;&quot;&quot;
+  return x * x;
+&quot;&quot;&quot;;</pre></div><div class='content'></div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIEZVTkNUSU9OIG15X3Byb2plY3QubXlfZGF0YXNldC5zcXVhcmUoeCBGTE9BVDY0KSBSRVRVUk5TIEZMT0FUNjQgTEFOR1VBR0UganMgQVMgIiIiCiAgcmV0dXJuIHggKiB4OwoiIiI7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE FUNCTION my_project.my_dataset.square(x FLOAT64) RETURNS FLOAT64 LANGUAGE js AS &quot;&quot;&quot;
+  return x * x;
+&quot;&quot;&quot;;</pre></div><div class='content'></div><h2>Ús de la UDF Persistent</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIG15X3Byb2plY3QubXlfZGF0YXNldC5zcXVhcmUoMykgQVMgcmVzdWx0Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT my_project.my_dataset.square(3) AS result;</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après a crear Funcions Definides per l'Usuari (UDFs) a BigQuery utilitzant tant JavaScript com SQL. Hem vist exemples pràctics i hem creat UDFs tant temporals com persistents. Les UDFs són una eina poderosa per realitzar càlculs complexos i transformar dades de manera personalitzada.</p>
+</div><h1>Exercicis Addicionals</h1>
+<div class='content'><ol>
+<li><strong>Exercici</strong>: Crea una UDF en JavaScript que calculi la longitud d'una cadena de text.</li>
+<li><strong>Exercici</strong>: Crea una UDF en SQL que determini si un nombre és primer.</li>
+</ol>
+<p><strong>Solucions</strong>:</p>
+<ol>
+<li><strong>JavaScript UDF</strong>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRFTVAgRlVOQ1RJT04gc3RyaW5nTGVuZ3RoKHN0ciBTVFJJTkcpIFJFVFVSTlMgSU5UNjQgTEFOR1VBR0UganMgQVMgIiIiCiAgcmV0dXJuIHN0ci5sZW5ndGg7CiIiIjsKClNFTEVDVCBzdHJpbmdMZW5ndGgoJ2hlbGxvIHdvcmxkJykgQVMgcmVzdWx0Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TEMP FUNCTION stringLength(str STRING) RETURNS INT64 LANGUAGE js AS &quot;&quot;&quot;
+  return str.length;
+&quot;&quot;&quot;;
+
+SELECT stringLength('hello world') AS result;</pre></div><div class='content'><ol start="2">
+<li><strong>SQL UDF</strong>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRFTVAgRlVOQ1RJT04gaXNQcmltZShuIElOVDY0KSBSRVRVUk5TIEJPT0wgQVMgKAogIENBU0UKICAgIFdIRU4gbiA8IDIgVEhFTiBGQUxTRQogICAgV0hFTiBuID0gMiBUSEVOIFRSVUUKICAgIEVMU0UgTk9UIEVYSVNUUyAoCiAgICAgIFNFTEVDVCAxCiAgICAgIEZST00gVU5ORVNUKEdFTkVSQVRFX0FSUkFZKDIsIENBU1QoU1FSVChuKSBBUyBJTlQ2NCkpKSBBUyBpCiAgICAgIFdIRVJFIG4gJSBpID0gMAogICAgKQogIEVORAopOwoKU0VMRUNUIGlzUHJpbWUoNykgQVMgcmVzdWx0Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TEMP FUNCTION isPrime(n INT64) RETURNS BOOL AS (
+  CASE
+    WHEN n &lt; 2 THEN FALSE
+    WHEN n = 2 THEN TRUE
+    ELSE NOT EXISTS (
+      SELECT 1
+      FROM UNNEST(GENERATE_ARRAY(2, CAST(SQRT(n) AS INT64))) AS i
+      WHERE n % i = 0
+    )
+  END
+);
+
+SELECT isPrime(7) AS result;</pre></div><div class='content'><p>Amb aquests exercicis, hauràs reforçat els conceptes apresos i estaràs preparat per utilitzar UDFs en els teus projectes de BigQuery.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-02-nested-repeated-fields' title="Camps niats i repetits">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-04-partitioning-clustering' title="Particionament i agrupament">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indexant Dades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/elasticsearch/02-01-indexing-data" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/elasticsearch/02-01-indexing-data" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/elasticsearch/02-01-indexing-data" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/elasticsearch/02-01-indexing-data" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/elasticsearch/02-01-indexing-data" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='01-04-elasticsearch-architecture' title="Arquitectura d'Elasticsearch">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Indexant Dades</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-02-searching-data' title="Cercant Dades">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='index'><p>En aquest tema, aprendrem com indexar dades a Elasticsearch. Indexar dades és el procés d'emmagatzemar documents en un índex perquè puguin ser cercats i recuperats eficientment. Aquest procés és fonamental per treballar amb Elasticsearch, ja que és la base de totes les operacions de cerca i anàlisi.</p>
+</div><h2>1. Què és un Document?</h2>
+<div class='index'><p>Un document és la unitat bàsica d'informació que es pot indexar a Elasticsearch. Cada document és un objecte JSON que conté dades estructurades. Els documents es guarden dins d'índexs, que són col·leccions de documents amb característiques similars.</p>
+</div><h2>Exemple de Document JSON</h2>
+<div class='index'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJ0aXRsZSI6ICJFbGFzdGljc2VhcmNoOiBUaGUgRGVmaW5pdGl2ZSBHdWlkZSIsCiAgImF1dGhvciI6ICJDbGludG9uIEdvcm1sZXkiLAogICJwdWJsaXNoZWRfZGF0ZSI6ICIyMDE1LTAyLTA3IiwKICAicHJpY2UiOiAzOS45OSwKICAidGFncyI6IFsiZWxhc3RpY3NlYXJjaCIsICJzZWFyY2giLCAiYmlnIGRhdGEiXQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;title&quot;: &quot;Elasticsearch: The Definitive Guide&quot;,
+  &quot;author&quot;: &quot;Clinton Gormley&quot;,
+  &quot;published_date&quot;: &quot;2015-02-07&quot;,
+  &quot;price&quot;: 39.99,
+  &quot;tags&quot;: [&quot;elasticsearch&quot;, &quot;search&quot;, &quot;big data&quot;]
+}</pre></div><div class='index'></div><h2>2. Crear un Índex</h2>
+<div class='index'><p>Abans de poder indexar documents, necessitem crear un índex. Un índex és una col·lecció de documents que tenen característiques similars. Per crear un índex, podem utilitzar una petició HTTP <code>PUT</code>.</p>
+</div><h2>Exemple de Creació d'un Índex</h2>
+<div class='index'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UFVUIC9ib29rcw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>PUT /books</pre></div><div class='index'><p>Aquest exemple crea un índex anomenat <code>books</code>.</p>
+</div><h2>3. Indexar un Document</h2>
+<div class='index'><p>Per indexar un document, utilitzem una petició HTTP <code>POST</code> o <code>PUT</code> a l'índex desitjat. Si no especifiquem un identificador per al document, Elasticsearch en generarà un automàticament.</p>
+</div><h2>Exemple d'Indexació d'un Document</h2>
+<div class='index'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UE9TVCAvYm9va3MvX2RvYy8KewogICJ0aXRsZSI6ICJFbGFzdGljc2VhcmNoOiBUaGUgRGVmaW5pdGl2ZSBHdWlkZSIsCiAgImF1dGhvciI6ICJDbGludG9uIEdvcm1sZXkiLAogICJwdWJsaXNoZWRfZGF0ZSI6ICIyMDE1LTAyLTA3IiwKICAicHJpY2UiOiAzOS45OSwKICAidGFncyI6IFsiZWxhc3RpY3NlYXJjaCIsICJzZWFyY2giLCAiYmlnIGRhdGEiXQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>POST /books/_doc/
+{
+  &quot;title&quot;: &quot;Elasticsearch: The Definitive Guide&quot;,
+  &quot;author&quot;: &quot;Clinton Gormley&quot;,
+  &quot;published_date&quot;: &quot;2015-02-07&quot;,
+  &quot;price&quot;: 39.99,
+  &quot;tags&quot;: [&quot;elasticsearch&quot;, &quot;search&quot;, &quot;big data&quot;]
+}</pre></div><div class='index'><p>Aquest exemple indexa un document al nostre índex <code>books</code>.</p>
+</div><h2>4. Obtenir un Document</h2>
+<div class='index'><p>Per obtenir un document específic, utilitzem una petició HTTP <code>GET</code> amb l'identificador del document.</p>
+</div><h2>Exemple d'Obtenció d'un Document</h2>
+<div class='index'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0VUIC9ib29rcy9fZG9jLzE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GET /books/_doc/1</pre></div><div class='index'><p>Aquest exemple obté el document amb l'identificador <code>1</code> de l'índex <code>books</code>.</p>
+</div><h2>5. Actualitzar un Document</h2>
+<div class='index'><p>Per actualitzar un document existent, utilitzem una petició HTTP <code>POST</code> o <code>PUT</code> amb l'identificador del document.</p>
+</div><h2>Exemple d'Actualització d'un Document</h2>
+<div class='index'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UE9TVCAvYm9va3MvX2RvYy8xCnsKICAiZG9jIjogewogICAgInByaWNlIjogMjkuOTkKICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>POST /books/_doc/1
+{
+  &quot;doc&quot;: {
+    &quot;price&quot;: 29.99
+  }
+}</pre></div><div class='index'><p>Aquest exemple actualitza el preu del document amb l'identificador <code>1</code> a <code>29.99</code>.</p>
+</div><h2>6. Eliminar un Document</h2>
+<div class='index'><p>Per eliminar un document, utilitzem una petició HTTP <code>DELETE</code> amb l'identificador del document.</p>
+</div><h2>Exemple d'Eliminació d'un Document</h2>
+<div class='index'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("REVMRVRFIC9ib29rcy9fZG9jLzE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>DELETE /books/_doc/1</pre></div><div class='index'><p>Aquest exemple elimina el document amb l'identificador <code>1</code> de l'índex <code>books</code>.</p>
+</div><h2>Exercicis Pràctics</h2>
+<div class='index'></div><h2>Exercici 1: Crear i Indexar un Document</h2>
+<div class='index'><ol>
+<li>Crea un índex anomenat <code>library</code>.</li>
+<li>Indexa un document amb les següents dades:
+<ul>
+<li><code>title</code>: &quot;Learning Elasticsearch&quot;</li>
+<li><code>author</code>: &quot;John Doe&quot;</li>
+<li><code>published_date</code>: &quot;2020-01-15&quot;</li>
+<li><code>price</code>: 45.00</li>
+<li><code>tags</code>: [&quot;elasticsearch&quot;, &quot;learning&quot;]</li>
+</ul>
+</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='index'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UFVUIC9saWJyYXJ5CgpQT1NUIC9saWJyYXJ5L19kb2MvCnsKICAidGl0bGUiOiAiTGVhcm5pbmcgRWxhc3RpY3NlYXJjaCIsCiAgImF1dGhvciI6ICJKb2huIERvZSIsCiAgInB1Ymxpc2hlZF9kYXRlIjogIjIwMjAtMDEtMTUiLAogICJwcmljZSI6IDQ1LjAwLAogICJ0YWdzIjogWyJlbGFzdGljc2VhcmNoIiwgImxlYXJuaW5nIl0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>PUT /library
+
+POST /library/_doc/
+{
+  &quot;title&quot;: &quot;Learning Elasticsearch&quot;,
+  &quot;author&quot;: &quot;John Doe&quot;,
+  &quot;published_date&quot;: &quot;2020-01-15&quot;,
+  &quot;price&quot;: 45.00,
+  &quot;tags&quot;: [&quot;elasticsearch&quot;, &quot;learning&quot;]
+}</pre></div><div class='index'></div><h2>Exercici 2: Obtenir i Actualitzar un Document</h2>
+<div class='index'><ol>
+<li>Obté el document que acabes d'indexar.</li>
+<li>Actualitza el preu del document a <code>40.00</code>.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='index'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0VUIC9saWJyYXJ5L19kb2MvMQoKUE9TVCAvbGlicmFyeS9fZG9jLzEKewogICJkb2MiOiB7CiAgICAicHJpY2UiOiA0MC4wMAogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GET /library/_doc/1
+
+POST /library/_doc/1
+{
+  &quot;doc&quot;: {
+    &quot;price&quot;: 40.00
+  }
+}</pre></div><div class='index'></div><h2>Exercici 3: Eliminar un Document</h2>
+<div class='index'><ol>
+<li>Elimina el document que acabes d'actualitzar.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='index'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("REVMRVRFIC9saWJyYXJ5L19kb2MvMQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>DELETE /library/_doc/1</pre></div><div class='index'></div><h2>Conclusió</h2>
+<div class='index'><p>En aquesta secció, hem après com indexar dades a Elasticsearch, incloent la creació d'índexs, l'indexació de documents, l'obtenció, l'actualització i l'eliminació de documents. Aquests són els fonaments per treballar amb Elasticsearch i ens preparen per a les operacions de cerca i anàlisi que veurem en els següents temes.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='01-04-elasticsearch-architecture' title="Arquitectura d'Elasticsearch">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-02-searching-data' title="Cercant Dades">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercici 1: Configuració d'un Pipeline Bàsic</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/ci_cd/07-01-ejercicio-pipeline-basico" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/ci_cd/07-01-exercici-pipeline-basic" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/ci_cd/07-01-exercise-basic-pipeline" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/ci_cd/07-01-exercici-pipeline-basic" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/ci_cd/07-01-exercici-pipeline-basic" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-05-docker-kubernetes' title="Docker i Kubernetes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Exercici 1: Configuració d'un Pipeline Bàsic</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-02-exercici-proves-automatitzades' title="Exercici 2: Integració de Proves Automatitzades">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest exercici, configurarem un pipeline bàsic de CI/CD utilitzant una eina popular com Jenkins. Aquest pipeline inclourà passos per clonar un repositori de codi, construir el projecte, executar proves i desplegar l'aplicació en un entorn de desenvolupament.</p>
+</div><h1>Objectius de l'Exercici</h1>
+<div class='content'><ol>
+<li>Configurar un servidor Jenkins.</li>
+<li>Crear un pipeline bàsic que cloni un repositori de Git.</li>
+<li>Afegir passos per construir el projecte.</li>
+<li>Executar proves automatitzades.</li>
+<li>Desplegar l'aplicació en un entorn de desenvolupament.</li>
+</ol>
+</div><h1>Passos a Seguir</h1>
+<div class='content'></div><h2>1. Configuració del Servidor Jenkins</h2>
+<div class='content'><h4>Instal·lació de Jenkins</h4>
+<ol>
+<li>
+<p><strong>Descarrega i instal·la Jenkins</strong>:</p>
+<ul>
+<li>Per a sistemes basats en Debian/Ubuntu:
+<pre><code class="language-bash">wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ &gt; /etc/apt/sources.list.d/jenkins.list'
+sudo apt update
+sudo apt install jenkins
+</code></pre>
+</li>
+<li>Per a sistemes basats en Red Hat/CentOS:
+<pre><code class="language-bash">sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins.io/redhat-stable/jenkins.repo
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+sudo yum install jenkins
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Inicia el servei de Jenkins</strong>:</p>
+<pre><code class="language-bash">sudo systemctl start jenkins
+sudo systemctl enable jenkins
+</code></pre>
+</li>
+<li>
+<p><strong>Accedeix a la interfície web de Jenkins</strong>:</p>
+<ul>
+<li>Obre un navegador web i ves a <code>http://localhost:8080</code>.</li>
+<li>Segueix les instruccions per completar la configuració inicial.</li>
+</ul>
+</li>
+</ol>
+</div><h2>2. Creació d'un Pipeline Bàsic</h2>
+<div class='content'><h4>Configuració del Projecte</h4>
+<ol>
+<li>
+<p><strong>Crea un nou element (projecte)</strong>:</p>
+<ul>
+<li>A la pàgina principal de Jenkins, fes clic a &quot;New Item&quot;.</li>
+<li>Introdueix un nom per al projecte i selecciona &quot;Pipeline&quot;. Fes clic a &quot;OK&quot;.</li>
+</ul>
+</li>
+<li>
+<p><strong>Configura el repositori de Git</strong>:</p>
+<ul>
+<li>A la pàgina de configuració del projecte, a la secció &quot;Pipeline&quot;, selecciona &quot;Pipeline script from SCM&quot;.</li>
+<li>Selecciona &quot;Git&quot; com a sistema de control de versions.</li>
+<li>Introdueix l'URL del repositori de Git que vols clonar.</li>
+</ul>
+</li>
+</ol>
+<h4>Definició del Pipeline</h4>
+<ol>
+<li>
+<p><strong>Escriu el script del pipeline</strong>:</p>
+<ul>
+<li>A la secció &quot;Pipeline&quot;, selecciona &quot;Pipeline script&quot; i introdueix el següent script:</li>
+</ul>
+<pre><code class="language-groovy">pipeline {
+    agent any
+
+    stages {
+        stage('Clonar Repositori') {
+            steps {
+                git 'https://github.com/usuari/repo.git'
+            }
+        }
+        stage('Construir') {
+            steps {
+                sh './gradlew build'
+            }
+        }
+        stage('Proves') {
+            steps {
+                sh './gradlew test'
+            }
+        }
+        stage('Desplegar') {
+            steps {
+                sh './scripts/deploy.sh'
+            }
+        }
+    }
+}
+</code></pre>
+</li>
+</ol>
+</div><h2>3. Executar el Pipeline</h2>
+<div class='content'><ol>
+<li><strong>Desa la configuració</strong> i torna a la pàgina principal del projecte.</li>
+<li><strong>Executa el pipeline</strong> fent clic a &quot;Build Now&quot;.</li>
+<li><strong>Revisa els logs</strong> per assegurar-te que cada etapa s'executa correctament.</li>
+</ol>
+</div><h2>4. Solució de Problemes Comuns</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Error de connexió al repositori de Git</strong>:</p>
+<ul>
+<li>Assegura't que l'URL del repositori és correcte i que les credencials (si són necessàries) estan configurades correctament a Jenkins.</li>
+</ul>
+</li>
+<li>
+<p><strong>Errors de construcció</strong>:</p>
+<ul>
+<li>Revisa els logs de construcció per identificar problemes específics amb el codi o les dependències.</li>
+</ul>
+</li>
+<li>
+<p><strong>Errors en les proves</strong>:</p>
+<ul>
+<li>Assegura't que les proves estan ben escrites i que totes les dependències de prova estan disponibles.</li>
+</ul>
+</li>
+<li>
+<p><strong>Errors de desplegament</strong>:</p>
+<ul>
+<li>Verifica que el script de desplegament (<code>deploy.sh</code>) és executable i que totes les configuracions necessàries estan correctament establertes.</li>
+</ul>
+</li>
+</ul>
+</div><h2>5. Conclusió</h2>
+<div class='content'><p>En aquest exercici, has après a configurar un pipeline bàsic de CI/CD utilitzant Jenkins. Aquest pipeline inclou passos per clonar un repositori, construir el projecte, executar proves i desplegar l'aplicació. Aquesta configuració bàsica és un punt de partida excel·lent per a pipelines més complexos que podràs desenvolupar en futurs exercicis.</p>
+<hr />
+<p><strong>Proper Pas</strong>: Continua amb l'Exercici 2: Integració de Proves Automatitzades per aprendre a afegir i configurar proves automatitzades en el teu pipeline de CI/CD.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-05-docker-kubernetes' title="Docker i Kubernetes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-02-exercici-proves-automatitzades' title="Exercici 2: Integració de Proves Automatitzades">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

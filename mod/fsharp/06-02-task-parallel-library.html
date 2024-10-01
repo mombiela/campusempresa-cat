@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca de Tasques Paral·leles</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/fsharp/06-02-task-parallel-library" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/fsharp/06-02-task-parallel-library" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/fsharp/06-02-task-parallel-library" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/fsharp/06-02-task-parallel-library" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/fsharp/06-02-task-parallel-library" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-asynchronous-workflows' title="Fluxos de Treball Asíncrons">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Biblioteca de Tasques Paral·leles</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-mailboxprocessor-agents' title="MailboxProcessor i Agents">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La Biblioteca de Tasques Paral·leles (TPL) és una part fonamental de la programació asíncrona i paral·lela en F#. La TPL proporciona un conjunt d'eines i classes que faciliten la creació i gestió de tasques paral·leles, permetent als desenvolupadors escriure codi que s'executi de manera eficient en múltiples fils.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><p>Abans de començar a treballar amb la TPL, és important comprendre alguns conceptes clau:</p>
+<ul>
+<li><strong>Tasques (Tasks)</strong>: Representen operacions que es poden executar de manera asíncrona.</li>
+<li><strong>Async</strong>: Una paraula clau en F# que facilita la creació de fluxos de treball asíncrons.</li>
+<li><strong>Await</strong>: Utilitzat per esperar el resultat d'una tasca asíncrona.</li>
+</ul>
+</div><h1>Creació de Tasques</h1>
+<div class='content'><p>En F#, les tasques es poden crear utilitzant la classe <code>Task</code> de la biblioteca <code>System.Threading.Tasks</code>. Aquí teniu un exemple bàsic de com crear i executar una tasca:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBTeXN0ZW0uVGhyZWFkaW5nLlRhc2tzCgpsZXQgc2ltcGxlVGFzayA9IFRhc2suUnVuKGZ1biAoKSAtPgogICAgcHJpbnRmbiAiVGFzcXVlcyBlbiBleGVjdWNpw7MiCiAgICBTeXN0ZW0uVGhyZWFkaW5nLlRocmVhZC5TbGVlcCgxMDAwKQogICAgcHJpbnRmbiAiVGFzcXVlcyBjb21wbGV0YWRlcyIKKQoKc2ltcGxlVGFzay5XYWl0KCkgLy8gRXNwZXJhIHF1ZSBsYSB0YXNjYSBlcyBjb21wbGV0aQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open System.Threading.Tasks
+
+let simpleTask = Task.Run(fun () -&gt;
+    printfn &quot;Tasques en execuci&oacute;&quot;
+    System.Threading.Thread.Sleep(1000)
+    printfn &quot;Tasques completades&quot;
+)
+
+simpleTask.Wait() // Espera que la tasca es completi</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li><strong>Importació de la Biblioteca</strong>: <code>open System.Threading.Tasks</code> importa la biblioteca necessària per treballar amb tasques.</li>
+<li><strong>Creació de la Tasca</strong>: <code>Task.Run</code> crea una nova tasca que executa el codi proporcionat.</li>
+<li><strong>Execució de la Tasca</strong>: <code>simpleTask.Wait()</code> espera que la tasca es completi abans de continuar.</li>
+</ol>
+</div><h1>Tasques Asíncrones</h1>
+<div class='content'><p>Les tasques asíncrones permeten que el codi continuï executant-se sense esperar que la tasca es completi. Això és útil per a operacions que poden trigar molt de temps, com ara accedir a una base de dades o fer una crida a una API.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBTeXN0ZW0uVGhyZWFkaW5nLlRhc2tzCgpsZXQgYXN5bmNUYXNrID0gYXN5bmMgewogICAgcHJpbnRmbiAiVGFzcXVlcyBhc8OtbmNyb25lcyBlbiBleGVjdWNpw7MiCiAgICBkbyEgVGFzay5EZWxheSgxMDAwKSB8PiBBc3luYy5Bd2FpdFRhc2sKICAgIHByaW50Zm4gIlRhc3F1ZXMgYXPDrW5jcm9uZXMgY29tcGxldGFkZXMiCn0KCkFzeW5jLlN0YXJ0KGFzeW5jVGFzayk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open System.Threading.Tasks
+
+let asyncTask = async {
+    printfn &quot;Tasques as&iacute;ncrones en execuci&oacute;&quot;
+    do! Task.Delay(1000) |&gt; Async.AwaitTask
+    printfn &quot;Tasques as&iacute;ncrones completades&quot;
+}
+
+Async.Start(asyncTask)</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li><strong>Creació de la Tasca Asíncrona</strong>: <code>async { ... }</code> crea una tasca asíncrona.</li>
+<li><strong>Retard Asíncron</strong>: <code>Task.Delay(1000) |&gt; Async.AwaitTask</code> espera de manera asíncrona durant 1 segon.</li>
+<li><strong>Inici de la Tasca</strong>: <code>Async.Start(asyncTask)</code> inicia la tasca asíncrona.</li>
+</ol>
+</div><h1>Combinació de Tasques</h1>
+<div class='content'><p>La TPL permet combinar múltiples tasques per executar-les en paral·lel i esperar que totes es completin. Això es pot fer utilitzant <code>Task.WhenAll</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBTeXN0ZW0uVGhyZWFkaW5nLlRhc2tzCgpsZXQgdGFzazEgPSBUYXNrLlJ1bihmdW4gKCkgLT4KICAgIHByaW50Zm4gIlRhc3F1ZXMgMSBlbiBleGVjdWNpw7MiCiAgICBTeXN0ZW0uVGhyZWFkaW5nLlRocmVhZC5TbGVlcCgxMDAwKQogICAgcHJpbnRmbiAiVGFzcXVlcyAxIGNvbXBsZXRhZGVzIgopCgpsZXQgdGFzazIgPSBUYXNrLlJ1bihmdW4gKCkgLT4KICAgIHByaW50Zm4gIlRhc3F1ZXMgMiBlbiBleGVjdWNpw7MiCiAgICBTeXN0ZW0uVGhyZWFkaW5nLlRocmVhZC5TbGVlcCgyMDAwKQogICAgcHJpbnRmbiAiVGFzcXVlcyAyIGNvbXBsZXRhZGVzIgopCgpUYXNrLldoZW5BbGwoW3wgdGFzazE7IHRhc2syIHxdKS5XYWl0KCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open System.Threading.Tasks
+
+let task1 = Task.Run(fun () -&gt;
+    printfn &quot;Tasques 1 en execuci&oacute;&quot;
+    System.Threading.Thread.Sleep(1000)
+    printfn &quot;Tasques 1 completades&quot;
+)
+
+let task2 = Task.Run(fun () -&gt;
+    printfn &quot;Tasques 2 en execuci&oacute;&quot;
+    System.Threading.Thread.Sleep(2000)
+    printfn &quot;Tasques 2 completades&quot;
+)
+
+Task.WhenAll([| task1; task2 |]).Wait()</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li><strong>Creació de Tasques</strong>: <code>task1</code> i <code>task2</code> són dues tasques que s'executen en paral·lel.</li>
+<li><strong>Combinació de Tasques</strong>: <code>Task.WhenAll([| task1; task2 |])</code> espera que ambdues tasques es completin abans de continuar.</li>
+</ol>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Creació i Execució de Tasques</h2>
+<div class='content'><p>Creeu una tasca que imprimeixi un missatge, esperi 2 segons i després imprimeixi un altre missatge.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBTeXN0ZW0uVGhyZWFkaW5nLlRhc2tzCgpsZXQgbXlUYXNrID0gVGFzay5SdW4oZnVuICgpIC0+CiAgICBwcmludGZuICJJbmljaSBkZSBsYSB0YXNjYSIKICAgIFN5c3RlbS5UaHJlYWRpbmcuVGhyZWFkLlNsZWVwKDIwMDApCiAgICBwcmludGZuICJGaW5hbCBkZSBsYSB0YXNjYSIKKQoKbXlUYXNrLldhaXQoKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open System.Threading.Tasks
+
+let myTask = Task.Run(fun () -&gt;
+    printfn &quot;Inici de la tasca&quot;
+    System.Threading.Thread.Sleep(2000)
+    printfn &quot;Final de la tasca&quot;
+)
+
+myTask.Wait()</pre></div><div class='content'></div><h2>Exercici 2: Tasques Asíncrones</h2>
+<div class='content'><p>Creeu una tasca asíncrona que esperi 3 segons i després imprimeixi un missatge.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBTeXN0ZW0uVGhyZWFkaW5nLlRhc2tzCgpsZXQgbXlBc3luY1Rhc2sgPSBhc3luYyB7CiAgICBwcmludGZuICJJbmljaSBkZSBsYSB0YXNjYSBhc8OtbmNyb25hIgogICAgZG8hIFRhc2suRGVsYXkoMzAwMCkgfD4gQXN5bmMuQXdhaXRUYXNrCiAgICBwcmludGZuICJGaW5hbCBkZSBsYSB0YXNjYSBhc8OtbmNyb25hIgp9CgpBc3luYy5TdGFydChteUFzeW5jVGFzayk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open System.Threading.Tasks
+
+let myAsyncTask = async {
+    printfn &quot;Inici de la tasca as&iacute;ncrona&quot;
+    do! Task.Delay(3000) |&gt; Async.AwaitTask
+    printfn &quot;Final de la tasca as&iacute;ncrona&quot;
+}
+
+Async.Start(myAsyncTask)</pre></div><div class='content'></div><h2>Exercici 3: Combinació de Tasques</h2>
+<div class='content'><p>Creeu dues tasques que s'executin en paral·lel, una que esperi 1 segon i una altra que esperi 2 segons. Espereu que ambdues tasques es completin abans de continuar.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBTeXN0ZW0uVGhyZWFkaW5nLlRhc2tzCgpsZXQgdGFza0EgPSBUYXNrLlJ1bihmdW4gKCkgLT4KICAgIHByaW50Zm4gIlRhc3F1ZXMgQSBlbiBleGVjdWNpw7MiCiAgICBTeXN0ZW0uVGhyZWFkaW5nLlRocmVhZC5TbGVlcCgxMDAwKQogICAgcHJpbnRmbiAiVGFzcXVlcyBBIGNvbXBsZXRhZGVzIgopCgpsZXQgdGFza0IgPSBUYXNrLlJ1bihmdW4gKCkgLT4KICAgIHByaW50Zm4gIlRhc3F1ZXMgQiBlbiBleGVjdWNpw7MiCiAgICBTeXN0ZW0uVGhyZWFkaW5nLlRocmVhZC5TbGVlcCgyMDAwKQogICAgcHJpbnRmbiAiVGFzcXVlcyBCIGNvbXBsZXRhZGVzIgopCgpUYXNrLldoZW5BbGwoW3wgdGFza0E7IHRhc2tCIHxdKS5XYWl0KCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open System.Threading.Tasks
+
+let taskA = Task.Run(fun () -&gt;
+    printfn &quot;Tasques A en execuci&oacute;&quot;
+    System.Threading.Thread.Sleep(1000)
+    printfn &quot;Tasques A completades&quot;
+)
+
+let taskB = Task.Run(fun () -&gt;
+    printfn &quot;Tasques B en execuci&oacute;&quot;
+    System.Threading.Thread.Sleep(2000)
+    printfn &quot;Tasques B completades&quot;
+)
+
+Task.WhenAll([| taskA; taskB |]).Wait()</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après a treballar amb la Biblioteca de Tasques Paral·leles (TPL) en F#. Hem vist com crear i executar tasques, com treballar amb tasques asíncrones i com combinar múltiples tasques per executar-les en paral·lel. Aquests conceptes són fonamentals per escriure codi eficient i escalable en aplicacions que requereixen operacions asíncrones i paral·leles.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-asynchronous-workflows' title="Fluxos de Treball Asíncrons">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-mailboxprocessor-agents' title="MailboxProcessor i Agents">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

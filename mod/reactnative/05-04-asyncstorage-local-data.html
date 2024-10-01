@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AsyncStorage per a dades locals</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/reactnative/05-04-asyncstorage-local-data" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/reactnative/05-04-asyncstorage-local-data" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/reactnative/05-04-asyncstorage-local-data" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/reactnative/05-04-asyncstorage-local-data" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/reactnative/05-04-asyncstorage-local-data" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-03-handling-network-errors' title="Gestió d'errors de xarxa">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">AsyncStorage per a dades locals</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-05-integrating-rest-apis' title="Integració amb APIs REST">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, aprendrem a utilitzar <code>AsyncStorage</code> per emmagatzemar dades locals en una aplicació React Native. <code>AsyncStorage</code> és una API asíncrona, no xifrada i persistent que permet emmagatzemar dades en format clau-valor. És útil per guardar configuracions, preferències d'usuari o qualsevol altra informació que necessiti ser persistent entre sessions.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Comprendre què és <code>AsyncStorage</code> i per a què serveix.</li>
+<li>Aprendre a utilitzar les funcions bàsiques de <code>AsyncStorage</code> per guardar, recuperar i eliminar dades.</li>
+<li>Implementar exemples pràctics per reforçar els conceptes apresos.</li>
+</ul>
+</div><h1>Instal·lació</h1>
+<div class='content'><p>Per utilitzar <code>AsyncStorage</code>, primer hem d'instal·lar el paquet corresponent. Pots fer-ho amb npm o yarn:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnBtIGluc3RhbGwgQHJlYWN0LW5hdGl2ZS1hc3luYy1zdG9yYWdlL2FzeW5jLXN0b3JhZ2U="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npm install @react-native-async-storage/async-storage</pre></div><div class='content'><p>o</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("eWFybiBhZGQgQHJlYWN0LW5hdGl2ZS1hc3luYy1zdG9yYWdlL2FzeW5jLXN0b3JhZ2U="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>yarn add @react-native-async-storage/async-storage</pre></div><div class='content'><p>Després d'instal·lar el paquet, assegura't de vincular-lo correctament si estàs utilitzant una versió de React Native anterior a 0.60:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVhY3QtbmF0aXZlIGxpbmsgQHJlYWN0LW5hdGl2ZS1hc3luYy1zdG9yYWdlL2FzeW5jLXN0b3JhZ2U="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>react-native link @react-native-async-storage/async-storage</pre></div><div class='content'></div><h1>Funcions Bàsiques</h1>
+<div class='content'></div><h2>Guardar Dades</h2>
+<div class='content'><p>Per guardar dades, utilitzem la funció <code>setItem</code>. Aquesta funció accepta una clau i un valor, ambdós en format de cadena de text.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IEFzeW5jU3RvcmFnZSBmcm9tICdAcmVhY3QtbmF0aXZlLWFzeW5jLXN0b3JhZ2UvYXN5bmMtc3RvcmFnZSc7Cgpjb25zdCBzdG9yZURhdGEgPSBhc3luYyAoa2V5LCB2YWx1ZSkgPT4gewogIHRyeSB7CiAgICBhd2FpdCBBc3luY1N0b3JhZ2Uuc2V0SXRlbShrZXksIHZhbHVlKTsKICAgIGNvbnNvbGUubG9nKCdEYWRlcyBndWFyZGFkZXMgY29ycmVjdGFtZW50Jyk7CiAgfSBjYXRjaCAoZSkgewogICAgY29uc29sZS5lcnJvcignRXJyb3IgZ3VhcmRhbnQgbGVzIGRhZGVzJywgZSk7CiAgfQp9Ow=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const storeData = async (key, value) =&gt; {
+  try {
+    await AsyncStorage.setItem(key, value);
+    console.log('Dades guardades correctament');
+  } catch (e) {
+    console.error('Error guardant les dades', e);
+  }
+};</pre></div><div class='content'></div><h2>Recuperar Dades</h2>
+<div class='content'><p>Per recuperar dades, utilitzem la funció <code>getItem</code>. Aquesta funció accepta una clau i retorna el valor associat a aquesta clau.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZ2V0RGF0YSA9IGFzeW5jIChrZXkpID0+IHsKICB0cnkgewogICAgY29uc3QgdmFsdWUgPSBhd2FpdCBBc3luY1N0b3JhZ2UuZ2V0SXRlbShrZXkpOwogICAgaWYgKHZhbHVlICE9PSBudWxsKSB7CiAgICAgIGNvbnNvbGUubG9nKCdEYWRlcyByZWN1cGVyYWRlczonLCB2YWx1ZSk7CiAgICAgIHJldHVybiB2YWx1ZTsKICAgIH0KICB9IGNhdGNoIChlKSB7CiAgICBjb25zb2xlLmVycm9yKCdFcnJvciByZWN1cGVyYW50IGxlcyBkYWRlcycsIGUpOwogIH0KfTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const getData = async (key) =&gt; {
+  try {
+    const value = await AsyncStorage.getItem(key);
+    if (value !== null) {
+      console.log('Dades recuperades:', value);
+      return value;
+    }
+  } catch (e) {
+    console.error('Error recuperant les dades', e);
+  }
+};</pre></div><div class='content'></div><h2>Eliminar Dades</h2>
+<div class='content'><p>Per eliminar dades, utilitzem la funció <code>removeItem</code>. Aquesta funció accepta una clau i elimina el valor associat a aquesta clau.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgcmVtb3ZlRGF0YSA9IGFzeW5jIChrZXkpID0+IHsKICB0cnkgewogICAgYXdhaXQgQXN5bmNTdG9yYWdlLnJlbW92ZUl0ZW0oa2V5KTsKICAgIGNvbnNvbGUubG9nKCdEYWRlcyBlbGltaW5hZGVzIGNvcnJlY3RhbWVudCcpOwogIH0gY2F0Y2ggKGUpIHsKICAgIGNvbnNvbGUuZXJyb3IoJ0Vycm9yIGVsaW1pbmFudCBsZXMgZGFkZXMnLCBlKTsKICB9Cn07"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const removeData = async (key) =&gt; {
+  try {
+    await AsyncStorage.removeItem(key);
+    console.log('Dades eliminades correctament');
+  } catch (e) {
+    console.error('Error eliminant les dades', e);
+  }
+};</pre></div><div class='content'></div><h1>Exemple Pràctic</h1>
+<div class='content'><p>A continuació, implementarem un exemple pràctic que utilitza <code>AsyncStorage</code> per guardar, recuperar i eliminar el nom d'un usuari.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IFJlYWN0LCB7IHVzZVN0YXRlIH0gZnJvbSAncmVhY3QnOwppbXBvcnQgeyBWaWV3LCBUZXh0LCBUZXh0SW5wdXQsIEJ1dHRvbiB9IGZyb20gJ3JlYWN0LW5hdGl2ZSc7CmltcG9ydCBBc3luY1N0b3JhZ2UgZnJvbSAnQHJlYWN0LW5hdGl2ZS1hc3luYy1zdG9yYWdlL2FzeW5jLXN0b3JhZ2UnOwoKY29uc3QgQXBwID0gKCkgPT4gewogIGNvbnN0IFtuYW1lLCBzZXROYW1lXSA9IHVzZVN0YXRlKCcnKTsKICBjb25zdCBbc3RvcmVkTmFtZSwgc2V0U3RvcmVkTmFtZV0gPSB1c2VTdGF0ZSgnJyk7CgogIGNvbnN0IHNhdmVOYW1lID0gYXN5bmMgKCkgPT4gewogICAgYXdhaXQgc3RvcmVEYXRhKCd1c2VyX25hbWUnLCBuYW1lKTsKICAgIHNldE5hbWUoJycpOwogIH07CgogIGNvbnN0IGxvYWROYW1lID0gYXN5bmMgKCkgPT4gewogICAgY29uc3QgbmFtZSA9IGF3YWl0IGdldERhdGEoJ3VzZXJfbmFtZScpOwogICAgc2V0U3RvcmVkTmFtZShuYW1lKTsKICB9OwoKICBjb25zdCBkZWxldGVOYW1lID0gYXN5bmMgKCkgPT4gewogICAgYXdhaXQgcmVtb3ZlRGF0YSgndXNlcl9uYW1lJyk7CiAgICBzZXRTdG9yZWROYW1lKCcnKTsKICB9OwoKICByZXR1cm4gKAogICAgPFZpZXcgc3R5bGU9e3sgcGFkZGluZzogMjAgfX0+CiAgICAgIDxUZXh0SW5wdXQKICAgICAgICBwbGFjZWhvbGRlcj0iRXNjcml1IGVsIHRldSBub20iCiAgICAgICAgdmFsdWU9e25hbWV9CiAgICAgICAgb25DaGFuZ2VUZXh0PXtzZXROYW1lfQogICAgICAgIHN0eWxlPXt7IGJvcmRlckJvdHRvbVdpZHRoOiAxLCBtYXJnaW5Cb3R0b206IDIwIH19CiAgICAgIC8+CiAgICAgIDxCdXR0b24gdGl0bGU9Ikd1YXJkYXIgTm9tIiBvblByZXNzPXtzYXZlTmFtZX0gLz4KICAgICAgPEJ1dHRvbiB0aXRsZT0iQ2FycmVnYXIgTm9tIiBvblByZXNzPXtsb2FkTmFtZX0gLz4KICAgICAgPEJ1dHRvbiB0aXRsZT0iRWxpbWluYXIgTm9tIiBvblByZXNzPXtkZWxldGVOYW1lfSAvPgogICAgICB7c3RvcmVkTmFtZSA/IDxUZXh0Pk5vbSBndWFyZGF0OiB7c3RvcmVkTmFtZX08L1RleHQ+IDogbnVsbH0KICAgIDwvVmlldz4KICApOwp9OwoKZXhwb3J0IGRlZmF1bHQgQXBwOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import React, { useState } from 'react';
+import { View, Text, TextInput, Button } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const App = () =&gt; {
+  const [name, setName] = useState('');
+  const [storedName, setStoredName] = useState('');
+
+  const saveName = async () =&gt; {
+    await storeData('user_name', name);
+    setName('');
+  };
+
+  const loadName = async () =&gt; {
+    const name = await getData('user_name');
+    setStoredName(name);
+  };
+
+  const deleteName = async () =&gt; {
+    await removeData('user_name');
+    setStoredName('');
+  };
+
+  return (
+    &lt;View style={{ padding: 20 }}&gt;
+      &lt;TextInput
+        placeholder=&quot;Escriu el teu nom&quot;
+        value={name}
+        onChangeText={setName}
+        style={{ borderBottomWidth: 1, marginBottom: 20 }}
+      /&gt;
+      &lt;Button title=&quot;Guardar Nom&quot; onPress={saveName} /&gt;
+      &lt;Button title=&quot;Carregar Nom&quot; onPress={loadName} /&gt;
+      &lt;Button title=&quot;Eliminar Nom&quot; onPress={deleteName} /&gt;
+      {storedName ? &lt;Text&gt;Nom guardat: {storedName}&lt;/Text&gt; : null}
+    &lt;/View&gt;
+  );
+};
+
+export default App;</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Guardar i Recuperar Preferències d'Usuari</h2>
+<div class='content'><ol>
+<li>Crea una aplicació que permeti a l'usuari guardar les seves preferències de tema (clar o fosc) utilitzant <code>AsyncStorage</code>.</li>
+<li>Implementa una funció per recuperar aquestes preferències quan l'aplicació es carrega.</li>
+</ol>
+</div><h2>Exercici 2: Llista de Tasques</h2>
+<div class='content'><ol>
+<li>Crea una aplicació de llista de tasques on les tasques es guardin localment utilitzant <code>AsyncStorage</code>.</li>
+<li>Implementa funcions per afegir, eliminar i marcar tasques com a completades.</li>
+</ol>
+</div><h1>Solucions</h1>
+<div class='content'></div><h2>Solució Exercici 1</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IFJlYWN0LCB7IHVzZVN0YXRlLCB1c2VFZmZlY3QgfSBmcm9tICdyZWFjdCc7CmltcG9ydCB7IFZpZXcsIFRleHQsIEJ1dHRvbiB9IGZyb20gJ3JlYWN0LW5hdGl2ZSc7CmltcG9ydCBBc3luY1N0b3JhZ2UgZnJvbSAnQHJlYWN0LW5hdGl2ZS1hc3luYy1zdG9yYWdlL2FzeW5jLXN0b3JhZ2UnOwoKY29uc3QgQXBwID0gKCkgPT4gewogIGNvbnN0IFt0aGVtZSwgc2V0VGhlbWVdID0gdXNlU3RhdGUoJ2xpZ2h0Jyk7CgogIHVzZUVmZmVjdCgoKSA9PiB7CiAgICBjb25zdCBsb2FkVGhlbWUgPSBhc3luYyAoKSA9PiB7CiAgICAgIGNvbnN0IHNhdmVkVGhlbWUgPSBhd2FpdCBnZXREYXRhKCdhcHBfdGhlbWUnKTsKICAgICAgaWYgKHNhdmVkVGhlbWUpIHsKICAgICAgICBzZXRUaGVtZShzYXZlZFRoZW1lKTsKICAgICAgfQogICAgfTsKICAgIGxvYWRUaGVtZSgpOwogIH0sIFtdKTsKCiAgY29uc3QgdG9nZ2xlVGhlbWUgPSBhc3luYyAoKSA9PiB7CiAgICBjb25zdCBuZXdUaGVtZSA9IHRoZW1lID09PSAnbGlnaHQnID8gJ2RhcmsnIDogJ2xpZ2h0JzsKICAgIHNldFRoZW1lKG5ld1RoZW1lKTsKICAgIGF3YWl0IHN0b3JlRGF0YSgnYXBwX3RoZW1lJywgbmV3VGhlbWUpOwogIH07CgogIHJldHVybiAoCiAgICA8VmlldyBzdHlsZT17eyBwYWRkaW5nOiAyMCwgYmFja2dyb3VuZENvbG9yOiB0aGVtZSA9PT0gJ2xpZ2h0JyA/ICcjZmZmJyA6ICcjMzMzJywgZmxleDogMSB9fT4KICAgICAgPFRleHQgc3R5bGU9e3sgY29sb3I6IHRoZW1lID09PSAnbGlnaHQnID8gJyMwMDAnIDogJyNmZmYnIH19PlRlbWEgYWN0dWFsOiB7dGhlbWV9PC9UZXh0PgogICAgICA8QnV0dG9uIHRpdGxlPSJDYW52aWFyIFRlbWEiIG9uUHJlc3M9e3RvZ2dsZVRoZW1lfSAvPgogICAgPC9WaWV3PgogICk7Cn07CgpleHBvcnQgZGVmYXVsdCBBcHA7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import React, { useState, useEffect } from 'react';
+import { View, Text, Button } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const App = () =&gt; {
+  const [theme, setTheme] = useState('light');
+
+  useEffect(() =&gt; {
+    const loadTheme = async () =&gt; {
+      const savedTheme = await getData('app_theme');
+      if (savedTheme) {
+        setTheme(savedTheme);
+      }
+    };
+    loadTheme();
+  }, []);
+
+  const toggleTheme = async () =&gt; {
+    const newTheme = theme === 'light' ? 'dark' : 'light';
+    setTheme(newTheme);
+    await storeData('app_theme', newTheme);
+  };
+
+  return (
+    &lt;View style={{ padding: 20, backgroundColor: theme === 'light' ? '#fff' : '#333', flex: 1 }}&gt;
+      &lt;Text style={{ color: theme === 'light' ? '#000' : '#fff' }}&gt;Tema actual: {theme}&lt;/Text&gt;
+      &lt;Button title=&quot;Canviar Tema&quot; onPress={toggleTheme} /&gt;
+    &lt;/View&gt;
+  );
+};
+
+export default App;</pre></div><div class='content'></div><h2>Solució Exercici 2</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IFJlYWN0LCB7IHVzZVN0YXRlLCB1c2VFZmZlY3QgfSBmcm9tICdyZWFjdCc7CmltcG9ydCB7IFZpZXcsIFRleHQsIFRleHRJbnB1dCwgQnV0dG9uLCBGbGF0TGlzdCwgVG91Y2hhYmxlT3BhY2l0eSB9IGZyb20gJ3JlYWN0LW5hdGl2ZSc7CmltcG9ydCBBc3luY1N0b3JhZ2UgZnJvbSAnQHJlYWN0LW5hdGl2ZS1hc3luYy1zdG9yYWdlL2FzeW5jLXN0b3JhZ2UnOwoKY29uc3QgQXBwID0gKCkgPT4gewogIGNvbnN0IFt0YXNrLCBzZXRUYXNrXSA9IHVzZVN0YXRlKCcnKTsKICBjb25zdCBbdGFza3MsIHNldFRhc2tzXSA9IHVzZVN0YXRlKFtdKTsKCiAgdXNlRWZmZWN0KCgpID0+IHsKICAgIGNvbnN0IGxvYWRUYXNrcyA9IGFzeW5jICgpID0+IHsKICAgICAgY29uc3Qgc2F2ZWRUYXNrcyA9IGF3YWl0IGdldERhdGEoJ3Rhc2tzJyk7CiAgICAgIGlmIChzYXZlZFRhc2tzKSB7CiAgICAgICAgc2V0VGFza3MoSlNPTi5wYXJzZShzYXZlZFRhc2tzKSk7CiAgICAgIH0KICAgIH07CiAgICBsb2FkVGFza3MoKTsKICB9LCBbXSk7CgogIGNvbnN0IGFkZFRhc2sgPSBhc3luYyAoKSA9PiB7CiAgICBjb25zdCBuZXdUYXNrcyA9IFsuLi50YXNrcywgeyBpZDogRGF0ZS5ub3coKS50b1N0cmluZygpLCB0ZXh0OiB0YXNrLCBjb21wbGV0ZWQ6IGZhbHNlIH1dOwogICAgc2V0VGFza3MobmV3VGFza3MpOwogICAgYXdhaXQgc3RvcmVEYXRhKCd0YXNrcycsIEpTT04uc3RyaW5naWZ5KG5ld1Rhc2tzKSk7CiAgICBzZXRUYXNrKCcnKTsKICB9OwoKICBjb25zdCB0b2dnbGVUYXNrQ29tcGxldGlvbiA9IGFzeW5jIChpZCkgPT4gewogICAgY29uc3QgbmV3VGFza3MgPSB0YXNrcy5tYXAodGFzayA9PiB0YXNrLmlkID09PSBpZCA/IHsgLi4udGFzaywgY29tcGxldGVkOiAhdGFzay5jb21wbGV0ZWQgfSA6IHRhc2spOwogICAgc2V0VGFza3MobmV3VGFza3MpOwogICAgYXdhaXQgc3RvcmVEYXRhKCd0YXNrcycsIEpTT04uc3RyaW5naWZ5KG5ld1Rhc2tzKSk7CiAgfTsKCiAgY29uc3QgZGVsZXRlVGFzayA9IGFzeW5jIChpZCkgPT4gewogICAgY29uc3QgbmV3VGFza3MgPSB0YXNrcy5maWx0ZXIodGFzayA9PiB0YXNrLmlkICE9PSBpZCk7CiAgICBzZXRUYXNrcyhuZXdUYXNrcyk7CiAgICBhd2FpdCBzdG9yZURhdGEoJ3Rhc2tzJywgSlNPTi5zdHJpbmdpZnkobmV3VGFza3MpKTsKICB9OwoKICByZXR1cm4gKAogICAgPFZpZXcgc3R5bGU9e3sgcGFkZGluZzogMjAgfX0+CiAgICAgIDxUZXh0SW5wdXQKICAgICAgICBwbGFjZWhvbGRlcj0iRXNjcml1IHVuYSB0YXNjYSIKICAgICAgICB2YWx1ZT17dGFza30KICAgICAgICBvbkNoYW5nZVRleHQ9e3NldFRhc2t9CiAgICAgICAgc3R5bGU9e3sgYm9yZGVyQm90dG9tV2lkdGg6IDEsIG1hcmdpbkJvdHRvbTogMjAgfX0KICAgICAgLz4KICAgICAgPEJ1dHRvbiB0aXRsZT0iQWZlZ2lyIFRhc2NhIiBvblByZXNzPXthZGRUYXNrfSAvPgogICAgICA8RmxhdExpc3QKICAgICAgICBkYXRhPXt0YXNrc30KICAgICAgICBrZXlFeHRyYWN0b3I9e2l0ZW0gPT4gaXRlbS5pZH0KICAgICAgICByZW5kZXJJdGVtPXsoeyBpdGVtIH0pID0+ICgKICAgICAgICAgIDxWaWV3IHN0eWxlPXt7IGZsZXhEaXJlY3Rpb246ICdyb3cnLCBqdXN0aWZ5Q29udGVudDogJ3NwYWNlLWJldHdlZW4nLCBhbGlnbkl0ZW1zOiAnY2VudGVyJywgbWFyZ2luQm90dG9tOiAxMCB9fT4KICAgICAgICAgICAgPFRvdWNoYWJsZU9wYWNpdHkgb25QcmVzcz17KCkgPT4gdG9nZ2xlVGFza0NvbXBsZXRpb24oaXRlbS5pZCl9PgogICAgICAgICAgICAgIDxUZXh0IHN0eWxlPXt7IHRleHREZWNvcmF0aW9uTGluZTogaXRlbS5jb21wbGV0ZWQgPyAnbGluZS10aHJvdWdoJyA6ICdub25lJyB9fT57aXRlbS50ZXh0fTwvVGV4dD4KICAgICAgICAgICAgPC9Ub3VjaGFibGVPcGFjaXR5PgogICAgICAgICAgICA8QnV0dG9uIHRpdGxlPSJFbGltaW5hciIgb25QcmVzcz17KCkgPT4gZGVsZXRlVGFzayhpdGVtLmlkKX0gLz4KICAgICAgICAgIDwvVmlldz4KICAgICAgICApfQogICAgICAvPgogICAgPC9WaWV3PgogICk7Cn07CgpleHBvcnQgZGVmYXVsdCBBcHA7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, Button, FlatList, TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const App = () =&gt; {
+  const [task, setTask] = useState('');
+  const [tasks, setTasks] = useState([]);
+
+  useEffect(() =&gt; {
+    const loadTasks = async () =&gt; {
+      const savedTasks = await getData('tasks');
+      if (savedTasks) {
+        setTasks(JSON.parse(savedTasks));
+      }
+    };
+    loadTasks();
+  }, []);
+
+  const addTask = async () =&gt; {
+    const newTasks = [...tasks, { id: Date.now().toString(), text: task, completed: false }];
+    setTasks(newTasks);
+    await storeData('tasks', JSON.stringify(newTasks));
+    setTask('');
+  };
+
+  const toggleTaskCompletion = async (id) =&gt; {
+    const newTasks = tasks.map(task =&gt; task.id === id ? { ...task, completed: !task.completed } : task);
+    setTasks(newTasks);
+    await storeData('tasks', JSON.stringify(newTasks));
+  };
+
+  const deleteTask = async (id) =&gt; {
+    const newTasks = tasks.filter(task =&gt; task.id !== id);
+    setTasks(newTasks);
+    await storeData('tasks', JSON.stringify(newTasks));
+  };
+
+  return (
+    &lt;View style={{ padding: 20 }}&gt;
+      &lt;TextInput
+        placeholder=&quot;Escriu una tasca&quot;
+        value={task}
+        onChangeText={setTask}
+        style={{ borderBottomWidth: 1, marginBottom: 20 }}
+      /&gt;
+      &lt;Button title=&quot;Afegir Tasca&quot; onPress={addTask} /&gt;
+      &lt;FlatList
+        data={tasks}
+        keyExtractor={item =&gt; item.id}
+        renderItem={({ item }) =&gt; (
+          &lt;View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}&gt;
+            &lt;TouchableOpacity onPress={() =&gt; toggleTaskCompletion(item.id)}&gt;
+              &lt;Text style={{ textDecorationLine: item.completed ? 'line-through' : 'none' }}&gt;{item.text}&lt;/Text&gt;
+            &lt;/TouchableOpacity&gt;
+            &lt;Button title=&quot;Eliminar&quot; onPress={() =&gt; deleteTask(item.id)} /&gt;
+          &lt;/View&gt;
+        )}
+      /&gt;
+    &lt;/View&gt;
+  );
+};
+
+export default App;</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après a utilitzar <code>AsyncStorage</code> per emmagatzemar dades locals en una aplicació React Native. Hem vist com guardar, recuperar i eliminar dades, i hem implementat exemples pràctics per reforçar els conceptes apresos. <code>AsyncStorage</code> és una eina poderosa per gestionar dades locals i pot ser molt útil en diverses situacions dins d'una aplicació mòbil.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-03-handling-network-errors' title="Gestió d'errors de xarxa">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-05-integrating-rest-apis' title="Integració amb APIs REST">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

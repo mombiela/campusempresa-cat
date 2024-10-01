@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creant un Nucli Bàsic de Sistema Operatiu</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/assembly/07-02-basic-os-kernel" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/assembly/07-02-basic-os-kernel" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/assembly/07-02-basic-os-kernel" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/assembly/07-02-basic-os-kernel" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/assembly/07-02-basic-os-kernel" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-01-simple-bootloader' title="Escrivint un Bootloader Simple">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Creant un Nucli Bàsic de Sistema Operatiu</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-03-interfacing-hardware' title="Interfície amb el Maquinari">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a crear un nucli bàsic de sistema operatiu utilitzant el llenguatge Assembly. Aquest projecte ens permetrà aplicar molts dels conceptes apresos en els mòduls anteriors i ens proporcionarà una comprensió més profunda de com funcionen els sistemes operatius a nivell baix.</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ul>
+<li>Comprendre els components bàsics d'un nucli de sistema operatiu.</li>
+<li>Escriure codi Assembly per inicialitzar el maquinari.</li>
+<li>Implementar funcions bàsiques del nucli com la gestió de la memòria i la planificació de tasques.</li>
+<li>Crear un entorn de desenvolupament per a la compilació i prova del nucli.</li>
+</ul>
+</div><h1>Components Bàsics d'un Nucli de Sistema Operatiu</h1>
+<div class='content'><p>Un nucli de sistema operatiu és el component central d'un sistema operatiu. Gestiona els recursos del sistema i proporciona serveis als programes d'aplicació. Els components bàsics d'un nucli inclouen:</p>
+<ol>
+<li><strong>Inicialització del Maquinari</strong>: Configuració inicial del maquinari, com ara la CPU, la memòria i els dispositius d'entrada/sortida.</li>
+<li><strong>Gestió de la Memòria</strong>: Assignació i gestió de la memòria per als processos.</li>
+<li><strong>Planificació de Tasques</strong>: Gestió de l'execució dels processos.</li>
+<li><strong>Gestió d'Interrupcions</strong>: Maneig de les interrupcions del maquinari.</li>
+</ol>
+</div><h1>Configuració de l'Entorn de Desenvolupament</h1>
+<div class='content'><p>Abans de començar a escriure el codi, necessitem configurar un entorn de desenvolupament adequat. Utilitzarem un compilador d'Assembly, un emulador de maquinari i eines de depuració.</p>
+</div><h2>Eines Necessàries</h2>
+<div class='content'><ul>
+<li><strong>NASM (Netwide Assembler)</strong>: Un compilador d'Assembly.</li>
+<li><strong>QEMU</strong>: Un emulador de maquinari.</li>
+<li><strong>GDB (GNU Debugger)</strong>: Una eina de depuració.</li>
+</ul>
+</div><h2>Instal·lació de les Eines</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBJbnN0YWzCt2xhY2nDsyBkZSBOQVNNCnN1ZG8gYXB0LWdldCBpbnN0YWxsIG5hc20KCiMgSW5zdGFswrdsYWNpw7MgZGUgUUVNVQpzdWRvIGFwdC1nZXQgaW5zdGFsbCBxZW11CgojIEluc3RhbMK3bGFjacOzIGRlIEdEQgpzdWRvIGFwdC1nZXQgaW5zdGFsbCBnZGI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Instal&middot;laci&oacute; de NASM
+sudo apt-get install nasm
+
+# Instal&middot;laci&oacute; de QEMU
+sudo apt-get install qemu
+
+# Instal&middot;laci&oacute; de GDB
+sudo apt-get install gdb</pre></div><div class='content'></div><h1>Escrivint el Codi del Nucli</h1>
+<div class='content'></div><h2>Inicialització del Maquinari</h2>
+<div class='content'><p>El primer pas és inicialitzar el maquinari. Això inclou la configuració de la pila, la configuració del mode de la CPU i la inicialització de la memòria.</p>
+<h4>Codi d'Inicialització del Maquinari</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VjdGlvbiAudGV4dApnbG9iYWwgX3N0YXJ0Cgpfc3RhcnQ6CiAgICA7IENvbmZpZ3VyYWNpw7MgZGUgbGEgcGlsYQogICAgY2xpICAgICAgICAgICAgICAgICAgICAgOyBEZXNoYWJpbGl0YXIgaW50ZXJydXBjaW9ucwogICAgbW92IGVzcCwgc3RhY2tfc3BhY2UgICAgOyBDb25maWd1cmFyIGVsIHB1bnRlciBkZSBsYSBwaWxhCiAgICBzdGkgICAgICAgICAgICAgICAgICAgICA7IEhhYmlsaXRhciBpbnRlcnJ1cGNpb25zCgogICAgOyBDb25maWd1cmFjacOzIGRlbCBtb2RlIGRlIGxhIENQVQogICAgbW92IGVheCwgY3IwCiAgICBvciBlYXgsIDB4MSAgICAgICAgICAgICA7IEFjdGl2YXIgZWwgbW9kZSBwcm90ZWdpdAogICAgbW92IGNyMCwgZWF4CgogICAgOyBJbmljaWFsaXR6YWNpw7MgZGUgbGEgbWVtw7JyaWEKICAgIGNhbGwgaW5pdF9tZW1vcnkKCiAgICA7IEluaWNpIGRlbCBudWNsaQogICAgY2FsbCBrZXJuZWxfbWFpbgoKc2VjdGlvbiAuYnNzCnN0YWNrX3NwYWNlIHJlc2IgNDA5NiAgICAgICA7IEVzcGFpIHBlciBhIGxhIHBpbGEKCnNlY3Rpb24gLmRhdGEKOyBEYWRlcyBkZWwgbnVjbGkKCnNlY3Rpb24gLnRleHQKaW5pdF9tZW1vcnk6CiAgICA7IENvZGkgcGVyIGluaWNpYWxpdHphciBsYSBtZW3DsnJpYQogICAgcmV0CgprZXJuZWxfbWFpbjoKICAgIDsgQ29kaSBwcmluY2lwYWwgZGVsIG51Y2xpCiAgICBobHQgICAgICAgICAgICAgICAgICAgICA7IEF0dXJhciBsYSBDUFU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>section .text
+global _start
+
+_start:
+    ; Configuraci&oacute; de la pila
+    cli                     ; Deshabilitar interrupcions
+    mov esp, stack_space    ; Configurar el punter de la pila
+    sti                     ; Habilitar interrupcions
+
+    ; Configuraci&oacute; del mode de la CPU
+    mov eax, cr0
+    or eax, 0x1             ; Activar el mode protegit
+    mov cr0, eax
+
+    ; Inicialitzaci&oacute; de la mem&ograve;ria
+    call init_memory
+
+    ; Inici del nucli
+    call kernel_main
+
+section .bss
+stack_space resb 4096       ; Espai per a la pila
+
+section .data
+; Dades del nucli
+
+section .text
+init_memory:
+    ; Codi per inicialitzar la mem&ograve;ria
+    ret
+
+kernel_main:
+    ; Codi principal del nucli
+    hlt                     ; Aturar la CPU</pre></div><div class='content'></div><h2>Gestió de la Memòria</h2>
+<div class='content'><p>La gestió de la memòria és una part crucial del nucli. Implementarem una funció bàsica per assignar i alliberar memòria.</p>
+<h4>Codi de Gestió de la Memòria</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VjdGlvbiAudGV4dAoKbWFsbG9jOgogICAgOyBDb2RpIHBlciBhc3NpZ25hciBtZW3DsnJpYQogICAgcmV0CgpmcmVlOgogICAgOyBDb2RpIHBlciBhbGxpYmVyYXIgbWVtw7JyaWEKICAgIHJldA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>section .text
+
+malloc:
+    ; Codi per assignar mem&ograve;ria
+    ret
+
+free:
+    ; Codi per alliberar mem&ograve;ria
+    ret</pre></div><div class='content'></div><h2>Planificació de Tasques</h2>
+<div class='content'><p>La planificació de tasques implica gestionar l'execució dels processos. Implementarem una funció bàsica per canviar entre tasques.</p>
+<h4>Codi de Planificació de Tasques</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VjdGlvbiAudGV4dAoKc2NoZWR1bGU6CiAgICA7IENvZGkgcGVyIGNhbnZpYXIgZW50cmUgdGFzcXVlcwogICAgcmV0"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>section .text
+
+schedule:
+    ; Codi per canviar entre tasques
+    ret</pre></div><div class='content'></div><h1>Compilació i Prova del Nucli</h1>
+<div class='content'><p>Un cop hem escrit el codi del nucli, necessitem compilar-lo i provar-lo utilitzant QEMU.</p>
+</div><h2>Compilació del Nucli</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bmFzbSAtZiBiaW4gLW8ga2VybmVsLmJpbiBrZXJuZWwuYXNt"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>nasm -f bin -o kernel.bin kernel.asm</pre></div><div class='content'></div><h2>Prova del Nucli amb QEMU</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cWVtdS1zeXN0ZW0teDg2XzY0IC1rZXJuZWwga2VybmVsLmJpbg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>qemu-system-x86_64 -kernel kernel.bin</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Ampliar la Funció d'Inicialització de la Memòria</h2>
+<div class='content'><p>Ampliar la funció <code>init_memory</code> per configurar una taula de pàgines bàsica.</p>
+</div><h2>Exercici 2: Implementar una Funció de Gestió de Tasques</h2>
+<div class='content'><p>Implementar una funció que permeti crear i eliminar tasques.</p>
+</div><h2>Exercici 3: Depurar el Nucli</h2>
+<div class='content'><p>Utilitzar GDB per depurar el nucli i assegurar-se que totes les funcions s'executen correctament.</p>
+</div><h1>Solucions als Exercicis</h1>
+<div class='content'></div><h2>Solució a l'Exercici 1</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW5pdF9tZW1vcnk6CiAgICA7IENvbmZpZ3VyYXIgdW5hIHRhdWxhIGRlIHDDoGdpbmVzIGLDoHNpY2EKICAgIDsgQ29kaSBkJ2V4ZW1wbGUKICAgIHJldA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>init_memory:
+    ; Configurar una taula de p&agrave;gines b&agrave;sica
+    ; Codi d'exemple
+    ret</pre></div><div class='content'></div><h2>Solució a l'Exercici 2</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y3JlYXRlX3Rhc2s6CiAgICA7IENvZGkgcGVyIGNyZWFyIHVuYSB0YXNjYQogICAgcmV0CgpkZWxldGVfdGFzazoKICAgIDsgQ29kaSBwZXIgZWxpbWluYXIgdW5hIHRhc2NhCiAgICByZXQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>create_task:
+    ; Codi per crear una tasca
+    ret
+
+delete_task:
+    ; Codi per eliminar una tasca
+    ret</pre></div><div class='content'></div><h2>Solució a l'Exercici 3</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBJbmljaWFyIFFFTVUgYW1iIEdEQgpxZW11LXN5c3RlbS14ODZfNjQgLWtlcm5lbCBrZXJuZWwuYmluIC1zIC1TCgojIEVuIHVuYSBhbHRyYSB0ZXJtaW5hbCwgaW5pY2lhciBHREIKZ2RiIGtlcm5lbC5iaW4KCiMgQ29ubmVjdGFyLXNlIGEgUUVNVQooZ2RiKSB0YXJnZXQgcmVtb3RlIDoxMjM0CgojIEFmZWdpciBwdW50cyBkZSBydXB0dXJhIGkgZGVwdXJhcgooZ2RiKSBicmVhayBfc3RhcnQKKGdkYikgY29udGludWU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Iniciar QEMU amb GDB
+qemu-system-x86_64 -kernel kernel.bin -s -S
+
+# En una altra terminal, iniciar GDB
+gdb kernel.bin
+
+# Connectar-se a QEMU
+(gdb) target remote :1234
+
+# Afegir punts de ruptura i depurar
+(gdb) break _start
+(gdb) continue</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après a crear un nucli bàsic de sistema operatiu utilitzant el llenguatge Assembly. Hem cobert la inicialització del maquinari, la gestió de la memòria i la planificació de tasques. També hem configurat un entorn de desenvolupament per compilar i provar el nostre nucli. Amb aquests coneixements, estem preparats per explorar conceptes més avançats i crear sistemes operatius més complexos.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-01-simple-bootloader' title="Escrivint un Bootloader Simple">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-03-interfacing-hardware' title="Interfície amb el Maquinari">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

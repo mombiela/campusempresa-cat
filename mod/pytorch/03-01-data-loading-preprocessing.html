@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Càrrega i Preprocessament de Dades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/pytorch/03-01-data-loading-preprocessing" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/pytorch/03-01-data-loading-preprocessing" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/pytorch/03-01-data-loading-preprocessing" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/pytorch/03-01-data-loading-preprocessing" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/pytorch/03-01-data-loading-preprocessing" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-04-loss-functions-optimization' title="Funcions de Pèrdua i Optimització">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Càrrega i Preprocessament de Dades</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-02-training-loop' title="Bucle d'Entrenament">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com carregar i preprocessar dades per entrenar xarxes neuronals amb PyTorch. La càrrega i preprocessament de dades són passos crucials per assegurar que el model rebi les dades en el format correcte i amb la qualitat necessària per obtenir bons resultats.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre com utilitzar <code>torchvision</code> per carregar datasets comuns.</li>
+<li>Aprendre a crear datasets personalitzats amb <code>torch.utils.data.Dataset</code>.</li>
+<li>Utilitzar <code>DataLoader</code> per gestionar el batching i el shuffle de les dades.</li>
+<li>Aplicar transformacions per preprocessar les dades.</li>
+</ul>
+</div><h1>1. Utilització de `torchvision` per Carregar Datasets</h1>
+<div class='content'><p><code>torchvision</code> és una biblioteca que proporciona eines per treballar amb imatges i inclou diversos datasets populars com CIFAR-10, MNIST, etc.</p>
+</div><h2>Exemple: Carregar el Dataset CIFAR-10</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaHZpc2lvbgppbXBvcnQgdG9yY2h2aXNpb24udHJhbnNmb3JtcyBhcyB0cmFuc2Zvcm1zCgojIERlZmluaW0gbGVzIHRyYW5zZm9ybWFjaW9ucyBhIGFwbGljYXIgYSBsZXMgaW1hdGdlcwp0cmFuc2Zvcm0gPSB0cmFuc2Zvcm1zLkNvbXBvc2UoWwogICAgdHJhbnNmb3Jtcy5Ub1RlbnNvcigpLAogICAgdHJhbnNmb3Jtcy5Ob3JtYWxpemUoKDAuNSwgMC41LCAwLjUpLCAoMC41LCAwLjUsIDAuNSkpCl0pCgojIENhcnJlZ3VlbSBlbCBkYXRhc2V0IENJRkFSLTEwCnRyYWluc2V0ID0gdG9yY2h2aXNpb24uZGF0YXNldHMuQ0lGQVIxMChyb290PScuL2RhdGEnLCB0cmFpbj1UcnVlLCBkb3dubG9hZD1UcnVlLCB0cmFuc2Zvcm09dHJhbnNmb3JtKQp0cmFpbmxvYWRlciA9IHRvcmNoLnV0aWxzLmRhdGEuRGF0YUxvYWRlcih0cmFpbnNldCwgYmF0Y2hfc2l6ZT00LCBzaHVmZmxlPVRydWUsIG51bV93b3JrZXJzPTIpCgp0ZXN0c2V0ID0gdG9yY2h2aXNpb24uZGF0YXNldHMuQ0lGQVIxMChyb290PScuL2RhdGEnLCB0cmFpbj1GYWxzZSwgZG93bmxvYWQ9VHJ1ZSwgdHJhbnNmb3JtPXRyYW5zZm9ybSkKdGVzdGxvYWRlciA9IHRvcmNoLnV0aWxzLmRhdGEuRGF0YUxvYWRlcih0ZXN0c2V0LCBiYXRjaF9zaXplPTQsIHNodWZmbGU9RmFsc2UsIG51bV93b3JrZXJzPTIpCgpjbGFzc2VzID0gKCdwbGFuZScsICdjYXInLCAnYmlyZCcsICdjYXQnLCAnZGVlcicsICdkb2cnLCAnZnJvZycsICdob3JzZScsICdzaGlwJywgJ3RydWNrJyk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torchvision
+import torchvision.transforms as transforms
+
+# Definim les transformacions a aplicar a les imatges
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+])
+
+# Carreguem el dataset CIFAR-10
+trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=4, shuffle=True, num_workers=2)
+
+testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
+testloader = torch.utils.data.DataLoader(testset, batch_size=4, shuffle=False, num_workers=2)
+
+classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck')</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><strong>Transformacions</strong>: Utilitzem <code>transforms.Compose</code> per aplicar una sèrie de transformacions a les imatges. En aquest cas, convertim les imatges a tensors i les normalitzem.</li>
+<li><strong>Dataset</strong>: Carreguem el dataset CIFAR-10 amb <code>torchvision.datasets.CIFAR10</code>.</li>
+<li><strong>DataLoader</strong>: Utilitzem <code>DataLoader</code> per gestionar el batching i el shuffle de les dades.</li>
+</ul>
+</div><h1>2. Creació de Datasets Personalitzats</h1>
+<div class='content'><p>Quan treballem amb dades que no estan disponibles en <code>torchvision</code>, podem crear el nostre propi dataset personalitzat utilitzant <code>torch.utils.data.Dataset</code>.</p>
+</div><h2>Exemple: Dataset Personalitzat</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmZyb20gdG9yY2gudXRpbHMuZGF0YSBpbXBvcnQgRGF0YXNldCwgRGF0YUxvYWRlcgpmcm9tIFBJTCBpbXBvcnQgSW1hZ2UKaW1wb3J0IG9zCgpjbGFzcyBDdXN0b21EYXRhc2V0KERhdGFzZXQpOgogICAgZGVmIF9faW5pdF9fKHNlbGYsIGFubm90YXRpb25zX2ZpbGUsIGltZ19kaXIsIHRyYW5zZm9ybT1Ob25lKToKICAgICAgICBzZWxmLmltZ19sYWJlbHMgPSBwZC5yZWFkX2Nzdihhbm5vdGF0aW9uc19maWxlKQogICAgICAgIHNlbGYuaW1nX2RpciA9IGltZ19kaXIKICAgICAgICBzZWxmLnRyYW5zZm9ybSA9IHRyYW5zZm9ybQoKICAgIGRlZiBfX2xlbl9fKHNlbGYpOgogICAgICAgIHJldHVybiBsZW4oc2VsZi5pbWdfbGFiZWxzKQoKICAgIGRlZiBfX2dldGl0ZW1fXyhzZWxmLCBpZHgpOgogICAgICAgIGltZ19wYXRoID0gb3MucGF0aC5qb2luKHNlbGYuaW1nX2Rpciwgc2VsZi5pbWdfbGFiZWxzLmlsb2NbaWR4LCAwXSkKICAgICAgICBpbWFnZSA9IEltYWdlLm9wZW4oaW1nX3BhdGgpCiAgICAgICAgbGFiZWwgPSBzZWxmLmltZ19sYWJlbHMuaWxvY1tpZHgsIDFdCiAgICAgICAgaWYgc2VsZi50cmFuc2Zvcm06CiAgICAgICAgICAgIGltYWdlID0gc2VsZi50cmFuc2Zvcm0oaW1hZ2UpCiAgICAgICAgcmV0dXJuIGltYWdlLCBsYWJlbAoKIyBFeGVtcGxlIGQnw7pzCnRyYW5zZm9ybSA9IHRyYW5zZm9ybXMuQ29tcG9zZShbCiAgICB0cmFuc2Zvcm1zLlJlc2l6ZSgoMTI4LCAxMjgpKSwKICAgIHRyYW5zZm9ybXMuVG9UZW5zb3IoKQpdKQoKZGF0YXNldCA9IEN1c3RvbURhdGFzZXQoYW5ub3RhdGlvbnNfZmlsZT0nYW5ub3RhdGlvbnMuY3N2JywgaW1nX2Rpcj0ncGF0aC90by9pbWFnZXMnLCB0cmFuc2Zvcm09dHJhbnNmb3JtKQpkYXRhbG9hZGVyID0gRGF0YUxvYWRlcihkYXRhc2V0LCBiYXRjaF9zaXplPTQsIHNodWZmbGU9VHJ1ZSwgbnVtX3dvcmtlcnM9Mik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+from torch.utils.data import Dataset, DataLoader
+from PIL import Image
+import os
+
+class CustomDataset(Dataset):
+    def __init__(self, annotations_file, img_dir, transform=None):
+        self.img_labels = pd.read_csv(annotations_file)
+        self.img_dir = img_dir
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.img_labels)
+
+    def __getitem__(self, idx):
+        img_path = os.path.join(self.img_dir, self.img_labels.iloc[idx, 0])
+        image = Image.open(img_path)
+        label = self.img_labels.iloc[idx, 1]
+        if self.transform:
+            image = self.transform(image)
+        return image, label
+
+# Exemple d'&uacute;s
+transform = transforms.Compose([
+    transforms.Resize((128, 128)),
+    transforms.ToTensor()
+])
+
+dataset = CustomDataset(annotations_file='annotations.csv', img_dir='path/to/images', transform=transform)
+dataloader = DataLoader(dataset, batch_size=4, shuffle=True, num_workers=2)</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><strong>CustomDataset</strong>: Definim una classe que hereta de <code>torch.utils.data.Dataset</code> i implementa els mètodes <code>__init__</code>, <code>__len__</code> i <code>__getitem__</code>.</li>
+<li><strong>Transformacions</strong>: Podem aplicar transformacions a les imatges, com redimensionar-les i convertir-les a tensors.</li>
+<li><strong>DataLoader</strong>: Utilitzem <code>DataLoader</code> per gestionar el batching i el shuffle de les dades.</li>
+</ul>
+</div><h1>3. Transformacions de Dades</h1>
+<div class='content'><p>Les transformacions són essencials per preprocessar les dades abans d'entrenar el model. <code>torchvision.transforms</code> proporciona diverses transformacions que podem aplicar a les imatges.</p>
+</div><h2>Exemple: Transformacions Comunes</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNodmlzaW9uLnRyYW5zZm9ybXMgYXMgdHJhbnNmb3JtcwoKdHJhbnNmb3JtID0gdHJhbnNmb3Jtcy5Db21wb3NlKFsKICAgIHRyYW5zZm9ybXMuUmFuZG9tSG9yaXpvbnRhbEZsaXAoKSwKICAgIHRyYW5zZm9ybXMuUmFuZG9tQ3JvcCgzMiwgcGFkZGluZz00KSwKICAgIHRyYW5zZm9ybXMuVG9UZW5zb3IoKSwKICAgIHRyYW5zZm9ybXMuTm9ybWFsaXplKCgwLjUsIDAuNSwgMC41KSwgKDAuNSwgMC41LCAwLjUpKQpdKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torchvision.transforms as transforms
+
+transform = transforms.Compose([
+    transforms.RandomHorizontalFlip(),
+    transforms.RandomCrop(32, padding=4),
+    transforms.ToTensor(),
+    transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
+])</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><strong>RandomHorizontalFlip</strong>: Aplica una inversió horitzontal aleatòria a les imatges.</li>
+<li><strong>RandomCrop</strong>: Realitza un retall aleatori de les imatges amb un padding de 4 píxels.</li>
+<li><strong>ToTensor</strong>: Converteix les imatges a tensors.</li>
+<li><strong>Normalize</strong>: Normalitza les imatges amb una mitjana i desviació estàndard especificades.</li>
+</ul>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Carregar el Dataset MNIST</h2>
+<div class='content'><p>Carrega el dataset MNIST utilitzant <code>torchvision</code> i aplica les transformacions següents: converteix les imatges a tensors i normalitza-les amb una mitjana de 0.5 i una desviació estàndard de 0.5.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNodmlzaW9uLnRyYW5zZm9ybXMgYXMgdHJhbnNmb3JtcwppbXBvcnQgdG9yY2h2aXNpb24uZGF0YXNldHMgYXMgZGF0YXNldHMKZnJvbSB0b3JjaC51dGlscy5kYXRhIGltcG9ydCBEYXRhTG9hZGVyCgp0cmFuc2Zvcm0gPSB0cmFuc2Zvcm1zLkNvbXBvc2UoWwogICAgdHJhbnNmb3Jtcy5Ub1RlbnNvcigpLAogICAgdHJhbnNmb3Jtcy5Ob3JtYWxpemUoKDAuNSwpLCAoMC41LCkpCl0pCgp0cmFpbnNldCA9IGRhdGFzZXRzLk1OSVNUKHJvb3Q9Jy4vZGF0YScsIHRyYWluPVRydWUsIGRvd25sb2FkPVRydWUsIHRyYW5zZm9ybT10cmFuc2Zvcm0pCnRyYWlubG9hZGVyID0gRGF0YUxvYWRlcih0cmFpbnNldCwgYmF0Y2hfc2l6ZT02NCwgc2h1ZmZsZT1UcnVlLCBudW1fd29ya2Vycz0yKQoKdGVzdHNldCA9IGRhdGFzZXRzLk1OSVNUKHJvb3Q9Jy4vZGF0YScsIHRyYWluPUZhbHNlLCBkb3dubG9hZD1UcnVlLCB0cmFuc2Zvcm09dHJhbnNmb3JtKQp0ZXN0bG9hZGVyID0gRGF0YUxvYWRlcih0ZXN0c2V0LCBiYXRjaF9zaXplPTY0LCBzaHVmZmxlPUZhbHNlLCBudW1fd29ya2Vycz0yKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torchvision.transforms as transforms
+import torchvision.datasets as datasets
+from torch.utils.data import DataLoader
+
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((0.5,), (0.5,))
+])
+
+trainset = datasets.MNIST(root='./data', train=True, download=True, transform=transform)
+trainloader = DataLoader(trainset, batch_size=64, shuffle=True, num_workers=2)
+
+testset = datasets.MNIST(root='./data', train=False, download=True, transform=transform)
+testloader = DataLoader(testset, batch_size=64, shuffle=False, num_workers=2)</pre></div><div class='content'></div><h2>Exercici 2: Crear un Dataset Personalitzat</h2>
+<div class='content'><p>Crea un dataset personalitzat per a un conjunt d'imatges emmagatzemades en una carpeta. Aplica les transformacions següents: redimensiona les imatges a 128x128 píxels i converteix-les a tensors.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHBhbmRhcyBhcyBwZApmcm9tIHRvcmNoLnV0aWxzLmRhdGEgaW1wb3J0IERhdGFzZXQsIERhdGFMb2FkZXIKZnJvbSBQSUwgaW1wb3J0IEltYWdlCmltcG9ydCBvcwoKY2xhc3MgQ3VzdG9tRGF0YXNldChEYXRhc2V0KToKICAgIGRlZiBfX2luaXRfXyhzZWxmLCBhbm5vdGF0aW9uc19maWxlLCBpbWdfZGlyLCB0cmFuc2Zvcm09Tm9uZSk6CiAgICAgICAgc2VsZi5pbWdfbGFiZWxzID0gcGQucmVhZF9jc3YoYW5ub3RhdGlvbnNfZmlsZSkKICAgICAgICBzZWxmLmltZ19kaXIgPSBpbWdfZGlyCiAgICAgICAgc2VsZi50cmFuc2Zvcm0gPSB0cmFuc2Zvcm0KCiAgICBkZWYgX19sZW5fXyhzZWxmKToKICAgICAgICByZXR1cm4gbGVuKHNlbGYuaW1nX2xhYmVscykKCiAgICBkZWYgX19nZXRpdGVtX18oc2VsZiwgaWR4KToKICAgICAgICBpbWdfcGF0aCA9IG9zLnBhdGguam9pbihzZWxmLmltZ19kaXIsIHNlbGYuaW1nX2xhYmVscy5pbG9jW2lkeCwgMF0pCiAgICAgICAgaW1hZ2UgPSBJbWFnZS5vcGVuKGltZ19wYXRoKQogICAgICAgIGxhYmVsID0gc2VsZi5pbWdfbGFiZWxzLmlsb2NbaWR4LCAxXQogICAgICAgIGlmIHNlbGYudHJhbnNmb3JtOgogICAgICAgICAgICBpbWFnZSA9IHNlbGYudHJhbnNmb3JtKGltYWdlKQogICAgICAgIHJldHVybiBpbWFnZSwgbGFiZWwKCnRyYW5zZm9ybSA9IHRyYW5zZm9ybXMuQ29tcG9zZShbCiAgICB0cmFuc2Zvcm1zLlJlc2l6ZSgoMTI4LCAxMjgpKSwKICAgIHRyYW5zZm9ybXMuVG9UZW5zb3IoKQpdKQoKZGF0YXNldCA9IEN1c3RvbURhdGFzZXQoYW5ub3RhdGlvbnNfZmlsZT0nYW5ub3RhdGlvbnMuY3N2JywgaW1nX2Rpcj0ncGF0aC90by9pbWFnZXMnLCB0cmFuc2Zvcm09dHJhbnNmb3JtKQpkYXRhbG9hZGVyID0gRGF0YUxvYWRlcihkYXRhc2V0LCBiYXRjaF9zaXplPTQsIHNodWZmbGU9VHJ1ZSwgbnVtX3dvcmtlcnM9Mik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import pandas as pd
+from torch.utils.data import Dataset, DataLoader
+from PIL import Image
+import os
+
+class CustomDataset(Dataset):
+    def __init__(self, annotations_file, img_dir, transform=None):
+        self.img_labels = pd.read_csv(annotations_file)
+        self.img_dir = img_dir
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.img_labels)
+
+    def __getitem__(self, idx):
+        img_path = os.path.join(self.img_dir, self.img_labels.iloc[idx, 0])
+        image = Image.open(img_path)
+        label = self.img_labels.iloc[idx, 1]
+        if self.transform:
+            image = self.transform(image)
+        return image, label
+
+transform = transforms.Compose([
+    transforms.Resize((128, 128)),
+    transforms.ToTensor()
+])
+
+dataset = CustomDataset(annotations_file='annotations.csv', img_dir='path/to/images', transform=transform)
+dataloader = DataLoader(dataset, batch_size=4, shuffle=True, num_workers=2)</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après com carregar i preprocessar dades utilitzant PyTorch. Hem vist com utilitzar <code>torchvision</code> per carregar datasets comuns, com crear datasets personalitzats i com aplicar transformacions per preprocessar les dades. Aquests coneixements són fonamentals per preparar les dades abans d'entrenar un model de xarxa neuronal.</p>
+<p>En el següent tema, explorarem el bucle d'entrenament, on veurem com utilitzar les dades carregades per entrenar una xarxa neuronal.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-04-loss-functions-optimization' title="Funcions de Pèrdua i Optimització">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-02-training-loop' title="Bucle d'Entrenament">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

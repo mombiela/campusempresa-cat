@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimització del Rendiment</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/pytorch/06-04-optimizing-performance" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/pytorch/06-04-optimizing-performance" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/pytorch/06-04-optimizing-performance" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/pytorch/06-04-optimizing-performance" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/pytorch/06-04-optimizing-performance" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-03-deploying-models' title="Desplegament de Models PyTorch">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Optimització del Rendiment</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-01-image-classification-project' title="Projecte de Classificació d'Imatges">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com optimitzar el rendiment dels models de PyTorch per assegurar-nos que s'executin de la manera més eficient possible. Això inclou tècniques per accelerar l'entrenament, reduir l'ús de memòria i millorar la velocitat d'inferència.</p>
+</div><h1>Continguts</h1>
+<div class='content'><ol>
+<li><a href="#introducció-a-loptimització-del-rendiment">Introducció a l'Optimització del Rendiment</a></li>
+<li><a href="#optimització-de-lentrenament">Optimització de l'Entrenament</a></li>
+<li><a href="#optimització-de-la-memòria">Optimització de la Memòria</a></li>
+<li><a href="#optimització-de-la-velocitat-dinferència">Optimització de la Velocitat d'Inferència</a></li>
+<li><a href="#exercicis-pràctics">Exercicis Pràctics</a></li>
+<li><a href="#conclusió">Conclusió</a></li>
+</ol>
+</div><h1>Introducció a l'Optimització del Rendiment</h1>
+<div class='content'><p>L'optimització del rendiment és crucial per a l'entrenament i la inferència eficients dels models de xarxes neuronals. Els beneficis inclouen:</p>
+<ul>
+<li><strong>Reducció del temps d'entrenament</strong>: Permet entrenar models més ràpidament.</li>
+<li><strong>Reducció de l'ús de memòria</strong>: Permet entrenar models més grans o utilitzar més dades.</li>
+<li><strong>Millora de la velocitat d'inferència</strong>: Permet fer prediccions més ràpidament, essencial per a aplicacions en temps real.</li>
+</ul>
+</div><h1>Optimització de l'Entrenament</h1>
+<div class='content'></div><h2>1. Utilització de GPU</h2>
+<div class='content'><p>Les GPU són molt més ràpides que les CPU per a les operacions de tensor. Assegura't d'utilitzar una GPU si està disponible.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCgojIENvbXByb3ZhciBzaSBoaSBoYSB1bmEgR1BVIGRpc3BvbmlibGUKZGV2aWNlID0gdG9yY2guZGV2aWNlKCJjdWRhIiBpZiB0b3JjaC5jdWRhLmlzX2F2YWlsYWJsZSgpIGVsc2UgImNwdSIpCnByaW50KGYiVXNpbmcgZGV2aWNlOiB7ZGV2aWNlfSIpCgojIE1vdXJlIHRlbnNvcnMgYSBsYSBHUFUKdGVuc29yID0gdG9yY2gucmFuZG4oMTAwLCAxMDApLnRvKGRldmljZSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+
+# Comprovar si hi ha una GPU disponible
+device = torch.device(&quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;)
+print(f&quot;Using device: {device}&quot;)
+
+# Moure tensors a la GPU
+tensor = torch.randn(100, 100).to(device)</pre></div><div class='content'></div><h2>2. Entrenament Mixt de Precisió</h2>
+<div class='content'><p>L'entrenament mixt de precisió utilitza tant precisió simple (32 bits) com precisió mitjana (16 bits) per accelerar l'entrenament i reduir l'ús de memòria.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSB0b3JjaC5jdWRhLmFtcCBpbXBvcnQgR3JhZFNjYWxlciwgYXV0b2Nhc3QKCm1vZGVsID0gbW9kZWwudG8oZGV2aWNlKQpvcHRpbWl6ZXIgPSB0b3JjaC5vcHRpbS5BZGFtKG1vZGVsLnBhcmFtZXRlcnMoKSwgbHI9MC4wMDEpCnNjYWxlciA9IEdyYWRTY2FsZXIoKQoKZm9yIGRhdGEsIHRhcmdldCBpbiBkYXRhbG9hZGVyOgogICAgZGF0YSwgdGFyZ2V0ID0gZGF0YS50byhkZXZpY2UpLCB0YXJnZXQudG8oZGV2aWNlKQogICAgCiAgICBvcHRpbWl6ZXIuemVyb19ncmFkKCkKICAgIAogICAgd2l0aCBhdXRvY2FzdCgpOgogICAgICAgIG91dHB1dCA9IG1vZGVsKGRhdGEpCiAgICAgICAgbG9zcyA9IGxvc3NfZm4ob3V0cHV0LCB0YXJnZXQpCiAgICAKICAgIHNjYWxlci5zY2FsZShsb3NzKS5iYWNrd2FyZCgpCiAgICBzY2FsZXIuc3RlcChvcHRpbWl6ZXIpCiAgICBzY2FsZXIudXBkYXRlKCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from torch.cuda.amp import GradScaler, autocast
+
+model = model.to(device)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+scaler = GradScaler()
+
+for data, target in dataloader:
+    data, target = data.to(device), target.to(device)
+    
+    optimizer.zero_grad()
+    
+    with autocast():
+        output = model(data)
+        loss = loss_fn(output, target)
+    
+    scaler.scale(loss).backward()
+    scaler.step(optimizer)
+    scaler.update()</pre></div><div class='content'></div><h2>3. Optimització de l'Algorisme d'Optimització</h2>
+<div class='content'><p>Utilitza optimitzadors avançats com Adam, RMSprop, o optimitzadors específics per a la teva arquitectura.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3B0aW1pemVyID0gdG9yY2gub3B0aW0uQWRhbShtb2RlbC5wYXJhbWV0ZXJzKCksIGxyPTAuMDAxKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>optimizer = torch.optim.Adam(model.parameters(), lr=0.001)</pre></div><div class='content'></div><h1>Optimització de la Memòria</h1>
+<div class='content'></div><h2>1. Alliberament de Memòria Innecessària</h2>
+<div class='content'><p>Allibera memòria innecessària per evitar fuites de memòria.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVsIHRlbnNvcgp0b3JjaC5jdWRhLmVtcHR5X2NhY2hlKCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>del tensor
+torch.cuda.empty_cache()</pre></div><div class='content'></div><h2>2. Utilització de `torch.no_grad()`</h2>
+<div class='content'><p>Desactiva el càlcul de gradients durant la inferència per estalviar memòria.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("d2l0aCB0b3JjaC5ub19ncmFkKCk6CiAgICBvdXRwdXQgPSBtb2RlbChkYXRhKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>with torch.no_grad():
+    output = model(data)</pre></div><div class='content'></div><h1>Optimització de la Velocitat d'Inferència</h1>
+<div class='content'></div><h2>1. Model Tracing amb TorchScript</h2>
+<div class='content'><p>Utilitza TorchScript per convertir el model a una representació optimitzada.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoLmppdAoKdHJhY2VkX21vZGVsID0gdG9yY2guaml0LnRyYWNlKG1vZGVsLCBleGFtcGxlX2lucHV0KQp0cmFjZWRfbW9kZWwuc2F2ZSgidHJhY2VkX21vZGVsLnB0Iik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch.jit
+
+traced_model = torch.jit.trace(model, example_input)
+traced_model.save(&quot;traced_model.pt&quot;)</pre></div><div class='content'></div><h2>2. Quantització</h2>
+<div class='content'><p>La quantització redueix la precisió dels pesos i les activacions per accelerar la inferència.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kZWwucWNvbmZpZyA9IHRvcmNoLnF1YW50aXphdGlvbi5nZXRfZGVmYXVsdF9xY29uZmlnKCdmYmdlbW0nKQp0b3JjaC5xdWFudGl6YXRpb24ucHJlcGFyZShtb2RlbCwgaW5wbGFjZT1UcnVlKQp0b3JjaC5xdWFudGl6YXRpb24uY29udmVydChtb2RlbCwgaW5wbGFjZT1UcnVlKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>model.qconfig = torch.quantization.get_default_qconfig('fbgemm')
+torch.quantization.prepare(model, inplace=True)
+torch.quantization.convert(model, inplace=True)</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Utilització de GPU</h2>
+<div class='content'><ol>
+<li>Comprova si tens una GPU disponible.</li>
+<li>Mou un tensor a la GPU i realitza una operació senzilla.</li>
+</ol>
+</div><h2>Exercici 2: Entrenament Mixt de Precisió</h2>
+<div class='content'><ol>
+<li>Implementa l'entrenament mixt de precisió en un model simple.</li>
+<li>Compara el temps d'entrenament amb i sense entrenament mixt de precisió.</li>
+</ol>
+</div><h2>Exercici 3: Quantització</h2>
+<div class='content'><ol>
+<li>Aplica la quantització a un model preentrenat.</li>
+<li>Compara la velocitat d'inferència abans i després de la quantització.</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem explorat diverses tècniques per optimitzar el rendiment dels models de PyTorch. Hem après com utilitzar GPU, entrenament mixt de precisió, optimitzadors avançats, alliberament de memòria, <code>torch.no_grad()</code>, model tracing amb TorchScript i quantització. Aquestes tècniques són essencials per assegurar que els models s'executin de manera eficient tant durant l'entrenament com durant la inferència.</p>
+<p>Amb aquestes eines, estàs preparat per abordar problemes més complexos i treballar amb models més grans i dades més voluminoses de manera eficient.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-03-deploying-models' title="Desplegament de Models PyTorch">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-01-image-classification-project' title="Projecte de Classificació d'Imatges">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuració SSL/TLS</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nginx/04-03-ssl-tls-configuration" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nginx/04-03-ssl-tls-configuration" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nginx/04-03-ssl-tls-configuration" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nginx/04-03-ssl-tls-configuration" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nginx/04-03-ssl-tls-configuration" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-02-rate-limiting' title="Limitació de velocitat">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Configuració SSL/TLS</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-04-caching' title="Caché">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com configurar SSL/TLS a NGINX per assegurar les comunicacions entre el servidor i els clients. SSL (Secure Sockets Layer) i el seu successor TLS (Transport Layer Security) són protocols que proporcionen seguretat en les comunicacions a través d'Internet.</p>
+</div><h1>1. Introducció a SSL/TLS</h1>
+<div class='content'></div><h2>Què és SSL/TLS?</h2>
+<div class='content'><ul>
+<li><strong>SSL/TLS</strong>: Protocols de seguretat que xifren les dades transmeses entre el client i el servidor.</li>
+<li><strong>Certificat SSL/TLS</strong>: Un fitxer que conté la clau pública del servidor i altres dades d'identificació. És emès per una Autoritat de Certificació (CA).</li>
+</ul>
+</div><h2>Beneficis de SSL/TLS</h2>
+<div class='content'><ul>
+<li><strong>Confidencialitat</strong>: Les dades transmeses són xifrades.</li>
+<li><strong>Integritat</strong>: Les dades no poden ser modificades sense ser detectades.</li>
+<li><strong>Autenticació</strong>: Assegura que el servidor és qui diu ser.</li>
+</ul>
+</div><h1>2. Obtenint un Certificat SSL/TLS</h1>
+<div class='content'></div><h2>Opcions per obtenir un certificat</h2>
+<div class='content'><ul>
+<li><strong>Certificats auto-signats</strong>: Generats pel propi servidor, adequats per a entorns de desenvolupament.</li>
+<li><strong>Certificats de CA</strong>: Emesos per una Autoritat de Certificació, adequats per a entorns de producció.</li>
+</ul>
+</div><h2>Generant un certificat auto-signat</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBHZW5lcmFyIHVuYSBjbGF1IHByaXZhZGEKb3BlbnNzbCBnZW5wa2V5IC1hbGdvcml0aG0gUlNBIC1vdXQgc2VydmVyLmtleQoKIyBHZW5lcmFyIHVuIGNlcnRpZmljYXQgYXV0by1zaWduYXQKb3BlbnNzbCByZXEgLW5ldyAteDUwOSAta2V5IHNlcnZlci5rZXkgLW91dCBzZXJ2ZXIuY3J0IC1kYXlzIDM2NQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Generar una clau privada
+openssl genpkey -algorithm RSA -out server.key
+
+# Generar un certificat auto-signat
+openssl req -new -x509 -key server.key -out server.crt -days 365</pre></div><div class='content'></div><h2>Obtenint un certificat de CA</h2>
+<div class='content'><ul>
+<li><strong>Let's Encrypt</strong>: Una CA gratuïta que proporciona certificats SSL/TLS.</li>
+<li><strong>Altres CA</strong>: Com DigiCert, GlobalSign, etc.</li>
+</ul>
+</div><h1>3. Configurant SSL/TLS a NGINX</h1>
+<div class='content'></div><h2>Estructura de la configuració</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmVyIHsKICAgIGxpc3RlbiA0NDMgc3NsOwogICAgc2VydmVyX25hbWUgZXhhbXBsZS5jb207CgogICAgc3NsX2NlcnRpZmljYXRlIC9wYXRoL3RvL3NlcnZlci5jcnQ7CiAgICBzc2xfY2VydGlmaWNhdGVfa2V5IC9wYXRoL3RvL3NlcnZlci5rZXk7CgogICAgc3NsX3Byb3RvY29scyBUTFN2MS4yIFRMU3YxLjM7CiAgICBzc2xfY2lwaGVycyBISUdIOiFhTlVMTDohTUQ1OwoKICAgIGxvY2F0aW9uIC8gewogICAgICAgIHJvb3QgL3Vzci9zaGFyZS9uZ2lueC9odG1sOwogICAgICAgIGluZGV4IGluZGV4Lmh0bWw7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>server {
+    listen 443 ssl;
+    server_name example.com;
+
+    ssl_certificate /path/to/server.crt;
+    ssl_certificate_key /path/to/server.key;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    location / {
+        root /usr/share/nginx/html;
+        index index.html;
+    }
+}</pre></div><div class='content'></div><h2>Explicació de la configuració</h2>
+<div class='content'><ul>
+<li><code>listen 443 ssl;</code>: Indica que el servidor escoltarà al port 443 amb SSL habilitat.</li>
+<li><code>server_name example.com;</code>: El nom del servidor.</li>
+<li><code>ssl_certificate</code>: Ruta al certificat SSL.</li>
+<li><code>ssl_certificate_key</code>: Ruta a la clau privada del certificat.</li>
+<li><code>ssl_protocols</code>: Protocols TLS que es permeten.</li>
+<li><code>ssl_ciphers</code>: Conjunts de xifrat que es permeten.</li>
+</ul>
+</div><h2>Exemple complet</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmVyIHsKICAgIGxpc3RlbiA0NDMgc3NsOwogICAgc2VydmVyX25hbWUgZXhhbXBsZS5jb207CgogICAgc3NsX2NlcnRpZmljYXRlIC9ldGMvbmdpbngvc3NsL3NlcnZlci5jcnQ7CiAgICBzc2xfY2VydGlmaWNhdGVfa2V5IC9ldGMvbmdpbngvc3NsL3NlcnZlci5rZXk7CgogICAgc3NsX3Byb3RvY29scyBUTFN2MS4yIFRMU3YxLjM7CiAgICBzc2xfY2lwaGVycyBISUdIOiFhTlVMTDohTUQ1OwoKICAgIGxvY2F0aW9uIC8gewogICAgICAgIHJvb3QgL3Vzci9zaGFyZS9uZ2lueC9odG1sOwogICAgICAgIGluZGV4IGluZGV4Lmh0bWw7CiAgICB9Cn0KCnNlcnZlciB7CiAgICBsaXN0ZW4gODA7CiAgICBzZXJ2ZXJfbmFtZSBleGFtcGxlLmNvbTsKCiAgICBsb2NhdGlvbiAvIHsKICAgICAgICByZXR1cm4gMzAxIGh0dHBzOi8vJGhvc3QkcmVxdWVzdF91cmk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>server {
+    listen 443 ssl;
+    server_name example.com;
+
+    ssl_certificate /etc/nginx/ssl/server.crt;
+    ssl_certificate_key /etc/nginx/ssl/server.key;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+
+    location / {
+        root /usr/share/nginx/html;
+        index index.html;
+    }
+}
+
+server {
+    listen 80;
+    server_name example.com;
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}</pre></div><div class='content'></div><h2>Explicació addicional</h2>
+<div class='content'><ul>
+<li><strong>Redirecció HTTP a HTTPS</strong>: El segon bloc <code>server</code> redirigeix tot el tràfic HTTP a HTTPS per assegurar que totes les comunicacions siguin segures.</li>
+</ul>
+</div><h1>4. Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Generar un certificat auto-signat</h2>
+<div class='content'><ol>
+<li>Genera una clau privada i un certificat auto-signat utilitzant <code>openssl</code>.</li>
+<li>Configura NGINX per utilitzar aquest certificat.</li>
+</ol>
+</div><h2>Exercici 2: Configurar SSL/TLS amb Let's Encrypt</h2>
+<div class='content'><ol>
+<li>Utilitza <code>certbot</code> per obtenir un certificat de Let's Encrypt.</li>
+<li>Configura NGINX per utilitzar el certificat obtingut.</li>
+</ol>
+</div><h2>Solucions</h2>
+<div class='content'><h4>Solució Exercici 1</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBHZW5lcmFyIHVuYSBjbGF1IHByaXZhZGEKb3BlbnNzbCBnZW5wa2V5IC1hbGdvcml0aG0gUlNBIC1vdXQgL2V0Yy9uZ2lueC9zc2wvc2VydmVyLmtleQoKIyBHZW5lcmFyIHVuIGNlcnRpZmljYXQgYXV0by1zaWduYXQKb3BlbnNzbCByZXEgLW5ldyAteDUwOSAta2V5IC9ldGMvbmdpbngvc3NsL3NlcnZlci5rZXkgLW91dCAvZXRjL25naW54L3NzbC9zZXJ2ZXIuY3J0IC1kYXlzIDM2NQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Generar una clau privada
+openssl genpkey -algorithm RSA -out /etc/nginx/ssl/server.key
+
+# Generar un certificat auto-signat
+openssl req -new -x509 -key /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.crt -days 365</pre></div><div class='content'><h4>Solució Exercici 2</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBJbnN0YWzCt2xhciBjZXJ0Ym90CnN1ZG8gYXB0LWdldCBpbnN0YWxsIGNlcnRib3QgcHl0aG9uMy1jZXJ0Ym90LW5naW54CgojIE9idGVuaXIgdW4gY2VydGlmaWNhdCBkZSBMZXQncyBFbmNyeXB0CnN1ZG8gY2VydGJvdCAtLW5naW54IC1kIGV4YW1wbGUuY29t"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Instal&middot;lar certbot
+sudo apt-get install certbot python3-certbot-nginx
+
+# Obtenir un certificat de Let's Encrypt
+sudo certbot --nginx -d example.com</pre></div><div class='content'></div><h1>5. Errors Comuns i Consells</h1>
+<div class='content'></div><h2>Errors Comuns</h2>
+<div class='content'><ul>
+<li><strong>Certificat invàlid</strong>: Assegura't que el certificat i la clau privada coincideixen.</li>
+<li><strong>Protocols no suportats</strong>: Verifica que el client i el servidor suporten els mateixos protocols TLS.</li>
+</ul>
+</div><h2>Consells</h2>
+<div class='content'><ul>
+<li><strong>Renovació automàtica</strong>: Configura la renovació automàtica dels certificats de Let's Encrypt.</li>
+<li><strong>Seguretat</strong>: Utilitza conjunts de xifrat forts i desactiva protocols obsolets.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com configurar SSL/TLS a NGINX per assegurar les comunicacions. Hem vist com obtenir certificats, tant auto-signats com de CA, i com configurar-los a NGINX. També hem practicat amb exercicis per reforçar els conceptes apresos. En el següent tema, explorarem la caché a NGINX per millorar el rendiment del servidor.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-02-rate-limiting' title="Limitació de velocitat">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-04-caching' title="Caché">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

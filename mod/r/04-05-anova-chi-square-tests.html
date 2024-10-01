@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANOVA i Proves de Chi-Cuadrat</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/r/04-05-anova-chi-square-tests" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/r/04-05-anova-chi-square-tests" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/r/04-05-anova-chi-square-tests" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/r/04-05-anova-chi-square-tests" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/r/04-05-anova-chi-square-tests" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-04-correlation-regression' title="Correlació i Regressió">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">ANOVA i Proves de Chi-Cuadrat</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-01-handling-dates-times' title="Gestió de Dates i Hores">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, explorarem dues tècniques estadístiques fonamentals per a l'anàlisi de dades: l'ANOVA (Anàlisi de la Variància) i les proves de Chi-Cuadrat. Aquestes tècniques són àmpliament utilitzades per comparar grups i determinar si hi ha diferències significatives entre ells.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Comprendre el concepte d'ANOVA i com s'utilitza per comparar mitjanes de múltiples grups.</li>
+<li>Aprendre a realitzar una prova d'ANOVA en R.</li>
+<li>Entendre les proves de Chi-Cuadrat i com s'utilitzen per analitzar dades categòriques.</li>
+<li>Aprendre a realitzar una prova de Chi-Cuadrat en R.</li>
+</ul>
+</div><h1>ANOVA (Anàlisi de la Variància)</h1>
+<div class='content'></div><h2>Què és l'ANOVA?</h2>
+<div class='content'><p>L'ANOVA és una tècnica estadística que s'utilitza per comparar les mitjanes de tres o més grups per determinar si almenys un grup és significativament diferent dels altres. L'ANOVA es basa en la partició de la variància total en components atribuïbles a diferents fonts de variació.</p>
+</div><h2>Tipus d'ANOVA</h2>
+<div class='content'><ul>
+<li><strong>ANOVA d'un factor (one-way ANOVA)</strong>: Compara les mitjanes de tres o més grups basats en un sol factor.</li>
+<li><strong>ANOVA de dos factors (two-way ANOVA)</strong>: Compara les mitjanes de grups basats en dos factors, permetent l'anàlisi de la interacció entre els factors.</li>
+</ul>
+</div><h2>Realitzar una ANOVA d'un factor en R</h2>
+<div class='content'><h4>Exemple Pràctic</h4>
+<p>Suposem que tenim tres grups de dades que representen els resultats d'un examen per a tres mètodes d'ensenyament diferents. Volem determinar si hi ha una diferència significativa entre els mètodes.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBEYWRlcyBkJ2V4ZW1wbGUKZ3J1cDEgPC0gYyg4NSwgOTAsIDg4LCA3NSwgOTUpCmdydXAyIDwtIGMoNzgsIDgyLCA4MCwgODUsIDg4KQpncnVwMyA8LSBjKDkyLCA5NCwgODksIDkxLCA5MykKCiMgQ3JlYXIgdW4gZGF0YSBmcmFtZQpkYWRlcyA8LSBkYXRhLmZyYW1lKAogIHZhbG9yID0gYyhncnVwMSwgZ3J1cDIsIGdydXAzKSwKICBncnVwID0gZmFjdG9yKHJlcChjKCJNw6h0b2RlIDEiLCAiTcOodG9kZSAyIiwgIk3DqHRvZGUgMyIpLCBlYWNoID0gNSkpCikKCiMgUmVhbGl0emFyIEFOT1ZBCmFub3ZhX3Jlc3VsdGF0IDwtIGFvdih2YWxvciB+IGdydXAsIGRhdGEgPSBkYWRlcykKc3VtbWFyeShhbm92YV9yZXN1bHRhdCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Dades d'exemple
+grup1 &lt;- c(85, 90, 88, 75, 95)
+grup2 &lt;- c(78, 82, 80, 85, 88)
+grup3 &lt;- c(92, 94, 89, 91, 93)
+
+# Crear un data frame
+dades &lt;- data.frame(
+  valor = c(grup1, grup2, grup3),
+  grup = factor(rep(c(&quot;M&egrave;tode 1&quot;, &quot;M&egrave;tode 2&quot;, &quot;M&egrave;tode 3&quot;), each = 5))
+)
+
+# Realitzar ANOVA
+anova_resultat &lt;- aov(valor ~ grup, data = dades)
+summary(anova_resultat)</pre></div><div class='content'><h4>Explicació del Codi</h4>
+<ol>
+<li><strong>Crear les dades</strong>: Definim tres vectors que contenen els resultats dels tres grups.</li>
+<li><strong>Crear un data frame</strong>: Combina els vectors en un data frame amb una columna per als valors i una altra per als grups.</li>
+<li><strong>Realitzar ANOVA</strong>: Utilitzem la funció <code>aov()</code> per realitzar l'ANOVA i <code>summary()</code> per veure els resultats.</li>
+</ol>
+</div><h2>Interpretació dels Resultats</h2>
+<div class='content'><p>El resultat de l'ANOVA inclou un valor p que ens indica si hi ha una diferència significativa entre els grups. Si el valor p és menor que el nivell de significació (normalment 0.05), rebutgem la hipòtesi nul·la i concloem que almenys un grup és diferent.</p>
+</div><h1>Proves de Chi-Cuadrat</h1>
+<div class='content'></div><h2>Què és la Prova de Chi-Cuadrat?</h2>
+<div class='content'><p>La prova de Chi-Cuadrat s'utilitza per analitzar dades categòriques per determinar si hi ha una associació significativa entre les variables. Hi ha dues proves principals de Chi-Cuadrat:</p>
+<ul>
+<li><strong>Prova de Chi-Cuadrat d'Independència</strong>: Determina si hi ha una associació entre dues variables categòriques.</li>
+<li><strong>Prova de Chi-Cuadrat de Bondat d'Ajut</strong>: Comprova si una distribució observada difereix d'una distribució esperada.</li>
+</ul>
+</div><h2>Realitzar una Prova de Chi-Cuadrat d'Independència en R</h2>
+<div class='content'><h4>Exemple Pràctic</h4>
+<p>Suposem que tenim dades sobre la preferència de color de cotxe (vermell, blau, verd) entre homes i dones. Volem determinar si hi ha una associació entre el gènere i la preferència de color.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBEYWRlcyBkJ2V4ZW1wbGUKZGFkZXMgPC0gbWF0cml4KGMoMjAsIDE1LCAyNSwgMzAsIDM1LCAxMCksIG5yb3cgPSAyLCBieXJvdyA9IFRSVUUpCmNvbG5hbWVzKGRhZGVzKSA8LSBjKCJWZXJtZWxsIiwgIkJsYXUiLCAiVmVyZCIpCnJvd25hbWVzKGRhZGVzKSA8LSBjKCJIb21lcyIsICJEb25lcyIpCgojIFJlYWxpdHphciBsYSBwcm92YSBkZSBDaGktQ3VhZHJhdApjaGlfcmVzdWx0YXQgPC0gY2hpc3EudGVzdChkYWRlcykKY2hpX3Jlc3VsdGF0"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Dades d'exemple
+dades &lt;- matrix(c(20, 15, 25, 30, 35, 10), nrow = 2, byrow = TRUE)
+colnames(dades) &lt;- c(&quot;Vermell&quot;, &quot;Blau&quot;, &quot;Verd&quot;)
+rownames(dades) &lt;- c(&quot;Homes&quot;, &quot;Dones&quot;)
+
+# Realitzar la prova de Chi-Cuadrat
+chi_resultat &lt;- chisq.test(dades)
+chi_resultat</pre></div><div class='content'><h4>Explicació del Codi</h4>
+<ol>
+<li><strong>Crear les dades</strong>: Definim una matriu amb les freqüències observades per a cada combinació de gènere i color.</li>
+<li><strong>Realitzar la prova de Chi-Cuadrat</strong>: Utilitzem la funció <code>chisq.test()</code> per realitzar la prova.</li>
+</ol>
+</div><h2>Interpretació dels Resultats</h2>
+<div class='content'><p>El resultat de la prova de Chi-Cuadrat inclou un valor p que ens indica si hi ha una associació significativa entre les variables. Si el valor p és menor que el nivell de significació (normalment 0.05), rebutgem la hipòtesi nul·la i concloem que hi ha una associació entre les variables.</p>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: ANOVA d'un Factor</h2>
+<div class='content'><p>Utilitza les dades següents per realitzar una ANOVA d'un factor i determinar si hi ha una diferència significativa entre els grups.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z3J1cDEgPC0gYyg1MCwgNTUsIDYwLCA2NSwgNzApCmdydXAyIDwtIGMoNjAsIDY1LCA3MCwgNzUsIDgwKQpncnVwMyA8LSBjKDcwLCA3NSwgODAsIDg1LCA5MCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>grup1 &lt;- c(50, 55, 60, 65, 70)
+grup2 &lt;- c(60, 65, 70, 75, 80)
+grup3 &lt;- c(70, 75, 80, 85, 90)</pre></div><div class='content'></div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDcmVhciB1biBkYXRhIGZyYW1lCmRhZGVzIDwtIGRhdGEuZnJhbWUoCiAgdmFsb3IgPSBjKGdydXAxLCBncnVwMiwgZ3J1cDMpLAogIGdydXAgPSBmYWN0b3IocmVwKGMoIkdydXAgMSIsICJHcnVwIDIiLCAiR3J1cCAzIiksIGVhY2ggPSA1KSkKKQoKIyBSZWFsaXR6YXIgQU5PVkEKYW5vdmFfcmVzdWx0YXQgPC0gYW92KHZhbG9yIH4gZ3J1cCwgZGF0YSA9IGRhZGVzKQpzdW1tYXJ5KGFub3ZhX3Jlc3VsdGF0KQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Crear un data frame
+dades &lt;- data.frame(
+  valor = c(grup1, grup2, grup3),
+  grup = factor(rep(c(&quot;Grup 1&quot;, &quot;Grup 2&quot;, &quot;Grup 3&quot;), each = 5))
+)
+
+# Realitzar ANOVA
+anova_resultat &lt;- aov(valor ~ grup, data = dades)
+summary(anova_resultat)</pre></div><div class='content'></div><h2>Exercici 2: Prova de Chi-Cuadrat d'Independència</h2>
+<div class='content'><p>Utilitza les dades següents per realitzar una prova de Chi-Cuadrat d'independència i determinar si hi ha una associació entre el tipus de producte i la preferència de compra.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBEYWRlcyBkJ2V4ZW1wbGUKZGFkZXMgPC0gbWF0cml4KGMoMzAsIDIwLCA1MCwgNDAsIDMwLCAzMCksIG5yb3cgPSAyLCBieXJvdyA9IFRSVUUpCmNvbG5hbWVzKGRhZGVzKSA8LSBjKCJQcm9kdWN0ZSBBIiwgIlByb2R1Y3RlIEIiLCAiUHJvZHVjdGUgQyIpCnJvd25hbWVzKGRhZGVzKSA8LSBjKCJQcmVmZXJpdCIsICJObyBQcmVmZXJpdCIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Dades d'exemple
+dades &lt;- matrix(c(30, 20, 50, 40, 30, 30), nrow = 2, byrow = TRUE)
+colnames(dades) &lt;- c(&quot;Producte A&quot;, &quot;Producte B&quot;, &quot;Producte C&quot;)
+rownames(dades) &lt;- c(&quot;Preferit&quot;, &quot;No Preferit&quot;)</pre></div><div class='content'></div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBSZWFsaXR6YXIgbGEgcHJvdmEgZGUgQ2hpLUN1YWRyYXQKY2hpX3Jlc3VsdGF0IDwtIGNoaXNxLnRlc3QoZGFkZXMpCmNoaV9yZXN1bHRhdA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Realitzar la prova de Chi-Cuadrat
+chi_resultat &lt;- chisq.test(dades)
+chi_resultat</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après a utilitzar l'ANOVA per comparar les mitjanes de múltiples grups i les proves de Chi-Cuadrat per analitzar dades categòriques. Aquestes tècniques són fonamentals per a l'anàlisi estadística i ens permeten extreure conclusions significatives de les nostres dades. En el proper tema, explorarem altres tècniques d'anàlisi estadística avançada.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-04-correlation-regression' title="Correlació i Regressió">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-01-handling-dates-times' title="Gestió de Dates i Hores">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

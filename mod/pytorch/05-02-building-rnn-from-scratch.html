@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construcció d'una RNN des de Zero</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/pytorch/05-02-building-rnn-from-scratch" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/pytorch/05-02-building-rnn-from-scratch" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/pytorch/05-02-building-rnn-from-scratch" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/pytorch/05-02-building-rnn-from-scratch" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/pytorch/05-02-building-rnn-from-scratch" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-01-introduction-to-rnns' title="Introducció a les RNNs">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Construcció d'una RNN des de Zero</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-03-lstm-networks' title="Xarxes de Memòria a Llarg i Curt Termini (LSTM)">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a construir una Xarxa Neuronal Recurrent (RNN) des de zero utilitzant PyTorch. Les RNNs són especialment útils per a dades seqüencials, com ara sèries temporals, text o seqüències d'ADN. A diferència de les xarxes neuronals tradicionals, les RNNs tenen connexions recurrents que permeten mantenir informació de passos anteriors en la seqüència.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre la estructura bàsica d'una RNN.</li>
+<li>Implementar una RNN simple amb PyTorch.</li>
+<li>Entrenar la RNN amb un conjunt de dades seqüencials.</li>
+<li>Avaluar el rendiment de la RNN.</li>
+</ul>
+</div><h1>1. Estructura Bàsica d'una RNN</h1>
+<div class='content'><p>Una RNN processa una seqüència d'entrades \( x_1, x_2, \ldots, x_T \) i produeix una seqüència de sortides \( h_1, h_2, \ldots, h_T \). Cada sortida \( h_t \) depèn de l'entrada actual \( x_t \) i de l'estat ocult anterior \( h_{t-1} \).</p>
+</div><h2>Fórmules Clau</h2>
+<div class='content'><ul>
+<li>Estat ocult: \( h_t = \tanh(W_{xh} x_t + W_{hh} h_{t-1} + b_h) \)</li>
+<li>Sortida: \( y_t = W_{hy} h_t + b_y \)</li>
+</ul>
+<p>On:</p>
+<ul>
+<li>\( W_{xh} \) és la matriu de pesos entre l'entrada i l'estat ocult.</li>
+<li>\( W_{hh} \) és la matriu de pesos entre l'estat ocult anterior i l'estat ocult actual.</li>
+<li>\( W_{hy} \) és la matriu de pesos entre l'estat ocult i la sortida.</li>
+<li>\( b_h \) i \( b_y \) són els vectors de biaix.</li>
+</ul>
+</div><h1>2. Implementació d'una RNN Simple amb PyTorch</h1>
+<div class='content'></div><h2>2.1. Importar Llibreries Necessàries</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaC5ubiBhcyBubgppbXBvcnQgdG9yY2gub3B0aW0gYXMgb3B0aW0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torch.nn as nn
+import torch.optim as optim</pre></div><div class='content'></div><h2>2.2. Definir la Classe de la RNN</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgU2ltcGxlUk5OKG5uLk1vZHVsZSk6CiAgICBkZWYgX19pbml0X18oc2VsZiwgaW5wdXRfc2l6ZSwgaGlkZGVuX3NpemUsIG91dHB1dF9zaXplKToKICAgICAgICBzdXBlcihTaW1wbGVSTk4sIHNlbGYpLl9faW5pdF9fKCkKICAgICAgICBzZWxmLmhpZGRlbl9zaXplID0gaGlkZGVuX3NpemUKICAgICAgICBzZWxmLmkyaCA9IG5uLkxpbmVhcihpbnB1dF9zaXplICsgaGlkZGVuX3NpemUsIGhpZGRlbl9zaXplKQogICAgICAgIHNlbGYuaTJvID0gbm4uTGluZWFyKGhpZGRlbl9zaXplLCBvdXRwdXRfc2l6ZSkKICAgICAgICBzZWxmLnNvZnRtYXggPSBubi5Mb2dTb2Z0bWF4KGRpbT0xKQoKICAgIGRlZiBmb3J3YXJkKHNlbGYsIGlucHV0LCBoaWRkZW4pOgogICAgICAgIGNvbWJpbmVkID0gdG9yY2guY2F0KChpbnB1dCwgaGlkZGVuKSwgMSkKICAgICAgICBoaWRkZW4gPSBzZWxmLmkyaChjb21iaW5lZCkKICAgICAgICBvdXRwdXQgPSBzZWxmLmkybyhoaWRkZW4pCiAgICAgICAgb3V0cHV0ID0gc2VsZi5zb2Z0bWF4KG91dHB1dCkKICAgICAgICByZXR1cm4gb3V0cHV0LCBoaWRkZW4KCiAgICBkZWYgaW5pdEhpZGRlbihzZWxmKToKICAgICAgICByZXR1cm4gdG9yY2guemVyb3MoMSwgc2VsZi5oaWRkZW5fc2l6ZSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class SimpleRNN(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(SimpleRNN, self).__init__()
+        self.hidden_size = hidden_size
+        self.i2h = nn.Linear(input_size + hidden_size, hidden_size)
+        self.i2o = nn.Linear(hidden_size, output_size)
+        self.softmax = nn.LogSoftmax(dim=1)
+
+    def forward(self, input, hidden):
+        combined = torch.cat((input, hidden), 1)
+        hidden = self.i2h(combined)
+        output = self.i2o(hidden)
+        output = self.softmax(output)
+        return output, hidden
+
+    def initHidden(self):
+        return torch.zeros(1, self.hidden_size)</pre></div><div class='content'></div><h2>2.3. Inicialitzar la RNN</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bl9oaWRkZW4gPSAxMjgKcm5uID0gU2ltcGxlUk5OKGlucHV0X3NpemU9MTAsIGhpZGRlbl9zaXplPW5faGlkZGVuLCBvdXRwdXRfc2l6ZT0yKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>n_hidden = 128
+rnn = SimpleRNN(input_size=10, hidden_size=n_hidden, output_size=2)</pre></div><div class='content'></div><h1>3. Entrenament de la RNN</h1>
+<div class='content'></div><h2>3.1. Definir la Funció de Pèrdua i l'Optimitzador</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y3JpdGVyaW9uID0gbm4uTkxMTG9zcygpCm9wdGltaXplciA9IG9wdGltLlNHRChybm4ucGFyYW1ldGVycygpLCBscj0wLjAxKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>criterion = nn.NLLLoss()
+optimizer = optim.SGD(rnn.parameters(), lr=0.01)</pre></div><div class='content'></div><h2>3.2. Funció d'Entrenament</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIHRyYWluKGlucHV0X3RlbnNvciwgdGFyZ2V0X3RlbnNvcik6CiAgICBoaWRkZW4gPSBybm4uaW5pdEhpZGRlbigpCiAgICBybm4uemVyb19ncmFkKCkKCiAgICBmb3IgaSBpbiByYW5nZShpbnB1dF90ZW5zb3Iuc2l6ZSgwKSk6CiAgICAgICAgb3V0cHV0LCBoaWRkZW4gPSBybm4oaW5wdXRfdGVuc29yW2ldLCBoaWRkZW4pCgogICAgbG9zcyA9IGNyaXRlcmlvbihvdXRwdXQsIHRhcmdldF90ZW5zb3IpCiAgICBsb3NzLmJhY2t3YXJkKCkKICAgIG9wdGltaXplci5zdGVwKCkKCiAgICByZXR1cm4gb3V0cHV0LCBsb3NzLml0ZW0oKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def train(input_tensor, target_tensor):
+    hidden = rnn.initHidden()
+    rnn.zero_grad()
+
+    for i in range(input_tensor.size(0)):
+        output, hidden = rnn(input_tensor[i], hidden)
+
+    loss = criterion(output, target_tensor)
+    loss.backward()
+    optimizer.step()
+
+    return output, loss.item()</pre></div><div class='content'></div><h2>3.3. Entrenar la RNN amb un Conjunt de Dades Seqüencials</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bl9pdGVycyA9IDEwMDAKZm9yIGl0ZXIgaW4gcmFuZ2UoMSwgbl9pdGVycyArIDEpOgogICAgaW5wdXRfdGVuc29yID0gdG9yY2gucmFuZG4oNSwgMTApICAjIEV4ZW1wbGUgZGUgdGVuc29yIGQnZW50cmFkYQogICAgdGFyZ2V0X3RlbnNvciA9IHRvcmNoLnRlbnNvcihbMV0pICAjIEV4ZW1wbGUgZGUgdGVuc29yIG9iamVjdGl1CgogICAgb3V0cHV0LCBsb3NzID0gdHJhaW4oaW5wdXRfdGVuc29yLCB0YXJnZXRfdGVuc29yKQoKICAgIGlmIGl0ZXIgJSAxMDAgPT0gMDoKICAgICAgICBwcmludChmJ0l0ZXJhY2nDsyB7aXRlcn0gLSBQw6hyZHVhOiB7bG9zczouNGZ9Jyk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>n_iters = 1000
+for iter in range(1, n_iters + 1):
+    input_tensor = torch.randn(5, 10)  # Exemple de tensor d'entrada
+    target_tensor = torch.tensor([1])  # Exemple de tensor objectiu
+
+    output, loss = train(input_tensor, target_tensor)
+
+    if iter % 100 == 0:
+        print(f'Iteraci&oacute; {iter} - P&egrave;rdua: {loss:.4f}')</pre></div><div class='content'></div><h1>4. Avaluació del Rendiment de la RNN</h1>
+<div class='content'></div><h2>4.1. Funció de Predicció</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIHByZWRpY3QoaW5wdXRfdGVuc29yKToKICAgIGhpZGRlbiA9IHJubi5pbml0SGlkZGVuKCkKICAgIGZvciBpIGluIHJhbmdlKGlucHV0X3RlbnNvci5zaXplKDApKToKICAgICAgICBvdXRwdXQsIGhpZGRlbiA9IHJubihpbnB1dF90ZW5zb3JbaV0sIGhpZGRlbikKICAgIHJldHVybiBvdXRwdXQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def predict(input_tensor):
+    hidden = rnn.initHidden()
+    for i in range(input_tensor.size(0)):
+        output, hidden = rnn(input_tensor[i], hidden)
+    return output</pre></div><div class='content'></div><h2>4.2. Avaluar amb un Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW5wdXRfdGVuc29yID0gdG9yY2gucmFuZG4oNSwgMTApICAjIEV4ZW1wbGUgZGUgdGVuc29yIGQnZW50cmFkYQpvdXRwdXQgPSBwcmVkaWN0KGlucHV0X3RlbnNvcikKcHJpbnQob3V0cHV0KQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>input_tensor = torch.randn(5, 10)  # Exemple de tensor d'entrada
+output = predict(input_tensor)
+print(output)</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après a construir una RNN des de zero utilitzant PyTorch. Hem cobert la definició de la classe de la RNN, la inicialització, l'entrenament i l'avaluació. Les RNNs són eines poderoses per treballar amb dades seqüencials i, amb PyTorch, podem implementar-les de manera eficient i flexible.</p>
+<p>En el següent tema, explorarem les Xarxes de Memòria a Llarg i Curt Termini (LSTM), una variant de les RNNs que aborda alguns dels seus problemes més comuns, com el gradient vanishing.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-01-introduction-to-rnns' title="Introducció a les RNNs">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-03-lstm-networks' title="Xarxes de Memòria a Llarg i Curt Termini (LSTM)">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

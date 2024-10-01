@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mòdul Cluster</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nodejs/10-01-cluster-module" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nodejs/10-01-cluster-module" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nodejs/10-01-cluster-module" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nodejs/10-01-cluster-module" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nodejs/10-01-cluster-module" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-04-debugging-nodejs' title="Depuració d'Aplicacions Node.js">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Mòdul Cluster</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-02-worker-threads' title="Worker Threads">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>El mòdul <code>cluster</code> de Node.js permet crear aplicacions que poden aprofitar els múltiples nuclis d'una CPU. Això és especialment útil per a aplicacions que necessiten gestionar moltes connexions simultànies, ja que permet distribuir la càrrega de treball entre diversos processos.</p>
+</div><h1>Objectius del Mòdul</h1>
+<div class='content'><ol>
+<li>Entendre què és el mòdul <code>cluster</code> i per què és útil.</li>
+<li>Aprendre a crear un clúster de processos en Node.js.</li>
+<li>Gestionar la comunicació entre els processos del clúster.</li>
+<li>Implementar un exemple pràctic d'un servidor HTTP que utilitza el mòdul <code>cluster</code>.</li>
+</ol>
+</div><h1>Què és el Mòdul Cluster?</h1>
+<div class='content'><p>El mòdul <code>cluster</code> permet crear fàcilment processos fills que comparteixen el mateix port del servidor. Això és útil per aprofitar els múltiples nuclis d'una CPU i millorar el rendiment de les aplicacions Node.js.</p>
+</div><h2>Característiques Clau</h2>
+<div class='content'><ul>
+<li><strong>Multiprocés:</strong> Permet crear múltiples processos fills (workers) que poden gestionar peticions simultàniament.</li>
+<li><strong>Compartició de Port:</strong> Tots els processos fills poden compartir el mateix port del servidor.</li>
+<li><strong>Gestió de Fallades:</strong> Si un procés fill falla, el mòdul <code>cluster</code> pot crear-ne un de nou automàticament.</li>
+</ul>
+</div><h1>Crear un Clúster de Processos</h1>
+<div class='content'></div><h2>Pas 1: Importar el Mòdul Cluster</h2>
+<div class='content'><p>Primer, hem d'importar el mòdul <code>cluster</code> i altres mòduls necessaris com <code>http</code> i <code>os</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgY2x1c3RlciA9IHJlcXVpcmUoJ2NsdXN0ZXInKTsKY29uc3QgaHR0cCA9IHJlcXVpcmUoJ2h0dHAnKTsKY29uc3Qgb3MgPSByZXF1aXJlKCdvcycpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const cluster = require('cluster');
+const http = require('http');
+const os = require('os');</pre></div><div class='content'></div><h2>Pas 2: Verificar si el Procés és el Master</h2>
+<div class='content'><p>El procés principal (master) és responsable de crear els processos fills (workers).</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aWYgKGNsdXN0ZXIuaXNNYXN0ZXIpIHsKICAvLyBDb2RpIHBlciBhbCBwcm9jw6lzIG1hc3Rlcgp9IGVsc2UgewogIC8vIENvZGkgcGVyIGFscyBwcm9jZXNzb3MgZmlsbHMKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>if (cluster.isMaster) {
+  // Codi per al proc&eacute;s master
+} else {
+  // Codi per als processos fills
+}</pre></div><div class='content'></div><h2>Pas 3: Crear els Processos Fills</h2>
+<div class='content'><p>Utilitzem <code>os.cpus().length</code> per determinar el nombre de nuclis de la CPU i crear un procés fill per a cada nucli.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aWYgKGNsdXN0ZXIuaXNNYXN0ZXIpIHsKICBjb25zdCBudW1DUFVzID0gb3MuY3B1cygpLmxlbmd0aDsKICBjb25zb2xlLmxvZyhgTm9tYnJlIGRlIG51Y2xpcyBkZSBsYSBDUFU6ICR7bnVtQ1BVc31gKTsKICAKICBmb3IgKGxldCBpID0gMDsgaSA8IG51bUNQVXM7IGkrKykgewogICAgY2x1c3Rlci5mb3JrKCk7CiAgfQoKICBjbHVzdGVyLm9uKCdleGl0JywgKHdvcmtlciwgY29kZSwgc2lnbmFsKSA9PiB7CiAgICBjb25zb2xlLmxvZyhgV29ya2VyICR7d29ya2VyLnByb2Nlc3MucGlkfSBoYSBtb3J0YCk7CiAgICBjbHVzdGVyLmZvcmsoKTsgLy8gQ3JlYXIgdW4gbm91IHdvcmtlciBzaSB1biBmYWxsYQogIH0pOwp9IGVsc2UgewogIC8vIENyZWFyIHVuIHNlcnZpZG9yIEhUVFAgZW4gY2FkYSBwcm9jw6lzIGZpbGwKICBodHRwLmNyZWF0ZVNlcnZlcigocmVxLCByZXMpID0+IHsKICAgIHJlcy53cml0ZUhlYWQoMjAwKTsKICAgIHJlcy5lbmQoJ0hvbGEsIG3Ds24hXG4nKTsKICB9KS5saXN0ZW4oODAwMCk7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>if (cluster.isMaster) {
+  const numCPUs = os.cpus().length;
+  console.log(`Nombre de nuclis de la CPU: ${numCPUs}`);
+  
+  for (let i = 0; i &lt; numCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', (worker, code, signal) =&gt; {
+    console.log(`Worker ${worker.process.pid} ha mort`);
+    cluster.fork(); // Crear un nou worker si un falla
+  });
+} else {
+  // Crear un servidor HTTP en cada proc&eacute;s fill
+  http.createServer((req, res) =&gt; {
+    res.writeHead(200);
+    res.end('Hola, m&oacute;n!\n');
+  }).listen(8000);
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li><strong>Importació de Mòduls:</strong> Importem <code>cluster</code>, <code>http</code> i <code>os</code>.</li>
+<li><strong>Verificació del Procés Master:</strong> Utilitzem <code>cluster.isMaster</code> per verificar si el procés actual és el master.</li>
+<li><strong>Creació de Processos Fills:</strong> Utilitzem <code>cluster.fork()</code> per crear un procés fill per a cada nucli de la CPU.</li>
+<li><strong>Gestió de Fallades:</strong> Si un procés fill falla, el master en crea un de nou.</li>
+<li><strong>Servidor HTTP:</strong> Cada procés fill crea un servidor HTTP que escolta al port 8000.</li>
+</ol>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Crear un servidor HTTP que utilitzi el mòdul <code>cluster</code> per gestionar múltiples connexions simultànies.</p>
+</div><h2>Instruccions</h2>
+<div class='content'><ol>
+<li>Crea un fitxer anomenat <code>cluster_server.js</code>.</li>
+<li>Implementa el codi proporcionat anteriorment.</li>
+<li>Executa el fitxer amb <code>node cluster_server.js</code>.</li>
+<li>Obre diverses pestanyes del navegador i accedeix a <code>http://localhost:8000</code> per veure com es gestionen les peticions.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgY2x1c3RlciA9IHJlcXVpcmUoJ2NsdXN0ZXInKTsKY29uc3QgaHR0cCA9IHJlcXVpcmUoJ2h0dHAnKTsKY29uc3Qgb3MgPSByZXF1aXJlKCdvcycpOwoKaWYgKGNsdXN0ZXIuaXNNYXN0ZXIpIHsKICBjb25zdCBudW1DUFVzID0gb3MuY3B1cygpLmxlbmd0aDsKICBjb25zb2xlLmxvZyhgTm9tYnJlIGRlIG51Y2xpcyBkZSBsYSBDUFU6ICR7bnVtQ1BVc31gKTsKICAKICBmb3IgKGxldCBpID0gMDsgaSA8IG51bUNQVXM7IGkrKykgewogICAgY2x1c3Rlci5mb3JrKCk7CiAgfQoKICBjbHVzdGVyLm9uKCdleGl0JywgKHdvcmtlciwgY29kZSwgc2lnbmFsKSA9PiB7CiAgICBjb25zb2xlLmxvZyhgV29ya2VyICR7d29ya2VyLnByb2Nlc3MucGlkfSBoYSBtb3J0YCk7CiAgICBjbHVzdGVyLmZvcmsoKTsgLy8gQ3JlYXIgdW4gbm91IHdvcmtlciBzaSB1biBmYWxsYQogIH0pOwp9IGVsc2UgewogIGh0dHAuY3JlYXRlU2VydmVyKChyZXEsIHJlcykgPT4gewogICAgcmVzLndyaXRlSGVhZCgyMDApOwogICAgcmVzLmVuZCgnSG9sYSwgbcOzbiFcbicpOwogIH0pLmxpc3Rlbig4MDAwKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const cluster = require('cluster');
+const http = require('http');
+const os = require('os');
+
+if (cluster.isMaster) {
+  const numCPUs = os.cpus().length;
+  console.log(`Nombre de nuclis de la CPU: ${numCPUs}`);
+  
+  for (let i = 0; i &lt; numCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', (worker, code, signal) =&gt; {
+    console.log(`Worker ${worker.process.pid} ha mort`);
+    cluster.fork(); // Crear un nou worker si un falla
+  });
+} else {
+  http.createServer((req, res) =&gt; {
+    res.writeHead(200);
+    res.end('Hola, m&oacute;n!\n');
+  }).listen(8000);
+}</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest mòdul, hem après què és el mòdul <code>cluster</code> i com utilitzar-lo per crear un clúster de processos en Node.js. Hem vist com distribuir la càrrega de treball entre múltiples processos fills i gestionar la comunicació entre ells. També hem implementat un exemple pràctic d'un servidor HTTP que utilitza el mòdul <code>cluster</code>.</p>
+<p>En el següent tema, explorarem els <code>Worker Threads</code> per a tasques de computació intensiva.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-04-debugging-nodejs' title="Depuració d'Aplicacions Node.js">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-02-worker-threads' title="Worker Threads">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

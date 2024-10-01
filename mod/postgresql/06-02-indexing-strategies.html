@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estratègies d'indexació</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/postgresql/06-02-indexing-strategies" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/postgresql/06-02-indexing-strategies" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/postgresql/06-02-indexing-strategies" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/postgresql/06-02-indexing-strategies" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/postgresql/06-02-indexing-strategies" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-query-optimization' title="Optimització de consultes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Estratègies d'indexació</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-analyzing-query-performance' title="Analitzant el rendiment de les consultes">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='index'></div><h2>Introducció</h2>
+<div class='index'><p>L'indexació és una tècnica fonamental per millorar el rendiment de les consultes en una base de dades. En aquest tema, explorarem les diferents estratègies d'indexació disponibles a PostgreSQL, com crear i utilitzar índexs de manera eficient, i com seleccionar l'índex adequat per a cada situació.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='index'><ol>
+<li><strong>Índexs Bàsics</strong>: Els índexs són estructures de dades que milloren la velocitat de recuperació de dades en una taula.</li>
+<li><strong>Tipus d'Índexs</strong>: PostgreSQL ofereix diversos tipus d'índexs, cadascun amb els seus propis avantatges i desavantatges.</li>
+<li><strong>Estratègies d'Indexació</strong>: Seleccionar l'índex adequat depèn de la naturalesa de les consultes i les operacions que es realitzen sobre les dades.</li>
+</ol>
+</div><h2>Tipus d'Índexs en PostgreSQL</h2>
+<div class='index'></div><h2>Índexs B-Tree</h2>
+<div class='index'><p>Els índexs B-Tree són els més comuns i s'utilitzen per a la majoria de les operacions de consulta. Són eficients per a les operacions de cerca, inserció, actualització i eliminació.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gQ3JlYXIgdW4gw61uZGV4IEItVHJlZQpDUkVBVEUgSU5ERVggaWR4X25vbV9jb2x1bW5hIE9OIG5vbV90YXVsYShub21fY29sdW1uYSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Crear un &iacute;ndex B-Tree
+CREATE INDEX idx_nom_columna ON nom_taula(nom_columna);</pre></div><div class='index'></div><h2>Índexs Hash</h2>
+<div class='index'><p>Els índexs Hash són útils per a operacions d'igualtat, però no són adequats per a operacions de rang.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gQ3JlYXIgdW4gw61uZGV4IEhhc2gKQ1JFQVRFIElOREVYIGlkeF9ub21fY29sdW1uYV9oYXNoIE9OIG5vbV90YXVsYSBVU0lORyBIQVNIIChub21fY29sdW1uYSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Crear un &iacute;ndex Hash
+CREATE INDEX idx_nom_columna_hash ON nom_taula USING HASH (nom_columna);</pre></div><div class='index'></div><h2>Índexs GIN (Generalized Inverted Index)</h2>
+<div class='index'><p>Els índexs GIN són útils per a tipus de dades complexos com arrays, JSONB i text complet.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gQ3JlYXIgdW4gw61uZGV4IEdJTgpDUkVBVEUgSU5ERVggaWR4X25vbV9jb2x1bW5hX2dpbiBPTiBub21fdGF1bGEgVVNJTkcgR0lOIChub21fY29sdW1uYSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Crear un &iacute;ndex GIN
+CREATE INDEX idx_nom_columna_gin ON nom_taula USING GIN (nom_columna);</pre></div><div class='index'></div><h2>Índexs GiST (Generalized Search Tree)</h2>
+<div class='index'><p>Els índexs GiST són útils per a dades geoespacials i altres tipus de dades que requereixen operacions de similitud.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gQ3JlYXIgdW4gw61uZGV4IEdpU1QKQ1JFQVRFIElOREVYIGlkeF9ub21fY29sdW1uYV9naXN0IE9OIG5vbV90YXVsYSBVU0lORyBHaVNUIChub21fY29sdW1uYSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Crear un &iacute;ndex GiST
+CREATE INDEX idx_nom_columna_gist ON nom_taula USING GiST (nom_columna);</pre></div><div class='index'></div><h2>Índexs BRIN (Block Range INdex)</h2>
+<div class='index'><p>Els índexs BRIN són útils per a taules molt grans on les dades estan ordenades de manera natural.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gQ3JlYXIgdW4gw61uZGV4IEJSSU4KQ1JFQVRFIElOREVYIGlkeF9ub21fY29sdW1uYV9icmluIE9OIG5vbV90YXVsYSBVU0lORyBCUklOIChub21fY29sdW1uYSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Crear un &iacute;ndex BRIN
+CREATE INDEX idx_nom_columna_brin ON nom_taula USING BRIN (nom_columna);</pre></div><div class='index'></div><h2>Estratègies d'Indexació</h2>
+<div class='index'></div><h2>Índexs en Columnes Úniques</h2>
+<div class='index'><p>Per a columnes que s'utilitzen freqüentment en condicions de cerca, és recomanable crear un índex únic.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFVOSVFVRSBJTkRFWCBpZHhfbm9tX2NvbHVtbmFfdW5pYyBPTiBub21fdGF1bGEobm9tX2NvbHVtbmEpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE UNIQUE INDEX idx_nom_columna_unic ON nom_taula(nom_columna);</pre></div><div class='index'></div><h2>Índexs Compostos</h2>
+<div class='index'><p>Per a consultes que involucren múltiples columnes, un índex compost pot millorar significativament el rendiment.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIElOREVYIGlkeF9ub21fY29sdW1uYV9jb21wb3N0IE9OIG5vbV90YXVsYShjb2x1bW5hMSwgY29sdW1uYTIpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE INDEX idx_nom_columna_compost ON nom_taula(columna1, columna2);</pre></div><div class='index'></div><h2>Índexs Parcials</h2>
+<div class='index'><p>Els índexs parcials són útils quan només una part de les dades és rellevant per a les consultes.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIElOREVYIGlkeF9ub21fY29sdW1uYV9wYXJjaWFsIE9OIG5vbV90YXVsYShub21fY29sdW1uYSkgV0hFUkUgY29uZGljaW87"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE INDEX idx_nom_columna_parcial ON nom_taula(nom_columna) WHERE condicio;</pre></div><div class='index'></div><h2>Índexs Funcionals</h2>
+<div class='index'><p>Els índexs funcionals permeten indexar el resultat d'una funció aplicada a una columna.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIElOREVYIGlkeF9ub21fY29sdW1uYV9mdW5jaW9uYWwgT04gbm9tX3RhdWxhIChmdW5jaW8obm9tX2NvbHVtbmEpKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE INDEX idx_nom_columna_funcional ON nom_taula (funcio(nom_columna));</pre></div><div class='index'></div><h2>Exercicis Pràctics</h2>
+<div class='index'></div><h2>Exercici 1: Crear un Índex B-Tree</h2>
+<div class='index'><ol>
+<li>Crea una taula <code>empleats</code> amb les columnes <code>id</code>, <code>nom</code> i <code>departament</code>.</li>
+<li>Insereix algunes dades a la taula.</li>
+<li>Crea un índex B-Tree a la columna <code>nom</code>.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gU29sdWNpw7MKQ1JFQVRFIFRBQkxFIGVtcGxlYXRzICgKICAgIGlkIFNFUklBTCBQUklNQVJZIEtFWSwKICAgIG5vbSBWQVJDSEFSKDEwMCksCiAgICBkZXBhcnRhbWVudCBWQVJDSEFSKDUwKQopOwoKSU5TRVJUIElOVE8gZW1wbGVhdHMgKG5vbSwgZGVwYXJ0YW1lbnQpIFZBTFVFUwooJ0FubmEnLCAnVmVuZGVzJyksCignSm9hbicsICdNw6BycXVldGluZycpLAooJ01hcmlhJywgJ0lUJyk7CgpDUkVBVEUgSU5ERVggaWR4X25vbV9lbXBsIE9OIGVtcGxlYXRzKG5vbSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Soluci&oacute;
+CREATE TABLE empleats (
+    id SERIAL PRIMARY KEY,
+    nom VARCHAR(100),
+    departament VARCHAR(50)
+);
+
+INSERT INTO empleats (nom, departament) VALUES
+('Anna', 'Vendes'),
+('Joan', 'M&agrave;rqueting'),
+('Maria', 'IT');
+
+CREATE INDEX idx_nom_empl ON empleats(nom);</pre></div><div class='index'></div><h2>Exercici 2: Crear un Índex Compost</h2>
+<div class='index'><ol>
+<li>Crea una taula <code>productes</code> amb les columnes <code>id</code>, <code>nom</code> i <code>categoria</code>.</li>
+<li>Insereix algunes dades a la taula.</li>
+<li>Crea un índex compost a les columnes <code>nom</code> i <code>categoria</code>.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gU29sdWNpw7MKQ1JFQVRFIFRBQkxFIHByb2R1Y3RlcyAoCiAgICBpZCBTRVJJQUwgUFJJTUFSWSBLRVksCiAgICBub20gVkFSQ0hBUigxMDApLAogICAgY2F0ZWdvcmlhIFZBUkNIQVIoNTApCik7CgpJTlNFUlQgSU5UTyBwcm9kdWN0ZXMgKG5vbSwgY2F0ZWdvcmlhKSBWQUxVRVMKKCdPcmRpbmFkb3InLCAnRWxlY3Ryw7JuaWNhJyksCignQ2FkaXJhJywgJ01vYmxlcycpLAooJ1RlbMOoZm9uJywgJ0VsZWN0csOybmljYScpOwoKQ1JFQVRFIElOREVYIGlkeF9ub21fY2F0ZWdvcmlhIE9OIHByb2R1Y3Rlcyhub20sIGNhdGVnb3JpYSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Soluci&oacute;
+CREATE TABLE productes (
+    id SERIAL PRIMARY KEY,
+    nom VARCHAR(100),
+    categoria VARCHAR(50)
+);
+
+INSERT INTO productes (nom, categoria) VALUES
+('Ordinador', 'Electr&ograve;nica'),
+('Cadira', 'Mobles'),
+('Tel&egrave;fon', 'Electr&ograve;nica');
+
+CREATE INDEX idx_nom_categoria ON productes(nom, categoria);</pre></div><div class='index'></div><h2>Errors Comuns i Consells</h2>
+<div class='index'><ol>
+<li><strong>No crear índexs innecessaris</strong>: Cada índex afegeix sobrecàrrega a les operacions d'inserció, actualització i eliminació.</li>
+<li><strong>Utilitzar índexs parcials amb cura</strong>: Assegura't que la condició de l'índex parcial sigui rellevant per a les consultes.</li>
+<li><strong>Monitoritzar el rendiment</strong>: Utilitza <code>EXPLAIN</code> per analitzar el pla d'execució de les consultes i ajustar els índexs segons sigui necessari.</li>
+</ol>
+</div><h2>Conclusió</h2>
+<div class='index'><p>Les estratègies d'indexació són crucials per optimitzar el rendiment de les consultes en PostgreSQL. Comprendre els diferents tipus d'índexs i saber quan utilitzar-los pot marcar una gran diferència en l'eficiència de la teva base de dades. Practica amb els exercicis proporcionats per consolidar els teus coneixements i millorar les teves habilitats en indexació.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-query-optimization' title="Optimització de consultes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-analyzing-query-performance' title="Analitzant el rendiment de les consultes">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

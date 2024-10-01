@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuració de la Persistència</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/redis/04-03-persistence-configuration" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/redis/04-03-persistence-configuration" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/redis/04-03-persistence-configuration" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/redis/04-03-persistence-configuration" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/redis/04-03-persistence-configuration" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-02-append-only-files-aof' title="Fitxers Només de Afegeix (AOF)">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Configuració de la Persistència</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-04-backup-and-restore' title="Còpia de Seguretat i Restauració">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com configurar la persistència en Redis per assegurar-nos que les dades es mantinguin segures i disponibles fins i tot després d'un reinici del servidor. Redis ofereix dues maneres principals de persistència: Instantànies (RDB) i Fitxers Només de Afegeix (AOF). També veurem com combinar aquestes dues opcions per obtenir el millor de cada una.</p>
+</div><h1>1. Instantànies (RDB)</h1>
+<div class='content'></div><h2>Què és RDB?</h2>
+<div class='content'><p>RDB (Redis Database Backup) és un mètode de persistència que crea instantànies de la base de dades en intervals de temps específics. Aquestes instantànies es guarden en un fitxer binari que es pot utilitzar per restaurar l'estat de la base de dades.</p>
+</div><h2>Configuració de RDB</h2>
+<div class='content'><p>La configuració de RDB es fa principalment al fitxer <code>redis.conf</code>. Aquí tens les opcions més importants:</p>
+<ul>
+<li>
+<p><strong>save</strong>: Defineix quan Redis ha de crear una instantània. Per exemple:</p>
+<pre><code class="language-plaintext">save 900 1  # Cada 900 segons (15 minuts) si hi ha hagut almenys 1 escriptura
+save 300 10 # Cada 300 segons (5 minuts) si hi ha hagut almenys 10 escriptures
+save 60 10000 # Cada 60 segons (1 minut) si hi ha hagut almenys 10000 escriptures
+</code></pre>
+</li>
+<li>
+<p><strong>dbfilename</strong>: Nom del fitxer on es guardarà la instantània.</p>
+<pre><code class="language-plaintext">dbfilename dump.rdb
+</code></pre>
+</li>
+<li>
+<p><strong>dir</strong>: Directori on es guardarà el fitxer de la instantània.</p>
+<pre><code class="language-plaintext">dir /var/lib/redis
+</code></pre>
+</li>
+</ul>
+</div><h2>Exemple de Configuració RDB</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2F2ZSA5MDAgMQpzYXZlIDMwMCAxMApzYXZlIDYwIDEwMDAwCmRiZmlsZW5hbWUgZHVtcC5yZGIKZGlyIC92YXIvbGliL3JlZGlz"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>save 900 1
+save 300 10
+save 60 10000
+dbfilename dump.rdb
+dir /var/lib/redis</pre></div><div class='content'></div><h1>2. Fitxers Només de Afegeix (AOF)</h1>
+<div class='content'></div><h2>Què és AOF?</h2>
+<div class='content'><p>AOF (Append Only File) és un mètode de persistència que registra cada operació d'escriptura que es fa a la base de dades. Aquestes operacions es guarden en un fitxer de registre que es pot reproduir per restaurar l'estat de la base de dades.</p>
+</div><h2>Configuració de AOF</h2>
+<div class='content'><p>La configuració de AOF també es fa al fitxer <code>redis.conf</code>. Aquí tens les opcions més importants:</p>
+<ul>
+<li>
+<p><strong>appendonly</strong>: Habilita o deshabilita AOF.</p>
+<pre><code class="language-plaintext">appendonly yes
+</code></pre>
+</li>
+<li>
+<p><strong>appendfilename</strong>: Nom del fitxer on es guardarà el registre AOF.</p>
+<pre><code class="language-plaintext">appendfilename &quot;appendonly.aof&quot;
+</code></pre>
+</li>
+<li>
+<p><strong>appendfsync</strong>: Defineix quan Redis ha de sincronitzar el fitxer AOF amb el disc. Les opcions són:</p>
+<ul>
+<li><code>always</code>: Sincronitza després de cada escriptura (més segur però més lent).</li>
+<li><code>everysec</code>: Sincronitza cada segon (compromís entre seguretat i rendiment).</li>
+<li><code>no</code>: Deixa que el sistema operatiu decideixi quan sincronitzar (més ràpid però menys segur).</li>
+</ul>
+<pre><code class="language-plaintext">appendfsync everysec
+</code></pre>
+</li>
+</ul>
+</div><h2>Exemple de Configuració AOF</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBwZW5kb25seSB5ZXMKYXBwZW5kZmlsZW5hbWUgImFwcGVuZG9ubHkuYW9mIgphcHBlbmRmc3luYyBldmVyeXNlYw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>appendonly yes
+appendfilename &quot;appendonly.aof&quot;
+appendfsync everysec</pre></div><div class='content'></div><h1>3. Combinació de RDB i AOF</h1>
+<div class='content'></div><h2>Per què combinar RDB i AOF?</h2>
+<div class='content'><p>Combinar RDB i AOF permet obtenir el millor de cada mètode: la rapidesa de les instantànies RDB i la seguretat de les escriptures AOF.</p>
+</div><h2>Configuració Recomanada</h2>
+<div class='content'><p>Per combinar RDB i AOF, simplement habilita ambdós mètodes al fitxer <code>redis.conf</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDb25maWd1cmFjacOzIFJEQgpzYXZlIDkwMCAxCnNhdmUgMzAwIDEwCnNhdmUgNjAgMTAwMDAKZGJmaWxlbmFtZSBkdW1wLnJkYgpkaXIgL3Zhci9saWIvcmVkaXMKCiMgQ29uZmlndXJhY2nDsyBBT0YKYXBwZW5kb25seSB5ZXMKYXBwZW5kZmlsZW5hbWUgImFwcGVuZG9ubHkuYW9mIgphcHBlbmRmc3luYyBldmVyeXNlYw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Configuraci&oacute; RDB
+save 900 1
+save 300 10
+save 60 10000
+dbfilename dump.rdb
+dir /var/lib/redis
+
+# Configuraci&oacute; AOF
+appendonly yes
+appendfilename &quot;appendonly.aof&quot;
+appendfsync everysec</pre></div><div class='content'></div><h1>4. Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Configurar RDB</h2>
+<div class='content'><ol>
+<li>Obre el fitxer <code>redis.conf</code>.</li>
+<li>Configura Redis per crear una instantània cada 5 minuts si hi ha hagut almenys 5 escriptures.</li>
+<li>Guarda i reinicia el servidor Redis.</li>
+</ol>
+</div><h2>Solució Exercici 1</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2F2ZSAzMDAgNQpkYmZpbGVuYW1lIGR1bXAucmRiCmRpciAvdmFyL2xpYi9yZWRpcw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>save 300 5
+dbfilename dump.rdb
+dir /var/lib/redis</pre></div><div class='content'></div><h2>Exercici 2: Configurar AOF</h2>
+<div class='content'><ol>
+<li>Obre el fitxer <code>redis.conf</code>.</li>
+<li>Habilita AOF i configura'l per sincronitzar cada segon.</li>
+<li>Guarda i reinicia el servidor Redis.</li>
+</ol>
+</div><h2>Solució Exercici 2</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBwZW5kb25seSB5ZXMKYXBwZW5kZmlsZW5hbWUgImFwcGVuZG9ubHkuYW9mIgphcHBlbmRmc3luYyBldmVyeXNlYw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>appendonly yes
+appendfilename &quot;appendonly.aof&quot;
+appendfsync everysec</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com configurar la persistència en Redis utilitzant RDB i AOF. Hem vist com cada mètode té els seus avantatges i desavantatges, i com podem combinar-los per obtenir una solució robusta i eficient. A la següent secció, explorarem com fer còpies de seguretat i restaurar les dades en Redis.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-02-append-only-files-aof' title="Fitxers Només de Afegeix (AOF)">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-04-backup-and-restore' title="Còpia de Seguretat i Restauració">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

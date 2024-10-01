@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construint imatges Docker</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/docker/02-02-building-docker-images" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/docker/02-02-building-docker-images" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/docker/02-02-building-docker-images" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/docker/02-02-building-docker-images" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/docker/02-02-building-docker-images" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-docker-hub-and-repositories' title="Docker Hub i Repositoris">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Construint imatges Docker</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-dockerfile-basics' title="Conceptes bàsics de Dockerfile">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com construir imatges Docker des de zero utilitzant Dockerfile. Les imatges són la base dels contenidors Docker, i entendre com crear-les és fonamental per a qualsevol desenvolupador que vulgui treballar amb Docker de manera eficient.</p>
+</div><h1>Què és una imatge Docker?</h1>
+<div class='content'><p>Una imatge Docker és una plantilla llegible per màquina que inclou tot el necessari per executar una aplicació: codi, biblioteques, variables d'entorn, fitxers de configuració, etc. Les imatges són immutables, el que significa que no canvien un cop creades.</p>
+</div><h1>Dockerfile: La base per construir imatges</h1>
+<div class='content'><p>Un Dockerfile és un fitxer de text que conté una sèrie d'instruccions que Docker utilitza per construir una imatge. Cada instrucció en un Dockerfile crea una nova capa en la imatge.</p>
+</div><h2>Estructura bàsica d'un Dockerfile</h2>
+<div class='content'><p>Un Dockerfile típic pot contenir les següents instruccions:</p>
+<ol>
+<li><strong>FROM</strong>: Defineix la imatge base.</li>
+<li><strong>RUN</strong>: Executa una comanda durant la construcció de la imatge.</li>
+<li><strong>COPY</strong>: Copia fitxers o directoris des del sistema de fitxers de l'amfitrió a la imatge.</li>
+<li><strong>CMD</strong>: Especifica la comanda per defecte que s'executarà quan es llanci un contenidor.</li>
+<li><strong>EXPOSE</strong>: Exposa un port per al contenidor.</li>
+<li><strong>ENV</strong>: Defineix variables d'entorn.</li>
+</ol>
+</div><h2>Exemple de Dockerfile</h2>
+<div class='content'><p>A continuació, es mostra un exemple senzill de Dockerfile per a una aplicació Node.js:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBVdGlsaXR6YSB1bmEgaW1hdGdlIGJhc2Ugb2ZpY2lhbCBkZSBOb2RlLmpzCkZST00gbm9kZToxNAoKIyBFc3RhYmxlaXggZWwgZGlyZWN0b3JpIGRlIHRyZWJhbGwgZGlucyBkZWwgY29udGVuaWRvcgpXT1JLRElSIC9hcHAKCiMgQ29waWEgZWwgZml0eGVyIHBhY2thZ2UuanNvbiBpIHBhY2thZ2UtbG9jay5qc29uCkNPUFkgcGFja2FnZSouanNvbiAuLwoKIyBJbnN0YWzCt2xhIGxlcyBkZXBlbmTDqG5jaWVzIGRlIGwnYXBsaWNhY2nDswpSVU4gbnBtIGluc3RhbGwKCiMgQ29waWEgZWwgY29kaSBkZSBsJ2FwbGljYWNpw7MKQ09QWSAuIC4KCiMgRXhwb3NhIGVsIHBvcnQgMzAwMApFWFBPU0UgMzAwMAoKIyBEZWZpbmVpeCBsYSBjb21hbmRhIHBlciBkZWZlY3RlIHBlciBleGVjdXRhciBsJ2FwbGljYWNpw7MKQ01EIFsibm9kZSIsICJhcHAuanMiXQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Utilitza una imatge base oficial de Node.js
+FROM node:14
+
+# Estableix el directori de treball dins del contenidor
+WORKDIR /app
+
+# Copia el fitxer package.json i package-lock.json
+COPY package*.json ./
+
+# Instal&middot;la les depend&egrave;ncies de l'aplicaci&oacute;
+RUN npm install
+
+# Copia el codi de l'aplicaci&oacute;
+COPY . .
+
+# Exposa el port 3000
+EXPOSE 3000
+
+# Defineix la comanda per defecte per executar l'aplicaci&oacute;
+CMD [&quot;node&quot;, &quot;app.js&quot;]</pre></div><div class='content'></div><h2>Explicació del Dockerfile</h2>
+<div class='content'><ol>
+<li><strong>FROM node:14</strong>: Utilitza la imatge oficial de Node.js com a base.</li>
+<li><strong>WORKDIR /app</strong>: Estableix <code>/app</code> com a directori de treball dins del contenidor.</li>
+<li><em><em>COPY package</em>.json ./</em>*: Copia els fitxers <code>package.json</code> i <code>package-lock.json</code> al directori de treball.</li>
+<li><strong>RUN npm install</strong>: Executa <code>npm install</code> per instal·lar les dependències de l'aplicació.</li>
+<li><strong>COPY . .</strong>: Copia tot el codi de l'aplicació al directori de treball.</li>
+<li><strong>EXPOSE 3000</strong>: Exposa el port 3000 per accedir a l'aplicació.</li>
+<li><strong>CMD [&quot;node&quot;, &quot;app.js&quot;]</strong>: Defineix la comanda per defecte per executar l'aplicació.</li>
+</ol>
+</div><h1>Construint la imatge</h1>
+<div class='content'><p>Per construir una imatge a partir d'un Dockerfile, utilitzem la comanda <code>docker build</code>. Aquí teniu un exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIGJ1aWxkIC10IG15LW5vZGUtYXBwIC4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker build -t my-node-app .</pre></div><div class='content'><ul>
+<li><strong>-t my-node-app</strong>: Assigna el nom <code>my-node-app</code> a la imatge.</li>
+<li><strong>.</strong>: Indica que el Dockerfile es troba en el directori actual.</li>
+</ul>
+</div><h1>Exercici pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Construir una imatge Docker per a una aplicació Python simple.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crea un fitxer <code>app.py</code></strong> amb el següent contingut:</p>
+<pre><code class="language-python">from flask import Flask
+app = Flask(__name__)
+
+@app.route('/')
+def hello_world():
+    return 'Hello, Docker!'
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0')
+</code></pre>
+</li>
+<li>
+<p><strong>Crea un fitxer <code>requirements.txt</code></strong> amb el següent contingut:</p>
+<pre><code>Flask==1.1.2
+</code></pre>
+</li>
+<li>
+<p><strong>Crea un Dockerfile</strong> amb el següent contingut:</p>
+<pre><code class="language-Dockerfile"># Utilitza una imatge base oficial de Python
+FROM python:3.8-slim
+
+# Estableix el directori de treball dins del contenidor
+WORKDIR /app
+
+# Copia el fitxer requirements.txt
+COPY requirements.txt ./
+
+# Instal·la les dependències de l'aplicació
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copia el codi de l'aplicació
+COPY . .
+
+# Exposa el port 5000
+EXPOSE 5000
+
+# Defineix la comanda per defecte per executar l'aplicació
+CMD [&quot;python&quot;, &quot;app.py&quot;]
+</code></pre>
+</li>
+<li>
+<p><strong>Construeix la imatge</strong>:</p>
+<pre><code class="language-sh">docker build -t my-python-app .
+</code></pre>
+</li>
+<li>
+<p><strong>Executa el contenidor</strong>:</p>
+<pre><code class="language-sh">docker run -p 5000:5000 my-python-app
+</code></pre>
+</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><p>Si has seguit els passos correctament, hauràs creat una imatge Docker per a una aplicació Python que utilitza Flask. Pots accedir a l'aplicació navegant a <code>http://localhost:5000</code> i hauries de veure el missatge &quot;Hello, Docker!&quot;.</p>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après com construir imatges Docker utilitzant Dockerfile. Hem vist un exemple pràctic amb una aplicació Node.js i hem realitzat un exercici pràctic amb una aplicació Python. Ara estàs preparat per crear les teves pròpies imatges Docker per a les teves aplicacions!</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-docker-hub-and-repositories' title="Docker Hub i Repositoris">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-dockerfile-basics' title="Conceptes bàsics de Dockerfile">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

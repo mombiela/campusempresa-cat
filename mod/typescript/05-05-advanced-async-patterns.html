@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patrons Asíncrons Avançats</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/typescript/05-05-advanced-async-patterns" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/typescript/05-05-advanced-async-patterns" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/typescript/05-05-advanced-async-patterns" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/typescript/05-05-advanced-async-patterns" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/typescript/05-05-advanced-async-patterns" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-error-handling' title="Gestió d'Errors">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Patrons Asíncrons Avançats</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-01-linting-formatting' title="Linting i Formatació">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem patrons avançats per gestionar operacions asíncrones en TypeScript. Aquests patrons són útils per escriure codi més net, eficient i mantenible quan es treballa amb operacions asíncrones complexes.</p>
+</div><h1>Contingut</h1>
+<div class='content'><ol>
+<li><strong>Patró de Retry (Reintentar)</strong></li>
+<li><strong>Patró de Throttling (Limitació)</strong></li>
+<li><strong>Patró de Debouncing (Desacceleració)</strong></li>
+<li><strong>Patró de Circuit Breaker (Interruptor de Circuit)</strong></li>
+<li><strong>Patró de Queues (Cues)</strong></li>
+</ol>
+</div><h1>1. Patró de Retry (Reintentar)</h1>
+<div class='content'><p>El patró de Retry és útil quan una operació asíncrona pot fallar temporalment i volem reintentar-la un nombre determinat de vegades abans de donar-nos per vençuts.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gcmV0cnk8VD4oZm46ICgpID0+IFByb21pc2U8VD4sIHJldHJpZXM6IG51bWJlcik6IFByb21pc2U8VD4gewogICAgcmV0dXJuIGZuKCkuY2F0Y2goZXJyID0+IHsKICAgICAgICBpZiAocmV0cmllcyA+IDApIHsKICAgICAgICAgICAgcmV0dXJuIHJldHJ5KGZuLCByZXRyaWVzIC0gMSk7CiAgICAgICAgfSBlbHNlIHsKICAgICAgICAgICAgdGhyb3cgZXJyOwogICAgICAgIH0KICAgIH0pOwp9CgovLyBFeGVtcGxlIGQnw7pzCmNvbnN0IGZldGNoRGF0YSA9ICgpID0+IGZldGNoKCdodHRwczovL2FwaS5leGFtcGxlLmNvbS9kYXRhJykudGhlbihyZXNwb25zZSA9PiByZXNwb25zZS5qc29uKCkpOwoKcmV0cnkoZmV0Y2hEYXRhLCAzKQogICAgLnRoZW4oZGF0YSA9PiBjb25zb2xlLmxvZyhkYXRhKSkKICAgIC5jYXRjaChlcnIgPT4gY29uc29sZS5lcnJvcignRmFpbGVkIGFmdGVyIDMgcmV0cmllczonLCBlcnIpKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function retry&lt;T&gt;(fn: () =&gt; Promise&lt;T&gt;, retries: number): Promise&lt;T&gt; {
+    return fn().catch(err =&gt; {
+        if (retries &gt; 0) {
+            return retry(fn, retries - 1);
+        } else {
+            throw err;
+        }
+    });
+}
+
+// Exemple d'&uacute;s
+const fetchData = () =&gt; fetch('https://api.example.com/data').then(response =&gt; response.json());
+
+retry(fetchData, 3)
+    .then(data =&gt; console.log(data))
+    .catch(err =&gt; console.error('Failed after 3 retries:', err));</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>retry</strong>: Funció que accepta una funció asíncrona <code>fn</code> i un nombre de reintents <code>retries</code>.</li>
+<li><strong>catch</strong>: Si la promesa falla, es reintenta fins que el nombre de reintents s'esgoti.</li>
+</ul>
+</div><h1>2. Patró de Throttling (Limitació)</h1>
+<div class='content'><p>El patró de Throttling limita el nombre de vegades que una funció pot ser executada en un període de temps determinat.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gdGhyb3R0bGU8VD4oZm46ICguLi5hcmdzOiBhbnlbXSkgPT4gUHJvbWlzZTxUPiwgbGltaXQ6IG51bWJlcik6ICguLi5hcmdzOiBhbnlbXSkgPT4gUHJvbWlzZTxUPiB7CiAgICBsZXQgaW5UaHJvdHRsZTogYm9vbGVhbjsKICAgIHJldHVybiBmdW5jdGlvbiguLi5hcmdzOiBhbnlbXSk6IFByb21pc2U8VD4gewogICAgICAgIGlmICghaW5UaHJvdHRsZSkgewogICAgICAgICAgICBpblRocm90dGxlID0gdHJ1ZTsKICAgICAgICAgICAgc2V0VGltZW91dCgoKSA9PiBpblRocm90dGxlID0gZmFsc2UsIGxpbWl0KTsKICAgICAgICAgICAgcmV0dXJuIGZuKC4uLmFyZ3MpOwogICAgICAgIH0gZWxzZSB7CiAgICAgICAgICAgIHJldHVybiBQcm9taXNlLnJlamVjdCgnVGhyb3R0bGVkJyk7CiAgICAgICAgfQogICAgfTsKfQoKLy8gRXhlbXBsZSBkJ8O6cwpjb25zdCBmZXRjaERhdGFUaHJvdHRsZWQgPSB0aHJvdHRsZShmZXRjaERhdGEsIDIwMDApOwoKZmV0Y2hEYXRhVGhyb3R0bGVkKCkKICAgIC50aGVuKGRhdGEgPT4gY29uc29sZS5sb2coZGF0YSkpCiAgICAuY2F0Y2goZXJyID0+IGNvbnNvbGUuZXJyb3IoZXJyKSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function throttle&lt;T&gt;(fn: (...args: any[]) =&gt; Promise&lt;T&gt;, limit: number): (...args: any[]) =&gt; Promise&lt;T&gt; {
+    let inThrottle: boolean;
+    return function(...args: any[]): Promise&lt;T&gt; {
+        if (!inThrottle) {
+            inThrottle = true;
+            setTimeout(() =&gt; inThrottle = false, limit);
+            return fn(...args);
+        } else {
+            return Promise.reject('Throttled');
+        }
+    };
+}
+
+// Exemple d'&uacute;s
+const fetchDataThrottled = throttle(fetchData, 2000);
+
+fetchDataThrottled()
+    .then(data =&gt; console.log(data))
+    .catch(err =&gt; console.error(err));</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>throttle</strong>: Funció que accepta una funció asíncrona <code>fn</code> i un límit de temps <code>limit</code>.</li>
+<li><strong>inThrottle</strong>: Variable que controla si la funció està en estat de limitació.</li>
+</ul>
+</div><h1>3. Patró de Debouncing (Desacceleració)</h1>
+<div class='content'><p>El patró de Debouncing assegura que una funció només s'executi després d'un període de temps determinat des de l'última vegada que va ser invocada.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gZGVib3VuY2U8VD4oZm46ICguLi5hcmdzOiBhbnlbXSkgPT4gUHJvbWlzZTxUPiwgZGVsYXk6IG51bWJlcik6ICguLi5hcmdzOiBhbnlbXSkgPT4gUHJvbWlzZTxUPiB7CiAgICBsZXQgdGltZW91dElkOiBOb2RlSlMuVGltZW91dDsKICAgIHJldHVybiBmdW5jdGlvbiguLi5hcmdzOiBhbnlbXSk6IFByb21pc2U8VD4gewogICAgICAgIGNsZWFyVGltZW91dCh0aW1lb3V0SWQpOwogICAgICAgIHJldHVybiBuZXcgUHJvbWlzZSgocmVzb2x2ZSwgcmVqZWN0KSA9PiB7CiAgICAgICAgICAgIHRpbWVvdXRJZCA9IHNldFRpbWVvdXQoKCkgPT4gewogICAgICAgICAgICAgICAgZm4oLi4uYXJncykudGhlbihyZXNvbHZlKS5jYXRjaChyZWplY3QpOwogICAgICAgICAgICB9LCBkZWxheSk7CiAgICAgICAgfSk7CiAgICB9Owp9CgovLyBFeGVtcGxlIGQnw7pzCmNvbnN0IGZldGNoRGF0YURlYm91bmNlZCA9IGRlYm91bmNlKGZldGNoRGF0YSwgMjAwMCk7CgpmZXRjaERhdGFEZWJvdW5jZWQoKQogICAgLnRoZW4oZGF0YSA9PiBjb25zb2xlLmxvZyhkYXRhKSkKICAgIC5jYXRjaChlcnIgPT4gY29uc29sZS5lcnJvcihlcnIpKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function debounce&lt;T&gt;(fn: (...args: any[]) =&gt; Promise&lt;T&gt;, delay: number): (...args: any[]) =&gt; Promise&lt;T&gt; {
+    let timeoutId: NodeJS.Timeout;
+    return function(...args: any[]): Promise&lt;T&gt; {
+        clearTimeout(timeoutId);
+        return new Promise((resolve, reject) =&gt; {
+            timeoutId = setTimeout(() =&gt; {
+                fn(...args).then(resolve).catch(reject);
+            }, delay);
+        });
+    };
+}
+
+// Exemple d'&uacute;s
+const fetchDataDebounced = debounce(fetchData, 2000);
+
+fetchDataDebounced()
+    .then(data =&gt; console.log(data))
+    .catch(err =&gt; console.error(err));</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>debounce</strong>: Funció que accepta una funció asíncrona <code>fn</code> i un retard <code>delay</code>.</li>
+<li><strong>timeoutId</strong>: Variable que emmagatzema l'identificador del temporitzador.</li>
+</ul>
+</div><h1>4. Patró de Circuit Breaker (Interruptor de Circuit)</h1>
+<div class='content'><p>El patró de Circuit Breaker evita que una aplicació intenti realitzar operacions que probablement fallaran, basant-se en l'historial d'errors recents.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgQ2lyY3VpdEJyZWFrZXIgewogICAgcHJpdmF0ZSBmYWlsdXJlQ291bnQ6IG51bWJlciA9IDA7CiAgICBwcml2YXRlIHN1Y2Nlc3NDb3VudDogbnVtYmVyID0gMDsKICAgIHByaXZhdGUgc3RhdGU6ICdDTE9TRUQnIHwgJ09QRU4nIHwgJ0hBTEYtT1BFTicgPSAnQ0xPU0VEJzsKICAgIHByaXZhdGUgcmVhZG9ubHkgZmFpbHVyZVRocmVzaG9sZDogbnVtYmVyOwogICAgcHJpdmF0ZSByZWFkb25seSBzdWNjZXNzVGhyZXNob2xkOiBudW1iZXI7CiAgICBwcml2YXRlIHJlYWRvbmx5IHRpbWVvdXQ6IG51bWJlcjsKCiAgICBjb25zdHJ1Y3RvcihmYWlsdXJlVGhyZXNob2xkOiBudW1iZXIsIHN1Y2Nlc3NUaHJlc2hvbGQ6IG51bWJlciwgdGltZW91dDogbnVtYmVyKSB7CiAgICAgICAgdGhpcy5mYWlsdXJlVGhyZXNob2xkID0gZmFpbHVyZVRocmVzaG9sZDsKICAgICAgICB0aGlzLnN1Y2Nlc3NUaHJlc2hvbGQgPSBzdWNjZXNzVGhyZXNob2xkOwogICAgICAgIHRoaXMudGltZW91dCA9IHRpbWVvdXQ7CiAgICB9CgogICAgYXN5bmMgZXhlY3V0ZTxUPihmbjogKCkgPT4gUHJvbWlzZTxUPik6IFByb21pc2U8VD4gewogICAgICAgIGlmICh0aGlzLnN0YXRlID09PSAnT1BFTicpIHsKICAgICAgICAgICAgdGhyb3cgbmV3IEVycm9yKCdDaXJjdWl0IGlzIG9wZW4nKTsKICAgICAgICB9CgogICAgICAgIHRyeSB7CiAgICAgICAgICAgIGNvbnN0IHJlc3VsdCA9IGF3YWl0IGZuKCk7CiAgICAgICAgICAgIHRoaXMub25TdWNjZXNzKCk7CiAgICAgICAgICAgIHJldHVybiByZXN1bHQ7CiAgICAgICAgfSBjYXRjaCAoZXJyKSB7CiAgICAgICAgICAgIHRoaXMub25GYWlsdXJlKCk7CiAgICAgICAgICAgIHRocm93IGVycjsKICAgICAgICB9CiAgICB9CgogICAgcHJpdmF0ZSBvblN1Y2Nlc3MoKSB7CiAgICAgICAgdGhpcy5zdWNjZXNzQ291bnQrKzsKICAgICAgICBpZiAodGhpcy5zdGF0ZSA9PT0gJ0hBTEYtT1BFTicgJiYgdGhpcy5zdWNjZXNzQ291bnQgPj0gdGhpcy5zdWNjZXNzVGhyZXNob2xkKSB7CiAgICAgICAgICAgIHRoaXMuc3RhdGUgPSAnQ0xPU0VEJzsKICAgICAgICAgICAgdGhpcy5zdWNjZXNzQ291bnQgPSAwOwogICAgICAgIH0KICAgIH0KCiAgICBwcml2YXRlIG9uRmFpbHVyZSgpIHsKICAgICAgICB0aGlzLmZhaWx1cmVDb3VudCsrOwogICAgICAgIGlmICh0aGlzLmZhaWx1cmVDb3VudCA+PSB0aGlzLmZhaWx1cmVUaHJlc2hvbGQpIHsKICAgICAgICAgICAgdGhpcy5zdGF0ZSA9ICdPUEVOJzsKICAgICAgICAgICAgc2V0VGltZW91dCgoKSA9PiB7CiAgICAgICAgICAgICAgICB0aGlzLnN0YXRlID0gJ0hBTEYtT1BFTic7CiAgICAgICAgICAgICAgICB0aGlzLmZhaWx1cmVDb3VudCA9IDA7CiAgICAgICAgICAgIH0sIHRoaXMudGltZW91dCk7CiAgICAgICAgfQogICAgfQp9CgovLyBFeGVtcGxlIGQnw7pzCmNvbnN0IGNpcmN1aXRCcmVha2VyID0gbmV3IENpcmN1aXRCcmVha2VyKDMsIDIsIDUwMDApOwoKY2lyY3VpdEJyZWFrZXIuZXhlY3V0ZShmZXRjaERhdGEpCiAgICAudGhlbihkYXRhID0+IGNvbnNvbGUubG9nKGRhdGEpKQogICAgLmNhdGNoKGVyciA9PiBjb25zb2xlLmVycm9yKGVycikpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class CircuitBreaker {
+    private failureCount: number = 0;
+    private successCount: number = 0;
+    private state: 'CLOSED' | 'OPEN' | 'HALF-OPEN' = 'CLOSED';
+    private readonly failureThreshold: number;
+    private readonly successThreshold: number;
+    private readonly timeout: number;
+
+    constructor(failureThreshold: number, successThreshold: number, timeout: number) {
+        this.failureThreshold = failureThreshold;
+        this.successThreshold = successThreshold;
+        this.timeout = timeout;
+    }
+
+    async execute&lt;T&gt;(fn: () =&gt; Promise&lt;T&gt;): Promise&lt;T&gt; {
+        if (this.state === 'OPEN') {
+            throw new Error('Circuit is open');
+        }
+
+        try {
+            const result = await fn();
+            this.onSuccess();
+            return result;
+        } catch (err) {
+            this.onFailure();
+            throw err;
+        }
+    }
+
+    private onSuccess() {
+        this.successCount++;
+        if (this.state === 'HALF-OPEN' &amp;&amp; this.successCount &gt;= this.successThreshold) {
+            this.state = 'CLOSED';
+            this.successCount = 0;
+        }
+    }
+
+    private onFailure() {
+        this.failureCount++;
+        if (this.failureCount &gt;= this.failureThreshold) {
+            this.state = 'OPEN';
+            setTimeout(() =&gt; {
+                this.state = 'HALF-OPEN';
+                this.failureCount = 0;
+            }, this.timeout);
+        }
+    }
+}
+
+// Exemple d'&uacute;s
+const circuitBreaker = new CircuitBreaker(3, 2, 5000);
+
+circuitBreaker.execute(fetchData)
+    .then(data =&gt; console.log(data))
+    .catch(err =&gt; console.error(err));</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>CircuitBreaker</strong>: Classe que implementa el patró de Circuit Breaker.</li>
+<li><strong>execute</strong>: Mètode que executa una funció asíncrona i gestiona l'estat del circuit.</li>
+</ul>
+</div><h1>5. Patró de Queues (Cues)</h1>
+<div class='content'><p>El patró de Queues gestiona una cua de tasques asíncrones, assegurant que només un nombre determinat de tasques s'executin simultàniament.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgQXN5bmNRdWV1ZSB7CiAgICBwcml2YXRlIHF1ZXVlOiAoKCkgPT4gUHJvbWlzZTxhbnk+KVtdID0gW107CiAgICBwcml2YXRlIHJ1bm5pbmc6IG51bWJlciA9IDA7CiAgICBwcml2YXRlIHJlYWRvbmx5IGNvbmN1cnJlbmN5OiBudW1iZXI7CgogICAgY29uc3RydWN0b3IoY29uY3VycmVuY3k6IG51bWJlcikgewogICAgICAgIHRoaXMuY29uY3VycmVuY3kgPSBjb25jdXJyZW5jeTsKICAgIH0KCiAgICBlbnF1ZXVlKHRhc2s6ICgpID0+IFByb21pc2U8YW55PikgewogICAgICAgIHRoaXMucXVldWUucHVzaCh0YXNrKTsKICAgICAgICB0aGlzLnJ1bk5leHQoKTsKICAgIH0KCiAgICBwcml2YXRlIHJ1bk5leHQoKSB7CiAgICAgICAgaWYgKHRoaXMucnVubmluZyA+PSB0aGlzLmNvbmN1cnJlbmN5IHx8IHRoaXMucXVldWUubGVuZ3RoID09PSAwKSB7CiAgICAgICAgICAgIHJldHVybjsKICAgICAgICB9CgogICAgICAgIGNvbnN0IHRhc2sgPSB0aGlzLnF1ZXVlLnNoaWZ0KCk7CiAgICAgICAgaWYgKHRhc2spIHsKICAgICAgICAgICAgdGhpcy5ydW5uaW5nKys7CiAgICAgICAgICAgIHRhc2soKS50aGVuKCgpID0+IHsKICAgICAgICAgICAgICAgIHRoaXMucnVubmluZy0tOwogICAgICAgICAgICAgICAgdGhpcy5ydW5OZXh0KCk7CiAgICAgICAgICAgIH0pLmNhdGNoKCgpID0+IHsKICAgICAgICAgICAgICAgIHRoaXMucnVubmluZy0tOwogICAgICAgICAgICAgICAgdGhpcy5ydW5OZXh0KCk7CiAgICAgICAgICAgIH0pOwogICAgICAgIH0KICAgIH0KfQoKLy8gRXhlbXBsZSBkJ8O6cwpjb25zdCBxdWV1ZSA9IG5ldyBBc3luY1F1ZXVlKDIpOwoKcXVldWUuZW5xdWV1ZSgoKSA9PiBmZXRjaERhdGEoKS50aGVuKGRhdGEgPT4gY29uc29sZS5sb2coZGF0YSkpKTsKcXVldWUuZW5xdWV1ZSgoKSA9PiBmZXRjaERhdGEoKS50aGVuKGRhdGEgPT4gY29uc29sZS5sb2coZGF0YSkpKTsKcXVldWUuZW5xdWV1ZSgoKSA9PiBmZXRjaERhdGEoKS50aGVuKGRhdGEgPT4gY29uc29sZS5sb2coZGF0YSkpKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class AsyncQueue {
+    private queue: (() =&gt; Promise&lt;any&gt;)[] = [];
+    private running: number = 0;
+    private readonly concurrency: number;
+
+    constructor(concurrency: number) {
+        this.concurrency = concurrency;
+    }
+
+    enqueue(task: () =&gt; Promise&lt;any&gt;) {
+        this.queue.push(task);
+        this.runNext();
+    }
+
+    private runNext() {
+        if (this.running &gt;= this.concurrency || this.queue.length === 0) {
+            return;
+        }
+
+        const task = this.queue.shift();
+        if (task) {
+            this.running++;
+            task().then(() =&gt; {
+                this.running--;
+                this.runNext();
+            }).catch(() =&gt; {
+                this.running--;
+                this.runNext();
+            });
+        }
+    }
+}
+
+// Exemple d'&uacute;s
+const queue = new AsyncQueue(2);
+
+queue.enqueue(() =&gt; fetchData().then(data =&gt; console.log(data)));
+queue.enqueue(() =&gt; fetchData().then(data =&gt; console.log(data)));
+queue.enqueue(() =&gt; fetchData().then(data =&gt; console.log(data)));</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong>AsyncQueue</strong>: Classe que implementa una cua de tasques asíncrones amb un límit de concurrència.</li>
+<li><strong>enqueue</strong>: Mètode que afegeix una tasca a la cua i inicia l'execució si és possible.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem explorat diversos patrons avançats per gestionar operacions asíncrones en TypeScript. Aquests patrons ajuden a escriure codi més robust i mantenible quan es treballa amb operacions asíncrones complexes. Practicar aquests patrons i aplicar-los en projectes reals millorarà significativament la qualitat del teu codi asíncron.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-error-handling' title="Gestió d'Errors">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-01-linting-formatting' title="Linting i Formatació">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

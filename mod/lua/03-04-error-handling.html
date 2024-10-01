@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió d'Errors</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/lua/03-04-error-handling" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/lua/03-04-error-handling" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/lua/03-04-error-handling" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/lua/03-04-error-handling" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/lua/03-04-error-handling" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-modules-packages' title="Mòduls i Paquets">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Gestió d'Errors</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-05-file-io' title="Entrada/Sortida de Fitxers">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La gestió d'errors és una part fonamental de qualsevol llenguatge de programació, i Lua no és una excepció. En aquest tema, aprendrem com Lua maneja els errors i com podem escriure codi robust que pugui gestionar situacions inesperades de manera elegant.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Errors en Lua</strong>: Lua utilitza una funció anomenada <code>error</code> per generar errors.</li>
+<li><strong>Funció <code>pcall</code></strong>: La funció <code>pcall</code> (protected call) s'utilitza per capturar errors sense interrompre l'execució del programa.</li>
+<li><strong>Funció <code>xpcall</code></strong>: Similar a <code>pcall</code>, però permet especificar una funció de maneig d'errors personalitzada.</li>
+<li><strong>Missatges d'Error</strong>: Com interpretar i utilitzar els missatges d'error per depurar el codi.</li>
+</ol>
+</div><h1>Errors en Lua</h1>
+<div class='content'><p>En Lua, els errors es generen utilitzant la funció <code>error</code>. Aquesta funció accepta un missatge d'error com a argument i interromp l'execució del programa.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gZGl2aWRlKGEsIGIpCiAgICBpZiBiID09IDAgdGhlbgogICAgICAgIGVycm9yKCJObyBlcyBwb3QgZGl2aWRpciBwZXIgemVybyIpCiAgICBlbHNlCiAgICAgICAgcmV0dXJuIGEgLyBiCiAgICBlbmQKZW5kCgpwcmludChkaXZpZGUoMTAsIDIpKSAgLS0gU29ydGlkYTogNQpwcmludChkaXZpZGUoMTAsIDApKSAgLS0gRXJyb3I6IE5vIGVzIHBvdCBkaXZpZGlyIHBlciB6ZXJv"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function divide(a, b)
+    if b == 0 then
+        error(&quot;No es pot dividir per zero&quot;)
+    else
+        return a / b
+    end
+end
+
+print(divide(10, 2))  -- Sortida: 5
+print(divide(10, 0))  -- Error: No es pot dividir per zero</pre></div><div class='content'><p>En aquest exemple, si <code>b</code> és zero, la funció <code>error</code> genera un missatge d'error i interromp l'execució.</p>
+</div><h1>Funció `pcall`</h1>
+<div class='content'><p>La funció <code>pcall</code> s'utilitza per capturar errors sense interrompre l'execució del programa. Aquesta funció executa una altra funció en un mode protegit i retorna un booleà que indica si l'execució va ser exitosa o no.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gZGl2aWRlKGEsIGIpCiAgICBpZiBiID09IDAgdGhlbgogICAgICAgIGVycm9yKCJObyBlcyBwb3QgZGl2aWRpciBwZXIgemVybyIpCiAgICBlbHNlCiAgICAgICAgcmV0dXJuIGEgLyBiCiAgICBlbmQKZW5kCgpsb2NhbCBzdGF0dXMsIHJlc3VsdCA9IHBjYWxsKGRpdmlkZSwgMTAsIDIpCmlmIHN0YXR1cyB0aGVuCiAgICBwcmludCgiUmVzdWx0YXQ6ICIgLi4gcmVzdWx0KSAgLS0gU29ydGlkYTogUmVzdWx0YXQ6IDUKZWxzZQogICAgcHJpbnQoIkVycm9yOiAiIC4uIHJlc3VsdCkKZW5kCgpsb2NhbCBzdGF0dXMsIHJlc3VsdCA9IHBjYWxsKGRpdmlkZSwgMTAsIDApCmlmIHN0YXR1cyB0aGVuCiAgICBwcmludCgiUmVzdWx0YXQ6ICIgLi4gcmVzdWx0KQplbHNlCiAgICBwcmludCgiRXJyb3I6ICIgLi4gcmVzdWx0KSAgLS0gU29ydGlkYTogRXJyb3I6IE5vIGVzIHBvdCBkaXZpZGlyIHBlciB6ZXJvCmVuZA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function divide(a, b)
+    if b == 0 then
+        error(&quot;No es pot dividir per zero&quot;)
+    else
+        return a / b
+    end
+end
+
+local status, result = pcall(divide, 10, 2)
+if status then
+    print(&quot;Resultat: &quot; .. result)  -- Sortida: Resultat: 5
+else
+    print(&quot;Error: &quot; .. result)
+end
+
+local status, result = pcall(divide, 10, 0)
+if status then
+    print(&quot;Resultat: &quot; .. result)
+else
+    print(&quot;Error: &quot; .. result)  -- Sortida: Error: No es pot dividir per zero
+end</pre></div><div class='content'></div><h1>Funció `xpcall`</h1>
+<div class='content'><p>La funció <code>xpcall</code> és similar a <code>pcall</code>, però permet especificar una funció de maneig d'errors personalitzada.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gZGl2aWRlKGEsIGIpCiAgICBpZiBiID09IDAgdGhlbgogICAgICAgIGVycm9yKCJObyBlcyBwb3QgZGl2aWRpciBwZXIgemVybyIpCiAgICBlbHNlCiAgICAgICAgcmV0dXJuIGEgLyBiCiAgICBlbmQKZW5kCgpmdW5jdGlvbiBlcnJvckhhbmRsZXIoZXJyKQogICAgcmV0dXJuICJDYXB0dXJhdCB1biBlcnJvcjogIiAuLiBlcnIKZW5kCgpsb2NhbCBzdGF0dXMsIHJlc3VsdCA9IHhwY2FsbChkaXZpZGUsIGVycm9ySGFuZGxlciwgMTAsIDApCmlmIHN0YXR1cyB0aGVuCiAgICBwcmludCgiUmVzdWx0YXQ6ICIgLi4gcmVzdWx0KQplbHNlCiAgICBwcmludChyZXN1bHQpICAtLSBTb3J0aWRhOiBDYXB0dXJhdCB1biBlcnJvcjogTm8gZXMgcG90IGRpdmlkaXIgcGVyIHplcm8KZW5k"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function divide(a, b)
+    if b == 0 then
+        error(&quot;No es pot dividir per zero&quot;)
+    else
+        return a / b
+    end
+end
+
+function errorHandler(err)
+    return &quot;Capturat un error: &quot; .. err
+end
+
+local status, result = xpcall(divide, errorHandler, 10, 0)
+if status then
+    print(&quot;Resultat: &quot; .. result)
+else
+    print(result)  -- Sortida: Capturat un error: No es pot dividir per zero
+end</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Captura d'Errors amb `pcall`</h2>
+<div class='content'><p>Escriu una funció que llegeixi un fitxer i capturi qualsevol error que pugui ocórrer durant la lectura.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gcmVhZEZpbGUoZmlsZW5hbWUpCiAgICBsb2NhbCBmaWxlLCBlcnIgPSBpby5vcGVuKGZpbGVuYW1lLCAiciIpCiAgICBpZiBub3QgZmlsZSB0aGVuCiAgICAgICAgZXJyb3IoIk5vIGVzIHBvdCBvYnJpciBlbCBmaXR4ZXI6ICIgLi4gZXJyKQogICAgZW5kCiAgICBsb2NhbCBjb250ZW50ID0gZmlsZTpyZWFkKCIqYSIpCiAgICBmaWxlOmNsb3NlKCkKICAgIHJldHVybiBjb250ZW50CmVuZAoKbG9jYWwgc3RhdHVzLCBjb250ZW50ID0gcGNhbGwocmVhZEZpbGUsICJleGlzdGVudC50eHQiKQppZiBzdGF0dXMgdGhlbgogICAgcHJpbnQoIkNvbnRpbmd1dCBkZWwgZml0eGVyOlxuIiAuLiBjb250ZW50KQplbHNlCiAgICBwcmludCgiRXJyb3I6ICIgLi4gY29udGVudCkKZW5kCgpsb2NhbCBzdGF0dXMsIGNvbnRlbnQgPSBwY2FsbChyZWFkRmlsZSwgImluZXhpc3RlbnQudHh0IikKaWYgc3RhdHVzIHRoZW4KICAgIHByaW50KCJDb250aW5ndXQgZGVsIGZpdHhlcjpcbiIgLi4gY29udGVudCkKZWxzZQogICAgcHJpbnQoIkVycm9yOiAiIC4uIGNvbnRlbnQpICAtLSBTb3J0aWRhOiBFcnJvcjogTm8gZXMgcG90IG9icmlyIGVsIGZpdHhlcjogLi4uCmVuZA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function readFile(filename)
+    local file, err = io.open(filename, &quot;r&quot;)
+    if not file then
+        error(&quot;No es pot obrir el fitxer: &quot; .. err)
+    end
+    local content = file:read(&quot;*a&quot;)
+    file:close()
+    return content
+end
+
+local status, content = pcall(readFile, &quot;existent.txt&quot;)
+if status then
+    print(&quot;Contingut del fitxer:\n&quot; .. content)
+else
+    print(&quot;Error: &quot; .. content)
+end
+
+local status, content = pcall(readFile, &quot;inexistent.txt&quot;)
+if status then
+    print(&quot;Contingut del fitxer:\n&quot; .. content)
+else
+    print(&quot;Error: &quot; .. content)  -- Sortida: Error: No es pot obrir el fitxer: ...
+end</pre></div><div class='content'></div><h2>Exercici 2: Maneig d'Errors Personalitzat amb `xpcall`</h2>
+<div class='content'><p>Escriu una funció que divideixi dos nombres i utilitza <code>xpcall</code> per capturar errors amb una funció de maneig d'errors personalitzada.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnVuY3Rpb24gZGl2aWRlKGEsIGIpCiAgICBpZiBiID09IDAgdGhlbgogICAgICAgIGVycm9yKCJObyBlcyBwb3QgZGl2aWRpciBwZXIgemVybyIpCiAgICBlbHNlCiAgICAgICAgcmV0dXJuIGEgLyBiCiAgICBlbmQKZW5kCgpmdW5jdGlvbiBjdXN0b21FcnJvckhhbmRsZXIoZXJyKQogICAgcmV0dXJuICJFcnJvciBjYXB0dXJhdDogIiAuLiBlcnIKZW5kCgpsb2NhbCBzdGF0dXMsIHJlc3VsdCA9IHhwY2FsbChkaXZpZGUsIGN1c3RvbUVycm9ySGFuZGxlciwgMTAsIDApCmlmIHN0YXR1cyB0aGVuCiAgICBwcmludCgiUmVzdWx0YXQ6ICIgLi4gcmVzdWx0KQplbHNlCiAgICBwcmludChyZXN1bHQpICAtLSBTb3J0aWRhOiBFcnJvciBjYXB0dXJhdDogTm8gZXMgcG90IGRpdmlkaXIgcGVyIHplcm8KZW5k"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>function divide(a, b)
+    if b == 0 then
+        error(&quot;No es pot dividir per zero&quot;)
+    else
+        return a / b
+    end
+end
+
+function customErrorHandler(err)
+    return &quot;Error capturat: &quot; .. err
+end
+
+local status, result = xpcall(divide, customErrorHandler, 10, 0)
+if status then
+    print(&quot;Resultat: &quot; .. result)
+else
+    print(result)  -- Sortida: Error capturat: No es pot dividir per zero
+end</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après com Lua maneja els errors i com podem utilitzar les funcions <code>error</code>, <code>pcall</code> i <code>xpcall</code> per gestionar errors de manera efectiva. La gestió d'errors és crucial per escriure codi robust i fiable, i aquestes tècniques ens ajuden a capturar i manejar situacions inesperades sense interrompre l'execució del programa.</p>
+<p>En el següent tema, explorarem l'entrada i sortida de fitxers en Lua, una habilitat essencial per a moltes aplicacions pràctiques.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-modules-packages' title="Mòduls i Paquets">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-05-file-io' title="Entrada/Sortida de Fitxers">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

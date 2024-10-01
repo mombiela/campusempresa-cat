@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renderització de Plantilles amb Jinja2</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/flask/02-03-rendering-templates" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/flask/02-03-rendering-templates" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/flask/02-03-rendering-templates" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/flask/02-03-rendering-templates" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/flask/02-03-rendering-templates" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-02-handling-http-methods' title="Gestió de Mètodes HTTP">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Renderització de Plantilles amb Jinja2</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-04-static-files' title="Treballant amb Fitxers Estàtics">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, aprendrem com Flask utilitza Jinja2 per renderitzar plantilles HTML. Jinja2 és un motor de plantilles per a Python que permet generar HTML dinàmic de manera senzilla i eficient. Amb Jinja2, podem inserir variables, aplicar lògica condicional, iterar sobre col·leccions i molt més dins dels nostres fitxers HTML.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Plantilles HTML</strong>: Fitxers HTML que contenen marcadors de posició per a dades dinàmiques.</li>
+<li><strong>Jinja2</strong>: Motor de plantilles que Flask utilitza per renderitzar HTML.</li>
+<li><strong>Renderització</strong>: El procés de combinar una plantilla amb dades per generar HTML final.</li>
+</ol>
+</div><h1>Estructura Bàsica d'una Plantilla Jinja2</h1>
+<div class='content'><p>Una plantilla Jinja2 és un fitxer HTML amb marcadors de posició per a dades dinàmiques. Aquests marcadors de posició es defineixen amb doble claudàtor <code>{{ }}</code> per a variables i <code>{% %}</code> per a instruccions de control.</p>
+</div><h2>Exemple de Plantilla Bàsica</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CiAgICA8bWV0YSBjaGFyc2V0PSJVVEYtOCI+CiAgICA8dGl0bGU+e3sgdGl0bGUgfX08L3RpdGxlPgo8L2hlYWQ+Cjxib2R5PgogICAgPGgxPkJlbnZpbmd1dCwge3sgdXNlcm5hbWUgfX0hPC9oMT4KICAgIDxwPkFxdWVzdGEgw6lzIHVuYSBww6BnaW5hIHJlbmRlcml0emFkYSBhbWIgSmluamEyLjwvcD4KPC9ib2R5Pgo8L2h0bWw+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;{{ title }}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Benvingut, {{ username }}!&lt;/h1&gt;
+    &lt;p&gt;Aquesta &eacute;s una p&agrave;gina renderitzada amb Jinja2.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'></div><h1>Renderització de Plantilles amb Flask</h1>
+<div class='content'></div><h2>Configuració del Directori de Plantilles</h2>
+<div class='content'><p>Per defecte, Flask busca les plantilles HTML en un directori anomenat <code>templates</code> dins del directori principal de l'aplicació. Assegura't de crear aquest directori i col·locar-hi les teves plantilles.</p>
+</div><h2>Exemple de Codi</h2>
+<div class='content'><p>A continuació, es mostra com renderitzar una plantilla des d'una ruta en Flask:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2ssIHJlbmRlcl90ZW1wbGF0ZQoKYXBwID0gRmxhc2soX19uYW1lX18pCgpAYXBwLnJvdXRlKCcvJykKZGVmIGhvbWUoKToKICAgIHJldHVybiByZW5kZXJfdGVtcGxhdGUoJ2luZGV4Lmh0bWwnLCB0aXRsZT0nUMOgZ2luYSBQcmluY2lwYWwnLCB1c2VybmFtZT0nSm9hbicpCgppZiBfX25hbWVfXyA9PSAnX19tYWluX18nOgogICAgYXBwLnJ1bihkZWJ1Zz1UcnVlKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return render_template('index.html', title='P&agrave;gina Principal', username='Joan')
+
+if __name__ == '__main__':
+    app.run(debug=True)</pre></div><div class='content'><p>En aquest exemple, la funció <code>render_template</code> carrega la plantilla <code>index.html</code> i substitueix els marcadors de posició <code>{{ title }}</code> i <code>{{ username }}</code> amb les dades proporcionades.</p>
+</div><h1>Control de Flux amb Jinja2</h1>
+<div class='content'></div><h2>Lògica Condicional</h2>
+<div class='content'><p>Jinja2 permet utilitzar instruccions condicionals dins de les plantilles.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("eyUgaWYgdXNlci5pc19hdXRoZW50aWNhdGVkICV9CiAgICA8cD5CZW52aW5ndXQsIHt7IHVzZXIudXNlcm5hbWUgfX0hPC9wPgp7JSBlbHNlICV9CiAgICA8cD5TaSB1cyBwbGF1LCBpbmljaWEgc2Vzc2nDsy48L3A+CnslIGVuZGlmICV9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{% if user.is_authenticated %}
+    &lt;p&gt;Benvingut, {{ user.username }}!&lt;/p&gt;
+{% else %}
+    &lt;p&gt;Si us plau, inicia sessi&oacute;.&lt;/p&gt;
+{% endif %}</pre></div><div class='content'></div><h2>Bucles</h2>
+<div class='content'><p>També podem iterar sobre col·leccions amb bucles <code>for</code>.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PHVsPgogICAgeyUgZm9yIGl0ZW0gaW4gaXRlbXMgJX0KICAgICAgICA8bGk+e3sgaXRlbSB9fTwvbGk+CiAgICB7JSBlbmRmb3IgJX0KPC91bD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;ul&gt;
+    {% for item in items %}
+        &lt;li&gt;{{ item }}&lt;/li&gt;
+    {% endfor %}
+&lt;/ul&gt;</pre></div><div class='content'></div><h1>Filtratge i Funcions</h1>
+<div class='content'><p>Jinja2 proporciona una sèrie de filtres i funcions per manipular dades dins de les plantilles.</p>
+</div><h2>Exemple de Filtres</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PHA+RGF0YSBhY3R1YWw6IHt7IGN1cnJlbnRfZGF0ZSB8IGRhdGUoJ2QvbS9ZJykgfX08L3A+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;p&gt;Data actual: {{ current_date | date('d/m/Y') }}&lt;/p&gt;</pre></div><div class='content'></div><h2>Exemple de Funcions</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PHA+TG9uZ2l0dWQgZGUgbGEgbGxpc3RhOiB7eyBpdGVtcyB8IGxlbmd0aCB9fTwvcD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;p&gt;Longitud de la llista: {{ items | length }}&lt;/p&gt;</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear una Plantilla Bàsica</h2>
+<div class='content'><ol>
+<li>Crea un fitxer <code>templates/welcome.html</code> amb el següent contingut:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CiAgICA8bWV0YSBjaGFyc2V0PSJVVEYtOCI+CiAgICA8dGl0bGU+e3sgdGl0bGUgfX08L3RpdGxlPgo8L2hlYWQ+Cjxib2R5PgogICAgPGgxPkJlbnZpbmd1dCwge3sgdXNlcm5hbWUgfX0hPC9oMT4KICAgIDxwPkFxdWVzdGEgw6lzIHVuYSBww6BnaW5hIGRlIGJlbnZpbmd1ZGEuPC9wPgo8L2JvZHk+CjwvaHRtbD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;{{ title }}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Benvingut, {{ username }}!&lt;/h1&gt;
+    &lt;p&gt;Aquesta &eacute;s una p&agrave;gina de benvinguda.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'><ol start="2">
+<li>Modifica la ruta principal de la teva aplicació Flask per utilitzar aquesta plantilla:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QGFwcC5yb3V0ZSgnL3dlbGNvbWUnKQpkZWYgd2VsY29tZSgpOgogICAgcmV0dXJuIHJlbmRlcl90ZW1wbGF0ZSgnd2VsY29tZS5odG1sJywgdGl0bGU9J0JlbnZpbmd1ZGEnLCB1c2VybmFtZT0nTWFyaWEnKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@app.route('/welcome')
+def welcome():
+    return render_template('welcome.html', title='Benvinguda', username='Maria')</pre></div><div class='content'></div><h2>Exercici 2: Utilitzar Lògica Condicional i Bucles</h2>
+<div class='content'><ol>
+<li>Crea un fitxer <code>templates/dashboard.html</code> amb el següent contingut:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCFET0NUWVBFIGh0bWw+CjxodG1sIGxhbmc9ImVuIj4KPGhlYWQ+CiAgICA8bWV0YSBjaGFyc2V0PSJVVEYtOCI+CiAgICA8dGl0bGU+e3sgdGl0bGUgfX08L3RpdGxlPgo8L2hlYWQ+Cjxib2R5PgogICAgPGgxPlRhdWxlciBkZSBDb250cm9sPC9oMT4KICAgIHslIGlmIHVzZXIuaXNfYXV0aGVudGljYXRlZCAlfQogICAgICAgIDxwPkJlbnZpbmd1dCwge3sgdXNlci51c2VybmFtZSB9fSE8L3A+CiAgICAgICAgPHVsPgogICAgICAgICAgICB7JSBmb3IgdGFzayBpbiB0YXNrcyAlfQogICAgICAgICAgICAgICAgPGxpPnt7IHRhc2sgfX08L2xpPgogICAgICAgICAgICB7JSBlbmRmb3IgJX0KICAgICAgICA8L3VsPgogICAgeyUgZWxzZSAlfQogICAgICAgIDxwPlNpIHVzIHBsYXUsIGluaWNpYSBzZXNzacOzIHBlciB2ZXVyZSBsZXMgdGV2ZXMgdGFzcXVlcy48L3A+CiAgICB7JSBlbmRpZiAlfQo8L2JvZHk+CjwvaHRtbD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;title&gt;{{ title }}&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Tauler de Control&lt;/h1&gt;
+    {% if user.is_authenticated %}
+        &lt;p&gt;Benvingut, {{ user.username }}!&lt;/p&gt;
+        &lt;ul&gt;
+            {% for task in tasks %}
+                &lt;li&gt;{{ task }}&lt;/li&gt;
+            {% endfor %}
+        &lt;/ul&gt;
+    {% else %}
+        &lt;p&gt;Si us plau, inicia sessi&oacute; per veure les teves tasques.&lt;/p&gt;
+    {% endif %}
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'><ol start="2">
+<li>Modifica la ruta corresponent en la teva aplicació Flask:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QGFwcC5yb3V0ZSgnL2Rhc2hib2FyZCcpCmRlZiBkYXNoYm9hcmQoKToKICAgIHVzZXIgPSB7J2lzX2F1dGhlbnRpY2F0ZWQnOiBUcnVlLCAndXNlcm5hbWUnOiAnSm9hbid9CiAgICB0YXNrcyA9IFsnQ29tcHJhciBsbGV0JywgJ0VudmlhciBjb3JyZXUnLCAnUHJlcGFyYXIgcmV1bmnDsyddCiAgICByZXR1cm4gcmVuZGVyX3RlbXBsYXRlKCdkYXNoYm9hcmQuaHRtbCcsIHRpdGxlPSdUYXVsZXIgZGUgQ29udHJvbCcsIHVzZXI9dXNlciwgdGFza3M9dGFza3Mp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@app.route('/dashboard')
+def dashboard():
+    user = {'is_authenticated': True, 'username': 'Joan'}
+    tasks = ['Comprar llet', 'Enviar correu', 'Preparar reuni&oacute;']
+    return render_template('dashboard.html', title='Tauler de Control', user=user, tasks=tasks)</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com utilitzar Jinja2 per renderitzar plantilles HTML amb Flask. Hem vist com inserir variables, aplicar lògica condicional i iterar sobre col·leccions dins de les plantilles. També hem practicat amb exercicis per reforçar aquests conceptes. En el proper tema, explorarem com treballar amb fitxers estàtics en Flask.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-02-handling-http-methods' title="Gestió de Mètodes HTTP">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-04-static-files' title="Treballant amb Fitxers Estàtics">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

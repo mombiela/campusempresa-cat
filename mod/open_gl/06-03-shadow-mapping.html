@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapeig d'Ombres</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/open_gl/06-03-shadow-mapping" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/open_gl/06-03-shadow-mapping" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/open_gl/06-03-shadow-mapping" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/open_gl/06-03-shadow-mapping" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/open_gl/06-03-shadow-mapping" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-post-processing' title="Efectes de Postprocessament">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Mapeig d'Ombres</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-environment-mapping' title="Mapeig d'Entorn">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>El mapeig d'ombres és una tècnica de renderització que permet afegir ombres realistes a les escenes 3D. Aquesta tècnica és àmpliament utilitzada en jocs i aplicacions gràfiques per millorar la percepció de profunditat i realisme. En aquest tema, aprendrem com implementar el mapeig d'ombres utilitzant OpenGL.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Mapa d'Ombres (Shadow Map)</strong>: Una textura que emmagatzema la informació de profunditat des de la perspectiva de la font de llum.</li>
+<li><strong>Passada de Profunditat (Depth Pass)</strong>: La primera passada on es renderitza la profunditat de l'escena des de la perspectiva de la font de llum.</li>
+<li><strong>Passada de Renderització (Render Pass)</strong>: La segona passada on es renderitza l'escena des de la perspectiva de la càmera, utilitzant el mapa d'ombres per determinar si un fragment està a l'ombra.</li>
+</ol>
+</div><h1>Passos per Implementar el Mapeig d'Ombres</h1>
+<div class='content'></div><h2>1. Crear el Framebuffer i la Textura de Profunditat</h2>
+<div class='content'><p>Primer, necessitem crear un framebuffer i una textura de profunditat per emmagatzemar el mapa d'ombres.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0x1aW50IGRlcHRoTWFwRkJPOwpnbEdlbkZyYW1lYnVmZmVycygxLCAmZGVwdGhNYXBGQk8pOwoKLy8gQ3JlYXIgbGEgdGV4dHVyYSBkZSBwcm9mdW5kaXRhdApHTHVpbnQgZGVwdGhNYXA7CmdsR2VuVGV4dHVyZXMoMSwgJmRlcHRoTWFwKTsKZ2xCaW5kVGV4dHVyZShHTF9URVhUVVJFXzJELCBkZXB0aE1hcCk7CmdsVGV4SW1hZ2UyRChHTF9URVhUVVJFXzJELCAwLCBHTF9ERVBUSF9DT01QT05FTlQsIFNIQURPV19XSURUSCwgU0hBRE9XX0hFSUdIVCwgMCwgR0xfREVQVEhfQ09NUE9ORU5ULCBHTF9GTE9BVCwgTlVMTCk7CmdsVGV4UGFyYW1ldGVyaShHTF9URVhUVVJFXzJELCBHTF9URVhUVVJFX01JTl9GSUxURVIsIEdMX05FQVJFU1QpOwpnbFRleFBhcmFtZXRlcmkoR0xfVEVYVFVSRV8yRCwgR0xfVEVYVFVSRV9NQUdfRklMVEVSLCBHTF9ORUFSRVNUKTsKZ2xUZXhQYXJhbWV0ZXJpKEdMX1RFWFRVUkVfMkQsIEdMX1RFWFRVUkVfV1JBUF9TLCBHTF9DTEFNUF9UT19CT1JERVIpOwpnbFRleFBhcmFtZXRlcmkoR0xfVEVYVFVSRV8yRCwgR0xfVEVYVFVSRV9XUkFQX1QsIEdMX0NMQU1QX1RPX0JPUkRFUik7CmZsb2F0IGJvcmRlckNvbG9yW10gPSB7MS4wLCAxLjAsIDEuMCwgMS4wfTsKZ2xUZXhQYXJhbWV0ZXJmdihHTF9URVhUVVJFXzJELCBHTF9URVhUVVJFX0JPUkRFUl9DT0xPUiwgYm9yZGVyQ29sb3IpOwoKLy8gQWRqdW50YXIgbGEgdGV4dHVyYSBkZSBwcm9mdW5kaXRhdCBhbCBmcmFtZWJ1ZmZlcgpnbEJpbmRGcmFtZWJ1ZmZlcihHTF9GUkFNRUJVRkZFUiwgZGVwdGhNYXBGQk8pOwpnbEZyYW1lYnVmZmVyVGV4dHVyZTJEKEdMX0ZSQU1FQlVGRkVSLCBHTF9ERVBUSF9BVFRBQ0hNRU5ULCBHTF9URVhUVVJFXzJELCBkZXB0aE1hcCwgMCk7CmdsRHJhd0J1ZmZlcihHTF9OT05FKTsKZ2xSZWFkQnVmZmVyKEdMX05PTkUpOwpnbEJpbmRGcmFtZWJ1ZmZlcihHTF9GUkFNRUJVRkZFUiwgMCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GLuint depthMapFBO;
+glGenFramebuffers(1, &amp;depthMapFBO);
+
+// Crear la textura de profunditat
+GLuint depthMap;
+glGenTextures(1, &amp;depthMap);
+glBindTexture(GL_TEXTURE_2D, depthMap);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+float borderColor[] = {1.0, 1.0, 1.0, 1.0};
+glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+
+// Adjuntar la textura de profunditat al framebuffer
+glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+glDrawBuffer(GL_NONE);
+glReadBuffer(GL_NONE);
+glBindFramebuffer(GL_FRAMEBUFFER, 0);</pre></div><div class='content'></div><h2>2. Passada de Profunditat</h2>
+<div class='content'><p>Renderitzem l'escena des de la perspectiva de la font de llum per generar el mapa d'ombres.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xtOjptYXQ0IGxpZ2h0UHJvamVjdGlvbiwgbGlnaHRWaWV3OwpnbG06Om1hdDQgbGlnaHRTcGFjZU1hdHJpeDsKZmxvYXQgbmVhcl9wbGFuZSA9IDEuMGYsIGZhcl9wbGFuZSA9IDcuNWY7CmxpZ2h0UHJvamVjdGlvbiA9IGdsbTo6b3J0aG8oLTEwLjBmLCAxMC4wZiwgLTEwLjBmLCAxMC4wZiwgbmVhcl9wbGFuZSwgZmFyX3BsYW5lKTsKbGlnaHRWaWV3ID0gZ2xtOjpsb29rQXQobGlnaHRQb3MsIGdsbTo6dmVjMygwLjBmKSwgZ2xtOjp2ZWMzKDAuMCwgMS4wLCAwLjApKTsKbGlnaHRTcGFjZU1hdHJpeCA9IGxpZ2h0UHJvamVjdGlvbiAqIGxpZ2h0VmlldzsKCi8vIENvbmZpZ3VyYXIgZWwgc2hhZGVyIGRlIHByb2Z1bmRpdGF0CmRlcHRoU2hhZGVyLnVzZSgpOwpkZXB0aFNoYWRlci5zZXRNYXQ0KCJsaWdodFNwYWNlTWF0cml4IiwgbGlnaHRTcGFjZU1hdHJpeCk7CgovLyBSZW5kZXJpdHphciBsJ2VzY2VuYSBhIGxhIHRleHR1cmEgZGUgcHJvZnVuZGl0YXQKZ2xWaWV3cG9ydCgwLCAwLCBTSEFET1dfV0lEVEgsIFNIQURPV19IRUlHSFQpOwpnbEJpbmRGcmFtZWJ1ZmZlcihHTF9GUkFNRUJVRkZFUiwgZGVwdGhNYXBGQk8pOwpnbENsZWFyKEdMX0RFUFRIX0JVRkZFUl9CSVQpOwpyZW5kZXJTY2VuZShkZXB0aFNoYWRlcik7CmdsQmluZEZyYW1lYnVmZmVyKEdMX0ZSQU1FQlVGRkVSLCAwKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glm::mat4 lightProjection, lightView;
+glm::mat4 lightSpaceMatrix;
+float near_plane = 1.0f, far_plane = 7.5f;
+lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
+lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
+lightSpaceMatrix = lightProjection * lightView;
+
+// Configurar el shader de profunditat
+depthShader.use();
+depthShader.setMat4(&quot;lightSpaceMatrix&quot;, lightSpaceMatrix);
+
+// Renderitzar l'escena a la textura de profunditat
+glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+glClear(GL_DEPTH_BUFFER_BIT);
+renderScene(depthShader);
+glBindFramebuffer(GL_FRAMEBUFFER, 0);</pre></div><div class='content'></div><h2>3. Passada de Renderització</h2>
+<div class='content'><p>Renderitzem l'escena des de la perspectiva de la càmera, utilitzant el mapa d'ombres per determinar si un fragment està a l'ombra.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gQ29uZmlndXJhciBlbCBzaGFkZXIgZGUgbCdlc2NlbmEKc2NlbmVTaGFkZXIudXNlKCk7CnNjZW5lU2hhZGVyLnNldE1hdDQoImxpZ2h0U3BhY2VNYXRyaXgiLCBsaWdodFNwYWNlTWF0cml4KTsKc2NlbmVTaGFkZXIuc2V0VmVjMygibGlnaHRQb3MiLCBsaWdodFBvcyk7CnNjZW5lU2hhZGVyLnNldFZlYzMoInZpZXdQb3MiLCBjYW1lcmEuUG9zaXRpb24pOwpnbEFjdGl2ZVRleHR1cmUoR0xfVEVYVFVSRTEpOwpnbEJpbmRUZXh0dXJlKEdMX1RFWFRVUkVfMkQsIGRlcHRoTWFwKTsKc2NlbmVTaGFkZXIuc2V0SW50KCJzaGFkb3dNYXAiLCAxKTsKCi8vIFJlbmRlcml0emFyIGwnZXNjZW5hCmdsVmlld3BvcnQoMCwgMCwgU0NSX1dJRFRILCBTQ1JfSEVJR0hUKTsKZ2xDbGVhcihHTF9DT0xPUl9CVUZGRVJfQklUIHwgR0xfREVQVEhfQlVGRkVSX0JJVCk7CnJlbmRlclNjZW5lKHNjZW5lU2hhZGVyKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Configurar el shader de l'escena
+sceneShader.use();
+sceneShader.setMat4(&quot;lightSpaceMatrix&quot;, lightSpaceMatrix);
+sceneShader.setVec3(&quot;lightPos&quot;, lightPos);
+sceneShader.setVec3(&quot;viewPos&quot;, camera.Position);
+glActiveTexture(GL_TEXTURE1);
+glBindTexture(GL_TEXTURE_2D, depthMap);
+sceneShader.setInt(&quot;shadowMap&quot;, 1);
+
+// Renderitzar l'escena
+glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+renderScene(sceneShader);</pre></div><div class='content'></div><h2>4. Shader de Fragment</h2>
+<div class='content'><p>El shader de fragment utilitza el mapa d'ombres per determinar si un fragment està a l'ombra.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I3ZlcnNpb24gMzMwIGNvcmUKb3V0IHZlYzQgRnJhZ0NvbG9yOwoKaW4gdmVjMyBGcmFnUG9zOwppbiB2ZWMzIE5vcm1hbDsKaW4gdmVjNCBGcmFnUG9zTGlnaHRTcGFjZTsKCnVuaWZvcm0gc2FtcGxlcjJEIHNoYWRvd01hcDsKdW5pZm9ybSB2ZWMzIGxpZ2h0UG9zOwp1bmlmb3JtIHZlYzMgdmlld1BvczsKCmZsb2F0IFNoYWRvd0NhbGN1bGF0aW9uKHZlYzQgZnJhZ1Bvc0xpZ2h0U3BhY2UpCnsKICAgIC8vIENvbnZlcnRpciBkZSBjbGlwIHNwYWNlIGEgTkRDCiAgICB2ZWMzIHByb2pDb29yZHMgPSBmcmFnUG9zTGlnaHRTcGFjZS54eXogLyBmcmFnUG9zTGlnaHRTcGFjZS53OwogICAgcHJvakNvb3JkcyA9IHByb2pDb29yZHMgKiAwLjUgKyAwLjU7CiAgICAKICAgIC8vIE9idGVuaXIgbGEgcHJvZnVuZGl0YXQgZGVsIG1hcGEgZCdvbWJyZXMKICAgIGZsb2F0IGNsb3Nlc3REZXB0aCA9IHRleHR1cmUoc2hhZG93TWFwLCBwcm9qQ29vcmRzLnh5KS5yOyAKICAgIGZsb2F0IGN1cnJlbnREZXB0aCA9IHByb2pDb29yZHMuejsKICAgIAogICAgLy8gVmVyaWZpY2FyIHNpIGVsIGZyYWdtZW50IGVzdMOgIGEgbCdvbWJyYQogICAgZmxvYXQgc2hhZG93ID0gY3VycmVudERlcHRoID4gY2xvc2VzdERlcHRoICA/IDEuMCA6IDAuMDsKICAgIAogICAgcmV0dXJuIHNoYWRvdzsKfQoKdm9pZCBtYWluKCkKewogICAgdmVjMyBjb2xvciA9IHZlYzMoMS4wKTsgLy8gQ29sb3IgZGUgbCdvYmplY3RlCiAgICB2ZWMzIG5vcm1hbCA9IG5vcm1hbGl6ZShOb3JtYWwpOwogICAgdmVjMyBsaWdodENvbG9yID0gdmVjMygxLjApOwogICAgdmVjMyBsaWdodERpciA9IG5vcm1hbGl6ZShsaWdodFBvcyAtIEZyYWdQb3MpOwogICAgZmxvYXQgZGlmZiA9IG1heChkb3QobGlnaHREaXIsIG5vcm1hbCksIDAuMCk7CiAgICB2ZWMzIGRpZmZ1c2UgPSBkaWZmICogbGlnaHRDb2xvcjsKICAgIAogICAgLy8gQ2FsY3VsYXIgbCdvbWJyYQogICAgZmxvYXQgc2hhZG93ID0gU2hhZG93Q2FsY3VsYXRpb24oRnJhZ1Bvc0xpZ2h0U3BhY2UpOwogICAgdmVjMyBsaWdodGluZyA9ICgxLjAgLSBzaGFkb3cpICogZGlmZnVzZSAqIGNvbG9yOwogICAgCiAgICBGcmFnQ29sb3IgPSB2ZWM0KGxpZ2h0aW5nLCAxLjApOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#version 330 core
+out vec4 FragColor;
+
+in vec3 FragPos;
+in vec3 Normal;
+in vec4 FragPosLightSpace;
+
+uniform sampler2D shadowMap;
+uniform vec3 lightPos;
+uniform vec3 viewPos;
+
+float ShadowCalculation(vec4 fragPosLightSpace)
+{
+    // Convertir de clip space a NDC
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5;
+    
+    // Obtenir la profunditat del mapa d'ombres
+    float closestDepth = texture(shadowMap, projCoords.xy).r; 
+    float currentDepth = projCoords.z;
+    
+    // Verificar si el fragment est&agrave; a l'ombra
+    float shadow = currentDepth &gt; closestDepth  ? 1.0 : 0.0;
+    
+    return shadow;
+}
+
+void main()
+{
+    vec3 color = vec3(1.0); // Color de l'objecte
+    vec3 normal = normalize(Normal);
+    vec3 lightColor = vec3(1.0);
+    vec3 lightDir = normalize(lightPos - FragPos);
+    float diff = max(dot(lightDir, normal), 0.0);
+    vec3 diffuse = diff * lightColor;
+    
+    // Calcular l'ombra
+    float shadow = ShadowCalculation(FragPosLightSpace);
+    vec3 lighting = (1.0 - shadow) * diffuse * color;
+    
+    FragColor = vec4(lighting, 1.0);
+}</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'><p>Implementa el mapeig d'ombres en una escena senzilla amb una font de llum direccional i un objecte que projecti una ombra sobre un pla.</p>
+</div><h2>Passos:</h2>
+<div class='content'><ol>
+<li>Configura el framebuffer i la textura de profunditat.</li>
+<li>Renderitza l'escena des de la perspectiva de la font de llum per generar el mapa d'ombres.</li>
+<li>Renderitza l'escena des de la perspectiva de la càmera, utilitzant el mapa d'ombres per determinar si un fragment està a l'ombra.</li>
+<li>Implementa el shader de fragment per calcular les ombres.</li>
+</ol>
+</div><h2>Solució:</h2>
+<div class='content'><p>Segueix els passos descrits anteriorment per implementar el mapeig d'ombres. Assegura't de configurar correctament els shaders i els buffers.</p>
+</div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ul>
+<li><strong>Resolució del Mapa d'Ombres</strong>: Una resolució baixa pot causar artefactes d'ombres. Ajusta <code>SHADOW_WIDTH</code> i <code>SHADOW_HEIGHT</code> segons sigui necessari.</li>
+<li><strong>Bias</strong>: Afegir un petit bias a la profunditat pot ajudar a evitar artefactes d'auto-ombra.</li>
+<li><strong>Projecció de la Llum</strong>: Assegura't que la projecció de la llum cobreixi tota l'escena per evitar ombres tallades.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>El mapeig d'ombres és una tècnica poderosa per afegir realisme a les escenes 3D. Amb una comprensió clara dels passos i la implementació correcta, pots crear ombres realistes que millorin significativament la qualitat visual de les teves aplicacions gràfiques. En el següent tema, explorarem altres efectes especials que poden complementar el mapeig d'ombres per crear escenes encara més immersives.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-post-processing' title="Efectes de Postprocessament">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-environment-mapping' title="Mapeig d'Entorn">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

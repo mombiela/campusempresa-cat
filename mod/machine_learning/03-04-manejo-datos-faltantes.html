@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió de dades mancants</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/machine_learning/03-04-manejo-datos-faltantes" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/machine_learning/03-04-manejo-datos-faltantes" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/machine_learning/03-04-handling-missing-data" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/machine_learning/03-04-manejo-datos-faltantes" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/machine_learning/03-04-manejo-datos-faltantes" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-normalizacion-estandarizacion' title="Normalització i estandardització">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Gestió de dades mancants</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-regresion-lineal' title="Regressió lineal">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La gestió de dades mancants és una part crucial del preprocessament de dades en qualsevol projecte de Machine Learning. Les dades mancants poden afectar significativament la qualitat dels models i la seva capacitat de generalització. En aquesta secció, explorarem diverses tècniques per gestionar les dades mancants de manera efectiva.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre les causes i els tipus de dades mancants.</li>
+<li>Aprendre diferents tècniques per gestionar les dades mancants.</li>
+<li>Implementar aquestes tècniques utilitzant Python.</li>
+</ul>
+</div><h1>Tipus de Dades Mancants</h1>
+<div class='content'><p>Les dades mancants poden classificar-se en tres categories principals:</p>
+<ol>
+<li><strong>MCAR (Missing Completely at Random)</strong>: Les dades mancants no depenen de cap variable observada ni no observada.</li>
+<li><strong>MAR (Missing at Random)</strong>: Les dades mancants depenen d'algunes variables observades però no de la variable que falta.</li>
+<li><strong>MNAR (Missing Not at Random)</strong>: Les dades mancants depenen de la variable que falta o d'altres variables no observades.</li>
+</ol>
+</div><h1>Tècniques per Gestionar Dades Mancants</h1>
+<div class='content'></div><h2>1. Eliminació de Dades Mancants</h2>
+<div class='content'><h4>Eliminació de Files</h4>
+<p>Si la quantitat de dades mancants és petita, una opció és eliminar les files que contenen valors mancants.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHBhbmRhcyBhcyBwZAoKIyBFeGVtcGxlIGRlIERhdGFGcmFtZSBhbWIgZGFkZXMgbWFuY2FudHMKZGF0YSA9IHsnQSc6IFsxLCAyLCBOb25lLCA0XSwgJ0InOiBbNSwgTm9uZSwgTm9uZSwgOF0sICdDJzogWzksIDEwLCAxMSwgMTJdfQpkZiA9IHBkLkRhdGFGcmFtZShkYXRhKQoKIyBFbGltaW5hY2nDsyBkZSBmaWxlcyBhbWIgdmFsb3JzIG1hbmNhbnRzCmRmX2NsZWFuZWQgPSBkZi5kcm9wbmEoKQpwcmludChkZl9jbGVhbmVkKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import pandas as pd
+
+# Exemple de DataFrame amb dades mancants
+data = {'A': [1, 2, None, 4], 'B': [5, None, None, 8], 'C': [9, 10, 11, 12]}
+df = pd.DataFrame(data)
+
+# Eliminaci&oacute; de files amb valors mancants
+df_cleaned = df.dropna()
+print(df_cleaned)</pre></div><div class='content'><h4>Eliminació de Columnes</h4>
+<p>Si una columna té molts valors mancants, pot ser més eficient eliminar tota la columna.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBFbGltaW5hY2nDsyBkZSBjb2x1bW5lcyBhbWIgdmFsb3JzIG1hbmNhbnRzCmRmX2NsZWFuZWQgPSBkZi5kcm9wbmEoYXhpcz0xKQpwcmludChkZl9jbGVhbmVkKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Eliminaci&oacute; de columnes amb valors mancants
+df_cleaned = df.dropna(axis=1)
+print(df_cleaned)</pre></div><div class='content'></div><h2>2. Imputació de Dades Mancants</h2>
+<div class='content'><h4>Imputació amb la Mitjana, Mediana o Moda</h4>
+<p>Una tècnica comuna és imputar els valors mancants amb la mitjana, mediana o moda de la columna.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBJbXB1dGFjacOzIGFtYiBsYSBtaXRqYW5hCmRmWydBJ10uZmlsbG5hKGRmWydBJ10ubWVhbigpLCBpbnBsYWNlPVRydWUpCnByaW50KGRmKQoKIyBJbXB1dGFjacOzIGFtYiBsYSBtZWRpYW5hCmRmWydCJ10uZmlsbG5hKGRmWydCJ10ubWVkaWFuKCksIGlucGxhY2U9VHJ1ZSkKcHJpbnQoZGYpCgojIEltcHV0YWNpw7MgYW1iIGxhIG1vZGEKZGZbJ0MnXS5maWxsbmEoZGZbJ0MnXS5tb2RlKClbMF0sIGlucGxhY2U9VHJ1ZSkKcHJpbnQoZGYp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Imputaci&oacute; amb la mitjana
+df['A'].fillna(df['A'].mean(), inplace=True)
+print(df)
+
+# Imputaci&oacute; amb la mediana
+df['B'].fillna(df['B'].median(), inplace=True)
+print(df)
+
+# Imputaci&oacute; amb la moda
+df['C'].fillna(df['C'].mode()[0], inplace=True)
+print(df)</pre></div><div class='content'><h4>Imputació amb Valors Constants</h4>
+<p>Una altra tècnica és imputar els valors mancants amb un valor constant, com ara zero o una categoria específica.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBJbXB1dGFjacOzIGFtYiB1biB2YWxvciBjb25zdGFudApkZlsnQSddLmZpbGxuYSgwLCBpbnBsYWNlPVRydWUpCnByaW50KGRmKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Imputaci&oacute; amb un valor constant
+df['A'].fillna(0, inplace=True)
+print(df)</pre></div><div class='content'><h4>Imputació amb Models Predictius</h4>
+<p>Es poden utilitzar models predictius per imputar els valors mancants basant-se en altres variables.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBza2xlYXJuLmltcHV0ZSBpbXBvcnQgU2ltcGxlSW1wdXRlcgppbXBvcnQgbnVtcHkgYXMgbnAKCiMgRXhlbXBsZSBkZSBEYXRhRnJhbWUgYW1iIGRhZGVzIG1hbmNhbnRzCmRhdGEgPSB7J0EnOiBbMSwgMiwgbnAubmFuLCA0XSwgJ0InOiBbNSwgbnAubmFuLCBucC5uYW4sIDhdLCAnQyc6IFs5LCAxMCwgMTEsIDEyXX0KZGYgPSBwZC5EYXRhRnJhbWUoZGF0YSkKCiMgSW1wdXRhY2nDsyBhbWIgU2ltcGxlSW1wdXRlcgppbXB1dGVyID0gU2ltcGxlSW1wdXRlcihzdHJhdGVneT0nbWVhbicpCmRmX2ltcHV0ZWQgPSBwZC5EYXRhRnJhbWUoaW1wdXRlci5maXRfdHJhbnNmb3JtKGRmKSwgY29sdW1ucz1kZi5jb2x1bW5zKQpwcmludChkZl9pbXB1dGVkKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from sklearn.impute import SimpleImputer
+import numpy as np
+
+# Exemple de DataFrame amb dades mancants
+data = {'A': [1, 2, np.nan, 4], 'B': [5, np.nan, np.nan, 8], 'C': [9, 10, 11, 12]}
+df = pd.DataFrame(data)
+
+# Imputaci&oacute; amb SimpleImputer
+imputer = SimpleImputer(strategy='mean')
+df_imputed = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
+print(df_imputed)</pre></div><div class='content'></div><h2>3. Utilització d'Algoritmes que Gestionen Dades Mancants</h2>
+<div class='content'><p>Alguns algoritmes de Machine Learning poden gestionar dades mancants de manera nativa, com ara els arbres de decisió.</p>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Eliminació de Dades Mancants</h2>
+<div class='content'><ol>
+<li>Carrega un DataFrame amb dades mancants.</li>
+<li>Elimina les files amb valors mancants.</li>
+<li>Elimina les columnes amb valors mancants.</li>
+</ol>
+</div><h2>Exercici 2: Imputació de Dades Mancants</h2>
+<div class='content'><ol>
+<li>Carrega un DataFrame amb dades mancants.</li>
+<li>Imputa els valors mancants amb la mitjana de cada columna.</li>
+<li>Imputa els valors mancants amb un valor constant.</li>
+</ol>
+</div><h2>Exercici 3: Imputació amb Models Predictius</h2>
+<div class='content'><ol>
+<li>Carrega un DataFrame amb dades mancants.</li>
+<li>Utilitza <code>SimpleImputer</code> per imputar els valors mancants amb la mediana.</li>
+</ol>
+</div><h1>Solucions</h1>
+<div class='content'></div><h2>Solució Exercici 1</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDYXJyZWdhIHVuIERhdGFGcmFtZSBhbWIgZGFkZXMgbWFuY2FudHMKZGF0YSA9IHsnQSc6IFsxLCAyLCBOb25lLCA0XSwgJ0InOiBbNSwgTm9uZSwgTm9uZSwgOF0sICdDJzogWzksIDEwLCAxMSwgMTJdfQpkZiA9IHBkLkRhdGFGcmFtZShkYXRhKQoKIyBFbGltaW5hIGxlcyBmaWxlcyBhbWIgdmFsb3JzIG1hbmNhbnRzCmRmX2NsZWFuZWRfcm93cyA9IGRmLmRyb3BuYSgpCnByaW50KGRmX2NsZWFuZWRfcm93cykKCiMgRWxpbWluYSBsZXMgY29sdW1uZXMgYW1iIHZhbG9ycyBtYW5jYW50cwpkZl9jbGVhbmVkX2NvbHMgPSBkZi5kcm9wbmEoYXhpcz0xKQpwcmludChkZl9jbGVhbmVkX2NvbHMp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Carrega un DataFrame amb dades mancants
+data = {'A': [1, 2, None, 4], 'B': [5, None, None, 8], 'C': [9, 10, 11, 12]}
+df = pd.DataFrame(data)
+
+# Elimina les files amb valors mancants
+df_cleaned_rows = df.dropna()
+print(df_cleaned_rows)
+
+# Elimina les columnes amb valors mancants
+df_cleaned_cols = df.dropna(axis=1)
+print(df_cleaned_cols)</pre></div><div class='content'></div><h2>Solució Exercici 2</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDYXJyZWdhIHVuIERhdGFGcmFtZSBhbWIgZGFkZXMgbWFuY2FudHMKZGF0YSA9IHsnQSc6IFsxLCAyLCBOb25lLCA0XSwgJ0InOiBbNSwgTm9uZSwgTm9uZSwgOF0sICdDJzogWzksIDEwLCAxMSwgMTJdfQpkZiA9IHBkLkRhdGFGcmFtZShkYXRhKQoKIyBJbXB1dGEgZWxzIHZhbG9ycyBtYW5jYW50cyBhbWIgbGEgbWl0amFuYSBkZSBjYWRhIGNvbHVtbmEKZGZbJ0EnXS5maWxsbmEoZGZbJ0EnXS5tZWFuKCksIGlucGxhY2U9VHJ1ZSkKcHJpbnQoZGYpCgojIEltcHV0YSBlbHMgdmFsb3JzIG1hbmNhbnRzIGFtYiB1biB2YWxvciBjb25zdGFudApkZlsnQiddLmZpbGxuYSgwLCBpbnBsYWNlPVRydWUpCnByaW50KGRmKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Carrega un DataFrame amb dades mancants
+data = {'A': [1, 2, None, 4], 'B': [5, None, None, 8], 'C': [9, 10, 11, 12]}
+df = pd.DataFrame(data)
+
+# Imputa els valors mancants amb la mitjana de cada columna
+df['A'].fillna(df['A'].mean(), inplace=True)
+print(df)
+
+# Imputa els valors mancants amb un valor constant
+df['B'].fillna(0, inplace=True)
+print(df)</pre></div><div class='content'></div><h2>Solució Exercici 3</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBza2xlYXJuLmltcHV0ZSBpbXBvcnQgU2ltcGxlSW1wdXRlcgppbXBvcnQgbnVtcHkgYXMgbnAKCiMgQ2FycmVnYSB1biBEYXRhRnJhbWUgYW1iIGRhZGVzIG1hbmNhbnRzCmRhdGEgPSB7J0EnOiBbMSwgMiwgbnAubmFuLCA0XSwgJ0InOiBbNSwgbnAubmFuLCBucC5uYW4sIDhdLCAnQyc6IFs5LCAxMCwgMTEsIDEyXX0KZGYgPSBwZC5EYXRhRnJhbWUoZGF0YSkKCiMgVXRpbGl0emEgU2ltcGxlSW1wdXRlciBwZXIgaW1wdXRhciBlbHMgdmFsb3JzIG1hbmNhbnRzIGFtYiBsYSBtZWRpYW5hCmltcHV0ZXIgPSBTaW1wbGVJbXB1dGVyKHN0cmF0ZWd5PSdtZWRpYW4nKQpkZl9pbXB1dGVkID0gcGQuRGF0YUZyYW1lKGltcHV0ZXIuZml0X3RyYW5zZm9ybShkZiksIGNvbHVtbnM9ZGYuY29sdW1ucykKcHJpbnQoZGZfaW1wdXRlZCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from sklearn.impute import SimpleImputer
+import numpy as np
+
+# Carrega un DataFrame amb dades mancants
+data = {'A': [1, 2, np.nan, 4], 'B': [5, np.nan, np.nan, 8], 'C': [9, 10, 11, 12]}
+df = pd.DataFrame(data)
+
+# Utilitza SimpleImputer per imputar els valors mancants amb la mediana
+imputer = SimpleImputer(strategy='median')
+df_imputed = pd.DataFrame(imputer.fit_transform(df), columns=df.columns)
+print(df_imputed)</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>La gestió de dades mancants és una part essencial del preprocessament de dades en Machine Learning. Hem explorat diverses tècniques per gestionar les dades mancants, incloent l'eliminació de dades, la imputació amb valors estadístics i l'ús de models predictius. La selecció de la tècnica adequada depèn del context del problema i de la quantitat de dades mancants.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-03-normalizacion-estandarizacion' title="Normalització i estandardització">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-regresion-lineal' title="Regressió lineal">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

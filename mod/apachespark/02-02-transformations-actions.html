@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformacions i Accions</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/apachespark/02-02-transformations-actions" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/apachespark/02-02-transformations-actions" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/apachespark/02-02-transformations-actions" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/apachespark/02-02-transformations-actions" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/apachespark/02-02-transformations-actions" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-rdds' title="RDDs (Resilient Distributed Datasets)">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Transformacions i Accions</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-spark-dataframes' title="DataFrames de Spark">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem dos conceptes fonamentals en Apache Spark: les transformacions i les accions. Aquests conceptes són essencials per treballar amb RDDs (Resilient Distributed Datasets) i altres estructures de dades en Spark.</p>
+</div><h1>Què són les Transformacions?</h1>
+<div class='content'><p>Les transformacions són operacions que es realitzen sobre un RDD per crear un nou RDD. Les transformacions són &quot;lazy&quot;, és a dir, no s'executen immediatament. En lloc d'això, Spark construeix un pla d'execució que s'executa només quan es crida a una acció.</p>
+</div><h2>Tipus de Transformacions</h2>
+<div class='content'><ol>
+<li>
+<p><strong>map(funció):</strong></p>
+<ul>
+<li>Aplica una funció a cada element de l'RDD i retorna un nou RDD amb els resultats.</li>
+</ul>
+<pre><code class="language-python">rdd = sc.parallelize([1, 2, 3, 4])
+rdd2 = rdd.map(lambda x: x * 2)
+print(rdd2.collect())  # Sortida: [2, 4, 6, 8]
+</code></pre>
+</li>
+<li>
+<p><strong>filter(funció):</strong></p>
+<ul>
+<li>Filtra els elements de l'RDD que compleixen una condició donada.</li>
+</ul>
+<pre><code class="language-python">rdd = sc.parallelize([1, 2, 3, 4])
+rdd2 = rdd.filter(lambda x: x % 2 == 0)
+print(rdd2.collect())  # Sortida: [2, 4]
+</code></pre>
+</li>
+<li>
+<p><strong>flatMap(funció):</strong></p>
+<ul>
+<li>Aplica una funció a cada element de l'RDD i retorna un nou RDD amb els resultats aplanats.</li>
+</ul>
+<pre><code class="language-python">rdd = sc.parallelize([&quot;Hello World&quot;, &quot;Apache Spark&quot;])
+rdd2 = rdd.flatMap(lambda x: x.split(&quot; &quot;))
+print(rdd2.collect())  # Sortida: ['Hello', 'World', 'Apache', 'Spark']
+</code></pre>
+</li>
+<li>
+<p><strong>distinct():</strong></p>
+<ul>
+<li>Retorna un nou RDD amb els elements únics de l'RDD original.</li>
+</ul>
+<pre><code class="language-python">rdd = sc.parallelize([1, 2, 2, 3, 3, 3])
+rdd2 = rdd.distinct()
+print(rdd2.collect())  # Sortida: [1, 2, 3]
+</code></pre>
+</li>
+<li>
+<p><strong>union(rdd):</strong></p>
+<ul>
+<li>Retorna un nou RDD que conté la unió dels elements de l'RDD original i un altre RDD.</li>
+</ul>
+<pre><code class="language-python">rdd1 = sc.parallelize([1, 2, 3])
+rdd2 = sc.parallelize([3, 4, 5])
+rdd3 = rdd1.union(rdd2)
+print(rdd3.collect())  # Sortida: [1, 2, 3, 3, 4, 5]
+</code></pre>
+</li>
+</ol>
+</div><h1>Què són les Accions?</h1>
+<div class='content'><p>Les accions són operacions que triguen a executar-se i retornen un valor al driver program o escriuen dades a un sistema d'emmagatzematge extern. Les accions forcen l'execució de les transformacions &quot;lazy&quot;.</p>
+</div><h2>Tipus d'Accions</h2>
+<div class='content'><ol>
+<li>
+<p><strong>collect():</strong></p>
+<ul>
+<li>Retorna tots els elements de l'RDD com una llista.</li>
+</ul>
+<pre><code class="language-python">rdd = sc.parallelize([1, 2, 3, 4])
+result = rdd.collect()
+print(result)  # Sortida: [1, 2, 3, 4]
+</code></pre>
+</li>
+<li>
+<p><strong>count():</strong></p>
+<ul>
+<li>Retorna el nombre d'elements de l'RDD.</li>
+</ul>
+<pre><code class="language-python">rdd = sc.parallelize([1, 2, 3, 4])
+result = rdd.count()
+print(result)  # Sortida: 4
+</code></pre>
+</li>
+<li>
+<p><strong>first():</strong></p>
+<ul>
+<li>Retorna el primer element de l'RDD.</li>
+</ul>
+<pre><code class="language-python">rdd = sc.parallelize([1, 2, 3, 4])
+result = rdd.first()
+print(result)  # Sortida: 1
+</code></pre>
+</li>
+<li>
+<p><strong>take(n):</strong></p>
+<ul>
+<li>Retorna els primers 'n' elements de l'RDD.</li>
+</ul>
+<pre><code class="language-python">rdd = sc.parallelize([1, 2, 3, 4])
+result = rdd.take(2)
+print(result)  # Sortida: [1, 2]
+</code></pre>
+</li>
+<li>
+<p><strong>reduce(funció):</strong></p>
+<ul>
+<li>Agrega els elements de l'RDD utilitzant una funció de reducció.</li>
+</ul>
+<pre><code class="language-python">rdd = sc.parallelize([1, 2, 3, 4])
+result = rdd.reduce(lambda x, y: x + y)
+print(result)  # Sortida: 10
+</code></pre>
+</li>
+</ol>
+</div><h1>Exemple Pràctic</h1>
+<div class='content'><p>A continuació, es mostra un exemple pràctic que combina transformacions i accions per processar un RDD.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBweXNwYXJrIGltcG9ydCBTcGFya0NvbnRleHQKCiMgQ3JlYXIgdW4gY29udGV4dCBkZSBTcGFyawpzYyA9IFNwYXJrQ29udGV4dCgibG9jYWwiLCAiVHJhbnNmb3JtYWNpb25zIGkgQWNjaW9ucyIpCgojIENyZWFyIHVuIFJERApyZGQgPSBzYy5wYXJhbGxlbGl6ZShbMSwgMiwgMywgNCwgNSwgNiwgNywgOCwgOSwgMTBdKQoKIyBBcGxpY2FyIHRyYW5zZm9ybWFjaW9ucwpyZGQyID0gcmRkLmZpbHRlcihsYW1iZGEgeDogeCAlIDIgPT0gMCkubWFwKGxhbWJkYSB4OiB4ICogMikKCiMgQXBsaWNhciB1bmEgYWNjacOzCnJlc3VsdCA9IHJkZDIuY29sbGVjdCgpCgojIE1vc3RyYXIgZWwgcmVzdWx0YXQKcHJpbnQocmVzdWx0KSAgIyBTb3J0aWRhOiBbNCwgOCwgMTIsIDE2LCAyMF0KCiMgQXR1cmFyIGVsIGNvbnRleHQgZGUgU3BhcmsKc2Muc3RvcCgp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from pyspark import SparkContext
+
+# Crear un context de Spark
+sc = SparkContext(&quot;local&quot;, &quot;Transformacions i Accions&quot;)
+
+# Crear un RDD
+rdd = sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+
+# Aplicar transformacions
+rdd2 = rdd.filter(lambda x: x % 2 == 0).map(lambda x: x * 2)
+
+# Aplicar una acci&oacute;
+result = rdd2.collect()
+
+# Mostrar el resultat
+print(result)  # Sortida: [4, 8, 12, 16, 20]
+
+# Aturar el context de Spark
+sc.stop()</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Exercici 1:</strong></p>
+<ul>
+<li>Crea un RDD amb els números de l'1 al 20.</li>
+<li>Filtra els números que són divisibles per 3.</li>
+<li>Multiplica cada número resultant per 5.</li>
+<li>Recull els resultats en una llista i imprimeix-la.</li>
+</ul>
+</li>
+<li>
+<p><strong>Exercici 2:</strong></p>
+<ul>
+<li>Crea un RDD amb una llista de paraules.</li>
+<li>Utilitza <code>flatMap</code> per dividir cada paraula en caràcters.</li>
+<li>Filtra els caràcters que són vocals.</li>
+<li>Utilitza <code>distinct</code> per obtenir les vocals úniques.</li>
+<li>Recull els resultats en una llista i imprimeix-la.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Solucions</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Solució Exercici 1:</strong></p>
+<pre><code class="language-python">rdd = sc.parallelize(range(1, 21))
+rdd2 = rdd.filter(lambda x: x % 3 == 0).map(lambda x: x * 5)
+result = rdd2.collect()
+print(result)  # Sortida: [15, 30, 45, 60, 75, 90]
+</code></pre>
+</li>
+<li>
+<p><strong>Solució Exercici 2:</strong></p>
+<pre><code class="language-python">rdd = sc.parallelize([&quot;apple&quot;, &quot;banana&quot;, &quot;cherry&quot;])
+rdd2 = rdd.flatMap(lambda x: list(x)).filter(lambda x: x in 'aeiou').distinct()
+result = rdd2.collect()
+print(result)  # Sortida: ['a', 'e', 'i', 'o', 'u']
+</code></pre>
+</li>
+</ol>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après sobre les transformacions i les accions en Apache Spark. Les transformacions són operacions &quot;lazy&quot; que creen nous RDDs, mentre que les accions són operacions que triguen a executar-se i retornen un valor o escriuen dades. Hem vist diversos exemples pràctics i exercicis per reforçar aquests conceptes. En el proper tema, explorarem els DataFrames de Spark.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-rdds' title="RDDs (Resilient Distributed Datasets)">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-spark-dataframes' title="DataFrames de Spark">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

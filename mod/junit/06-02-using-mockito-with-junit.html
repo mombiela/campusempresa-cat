@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utilitzant Mockito amb JUnit</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/junit/06-02-using-mockito-with-junit" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/junit/06-02-using-mockito-with-junit" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/junit/06-02-using-mockito-with-junit" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/junit/06-02-using-mockito-with-junit" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/junit/06-02-using-mockito-with-junit" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-introduction-to-mocking' title="Introducció al Mocking">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Utilitzant Mockito amb JUnit</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-creating-mocks' title="Creant Mocks">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com utilitzar Mockito, una popular llibreria de mocking per a Java, juntament amb JUnit per crear tests més robustos i flexibles. Mockito ens permet crear mocks d'objectes per simular el comportament de les dependències en els nostres tests.</p>
+</div><h1>Què és Mockito?</h1>
+<div class='content'><p>Mockito és una llibreria de mocking per a Java que permet crear objectes simulats (mocks) per a les nostres proves unitàries. Els mocks ens permeten aïllar el codi que estem provant de les seves dependències, facilitant la detecció d'errors i la verificació del comportament del codi.</p>
+</div><h1>Configuració de Mockito</h1>
+<div class='content'><p>Abans de començar a utilitzar Mockito amb JUnit, hem d'afegir la dependència de Mockito al nostre projecte. Si estem utilitzant Maven, podem afegir la següent dependència al nostre <code>pom.xml</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PGRlcGVuZGVuY3k+CiAgICA8Z3JvdXBJZD5vcmcubW9ja2l0bzwvZ3JvdXBJZD4KICAgIDxhcnRpZmFjdElkPm1vY2tpdG8tY29yZTwvYXJ0aWZhY3RJZD4KICAgIDx2ZXJzaW9uPjMuMTEuMjwvdmVyc2lvbj4KICAgIDxzY29wZT50ZXN0PC9zY29wZT4KPC9kZXBlbmRlbmN5Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;dependency&gt;
+    &lt;groupId&gt;org.mockito&lt;/groupId&gt;
+    &lt;artifactId&gt;mockito-core&lt;/artifactId&gt;
+    &lt;version&gt;3.11.2&lt;/version&gt;
+    &lt;scope&gt;test&lt;/scope&gt;
+&lt;/dependency&gt;</pre></div><div class='content'><p>Si estem utilitzant Gradle, podem afegir la següent línia al nostre <code>build.gradle</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVzdEltcGxlbWVudGF0aW9uICdvcmcubW9ja2l0bzptb2NraXRvLWNvcmU6My4xMS4yJw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>testImplementation 'org.mockito:mockito-core:3.11.2'</pre></div><div class='content'></div><h1>Creant Mocks amb Mockito</h1>
+<div class='content'><p>Per crear un mock amb Mockito, utilitzem la funció <code>Mockito.mock()</code>. A continuació, es mostra un exemple de com crear un mock i utilitzar-lo en un test de JUnit:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHN0YXRpYyBvcmcubW9ja2l0by5Nb2NraXRvLio7CmltcG9ydCBzdGF0aWMgb3JnLmp1bml0Lmp1cGl0ZXIuYXBpLkFzc2VydGlvbnMuKjsKaW1wb3J0IG9yZy5qdW5pdC5qdXBpdGVyLmFwaS5UZXN0OwoKY2xhc3MgVXNlclNlcnZpY2VUZXN0IHsKCiAgICBAVGVzdAogICAgdm9pZCB0ZXN0R2V0VXNlcigpIHsKICAgICAgICAvLyBDcmVhciB1biBtb2NrIGRlIGxhIGNsYXNzZSBVc2VyUmVwb3NpdG9yeQogICAgICAgIFVzZXJSZXBvc2l0b3J5IG1vY2tSZXBvc2l0b3J5ID0gbW9jayhVc2VyUmVwb3NpdG9yeS5jbGFzcyk7CgogICAgICAgIC8vIERlZmluaXIgZWwgY29tcG9ydGFtZW50IGRlbCBtb2NrCiAgICAgICAgVXNlciBtb2NrVXNlciA9IG5ldyBVc2VyKCJKb2huIiwgIkRvZSIpOwogICAgICAgIHdoZW4obW9ja1JlcG9zaXRvcnkuZmluZFVzZXJCeUlkKDEpKS50aGVuUmV0dXJuKG1vY2tVc2VyKTsKCiAgICAgICAgLy8gQ3JlYXIgdW5hIGluc3TDoG5jaWEgZGUgbGEgY2xhc3NlIHF1ZSBlc3RlbSBwcm92YW50CiAgICAgICAgVXNlclNlcnZpY2UgdXNlclNlcnZpY2UgPSBuZXcgVXNlclNlcnZpY2UobW9ja1JlcG9zaXRvcnkpOwoKICAgICAgICAvLyBFeGVjdXRhciBlbCBtw6h0b2RlIHF1ZSBlc3RlbSBwcm92YW50CiAgICAgICAgVXNlciByZXN1bHQgPSB1c2VyU2VydmljZS5nZXRVc2VyKDEpOwoKICAgICAgICAvLyBWZXJpZmljYXIgZWwgcmVzdWx0YXQKICAgICAgICBhc3NlcnRFcXVhbHMoIkpvaG4iLCByZXN1bHQuZ2V0Rmlyc3ROYW1lKCkpOwogICAgICAgIGFzc2VydEVxdWFscygiRG9lIiwgcmVzdWx0LmdldExhc3ROYW1lKCkpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+class UserServiceTest {
+
+    @Test
+    void testGetUser() {
+        // Crear un mock de la classe UserRepository
+        UserRepository mockRepository = mock(UserRepository.class);
+
+        // Definir el comportament del mock
+        User mockUser = new User(&quot;John&quot;, &quot;Doe&quot;);
+        when(mockRepository.findUserById(1)).thenReturn(mockUser);
+
+        // Crear una inst&agrave;ncia de la classe que estem provant
+        UserService userService = new UserService(mockRepository);
+
+        // Executar el m&egrave;tode que estem provant
+        User result = userService.getUser(1);
+
+        // Verificar el resultat
+        assertEquals(&quot;John&quot;, result.getFirstName());
+        assertEquals(&quot;Doe&quot;, result.getLastName());
+    }
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li><strong>Creació del Mock</strong>: Utilitzem <code>mock(UserRepository.class)</code> per crear un mock de la classe <code>UserRepository</code>.</li>
+<li><strong>Definició del Comportament del Mock</strong>: Utilitzem <code>when(mockRepository.findUserById(1)).thenReturn(mockUser)</code> per definir el comportament del mock. Quan es crida al mètode <code>findUserById(1)</code>, el mock retornarà l'objecte <code>mockUser</code>.</li>
+<li><strong>Creació de la Classe a Provar</strong>: Creem una instància de <code>UserService</code> passant-li el mock <code>mockRepository</code>.</li>
+<li><strong>Execució del Mètode a Provar</strong>: Cridem al mètode <code>getUser(1)</code> de <code>UserService</code>.</li>
+<li><strong>Verificació del Resultat</strong>: Utilitzem <code>assertEquals</code> per verificar que el resultat és el que esperem.</li>
+</ol>
+</div><h1>Verificant Interaccions amb Mockito</h1>
+<div class='content'><p>Mockito també ens permet verificar que els mètodes dels mocks han estat cridats amb els paràmetres correctes. A continuació, es mostra un exemple de com fer-ho:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHN0YXRpYyBvcmcubW9ja2l0by5Nb2NraXRvLio7CmltcG9ydCBzdGF0aWMgb3JnLmp1bml0Lmp1cGl0ZXIuYXBpLkFzc2VydGlvbnMuKjsKaW1wb3J0IG9yZy5qdW5pdC5qdXBpdGVyLmFwaS5UZXN0OwoKY2xhc3MgVXNlclNlcnZpY2VUZXN0IHsKCiAgICBAVGVzdAogICAgdm9pZCB0ZXN0R2V0VXNlcigpIHsKICAgICAgICBVc2VyUmVwb3NpdG9yeSBtb2NrUmVwb3NpdG9yeSA9IG1vY2soVXNlclJlcG9zaXRvcnkuY2xhc3MpOwogICAgICAgIFVzZXIgbW9ja1VzZXIgPSBuZXcgVXNlcigiSm9obiIsICJEb2UiKTsKICAgICAgICB3aGVuKG1vY2tSZXBvc2l0b3J5LmZpbmRVc2VyQnlJZCgxKSkudGhlblJldHVybihtb2NrVXNlcik7CgogICAgICAgIFVzZXJTZXJ2aWNlIHVzZXJTZXJ2aWNlID0gbmV3IFVzZXJTZXJ2aWNlKG1vY2tSZXBvc2l0b3J5KTsKICAgICAgICBVc2VyIHJlc3VsdCA9IHVzZXJTZXJ2aWNlLmdldFVzZXIoMSk7CgogICAgICAgIGFzc2VydEVxdWFscygiSm9obiIsIHJlc3VsdC5nZXRGaXJzdE5hbWUoKSk7CiAgICAgICAgYXNzZXJ0RXF1YWxzKCJEb2UiLCByZXN1bHQuZ2V0TGFzdE5hbWUoKSk7CgogICAgICAgIC8vIFZlcmlmaWNhciBxdWUgZWwgbcOodG9kZSBmaW5kVXNlckJ5SWQgaGEgZXN0YXQgY3JpZGF0IGFtYiBlbCBwYXLDoG1ldHJlIDEKICAgICAgICB2ZXJpZnkobW9ja1JlcG9zaXRvcnkpLmZpbmRVc2VyQnlJZCgxKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+class UserServiceTest {
+
+    @Test
+    void testGetUser() {
+        UserRepository mockRepository = mock(UserRepository.class);
+        User mockUser = new User(&quot;John&quot;, &quot;Doe&quot;);
+        when(mockRepository.findUserById(1)).thenReturn(mockUser);
+
+        UserService userService = new UserService(mockRepository);
+        User result = userService.getUser(1);
+
+        assertEquals(&quot;John&quot;, result.getFirstName());
+        assertEquals(&quot;Doe&quot;, result.getLastName());
+
+        // Verificar que el m&egrave;tode findUserById ha estat cridat amb el par&agrave;metre 1
+        verify(mockRepository).findUserById(1);
+    }
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li><strong>Verificació de la Interacció</strong>: Utilitzem <code>verify(mockRepository).findUserById(1)</code> per verificar que el mètode <code>findUserById</code> del mock <code>mockRepository</code> ha estat cridat amb el paràmetre <code>1</code>.</li>
+</ol>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici</h2>
+<div class='content'><p>Crea un test per a la classe <code>OrderService</code> que utilitzi Mockito per simular el comportament de la seva dependència <code>OrderRepository</code>. Verifica que el mètode <code>placeOrder</code> crida al mètode <code>saveOrder</code> del <code>OrderRepository</code> amb l'ordre correcta.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgT3JkZXJTZXJ2aWNlIHsKICAgIHByaXZhdGUgZmluYWwgT3JkZXJSZXBvc2l0b3J5IG9yZGVyUmVwb3NpdG9yeTsKCiAgICBwdWJsaWMgT3JkZXJTZXJ2aWNlKE9yZGVyUmVwb3NpdG9yeSBvcmRlclJlcG9zaXRvcnkpIHsKICAgICAgICB0aGlzLm9yZGVyUmVwb3NpdG9yeSA9IG9yZGVyUmVwb3NpdG9yeTsKICAgIH0KCiAgICBwdWJsaWMgdm9pZCBwbGFjZU9yZGVyKE9yZGVyIG9yZGVyKSB7CiAgICAgICAgb3JkZXJSZXBvc2l0b3J5LnNhdmVPcmRlcihvcmRlcik7CiAgICB9Cn0KCmludGVyZmFjZSBPcmRlclJlcG9zaXRvcnkgewogICAgdm9pZCBzYXZlT3JkZXIoT3JkZXIgb3JkZXIpOwp9CgpjbGFzcyBPcmRlciB7CiAgICBwcml2YXRlIGZpbmFsIFN0cmluZyBwcm9kdWN0OwogICAgcHJpdmF0ZSBmaW5hbCBpbnQgcXVhbnRpdHk7CgogICAgcHVibGljIE9yZGVyKFN0cmluZyBwcm9kdWN0LCBpbnQgcXVhbnRpdHkpIHsKICAgICAgICB0aGlzLnByb2R1Y3QgPSBwcm9kdWN0OwogICAgICAgIHRoaXMucXVhbnRpdHkgPSBxdWFudGl0eTsKICAgIH0KCiAgICAvLyBHZXR0ZXJzCiAgICBwdWJsaWMgU3RyaW5nIGdldFByb2R1Y3QoKSB7CiAgICAgICAgcmV0dXJuIHByb2R1Y3Q7CiAgICB9CgogICAgcHVibGljIGludCBnZXRRdWFudGl0eSgpIHsKICAgICAgICByZXR1cm4gcXVhbnRpdHk7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class OrderService {
+    private final OrderRepository orderRepository;
+
+    public OrderService(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
+    public void placeOrder(Order order) {
+        orderRepository.saveOrder(order);
+    }
+}
+
+interface OrderRepository {
+    void saveOrder(Order order);
+}
+
+class Order {
+    private final String product;
+    private final int quantity;
+
+    public Order(String product, int quantity) {
+        this.product = product;
+        this.quantity = quantity;
+    }
+
+    // Getters
+    public String getProduct() {
+        return product;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+}</pre></div><div class='content'></div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHN0YXRpYyBvcmcubW9ja2l0by5Nb2NraXRvLio7CmltcG9ydCBvcmcuanVuaXQuanVwaXRlci5hcGkuVGVzdDsKCmNsYXNzIE9yZGVyU2VydmljZVRlc3QgewoKICAgIEBUZXN0CiAgICB2b2lkIHRlc3RQbGFjZU9yZGVyKCkgewogICAgICAgIC8vIENyZWFyIHVuIG1vY2sgZGUgbGEgY2xhc3NlIE9yZGVyUmVwb3NpdG9yeQogICAgICAgIE9yZGVyUmVwb3NpdG9yeSBtb2NrUmVwb3NpdG9yeSA9IG1vY2soT3JkZXJSZXBvc2l0b3J5LmNsYXNzKTsKCiAgICAgICAgLy8gQ3JlYXIgdW5hIGluc3TDoG5jaWEgZGUgbGEgY2xhc3NlIHF1ZSBlc3RlbSBwcm92YW50CiAgICAgICAgT3JkZXJTZXJ2aWNlIG9yZGVyU2VydmljZSA9IG5ldyBPcmRlclNlcnZpY2UobW9ja1JlcG9zaXRvcnkpOwoKICAgICAgICAvLyBDcmVhciB1bmEgb3JkcmUgZGUgcHJvdmEKICAgICAgICBPcmRlciBvcmRlciA9IG5ldyBPcmRlcigiTGFwdG9wIiwgMSk7CgogICAgICAgIC8vIEV4ZWN1dGFyIGVsIG3DqHRvZGUgcXVlIGVzdGVtIHByb3ZhbnQKICAgICAgICBvcmRlclNlcnZpY2UucGxhY2VPcmRlcihvcmRlcik7CgogICAgICAgIC8vIFZlcmlmaWNhciBxdWUgZWwgbcOodG9kZSBzYXZlT3JkZXIgaGEgZXN0YXQgY3JpZGF0IGFtYiBsJ29yZHJlIGNvcnJlY3RhCiAgICAgICAgdmVyaWZ5KG1vY2tSZXBvc2l0b3J5KS5zYXZlT3JkZXIob3JkZXIpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.Test;
+
+class OrderServiceTest {
+
+    @Test
+    void testPlaceOrder() {
+        // Crear un mock de la classe OrderRepository
+        OrderRepository mockRepository = mock(OrderRepository.class);
+
+        // Crear una inst&agrave;ncia de la classe que estem provant
+        OrderService orderService = new OrderService(mockRepository);
+
+        // Crear una ordre de prova
+        Order order = new Order(&quot;Laptop&quot;, 1);
+
+        // Executar el m&egrave;tode que estem provant
+        orderService.placeOrder(order);
+
+        // Verificar que el m&egrave;tode saveOrder ha estat cridat amb l'ordre correcta
+        verify(mockRepository).saveOrder(order);
+    }
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li><strong>Creació del Mock</strong>: Utilitzem <code>mock(OrderRepository.class)</code> per crear un mock de la classe <code>OrderRepository</code>.</li>
+<li><strong>Creació de la Classe a Provar</strong>: Creem una instància de <code>OrderService</code> passant-li el mock <code>mockRepository</code>.</li>
+<li><strong>Creació de l'Ordre de Prova</strong>: Creem una instància de <code>Order</code> amb els valors &quot;Laptop&quot; i 1.</li>
+<li><strong>Execució del Mètode a Provar</strong>: Cridem al mètode <code>placeOrder(order)</code> de <code>OrderService</code>.</li>
+<li><strong>Verificació de la Interacció</strong>: Utilitzem <code>verify(mockRepository).saveOrder(order)</code> per verificar que el mètode <code>saveOrder</code> del mock <code>mockRepository</code> ha estat cridat amb l'ordre <code>order</code>.</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com utilitzar Mockito amb JUnit per crear mocks i verificar interaccions. Hem vist com configurar Mockito, crear mocks, definir el seu comportament i verificar que els mètodes dels mocks han estat cridats amb els paràmetres correctes. Aquests coneixements ens permetran escriure tests més robustos i flexibles, aïllant el codi que estem provant de les seves dependències.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-introduction-to-mocking' title="Introducció al Mocking">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-creating-mocks' title="Creant Mocks">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

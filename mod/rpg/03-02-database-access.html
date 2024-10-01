@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accés a Bases de Dades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/rpg/03-02-database-access" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/rpg/03-02-database-access" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/rpg/03-02-database-access" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/rpg/03-02-database-access" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/rpg/03-02-database-access" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-01-file-handling' title="Gestió d'Arxius">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Accés a Bases de Dades</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-03-data-structures' title="Estructures de Dades">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com accedir i manipular bases de dades utilitzant RPG. Aquest és un aspecte fonamental per a qualsevol aplicació que necessiti emmagatzemar, recuperar i gestionar dades de manera eficient. Explorarem les operacions bàsiques com la connexió a una base de dades, la realització de consultes, la inserció, l'actualització i l'eliminació de registres.</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ul>
+<li>Entendre com connectar-se a una base de dades des d'un programa RPG.</li>
+<li>Aprendre a realitzar operacions bàsiques de CRUD (Create, Read, Update, Delete).</li>
+<li>Conèixer les funcions i procediments RPG per a la gestió de bases de dades.</li>
+<li>Practicar amb exemples pràctics i exercicis.</li>
+</ul>
+</div><h1>1. Connexió a una Base de Dades</h1>
+<div class='content'></div><h2>1.1. Configuració de la Connexió</h2>
+<div class='content'><p>Per accedir a una base de dades des d'un programa RPG, primer hem de configurar la connexió. Això implica especificar els detalls de la base de dades com el nom del servidor, el nom de la base de dades, l'usuari i la contrasenya.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RGNsLVMgZGJOYW1lIENoYXIoNTApIElueignbXlEYXRhYmFzZScpOwpEY2wtUyBkYlVzZXIgQ2hhcig1MCkgSW56KCdteVVzZXInKTsKRGNsLVMgZGJQYXNzd29yZCBDaGFyKDUwKSBJbnooJ215UGFzc3dvcmQnKTsKRGNsLVMgZGJTZXJ2ZXIgQ2hhcig1MCkgSW56KCdteVNlcnZlcicpOwoKRXhlYyBTUUwKICBDT05ORUNUIFRPIDpkYk5hbWUgVVNFUiA6ZGJVc2VyIFVTSU5HIDpkYlBhc3N3b3JkOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Dcl-S dbName Char(50) Inz('myDatabase');
+Dcl-S dbUser Char(50) Inz('myUser');
+Dcl-S dbPassword Char(50) Inz('myPassword');
+Dcl-S dbServer Char(50) Inz('myServer');
+
+Exec SQL
+  CONNECT TO :dbName USER :dbUser USING :dbPassword;</pre></div><div class='content'></div><h2>1.2. Verificació de la Connexió</h2>
+<div class='content'><p>Després de configurar la connexió, és important verificar que s'ha establert correctament.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("SWYgU1FMQ09ERSA8PiAwOwogIERzcGx5ICdFcnJvciBlbiBsYSBjb25uZXhpw7MgYSBsYSBiYXNlIGRlIGRhZGVzJzsKICBSZXR1cm47CkVuZElmOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>If SQLCODE &lt;&gt; 0;
+  Dsply 'Error en la connexi&oacute; a la base de dades';
+  Return;
+EndIf;</pre></div><div class='content'></div><h1>2. Operacions CRUD</h1>
+<div class='content'></div><h2>2.1. Creació de Registres (INSERT)</h2>
+<div class='content'><p>Per inserir nous registres a la base de dades, utilitzem la instrucció SQL <code>INSERT INTO</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RGNsLVMgZW1wTmFtZSBDaGFyKDUwKSBJbnooJ0pvaG4gRG9lJyk7CkRjbC1TIGVtcEFnZSBJbnQoMTApIElueigzMCk7CgpFeGVjIFNRTAogIElOU0VSVCBJTlRPIGVtcGxveWVlcyAobmFtZSwgYWdlKQogIFZBTFVFUyAoOmVtcE5hbWUsIDplbXBBZ2UpOwoKSWYgU1FMQ09ERSA8PiAwOwogIERzcGx5ICdFcnJvciBlbiBsYSBpbnNlcmNpw7MgZGVsIHJlZ2lzdHJlJzsKRW5kSWY7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Dcl-S empName Char(50) Inz('John Doe');
+Dcl-S empAge Int(10) Inz(30);
+
+Exec SQL
+  INSERT INTO employees (name, age)
+  VALUES (:empName, :empAge);
+
+If SQLCODE &lt;&gt; 0;
+  Dsply 'Error en la inserci&oacute; del registre';
+EndIf;</pre></div><div class='content'></div><h2>2.2. Lectura de Registres (SELECT)</h2>
+<div class='content'><p>Per recuperar dades de la base de dades, utilitzem la instrucció SQL <code>SELECT</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RGNsLVMgZW1wSWQgSW50KDEwKSBJbnooMSk7CkRjbC1TIGVtcE5hbWUgQ2hhcig1MCk7CkRjbC1TIGVtcEFnZSBJbnQoMTApOwoKRXhlYyBTUUwKICBTRUxFQ1QgbmFtZSwgYWdlIElOVE8gOmVtcE5hbWUsIDplbXBBZ2UKICBGUk9NIGVtcGxveWVlcwogIFdIRVJFIGlkID0gOmVtcElkOwoKSWYgU1FMQ09ERSA8PiAwOwogIERzcGx5ICdFcnJvciBlbiBsYSByZWN1cGVyYWNpw7MgZGVsIHJlZ2lzdHJlJzsKRWxzZTsKICBEc3BseSAoJ05vbTogJyArICVUcmltKGVtcE5hbWUpICsgJywgRWRhdDogJyArICVDaGFyKGVtcEFnZSkpOwpFbmRJZjs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Dcl-S empId Int(10) Inz(1);
+Dcl-S empName Char(50);
+Dcl-S empAge Int(10);
+
+Exec SQL
+  SELECT name, age INTO :empName, :empAge
+  FROM employees
+  WHERE id = :empId;
+
+If SQLCODE &lt;&gt; 0;
+  Dsply 'Error en la recuperaci&oacute; del registre';
+Else;
+  Dsply ('Nom: ' + %Trim(empName) + ', Edat: ' + %Char(empAge));
+EndIf;</pre></div><div class='content'></div><h2>2.3. Actualització de Registres (UPDATE)</h2>
+<div class='content'><p>Per actualitzar registres existents, utilitzem la instrucció SQL <code>UPDATE</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RGNsLVMgZW1wSWQgSW50KDEwKSBJbnooMSk7CkRjbC1TIG5ld0FnZSBJbnQoMTApIElueigzNSk7CgpFeGVjIFNRTAogIFVQREFURSBlbXBsb3llZXMKICBTRVQgYWdlID0gOm5ld0FnZQogIFdIRVJFIGlkID0gOmVtcElkOwoKSWYgU1FMQ09ERSA8PiAwOwogIERzcGx5ICdFcnJvciBlbiBsXCdhY3R1YWxpdHphY2nDsyBkZWwgcmVnaXN0cmUnOwpFbmRJZjs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Dcl-S empId Int(10) Inz(1);
+Dcl-S newAge Int(10) Inz(35);
+
+Exec SQL
+  UPDATE employees
+  SET age = :newAge
+  WHERE id = :empId;
+
+If SQLCODE &lt;&gt; 0;
+  Dsply 'Error en l\'actualitzaci&oacute; del registre';
+EndIf;</pre></div><div class='content'></div><h2>2.4. Eliminació de Registres (DELETE)</h2>
+<div class='content'><p>Per eliminar registres de la base de dades, utilitzem la instrucció SQL <code>DELETE</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RGNsLVMgZW1wSWQgSW50KDEwKSBJbnooMSk7CgpFeGVjIFNRTAogIERFTEVURSBGUk9NIGVtcGxveWVlcwogIFdIRVJFIGlkID0gOmVtcElkOwoKSWYgU1FMQ09ERSA8PiAwOwogIERzcGx5ICdFcnJvciBlbiBsXCdlbGltaW5hY2nDsyBkZWwgcmVnaXN0cmUnOwpFbmRJZjs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Dcl-S empId Int(10) Inz(1);
+
+Exec SQL
+  DELETE FROM employees
+  WHERE id = :empId;
+
+If SQLCODE &lt;&gt; 0;
+  Dsply 'Error en l\'eliminaci&oacute; del registre';
+EndIf;</pre></div><div class='content'></div><h1>3. Exemples Pràctics</h1>
+<div class='content'></div><h2>Exemple 1: Inserir un Nou Empleat</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RGNsLVMgZW1wTmFtZSBDaGFyKDUwKSBJbnooJ0FsaWNlIFNtaXRoJyk7CkRjbC1TIGVtcEFnZSBJbnQoMTApIElueigyOCk7CgpFeGVjIFNRTAogIElOU0VSVCBJTlRPIGVtcGxveWVlcyAobmFtZSwgYWdlKQogIFZBTFVFUyAoOmVtcE5hbWUsIDplbXBBZ2UpOwoKSWYgU1FMQ09ERSA8PiAwOwogIERzcGx5ICdFcnJvciBlbiBsYSBpbnNlcmNpw7MgZGVsIHJlZ2lzdHJlJzsKRWxzZTsKICBEc3BseSAnUmVnaXN0cmUgaW5zZXJpdCBjb3JyZWN0YW1lbnQnOwpFbmRJZjs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Dcl-S empName Char(50) Inz('Alice Smith');
+Dcl-S empAge Int(10) Inz(28);
+
+Exec SQL
+  INSERT INTO employees (name, age)
+  VALUES (:empName, :empAge);
+
+If SQLCODE &lt;&gt; 0;
+  Dsply 'Error en la inserci&oacute; del registre';
+Else;
+  Dsply 'Registre inserit correctament';
+EndIf;</pre></div><div class='content'></div><h2>Exemple 2: Recuperar Informació d'un Empleat</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RGNsLVMgZW1wSWQgSW50KDEwKSBJbnooMik7CkRjbC1TIGVtcE5hbWUgQ2hhcig1MCk7CkRjbC1TIGVtcEFnZSBJbnQoMTApOwoKRXhlYyBTUUwKICBTRUxFQ1QgbmFtZSwgYWdlIElOVE8gOmVtcE5hbWUsIDplbXBBZ2UKICBGUk9NIGVtcGxveWVlcwogIFdIRVJFIGlkID0gOmVtcElkOwoKSWYgU1FMQ09ERSA8PiAwOwogIERzcGx5ICdFcnJvciBlbiBsYSByZWN1cGVyYWNpw7MgZGVsIHJlZ2lzdHJlJzsKRWxzZTsKICBEc3BseSAoJ05vbTogJyArICVUcmltKGVtcE5hbWUpICsgJywgRWRhdDogJyArICVDaGFyKGVtcEFnZSkpOwpFbmRJZjs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Dcl-S empId Int(10) Inz(2);
+Dcl-S empName Char(50);
+Dcl-S empAge Int(10);
+
+Exec SQL
+  SELECT name, age INTO :empName, :empAge
+  FROM employees
+  WHERE id = :empId;
+
+If SQLCODE &lt;&gt; 0;
+  Dsply 'Error en la recuperaci&oacute; del registre';
+Else;
+  Dsply ('Nom: ' + %Trim(empName) + ', Edat: ' + %Char(empAge));
+EndIf;</pre></div><div class='content'></div><h1>4. Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Inserir un Nou Registre</h2>
+<div class='content'><p>Escriu un programa RPG que insereixi un nou registre a la taula <code>employees</code> amb els següents detalls:</p>
+<ul>
+<li>Nom: &quot;Carlos Perez&quot;</li>
+<li>Edat: 40</li>
+</ul>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RGNsLVMgZW1wTmFtZSBDaGFyKDUwKSBJbnooJ0NhcmxvcyBQZXJleicpOwpEY2wtUyBlbXBBZ2UgSW50KDEwKSBJbnooNDApOwoKRXhlYyBTUUwKICBJTlNFUlQgSU5UTyBlbXBsb3llZXMgKG5hbWUsIGFnZSkKICBWQUxVRVMgKDplbXBOYW1lLCA6ZW1wQWdlKTsKCklmIFNRTENPREUgPD4gMDsKICBEc3BseSAnRXJyb3IgZW4gbGEgaW5zZXJjacOzIGRlbCByZWdpc3RyZSc7CkVsc2U7CiAgRHNwbHkgJ1JlZ2lzdHJlIGluc2VyaXQgY29ycmVjdGFtZW50JzsKRW5kSWY7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Dcl-S empName Char(50) Inz('Carlos Perez');
+Dcl-S empAge Int(10) Inz(40);
+
+Exec SQL
+  INSERT INTO employees (name, age)
+  VALUES (:empName, :empAge);
+
+If SQLCODE &lt;&gt; 0;
+  Dsply 'Error en la inserci&oacute; del registre';
+Else;
+  Dsply 'Registre inserit correctament';
+EndIf;</pre></div><div class='content'></div><h2>Exercici 2: Actualitzar l'Edat d'un Empleat</h2>
+<div class='content'><p>Escriu un programa RPG que actualitzi l'edat de l'empleat amb ID 3 a 45 anys.</p>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RGNsLVMgZW1wSWQgSW50KDEwKSBJbnooMyk7CkRjbC1TIG5ld0FnZSBJbnQoMTApIElueig0NSk7CgpFeGVjIFNRTAogIFVQREFURSBlbXBsb3llZXMKICBTRVQgYWdlID0gOm5ld0FnZQogIFdIRVJFIGlkID0gOmVtcElkOwoKSWYgU1FMQ09ERSA8PiAwOwogIERzcGx5ICdFcnJvciBlbiBsXCdhY3R1YWxpdHphY2nDsyBkZWwgcmVnaXN0cmUnOwpFbHNlOwogIERzcGx5ICdSZWdpc3RyZSBhY3R1YWxpdHphdCBjb3JyZWN0YW1lbnQnOwpFbmRJZjs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Dcl-S empId Int(10) Inz(3);
+Dcl-S newAge Int(10) Inz(45);
+
+Exec SQL
+  UPDATE employees
+  SET age = :newAge
+  WHERE id = :empId;
+
+If SQLCODE &lt;&gt; 0;
+  Dsply 'Error en l\'actualitzaci&oacute; del registre';
+Else;
+  Dsply 'Registre actualitzat correctament';
+EndIf;</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com connectar-nos a una base de dades i realitzar operacions bàsiques de CRUD utilitzant RPG. Aquestes habilitats són essencials per a qualsevol desenvolupador que treballi amb aplicacions que necessiten gestionar dades de manera eficient. Practica amb els exemples i exercicis proporcionats per consolidar els teus coneixements i estar preparat per a les seccions més avançades del curs.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-01-file-handling' title="Gestió d'Arxius">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-03-data-structures' title="Estructures de Dades">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

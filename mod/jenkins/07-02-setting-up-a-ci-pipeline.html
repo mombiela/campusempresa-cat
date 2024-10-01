@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurant una Pipeline de CI</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/jenkins/07-02-setting-up-a-ci-pipeline" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/jenkins/07-02-setting-up-a-ci-pipeline" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/jenkins/07-02-setting-up-a-ci-pipeline" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/jenkins/07-02-setting-up-a-ci-pipeline" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/jenkins/07-02-setting-up-a-ci-pipeline" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-01-understanding-ci-cd' title="Entenent CI/CD">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Configurant una Pipeline de CI</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-03-setting-up-a-cd-pipeline' title="Configurant una Pipeline de CD">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a configurar una pipeline de Integració Contínua (CI) a Jenkins. La Integració Contínua és una pràctica de desenvolupament de programari on els desenvolupadors integren el seu codi en un repositori compartit amb freqüència, i cada integració és verificada per una build automatitzada per detectar errors tan aviat com sigui possible.</p>
+</div><h1>Objectius d'Aprenentatge</h1>
+<div class='content'><ul>
+<li>Entendre els conceptes bàsics de la Integració Contínua.</li>
+<li>Configurar una pipeline de CI a Jenkins.</li>
+<li>Executar i monitorar la pipeline de CI.</li>
+</ul>
+</div><h1>Conceptes Bàsics de la Integració Contínua</h1>
+<div class='content'><p>Abans de començar amb la configuració, és important entendre alguns conceptes clau de la Integració Contínua:</p>
+<ol>
+<li><strong>Commit Freqüent</strong>: Els desenvolupadors han de fer commits freqüents al repositori de codi.</li>
+<li><strong>Build Automatitzada</strong>: Cada commit ha de desencadenar una build automatitzada.</li>
+<li><strong>Test Automatitzat</strong>: Les proves automatitzades s'han d'executar com a part de la build.</li>
+<li><strong>Feedback Ràpid</strong>: Els desenvolupadors han de rebre feedback ràpid sobre l'estat de la build.</li>
+</ol>
+</div><h1>Passos per Configurar una Pipeline de CI</h1>
+<div class='content'></div><h2>1. Preparació del Repositori de Codi</h2>
+<div class='content'><p>Assegura't que el teu repositori de codi estigui configurat correctament i que tingui un fitxer de configuració de build (per exemple, un <code>pom.xml</code> per a Maven o un <code>build.gradle</code> per a Gradle).</p>
+</div><h2>2. Instal·lació de Plugins Necessaris</h2>
+<div class='content'><p>Jenkins té una gran varietat de plugins que poden ser útils per a la CI. Alguns dels plugins més comuns són:</p>
+<ul>
+<li><strong>Git Plugin</strong>: Per integrar Jenkins amb Git.</li>
+<li><strong>Maven Integration Plugin</strong>: Per projectes que utilitzen Maven.</li>
+<li><strong>Gradle Plugin</strong>: Per projectes que utilitzen Gradle.</li>
+</ul>
+</div><h2>3. Creació d'una Nova Feina de Jenkins</h2>
+<div class='content'><ol>
+<li>Aneu al tauler de Jenkins.</li>
+<li>Feu clic a &quot;New Item&quot;.</li>
+<li>Introduïu un nom per a la feina i seleccioneu &quot;Pipeline&quot;.</li>
+<li>Feu clic a &quot;OK&quot;.</li>
+</ol>
+</div><h2>4. Configuració de la Feina</h2>
+<div class='content'><ol>
+<li>
+<p><strong>General</strong>:</p>
+<ul>
+<li>Proporcioneu una descripció per a la feina.</li>
+</ul>
+</li>
+<li>
+<p><strong>Source Code Management</strong>:</p>
+<ul>
+<li>Seleccioneu &quot;Git&quot;.</li>
+<li>Introduïu l'URL del repositori de Git.</li>
+<li>Configureu les credencials si és necessari.</li>
+</ul>
+</li>
+<li>
+<p><strong>Build Triggers</strong>:</p>
+<ul>
+<li>Seleccioneu &quot;Poll SCM&quot; i configureu la freqüència amb la qual Jenkins ha de comprovar els canvis al repositori (per exemple, <code>H/5 * * * *</code> per comprovar cada 5 minuts).</li>
+</ul>
+</li>
+<li>
+<p><strong>Pipeline</strong>:</p>
+<ul>
+<li>Seleccioneu &quot;Pipeline script from SCM&quot;.</li>
+<li>Seleccioneu &quot;Git&quot; com a SCM.</li>
+<li>Introduïu l'URL del repositori de Git.</li>
+<li>Introduïu el camí al fitxer <code>Jenkinsfile</code> (per exemple, <code>Jenkinsfile</code>).</li>
+</ul>
+</li>
+</ol>
+</div><h2>5. Creació del Jenkinsfile</h2>
+<div class='content'><p>El <code>Jenkinsfile</code> defineix la pipeline de CI. A continuació es mostra un exemple bàsic per a un projecte Maven:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwZWxpbmUgewogICAgYWdlbnQgYW55CgogICAgc3RhZ2VzIHsKICAgICAgICBzdGFnZSgnQ2hlY2tvdXQnKSB7CiAgICAgICAgICAgIHN0ZXBzIHsKICAgICAgICAgICAgICAgIGdpdCAnaHR0cHM6Ly9naXRodWIuY29tL3VzdWFyaS9yZXBvLmdpdCcKICAgICAgICAgICAgfQogICAgICAgIH0KICAgICAgICBzdGFnZSgnQnVpbGQnKSB7CiAgICAgICAgICAgIHN0ZXBzIHsKICAgICAgICAgICAgICAgIHNoICdtdm4gY2xlYW4gaW5zdGFsbCcKICAgICAgICAgICAgfQogICAgICAgIH0KICAgICAgICBzdGFnZSgnVGVzdCcpIHsKICAgICAgICAgICAgc3RlcHMgewogICAgICAgICAgICAgICAgc2ggJ212biB0ZXN0JwogICAgICAgICAgICB9CiAgICAgICAgfQogICAgfQoKICAgIHBvc3QgewogICAgICAgIGFsd2F5cyB7CiAgICAgICAgICAgIGp1bml0ICcqKi90YXJnZXQvc3VyZWZpcmUtcmVwb3J0cy8qLnhtbCcKICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/usuari/repo.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn clean install'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+    }
+
+    post {
+        always {
+            junit '**/target/surefire-reports/*.xml'
+        }
+    }
+}</pre></div><div class='content'></div><h2>6. Executar la Pipeline</h2>
+<div class='content'><ol>
+<li>Des del tauler de Jenkins, seleccioneu la feina que heu creat.</li>
+<li>Feu clic a &quot;Build Now&quot;.</li>
+<li>Monitoritzeu l'execució de la pipeline a la secció &quot;Build History&quot;.</li>
+</ol>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'><p>Creeu una pipeline de CI per a un projecte de codi obert a GitHub que utilitzi Maven. Seguiu els passos descrits anteriorment i assegureu-vos que la pipeline s'executi correctament.</p>
+</div><h2>Solució de l'Exercici</h2>
+<div class='content'><ol>
+<li>Creeu una nova feina de pipeline a Jenkins.</li>
+<li>Configureu el repositori de Git: <code>https://github.com/apache/commons-lang.git</code>.</li>
+<li>Configureu el <code>Jenkinsfile</code> amb el següent contingut:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwZWxpbmUgewogICAgYWdlbnQgYW55CgogICAgc3RhZ2VzIHsKICAgICAgICBzdGFnZSgnQ2hlY2tvdXQnKSB7CiAgICAgICAgICAgIHN0ZXBzIHsKICAgICAgICAgICAgICAgIGdpdCAnaHR0cHM6Ly9naXRodWIuY29tL2FwYWNoZS9jb21tb25zLWxhbmcuZ2l0JwogICAgICAgICAgICB9CiAgICAgICAgfQogICAgICAgIHN0YWdlKCdCdWlsZCcpIHsKICAgICAgICAgICAgc3RlcHMgewogICAgICAgICAgICAgICAgc2ggJ212biBjbGVhbiBpbnN0YWxsJwogICAgICAgICAgICB9CiAgICAgICAgfQogICAgICAgIHN0YWdlKCdUZXN0JykgewogICAgICAgICAgICBzdGVwcyB7CiAgICAgICAgICAgICAgICBzaCAnbXZuIHRlc3QnCiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICB9CgogICAgcG9zdCB7CiAgICAgICAgYWx3YXlzIHsKICAgICAgICAgICAganVuaXQgJyoqL3RhcmdldC9zdXJlZmlyZS1yZXBvcnRzLyoueG1sJwogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/apache/commons-lang.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn clean install'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+    }
+
+    post {
+        always {
+            junit '**/target/surefire-reports/*.xml'
+        }
+    }
+}</pre></div><div class='content'><ol start="4">
+<li>Executeu la pipeline i verifiqueu que totes les etapes s'executen correctament.</li>
+</ol>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après a configurar una pipeline de CI a Jenkins. Hem cobert els conceptes bàsics de la Integració Contínua, els passos per configurar una pipeline i hem creat un <code>Jenkinsfile</code> per definir la pipeline. També hem realitzat un exercici pràctic per reforçar els conceptes apresos. En el següent tema, explorarem com configurar una pipeline de Desplegament Continu (CD).</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-01-understanding-ci-cd' title="Entenent CI/CD">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-03-setting-up-a-cd-pipeline' title="Configurant una Pipeline de CD">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

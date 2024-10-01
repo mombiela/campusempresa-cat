@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió d'Errors en la Programació Funcional</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/scala/05-05-error-handling-in-functional-programming" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/scala/05-05-error-handling-in-functional-programming" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/scala/05-05-error-handling-in-functional-programming" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/scala/05-05-error-handling-in-functional-programming" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/scala/05-05-error-handling-in-functional-programming" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-for-comprehensions' title="For-Comprehensions">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Gestió d'Errors en la Programació Funcional</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-01-implicit-conversions-and-parameters' title="Conversions i Paràmetres Implícits">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La gestió d'errors és una part fonamental de qualsevol llenguatge de programació, i Scala no és una excepció. En la programació funcional, la gestió d'errors es fa sovint de manera diferent a la programació imperativa tradicional. En aquest tema, explorarem com gestionar errors de manera funcional en Scala utilitzant estructures com <code>Option</code>, <code>Either</code> i <code>Try</code>.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Immutabilitat</strong>: Les estructures de dades immutables són fonamentals en la programació funcional. Això significa que un cop creats, els valors no poden canviar.</li>
+<li><strong>Monads</strong>: Les monads són estructures que encapsulen un valor i proporcionen una manera de manipular aquest valor de manera segura i composable.</li>
+<li><strong>Gestió d'Errors</strong>: En lloc d'utilitzar excepcions, la programació funcional utilitza estructures de dades com <code>Option</code>, <code>Either</code> i <code>Try</code> per representar errors de manera explícita.</li>
+</ol>
+</div><h1>`Option`</h1>
+<div class='content'><p>L'objecte <code>Option</code> representa un valor que pot o no estar present. Pot ser <code>Some(value)</code> si el valor està present, o <code>None</code> si no ho està.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIGZpbmRVc2VyQnlJZChpZDogSW50KTogT3B0aW9uW1N0cmluZ10gPSB7CiAgdmFsIHVzZXJzID0gTWFwKDEgLT4gIkFsaWNlIiwgMiAtPiAiQm9iIikKICB1c2Vycy5nZXQoaWQpCn0KCnZhbCB1c2VyMSA9IGZpbmRVc2VyQnlJZCgxKSAvLyBTb21lKCJBbGljZSIpCnZhbCB1c2VyMiA9IGZpbmRVc2VyQnlJZCgzKSAvLyBOb25l"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def findUserById(id: Int): Option[String] = {
+  val users = Map(1 -&gt; &quot;Alice&quot;, 2 -&gt; &quot;Bob&quot;)
+  users.get(id)
+}
+
+val user1 = findUserById(1) // Some(&quot;Alice&quot;)
+val user2 = findUserById(3) // None</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><code>findUserById</code> retorna un <code>Option[String]</code>.</li>
+<li>Si l'usuari existeix, retorna <code>Some(value)</code>.</li>
+<li>Si l'usuari no existeix, retorna <code>None</code>.</li>
+</ul>
+</div><h1>`Either`</h1>
+<div class='content'><p>L'objecte <code>Either</code> representa un valor que pot ser de dos tipus: <code>Left</code> per a errors i <code>Right</code> per a valors correctes.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIGRpdmlkZShhOiBJbnQsIGI6IEludCk6IEVpdGhlcltTdHJpbmcsIEludF0gPSB7CiAgaWYgKGIgPT0gMCkgTGVmdCgiQ2Fubm90IGRpdmlkZSBieSB6ZXJvIikKICBlbHNlIFJpZ2h0KGEgLyBiKQp9Cgp2YWwgcmVzdWx0MSA9IGRpdmlkZSg0LCAyKSAvLyBSaWdodCgyKQp2YWwgcmVzdWx0MiA9IGRpdmlkZSg0LCAwKSAvLyBMZWZ0KCJDYW5ub3QgZGl2aWRlIGJ5IHplcm8iKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def divide(a: Int, b: Int): Either[String, Int] = {
+  if (b == 0) Left(&quot;Cannot divide by zero&quot;)
+  else Right(a / b)
+}
+
+val result1 = divide(4, 2) // Right(2)
+val result2 = divide(4, 0) // Left(&quot;Cannot divide by zero&quot;)</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><code>divide</code> retorna un <code>Either[String, Int]</code>.</li>
+<li>Si <code>b</code> és 0, retorna <code>Left</code> amb un missatge d'error.</li>
+<li>Si <code>b</code> no és 0, retorna <code>Right</code> amb el resultat de la divisió.</li>
+</ul>
+</div><h1>`Try`</h1>
+<div class='content'><p>L'objecte <code>Try</code> s'utilitza per encapsular operacions que poden llançar excepcions. Pot ser <code>Success(value)</code> si l'operació té èxit, o <code>Failure(exception)</code> si falla.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHNjYWxhLnV0aWwue1RyeSwgU3VjY2VzcywgRmFpbHVyZX0KCmRlZiBwYXJzZUludChzOiBTdHJpbmcpOiBUcnlbSW50XSA9IFRyeShzLnRvSW50KQoKdmFsIHJlc3VsdDEgPSBwYXJzZUludCgiMTIzIikgLy8gU3VjY2VzcygxMjMpCnZhbCByZXN1bHQyID0gcGFyc2VJbnQoImFiYyIpIC8vIEZhaWx1cmUoamF2YS5sYW5nLk51bWJlckZvcm1hdEV4Y2VwdGlvbik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import scala.util.{Try, Success, Failure}
+
+def parseInt(s: String): Try[Int] = Try(s.toInt)
+
+val result1 = parseInt(&quot;123&quot;) // Success(123)
+val result2 = parseInt(&quot;abc&quot;) // Failure(java.lang.NumberFormatException)</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><code>parseInt</code> retorna un <code>Try[Int]</code>.</li>
+<li>Si la cadena es pot convertir a un enter, retorna <code>Success</code>.</li>
+<li>Si la cadena no es pot convertir, retorna <code>Failure</code> amb l'excepció corresponent.</li>
+</ul>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Utilitzant `Option`</h2>
+<div class='content'><p>Escriu una funció que busqui un producte per ID en un mapa de productes. Si el producte no existeix, retorna <code>None</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIGZpbmRQcm9kdWN0QnlJZChpZDogSW50KTogT3B0aW9uW1N0cmluZ10gPSB7CiAgdmFsIHByb2R1Y3RzID0gTWFwKDEgLT4gIkxhcHRvcCIsIDIgLT4gIlNtYXJ0cGhvbmUiKQogIC8vIEltcGxlbWVudGEgbGEgZnVuY2nDsyBhcXXDrQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def findProductById(id: Int): Option[String] = {
+  val products = Map(1 -&gt; &quot;Laptop&quot;, 2 -&gt; &quot;Smartphone&quot;)
+  // Implementa la funci&oacute; aqu&iacute;
+}</pre></div><div class='content'><h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIGZpbmRQcm9kdWN0QnlJZChpZDogSW50KTogT3B0aW9uW1N0cmluZ10gPSB7CiAgdmFsIHByb2R1Y3RzID0gTWFwKDEgLT4gIkxhcHRvcCIsIDIgLT4gIlNtYXJ0cGhvbmUiKQogIHByb2R1Y3RzLmdldChpZCkKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def findProductById(id: Int): Option[String] = {
+  val products = Map(1 -&gt; &quot;Laptop&quot;, 2 -&gt; &quot;Smartphone&quot;)
+  products.get(id)
+}</pre></div><div class='content'></div><h2>Exercici 2: Utilitzant `Either`</h2>
+<div class='content'><p>Escriu una funció que calculi la radicació quadrada d'un nombre. Si el nombre és negatiu, retorna un missatge d'error.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIHNxcnQoeDogRG91YmxlKTogRWl0aGVyW1N0cmluZywgRG91YmxlXSA9IHsKICAvLyBJbXBsZW1lbnRhIGxhIGZ1bmNpw7MgYXF1w60KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def sqrt(x: Double): Either[String, Double] = {
+  // Implementa la funci&oacute; aqu&iacute;
+}</pre></div><div class='content'><h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIHNxcnQoeDogRG91YmxlKTogRWl0aGVyW1N0cmluZywgRG91YmxlXSA9IHsKICBpZiAoeCA8IDApIExlZnQoIkNhbm5vdCBjYWxjdWxhdGUgc3F1YXJlIHJvb3Qgb2YgYSBuZWdhdGl2ZSBudW1iZXIiKQogIGVsc2UgUmlnaHQoTWF0aC5zcXJ0KHgpKQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def sqrt(x: Double): Either[String, Double] = {
+  if (x &lt; 0) Left(&quot;Cannot calculate square root of a negative number&quot;)
+  else Right(Math.sqrt(x))
+}</pre></div><div class='content'></div><h2>Exercici 3: Utilitzant `Try`</h2>
+<div class='content'><p>Escriu una funció que llegeixi un fitxer i retorni el seu contingut com una cadena. Si el fitxer no existeix, retorna una excepció.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHNjYWxhLnV0aWwue1RyeSwgU3VjY2VzcywgRmFpbHVyZX0KaW1wb3J0IHNjYWxhLmlvLlNvdXJjZQoKZGVmIHJlYWRGaWxlKGZpbGVuYW1lOiBTdHJpbmcpOiBUcnlbU3RyaW5nXSA9IHsKICAvLyBJbXBsZW1lbnRhIGxhIGZ1bmNpw7MgYXF1w60KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import scala.util.{Try, Success, Failure}
+import scala.io.Source
+
+def readFile(filename: String): Try[String] = {
+  // Implementa la funci&oacute; aqu&iacute;
+}</pre></div><div class='content'><h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHNjYWxhLnV0aWwue1RyeSwgU3VjY2VzcywgRmFpbHVyZX0KaW1wb3J0IHNjYWxhLmlvLlNvdXJjZQoKZGVmIHJlYWRGaWxlKGZpbGVuYW1lOiBTdHJpbmcpOiBUcnlbU3RyaW5nXSA9IHsKICBUcnkoU291cmNlLmZyb21GaWxlKGZpbGVuYW1lKS5nZXRMaW5lcy5ta1N0cmluZygiXG4iKSkKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import scala.util.{Try, Success, Failure}
+import scala.io.Source
+
+def readFile(filename: String): Try[String] = {
+  Try(Source.fromFile(filename).getLines.mkString(&quot;\n&quot;))
+}</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après com gestionar errors de manera funcional en Scala utilitzant <code>Option</code>, <code>Either</code> i <code>Try</code>. Aquestes estructures ens permeten representar errors de manera explícita i composable, evitant l'ús d'excepcions tradicionals. Hem vist exemples pràctics i hem realitzat exercicis per reforçar els conceptes apresos. En el proper tema, explorarem conceptes avançats de Scala, com les conversions i els paràmetres implícits.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-for-comprehensions' title="For-Comprehensions">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-01-implicit-conversions-and-parameters' title="Conversions i Paràmetres Implícits">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

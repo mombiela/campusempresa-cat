@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proveïment de recursos GCP</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/terraform/05-04-provisioning-gcp-resources" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/terraform/05-04-provisioning-gcp-resources" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/terraform/05-04-provisioning-gcp-resources" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/terraform/05-04-provisioning-gcp-resources" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/terraform/05-04-provisioning-gcp-resources" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-03-provisioning-azure-resources' title="Proveïment de recursos Azure">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Proveïment de recursos GCP</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-01-terraform-workspaces' title="Espais de treball de Terraform">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com utilitzar Terraform per proveir recursos a Google Cloud Platform (GCP). Explorarem els conceptes bàsics, la configuració necessària i veurem exemples pràctics per crear i gestionar recursos a GCP.</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ul>
+<li>Comprendre els conceptes bàsics del proveïment de recursos a GCP amb Terraform.</li>
+<li>Configurar Terraform per treballar amb GCP.</li>
+<li>Crear i gestionar recursos bàsics a GCP utilitzant Terraform.</li>
+</ul>
+</div><h1>Requisits Previs</h1>
+<div class='content'><ul>
+<li>Coneixements bàsics de Terraform.</li>
+<li>Un compte de Google Cloud Platform.</li>
+<li>Instal·lació de l'eina de línia de comandes <code>gcloud</code>.</li>
+</ul>
+</div><h1>1. Configuració Inicial</h1>
+<div class='content'></div><h2>1.1. Instal·lació de l'eina de línia de comandes `gcloud`</h2>
+<div class='content'><p>Si no tens instal·lada l'eina de línia de comandes <code>gcloud</code>, pots seguir les instruccions oficials de Google per instal·lar-la: <a href="https://cloud.google.com/sdk/docs/install">Instal·lació de gcloud</a>.</p>
+</div><h2>1.2. Autenticació amb GCP</h2>
+<div class='content'><p>Autentica't amb el teu compte de GCP utilitzant l'eina <code>gcloud</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2Nsb3VkIGF1dGggbG9naW4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>gcloud auth login</pre></div><div class='content'></div><h2>1.3. Creació d'un Projecte a GCP</h2>
+<div class='content'><p>Crea un nou projecte a GCP o utilitza un projecte existent. Pots crear un projecte des de la consola de GCP o utilitzant l'eina <code>gcloud</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2Nsb3VkIHByb2plY3RzIGNyZWF0ZSBteS10ZXJyYWZvcm0tcHJvamVjdA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>gcloud projects create my-terraform-project</pre></div><div class='content'></div><h2>1.4. Configuració de les Credencials</h2>
+<div class='content'><p>Genera un fitxer de credencials per a Terraform:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2Nsb3VkIGlhbSBzZXJ2aWNlLWFjY291bnRzIGNyZWF0ZSB0ZXJyYWZvcm0gLS1kaXNwbGF5LW5hbWUgIlRlcnJhZm9ybSBhZG1pbiBhY2NvdW50IgpnY2xvdWQgcHJvamVjdHMgYWRkLWlhbS1wb2xpY3ktYmluZGluZyBteS10ZXJyYWZvcm0tcHJvamVjdCAtLW1lbWJlcj0ic2VydmljZUFjY291bnQ6dGVycmFmb3JtQG15LXRlcnJhZm9ybS1wcm9qZWN0LmlhbS5nc2VydmljZWFjY291bnQuY29tIiAtLXJvbGU9InJvbGVzL293bmVyIgpnY2xvdWQgaWFtIHNlcnZpY2UtYWNjb3VudHMga2V5cyBjcmVhdGUgfi90ZXJyYWZvcm0ta2V5Lmpzb24gLS1pYW0tYWNjb3VudCB0ZXJyYWZvcm1AbXktdGVycmFmb3JtLXByb2plY3QuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>gcloud iam service-accounts create terraform --display-name &quot;Terraform admin account&quot;
+gcloud projects add-iam-policy-binding my-terraform-project --member=&quot;serviceAccount:terraform@my-terraform-project.iam.gserviceaccount.com&quot; --role=&quot;roles/owner&quot;
+gcloud iam service-accounts keys create ~/terraform-key.json --iam-account terraform@my-terraform-project.iam.gserviceaccount.com</pre></div><div class='content'></div><h1>2. Configuració de Terraform per a GCP</h1>
+<div class='content'></div><h2>2.1. Fitxer de Proveïdor</h2>
+<div class='content'><p>Crea un fitxer <code>main.tf</code> i afegeix la configuració del proveïdor de GCP:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHJvdmlkZXIgImdvb2dsZSIgewogIGNyZWRlbnRpYWxzID0gZmlsZSgiPHBhdGgtdG8teW91ci1rZXktZmlsZT4vdGVycmFmb3JtLWtleS5qc29uIikKICBwcm9qZWN0ICAgICA9ICJteS10ZXJyYWZvcm0tcHJvamVjdCIKICByZWdpb24gICAgICA9ICJ1cy1jZW50cmFsMSIKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>provider &quot;google&quot; {
+  credentials = file(&quot;&lt;path-to-your-key-file&gt;/terraform-key.json&quot;)
+  project     = &quot;my-terraform-project&quot;
+  region      = &quot;us-central1&quot;
+}</pre></div><div class='content'></div><h2>2.2. Creació d'una Xarxa VPC</h2>
+<div class='content'><p>Afegeix la configuració per crear una xarxa VPC:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVzb3VyY2UgImdvb2dsZV9jb21wdXRlX25ldHdvcmsiICJ2cGNfbmV0d29yayIgewogIG5hbWUgICAgICAgICAgICAgICAgICAgID0gInRlcnJhZm9ybS1uZXR3b3JrIgogIGF1dG9fY3JlYXRlX3N1Ym5ldHdvcmtzID0gInRydWUiCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>resource &quot;google_compute_network&quot; &quot;vpc_network&quot; {
+  name                    = &quot;terraform-network&quot;
+  auto_create_subnetworks = &quot;true&quot;
+}</pre></div><div class='content'></div><h2>2.3. Creació d'una Instància de Compute Engine</h2>
+<div class='content'><p>Afegeix la configuració per crear una instància de Compute Engine:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVzb3VyY2UgImdvb2dsZV9jb21wdXRlX2luc3RhbmNlIiAidm1faW5zdGFuY2UiIHsKICBuYW1lICAgICAgICAgPSAidGVycmFmb3JtLWluc3RhbmNlIgogIG1hY2hpbmVfdHlwZSA9ICJmMS1taWNybyIKICB6b25lICAgICAgICAgPSAidXMtY2VudHJhbDEtYSIKCiAgYm9vdF9kaXNrIHsKICAgIGluaXRpYWxpemVfcGFyYW1zIHsKICAgICAgaW1hZ2UgPSAiZGViaWFuLWNsb3VkL2RlYmlhbi05IgogICAgfQogIH0KCiAgbmV0d29ya19pbnRlcmZhY2UgewogICAgbmV0d29yayA9IGdvb2dsZV9jb21wdXRlX25ldHdvcmsudnBjX25ldHdvcmsubmFtZQogICAgYWNjZXNzX2NvbmZpZyB7CiAgICAgIC8vIEVwaGVtZXJhbCBJUAogICAgfQogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>resource &quot;google_compute_instance&quot; &quot;vm_instance&quot; {
+  name         = &quot;terraform-instance&quot;
+  machine_type = &quot;f1-micro&quot;
+  zone         = &quot;us-central1-a&quot;
+
+  boot_disk {
+    initialize_params {
+      image = &quot;debian-cloud/debian-9&quot;
+    }
+  }
+
+  network_interface {
+    network = google_compute_network.vpc_network.name
+    access_config {
+      // Ephemeral IP
+    }
+  }
+}</pre></div><div class='content'></div><h1>3. Desplegament de la Configuració</h1>
+<div class='content'></div><h2>3.1. Inicialització de Terraform</h2>
+<div class='content'><p>Inicialitza el directori de treball de Terraform:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIGluaXQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform init</pre></div><div class='content'></div><h2>3.2. Planificació de la Infraestructura</h2>
+<div class='content'><p>Genera un pla d'execució per veure quins recursos es crearan:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIHBsYW4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform plan</pre></div><div class='content'></div><h2>3.3. Aplicació de la Configuració</h2>
+<div class='content'><p>Aplica la configuració per crear els recursos a GCP:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVycmFmb3JtIGFwcGx5"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>terraform apply</pre></div><div class='content'></div><h1>4. Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear una Instància de Compute Engine amb una IP Estàtica</h2>
+<div class='content'><ol>
+<li>Modifica la configuració de la instància per assignar una IP estàtica.</li>
+<li>Aplica els canvis i verifica que la instància té una IP estàtica.</li>
+</ol>
+</div><h2>Exercici 2: Crear un Bucket de Google Cloud Storage</h2>
+<div class='content'><ol>
+<li>Afegeix la configuració per crear un bucket de Google Cloud Storage.</li>
+<li>Aplica la configuració i verifica que el bucket s'ha creat correctament.</li>
+</ol>
+</div><h2>Solucions</h2>
+<div class='content'><h4>Solució Exercici 1</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVzb3VyY2UgImdvb2dsZV9jb21wdXRlX2FkZHJlc3MiICJzdGF0aWNfaXAiIHsKICBuYW1lID0gInRlcnJhZm9ybS1zdGF0aWMtaXAiCn0KCnJlc291cmNlICJnb29nbGVfY29tcHV0ZV9pbnN0YW5jZSIgInZtX2luc3RhbmNlIiB7CiAgbmFtZSAgICAgICAgID0gInRlcnJhZm9ybS1pbnN0YW5jZSIKICBtYWNoaW5lX3R5cGUgPSAiZjEtbWljcm8iCiAgem9uZSAgICAgICAgID0gInVzLWNlbnRyYWwxLWEiCgogIGJvb3RfZGlzayB7CiAgICBpbml0aWFsaXplX3BhcmFtcyB7CiAgICAgIGltYWdlID0gImRlYmlhbi1jbG91ZC9kZWJpYW4tOSIKICAgIH0KICB9CgogIG5ldHdvcmtfaW50ZXJmYWNlIHsKICAgIG5ldHdvcmsgPSBnb29nbGVfY29tcHV0ZV9uZXR3b3JrLnZwY19uZXR3b3JrLm5hbWUKICAgIGFjY2Vzc19jb25maWcgewogICAgICBuYXRfaXAgPSBnb29nbGVfY29tcHV0ZV9hZGRyZXNzLnN0YXRpY19pcC5hZGRyZXNzCiAgICB9CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>resource &quot;google_compute_address&quot; &quot;static_ip&quot; {
+  name = &quot;terraform-static-ip&quot;
+}
+
+resource &quot;google_compute_instance&quot; &quot;vm_instance&quot; {
+  name         = &quot;terraform-instance&quot;
+  machine_type = &quot;f1-micro&quot;
+  zone         = &quot;us-central1-a&quot;
+
+  boot_disk {
+    initialize_params {
+      image = &quot;debian-cloud/debian-9&quot;
+    }
+  }
+
+  network_interface {
+    network = google_compute_network.vpc_network.name
+    access_config {
+      nat_ip = google_compute_address.static_ip.address
+    }
+  }
+}</pre></div><div class='content'><h4>Solució Exercici 2</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cmVzb3VyY2UgImdvb2dsZV9zdG9yYWdlX2J1Y2tldCIgInRlcnJhZm9ybV9idWNrZXQiIHsKICBuYW1lICAgICA9ICJteS10ZXJyYWZvcm0tYnVja2V0IgogIGxvY2F0aW9uID0gIlVTIgp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>resource &quot;google_storage_bucket&quot; &quot;terraform_bucket&quot; {
+  name     = &quot;my-terraform-bucket&quot;
+  location = &quot;US&quot;
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com configurar Terraform per treballar amb GCP i com crear recursos bàsics com xarxes VPC i instàncies de Compute Engine. També hem practicat amb exercicis per reforçar els conceptes apresos. En el següent mòdul, explorarem funcionalitats avançades de Terraform.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-03-provisioning-azure-resources' title="Proveïment de recursos Azure">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-01-terraform-workspaces' title="Espais de treball de Terraform">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

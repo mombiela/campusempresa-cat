@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tessel·lació</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/open_gl/04-04-tessellation" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/open_gl/04-04-tessellation" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/open_gl/04-04-tessellation" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/open_gl/04-04-tessellation" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/open_gl/04-04-tessellation" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-03-instanced-rendering' title="Renderització Instanciada">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Tessel·lació</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-01-optimizing-code' title="Optimitzar el Codi OpenGL">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La tessel·lació és una tècnica avançada en OpenGL que permet subdividir superfícies en triangles més petits, millorant així el detall i la qualitat de la renderització. Aquesta tècnica és especialment útil en la creació de terrenys, superfícies corbes i altres objectes que requereixen un alt nivell de detall.</p>
+</div><h1>Objectius d'aquest tema</h1>
+<div class='content'><ul>
+<li>Entendre què és la tessel·lació i per què és útil.</li>
+<li>Aprendre a configurar i utilitzar els shaders de tessel·lació en OpenGL.</li>
+<li>Implementar un exemple pràctic de tessel·lació.</li>
+</ul>
+</div><h1>Què és la Tessel·lació?</h1>
+<div class='content'><p>La tessel·lació és el procés de subdividir una superfície en triangles més petits. Això permet:</p>
+<ul>
+<li>Augmentar el detall geomètric d'un objecte.</li>
+<li>Millorar la qualitat visual de superfícies corbes.</li>
+<li>Aplicar tècniques de detall dinàmic, on el nivell de detall varia segons la distància de la càmera.</li>
+</ul>
+</div><h1>Components de la Tessel·lació en OpenGL</h1>
+<div class='content'><p>OpenGL utilitza tres tipus de shaders per a la tessel·lació:</p>
+<ol>
+<li><strong>Tessellation Control Shader (TCS)</strong>: Controla com es subdivideix la superfície.</li>
+<li><strong>Tessellation Evaluation Shader (TES)</strong>: Avalua les noves posicions dels vèrtexs generats.</li>
+<li><strong>Patch Primitive</strong>: Defineix els vèrtexs inicials que seran tessel·lats.</li>
+</ol>
+</div><h1>Configuració dels Shaders de Tessel·lació</h1>
+<div class='content'></div><h2>1. Shader de Control de Tessel·lació (TCS)</h2>
+<div class='content'><p>El TCS determina com es subdivideix la superfície. Aquí tens un exemple bàsic:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I3ZlcnNpb24gNDUwIGNvcmUKCmxheW91dCh2ZXJ0aWNlcyA9IDMpIG91dDsgLy8gRGVmaW5laXggdW4gcGF0Y2ggZGUgMyB2w6hydGV4cwoKdm9pZCBtYWluKCkgewogICAgaWYgKGdsX0ludm9jYXRpb25JRCA9PSAwKSB7CiAgICAgICAgZ2xfVGVzc0xldmVsSW5uZXJbMF0gPSA1LjA7IC8vIE5pdmVsbCBkZSB0ZXNzZWzCt2xhY2nDsyBpbnRlcm4KICAgICAgICBnbF9UZXNzTGV2ZWxPdXRlclswXSA9IDUuMDsgLy8gTml2ZWxsIGRlIHRlc3NlbMK3bGFjacOzIGV4dGVybgogICAgICAgIGdsX1Rlc3NMZXZlbE91dGVyWzFdID0gNS4wOwogICAgICAgIGdsX1Rlc3NMZXZlbE91dGVyWzJdID0gNS4wOwogICAgfQogICAgZ2xfb3V0W2dsX0ludm9jYXRpb25JRF0uZ2xfUG9zaXRpb24gPSBnbF9pbltnbF9JbnZvY2F0aW9uSURdLmdsX1Bvc2l0aW9uOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#version 450 core
+
+layout(vertices = 3) out; // Defineix un patch de 3 v&egrave;rtexs
+
+void main() {
+    if (gl_InvocationID == 0) {
+        gl_TessLevelInner[0] = 5.0; // Nivell de tessel&middot;laci&oacute; intern
+        gl_TessLevelOuter[0] = 5.0; // Nivell de tessel&middot;laci&oacute; extern
+        gl_TessLevelOuter[1] = 5.0;
+        gl_TessLevelOuter[2] = 5.0;
+    }
+    gl_out[gl_InvocationID].gl_Position = gl_in[gl_InvocationID].gl_Position;
+}</pre></div><div class='content'></div><h2>2. Shader d'Avaluació de Tessel·lació (TES)</h2>
+<div class='content'><p>El TES avalua les noves posicions dels vèrtexs generats. Aquí tens un exemple bàsic:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I3ZlcnNpb24gNDUwIGNvcmUKCmxheW91dCh0cmlhbmdsZXMsIGVxdWFsX3NwYWNpbmcsIGN3KSBpbjsKCnZvaWQgbWFpbigpIHsKICAgIHZlYzMgcDAgPSBnbF9pblswXS5nbF9Qb3NpdGlvbi54eXo7CiAgICB2ZWMzIHAxID0gZ2xfaW5bMV0uZ2xfUG9zaXRpb24ueHl6OwogICAgdmVjMyBwMiA9IGdsX2luWzJdLmdsX1Bvc2l0aW9uLnh5ejsKCiAgICB2ZWMzIHBvcyA9IChnbF9UZXNzQ29vcmQueCAqIHAwKSArCiAgICAgICAgICAgICAgIChnbF9UZXNzQ29vcmQueSAqIHAxKSArCiAgICAgICAgICAgICAgIChnbF9UZXNzQ29vcmQueiAqIHAyKTsKCiAgICBnbF9Qb3NpdGlvbiA9IHZlYzQocG9zLCAxLjApOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#version 450 core
+
+layout(triangles, equal_spacing, cw) in;
+
+void main() {
+    vec3 p0 = gl_in[0].gl_Position.xyz;
+    vec3 p1 = gl_in[1].gl_Position.xyz;
+    vec3 p2 = gl_in[2].gl_Position.xyz;
+
+    vec3 pos = (gl_TessCoord.x * p0) +
+               (gl_TessCoord.y * p1) +
+               (gl_TessCoord.z * p2);
+
+    gl_Position = vec4(pos, 1.0);
+}</pre></div><div class='content'></div><h2>3. Shader de Fragment</h2>
+<div class='content'><p>El shader de fragment processa els fragments generats per la tessel·lació. Aquí tens un exemple bàsic:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I3ZlcnNpb24gNDUwIGNvcmUKCm91dCB2ZWM0IEZyYWdDb2xvcjsKCnZvaWQgbWFpbigpIHsKICAgIEZyYWdDb2xvciA9IHZlYzQoMS4wLCAwLjAsIDAuMCwgMS4wKTsgLy8gQ29sb3IgdmVybWVsbAp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#version 450 core
+
+out vec4 FragColor;
+
+void main() {
+    FragColor = vec4(1.0, 0.0, 0.0, 1.0); // Color vermell
+}</pre></div><div class='content'></div><h1>Exemple Pràctic de Tessel·lació</h1>
+<div class='content'></div><h2>1. Configuració del Patch Primitive</h2>
+<div class='content'><p>Abans de començar a dibuixar, hem de configurar el tipus de patch:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z2xQYXRjaFBhcmFtZXRlcmkoR0xfUEFUQ0hfVkVSVElDRVMsIDMpOyAvLyBEZWZpbmVpeCB1biBwYXRjaCBkZSAzIHbDqHJ0ZXhz"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>glPatchParameteri(GL_PATCH_VERTICES, 3); // Defineix un patch de 3 v&egrave;rtexs</pre></div><div class='content'></div><h2>2. Codi de Configuració en C++</h2>
+<div class='content'><p>Aquí tens un exemple complet de com configurar i utilitzar la tessel·lació en un programa OpenGL:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPEdML2dsZXcuaD4KI2luY2x1ZGUgPEdMRlcvZ2xmdzMuaD4KCi8vIEZ1bmNpb25zIHBlciBjYXJyZWdhciBzaGFkZXJzIChubyBpbmNsb3NlcyBhcXXDrSBwZXIgYnJldmV0YXQpCgppbnQgbWFpbigpIHsKICAgIC8vIEluaWNpYWxpdHphY2nDsyBkZSBHTEZXIGkgR0xFVyAobm8gaW5jbG9zYSBhcXXDrSBwZXIgYnJldmV0YXQpCgogICAgR0x1aW50IHByb2dyYW0gPSBMb2FkU2hhZGVycygidmVydGV4X3NoYWRlci5nbHNsIiwgInRlc3NfY29udHJvbF9zaGFkZXIuZ2xzbCIsICJ0ZXNzX2V2YWxfc2hhZGVyLmdsc2wiLCAiZnJhZ21lbnRfc2hhZGVyLmdsc2wiKTsKICAgIGdsVXNlUHJvZ3JhbShwcm9ncmFtKTsKCiAgICAvLyBDb25maWd1cmFjacOzIGRlbCBwYXRjaCBwcmltaXRpdmUKICAgIGdsUGF0Y2hQYXJhbWV0ZXJpKEdMX1BBVENIX1ZFUlRJQ0VTLCAzKTsKCiAgICAvLyBDb25maWd1cmFjacOzIGRlIHbDqHJ0ZXhzIChubyBpbmNsb3NhIGFxdcOtIHBlciBicmV2ZXRhdCkKCiAgICB3aGlsZSAoIWdsZndXaW5kb3dTaG91bGRDbG9zZSh3aW5kb3cpKSB7CiAgICAgICAgZ2xDbGVhcihHTF9DT0xPUl9CVUZGRVJfQklUIHwgR0xfREVQVEhfQlVGRkVSX0JJVCk7CgogICAgICAgIC8vIERpYnVpeGFyIGVsIHBhdGNoCiAgICAgICAgZ2xEcmF3QXJyYXlzKEdMX1BBVENIRVMsIDAsIDMpOwoKICAgICAgICBnbGZ3U3dhcEJ1ZmZlcnMod2luZG93KTsKICAgICAgICBnbGZ3UG9sbEV2ZW50cygpOwogICAgfQoKICAgIC8vIEFsbGliZXJhciByZWN1cnNvcyAobm8gaW5jbG9zYSBhcXXDrSBwZXIgYnJldmV0YXQpCgogICAgcmV0dXJuIDA7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;GL/glew.h&gt;
+#include &lt;GLFW/glfw3.h&gt;
+
+// Funcions per carregar shaders (no incloses aqu&iacute; per brevetat)
+
+int main() {
+    // Inicialitzaci&oacute; de GLFW i GLEW (no inclosa aqu&iacute; per brevetat)
+
+    GLuint program = LoadShaders(&quot;vertex_shader.glsl&quot;, &quot;tess_control_shader.glsl&quot;, &quot;tess_eval_shader.glsl&quot;, &quot;fragment_shader.glsl&quot;);
+    glUseProgram(program);
+
+    // Configuraci&oacute; del patch primitive
+    glPatchParameteri(GL_PATCH_VERTICES, 3);
+
+    // Configuraci&oacute; de v&egrave;rtexs (no inclosa aqu&iacute; per brevetat)
+
+    while (!glfwWindowShouldClose(window)) {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Dibuixar el patch
+        glDrawArrays(GL_PATCHES, 0, 3);
+
+        glfwSwapBuffers(window);
+        glfwPollEvents();
+    }
+
+    // Alliberar recursos (no inclosa aqu&iacute; per brevetat)
+
+    return 0;
+}</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici</h2>
+<div class='content'><p>Implementa un programa OpenGL que utilitzi tessel·lació per subdividir un triangle en múltiples triangles més petits. Experimenta amb diferents nivells de tessel·lació per veure com afecta la qualitat de la renderització.</p>
+</div><h2>Solució</h2>
+<div class='content'><ol>
+<li>Crea els shaders de control i avaluació de tessel·lació com s'ha mostrat anteriorment.</li>
+<li>Configura el patch primitive amb <code>glPatchParameteri(GL_PATCH_VERTICES, 3);</code>.</li>
+<li>Dibuixa el patch amb <code>glDrawArrays(GL_PATCHES, 0, 3);</code>.</li>
+</ol>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après què és la tessel·lació i com utilitzar-la en OpenGL. Hem vist com configurar els shaders de tessel·lació i hem implementat un exemple pràctic. La tessel·lació és una tècnica poderosa que permet augmentar el detall geomètric d'un objecte, millorant així la qualitat visual de les nostres aplicacions gràfiques.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-03-instanced-rendering' title="Renderització Instanciada">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-01-optimizing-code' title="Optimitzar el Codi OpenGL">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulació de Fluids</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/fisica_videojuegos/05-02-simulacion-fluidos" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/fisica_videojuegos/05-02-simulacio-fluids" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/fisica_videojuegos/05-02-fluid-simulation" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/fisica_videojuegos/05-02-simulacio-fluids" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/fisica_videojuegos/05-02-simulacio-fluids" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-01-sistemes-particules' title="Sistemes de Partícules">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Simulació de Fluids</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-03-efectes-particules' title="Efectes de Partícules">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La simulació de fluids és una part crucial en la física de videojocs, ja que permet crear efectes realistes com aigua, fum, foc i altres fenòmens naturals. Aquest tema se centra en els principis bàsics de la simulació de fluids, les tècniques utilitzades i com implementar-les en un entorn de videojoc.</p>
+</div><h1>Conceptes Bàsics</h1>
+<div class='content'></div><h2>Fluids i les seves Propietats</h2>
+<div class='content'><ul>
+<li><strong>Densitat</strong>: La massa per unitat de volum d'un fluid.</li>
+<li><strong>Viscositat</strong>: La resistència d'un fluid a fluir.</li>
+<li><strong>Pressió</strong>: La força exercida per unitat d'àrea dins d'un fluid.</li>
+<li><strong>Velocitat</strong>: La velocitat a la qual es mouen les partícules del fluid.</li>
+</ul>
+</div><h2>Equacions de Navier-Stokes</h2>
+<div class='content'><p>Les equacions de Navier-Stokes són fonamentals per descriure el moviment dels fluids. Aquestes equacions són un conjunt de equacions diferencials parcials que descriuen com la velocitat del fluid canvia amb el temps.</p>
+<p>Les equacions de Navier-Stokes en la seva forma simplificada són:
+\[ \frac{\partial \mathbf{u}}{\partial t} + (\mathbf{u} \cdot \nabla) \mathbf{u} = -\frac{1}{\rho} \nabla p + \nu \nabla^2 \mathbf{u} + \mathbf{f} \]</p>
+<p>On:</p>
+<ul>
+<li>\(\mathbf{u}\) és el camp de velocitat.</li>
+<li>\(t\) és el temps.</li>
+<li>\(\rho\) és la densitat del fluid.</li>
+<li>\(p\) és la pressió.</li>
+<li>\(\nu\) és la viscositat cinemàtica.</li>
+<li>\(\mathbf{f}\) és la força externa aplicada al fluid.</li>
+</ul>
+</div><h1>Tècniques de Simulació de Fluids</h1>
+<div class='content'></div><h2>Mètode de Partícules</h2>
+<div class='content'><p>El mètode de partícules és una tècnica popular per simular fluids en temps real. En aquest mètode, el fluid es representa com una col·lecció de partícules que interactuen entre elles.</p>
+<h4>Smoothed Particle Hydrodynamics (SPH)</h4>
+<p>SPH és una tècnica de mètode de partícules que s'utilitza àmpliament en la simulació de fluids. En SPH, les propietats del fluid es calculen mitjançant la interpolació de les propietats de les partícules veïnes.</p>
+<p><strong>Equacions SPH Bàsiques:</strong></p>
+<ul>
+<li>
+<p><strong>Densitat</strong>:
+\[ \rho_i = \sum_j m_j W(\mathbf{r}_i - \mathbf{r}_j, h) \]</p>
+</li>
+<li>
+<p><strong>Pressió</strong>:
+\[ p_i = k (\rho_i - \rho_0) \]</p>
+</li>
+<li>
+<p><strong>Força de Pressió</strong>:
+\[ \mathbf{f}_i^{\text{pressió}} = -\sum_j m_j \left( \frac{p_i + p_j}{2 \rho_j} \right) \nabla W(\mathbf{r}_i - \mathbf{r}_j, h) \]</p>
+</li>
+<li>
+<p><strong>Força de Viscositat</strong>:
+\[ \mathbf{f}_i^{\text{viscositat}} = \nu \sum_j m_j \frac{\mathbf{u}_j - \mathbf{u}_i}{\rho_j} \nabla^2 W(\mathbf{r}_i - \mathbf{r}_j, h) \]</p>
+</li>
+</ul>
+</div><h2>Mètode de Volum Finite (FVM)</h2>
+<div class='content'><p>El mètode de volum finit divideix l'espai en petites cel·les i calcula el flux de fluid a través de les fronteres de cada cel·la. Aquest mètode és més precís però també més costós computacionalment.</p>
+</div><h2>Mètode de Lattice Boltzmann (LBM)</h2>
+<div class='content'><p>LBM és una tècnica basada en la mecànica estadística que simula el comportament dels fluids a nivell microscòpic. Aquest mètode és adequat per a simulacions de fluids complexes i és conegut per la seva eficiència en paral·lelització.</p>
+</div><h1>Implementació en Motors de Videojocs</h1>
+<div class='content'></div><h2>Unity</h2>
+<div class='content'><p>Unity proporciona eines i plugins per a la simulació de fluids, com Obi Fluid i NVIDIA Flex.</p>
+<h4>Exemple de Codi amb Obi Fluid</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNpbmcgT2JpOwp1c2luZyBVbml0eUVuZ2luZTsKCnB1YmxpYyBjbGFzcyBGbHVpZFNpbXVsYXRpb24gOiBNb25vQmVoYXZpb3VyCnsKICAgIHB1YmxpYyBPYmlTb2x2ZXIgc29sdmVyOwogICAgcHVibGljIE9iaUVtaXR0ZXIgZW1pdHRlcjsKCiAgICB2b2lkIFN0YXJ0KCkKICAgIHsKICAgICAgICBzb2x2ZXIgPSBHZXRDb21wb25lbnQ8T2JpU29sdmVyPigpOwogICAgICAgIGVtaXR0ZXIgPSBHZXRDb21wb25lbnQ8T2JpRW1pdHRlcj4oKTsKICAgIH0KCiAgICB2b2lkIFVwZGF0ZSgpCiAgICB7CiAgICAgICAgLy8gQWN0dWFsaXR6YXIgbGEgc2ltdWxhY2nDsyBkZSBmbHVpZHMKICAgICAgICBzb2x2ZXIuU2ltdWxhdGUoVGltZS5kZWx0YVRpbWUpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>using Obi;
+using UnityEngine;
+
+public class FluidSimulation : MonoBehaviour
+{
+    public ObiSolver solver;
+    public ObiEmitter emitter;
+
+    void Start()
+    {
+        solver = GetComponent&lt;ObiSolver&gt;();
+        emitter = GetComponent&lt;ObiEmitter&gt;();
+    }
+
+    void Update()
+    {
+        // Actualitzar la simulaci&oacute; de fluids
+        solver.Simulate(Time.deltaTime);
+    }
+}</pre></div><div class='content'></div><h2>Unreal Engine</h2>
+<div class='content'><p>Unreal Engine utilitza el sistema de física Chaos per a la simulació de fluids.</p>
+<h4>Exemple de Codi amb Chaos</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgIkNoYW9zL0NoYW9zU29sdmVyQWN0b3IuaCIKI2luY2x1ZGUgIkNoYW9zL1BhcnRpY2xlSGFuZGxlLmgiCgp2b2lkIFNpbXVsYXRlRmx1aWQoKQp7CiAgICAvLyBDcmVhciB1biBzb2x2ZXIgZGUgQ2hhb3MKICAgIENoYW9zOjpGQ2hhb3NTb2x2ZXIqIFNvbHZlciA9IG5ldyBDaGFvczo6RkNoYW9zU29sdmVyKCk7CgogICAgLy8gQ29uZmlndXJhciBlbCBzb2x2ZXIgcGVyIGEgbGEgc2ltdWxhY2nDsyBkZSBmbHVpZHMKICAgIFNvbHZlci0+U2V0U29sdmVyVHlwZShDaGFvczo6RVNvbHZlclR5cGU6OkZsdWlkKTsKCiAgICAvLyBBZmVnaXIgcGFydMOtY3VsZXMgZGUgZmx1aWQgYWwgc29sdmVyCiAgICBDaGFvczo6RlBhcnRpY2xlSGFuZGxlKiBQYXJ0aWNsZSA9IFNvbHZlci0+Q3JlYXRlUGFydGljbGUoKTsKICAgIFBhcnRpY2xlLT5TZXRQb3NpdGlvbihGVmVjdG9yKDAuMGYsIDAuMGYsIDAuMGYpKTsKICAgIFBhcnRpY2xlLT5TZXRWZWxvY2l0eShGVmVjdG9yKDAuMGYsIDAuMGYsIDAuMGYpKTsKCiAgICAvLyBTaW11bGFyIGVsIGZsdWlkCiAgICBTb2x2ZXItPkFkdmFuY2VTb2x2ZXJCeSgwLjAxNmYpOyAvLyBTaW11bGFyIDE2bXMKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &quot;Chaos/ChaosSolverActor.h&quot;
+#include &quot;Chaos/ParticleHandle.h&quot;
+
+void SimulateFluid()
+{
+    // Crear un solver de Chaos
+    Chaos::FChaosSolver* Solver = new Chaos::FChaosSolver();
+
+    // Configurar el solver per a la simulaci&oacute; de fluids
+    Solver-&gt;SetSolverType(Chaos::ESolverType::Fluid);
+
+    // Afegir part&iacute;cules de fluid al solver
+    Chaos::FParticleHandle* Particle = Solver-&gt;CreateParticle();
+    Particle-&gt;SetPosition(FVector(0.0f, 0.0f, 0.0f));
+    Particle-&gt;SetVelocity(FVector(0.0f, 0.0f, 0.0f));
+
+    // Simular el fluid
+    Solver-&gt;AdvanceSolverBy(0.016f); // Simular 16ms
+}</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Implementar una Simulació Bàsica de Fluids amb SPH</h2>
+<div class='content'><p><strong>Objectiu</strong>: Crear una simulació de fluids utilitzant el mètode SPH en Unity.</p>
+<p><strong>Passos</strong>:</p>
+<ol>
+<li>Configura un projecte de Unity i afegeix el plugin Obi Fluid.</li>
+<li>Crea un nou script per gestionar la simulació de fluids.</li>
+<li>Implementa les equacions SPH per calcular la densitat, pressió i forces de viscositat.</li>
+<li>Visualitza el fluid utilitzant partícules.</li>
+</ol>
+<p><strong>Solució</strong>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNpbmcgT2JpOwp1c2luZyBVbml0eUVuZ2luZTsKCnB1YmxpYyBjbGFzcyBTUEhGbHVpZFNpbXVsYXRpb24gOiBNb25vQmVoYXZpb3VyCnsKICAgIHB1YmxpYyBPYmlTb2x2ZXIgc29sdmVyOwogICAgcHVibGljIE9iaUVtaXR0ZXIgZW1pdHRlcjsKCiAgICB2b2lkIFN0YXJ0KCkKICAgIHsKICAgICAgICBzb2x2ZXIgPSBHZXRDb21wb25lbnQ8T2JpU29sdmVyPigpOwogICAgICAgIGVtaXR0ZXIgPSBHZXRDb21wb25lbnQ8T2JpRW1pdHRlcj4oKTsKICAgIH0KCiAgICB2b2lkIFVwZGF0ZSgpCiAgICB7CiAgICAgICAgLy8gQWN0dWFsaXR6YXIgbGEgc2ltdWxhY2nDsyBkZSBmbHVpZHMKICAgICAgICBzb2x2ZXIuU2ltdWxhdGUoVGltZS5kZWx0YVRpbWUpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>using Obi;
+using UnityEngine;
+
+public class SPHFluidSimulation : MonoBehaviour
+{
+    public ObiSolver solver;
+    public ObiEmitter emitter;
+
+    void Start()
+    {
+        solver = GetComponent&lt;ObiSolver&gt;();
+        emitter = GetComponent&lt;ObiEmitter&gt;();
+    }
+
+    void Update()
+    {
+        // Actualitzar la simulaci&oacute; de fluids
+        solver.Simulate(Time.deltaTime);
+    }
+}</pre></div><div class='content'></div><h2>Exercici 2: Simulació de Fluids amb Chaos en Unreal Engine</h2>
+<div class='content'><p><strong>Objectiu</strong>: Crear una simulació de fluids utilitzant el sistema Chaos en Unreal Engine.</p>
+<p><strong>Passos</strong>:</p>
+<ol>
+<li>Configura un projecte d'Unreal Engine amb el sistema Chaos activat.</li>
+<li>Crea un nou actor per gestionar la simulació de fluids.</li>
+<li>Implementa el codi per afegir partícules de fluid i simular el seu moviment.</li>
+<li>Visualitza el fluid utilitzant partícules o malles.</li>
+</ol>
+<p><strong>Solució</strong>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgIkNoYW9zL0NoYW9zU29sdmVyQWN0b3IuaCIKI2luY2x1ZGUgIkNoYW9zL1BhcnRpY2xlSGFuZGxlLmgiCgp2b2lkIFNpbXVsYXRlRmx1aWQoKQp7CiAgICAvLyBDcmVhciB1biBzb2x2ZXIgZGUgQ2hhb3MKICAgIENoYW9zOjpGQ2hhb3NTb2x2ZXIqIFNvbHZlciA9IG5ldyBDaGFvczo6RkNoYW9zU29sdmVyKCk7CgogICAgLy8gQ29uZmlndXJhciBlbCBzb2x2ZXIgcGVyIGEgbGEgc2ltdWxhY2nDsyBkZSBmbHVpZHMKICAgIFNvbHZlci0+U2V0U29sdmVyVHlwZShDaGFvczo6RVNvbHZlclR5cGU6OkZsdWlkKTsKCiAgICAvLyBBZmVnaXIgcGFydMOtY3VsZXMgZGUgZmx1aWQgYWwgc29sdmVyCiAgICBDaGFvczo6RlBhcnRpY2xlSGFuZGxlKiBQYXJ0aWNsZSA9IFNvbHZlci0+Q3JlYXRlUGFydGljbGUoKTsKICAgIFBhcnRpY2xlLT5TZXRQb3NpdGlvbihGVmVjdG9yKDAuMGYsIDAuMGYsIDAuMGYpKTsKICAgIFBhcnRpY2xlLT5TZXRWZWxvY2l0eShGVmVjdG9yKDAuMGYsIDAuMGYsIDAuMGYpKTsKCiAgICAvLyBTaW11bGFyIGVsIGZsdWlkCiAgICBTb2x2ZXItPkFkdmFuY2VTb2x2ZXJCeSgwLjAxNmYpOyAvLyBTaW11bGFyIDE2bXMKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &quot;Chaos/ChaosSolverActor.h&quot;
+#include &quot;Chaos/ParticleHandle.h&quot;
+
+void SimulateFluid()
+{
+    // Crear un solver de Chaos
+    Chaos::FChaosSolver* Solver = new Chaos::FChaosSolver();
+
+    // Configurar el solver per a la simulaci&oacute; de fluids
+    Solver-&gt;SetSolverType(Chaos::ESolverType::Fluid);
+
+    // Afegir part&iacute;cules de fluid al solver
+    Chaos::FParticleHandle* Particle = Solver-&gt;CreateParticle();
+    Particle-&gt;SetPosition(FVector(0.0f, 0.0f, 0.0f));
+    Particle-&gt;SetVelocity(FVector(0.0f, 0.0f, 0.0f));
+
+    // Simular el fluid
+    Solver-&gt;AdvanceSolverBy(0.016f); // Simular 16ms
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>La simulació de fluids és una àrea complexa però fascinant de la física de videojocs. Amb tècniques com SPH, FVM i LBM, és possible crear efectes de fluids realistes que milloren significativament l'experiència de joc. La implementació d'aquestes tècniques en motors de videojocs com Unity i Unreal Engine permet als desenvolupadors crear entorns immersius i dinàmics. Practicar amb exercicis pràctics ajuda a consolidar els coneixements i a desenvolupar habilitats en la simulació de fluids.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-01-sistemes-particules' title="Sistemes de Partícules">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-03-efectes-particules' title="Efectes de Partícules">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

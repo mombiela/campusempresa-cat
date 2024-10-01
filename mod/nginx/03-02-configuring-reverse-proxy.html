@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurant un proxy invers</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nginx/03-02-configuring-reverse-proxy" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nginx/03-02-configuring-reverse-proxy" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nginx/03-02-configuring-reverse-proxy" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nginx/03-02-configuring-reverse-proxy" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nginx/03-02-configuring-reverse-proxy" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-01-introduction-reverse-proxy' title="Introducció al proxy invers">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Configurant un proxy invers</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-03-load-balancing' title="Balanceig de càrrega">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a configurar NGINX com a proxy invers. Un proxy invers és un servidor que es troba entre els clients i els servidors backend, redirigint les sol·licituds dels clients als servidors adequats. Aquesta configuració és útil per a la distribució de càrrega, la seguretat i la gestió de trànsit.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre el concepte de proxy invers.</li>
+<li>Configurar NGINX per actuar com a proxy invers.</li>
+<li>Redirigir sol·licituds a servidors backend.</li>
+<li>Gestionar capçaleres HTTP.</li>
+</ul>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Proxy invers</strong>: Un servidor que redirigeix les sol·licituds dels clients a un o més servidors backend.</li>
+<li><strong>Backend</strong>: El servidor o servidors que processen les sol·licituds redirigides pel proxy invers.</li>
+<li><strong>Capçaleres HTTP</strong>: Informació addicional enviada amb les sol·licituds i respostes HTTP.</li>
+</ul>
+</div><h1>Configuració Bàsica</h1>
+<div class='content'></div><h2>1. Configuració del Bloc `server`</h2>
+<div class='content'><p>Primer, hem de definir un bloc <code>server</code> en el fitxer de configuració de NGINX (<code>nginx.conf</code> o un fitxer de configuració específic del lloc).</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmVyIHsKICAgIGxpc3RlbiA4MDsKICAgIHNlcnZlcl9uYW1lIGV4YW1wbGUuY29tOwoKICAgIGxvY2F0aW9uIC8gewogICAgICAgIHByb3h5X3Bhc3MgaHR0cDovL2JhY2tlbmRfc2VydmVyOwogICAgICAgIHByb3h5X3NldF9oZWFkZXIgSG9zdCAkaG9zdDsKICAgICAgICBwcm94eV9zZXRfaGVhZGVyIFgtUmVhbC1JUCAkcmVtb3RlX2FkZHI7CiAgICAgICAgcHJveHlfc2V0X2hlYWRlciBYLUZvcndhcmRlZC1Gb3IgJHByb3h5X2FkZF94X2ZvcndhcmRlZF9mb3I7CiAgICAgICAgcHJveHlfc2V0X2hlYWRlciBYLUZvcndhcmRlZC1Qcm90byAkc2NoZW1lOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>server {
+    listen 80;
+    server_name example.com;
+
+    location / {
+        proxy_pass http://backend_server;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>listen 80;</code>: NGINX escoltarà les sol·licituds HTTP al port 80.</li>
+<li><code>server_name example.com;</code>: Defineix el nom del servidor.</li>
+<li><code>location / { ... }</code>: Defineix una ubicació per a totes les sol·licituds que coincideixin amb <code>/</code>.</li>
+<li><code>proxy_pass http://backend_server;</code>: Redirigeix les sol·licituds al servidor backend. Substitueix <code>backend_server</code> amb l'adreça IP o el nom de domini del teu servidor backend.</li>
+<li><code>proxy_set_header Host $host;</code>: Configura la capçalera <code>Host</code> per a la sol·licitud redirigida.</li>
+<li><code>proxy_set_header X-Real-IP $remote_addr;</code>: Afegeix la capçalera <code>X-Real-IP</code> amb l'adreça IP del client.</li>
+<li><code>proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;</code>: Afegeix la capçalera <code>X-Forwarded-For</code> amb la cadena de capçaleres <code>X-Forwarded-For</code> existents i l'adreça IP del client.</li>
+<li><code>proxy_set_header X-Forwarded-Proto $scheme;</code>: Afegeix la capçalera <code>X-Forwarded-Proto</code> amb el protocol utilitzat (HTTP o HTTPS).</li>
+</ul>
+</div><h2>2. Configuració de Servidors Backend</h2>
+<div class='content'><p>Pots definir múltiples servidors backend per a la distribució de càrrega.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXBzdHJlYW0gYmFja2VuZF9zZXJ2ZXJzIHsKICAgIHNlcnZlciBiYWNrZW5kMS5leGFtcGxlLmNvbTsKICAgIHNlcnZlciBiYWNrZW5kMi5leGFtcGxlLmNvbTsKfQoKc2VydmVyIHsKICAgIGxpc3RlbiA4MDsKICAgIHNlcnZlcl9uYW1lIGV4YW1wbGUuY29tOwoKICAgIGxvY2F0aW9uIC8gewogICAgICAgIHByb3h5X3Bhc3MgaHR0cDovL2JhY2tlbmRfc2VydmVyczsKICAgICAgICBwcm94eV9zZXRfaGVhZGVyIEhvc3QgJGhvc3Q7CiAgICAgICAgcHJveHlfc2V0X2hlYWRlciBYLVJlYWwtSVAgJHJlbW90ZV9hZGRyOwogICAgICAgIHByb3h5X3NldF9oZWFkZXIgWC1Gb3J3YXJkZWQtRm9yICRwcm94eV9hZGRfeF9mb3J3YXJkZWRfZm9yOwogICAgICAgIHByb3h5X3NldF9oZWFkZXIgWC1Gb3J3YXJkZWQtUHJvdG8gJHNjaGVtZTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>upstream backend_servers {
+    server backend1.example.com;
+    server backend2.example.com;
+}
+
+server {
+    listen 80;
+    server_name example.com;
+
+    location / {
+        proxy_pass http://backend_servers;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>upstream backend_servers { ... }</code>: Defineix un grup de servidors backend.</li>
+<li><code>server backend1.example.com;</code>: Afegeix un servidor backend al grup.</li>
+<li><code>server backend2.example.com;</code>: Afegeix un altre servidor backend al grup.</li>
+<li><code>proxy_pass http://backend_servers;</code>: Redirigeix les sol·licituds al grup de servidors backend.</li>
+</ul>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici 1: Configurar un Proxy Invers Bàsic</h2>
+<div class='content'><ol>
+<li>Crea un fitxer de configuració per a NGINX.</li>
+<li>Defineix un bloc <code>server</code> que escolti al port 80.</li>
+<li>Configura NGINX per redirigir les sol·licituds a un servidor backend.</li>
+</ol>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2VydmVyIHsKICAgIGxpc3RlbiA4MDsKICAgIHNlcnZlcl9uYW1lIG15c2l0ZS5jb207CgogICAgbG9jYXRpb24gLyB7CiAgICAgICAgcHJveHlfcGFzcyBodHRwOi8vYmFja2VuZC5teXNpdGUuY29tOwogICAgICAgIHByb3h5X3NldF9oZWFkZXIgSG9zdCAkaG9zdDsKICAgICAgICBwcm94eV9zZXRfaGVhZGVyIFgtUmVhbC1JUCAkcmVtb3RlX2FkZHI7CiAgICAgICAgcHJveHlfc2V0X2hlYWRlciBYLUZvcndhcmRlZC1Gb3IgJHByb3h5X2FkZF94X2ZvcndhcmRlZF9mb3I7CiAgICAgICAgcHJveHlfc2V0X2hlYWRlciBYLUZvcndhcmRlZC1Qcm90byAkc2NoZW1lOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>server {
+    listen 80;
+    server_name mysite.com;
+
+    location / {
+        proxy_pass http://backend.mysite.com;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}</pre></div><div class='content'></div><h2>Exercici 2: Configurar un Grup de Servidors Backend</h2>
+<div class='content'><ol>
+<li>Defineix un grup de servidors backend.</li>
+<li>Configura NGINX per redirigir les sol·licituds a aquest grup de servidors.</li>
+</ol>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXBzdHJlYW0gbXlfYmFja2VuZCB7CiAgICBzZXJ2ZXIgYmFja2VuZDEubXlzaXRlLmNvbTsKICAgIHNlcnZlciBiYWNrZW5kMi5teXNpdGUuY29tOwp9CgpzZXJ2ZXIgewogICAgbGlzdGVuIDgwOwogICAgc2VydmVyX25hbWUgbXlzaXRlLmNvbTsKCiAgICBsb2NhdGlvbiAvIHsKICAgICAgICBwcm94eV9wYXNzIGh0dHA6Ly9teV9iYWNrZW5kOwogICAgICAgIHByb3h5X3NldF9oZWFkZXIgSG9zdCAkaG9zdDsKICAgICAgICBwcm94eV9zZXRfaGVhZGVyIFgtUmVhbC1JUCAkcmVtb3RlX2FkZHI7CiAgICAgICAgcHJveHlfc2V0X2hlYWRlciBYLUZvcndhcmRlZC1Gb3IgJHByb3h5X2FkZF94X2ZvcndhcmRlZF9mb3I7CiAgICAgICAgcHJveHlfc2V0X2hlYWRlciBYLUZvcndhcmRlZC1Qcm90byAkc2NoZW1lOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>upstream my_backend {
+    server backend1.mysite.com;
+    server backend2.mysite.com;
+}
+
+server {
+    listen 80;
+    server_name mysite.com;
+
+    location / {
+        proxy_pass http://my_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}</pre></div><div class='content'></div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ul>
+<li><strong>Error 502 Bad Gateway</strong>: Assegura't que els servidors backend estan en funcionament i accessibles des de NGINX.</li>
+<li><strong>Capçaleres Incorrectes</strong>: Verifica que les capçaleres HTTP estan configurades correctament per evitar problemes de seguretat i autenticació.</li>
+<li><strong>Configuració de DNS</strong>: Si utilitzes noms de domini per als servidors backend, assegura't que els registres DNS estan configurats correctament.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après a configurar NGINX com a proxy invers, redirigint les sol·licituds dels clients a servidors backend. Hem vist com definir blocs <code>server</code> i <code>upstream</code>, i com gestionar les capçaleres HTTP per assegurar una configuració correcta i segura. Amb aquesta base, estem preparats per explorar funcions més avançades com el balanceig de càrrega i les comprovacions de salut en els següents temes.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-01-introduction-reverse-proxy' title="Introducció al proxy invers">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-03-load-balancing' title="Balanceig de càrrega">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

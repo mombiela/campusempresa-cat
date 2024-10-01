@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classes de Tipus i Polimorfisme</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/scala/06-02-type-classes-and-polymorphism" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/scala/06-02-type-classes-and-polymorphism" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/scala/06-02-type-classes-and-polymorphism" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/scala/06-02-type-classes-and-polymorphism" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/scala/06-02-type-classes-and-polymorphism" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-implicit-conversions-and-parameters' title="Conversions i Paràmetres Implícits">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Classes de Tipus i Polimorfisme</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-macros-and-reflection' title="Macros i Reflexió">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem dos conceptes avançats de Scala: les classes de tipus i el polimorfisme. Aquests conceptes són fonamentals per escriure codi flexible i reutilitzable en Scala.</p>
+</div><h1>Classes de Tipus</h1>
+<div class='content'><p>Les classes de tipus són una característica poderosa de Scala que permet definir comportaments genèrics per a diferents tipus de dades. Això es fa mitjançant la definició de traits que especifiquen un conjunt de funcions que han de ser implementades per qualsevol tipus que vulgui ser una instància d'aquesta classe de tipus.</p>
+</div><h2>Definició d'una Classe de Tipus</h2>
+<div class='content'><p>Comencem amb un exemple senzill. Suposem que volem definir una classe de tipus <code>Show</code> que proporciona una manera de convertir qualsevol tipus a una cadena (<code>String</code>).</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHJhaXQgU2hvd1tUXSB7CiAgZGVmIHNob3codmFsdWU6IFQpOiBTdHJpbmcKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>trait Show[T] {
+  def show(value: T): String
+}</pre></div><div class='content'></div><h2>Implementació d'Instàncies de la Classe de Tipus</h2>
+<div class='content'><p>Ara, implementem instàncies de la classe de tipus <code>Show</code> per a alguns tipus comuns.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wbGljaXQgdmFsIGludFNob3c6IFNob3dbSW50XSA9IG5ldyBTaG93W0ludF0gewogIGRlZiBzaG93KHZhbHVlOiBJbnQpOiBTdHJpbmcgPSB2YWx1ZS50b1N0cmluZwp9CgppbXBsaWNpdCB2YWwgc3RyaW5nU2hvdzogU2hvd1tTdHJpbmddID0gbmV3IFNob3dbU3RyaW5nXSB7CiAgZGVmIHNob3codmFsdWU6IFN0cmluZyk6IFN0cmluZyA9IHZhbHVlCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>implicit val intShow: Show[Int] = new Show[Int] {
+  def show(value: Int): String = value.toString
+}
+
+implicit val stringShow: Show[String] = new Show[String] {
+  def show(value: String): String = value
+}</pre></div><div class='content'></div><h2>Ús de la Classe de Tipus</h2>
+<div class='content'><p>Podem definir una funció genèrica que utilitzi la classe de tipus <code>Show</code> per mostrar qualsevol valor.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIHByaW50VmFsdWVbVF0odmFsdWU6IFQpKGltcGxpY2l0IHM6IFNob3dbVF0pOiBVbml0ID0gewogIHByaW50bG4ocy5zaG93KHZhbHVlKSkKfQoKcHJpbnRWYWx1ZSgxMjMpICAgIC8vIE91dHB1dDogMTIzCnByaW50VmFsdWUoIkhvbGEiKSAvLyBPdXRwdXQ6IEhvbGE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def printValue[T](value: T)(implicit s: Show[T]): Unit = {
+  println(s.show(value))
+}
+
+printValue(123)    // Output: 123
+printValue(&quot;Hola&quot;) // Output: Hola</pre></div><div class='content'></div><h2>Exercici Pràctic</h2>
+<div class='content'><p><strong>Exercici:</strong> Defineix una classe de tipus <code>Equal</code> que proporciona una manera de comparar dos valors per igualtat. Implementa instàncies per als tipus <code>Int</code> i <code>String</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHJhaXQgRXF1YWxbVF0gewogIGRlZiBlcXVhbChhOiBULCBiOiBUKTogQm9vbGVhbgp9CgppbXBsaWNpdCB2YWwgaW50RXF1YWw6IEVxdWFsW0ludF0gPSBuZXcgRXF1YWxbSW50XSB7CiAgZGVmIGVxdWFsKGE6IEludCwgYjogSW50KTogQm9vbGVhbiA9IGEgPT0gYgp9CgppbXBsaWNpdCB2YWwgc3RyaW5nRXF1YWw6IEVxdWFsW1N0cmluZ10gPSBuZXcgRXF1YWxbU3RyaW5nXSB7CiAgZGVmIGVxdWFsKGE6IFN0cmluZywgYjogU3RyaW5nKTogQm9vbGVhbiA9IGEgPT0gYgp9CgpkZWYgYXJlRXF1YWxbVF0oYTogVCwgYjogVCkoaW1wbGljaXQgZXE6IEVxdWFsW1RdKTogQm9vbGVhbiA9IHsKICBlcS5lcXVhbChhLCBiKQp9CgovLyBQcm92YSBlbHMgdGV1cyByZXN1bHRhdHMKcHJpbnRsbihhcmVFcXVhbCgxMCwgMTApKSAgICAvLyBPdXRwdXQ6IHRydWUKcHJpbnRsbihhcmVFcXVhbCgxMCwgMjApKSAgICAvLyBPdXRwdXQ6IGZhbHNlCnByaW50bG4oYXJlRXF1YWwoIlNjYWxhIiwgIlNjYWxhIikpIC8vIE91dHB1dDogdHJ1ZQpwcmludGxuKGFyZUVxdWFsKCJTY2FsYSIsICJKYXZhIikpICAvLyBPdXRwdXQ6IGZhbHNl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>trait Equal[T] {
+  def equal(a: T, b: T): Boolean
+}
+
+implicit val intEqual: Equal[Int] = new Equal[Int] {
+  def equal(a: Int, b: Int): Boolean = a == b
+}
+
+implicit val stringEqual: Equal[String] = new Equal[String] {
+  def equal(a: String, b: String): Boolean = a == b
+}
+
+def areEqual[T](a: T, b: T)(implicit eq: Equal[T]): Boolean = {
+  eq.equal(a, b)
+}
+
+// Prova els teus resultats
+println(areEqual(10, 10))    // Output: true
+println(areEqual(10, 20))    // Output: false
+println(areEqual(&quot;Scala&quot;, &quot;Scala&quot;)) // Output: true
+println(areEqual(&quot;Scala&quot;, &quot;Java&quot;))  // Output: false</pre></div><div class='content'></div><h1>Polimorfisme</h1>
+<div class='content'><p>El polimorfisme és la capacitat de tractar objectes de diferents tipus de manera uniforme. Scala suporta diversos tipus de polimorfisme, incloent el polimorfisme ad-hoc (mitjançant classes de tipus) i el polimorfisme paramètric.</p>
+</div><h2>Polimorfisme Paramètric</h2>
+<div class='content'><p>El polimorfisme paramètric permet definir funcions i classes que poden operar sobre qualsevol tipus. Això es fa mitjançant l'ús de paràmetres de tipus.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIGlkZW50aXR5W1RdKHg6IFQpOiBUID0geAoKcHJpbnRsbihpZGVudGl0eSg0MikpICAgICAgIC8vIE91dHB1dDogNDIKcHJpbnRsbihpZGVudGl0eSgiU2NhbGEiKSkgIC8vIE91dHB1dDogU2NhbGE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def identity[T](x: T): T = x
+
+println(identity(42))       // Output: 42
+println(identity(&quot;Scala&quot;))  // Output: Scala</pre></div><div class='content'></div><h2>Polimorfisme Ad-hoc</h2>
+<div class='content'><p>El polimorfisme ad-hoc es refereix a la capacitat de definir comportaments específics per a diferents tipus mitjançant classes de tipus, com hem vist anteriorment.</p>
+</div><h2>Exercici Pràctic</h2>
+<div class='content'><p><strong>Exercici:</strong> Defineix una funció genèrica <code>compare</code> que utilitzi la classe de tipus <code>Equal</code> per comparar dos valors de qualsevol tipus.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIGNvbXBhcmVbVF0oYTogVCwgYjogVCkoaW1wbGljaXQgZXE6IEVxdWFsW1RdKTogQm9vbGVhbiA9IHsKICBlcS5lcXVhbChhLCBiKQp9CgovLyBQcm92YSBlbHMgdGV1cyByZXN1bHRhdHMKcHJpbnRsbihjb21wYXJlKDEwLCAxMCkpICAgIC8vIE91dHB1dDogdHJ1ZQpwcmludGxuKGNvbXBhcmUoMTAsIDIwKSkgICAgLy8gT3V0cHV0OiBmYWxzZQpwcmludGxuKGNvbXBhcmUoIlNjYWxhIiwgIlNjYWxhIikpIC8vIE91dHB1dDogdHJ1ZQpwcmludGxuKGNvbXBhcmUoIlNjYWxhIiwgIkphdmEiKSkgIC8vIE91dHB1dDogZmFsc2U="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def compare[T](a: T, b: T)(implicit eq: Equal[T]): Boolean = {
+  eq.equal(a, b)
+}
+
+// Prova els teus resultats
+println(compare(10, 10))    // Output: true
+println(compare(10, 20))    // Output: false
+println(compare(&quot;Scala&quot;, &quot;Scala&quot;)) // Output: true
+println(compare(&quot;Scala&quot;, &quot;Java&quot;))  // Output: false</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après sobre les classes de tipus i el polimorfisme en Scala. Les classes de tipus ens permeten definir comportaments genèrics per a diferents tipus de dades, mentre que el polimorfisme ens permet tractar objectes de diferents tipus de manera uniforme. Aquests conceptes són fonamentals per escriure codi flexible i reutilitzable en Scala.</p>
+<p>En el següent tema, explorarem els macros i la reflexió en Scala, que ens permetran escriure codi més dinàmic i potent.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-implicit-conversions-and-parameters' title="Conversions i Paràmetres Implícits">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-macros-and-reflection' title="Macros i Reflexió">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

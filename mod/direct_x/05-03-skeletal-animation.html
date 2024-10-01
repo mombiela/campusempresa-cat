@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animació Esquelètica</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/direct_x/05-03-skeletal-animation" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/direct_x/05-03-skeletal-animation" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/direct_x/05-03-skeletal-animation" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/direct_x/05-03-skeletal-animation" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/direct_x/05-03-skeletal-animation" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-02-animating-3d-models' title="Animar Models 3D">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Animació Esquelètica</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-04-morph-target-animation' title="Animació de Targetes de Morfologia">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>L'animació esquelètica és una tècnica d'animació utilitzada per animar models 3D de manera eficient. Aquesta tècnica implica l'ús d'un esquelet intern (conjunt d'ossos) que controla la deformació de la malla del model. Cada os de l'esquelet pot ser animat individualment, permetent moviments complexos i realistes.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Esquelet (Skeleton)</strong>: Conjunt d'ossos que defineixen l'estructura interna del model.</li>
+<li><strong>Ossos (Bones)</strong>: Elements individuals de l'esquelet que poden ser animats.</li>
+<li><strong>Pells (Skinning)</strong>: Procés d'assignar vèrtexs de la malla del model als ossos de l'esquelet.</li>
+<li><strong>Pesos (Weights)</strong>: Valors que determinen la influència de cada os sobre els vèrtexs de la malla.</li>
+<li><strong>Transformacions (Transformations)</strong>: Matrius que defineixen la posició, rotació i escala dels ossos.</li>
+</ol>
+</div><h1>Passos per Implementar l'Animació Esquelètica</h1>
+<div class='content'></div><h2>1. Definir l'Esquelet</h2>
+<div class='content'><p>L'esquelet es defineix com una jerarquia d'ossos. Cada os té una posició relativa al seu os pare.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RydWN0IEJvbmUgewogICAgc3RkOjpzdHJpbmcgbmFtZTsKICAgIGludCBwYXJlbnRJbmRleDsKICAgIERpcmVjdFg6OlhNRkxPQVQ0WDQgYmluZFBvc2U7CiAgICBEaXJlY3RYOjpYTUZMT0FUNFg0IGludmVyc2VCaW5kUG9zZTsKICAgIERpcmVjdFg6OlhNRkxPQVQ0WDQgY3VycmVudFRyYW5zZm9ybTsKfTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>struct Bone {
+    std::string name;
+    int parentIndex;
+    DirectX::XMFLOAT4X4 bindPose;
+    DirectX::XMFLOAT4X4 inverseBindPose;
+    DirectX::XMFLOAT4X4 currentTransform;
+};</pre></div><div class='content'></div><h2>2. Assignar Pells</h2>
+<div class='content'><p>Cada vèrtex de la malla es vincula a un o més ossos amb un pes associat.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RydWN0IFZlcnRleCB7CiAgICBEaXJlY3RYOjpYTUZMT0FUMyBwb3NpdGlvbjsKICAgIERpcmVjdFg6OlhNRkxPQVQzIG5vcm1hbDsKICAgIERpcmVjdFg6OlhNRkxPQVQyIHRleENvb3JkOwogICAgaW50IGJvbmVJbmRpY2VzWzRdOwogICAgZmxvYXQgYm9uZVdlaWdodHNbNF07Cn07"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>struct Vertex {
+    DirectX::XMFLOAT3 position;
+    DirectX::XMFLOAT3 normal;
+    DirectX::XMFLOAT2 texCoord;
+    int boneIndices[4];
+    float boneWeights[4];
+};</pre></div><div class='content'></div><h2>3. Aplicar Transformacions</h2>
+<div class='content'><p>Les transformacions dels ossos es calculen i s'apliquen als vèrtexs de la malla.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dm9pZCBBcHBseUJvbmVUcmFuc2Zvcm1hdGlvbnMoc3RkOjp2ZWN0b3I8Qm9uZT4mIGJvbmVzLCBzdGQ6OnZlY3RvcjxWZXJ0ZXg+JiB2ZXJ0aWNlcykgewogICAgZm9yIChhdXRvJiBib25lIDogYm9uZXMpIHsKICAgICAgICBpZiAoYm9uZS5wYXJlbnRJbmRleCA+PSAwKSB7CiAgICAgICAgICAgIGJvbmUuY3VycmVudFRyYW5zZm9ybSA9IGJvbmUuYmluZFBvc2UgKiBib25lc1tib25lLnBhcmVudEluZGV4XS5jdXJyZW50VHJhbnNmb3JtOwogICAgICAgIH0gZWxzZSB7CiAgICAgICAgICAgIGJvbmUuY3VycmVudFRyYW5zZm9ybSA9IGJvbmUuYmluZFBvc2U7CiAgICAgICAgfQogICAgfQoKICAgIGZvciAoYXV0byYgdmVydGV4IDogdmVydGljZXMpIHsKICAgICAgICBEaXJlY3RYOjpYTVZFQ1RPUiB0cmFuc2Zvcm1lZFBvc2l0aW9uID0gRGlyZWN0WDo6WE1WZWN0b3JaZXJvKCk7CiAgICAgICAgZm9yIChpbnQgaSA9IDA7IGkgPCA0OyArK2kpIHsKICAgICAgICAgICAgaWYgKHZlcnRleC5ib25lV2VpZ2h0c1tpXSA+IDApIHsKICAgICAgICAgICAgICAgIERpcmVjdFg6OlhNTUFUUklYIGJvbmVUcmFuc2Zvcm0gPSBEaXJlY3RYOjpYTUxvYWRGbG9hdDR4NCgmYm9uZXNbdmVydGV4LmJvbmVJbmRpY2VzW2ldXS5jdXJyZW50VHJhbnNmb3JtKTsKICAgICAgICAgICAgICAgIHRyYW5zZm9ybWVkUG9zaXRpb24gKz0gdmVydGV4LmJvbmVXZWlnaHRzW2ldICogRGlyZWN0WDo6WE1WZWN0b3IzVHJhbnNmb3JtKERpcmVjdFg6OlhNTG9hZEZsb2F0MygmdmVydGV4LnBvc2l0aW9uKSwgYm9uZVRyYW5zZm9ybSk7CiAgICAgICAgICAgIH0KICAgICAgICB9CiAgICAgICAgRGlyZWN0WDo6WE1TdG9yZUZsb2F0MygmdmVydGV4LnBvc2l0aW9uLCB0cmFuc2Zvcm1lZFBvc2l0aW9uKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>void ApplyBoneTransformations(std::vector&lt;Bone&gt;&amp; bones, std::vector&lt;Vertex&gt;&amp; vertices) {
+    for (auto&amp; bone : bones) {
+        if (bone.parentIndex &gt;= 0) {
+            bone.currentTransform = bone.bindPose * bones[bone.parentIndex].currentTransform;
+        } else {
+            bone.currentTransform = bone.bindPose;
+        }
+    }
+
+    for (auto&amp; vertex : vertices) {
+        DirectX::XMVECTOR transformedPosition = DirectX::XMVectorZero();
+        for (int i = 0; i &lt; 4; ++i) {
+            if (vertex.boneWeights[i] &gt; 0) {
+                DirectX::XMMATRIX boneTransform = DirectX::XMLoadFloat4x4(&amp;bones[vertex.boneIndices[i]].currentTransform);
+                transformedPosition += vertex.boneWeights[i] * DirectX::XMVector3Transform(DirectX::XMLoadFloat3(&amp;vertex.position), boneTransform);
+            }
+        }
+        DirectX::XMStoreFloat3(&amp;vertex.position, transformedPosition);
+    }
+}</pre></div><div class='content'></div><h2>4. Animar l'Esquelet</h2>
+<div class='content'><p>Les animacions es defineixen com una sèrie de transformacions aplicades als ossos al llarg del temps.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RydWN0IEtleWZyYW1lIHsKICAgIGZsb2F0IHRpbWU7CiAgICBEaXJlY3RYOjpYTUZMT0FUNFg0IHRyYW5zZm9ybTsKfTsKCnN0cnVjdCBBbmltYXRpb24gewogICAgc3RkOjpzdHJpbmcgbmFtZTsKICAgIGZsb2F0IGR1cmF0aW9uOwogICAgc3RkOjp2ZWN0b3I8c3RkOjp2ZWN0b3I8S2V5ZnJhbWU+PiBib25lS2V5ZnJhbWVzOwp9OwoKdm9pZCBVcGRhdGVBbmltYXRpb24oQW5pbWF0aW9uJiBhbmltYXRpb24sIGZsb2F0IHRpbWUsIHN0ZDo6dmVjdG9yPEJvbmU+JiBib25lcykgewogICAgZm9yIChzaXplX3QgaSA9IDA7IGkgPCBib25lcy5zaXplKCk7ICsraSkgewogICAgICAgIGNvbnN0IGF1dG8mIGtleWZyYW1lcyA9IGFuaW1hdGlvbi5ib25lS2V5ZnJhbWVzW2ldOwogICAgICAgIGlmIChrZXlmcmFtZXMuZW1wdHkoKSkgY29udGludWU7CgogICAgICAgIC8vIEludGVycG9sYWNpw7MgbGluZWFsIGVudHJlIGtleWZyYW1lcwogICAgICAgIHNpemVfdCBrMSA9IDAsIGsyID0gMTsKICAgICAgICB3aGlsZSAoazIgPCBrZXlmcmFtZXMuc2l6ZSgpICYmIGtleWZyYW1lc1trMl0udGltZSA8IHRpbWUpIHsKICAgICAgICAgICAgazEgPSBrMisrOwogICAgICAgIH0KCiAgICAgICAgZmxvYXQgdCA9ICh0aW1lIC0ga2V5ZnJhbWVzW2sxXS50aW1lKSAvIChrZXlmcmFtZXNbazJdLnRpbWUgLSBrZXlmcmFtZXNbazFdLnRpbWUpOwogICAgICAgIERpcmVjdFg6OlhNTUFUUklYIHRyYW5zZm9ybTEgPSBEaXJlY3RYOjpYTUxvYWRGbG9hdDR4NCgma2V5ZnJhbWVzW2sxXS50cmFuc2Zvcm0pOwogICAgICAgIERpcmVjdFg6OlhNTUFUUklYIHRyYW5zZm9ybTIgPSBEaXJlY3RYOjpYTUxvYWRGbG9hdDR4NCgma2V5ZnJhbWVzW2syXS50cmFuc2Zvcm0pOwogICAgICAgIERpcmVjdFg6OlhNTUFUUklYIGludGVycG9sYXRlZFRyYW5zZm9ybSA9IERpcmVjdFg6OlhNTWF0cml4TGVycCh0cmFuc2Zvcm0xLCB0cmFuc2Zvcm0yLCB0KTsKCiAgICAgICAgRGlyZWN0WDo6WE1TdG9yZUZsb2F0NHg0KCZib25lc1tpXS5iaW5kUG9zZSwgaW50ZXJwb2xhdGVkVHJhbnNmb3JtKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>struct Keyframe {
+    float time;
+    DirectX::XMFLOAT4X4 transform;
+};
+
+struct Animation {
+    std::string name;
+    float duration;
+    std::vector&lt;std::vector&lt;Keyframe&gt;&gt; boneKeyframes;
+};
+
+void UpdateAnimation(Animation&amp; animation, float time, std::vector&lt;Bone&gt;&amp; bones) {
+    for (size_t i = 0; i &lt; bones.size(); ++i) {
+        const auto&amp; keyframes = animation.boneKeyframes[i];
+        if (keyframes.empty()) continue;
+
+        // Interpolaci&oacute; lineal entre keyframes
+        size_t k1 = 0, k2 = 1;
+        while (k2 &lt; keyframes.size() &amp;&amp; keyframes[k2].time &lt; time) {
+            k1 = k2++;
+        }
+
+        float t = (time - keyframes[k1].time) / (keyframes[k2].time - keyframes[k1].time);
+        DirectX::XMMATRIX transform1 = DirectX::XMLoadFloat4x4(&amp;keyframes[k1].transform);
+        DirectX::XMMATRIX transform2 = DirectX::XMLoadFloat4x4(&amp;keyframes[k2].transform);
+        DirectX::XMMATRIX interpolatedTransform = DirectX::XMMatrixLerp(transform1, transform2, t);
+
+        DirectX::XMStoreFloat4x4(&amp;bones[i].bindPose, interpolatedTransform);
+    }
+}</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Implementar una animació esquelètica simple que faci que un model 3D mogui el braç amunt i avall.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li><strong>Definir l'Esquelet</strong>: Crear un esquelet amb un os per al braç.</li>
+<li><strong>Assignar Pells</strong>: Vincular els vèrtexs del braç a l'os corresponent.</li>
+<li><strong>Crear Animació</strong>: Definir una animació que mogui el braç amunt i avall.</li>
+<li><strong>Aplicar Transformacions</strong>: Actualitzar les transformacions dels ossos i aplicar-les als vèrtexs.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRGVmaW5pY2nDsyBkZSBsJ2VzcXVlbGV0CnN0ZDo6dmVjdG9yPEJvbmU+IGJvbmVzID0gewogICAgeyJSb290IiwgLTEsIElkZW50aXR5TWF0cml4KCksIElkZW50aXR5TWF0cml4KCksIElkZW50aXR5TWF0cml4KCl9LAogICAgeyJBcm0iLCAwLCBJZGVudGl0eU1hdHJpeCgpLCBJZGVudGl0eU1hdHJpeCgpLCBJZGVudGl0eU1hdHJpeCgpfQp9OwoKLy8gQXNzaWduYWNpw7MgZGUgcGVsbHMKc3RkOjp2ZWN0b3I8VmVydGV4PiB2ZXJ0aWNlcyA9IHsKICAgIC8vIFbDqHJ0ZXhzIGRlbCBicmHDpwogICAge3swLjBmLCAwLjBmLCAwLjBmfSwgezAuMGYsIDAuMGYsIDEuMGZ9LCB7MC4wZiwgMC4wZn0sIHsxfSwgezEuMGZ9fSwKICAgIHt7MS4wZiwgMC4wZiwgMC4wZn0sIHswLjBmLCAwLjBmLCAxLjBmfSwgezEuMGYsIDAuMGZ9LCB7MX0sIHsxLjBmfX0sCiAgICAvLyBBbHRyZXMgdsOocnRleHMuLi4KfTsKCi8vIERlZmluaWNpw7MgZGUgbCdhbmltYWNpw7MKQW5pbWF0aW9uIGFybUFuaW1hdGlvbiA9IHsKICAgICJBcm1XYXZlIiwKICAgIDIuMGYsCiAgICB7CiAgICAgICAgLy8gS2V5ZnJhbWVzIHBlciBhIGwnb3MgZGVsIGJyYcOnCiAgICAgICAgewogICAgICAgICAgICB7MC4wZiwgSWRlbnRpdHlNYXRyaXgoKX0sCiAgICAgICAgICAgIHsxLjBmLCBSb3RhdGlvbk1hdHJpeChEaXJlY3RYOjpYTV9QSSAvIDIsIHswLjBmLCAwLjBmLCAxLjBmfSl9LAogICAgICAgICAgICB7Mi4wZiwgSWRlbnRpdHlNYXRyaXgoKX0KICAgICAgICB9CiAgICB9Cn07CgovLyBBY3R1YWxpdHphY2nDsyBkZSBsJ2FuaW1hY2nDsyBpIGFwbGljYWNpw7MgZGUgdHJhbnNmb3JtYWNpb25zCmZsb2F0IGN1cnJlbnRUaW1lID0gMC4wZjsKVXBkYXRlQW5pbWF0aW9uKGFybUFuaW1hdGlvbiwgY3VycmVudFRpbWUsIGJvbmVzKTsKQXBwbHlCb25lVHJhbnNmb3JtYXRpb25zKGJvbmVzLCB2ZXJ0aWNlcyk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Definici&oacute; de l'esquelet
+std::vector&lt;Bone&gt; bones = {
+    {&quot;Root&quot;, -1, IdentityMatrix(), IdentityMatrix(), IdentityMatrix()},
+    {&quot;Arm&quot;, 0, IdentityMatrix(), IdentityMatrix(), IdentityMatrix()}
+};
+
+// Assignaci&oacute; de pells
+std::vector&lt;Vertex&gt; vertices = {
+    // V&egrave;rtexs del bra&ccedil;
+    {{0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}, {1}, {1.0f}},
+    {{1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}, {1}, {1.0f}},
+    // Altres v&egrave;rtexs...
+};
+
+// Definici&oacute; de l'animaci&oacute;
+Animation armAnimation = {
+    &quot;ArmWave&quot;,
+    2.0f,
+    {
+        // Keyframes per a l'os del bra&ccedil;
+        {
+            {0.0f, IdentityMatrix()},
+            {1.0f, RotationMatrix(DirectX::XM_PI / 2, {0.0f, 0.0f, 1.0f})},
+            {2.0f, IdentityMatrix()}
+        }
+    }
+};
+
+// Actualitzaci&oacute; de l'animaci&oacute; i aplicaci&oacute; de transformacions
+float currentTime = 0.0f;
+UpdateAnimation(armAnimation, currentTime, bones);
+ApplyBoneTransformations(bones, vertices);</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>L'animació esquelètica és una tècnica poderosa per animar models 3D de manera eficient i realista. Comprendre els conceptes clau i els passos per implementar aquesta tècnica és essencial per a qualsevol desenvolupador que treballi amb animacions 3D. Amb la pràctica, es poden crear animacions complexes i realistes per a jocs i aplicacions gràfiques.</p>
+<p>En el següent tema, explorarem l'animació de targetes de morfologia, una altra tècnica d'animació utilitzada per deformar models 3D.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-02-animating-3d-models' title="Animar Models 3D">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-04-morph-target-animation' title="Animació de Targetes de Morfologia">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

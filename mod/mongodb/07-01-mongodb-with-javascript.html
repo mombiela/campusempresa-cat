@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MongoDB amb JavaScript (Node.js)</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/mongodb/07-01-mongodb-with-javascript" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/mongodb/07-01-mongodb-with-javascript" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/mongodb/07-01-mongodb-with-javascript" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/mongodb/07-01-mongodb-with-javascript" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/mongodb/07-01-mongodb-with-javascript" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-04-monitoring-and-alerts' title="Monitorització i Alertes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">MongoDB amb JavaScript (Node.js)</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-02-mongodb-with-python' title="MongoDB amb Python">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com utilitzar MongoDB amb JavaScript, específicament amb Node.js. Node.js és una plataforma popular per al desenvolupament de servidors i aplicacions web, i MongoDB és una base de dades NoSQL que s'integra molt bé amb Node.js gràcies a la seva estructura de documents JSON.</p>
+</div><h1>Continguts</h1>
+<div class='content'><ol>
+<li><a href="#instal·lació-de-nodejs-i-mongodb">Instal·lació de Node.js i MongoDB</a></li>
+<li><a href="#configuració-del-projecte">Configuració del Projecte</a></li>
+<li><a href="#connexió-a-mongodb">Connexió a MongoDB</a></li>
+<li><a href="#operacions-crud">Operacions CRUD</a></li>
+<li><a href="#exercicis-pràctics">Exercicis Pràctics</a></li>
+<li><a href="#conclusió">Conclusió</a></li>
+</ol>
+</div><h1>Instal·lació de Node.js i MongoDB</h1>
+<div class='content'></div><h2>Instal·lació de Node.js</h2>
+<div class='content'><ol>
+<li><strong>Descarrega i instal·la Node.js</strong> des del <a href="https://nodejs.org/">lloc oficial</a>.</li>
+<li>Verifica la instal·lació executant:
+<pre><code class="language-bash">node -v
+npm -v
+</code></pre>
+</li>
+</ol>
+</div><h2>Instal·lació de MongoDB</h2>
+<div class='content'><ol>
+<li><strong>Descarrega i instal·la MongoDB</strong> des del <a href="https://www.mongodb.com/try/download/community">lloc oficial</a>.</li>
+<li>Inicia el servei de MongoDB:
+<pre><code class="language-bash">mongod
+</code></pre>
+</li>
+</ol>
+</div><h1>Configuració del Projecte</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Crea una carpeta per al projecte</strong> i inicialitza un nou projecte Node.js:</p>
+<pre><code class="language-bash">mkdir mongodb-nodejs
+cd mongodb-nodejs
+npm init -y
+</code></pre>
+</li>
+<li>
+<p><strong>Instal·la el client MongoDB per a Node.js</strong>:</p>
+<pre><code class="language-bash">npm install mongodb
+</code></pre>
+</li>
+</ol>
+</div><h1>Connexió a MongoDB</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Crea un fitxer <code>index.js</code></strong> i afegeix el següent codi per connectar-te a MongoDB:</p>
+<pre><code class="language-javascript">const { MongoClient } = require('mongodb');
+
+async function main() {
+    const uri = &quot;mongodb://localhost:27017&quot;;
+    const client = new MongoClient(uri);
+
+    try {
+        await client.connect();
+        console.log(&quot;Connectat a MongoDB!&quot;);
+    } catch (e) {
+        console.error(e);
+    } finally {
+        await client.close();
+    }
+}
+
+main().catch(console.error);
+</code></pre>
+</li>
+<li>
+<p><strong>Executa el fitxer</strong> per verificar la connexió:</p>
+<pre><code class="language-bash">node index.js
+</code></pre>
+</li>
+</ol>
+</div><h1>Operacions CRUD</h1>
+<div class='content'></div><h2>Creant Documents</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXN5bmMgZnVuY3Rpb24gY3JlYXRlRG9jdW1lbnQoY2xpZW50KSB7CiAgICBjb25zdCByZXN1bHQgPSBhd2FpdCBjbGllbnQuZGIoInRlc3RkYiIpLmNvbGxlY3Rpb24oInRlc3Rjb2xsZWN0aW9uIikuaW5zZXJ0T25lKHsKICAgICAgICBuYW1lOiAiSm9obiBEb2UiLAogICAgICAgIGFnZTogMzAsCiAgICAgICAgYWRkcmVzczogIjEyMyBNYWluIFN0IgogICAgfSk7CiAgICBjb25zb2xlLmxvZyhgTm91IGRvY3VtZW50IGNyZWF0IGFtYiBsJ0lEOiAke3Jlc3VsdC5pbnNlcnRlZElkfWApOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>async function createDocument(client) {
+    const result = await client.db(&quot;testdb&quot;).collection(&quot;testcollection&quot;).insertOne({
+        name: &quot;John Doe&quot;,
+        age: 30,
+        address: &quot;123 Main St&quot;
+    });
+    console.log(`Nou document creat amb l'ID: ${result.insertedId}`);
+}</pre></div><div class='content'></div><h2>Llegint Documents</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXN5bmMgZnVuY3Rpb24gcmVhZERvY3VtZW50cyhjbGllbnQpIHsKICAgIGNvbnN0IGN1cnNvciA9IGF3YWl0IGNsaWVudC5kYigidGVzdGRiIikuY29sbGVjdGlvbigidGVzdGNvbGxlY3Rpb24iKS5maW5kKCk7CiAgICBjb25zdCByZXN1bHRzID0gYXdhaXQgY3Vyc29yLnRvQXJyYXkoKTsKICAgIGNvbnNvbGUubG9nKCJEb2N1bWVudHMgdHJvYmF0czoiKTsKICAgIGNvbnNvbGUubG9nKHJlc3VsdHMpOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>async function readDocuments(client) {
+    const cursor = await client.db(&quot;testdb&quot;).collection(&quot;testcollection&quot;).find();
+    const results = await cursor.toArray();
+    console.log(&quot;Documents trobats:&quot;);
+    console.log(results);
+}</pre></div><div class='content'></div><h2>Actualitzant Documents</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXN5bmMgZnVuY3Rpb24gdXBkYXRlRG9jdW1lbnQoY2xpZW50KSB7CiAgICBjb25zdCByZXN1bHQgPSBhd2FpdCBjbGllbnQuZGIoInRlc3RkYiIpLmNvbGxlY3Rpb24oInRlc3Rjb2xsZWN0aW9uIikudXBkYXRlT25lKAogICAgICAgIHsgbmFtZTogIkpvaG4gRG9lIiB9LAogICAgICAgIHsgJHNldDogeyBhZ2U6IDMxIH0gfQogICAgKTsKICAgIGNvbnNvbGUubG9nKGAke3Jlc3VsdC5tYXRjaGVkQ291bnR9IGRvY3VtZW50KHMpIHRyb2JhdChzKSwgJHtyZXN1bHQubW9kaWZpZWRDb3VudH0gZG9jdW1lbnQocykgYWN0dWFsaXR6YXQocylgKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>async function updateDocument(client) {
+    const result = await client.db(&quot;testdb&quot;).collection(&quot;testcollection&quot;).updateOne(
+        { name: &quot;John Doe&quot; },
+        { $set: { age: 31 } }
+    );
+    console.log(`${result.matchedCount} document(s) trobat(s), ${result.modifiedCount} document(s) actualitzat(s)`);
+}</pre></div><div class='content'></div><h2>Eliminant Documents</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXN5bmMgZnVuY3Rpb24gZGVsZXRlRG9jdW1lbnQoY2xpZW50KSB7CiAgICBjb25zdCByZXN1bHQgPSBhd2FpdCBjbGllbnQuZGIoInRlc3RkYiIpLmNvbGxlY3Rpb24oInRlc3Rjb2xsZWN0aW9uIikuZGVsZXRlT25lKHsgbmFtZTogIkpvaG4gRG9lIiB9KTsKICAgIGNvbnNvbGUubG9nKGAke3Jlc3VsdC5kZWxldGVkQ291bnR9IGRvY3VtZW50KHMpIGVsaW1pbmF0KHMpYCk7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>async function deleteDocument(client) {
+    const result = await client.db(&quot;testdb&quot;).collection(&quot;testcollection&quot;).deleteOne({ name: &quot;John Doe&quot; });
+    console.log(`${result.deletedCount} document(s) eliminat(s)`);
+}</pre></div><div class='content'></div><h2>Exemple complet</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgeyBNb25nb0NsaWVudCB9ID0gcmVxdWlyZSgnbW9uZ29kYicpOwoKYXN5bmMgZnVuY3Rpb24gbWFpbigpIHsKICAgIGNvbnN0IHVyaSA9ICJtb25nb2RiOi8vbG9jYWxob3N0OjI3MDE3IjsKICAgIGNvbnN0IGNsaWVudCA9IG5ldyBNb25nb0NsaWVudCh1cmkpOwoKICAgIHRyeSB7CiAgICAgICAgYXdhaXQgY2xpZW50LmNvbm5lY3QoKTsKICAgICAgICBjb25zb2xlLmxvZygiQ29ubmVjdGF0IGEgTW9uZ29EQiEiKTsKCiAgICAgICAgYXdhaXQgY3JlYXRlRG9jdW1lbnQoY2xpZW50KTsKICAgICAgICBhd2FpdCByZWFkRG9jdW1lbnRzKGNsaWVudCk7CiAgICAgICAgYXdhaXQgdXBkYXRlRG9jdW1lbnQoY2xpZW50KTsKICAgICAgICBhd2FpdCByZWFkRG9jdW1lbnRzKGNsaWVudCk7CiAgICAgICAgYXdhaXQgZGVsZXRlRG9jdW1lbnQoY2xpZW50KTsKICAgICAgICBhd2FpdCByZWFkRG9jdW1lbnRzKGNsaWVudCk7CgogICAgfSBjYXRjaCAoZSkgewogICAgICAgIGNvbnNvbGUuZXJyb3IoZSk7CiAgICB9IGZpbmFsbHkgewogICAgICAgIGF3YWl0IGNsaWVudC5jbG9zZSgpOwogICAgfQp9CgptYWluKCkuY2F0Y2goY29uc29sZS5lcnJvcik7Cgphc3luYyBmdW5jdGlvbiBjcmVhdGVEb2N1bWVudChjbGllbnQpIHsKICAgIGNvbnN0IHJlc3VsdCA9IGF3YWl0IGNsaWVudC5kYigidGVzdGRiIikuY29sbGVjdGlvbigidGVzdGNvbGxlY3Rpb24iKS5pbnNlcnRPbmUoewogICAgICAgIG5hbWU6ICJKb2huIERvZSIsCiAgICAgICAgYWdlOiAzMCwKICAgICAgICBhZGRyZXNzOiAiMTIzIE1haW4gU3QiCiAgICB9KTsKICAgIGNvbnNvbGUubG9nKGBOb3UgZG9jdW1lbnQgY3JlYXQgYW1iIGwnSUQ6ICR7cmVzdWx0Lmluc2VydGVkSWR9YCk7Cn0KCmFzeW5jIGZ1bmN0aW9uIHJlYWREb2N1bWVudHMoY2xpZW50KSB7CiAgICBjb25zdCBjdXJzb3IgPSBhd2FpdCBjbGllbnQuZGIoInRlc3RkYiIpLmNvbGxlY3Rpb24oInRlc3Rjb2xsZWN0aW9uIikuZmluZCgpOwogICAgY29uc3QgcmVzdWx0cyA9IGF3YWl0IGN1cnNvci50b0FycmF5KCk7CiAgICBjb25zb2xlLmxvZygiRG9jdW1lbnRzIHRyb2JhdHM6Iik7CiAgICBjb25zb2xlLmxvZyhyZXN1bHRzKTsKfQoKYXN5bmMgZnVuY3Rpb24gdXBkYXRlRG9jdW1lbnQoY2xpZW50KSB7CiAgICBjb25zdCByZXN1bHQgPSBhd2FpdCBjbGllbnQuZGIoInRlc3RkYiIpLmNvbGxlY3Rpb24oInRlc3Rjb2xsZWN0aW9uIikudXBkYXRlT25lKAogICAgICAgIHsgbmFtZTogIkpvaG4gRG9lIiB9LAogICAgICAgIHsgJHNldDogeyBhZ2U6IDMxIH0gfQogICAgKTsKICAgIGNvbnNvbGUubG9nKGAke3Jlc3VsdC5tYXRjaGVkQ291bnR9IGRvY3VtZW50KHMpIHRyb2JhdChzKSwgJHtyZXN1bHQubW9kaWZpZWRDb3VudH0gZG9jdW1lbnQocykgYWN0dWFsaXR6YXQocylgKTsKfQoKYXN5bmMgZnVuY3Rpb24gZGVsZXRlRG9jdW1lbnQoY2xpZW50KSB7CiAgICBjb25zdCByZXN1bHQgPSBhd2FpdCBjbGllbnQuZGIoInRlc3RkYiIpLmNvbGxlY3Rpb24oInRlc3Rjb2xsZWN0aW9uIikuZGVsZXRlT25lKHsgbmFtZTogIkpvaG4gRG9lIiB9KTsKICAgIGNvbnNvbGUubG9nKGAke3Jlc3VsdC5kZWxldGVkQ291bnR9IGRvY3VtZW50KHMpIGVsaW1pbmF0KHMpYCk7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const { MongoClient } = require('mongodb');
+
+async function main() {
+    const uri = &quot;mongodb://localhost:27017&quot;;
+    const client = new MongoClient(uri);
+
+    try {
+        await client.connect();
+        console.log(&quot;Connectat a MongoDB!&quot;);
+
+        await createDocument(client);
+        await readDocuments(client);
+        await updateDocument(client);
+        await readDocuments(client);
+        await deleteDocument(client);
+        await readDocuments(client);
+
+    } catch (e) {
+        console.error(e);
+    } finally {
+        await client.close();
+    }
+}
+
+main().catch(console.error);
+
+async function createDocument(client) {
+    const result = await client.db(&quot;testdb&quot;).collection(&quot;testcollection&quot;).insertOne({
+        name: &quot;John Doe&quot;,
+        age: 30,
+        address: &quot;123 Main St&quot;
+    });
+    console.log(`Nou document creat amb l'ID: ${result.insertedId}`);
+}
+
+async function readDocuments(client) {
+    const cursor = await client.db(&quot;testdb&quot;).collection(&quot;testcollection&quot;).find();
+    const results = await cursor.toArray();
+    console.log(&quot;Documents trobats:&quot;);
+    console.log(results);
+}
+
+async function updateDocument(client) {
+    const result = await client.db(&quot;testdb&quot;).collection(&quot;testcollection&quot;).updateOne(
+        { name: &quot;John Doe&quot; },
+        { $set: { age: 31 } }
+    );
+    console.log(`${result.matchedCount} document(s) trobat(s), ${result.modifiedCount} document(s) actualitzat(s)`);
+}
+
+async function deleteDocument(client) {
+    const result = await client.db(&quot;testdb&quot;).collection(&quot;testcollection&quot;).deleteOne({ name: &quot;John Doe&quot; });
+    console.log(`${result.deletedCount} document(s) eliminat(s)`);
+}</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'><ol>
+<li><strong>Crea un nou document</strong> amb informació d'un altre usuari.</li>
+<li><strong>Llegeix tots els documents</strong> de la col·lecció i mostra'ls per consola.</li>
+<li><strong>Actualitza un document</strong> canviant l'adreça d'un usuari existent.</li>
+<li><strong>Elimina un document</strong> basat en un criteri específic.</li>
+</ol>
+</div><h2>Solucions</h2>
+<div class='content'><ol>
+<li>
+<p>Crear un nou document:</p>
+<pre><code class="language-javascript">await client.db(&quot;testdb&quot;).collection(&quot;testcollection&quot;).insertOne({
+    name: &quot;Jane Doe&quot;,
+    age: 28,
+    address: &quot;456 Elm St&quot;
+});
+</code></pre>
+</li>
+<li>
+<p>Llegir tots els documents:</p>
+<pre><code class="language-javascript">const cursor = await client.db(&quot;testdb&quot;).collection(&quot;testcollection&quot;).find();
+const results = await cursor.toArray();
+console.log(results);
+</code></pre>
+</li>
+<li>
+<p>Actualitzar un document:</p>
+<pre><code class="language-javascript">await client.db(&quot;testdb&quot;).collection(&quot;testcollection&quot;).updateOne(
+    { name: &quot;Jane Doe&quot; },
+    { $set: { address: &quot;789 Oak St&quot; } }
+);
+</code></pre>
+</li>
+<li>
+<p>Eliminar un document:</p>
+<pre><code class="language-javascript">await client.db(&quot;testdb&quot;).collection(&quot;testcollection&quot;).deleteOne({ name: &quot;Jane Doe&quot; });
+</code></pre>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com configurar un projecte Node.js per treballar amb MongoDB, com connectar-nos a una base de dades MongoDB i com realitzar operacions CRUD bàsiques. Aquestes habilitats són fonamentals per desenvolupar aplicacions web modernes que necessiten emmagatzemar i gestionar dades de manera eficient. En els següents mòduls, explorarem funcions més avançades i aplicacions del món real utilitzant MongoDB.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-04-monitoring-and-alerts' title="Monitorització i Alertes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-02-mongodb-with-python' title="MongoDB amb Python">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

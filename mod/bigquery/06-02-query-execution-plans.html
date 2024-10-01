@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprendre els plans d'execució de consultes</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/bigquery/06-02-query-execution-plans" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/bigquery/06-02-query-execution-plans" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/bigquery/06-02-query-execution-plans" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/bigquery/06-02-query-execution-plans" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/bigquery/06-02-query-execution-plans" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-query-optimization-techniques' title="Tècniques d'optimització de consultes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Comprendre els plans d'execució de consultes</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-using-materialized-views' title="Ús de vistes materialitzades">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Els plans d'execució de consultes són una eina essencial per optimitzar el rendiment de les consultes a BigQuery. Aquests plans proporcionen una visió detallada de com BigQuery processa una consulta, permetent identificar colls d'ampolla i oportunitats per a l'optimització.</p>
+</div><h1>Què és un pla d'execució de consultes?</h1>
+<div class='content'><p>Un pla d'execució de consulta és una representació detallada dels passos que BigQuery segueix per executar una consulta SQL. Inclou informació sobre les operacions que es realitzen, com ara escanejar taules, aplicar filtres, unir taules, etc.</p>
+</div><h2>Components clau d'un pla d'execució</h2>
+<div class='content'><ol>
+<li><strong>Lectura de dades</strong>: Com BigQuery llegeix les dades de les taules.</li>
+<li><strong>Filtratge</strong>: Aplicació de condicions <code>WHERE</code> per reduir el conjunt de dades.</li>
+<li><strong>Unions</strong>: Com BigQuery combina dades de diferents taules.</li>
+<li><strong>Agregació</strong>: Operacions com <code>GROUP BY</code> i funcions agregades (<code>SUM</code>, <code>COUNT</code>, etc.).</li>
+<li><strong>Ordenació</strong>: Ordenació de dades amb <code>ORDER BY</code>.</li>
+<li><strong>Sortida</strong>: Com es presenten els resultats finals.</li>
+</ol>
+</div><h1>Com obtenir un pla d'execució a BigQuery</h1>
+<div class='content'><p>Per obtenir un pla d'execució de consulta a BigQuery, pots utilitzar la consola de BigQuery o l'eina de línia de comandes <code>bq</code>.</p>
+</div><h2>Utilitzant la consola de BigQuery</h2>
+<div class='content'><ol>
+<li>Escriu la teva consulta SQL a la consola de BigQuery.</li>
+<li>Fes clic a &quot;Explica&quot; (Explain) en lloc de &quot;Executa&quot; (Run).</li>
+<li>La consola mostrarà el pla d'execució de la consulta.</li>
+</ol>
+</div><h2>Utilitzant l'eina de línia de comandes `bq`</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YnEgcXVlcnkgLS11c2VfbGVnYWN5X3NxbD1mYWxzZSAtLWRyeV9ydW4gLS1mb3JtYXQ9cHJldHR5anNvbiAnU0VMRUNUICogRlJPTSBgcHJvamVjdC5kYXRhc2V0LnRhYmxlYCBXSEVSRSBjb25kaXRpb24n"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>bq query --use_legacy_sql=false --dry_run --format=prettyjson 'SELECT * FROM `project.dataset.table` WHERE condition'</pre></div><div class='content'><p>Aquest comandament executarà una &quot;execució en sec&quot; (dry run) de la consulta i mostrarà el pla d'execució en format JSON.</p>
+</div><h1>Interpretació d'un pla d'execució</h1>
+<div class='content'><p>Un pla d'execució de consulta a BigQuery es presenta en forma de gràfic o taula que detalla les operacions realitzades. A continuació, es mostra un exemple simplificat d'un pla d'execució:</p>
+<table>
+<thead>
+<tr>
+<th>Operació</th>
+<th>Descripció</th>
+<th>Cost estimat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scan</td>
+<td>Escaneja la taula <code>project.dataset.table</code></td>
+<td>100 MB</td>
+</tr>
+<tr>
+<td>Filter</td>
+<td>Aplica el filtre <code>condition</code></td>
+<td>50 MB</td>
+</tr>
+<tr>
+<td>Join</td>
+<td>Uneix amb la taula <code>project.dataset.other_table</code></td>
+<td>30 MB</td>
+</tr>
+<tr>
+<td>Aggregate</td>
+<td>Agrega dades amb <code>GROUP BY</code></td>
+<td>10 MB</td>
+</tr>
+<tr>
+<td>Output</td>
+<td>Retorna els resultats</td>
+<td>5 MB</td>
+</tr>
+</tbody>
+</table>
+</div><h2>Exemples pràctics</h2>
+<div class='content'><h4>Exemple 1: Consulta simple amb filtratge</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIG5hbWUsIGFnZQpGUk9NIGBwcm9qZWN0LmRhdGFzZXQudGFibGVgCldIRVJFIGFnZSA+IDMw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT name, age
+FROM `project.dataset.table`
+WHERE age &gt; 30</pre></div><div class='content'><p><strong>Pla d'execució:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Operació</th>
+<th>Descripció</th>
+<th>Cost estimat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scan</td>
+<td>Escaneja la taula <code>project.dataset.table</code></td>
+<td>100 MB</td>
+</tr>
+<tr>
+<td>Filter</td>
+<td>Aplica el filtre <code>age &gt; 30</code></td>
+<td>50 MB</td>
+</tr>
+<tr>
+<td>Output</td>
+<td>Retorna els resultats</td>
+<td>50 MB</td>
+</tr>
+</tbody>
+</table>
+<h4>Exemple 2: Consulta amb unió i agregació</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIHQxLm5hbWUsIENPVU5UKHQyLm9yZGVyX2lkKSBhcyBvcmRlcl9jb3VudApGUk9NIGBwcm9qZWN0LmRhdGFzZXQuY3VzdG9tZXJzYCB0MQpKT0lOIGBwcm9qZWN0LmRhdGFzZXQub3JkZXJzYCB0MgpPTiB0MS5jdXN0b21lcl9pZCA9IHQyLmN1c3RvbWVyX2lkCkdST1VQIEJZIHQxLm5hbWU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT t1.name, COUNT(t2.order_id) as order_count
+FROM `project.dataset.customers` t1
+JOIN `project.dataset.orders` t2
+ON t1.customer_id = t2.customer_id
+GROUP BY t1.name</pre></div><div class='content'><p><strong>Pla d'execució:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Operació</th>
+<th>Descripció</th>
+<th>Cost estimat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scan</td>
+<td>Escaneja la taula <code>project.dataset.customers</code></td>
+<td>100 MB</td>
+</tr>
+<tr>
+<td>Scan</td>
+<td>Escaneja la taula <code>project.dataset.orders</code></td>
+<td>200 MB</td>
+</tr>
+<tr>
+<td>Join</td>
+<td>Uneix les taules <code>customers</code> i <code>orders</code></td>
+<td>150 MB</td>
+</tr>
+<tr>
+<td>Aggregate</td>
+<td>Agrega dades amb <code>GROUP BY t1.name</code></td>
+<td>50 MB</td>
+</tr>
+<tr>
+<td>Output</td>
+<td>Retorna els resultats</td>
+<td>50 MB</td>
+</tr>
+</tbody>
+</table>
+</div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Consulta amb filtratge</h2>
+<div class='content'><p>Escriu una consulta que seleccioni els noms i edats dels usuaris de la taula <code>users</code> que tinguin més de 25 anys. Obteniu el pla d'execució i interpreteu-lo.</p>
+<p><strong>Solució:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIG5hbWUsIGFnZQpGUk9NIGBwcm9qZWN0LmRhdGFzZXQudXNlcnNgCldIRVJFIGFnZSA+IDI1"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT name, age
+FROM `project.dataset.users`
+WHERE age &gt; 25</pre></div><div class='content'><p><strong>Pla d'execució esperat:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Operació</th>
+<th>Descripció</th>
+<th>Cost estimat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scan</td>
+<td>Escaneja la taula <code>project.dataset.users</code></td>
+<td>100 MB</td>
+</tr>
+<tr>
+<td>Filter</td>
+<td>Aplica el filtre <code>age &gt; 25</code></td>
+<td>60 MB</td>
+</tr>
+<tr>
+<td>Output</td>
+<td>Retorna els resultats</td>
+<td>60 MB</td>
+</tr>
+</tbody>
+</table>
+</div><h2>Exercici 2: Consulta amb unió</h2>
+<div class='content'><p>Escriu una consulta que uneixi les taules <code>employees</code> i <code>departments</code> per obtenir els noms dels empleats i els noms dels seus departaments. Obteniu el pla d'execució i interpreteu-lo.</p>
+<p><strong>Solució:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGUubmFtZSwgZC5kZXBhcnRtZW50X25hbWUKRlJPTSBgcHJvamVjdC5kYXRhc2V0LmVtcGxveWVlc2AgZQpKT0lOIGBwcm9qZWN0LmRhdGFzZXQuZGVwYXJ0bWVudHNgIGQKT04gZS5kZXBhcnRtZW50X2lkID0gZC5kZXBhcnRtZW50X2lk"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT e.name, d.department_name
+FROM `project.dataset.employees` e
+JOIN `project.dataset.departments` d
+ON e.department_id = d.department_id</pre></div><div class='content'><p><strong>Pla d'execució esperat:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Operació</th>
+<th>Descripció</th>
+<th>Cost estimat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scan</td>
+<td>Escaneja la taula <code>project.dataset.employees</code></td>
+<td>100 MB</td>
+</tr>
+<tr>
+<td>Scan</td>
+<td>Escaneja la taula <code>project.dataset.departments</code></td>
+<td>50 MB</td>
+</tr>
+<tr>
+<td>Join</td>
+<td>Uneix les taules <code>employees</code> i <code>departments</code></td>
+<td>75 MB</td>
+</tr>
+<tr>
+<td>Output</td>
+<td>Retorna els resultats</td>
+<td>75 MB</td>
+</tr>
+</tbody>
+</table>
+</div><h1>Resum</h1>
+<div class='content'><p>Comprendre els plans d'execució de consultes és fonamental per optimitzar el rendiment de les consultes a BigQuery. Aquests plans proporcionen una visió detallada de les operacions realitzades durant l'execució d'una consulta, permetent identificar colls d'ampolla i oportunitats per a l'optimització. Practicar la interpretació dels plans d'execució amb exemples reals és una manera efectiva de millorar les teves habilitats en l'optimització de consultes.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-query-optimization-techniques' title="Tècniques d'optimització de consultes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-using-materialized-views' title="Ús de vistes materialitzades">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

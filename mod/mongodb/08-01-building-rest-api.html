@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construint una API REST amb MongoDB</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/mongodb/08-01-building-rest-api" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/mongodb/08-01-building-rest-api" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/mongodb/08-01-building-rest-api" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/mongodb/08-01-building-rest-api" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/mongodb/08-01-building-rest-api" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-mongodb-with-csharp' title="MongoDB amb C#">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Construint una API REST amb MongoDB</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-ecommerce-application' title="Aplicació de Comerç Electrònic">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a construir una API REST utilitzant MongoDB com a base de dades. Aquest procés inclou la configuració del servidor, la creació de rutes per a les operacions CRUD, i la integració amb MongoDB per gestionar les dades.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Configurar un servidor Node.js amb Express.</li>
+<li>Crear rutes per a les operacions CRUD.</li>
+<li>Integrar MongoDB amb l'API REST.</li>
+<li>Provar l'API amb eines com Postman.</li>
+</ul>
+</div><h1>Requisits Prèvis</h1>
+<div class='content'><ul>
+<li>Coneixements bàsics de JavaScript i Node.js.</li>
+<li>Familiaritat amb MongoDB i les operacions CRUD.</li>
+<li>Instal·lació de Node.js i MongoDB.</li>
+</ul>
+</div><h1>Passos per Construir l'API REST</h1>
+<div class='content'></div><h2>1. Configuració del Projecte</h2>
+<div class='content'><h4>1.1. Crear un Nou Projecte Node.js</h4>
+<p>Obre el terminal i crea una nova carpeta per al projecte. Després, inicialitza un nou projecte Node.js.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bWtkaXIgcmVzdC1hcGktbW9uZ29kYgpjZCByZXN0LWFwaS1tb25nb2RiCm5wbSBpbml0IC15"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>mkdir rest-api-mongodb
+cd rest-api-mongodb
+npm init -y</pre></div><div class='content'><h4>1.2. Instal·lar les Dependències Necessàries</h4>
+<p>Instal·la Express, Mongoose (per interactuar amb MongoDB), i altres dependències necessàries.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnBtIGluc3RhbGwgZXhwcmVzcyBtb25nb29zZSBib2R5LXBhcnNlcg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npm install express mongoose body-parser</pre></div><div class='content'></div><h2>2. Configuració del Servidor</h2>
+<div class='content'><h4>2.1. Crear el Fitxer <code>server.js</code></h4>
+<p>Crea un fitxer anomenat <code>server.js</code> a la carpeta del projecte i afegeix el següent codi per configurar el servidor.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoJ2V4cHJlc3MnKTsKY29uc3QgbW9uZ29vc2UgPSByZXF1aXJlKCdtb25nb29zZScpOwpjb25zdCBib2R5UGFyc2VyID0gcmVxdWlyZSgnYm9keS1wYXJzZXInKTsKCmNvbnN0IGFwcCA9IGV4cHJlc3MoKTsKY29uc3QgcG9ydCA9IDMwMDA7CgovLyBNaWRkbGV3YXJlCmFwcC51c2UoYm9keVBhcnNlci5qc29uKCkpOwoKLy8gQ29ubmV4acOzIGEgTW9uZ29EQgptb25nb29zZS5jb25uZWN0KCdtb25nb2RiOi8vbG9jYWxob3N0OjI3MDE3L3Jlc3RhcGknLCB7CiAgdXNlTmV3VXJsUGFyc2VyOiB0cnVlLAogIHVzZVVuaWZpZWRUb3BvbG9neTogdHJ1ZQp9KS50aGVuKCgpID0+IHsKICBjb25zb2xlLmxvZygnQ29ubmV4acOzIGEgTW9uZ29EQiBlc3RhYmxlcnRhJyk7Cn0pLmNhdGNoKGVyciA9PiB7CiAgY29uc29sZS5lcnJvcignRXJyb3IgY29ubmVjdGFudCBhIE1vbmdvREInLCBlcnIpOwp9KTsKCi8vIFJ1dGEgZGUgcHJvdmEKYXBwLmdldCgnLycsIChyZXEsIHJlcykgPT4gewogIHJlcy5zZW5kKCdBUEkgUkVTVCBhbWIgTW9uZ29EQicpOwp9KTsKCmFwcC5saXN0ZW4ocG9ydCwgKCkgPT4gewogIGNvbnNvbGUubG9nKGBTZXJ2aWRvciBlc2NvbHRhbnQgYSBodHRwOi8vbG9jYWxob3N0OiR7cG9ydH1gKTsKfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+
+const app = express();
+const port = 3000;
+
+// Middleware
+app.use(bodyParser.json());
+
+// Connexi&oacute; a MongoDB
+mongoose.connect('mongodb://localhost:27017/restapi', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() =&gt; {
+  console.log('Connexi&oacute; a MongoDB establerta');
+}).catch(err =&gt; {
+  console.error('Error connectant a MongoDB', err);
+});
+
+// Ruta de prova
+app.get('/', (req, res) =&gt; {
+  res.send('API REST amb MongoDB');
+});
+
+app.listen(port, () =&gt; {
+  console.log(`Servidor escoltant a http://localhost:${port}`);
+});</pre></div><div class='content'></div><h2>3. Creació del Model de Dades</h2>
+<div class='content'><h4>3.1. Definir un Model de Mongoose</h4>
+<p>Crea una carpeta anomenada <code>models</code> i dins d'ella, crea un fitxer <code>user.js</code> per definir el model de dades.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gbW9kZWxzL3VzZXIuanMKY29uc3QgbW9uZ29vc2UgPSByZXF1aXJlKCdtb25nb29zZScpOwoKY29uc3QgdXNlclNjaGVtYSA9IG5ldyBtb25nb29zZS5TY2hlbWEoewogIG5hbWU6IHsKICAgIHR5cGU6IFN0cmluZywKICAgIHJlcXVpcmVkOiB0cnVlCiAgfSwKICBlbWFpbDogewogICAgdHlwZTogU3RyaW5nLAogICAgcmVxdWlyZWQ6IHRydWUsCiAgICB1bmlxdWU6IHRydWUKICB9LAogIGFnZTogewogICAgdHlwZTogTnVtYmVyLAogICAgcmVxdWlyZWQ6IHRydWUKICB9Cn0pOwoKbW9kdWxlLmV4cG9ydHMgPSBtb25nb29zZS5tb2RlbCgnVXNlcicsIHVzZXJTY2hlbWEpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// models/user.js
+const mongoose = require('mongoose');
+
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  age: {
+    type: Number,
+    required: true
+  }
+});
+
+module.exports = mongoose.model('User', userSchema);</pre></div><div class='content'></div><h2>4. Creació de les Rutes CRUD</h2>
+<div class='content'><h4>4.1. Crear el Fitxer de Rutes</h4>
+<p>Crea una carpeta anomenada <code>routes</code> i dins d'ella, crea un fitxer <code>userRoutes.js</code> per definir les rutes CRUD.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gcm91dGVzL3VzZXJSb3V0ZXMuanMKY29uc3QgZXhwcmVzcyA9IHJlcXVpcmUoJ2V4cHJlc3MnKTsKY29uc3Qgcm91dGVyID0gZXhwcmVzcy5Sb3V0ZXIoKTsKY29uc3QgVXNlciA9IHJlcXVpcmUoJy4uL21vZGVscy91c2VyJyk7CgovLyBDcmVhciB1biBub3UgdXN1YXJpCnJvdXRlci5wb3N0KCcvdXNlcnMnLCBhc3luYyAocmVxLCByZXMpID0+IHsKICB0cnkgewogICAgY29uc3QgdXNlciA9IG5ldyBVc2VyKHJlcS5ib2R5KTsKICAgIGF3YWl0IHVzZXIuc2F2ZSgpOwogICAgcmVzLnN0YXR1cygyMDEpLnNlbmQodXNlcik7CiAgfSBjYXRjaCAoZXJyb3IpIHsKICAgIHJlcy5zdGF0dXMoNDAwKS5zZW5kKGVycm9yKTsKICB9Cn0pOwoKLy8gTGxlZ2lyIHRvdHMgZWxzIHVzdWFyaXMKcm91dGVyLmdldCgnL3VzZXJzJywgYXN5bmMgKHJlcSwgcmVzKSA9PiB7CiAgdHJ5IHsKICAgIGNvbnN0IHVzZXJzID0gYXdhaXQgVXNlci5maW5kKCk7CiAgICByZXMuc3RhdHVzKDIwMCkuc2VuZCh1c2Vycyk7CiAgfSBjYXRjaCAoZXJyb3IpIHsKICAgIHJlcy5zdGF0dXMoNTAwKS5zZW5kKGVycm9yKTsKICB9Cn0pOwoKLy8gTGxlZ2lyIHVuIHVzdWFyaSBwZXIgSUQKcm91dGVyLmdldCgnL3VzZXJzLzppZCcsIGFzeW5jIChyZXEsIHJlcykgPT4gewogIHRyeSB7CiAgICBjb25zdCB1c2VyID0gYXdhaXQgVXNlci5maW5kQnlJZChyZXEucGFyYW1zLmlkKTsKICAgIGlmICghdXNlcikgewogICAgICByZXR1cm4gcmVzLnN0YXR1cyg0MDQpLnNlbmQoKTsKICAgIH0KICAgIHJlcy5zdGF0dXMoMjAwKS5zZW5kKHVzZXIpOwogIH0gY2F0Y2ggKGVycm9yKSB7CiAgICByZXMuc3RhdHVzKDUwMCkuc2VuZChlcnJvcik7CiAgfQp9KTsKCi8vIEFjdHVhbGl0emFyIHVuIHVzdWFyaSBwZXIgSUQKcm91dGVyLnBhdGNoKCcvdXNlcnMvOmlkJywgYXN5bmMgKHJlcSwgcmVzKSA9PiB7CiAgdHJ5IHsKICAgIGNvbnN0IHVzZXIgPSBhd2FpdCBVc2VyLmZpbmRCeUlkQW5kVXBkYXRlKHJlcS5wYXJhbXMuaWQsIHJlcS5ib2R5LCB7IG5ldzogdHJ1ZSwgcnVuVmFsaWRhdG9yczogdHJ1ZSB9KTsKICAgIGlmICghdXNlcikgewogICAgICByZXR1cm4gcmVzLnN0YXR1cyg0MDQpLnNlbmQoKTsKICAgIH0KICAgIHJlcy5zdGF0dXMoMjAwKS5zZW5kKHVzZXIpOwogIH0gY2F0Y2ggKGVycm9yKSB7CiAgICByZXMuc3RhdHVzKDQwMCkuc2VuZChlcnJvcik7CiAgfQp9KTsKCi8vIEVsaW1pbmFyIHVuIHVzdWFyaSBwZXIgSUQKcm91dGVyLmRlbGV0ZSgnL3VzZXJzLzppZCcsIGFzeW5jIChyZXEsIHJlcykgPT4gewogIHRyeSB7CiAgICBjb25zdCB1c2VyID0gYXdhaXQgVXNlci5maW5kQnlJZEFuZERlbGV0ZShyZXEucGFyYW1zLmlkKTsKICAgIGlmICghdXNlcikgewogICAgICByZXR1cm4gcmVzLnN0YXR1cyg0MDQpLnNlbmQoKTsKICAgIH0KICAgIHJlcy5zdGF0dXMoMjAwKS5zZW5kKHVzZXIpOwogIH0gY2F0Y2ggKGVycm9yKSB7CiAgICByZXMuc3RhdHVzKDUwMCkuc2VuZChlcnJvcik7CiAgfQp9KTsKCm1vZHVsZS5leHBvcnRzID0gcm91dGVyOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// routes/userRoutes.js
+const express = require('express');
+const router = express.Router();
+const User = require('../models/user');
+
+// Crear un nou usuari
+router.post('/users', async (req, res) =&gt; {
+  try {
+    const user = new User(req.body);
+    await user.save();
+    res.status(201).send(user);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+// Llegir tots els usuaris
+router.get('/users', async (req, res) =&gt; {
+  try {
+    const users = await User.find();
+    res.status(200).send(users);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+// Llegir un usuari per ID
+router.get('/users/:id', async (req, res) =&gt; {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).send();
+    }
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+// Actualitzar un usuari per ID
+router.patch('/users/:id', async (req, res) =&gt; {
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!user) {
+      return res.status(404).send();
+    }
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
+// Eliminar un usuari per ID
+router.delete('/users/:id', async (req, res) =&gt; {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).send();
+    }
+    res.status(200).send(user);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+});
+
+module.exports = router;</pre></div><div class='content'><h4>4.2. Integrar les Rutes al Servidor</h4>
+<p>Modifica el fitxer <code>server.js</code> per utilitzar les rutes que acabem de crear.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gc2VydmVyLmpzCmNvbnN0IGV4cHJlc3MgPSByZXF1aXJlKCdleHByZXNzJyk7CmNvbnN0IG1vbmdvb3NlID0gcmVxdWlyZSgnbW9uZ29vc2UnKTsKY29uc3QgYm9keVBhcnNlciA9IHJlcXVpcmUoJ2JvZHktcGFyc2VyJyk7CmNvbnN0IHVzZXJSb3V0ZXMgPSByZXF1aXJlKCcuL3JvdXRlcy91c2VyUm91dGVzJyk7Cgpjb25zdCBhcHAgPSBleHByZXNzKCk7CmNvbnN0IHBvcnQgPSAzMDAwOwoKLy8gTWlkZGxld2FyZQphcHAudXNlKGJvZHlQYXJzZXIuanNvbigpKTsKCi8vIENvbm5leGnDsyBhIE1vbmdvREIKbW9uZ29vc2UuY29ubmVjdCgnbW9uZ29kYjovL2xvY2FsaG9zdDoyNzAxNy9yZXN0YXBpJywgewogIHVzZU5ld1VybFBhcnNlcjogdHJ1ZSwKICB1c2VVbmlmaWVkVG9wb2xvZ3k6IHRydWUKfSkudGhlbigoKSA9PiB7CiAgY29uc29sZS5sb2coJ0Nvbm5leGnDsyBhIE1vbmdvREIgZXN0YWJsZXJ0YScpOwp9KS5jYXRjaChlcnIgPT4gewogIGNvbnNvbGUuZXJyb3IoJ0Vycm9yIGNvbm5lY3RhbnQgYSBNb25nb0RCJywgZXJyKTsKfSk7CgovLyBVdGlsaXR6YXIgbGVzIHJ1dGVzCmFwcC51c2UoJy9hcGknLCB1c2VyUm91dGVzKTsKCmFwcC5saXN0ZW4ocG9ydCwgKCkgPT4gewogIGNvbnNvbGUubG9nKGBTZXJ2aWRvciBlc2NvbHRhbnQgYSBodHRwOi8vbG9jYWxob3N0OiR7cG9ydH1gKTsKfSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// server.js
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const userRoutes = require('./routes/userRoutes');
+
+const app = express();
+const port = 3000;
+
+// Middleware
+app.use(bodyParser.json());
+
+// Connexi&oacute; a MongoDB
+mongoose.connect('mongodb://localhost:27017/restapi', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() =&gt; {
+  console.log('Connexi&oacute; a MongoDB establerta');
+}).catch(err =&gt; {
+  console.error('Error connectant a MongoDB', err);
+});
+
+// Utilitzar les rutes
+app.use('/api', userRoutes);
+
+app.listen(port, () =&gt; {
+  console.log(`Servidor escoltant a http://localhost:${port}`);
+});</pre></div><div class='content'></div><h2>5. Provar l'API</h2>
+<div class='content'><h4>5.1. Utilitzar Postman per Provar les Rutes</h4>
+<ul>
+<li><strong>Crear un nou usuari</strong>: Envia una petició POST a <code>http://localhost:3000/api/users</code> amb el cos de la petició en format JSON.</li>
+<li><strong>Llegir tots els usuaris</strong>: Envia una petició GET a <code>http://localhost:3000/api/users</code>.</li>
+<li><strong>Llegir un usuari per ID</strong>: Envia una petició GET a <code>http://localhost:3000/api/users/:id</code>.</li>
+<li><strong>Actualitzar un usuari per ID</strong>: Envia una petició PATCH a <code>http://localhost:3000/api/users/:id</code> amb el cos de la petició en format JSON.</li>
+<li><strong>Eliminar un usuari per ID</strong>: Envia una petició DELETE a <code>http://localhost:3000/api/users/:id</code>.</li>
+</ul>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après a construir una API REST utilitzant Node.js, Express i MongoDB. Hem configurat el servidor, creat un model de dades, definit rutes per a les operacions CRUD, i provat l'API amb Postman. Aquest coneixement és fonamental per desenvolupar aplicacions web modernes que necessiten gestionar dades de manera eficient.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-mongodb-with-csharp' title="MongoDB amb C#">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-ecommerce-application' title="Aplicació de Comerç Electrònic">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

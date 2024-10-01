@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assegurant Elasticsearch</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/elasticsearch/06-01-securing-elasticsearch" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/elasticsearch/06-01-securing-elasticsearch" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/elasticsearch/06-01-securing-elasticsearch" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/elasticsearch/06-01-securing-elasticsearch" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/elasticsearch/06-01-securing-elasticsearch" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-backup-restore' title="Còpia de Seguretat i Restauració">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Assegurant Elasticsearch</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-02-user-authentication-authorization' title="Autenticació i Autorització d'Usuaris">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com assegurar Elasticsearch per protegir les dades i garantir que només els usuaris autoritzats tinguin accés. La seguretat és un aspecte crític en qualsevol sistema de gestió de dades, i Elasticsearch no és una excepció. A continuació, desglossarem els conceptes clau i les pràctiques recomanades per assegurar Elasticsearch.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Autenticació</strong>: Verificació de la identitat dels usuaris que intenten accedir al sistema.</li>
+<li><strong>Autorització</strong>: Determinació dels permisos i nivells d'accés dels usuaris autenticats.</li>
+<li><strong>Xifratge</strong>: Protecció de les dades en trànsit i en repòs mitjançant tècniques de xifratge.</li>
+<li><strong>Seguretat de la Xarxa</strong>: Configuració de la xarxa per limitar l'accés a Elasticsearch només a usuaris i sistemes autoritzats.</li>
+</ol>
+</div><h1>Configuració de la Seguretat Bàsica</h1>
+<div class='content'></div><h2>1. Instal·lació del Mòdul de Seguretat</h2>
+<div class='content'><p>Elasticsearch inclou un mòdul de seguretat anomenat &quot;Elastic Security&quot;. Per activar-lo, cal assegurar-se que el mòdul està instal·lat i configurat correctament.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBJbnN0YWzCt2xhY2nDsyBkZWwgbcOyZHVsIGRlIHNlZ3VyZXRhdCAoc2kgbm8gZXN0w6AgamEgaW5zdGFswrdsYXQpCmJpbi9lbGFzdGljc2VhcmNoLXBsdWdpbiBpbnN0YWxsIHgtcGFjaw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Instal&middot;laci&oacute; del m&ograve;dul de seguretat (si no est&agrave; ja instal&middot;lat)
+bin/elasticsearch-plugin install x-pack</pre></div><div class='content'></div><h2>2. Configuració de l'Autenticació</h2>
+<div class='content'><p>Per configurar l'autenticació, cal definir usuaris i rols. Això es pot fer mitjançant el fitxer <code>elasticsearch.yml</code> o utilitzant l'API de seguretat.</p>
+<h4>Exemple de Configuració en <code>elasticsearch.yml</code>:</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("eHBhY2suc2VjdXJpdHkuZW5hYmxlZDogdHJ1ZQp4cGFjay5zZWN1cml0eS50cmFuc3BvcnQuc3NsLmVuYWJsZWQ6IHRydWUKeHBhY2suc2VjdXJpdHkudHJhbnNwb3J0LnNzbC52ZXJpZmljYXRpb25fbW9kZTogY2VydGlmaWNhdGUKeHBhY2suc2VjdXJpdHkudHJhbnNwb3J0LnNzbC5rZXlzdG9yZS5wYXRoOiAvcGF0aC90by9rZXlzdG9yZS5wMTIKeHBhY2suc2VjdXJpdHkudHJhbnNwb3J0LnNzbC50cnVzdHN0b3JlLnBhdGg6IC9wYXRoL3RvL3RydXN0c3RvcmUucDEy"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>xpack.security.enabled: true
+xpack.security.transport.ssl.enabled: true
+xpack.security.transport.ssl.verification_mode: certificate
+xpack.security.transport.ssl.keystore.path: /path/to/keystore.p12
+xpack.security.transport.ssl.truststore.path: /path/to/truststore.p12</pre></div><div class='content'><h4>Creació d'Usuaris i Rols amb l'API:</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDcmVhY2nDsyBkJ3VuIHVzdWFyaQpjdXJsIC1YIFBPU1QgImxvY2FsaG9zdDo5MjAwL19zZWN1cml0eS91c2VyL2pvaG5fZG9lIiAtSCAnQ29udGVudC1UeXBlOiBhcHBsaWNhdGlvbi9qc29uJyAtZCcKewogICJwYXNzd29yZCIgOiAicGFzc3dvcmQxMjMiLAogICJyb2xlcyIgOiBbICJhZG1pbiIgXSwKICAiZnVsbF9uYW1lIiA6ICJKb2huIERvZSIsCiAgImVtYWlsIiA6ICJqb2huLmRvZUBleGFtcGxlLmNvbSIKfQonCgojIENyZWFjacOzIGQndW4gcm9sCmN1cmwgLVggUE9TVCAibG9jYWxob3N0OjkyMDAvX3NlY3VyaXR5L3JvbGUvYWRtaW4iIC1IICdDb250ZW50LVR5cGU6IGFwcGxpY2F0aW9uL2pzb24nIC1kJwp7CiAgImNsdXN0ZXIiOiBbImFsbCJdLAogICJpbmRpY2VzIjogWwogICAgewogICAgICAibmFtZXMiOiBbICIqIiBdLAogICAgICAicHJpdmlsZWdlcyI6IFsiYWxsIl0KICAgIH0KICBdCn0KJw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Creaci&oacute; d'un usuari
+curl -X POST &quot;localhost:9200/_security/user/john_doe&quot; -H 'Content-Type: application/json' -d'
+{
+  &quot;password&quot; : &quot;password123&quot;,
+  &quot;roles&quot; : [ &quot;admin&quot; ],
+  &quot;full_name&quot; : &quot;John Doe&quot;,
+  &quot;email&quot; : &quot;john.doe@example.com&quot;
+}
+'
+
+# Creaci&oacute; d'un rol
+curl -X POST &quot;localhost:9200/_security/role/admin&quot; -H 'Content-Type: application/json' -d'
+{
+  &quot;cluster&quot;: [&quot;all&quot;],
+  &quot;indices&quot;: [
+    {
+      &quot;names&quot;: [ &quot;*&quot; ],
+      &quot;privileges&quot;: [&quot;all&quot;]
+    }
+  ]
+}
+'</pre></div><div class='content'></div><h2>3. Xifratge de les Comunicacions</h2>
+<div class='content'><p>Per assegurar que les dades en trànsit estan protegides, és important configurar el xifratge TLS (Transport Layer Security).</p>
+<h4>Generació de Certificats TLS:</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBHZW5lcmFjacOzIGQndW4gY2VydGlmaWNhdCBhdXRvZmlybWF0CmJpbi9lbGFzdGljc2VhcmNoLWNlcnR1dGlsIGNhCmJpbi9lbGFzdGljc2VhcmNoLWNlcnR1dGlsIGNlcnQgLS1jYSBlbGFzdGljLXN0YWNrLWNhLnAxMg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Generaci&oacute; d'un certificat autofirmat
+bin/elasticsearch-certutil ca
+bin/elasticsearch-certutil cert --ca elastic-stack-ca.p12</pre></div><div class='content'><h4>Configuració del TLS en <code>elasticsearch.yml</code>:</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("eHBhY2suc2VjdXJpdHkuaHR0cC5zc2wuZW5hYmxlZDogdHJ1ZQp4cGFjay5zZWN1cml0eS5odHRwLnNzbC5rZXlzdG9yZS5wYXRoOiAvcGF0aC90by9rZXlzdG9yZS5wMTIKeHBhY2suc2VjdXJpdHkuaHR0cC5zc2wudHJ1c3RzdG9yZS5wYXRoOiAvcGF0aC90by90cnVzdHN0b3JlLnAxMg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>xpack.security.http.ssl.enabled: true
+xpack.security.http.ssl.keystore.path: /path/to/keystore.p12
+xpack.security.http.ssl.truststore.path: /path/to/truststore.p12</pre></div><div class='content'></div><h2>4. Seguretat de la Xarxa</h2>
+<div class='content'><p>Configura el tallafocs i les regles de seguretat de la xarxa per limitar l'accés a Elasticsearch només a les adreces IP de confiança.</p>
+<h4>Exemple de Configuració del Tallafocs:</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBQZXJtZXRyZSBub23DqXMgY29ubmV4aW9ucyBkZXMgZGUgbCdhZHJlw6dhIElQIDE5Mi4xNjguMS4xMDAKc3VkbyB1ZncgYWxsb3cgZnJvbSAxOTIuMTY4LjEuMTAwIHRvIGFueSBwb3J0IDkyMDA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Permetre nom&eacute;s connexions des de l'adre&ccedil;a IP 192.168.1.100
+sudo ufw allow from 192.168.1.100 to any port 9200</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Configuració Bàsica de Seguretat</h2>
+<div class='content'><ol>
+<li>Instal·la el mòdul de seguretat d'Elasticsearch.</li>
+<li>Configura l'autenticació i crea un usuari amb rol d'administrador.</li>
+<li>Habilita el xifratge TLS per a les comunicacions HTTP.</li>
+</ol>
+</div><h2>Exercici 2: Configuració de la Xarxa</h2>
+<div class='content'><ol>
+<li>Configura el tallafocs per permetre l'accés a Elasticsearch només des d'una adreça IP específica.</li>
+</ol>
+</div><h1>Solucions</h1>
+<div class='content'></div><h2>Solució a l'Exercici 1</h2>
+<div class='content'><ol>
+<li>Instal·lació del mòdul de seguretat:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YmluL2VsYXN0aWNzZWFyY2gtcGx1Z2luIGluc3RhbGwgeC1wYWNr"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>bin/elasticsearch-plugin install x-pack</pre></div><div class='content'><ol start="2">
+<li>Configuració de l'autenticació en <code>elasticsearch.yml</code>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("eHBhY2suc2VjdXJpdHkuZW5hYmxlZDogdHJ1ZQp4cGFjay5zZWN1cml0eS50cmFuc3BvcnQuc3NsLmVuYWJsZWQ6IHRydWUKeHBhY2suc2VjdXJpdHkudHJhbnNwb3J0LnNzbC52ZXJpZmljYXRpb25fbW9kZTogY2VydGlmaWNhdGUKeHBhY2suc2VjdXJpdHkudHJhbnNwb3J0LnNzbC5rZXlzdG9yZS5wYXRoOiAvcGF0aC90by9rZXlzdG9yZS5wMTIKeHBhY2suc2VjdXJpdHkudHJhbnNwb3J0LnNzbC50cnVzdHN0b3JlLnBhdGg6IC9wYXRoL3RvL3RydXN0c3RvcmUucDEy"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>xpack.security.enabled: true
+xpack.security.transport.ssl.enabled: true
+xpack.security.transport.ssl.verification_mode: certificate
+xpack.security.transport.ssl.keystore.path: /path/to/keystore.p12
+xpack.security.transport.ssl.truststore.path: /path/to/truststore.p12</pre></div><div class='content'><ol start="3">
+<li>Creació d'un usuari i rol amb l'API:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y3VybCAtWCBQT1NUICJsb2NhbGhvc3Q6OTIwMC9fc2VjdXJpdHkvdXNlci9qb2huX2RvZSIgLUggJ0NvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vanNvbicgLWQnCnsKICAicGFzc3dvcmQiIDogInBhc3N3b3JkMTIzIiwKICAicm9sZXMiIDogWyAiYWRtaW4iIF0sCiAgImZ1bGxfbmFtZSIgOiAiSm9obiBEb2UiLAogICJlbWFpbCIgOiAiam9obi5kb2VAZXhhbXBsZS5jb20iCn0KJwoKY3VybCAtWCBQT1NUICJsb2NhbGhvc3Q6OTIwMC9fc2VjdXJpdHkvcm9sZS9hZG1pbiIgLUggJ0NvbnRlbnQtVHlwZTogYXBwbGljYXRpb24vanNvbicgLWQnCnsKICAiY2x1c3RlciI6IFsiYWxsIl0sCiAgImluZGljZXMiOiBbCiAgICB7CiAgICAgICJuYW1lcyI6IFsgIioiIF0sCiAgICAgICJwcml2aWxlZ2VzIjogWyJhbGwiXQogICAgfQogIF0KfQon"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>curl -X POST &quot;localhost:9200/_security/user/john_doe&quot; -H 'Content-Type: application/json' -d'
+{
+  &quot;password&quot; : &quot;password123&quot;,
+  &quot;roles&quot; : [ &quot;admin&quot; ],
+  &quot;full_name&quot; : &quot;John Doe&quot;,
+  &quot;email&quot; : &quot;john.doe@example.com&quot;
+}
+'
+
+curl -X POST &quot;localhost:9200/_security/role/admin&quot; -H 'Content-Type: application/json' -d'
+{
+  &quot;cluster&quot;: [&quot;all&quot;],
+  &quot;indices&quot;: [
+    {
+      &quot;names&quot;: [ &quot;*&quot; ],
+      &quot;privileges&quot;: [&quot;all&quot;]
+    }
+  ]
+}
+'</pre></div><div class='content'><ol start="4">
+<li>Habilitació del xifratge TLS:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("eHBhY2suc2VjdXJpdHkuaHR0cC5zc2wuZW5hYmxlZDogdHJ1ZQp4cGFjay5zZWN1cml0eS5odHRwLnNzbC5rZXlzdG9yZS5wYXRoOiAvcGF0aC90by9rZXlzdG9yZS5wMTIKeHBhY2suc2VjdXJpdHkuaHR0cC5zc2wudHJ1c3RzdG9yZS5wYXRoOiAvcGF0aC90by90cnVzdHN0b3JlLnAxMg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>xpack.security.http.ssl.enabled: true
+xpack.security.http.ssl.keystore.path: /path/to/keystore.p12
+xpack.security.http.ssl.truststore.path: /path/to/truststore.p12</pre></div><div class='content'></div><h2>Solució a l'Exercici 2</h2>
+<div class='content'><ol>
+<li>Configuració del tallafocs:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3VkbyB1ZncgYWxsb3cgZnJvbSAxOTIuMTY4LjEuMTAwIHRvIGFueSBwb3J0IDkyMDA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>sudo ufw allow from 192.168.1.100 to any port 9200</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com assegurar Elasticsearch mitjançant la configuració de l'autenticació, l'autorització, el xifratge de les comunicacions i la seguretat de la xarxa. Aquests passos són essencials per protegir les dades i garantir que només els usuaris autoritzats tinguin accés al sistema. En el proper tema, explorarem com configurar l'autenticació i l'autorització d'usuaris en més detall.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-backup-restore' title="Còpia de Seguretat i Restauració">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-02-user-authentication-authorization' title="Autenticació i Autorització d'Usuaris">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaluació i predicció amb models</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/bigquery/09-03-evaluating-predicting-models" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/bigquery/09-03-evaluating-predicting-models" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/bigquery/09-03-evaluating-predicting-models" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/bigquery/09-03-evaluating-predicting-models" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/bigquery/09-03-evaluating-predicting-models" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-02-creating-training-models' title="Creació i entrenament de models">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Avaluació i predicció amb models</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-04-advanced-bqml-features' title="Funcions avançades de BQML">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com avaluar els models de Machine Learning creats amb BigQuery ML (BQML) i com utilitzar aquests models per fer prediccions. Aquest procés és crucial per assegurar-nos que els nostres models funcionen correctament i proporcionen resultats precisos.</p>
+</div><h1>1. Avaluació de models</h1>
+<div class='content'></div><h2>1.1. Mètriques d'avaluació</h2>
+<div class='content'><p>BigQuery ML proporciona diverses mètriques per avaluar els models de Machine Learning. Les mètriques varien segons el tipus de model (classificació, regressió, etc.). Algunes de les mètriques més comunes són:</p>
+<ul>
+<li><strong>Accuracy</strong>: Proporció de prediccions correctes respecte al total de prediccions.</li>
+<li><strong>Precision</strong>: Proporció de prediccions positives correctes respecte al total de prediccions positives.</li>
+<li><strong>Recall</strong>: Proporció de prediccions positives correctes respecte al total de casos reals positius.</li>
+<li><strong>F1 Score</strong>: Mitjana harmònica de la precisió i el recall.</li>
+<li><strong>Mean Absolute Error (MAE)</strong>: Promig dels errors absoluts entre les prediccions i els valors reals.</li>
+<li><strong>Root Mean Squared Error (RMSE)</strong>: Arrel quadrada del promig dels errors quadrats entre les prediccions i els valors reals.</li>
+</ul>
+</div><h2>1.2. Exemple pràctic: Avaluació d'un model de classificació</h2>
+<div class='content'><p>Suposem que hem creat un model de classificació per predir si un client farà una compra. Utilitzarem la funció <code>ML.EVALUATE</code> per obtenir les mètriques d'avaluació del model.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUCiAgKgpGUk9NCiAgTUwuRVZBTFVBVEUoTU9ERUwgYHByb2plY3RfaWQuZGF0YXNldC5tb2RlbF9uYW1lYCwgKAogICAgU0VMRUNUCiAgICAgICoKICAgIEZST00KICAgICAgYHByb2plY3RfaWQuZGF0YXNldC5ldmFsdWF0aW9uX2RhdGFgCiAgKSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT
+  *
+FROM
+  ML.EVALUATE(MODEL `project_id.dataset.model_name`, (
+    SELECT
+      *
+    FROM
+      `project_id.dataset.evaluation_data`
+  ))</pre></div><div class='content'></div><h2>Explicació del codi</h2>
+<div class='content'><ul>
+<li><code>ML.EVALUATE</code>: Funció de BigQuery ML per avaluar un model.</li>
+<li><code>MODEL project_id.dataset.model_name</code>: Especifica el model que volem avaluar.</li>
+<li><code>evaluation_data</code>: Conjunt de dades utilitzat per avaluar el model.</li>
+</ul>
+</div><h1>2. Predicció amb models</h1>
+<div class='content'></div><h2>2.1. Realitzar prediccions</h2>
+<div class='content'><p>Un cop hem avaluat el nostre model i estem satisfets amb el seu rendiment, podem utilitzar-lo per fer prediccions sobre noves dades. Utilitzarem la funció <code>ML.PREDICT</code> per fer-ho.</p>
+</div><h2>2.2. Exemple pràctic: Predicció amb un model de classificació</h2>
+<div class='content'><p>Continuant amb l'exemple anterior, utilitzarem el model de classificació per predir si nous clients faran una compra.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUCiAgKgpGUk9NCiAgTUwuUFJFRElDVChNT0RFTCBgcHJvamVjdF9pZC5kYXRhc2V0Lm1vZGVsX25hbWVgLCAoCiAgICBTRUxFQ1QKICAgICAgKgogICAgRlJPTQogICAgICBgcHJvamVjdF9pZC5kYXRhc2V0Lm5ld19kYXRhYAogICkp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT
+  *
+FROM
+  ML.PREDICT(MODEL `project_id.dataset.model_name`, (
+    SELECT
+      *
+    FROM
+      `project_id.dataset.new_data`
+  ))</pre></div><div class='content'></div><h2>Explicació del codi</h2>
+<div class='content'><ul>
+<li><code>ML.PREDICT</code>: Funció de BigQuery ML per fer prediccions amb un model.</li>
+<li><code>MODEL project_id.dataset.model_name</code>: Especifica el model que volem utilitzar per fer prediccions.</li>
+<li><code>new_data</code>: Conjunt de dades sobre el qual volem fer prediccions.</li>
+</ul>
+</div><h1>3. Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Avaluació d'un model de regressió</h2>
+<div class='content'><ol>
+<li>Crea un model de regressió per predir el preu d'habitatges.</li>
+<li>Utilitza la funció <code>ML.EVALUATE</code> per obtenir les mètriques d'avaluació del model.</li>
+<li>Interpreta les mètriques obtingudes.</li>
+</ol>
+</div><h2>Exercici 2: Predicció amb un model de regressió</h2>
+<div class='content'><ol>
+<li>Utilitza el model de regressió creat en l'exercici anterior per predir el preu d'habitatges en un nou conjunt de dades.</li>
+<li>Utilitza la funció <code>ML.PREDICT</code> per fer les prediccions.</li>
+<li>Analitza els resultats obtinguts.</li>
+</ol>
+</div><h1>Solucions</h1>
+<div class='content'></div><h2>Solució a l'Exercici 1</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gQ3JlYWNpw7MgZGVsIG1vZGVsIGRlIHJlZ3Jlc3Npw7MKQ1JFQVRFIE9SIFJFUExBQ0UgTU9ERUwgYHByb2plY3RfaWQuZGF0YXNldC5ob3VzZV9wcmljZV9tb2RlbGAKT1BUSU9OUyhtb2RlbF90eXBlPSdsaW5lYXJfcmVnJykgQVMKU0VMRUNUCiAgKgpGUk9NCiAgYHByb2plY3RfaWQuZGF0YXNldC50cmFpbmluZ19kYXRhYDsKCi0tIEF2YWx1YWNpw7MgZGVsIG1vZGVsClNFTEVDVAogICoKRlJPTQogIE1MLkVWQUxVQVRFKE1PREVMIGBwcm9qZWN0X2lkLmRhdGFzZXQuaG91c2VfcHJpY2VfbW9kZWxgLCAoCiAgICBTRUxFQ1QKICAgICAgKgogICAgRlJPTQogICAgICBgcHJvamVjdF9pZC5kYXRhc2V0LmV2YWx1YXRpb25fZGF0YWAKICApKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Creaci&oacute; del model de regressi&oacute;
+CREATE OR REPLACE MODEL `project_id.dataset.house_price_model`
+OPTIONS(model_type='linear_reg') AS
+SELECT
+  *
+FROM
+  `project_id.dataset.training_data`;
+
+-- Avaluaci&oacute; del model
+SELECT
+  *
+FROM
+  ML.EVALUATE(MODEL `project_id.dataset.house_price_model`, (
+    SELECT
+      *
+    FROM
+      `project_id.dataset.evaluation_data`
+  ));</pre></div><div class='content'></div><h2>Solució a l'Exercici 2</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gUHJlZGljY2nDsyBhbWIgZWwgbW9kZWwgZGUgcmVncmVzc2nDswpTRUxFQ1QKICAqCkZST00KICBNTC5QUkVESUNUKE1PREVMIGBwcm9qZWN0X2lkLmRhdGFzZXQuaG91c2VfcHJpY2VfbW9kZWxgLCAoCiAgICBTRUxFQ1QKICAgICAgKgogICAgRlJPTQogICAgICBgcHJvamVjdF9pZC5kYXRhc2V0Lm5ld19kYXRhYAogICkpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Predicci&oacute; amb el model de regressi&oacute;
+SELECT
+  *
+FROM
+  ML.PREDICT(MODEL `project_id.dataset.house_price_model`, (
+    SELECT
+      *
+    FROM
+      `project_id.dataset.new_data`
+  ));</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com avaluar els models de Machine Learning creats amb BigQuery ML utilitzant diverses mètriques d'avaluació. També hem vist com utilitzar aquests models per fer prediccions sobre noves dades. Aquests passos són essencials per assegurar-nos que els nostres models funcionen correctament i proporcionen resultats precisos. En el proper tema, explorarem les funcions avançades de BQML per millorar encara més els nostres models.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-02-creating-training-models' title="Creació i entrenament de models">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-04-advanced-bqml-features' title="Funcions avançades de BQML">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

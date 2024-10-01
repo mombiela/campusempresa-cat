@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió de Memòria</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/direct_x/06-03-memory-management" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/direct_x/06-03-memory-management" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/direct_x/06-03-memory-management" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/direct_x/06-03-memory-management" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/direct_x/06-03-memory-management" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-optimizing-rendering-performance' title="Optimitzar el Rendiment de la Renderització">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Gestió de Memòria</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-multithreading-directx' title="Multifil en DirectX">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La gestió de memòria és un aspecte crucial en el desenvolupament de qualsevol aplicació gràfica, especialment quan es treballa amb DirectX. Una gestió de memòria eficient pot millorar significativament el rendiment de la teva aplicació i evitar problemes com fuites de memòria i errors de segmentació. En aquest tema, explorarem les tècniques i les millors pràctiques per gestionar la memòria en aplicacions DirectX.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Memòria de Vídeo vs. Memòria del Sistema</strong>:</p>
+<ul>
+<li><strong>Memòria de Vídeo (VRAM)</strong>: Utilitzada per emmagatzemar textures, buffers de vèrtexs, i altres dades gràfiques.</li>
+<li><strong>Memòria del Sistema (RAM)</strong>: Utilitzada per emmagatzemar dades de l'aplicació, incloent estructures de dades i codi.</li>
+</ul>
+</li>
+<li>
+<p><strong>Buffers de Vèrtexs i Índexs</strong>:</p>
+<ul>
+<li><strong>Buffers de Vèrtexs</strong>: Emmagatzemen les coordenades dels vèrtexs.</li>
+<li><strong>Buffers d'Índexs</strong>: Emmagatzemen els índexs que defineixen com es connecten els vèrtexs per formar primitives (com triangles).</li>
+</ul>
+</li>
+<li>
+<p><strong>Textures</strong>:</p>
+<ul>
+<li>Emmagatzemen imatges que es poden aplicar a superfícies 3D per donar-los aparença detallada.</li>
+</ul>
+</li>
+<li>
+<p><strong>Gestió de Recursos</strong>:</p>
+<ul>
+<li><strong>Creació i Destrucció</strong>: Com crear i destruir recursos de manera eficient.</li>
+<li><strong>Mapatge i Desmapatge</strong>: Com accedir i modificar dades en buffers i textures.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Creació i Destrucció de Recursos</h1>
+<div class='content'></div><h2>Creació de Buffers</h2>
+<div class='content'><p>Per crear un buffer de vèrtexs en DirectX, utilitzem la funció <code>CreateBuffer</code>. Aquí tens un exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRXN0cnVjdHVyYSBkZSBkYWRlcyBwZXIgYSB1biB2w6hydGV4CnN0cnVjdCBWZXJ0ZXggewogICAgZmxvYXQgeCwgeSwgejsgLy8gQ29vcmRlbmFkZXMgZGVsIHbDqHJ0ZXgKICAgIGZsb2F0IHIsIGcsIGI7IC8vIENvbG9yIGRlbCB2w6hydGV4Cn07CgovLyBEYWRlcyBkZWxzIHbDqHJ0ZXhzClZlcnRleCB2ZXJ0aWNlc1tdID0gewogICAgezAuMGYsIDAuNWYsIDAuMGYsIDEuMGYsIDAuMGYsIDAuMGZ9LAogICAgezAuNWYsIC0wLjVmLCAwLjBmLCAwLjBmLCAxLjBmLCAwLjBmfSwKICAgIHstMC41ZiwgLTAuNWYsIDAuMGYsIDAuMGYsIDAuMGYsIDEuMGZ9Cn07CgovLyBEZXNjcmlwY2nDsyBkZWwgYnVmZmVyCkQzRDExX0JVRkZFUl9ERVNDIGJ1ZmZlckRlc2MgPSB7fTsKYnVmZmVyRGVzYy5Vc2FnZSA9IEQzRDExX1VTQUdFX0RFRkFVTFQ7CmJ1ZmZlckRlc2MuQnl0ZVdpZHRoID0gc2l6ZW9mKHZlcnRpY2VzKTsKYnVmZmVyRGVzYy5CaW5kRmxhZ3MgPSBEM0QxMV9CSU5EX1ZFUlRFWF9CVUZGRVI7CmJ1ZmZlckRlc2MuQ1BVQWNjZXNzRmxhZ3MgPSAwOwoKLy8gRGFkZXMgaW5pY2lhbHMgZGVsIGJ1ZmZlcgpEM0QxMV9TVUJSRVNPVVJDRV9EQVRBIGluaXREYXRhID0ge307CmluaXREYXRhLnBTeXNNZW0gPSB2ZXJ0aWNlczsKCi8vIENyZWFjacOzIGRlbCBidWZmZXIKSUQzRDExQnVmZmVyKiB2ZXJ0ZXhCdWZmZXI7CkhSRVNVTFQgaHIgPSBkZXZpY2UtPkNyZWF0ZUJ1ZmZlcigmYnVmZmVyRGVzYywgJmluaXREYXRhLCAmdmVydGV4QnVmZmVyKTsKaWYgKEZBSUxFRChocikpIHsKICAgIC8vIE1hbmVqYXIgbCdlcnJvcgp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Estructura de dades per a un v&egrave;rtex
+struct Vertex {
+    float x, y, z; // Coordenades del v&egrave;rtex
+    float r, g, b; // Color del v&egrave;rtex
+};
+
+// Dades dels v&egrave;rtexs
+Vertex vertices[] = {
+    {0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f},
+    {0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f},
+    {-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f}
+};
+
+// Descripci&oacute; del buffer
+D3D11_BUFFER_DESC bufferDesc = {};
+bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+bufferDesc.ByteWidth = sizeof(vertices);
+bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+bufferDesc.CPUAccessFlags = 0;
+
+// Dades inicials del buffer
+D3D11_SUBRESOURCE_DATA initData = {};
+initData.pSysMem = vertices;
+
+// Creaci&oacute; del buffer
+ID3D11Buffer* vertexBuffer;
+HRESULT hr = device-&gt;CreateBuffer(&amp;bufferDesc, &amp;initData, &amp;vertexBuffer);
+if (FAILED(hr)) {
+    // Manejar l'error
+}</pre></div><div class='content'></div><h2>Destrucció de Buffers</h2>
+<div class='content'><p>Per destruir un buffer, simplement alliberem la memòria associada:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aWYgKHZlcnRleEJ1ZmZlcikgewogICAgdmVydGV4QnVmZmVyLT5SZWxlYXNlKCk7CiAgICB2ZXJ0ZXhCdWZmZXIgPSBudWxscHRyOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>if (vertexBuffer) {
+    vertexBuffer-&gt;Release();
+    vertexBuffer = nullptr;
+}</pre></div><div class='content'></div><h1>Mapeig i Desmapeig de Recursos</h1>
+<div class='content'></div><h2>Mapeig de Buffers</h2>
+<div class='content'><p>El mapeig permet accedir directament a la memòria del buffer per modificar les seves dades. Aquí tens un exemple de com mapar un buffer de vèrtexs:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RDNEMTFfTUFQUEVEX1NVQlJFU09VUkNFIG1hcHBlZFJlc291cmNlOwpociA9IGNvbnRleHQtPk1hcCh2ZXJ0ZXhCdWZmZXIsIDAsIEQzRDExX01BUF9XUklURV9ESVNDQVJELCAwLCAmbWFwcGVkUmVzb3VyY2UpOwppZiAoU1VDQ0VFREVEKGhyKSkgewogICAgLy8gQWNjZWRpciBhIGxlcyBkYWRlcyBkZWwgYnVmZmVyCiAgICBWZXJ0ZXgqIHZlcnRpY2VzID0gKFZlcnRleCopbWFwcGVkUmVzb3VyY2UucERhdGE7CiAgICB2ZXJ0aWNlc1swXS54ID0gMC4xZjsgLy8gTW9kaWZpY2FyIGxlcyBkYWRlcyBkZWwgdsOocnRleAoKICAgIC8vIERlc21hcGFyIGVsIGJ1ZmZlcgogICAgY29udGV4dC0+VW5tYXAodmVydGV4QnVmZmVyLCAwKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>D3D11_MAPPED_SUBRESOURCE mappedResource;
+hr = context-&gt;Map(vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &amp;mappedResource);
+if (SUCCEEDED(hr)) {
+    // Accedir a les dades del buffer
+    Vertex* vertices = (Vertex*)mappedResource.pData;
+    vertices[0].x = 0.1f; // Modificar les dades del v&egrave;rtex
+
+    // Desmapar el buffer
+    context-&gt;Unmap(vertexBuffer, 0);
+}</pre></div><div class='content'></div><h1>Gestió de Textures</h1>
+<div class='content'></div><h2>Creació de Textures</h2>
+<div class='content'><p>Per crear una textura, utilitzem la funció <code>CreateTexture2D</code>. Aquí tens un exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRGVzY3JpcGNpw7MgZGUgbGEgdGV4dHVyYQpEM0QxMV9URVhUVVJFMkRfREVTQyB0ZXh0dXJlRGVzYyA9IHt9Owp0ZXh0dXJlRGVzYy5XaWR0aCA9IDI1NjsKdGV4dHVyZURlc2MuSGVpZ2h0ID0gMjU2Owp0ZXh0dXJlRGVzYy5NaXBMZXZlbHMgPSAxOwp0ZXh0dXJlRGVzYy5BcnJheVNpemUgPSAxOwp0ZXh0dXJlRGVzYy5Gb3JtYXQgPSBEWEdJX0ZPUk1BVF9SOEc4QjhBOF9VTk9STTsKdGV4dHVyZURlc2MuU2FtcGxlRGVzYy5Db3VudCA9IDE7CnRleHR1cmVEZXNjLlVzYWdlID0gRDNEMTFfVVNBR0VfREVGQVVMVDsKdGV4dHVyZURlc2MuQmluZEZsYWdzID0gRDNEMTFfQklORF9TSEFERVJfUkVTT1VSQ0U7CnRleHR1cmVEZXNjLkNQVUFjY2Vzc0ZsYWdzID0gMDsKCi8vIERhZGVzIGluaWNpYWxzIGRlIGxhIHRleHR1cmEKRDNEMTFfU1VCUkVTT1VSQ0VfREFUQSBpbml0RGF0YSA9IHt9Owppbml0RGF0YS5wU3lzTWVtID0gaW1hZ2VEYXRhOyAvLyBQdW50ZXIgYSBsZXMgZGFkZXMgZGUgbGEgaW1hdGdlCmluaXREYXRhLlN5c01lbVBpdGNoID0gMjU2ICogNDsgLy8gQW1wbGFkYSBkZSBsYSBpbWF0Z2UgZW4gYnl0ZXMKCi8vIENyZWFjacOzIGRlIGxhIHRleHR1cmEKSUQzRDExVGV4dHVyZTJEKiB0ZXh0dXJlOwpociA9IGRldmljZS0+Q3JlYXRlVGV4dHVyZTJEKCZ0ZXh0dXJlRGVzYywgJmluaXREYXRhLCAmdGV4dHVyZSk7CmlmIChGQUlMRUQoaHIpKSB7CiAgICAvLyBNYW5lamFyIGwnZXJyb3IKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Descripci&oacute; de la textura
+D3D11_TEXTURE2D_DESC textureDesc = {};
+textureDesc.Width = 256;
+textureDesc.Height = 256;
+textureDesc.MipLevels = 1;
+textureDesc.ArraySize = 1;
+textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+textureDesc.SampleDesc.Count = 1;
+textureDesc.Usage = D3D11_USAGE_DEFAULT;
+textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+textureDesc.CPUAccessFlags = 0;
+
+// Dades inicials de la textura
+D3D11_SUBRESOURCE_DATA initData = {};
+initData.pSysMem = imageData; // Punter a les dades de la imatge
+initData.SysMemPitch = 256 * 4; // Amplada de la imatge en bytes
+
+// Creaci&oacute; de la textura
+ID3D11Texture2D* texture;
+hr = device-&gt;CreateTexture2D(&amp;textureDesc, &amp;initData, &amp;texture);
+if (FAILED(hr)) {
+    // Manejar l'error
+}</pre></div><div class='content'></div><h2>Destrucció de Textures</h2>
+<div class='content'><p>Per destruir una textura, alliberem la memòria associada:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aWYgKHRleHR1cmUpIHsKICAgIHRleHR1cmUtPlJlbGVhc2UoKTsKICAgIHRleHR1cmUgPSBudWxscHRyOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>if (texture) {
+    texture-&gt;Release();
+    texture = nullptr;
+}</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear i Destruir un Buffer de Vèrtexs</h2>
+<div class='content'><ol>
+<li>Crea un buffer de vèrtexs que emmagatzemi les coordenades i els colors de tres vèrtexs.</li>
+<li>Destrueix el buffer de vèrtexs alliberant la memòria associada.</li>
+</ol>
+</div><h2>Exercici 2: Mapejar i Modificar un Buffer de Vèrtexs</h2>
+<div class='content'><ol>
+<li>Crea un buffer de vèrtexs amb tres vèrtexs.</li>
+<li>Mapa el buffer i modifica les coordenades del primer vèrtex.</li>
+<li>Desmapa el buffer.</li>
+</ol>
+</div><h2>Exercici 3: Crear i Destruir una Textura</h2>
+<div class='content'><ol>
+<li>Crea una textura 2D de 256x256 píxels amb format <code>DXGI_FORMAT_R8G8B8A8_UNORM</code>.</li>
+<li>Destrueix la textura alliberant la memòria associada.</li>
+</ol>
+</div><h1>Solucions</h1>
+<div class='content'></div><h2>Solució a l'Exercici 1</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRXN0cnVjdHVyYSBkZSBkYWRlcyBwZXIgYSB1biB2w6hydGV4CnN0cnVjdCBWZXJ0ZXggewogICAgZmxvYXQgeCwgeSwgejsKICAgIGZsb2F0IHIsIGcsIGI7Cn07CgovLyBEYWRlcyBkZWxzIHbDqHJ0ZXhzClZlcnRleCB2ZXJ0aWNlc1tdID0gewogICAgezAuMGYsIDAuNWYsIDAuMGYsIDEuMGYsIDAuMGYsIDAuMGZ9LAogICAgezAuNWYsIC0wLjVmLCAwLjBmLCAwLjBmLCAxLjBmLCAwLjBmfSwKICAgIHstMC41ZiwgLTAuNWYsIDAuMGYsIDAuMGYsIDAuMGYsIDEuMGZ9Cn07CgovLyBEZXNjcmlwY2nDsyBkZWwgYnVmZmVyCkQzRDExX0JVRkZFUl9ERVNDIGJ1ZmZlckRlc2MgPSB7fTsKYnVmZmVyRGVzYy5Vc2FnZSA9IEQzRDExX1VTQUdFX0RFRkFVTFQ7CmJ1ZmZlckRlc2MuQnl0ZVdpZHRoID0gc2l6ZW9mKHZlcnRpY2VzKTsKYnVmZmVyRGVzYy5CaW5kRmxhZ3MgPSBEM0QxMV9CSU5EX1ZFUlRFWF9CVUZGRVI7CmJ1ZmZlckRlc2MuQ1BVQWNjZXNzRmxhZ3MgPSAwOwoKLy8gRGFkZXMgaW5pY2lhbHMgZGVsIGJ1ZmZlcgpEM0QxMV9TVUJSRVNPVVJDRV9EQVRBIGluaXREYXRhID0ge307CmluaXREYXRhLnBTeXNNZW0gPSB2ZXJ0aWNlczsKCi8vIENyZWFjacOzIGRlbCBidWZmZXIKSUQzRDExQnVmZmVyKiB2ZXJ0ZXhCdWZmZXI7CkhSRVNVTFQgaHIgPSBkZXZpY2UtPkNyZWF0ZUJ1ZmZlcigmYnVmZmVyRGVzYywgJmluaXREYXRhLCAmdmVydGV4QnVmZmVyKTsKaWYgKEZBSUxFRChocikpIHsKICAgIC8vIE1hbmVqYXIgbCdlcnJvcgp9CgovLyBEZXN0cnVjY2nDsyBkZWwgYnVmZmVyCmlmICh2ZXJ0ZXhCdWZmZXIpIHsKICAgIHZlcnRleEJ1ZmZlci0+UmVsZWFzZSgpOwogICAgdmVydGV4QnVmZmVyID0gbnVsbHB0cjsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Estructura de dades per a un v&egrave;rtex
+struct Vertex {
+    float x, y, z;
+    float r, g, b;
+};
+
+// Dades dels v&egrave;rtexs
+Vertex vertices[] = {
+    {0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f},
+    {0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f},
+    {-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f}
+};
+
+// Descripci&oacute; del buffer
+D3D11_BUFFER_DESC bufferDesc = {};
+bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+bufferDesc.ByteWidth = sizeof(vertices);
+bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+bufferDesc.CPUAccessFlags = 0;
+
+// Dades inicials del buffer
+D3D11_SUBRESOURCE_DATA initData = {};
+initData.pSysMem = vertices;
+
+// Creaci&oacute; del buffer
+ID3D11Buffer* vertexBuffer;
+HRESULT hr = device-&gt;CreateBuffer(&amp;bufferDesc, &amp;initData, &amp;vertexBuffer);
+if (FAILED(hr)) {
+    // Manejar l'error
+}
+
+// Destrucci&oacute; del buffer
+if (vertexBuffer) {
+    vertexBuffer-&gt;Release();
+    vertexBuffer = nullptr;
+}</pre></div><div class='content'></div><h2>Solució a l'Exercici 2</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRXN0cnVjdHVyYSBkZSBkYWRlcyBwZXIgYSB1biB2w6hydGV4CnN0cnVjdCBWZXJ0ZXggewogICAgZmxvYXQgeCwgeSwgejsKICAgIGZsb2F0IHIsIGcsIGI7Cn07CgovLyBEYWRlcyBkZWxzIHbDqHJ0ZXhzClZlcnRleCB2ZXJ0aWNlc1tdID0gewogICAgezAuMGYsIDAuNWYsIDAuMGYsIDEuMGYsIDAuMGYsIDAuMGZ9LAogICAgezAuNWYsIC0wLjVmLCAwLjBmLCAwLjBmLCAxLjBmLCAwLjBmfSwKICAgIHstMC41ZiwgLTAuNWYsIDAuMGYsIDAuMGYsIDAuMGYsIDEuMGZ9Cn07CgovLyBEZXNjcmlwY2nDsyBkZWwgYnVmZmVyCkQzRDExX0JVRkZFUl9ERVNDIGJ1ZmZlckRlc2MgPSB7fTsKYnVmZmVyRGVzYy5Vc2FnZSA9IEQzRDExX1VTQUdFX0RZTkFNSUM7CmJ1ZmZlckRlc2MuQnl0ZVdpZHRoID0gc2l6ZW9mKHZlcnRpY2VzKTsKYnVmZmVyRGVzYy5CaW5kRmxhZ3MgPSBEM0QxMV9CSU5EX1ZFUlRFWF9CVUZGRVI7CmJ1ZmZlckRlc2MuQ1BVQWNjZXNzRmxhZ3MgPSBEM0QxMV9DUFVfQUNDRVNTX1dSSVRFOwoKLy8gRGFkZXMgaW5pY2lhbHMgZGVsIGJ1ZmZlcgpEM0QxMV9TVUJSRVNPVVJDRV9EQVRBIGluaXREYXRhID0ge307CmluaXREYXRhLnBTeXNNZW0gPSB2ZXJ0aWNlczsKCi8vIENyZWFjacOzIGRlbCBidWZmZXIKSUQzRDExQnVmZmVyKiB2ZXJ0ZXhCdWZmZXI7CkhSRVNVTFQgaHIgPSBkZXZpY2UtPkNyZWF0ZUJ1ZmZlcigmYnVmZmVyRGVzYywgJmluaXREYXRhLCAmdmVydGV4QnVmZmVyKTsKaWYgKEZBSUxFRChocikpIHsKICAgIC8vIE1hbmVqYXIgbCdlcnJvcgp9CgovLyBNYXBlaWcgZGVsIGJ1ZmZlcgpEM0QxMV9NQVBQRURfU1VCUkVTT1VSQ0UgbWFwcGVkUmVzb3VyY2U7CmhyID0gY29udGV4dC0+TWFwKHZlcnRleEJ1ZmZlciwgMCwgRDNEMTFfTUFQX1dSSVRFX0RJU0NBUkQsIDAsICZtYXBwZWRSZXNvdXJjZSk7CmlmIChTVUNDRUVERUQoaHIpKSB7CiAgICAvLyBBY2NlZGlyIGEgbGVzIGRhZGVzIGRlbCBidWZmZXIKICAgIFZlcnRleCogdmVydGljZXMgPSAoVmVydGV4KiltYXBwZWRSZXNvdXJjZS5wRGF0YTsKICAgIHZlcnRpY2VzWzBdLnggPSAwLjFmOyAvLyBNb2RpZmljYXIgbGVzIGRhZGVzIGRlbCB2w6hydGV4CgogICAgLy8gRGVzbWFwYXIgZWwgYnVmZmVyCiAgICBjb250ZXh0LT5Vbm1hcCh2ZXJ0ZXhCdWZmZXIsIDApOwp9CgovLyBEZXN0cnVjY2nDsyBkZWwgYnVmZmVyCmlmICh2ZXJ0ZXhCdWZmZXIpIHsKICAgIHZlcnRleEJ1ZmZlci0+UmVsZWFzZSgpOwogICAgdmVydGV4QnVmZmVyID0gbnVsbHB0cjsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Estructura de dades per a un v&egrave;rtex
+struct Vertex {
+    float x, y, z;
+    float r, g, b;
+};
+
+// Dades dels v&egrave;rtexs
+Vertex vertices[] = {
+    {0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f},
+    {0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f},
+    {-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f}
+};
+
+// Descripci&oacute; del buffer
+D3D11_BUFFER_DESC bufferDesc = {};
+bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+bufferDesc.ByteWidth = sizeof(vertices);
+bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+// Dades inicials del buffer
+D3D11_SUBRESOURCE_DATA initData = {};
+initData.pSysMem = vertices;
+
+// Creaci&oacute; del buffer
+ID3D11Buffer* vertexBuffer;
+HRESULT hr = device-&gt;CreateBuffer(&amp;bufferDesc, &amp;initData, &amp;vertexBuffer);
+if (FAILED(hr)) {
+    // Manejar l'error
+}
+
+// Mapeig del buffer
+D3D11_MAPPED_SUBRESOURCE mappedResource;
+hr = context-&gt;Map(vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &amp;mappedResource);
+if (SUCCEEDED(hr)) {
+    // Accedir a les dades del buffer
+    Vertex* vertices = (Vertex*)mappedResource.pData;
+    vertices[0].x = 0.1f; // Modificar les dades del v&egrave;rtex
+
+    // Desmapar el buffer
+    context-&gt;Unmap(vertexBuffer, 0);
+}
+
+// Destrucci&oacute; del buffer
+if (vertexBuffer) {
+    vertexBuffer-&gt;Release();
+    vertexBuffer = nullptr;
+}</pre></div><div class='content'></div><h2>Solució a l'Exercici 3</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRGVzY3JpcGNpw7MgZGUgbGEgdGV4dHVyYQpEM0QxMV9URVhUVVJFMkRfREVTQyB0ZXh0dXJlRGVzYyA9IHt9Owp0ZXh0dXJlRGVzYy5XaWR0aCA9IDI1NjsKdGV4dHVyZURlc2MuSGVpZ2h0ID0gMjU2Owp0ZXh0dXJlRGVzYy5NaXBMZXZlbHMgPSAxOwp0ZXh0dXJlRGVzYy5BcnJheVNpemUgPSAxOwp0ZXh0dXJlRGVzYy5Gb3JtYXQgPSBEWEdJX0ZPUk1BVF9SOEc4QjhBOF9VTk9STTsKdGV4dHVyZURlc2MuU2FtcGxlRGVzYy5Db3VudCA9IDE7CnRleHR1cmVEZXNjLlVzYWdlID0gRDNEMTFfVVNBR0VfREVGQVVMVDsKdGV4dHVyZURlc2MuQmluZEZsYWdzID0gRDNEMTFfQklORF9TSEFERVJfUkVTT1VSQ0U7CnRleHR1cmVEZXNjLkNQVUFjY2Vzc0ZsYWdzID0gMDsKCi8vIERhZGVzIGluaWNpYWxzIGRlIGxhIHRleHR1cmEKRDNEMTFfU1VCUkVTT1VSQ0VfREFUQSBpbml0RGF0YSA9IHt9Owppbml0RGF0YS5wU3lzTWVtID0gaW1hZ2VEYXRhOyAvLyBQdW50ZXIgYSBsZXMgZGFkZXMgZGUgbGEgaW1hdGdlCmluaXREYXRhLlN5c01lbVBpdGNoID0gMjU2ICogNDsgLy8gQW1wbGFkYSBkZSBsYSBpbWF0Z2UgZW4gYnl0ZXMKCi8vIENyZWFjacOzIGRlIGxhIHRleHR1cmEKSUQzRDExVGV4dHVyZTJEKiB0ZXh0dXJlOwpIUkVTVUxUIGhyID0gZGV2aWNlLT5DcmVhdGVUZXh0dXJlMkQoJnRleHR1cmVEZXNjLCAmaW5pdERhdGEsICZ0ZXh0dXJlKTsKaWYgKEZBSUxFRChocikpIHsKICAgIC8vIE1hbmVqYXIgbCdlcnJvcgp9CgovLyBEZXN0cnVjY2nDsyBkZSBsYSB0ZXh0dXJhCmlmICh0ZXh0dXJlKSB7CiAgICB0ZXh0dXJlLT5SZWxlYXNlKCk7CiAgICB0ZXh0dXJlID0gbnVsbHB0cjsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Descripci&oacute; de la textura
+D3D11_TEXTURE2D_DESC textureDesc = {};
+textureDesc.Width = 256;
+textureDesc.Height = 256;
+textureDesc.MipLevels = 1;
+textureDesc.ArraySize = 1;
+textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+textureDesc.SampleDesc.Count = 1;
+textureDesc.Usage = D3D11_USAGE_DEFAULT;
+textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+textureDesc.CPUAccessFlags = 0;
+
+// Dades inicials de la textura
+D3D11_SUBRESOURCE_DATA initData = {};
+initData.pSysMem = imageData; // Punter a les dades de la imatge
+initData.SysMemPitch = 256 * 4; // Amplada de la imatge en bytes
+
+// Creaci&oacute; de la textura
+ID3D11Texture2D* texture;
+HRESULT hr = device-&gt;CreateTexture2D(&amp;textureDesc, &amp;initData, &amp;texture);
+if (FAILED(hr)) {
+    // Manejar l'error
+}
+
+// Destrucci&oacute; de la textura
+if (texture) {
+    texture-&gt;Release();
+    texture = nullptr;
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>La gestió de memòria és essencial per assegurar que les aplicacions DirectX funcionin de manera eficient i sense problemes. Hem cobert els conceptes bàsics de la creació, destrucció, mapeig i desmapeig de recursos com buffers i textures. A més, hem proporcionat exercicis pràctics per reforçar aquests conceptes. Amb una bona comprensió d'aquests temes, estaràs millor preparat per optimitzar el rendiment de les teves aplicacions DirectX.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-optimizing-rendering-performance' title="Optimitzar el Rendiment de la Renderització">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-multithreading-directx' title="Multifil en DirectX">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

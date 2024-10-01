@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integració de GraphQL</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/flutter/06-05-graphql-integration" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/flutter/06-05-graphql-integration" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/flutter/06-05-graphql-integration" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/flutter/06-05-graphql-integration" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/flutter/06-05-graphql-integration" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-04-using-rest-apis' title="Ús d'APIs REST">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Integració de GraphQL</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-01-introduction-to-persistence' title="Introducció a la Persistència">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com integrar GraphQL en una aplicació Flutter. GraphQL és un llenguatge de consulta per a APIs que permet als clients sol·licitar exactament les dades que necessiten, i res més. Això pot millorar l'eficiència de les aplicacions mòbils, ja que redueix la quantitat de dades transferides i processades.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Comprendre què és GraphQL i com funciona.</li>
+<li>Configurar una API GraphQL en una aplicació Flutter.</li>
+<li>Realitzar consultes i mutacions amb GraphQL.</li>
+<li>Gestionar errors i respostes de l'API.</li>
+</ul>
+</div><h1>Què és GraphQL?</h1>
+<div class='content'><p>GraphQL és un llenguatge de consulta per a APIs i un entorn d'execució per a les teves consultes, amb les dades existents. Proporciona una descripció completa i comprensible de les dades de la teva API, permetent als clients sol·licitar exactament el que necessiten i res més.</p>
+</div><h2>Avantatges de GraphQL</h2>
+<div class='content'><ul>
+<li><strong>Sol·licituds eficients:</strong> Només es recuperen les dades necessàries.</li>
+<li><strong>Tipat fort:</strong> Les consultes es validen contra un esquema.</li>
+<li><strong>Flexibilitat:</strong> Els clients poden definir l'estructura de la resposta.</li>
+</ul>
+</div><h1>Configuració de l'Entorn</h1>
+<div class='content'></div><h2>Instal·lació de les Dependències</h2>
+<div class='content'><p>Per començar, necessitem afegir les dependències necessàries al nostre projecte Flutter. Utilitzarem el paquet <code>graphql_flutter</code> per facilitar la integració.</p>
+<p>Afegiu les següents línies al fitxer <code>pubspec.yaml</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVwZW5kZW5jaWVzOgogIGZsdXR0ZXI6CiAgICBzZGs6IGZsdXR0ZXIKICBncmFwaHFsX2ZsdXR0ZXI6IF41LjAuMA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>dependencies:
+  flutter:
+    sdk: flutter
+  graphql_flutter: ^5.0.0</pre></div><div class='content'><p>Després, executeu <code>flutter pub get</code> per instal·lar les dependències.</p>
+</div><h2>Configuració del Client GraphQL</h2>
+<div class='content'><p>Primer, configurem el client GraphQL. Crearem un fitxer <code>graphql_config.dart</code> per gestionar la configuració del client.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0ICdwYWNrYWdlOmdyYXBocWxfZmx1dHRlci9ncmFwaHFsX2ZsdXR0ZXIuZGFydCc7CgpjbGFzcyBHcmFwaFFMQ29uZmlnIHsKICBzdGF0aWMgSHR0cExpbmsgaHR0cExpbmsgPSBIdHRwTGluaygKICAgICdodHRwczovL2FwaS5leGFtcGxlLmNvbS9ncmFwaHFsJywgLy8gVVJMIGRlIGxhIHRldmEgQVBJIEdyYXBoUUwKICApOwoKICBzdGF0aWMgVmFsdWVOb3RpZmllcjxHcmFwaFFMQ2xpZW50PiBjbGllbnQgPSBWYWx1ZU5vdGlmaWVyKAogICAgR3JhcGhRTENsaWVudCgKICAgICAgbGluazogaHR0cExpbmssCiAgICAgIGNhY2hlOiBHcmFwaFFMQ2FjaGUoc3RvcmU6IEluTWVtb3J5U3RvcmUoKSksCiAgICApLAogICk7CgogIHN0YXRpYyBHcmFwaFFMQ2xpZW50IGdldENsaWVudCgpIHsKICAgIHJldHVybiBHcmFwaFFMQ2xpZW50KAogICAgICBsaW5rOiBodHRwTGluaywKICAgICAgY2FjaGU6IEdyYXBoUUxDYWNoZShzdG9yZTogSW5NZW1vcnlTdG9yZSgpKSwKICAgICk7CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import 'package:graphql_flutter/graphql_flutter.dart';
+
+class GraphQLConfig {
+  static HttpLink httpLink = HttpLink(
+    'https://api.example.com/graphql', // URL de la teva API GraphQL
+  );
+
+  static ValueNotifier&lt;GraphQLClient&gt; client = ValueNotifier(
+    GraphQLClient(
+      link: httpLink,
+      cache: GraphQLCache(store: InMemoryStore()),
+    ),
+  );
+
+  static GraphQLClient getClient() {
+    return GraphQLClient(
+      link: httpLink,
+      cache: GraphQLCache(store: InMemoryStore()),
+    );
+  }
+}</pre></div><div class='content'></div><h1>Realitzar Consultes</h1>
+<div class='content'></div><h2>Exemple de Consulta</h2>
+<div class='content'><p>Crearem una consulta per obtenir una llista d'usuaris. Primer, definim la consulta en una variable.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgU3RyaW5nIHJlYWRVc2VycyA9ICIiIgogIHF1ZXJ5IHsKICAgIHVzZXJzIHsKICAgICAgaWQKICAgICAgbmFtZQogICAgICBlbWFpbAogICAgfQogIH0KIiIiOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const String readUsers = &quot;&quot;&quot;
+  query {
+    users {
+      id
+      name
+      email
+    }
+  }
+&quot;&quot;&quot;;</pre></div><div class='content'></div><h2>Executar la Consulta</h2>
+<div class='content'><p>Utilitzarem el widget <code>Query</code> proporcionat per <code>graphql_flutter</code> per executar la consulta i mostrar els resultats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0ICdwYWNrYWdlOmZsdXR0ZXIvbWF0ZXJpYWwuZGFydCc7CmltcG9ydCAncGFja2FnZTpncmFwaHFsX2ZsdXR0ZXIvZ3JhcGhxbF9mbHV0dGVyLmRhcnQnOwppbXBvcnQgJ2dyYXBocWxfY29uZmlnLmRhcnQnOwoKdm9pZCBtYWluKCkgewogIHJ1bkFwcChNeUFwcCgpKTsKfQoKY2xhc3MgTXlBcHAgZXh0ZW5kcyBTdGF0ZWxlc3NXaWRnZXQgewogIEBvdmVycmlkZQogIFdpZGdldCBidWlsZChCdWlsZENvbnRleHQgY29udGV4dCkgewogICAgcmV0dXJuIEdyYXBoUUxQcm92aWRlcigKICAgICAgY2xpZW50OiBHcmFwaFFMQ29uZmlnLmNsaWVudCwKICAgICAgY2hpbGQ6IE1hdGVyaWFsQXBwKAogICAgICAgIGhvbWU6IFVzZXJMaXN0U2NyZWVuKCksCiAgICAgICksCiAgICApOwogIH0KfQoKY2xhc3MgVXNlckxpc3RTY3JlZW4gZXh0ZW5kcyBTdGF0ZWxlc3NXaWRnZXQgewogIEBvdmVycmlkZQogIFdpZGdldCBidWlsZChCdWlsZENvbnRleHQgY29udGV4dCkgewogICAgcmV0dXJuIFNjYWZmb2xkKAogICAgICBhcHBCYXI6IEFwcEJhcigKICAgICAgICB0aXRsZTogVGV4dCgnVXNlciBMaXN0JyksCiAgICAgICksCiAgICAgIGJvZHk6IFF1ZXJ5KAogICAgICAgIG9wdGlvbnM6IFF1ZXJ5T3B0aW9ucygKICAgICAgICAgIGRvY3VtZW50OiBncWwocmVhZFVzZXJzKSwKICAgICAgICApLAogICAgICAgIGJ1aWxkZXI6IChRdWVyeVJlc3VsdCByZXN1bHQsIHsgVm9pZENhbGxiYWNrPyByZWZldGNoLCBGZXRjaE1vcmU/IGZldGNoTW9yZSB9KSB7CiAgICAgICAgICBpZiAocmVzdWx0Lmhhc0V4Y2VwdGlvbikgewogICAgICAgICAgICByZXR1cm4gVGV4dChyZXN1bHQuZXhjZXB0aW9uLnRvU3RyaW5nKCkpOwogICAgICAgICAgfQoKICAgICAgICAgIGlmIChyZXN1bHQuaXNMb2FkaW5nKSB7CiAgICAgICAgICAgIHJldHVybiBDZW50ZXIoY2hpbGQ6IENpcmN1bGFyUHJvZ3Jlc3NJbmRpY2F0b3IoKSk7CiAgICAgICAgICB9CgogICAgICAgICAgTGlzdCB1c2VycyA9IHJlc3VsdC5kYXRhIVsndXNlcnMnXTsKCiAgICAgICAgICByZXR1cm4gTGlzdFZpZXcuYnVpbGRlcigKICAgICAgICAgICAgaXRlbUNvdW50OiB1c2Vycy5sZW5ndGgsCiAgICAgICAgICAgIGl0ZW1CdWlsZGVyOiAoY29udGV4dCwgaW5kZXgpIHsKICAgICAgICAgICAgICBmaW5hbCB1c2VyID0gdXNlcnNbaW5kZXhdOwogICAgICAgICAgICAgIHJldHVybiBMaXN0VGlsZSgKICAgICAgICAgICAgICAgIHRpdGxlOiBUZXh0KHVzZXJbJ25hbWUnXSksCiAgICAgICAgICAgICAgICBzdWJ0aXRsZTogVGV4dCh1c2VyWydlbWFpbCddKSwKICAgICAgICAgICAgICApOwogICAgICAgICAgICB9LAogICAgICAgICAgKTsKICAgICAgICB9LAogICAgICApLAogICAgKTsKICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'graphql_config.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return GraphQLProvider(
+      client: GraphQLConfig.client,
+      child: MaterialApp(
+        home: UserListScreen(),
+      ),
+    );
+  }
+}
+
+class UserListScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('User List'),
+      ),
+      body: Query(
+        options: QueryOptions(
+          document: gql(readUsers),
+        ),
+        builder: (QueryResult result, { VoidCallback? refetch, FetchMore? fetchMore }) {
+          if (result.hasException) {
+            return Text(result.exception.toString());
+          }
+
+          if (result.isLoading) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          List users = result.data!['users'];
+
+          return ListView.builder(
+            itemCount: users.length,
+            itemBuilder: (context, index) {
+              final user = users[index];
+              return ListTile(
+                title: Text(user['name']),
+                subtitle: Text(user['email']),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}</pre></div><div class='content'></div><h1>Realitzar Mutacions</h1>
+<div class='content'></div><h2>Exemple de Mutació</h2>
+<div class='content'><p>Crearem una mutació per afegir un nou usuari. Primer, definim la mutació en una variable.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgU3RyaW5nIGFkZFVzZXIgPSAiIiIKICBtdXRhdGlvbiBBZGRVc2VyKFwkbmFtZTogU3RyaW5nISwgXCRlbWFpbDogU3RyaW5nISkgewogICAgYWRkVXNlcihuYW1lOiBcJG5hbWUsIGVtYWlsOiBcJGVtYWlsKSB7CiAgICAgIGlkCiAgICAgIG5hbWUKICAgICAgZW1haWwKICAgIH0KICB9CiIiIjs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const String addUser = &quot;&quot;&quot;
+  mutation AddUser(\$name: String!, \$email: String!) {
+    addUser(name: \$name, email: \$email) {
+      id
+      name
+      email
+    }
+  }
+&quot;&quot;&quot;;</pre></div><div class='content'></div><h2>Executar la Mutació</h2>
+<div class='content'><p>Utilitzarem el widget <code>Mutation</code> proporcionat per <code>graphql_flutter</code> per executar la mutació.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgQWRkVXNlclNjcmVlbiBleHRlbmRzIFN0YXRlbGVzc1dpZGdldCB7CiAgZmluYWwgVGV4dEVkaXRpbmdDb250cm9sbGVyIG5hbWVDb250cm9sbGVyID0gVGV4dEVkaXRpbmdDb250cm9sbGVyKCk7CiAgZmluYWwgVGV4dEVkaXRpbmdDb250cm9sbGVyIGVtYWlsQ29udHJvbGxlciA9IFRleHRFZGl0aW5nQ29udHJvbGxlcigpOwoKICBAb3ZlcnJpZGUKICBXaWRnZXQgYnVpbGQoQnVpbGRDb250ZXh0IGNvbnRleHQpIHsKICAgIHJldHVybiBTY2FmZm9sZCgKICAgICAgYXBwQmFyOiBBcHBCYXIoCiAgICAgICAgdGl0bGU6IFRleHQoJ0FkZCBVc2VyJyksCiAgICAgICksCiAgICAgIGJvZHk6IE11dGF0aW9uKAogICAgICAgIG9wdGlvbnM6IE11dGF0aW9uT3B0aW9ucygKICAgICAgICAgIGRvY3VtZW50OiBncWwoYWRkVXNlciksCiAgICAgICAgKSwKICAgICAgICBidWlsZGVyOiAoUnVuTXV0YXRpb24gcnVuTXV0YXRpb24sIFF1ZXJ5UmVzdWx0PyByZXN1bHQpIHsKICAgICAgICAgIHJldHVybiBDb2x1bW4oCiAgICAgICAgICAgIGNoaWxkcmVuOiBbCiAgICAgICAgICAgICAgVGV4dEZpZWxkKAogICAgICAgICAgICAgICAgY29udHJvbGxlcjogbmFtZUNvbnRyb2xsZXIsCiAgICAgICAgICAgICAgICBkZWNvcmF0aW9uOiBJbnB1dERlY29yYXRpb24obGFiZWxUZXh0OiAnTmFtZScpLAogICAgICAgICAgICAgICksCiAgICAgICAgICAgICAgVGV4dEZpZWxkKAogICAgICAgICAgICAgICAgY29udHJvbGxlcjogZW1haWxDb250cm9sbGVyLAogICAgICAgICAgICAgICAgZGVjb3JhdGlvbjogSW5wdXREZWNvcmF0aW9uKGxhYmVsVGV4dDogJ0VtYWlsJyksCiAgICAgICAgICAgICAgKSwKICAgICAgICAgICAgICBFbGV2YXRlZEJ1dHRvbigKICAgICAgICAgICAgICAgIG9uUHJlc3NlZDogKCkgewogICAgICAgICAgICAgICAgICBydW5NdXRhdGlvbih7CiAgICAgICAgICAgICAgICAgICAgJ25hbWUnOiBuYW1lQ29udHJvbGxlci50ZXh0LAogICAgICAgICAgICAgICAgICAgICdlbWFpbCc6IGVtYWlsQ29udHJvbGxlci50ZXh0LAogICAgICAgICAgICAgICAgICB9KTsKICAgICAgICAgICAgICAgIH0sCiAgICAgICAgICAgICAgICBjaGlsZDogVGV4dCgnQWRkIFVzZXInKSwKICAgICAgICAgICAgICApLAogICAgICAgICAgICAgIGlmIChyZXN1bHQgIT0gbnVsbCkgLi4uWwogICAgICAgICAgICAgICAgaWYgKHJlc3VsdC5oYXNFeGNlcHRpb24pIFRleHQocmVzdWx0LmV4Y2VwdGlvbi50b1N0cmluZygpKSwKICAgICAgICAgICAgICAgIGlmIChyZXN1bHQuaXNMb2FkaW5nKSBDaXJjdWxhclByb2dyZXNzSW5kaWNhdG9yKCksCiAgICAgICAgICAgICAgICBpZiAocmVzdWx0LmRhdGEgIT0gbnVsbCkgVGV4dCgnVXNlciBhZGRlZCBzdWNjZXNzZnVsbHkhJyksCiAgICAgICAgICAgICAgXSwKICAgICAgICAgICAgXSwKICAgICAgICAgICk7CiAgICAgICAgfSwKICAgICAgKSwKICAgICk7CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class AddUserScreen extends StatelessWidget {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Add User'),
+      ),
+      body: Mutation(
+        options: MutationOptions(
+          document: gql(addUser),
+        ),
+        builder: (RunMutation runMutation, QueryResult? result) {
+          return Column(
+            children: [
+              TextField(
+                controller: nameController,
+                decoration: InputDecoration(labelText: 'Name'),
+              ),
+              TextField(
+                controller: emailController,
+                decoration: InputDecoration(labelText: 'Email'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  runMutation({
+                    'name': nameController.text,
+                    'email': emailController.text,
+                  });
+                },
+                child: Text('Add User'),
+              ),
+              if (result != null) ...[
+                if (result.hasException) Text(result.exception.toString()),
+                if (result.isLoading) CircularProgressIndicator(),
+                if (result.data != null) Text('User added successfully!'),
+              ],
+            ],
+          );
+        },
+      ),
+    );
+  }
+}</pre></div><div class='content'></div><h1>Gestió d'Errors</h1>
+<div class='content'><p>És important gestionar els errors que poden sorgir durant les consultes i mutacions. <code>graphql_flutter</code> proporciona informació detallada sobre els errors a través de l'objecte <code>QueryResult</code>.</p>
+</div><h2>Exemple de Gestió d'Errors</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aWYgKHJlc3VsdC5oYXNFeGNlcHRpb24pIHsKICByZXR1cm4gVGV4dCgnRXJyb3I6ICR7cmVzdWx0LmV4Y2VwdGlvbi50b1N0cmluZygpfScpOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>if (result.hasException) {
+  return Text('Error: ${result.exception.toString()}');
+}</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'><ol>
+<li><strong>Consulta Avançada:</strong> Crea una consulta que obtingui una llista de productes amb els seus preus i descripcions.</li>
+<li><strong>Mutació Avançada:</strong> Crea una mutació que actualitzi la informació d'un usuari existent.</li>
+<li><strong>Gestió d'Errors:</strong> Implementa una gestió d'errors més robusta que mostri missatges d'error personalitzats segons el tipus d'error.</li>
+</ol>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après com integrar GraphQL en una aplicació Flutter. Hem configurat el client GraphQL, realitzat consultes i mutacions, i gestionat errors. GraphQL proporciona una manera eficient i flexible de treballar amb APIs, permetent-nos sol·licitar exactament les dades que necessitem.</p>
+<p>Amb aquests coneixements, estàs preparat per començar a utilitzar GraphQL en les teves aplicacions Flutter i aprofitar els seus avantatges per millorar l'eficiència i la flexibilitat de les teves solucions.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-04-using-rest-apis' title="Ús d'APIs REST">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-01-introduction-to-persistence' title="Introducció a la Persistència">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

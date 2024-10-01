@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Variables d'entorn a Docker Compose</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/docker/04-05-environment-variables-in-docker-compose" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/docker/04-05-environment-variables-in-docker-compose" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/docker/04-05-environment-variables-in-docker-compose" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/docker/04-05-environment-variables-in-docker-compose" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/docker/04-05-environment-variables-in-docker-compose" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-04-multi-container-applications' title="Aplicacions multi-contenidor">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Variables d'entorn a Docker Compose</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-01-docker-networking-deep-dive' title="Exploració profunda de xarxes Docker">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Les variables d'entorn són una manera poderosa de configurar aplicacions sense haver de modificar el codi font. En Docker Compose, les variables d'entorn es poden utilitzar per definir configuracions que poden variar entre diferents entorns (per exemple, desenvolupament, proves, producció). Aquest mòdul t'ensenyarà com utilitzar variables d'entorn en els teus fitxers <code>docker-compose.yml</code>.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Variables d'entorn en el fitxer <code>docker-compose.yml</code></strong>: Com definir variables directament en el fitxer.</li>
+<li><strong>Fitxers <code>.env</code></strong>: Com utilitzar fitxers d'entorn per carregar variables.</li>
+<li><strong>Passar variables d'entorn des del sistema host</strong>: Com passar variables d'entorn des del sistema operatiu host al contenidor.</li>
+</ol>
+</div><h1>Definint Variables d'Entorn en el Fitxer `docker-compose.yml`</h1>
+<div class='content'><p>Pots definir variables d'entorn directament en el fitxer <code>docker-compose.yml</code> utilitzant la clau <code>environment</code>. Aquí tens un exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmVyc2lvbjogJzMuOCcKCnNlcnZpY2VzOgogIHdlYjoKICAgIGltYWdlOiBuZ2lueAogICAgZW52aXJvbm1lbnQ6CiAgICAgIC0gTkdJTlhfSE9TVD1sb2NhbGhvc3QKICAgICAgLSBOR0lOWF9QT1JUPTgw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>version: '3.8'
+
+services:
+  web:
+    image: nginx
+    environment:
+      - NGINX_HOST=localhost
+      - NGINX_PORT=80</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>version: '3.8'</code>: Especifica la versió de Docker Compose.</li>
+<li><code>services</code>: Defineix els serveis que es desplegaran.</li>
+<li><code>web</code>: Nom del servei.</li>
+<li><code>image: nginx</code>: Utilitza la imatge <code>nginx</code>.</li>
+<li><code>environment</code>: Defineix les variables d'entorn <code>NGINX_HOST</code> i <code>NGINX_PORT</code>.</li>
+</ul>
+</div><h1>Utilitzant Fitxers `.env`</h1>
+<div class='content'><p>Els fitxers <code>.env</code> són una manera convenient de gestionar variables d'entorn. Pots crear un fitxer <code>.env</code> al mateix directori que el teu fitxer <code>docker-compose.yml</code> i definir les variables d'entorn allà.</p>
+</div><h2>Exemple de Fitxer `.env`</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("TkdJTlhfSE9TVD1sb2NhbGhvc3QKTkdJTlhfUE9SVD04MA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>NGINX_HOST=localhost
+NGINX_PORT=80</pre></div><div class='content'></div><h2>Exemple de Fitxer `docker-compose.yml` Utilitzant `.env`</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmVyc2lvbjogJzMuOCcKCnNlcnZpY2VzOgogIHdlYjoKICAgIGltYWdlOiBuZ2lueAogICAgZW52aXJvbm1lbnQ6CiAgICAgIC0gTkdJTlhfSE9TVAogICAgICAtIE5HSU5YX1BPUlQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>version: '3.8'
+
+services:
+  web:
+    image: nginx
+    environment:
+      - NGINX_HOST
+      - NGINX_PORT</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li>Les variables <code>NGINX_HOST</code> i <code>NGINX_PORT</code> es carregaran automàticament des del fitxer <code>.env</code>.</li>
+</ul>
+</div><h1>Passar Variables d'Entorn des del Sistema Host</h1>
+<div class='content'><p>També pots passar variables d'entorn des del sistema operatiu host al contenidor. Això és útil quan vols que les variables d'entorn siguin dinàmiques.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZXhwb3J0IE5HSU5YX0hPU1Q9bG9jYWxob3N0CmV4cG9ydCBOR0lOWF9QT1JUPTgwCmRvY2tlci1jb21wb3NlIHVw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>export NGINX_HOST=localhost
+export NGINX_PORT=80
+docker-compose up</pre></div><div class='content'></div><h2>Exemple de Fitxer `docker-compose.yml`</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmVyc2lvbjogJzMuOCcKCnNlcnZpY2VzOgogIHdlYjoKICAgIGltYWdlOiBuZ2lueAogICAgZW52aXJvbm1lbnQ6CiAgICAgIC0gTkdJTlhfSE9TVD0ke05HSU5YX0hPU1R9CiAgICAgIC0gTkdJTlhfUE9SVD0ke05HSU5YX1BPUlR9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>version: '3.8'
+
+services:
+  web:
+    image: nginx
+    environment:
+      - NGINX_HOST=${NGINX_HOST}
+      - NGINX_PORT=${NGINX_PORT}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li>Les variables <code>NGINX_HOST</code> i <code>NGINX_PORT</code> es substitueixen pels valors definits en el sistema host.</li>
+</ul>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Definir Variables d'Entorn en el Fitxer `docker-compose.yml`</h2>
+<div class='content'><ol>
+<li>Crea un fitxer <code>docker-compose.yml</code> que defineixi un servei <code>web</code> utilitzant la imatge <code>nginx</code>.</li>
+<li>Defineix les variables d'entorn <code>NGINX_HOST</code> i <code>NGINX_PORT</code> directament en el fitxer <code>docker-compose.yml</code>.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmVyc2lvbjogJzMuOCcKCnNlcnZpY2VzOgogIHdlYjoKICAgIGltYWdlOiBuZ2lueAogICAgZW52aXJvbm1lbnQ6CiAgICAgIC0gTkdJTlhfSE9TVD1sb2NhbGhvc3QKICAgICAgLSBOR0lOWF9QT1JUPTgw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>version: '3.8'
+
+services:
+  web:
+    image: nginx
+    environment:
+      - NGINX_HOST=localhost
+      - NGINX_PORT=80</pre></div><div class='content'></div><h2>Exercici 2: Utilitzar un Fitxer `.env`</h2>
+<div class='content'><ol>
+<li>Crea un fitxer <code>.env</code> amb les variables <code>NGINX_HOST</code> i <code>NGINX_PORT</code>.</li>
+<li>Modifica el fitxer <code>docker-compose.yml</code> per utilitzar aquestes variables.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><h4>Fitxer <code>.env</code></h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("TkdJTlhfSE9TVD1sb2NhbGhvc3QKTkdJTlhfUE9SVD04MA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>NGINX_HOST=localhost
+NGINX_PORT=80</pre></div><div class='content'><h4>Fitxer <code>docker-compose.yml</code></h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmVyc2lvbjogJzMuOCcKCnNlcnZpY2VzOgogIHdlYjoKICAgIGltYWdlOiBuZ2lueAogICAgZW52aXJvbm1lbnQ6CiAgICAgIC0gTkdJTlhfSE9TVAogICAgICAtIE5HSU5YX1BPUlQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>version: '3.8'
+
+services:
+  web:
+    image: nginx
+    environment:
+      - NGINX_HOST
+      - NGINX_PORT</pre></div><div class='content'></div><h2>Exercici 3: Passar Variables d'Entorn des del Sistema Host</h2>
+<div class='content'><ol>
+<li>Defineix les variables d'entorn <code>NGINX_HOST</code> i <code>NGINX_PORT</code> en el sistema host.</li>
+<li>Modifica el fitxer <code>docker-compose.yml</code> per utilitzar aquestes variables.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><h4>Comandes del Sistema Host</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZXhwb3J0IE5HSU5YX0hPU1Q9bG9jYWxob3N0CmV4cG9ydCBOR0lOWF9QT1JUPTgwCmRvY2tlci1jb21wb3NlIHVw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>export NGINX_HOST=localhost
+export NGINX_PORT=80
+docker-compose up</pre></div><div class='content'><h4>Fitxer <code>docker-compose.yml</code></h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmVyc2lvbjogJzMuOCcKCnNlcnZpY2VzOgogIHdlYjoKICAgIGltYWdlOiBuZ2lueAogICAgZW52aXJvbm1lbnQ6CiAgICAgIC0gTkdJTlhfSE9TVD0ke05HSU5YX0hPU1R9CiAgICAgIC0gTkdJTlhfUE9SVD0ke05HSU5YX1BPUlR9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>version: '3.8'
+
+services:
+  web:
+    image: nginx
+    environment:
+      - NGINX_HOST=${NGINX_HOST}
+      - NGINX_PORT=${NGINX_PORT}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Les variables d'entorn són una eina essencial per configurar aplicacions de manera flexible i segura. En aquest mòdul, has après com definir variables d'entorn directament en el fitxer <code>docker-compose.yml</code>, com utilitzar fitxers <code>.env</code> i com passar variables d'entorn des del sistema host. Aquestes tècniques et permetran gestionar configuracions de manera més eficient i adaptable a diferents entorns.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-04-multi-container-applications' title="Aplicacions multi-contenidor">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-01-docker-networking-deep-dive' title="Exploració profunda de xarxes Docker">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

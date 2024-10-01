@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL i HttpURLConnection</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/java/09-05-url-and-httpurlconnection" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/java/09-05-url-and-httpurlconnection" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/java/09-05-url-and-httpurlconnection" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/java/09-05-url-and-httpurlconnection" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/java/09-05-url-and-httpurlconnection" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-04-datagramsocket-and-datagrampacket' title="DatagramSocket i DatagramPacket">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">URL i HttpURLConnection</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-01-generics' title="Generics">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, aprendrem a treballar amb URL i HttpURLConnection en Java per a la comunicació amb servidors web. Aquestes classes ens permeten enviar sol·licituds HTTP i rebre respostes, cosa que és essencial per a la creació d'aplicacions que interactuen amb serveis web.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>URL (Uniform Resource Locator)</strong>: És una referència a un recurs web que especifica la seva ubicació en una xarxa i el mecanisme per accedir-hi.</li>
+<li><strong>HttpURLConnection</strong>: És una classe que permet establir una connexió HTTP amb un servidor web, enviar sol·licituds i rebre respostes.</li>
+</ul>
+</div><h1>Estructura del Tema</h1>
+<div class='content'><ol>
+<li><strong>Creació d'un Objecte URL</strong></li>
+<li><strong>Establiment d'una Connexió HTTP</strong></li>
+<li><strong>Enviament de Sol·licituds GET</strong></li>
+<li><strong>Enviament de Sol·licituds POST</strong></li>
+<li><strong>Gestió de Respostes</strong></li>
+<li><strong>Exemples Pràctics</strong></li>
+<li><strong>Exercicis Pràctics</strong></li>
+</ol>
+</div><h1>1. Creació d'un Objecte URL</h1>
+<div class='content'><p>Per crear un objecte URL, utilitzem la classe <code>URL</code> de Java. Aquesta classe ens permet representar una URL i proporciona mètodes per obtenir informació sobre la URL.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEubmV0LlVSTDsKCnB1YmxpYyBjbGFzcyBVUkxFeGFtcGxlIHsKICAgIHB1YmxpYyBzdGF0aWMgdm9pZCBtYWluKFN0cmluZ1tdIGFyZ3MpIHsKICAgICAgICB0cnkgewogICAgICAgICAgICBVUkwgdXJsID0gbmV3IFVSTCgiaHR0cHM6Ly93d3cuZXhhbXBsZS5jb20iKTsKICAgICAgICAgICAgU3lzdGVtLm91dC5wcmludGxuKCJQcm90b2NvbDogIiArIHVybC5nZXRQcm90b2NvbCgpKTsKICAgICAgICAgICAgU3lzdGVtLm91dC5wcmludGxuKCJIb3N0OiAiICsgdXJsLmdldEhvc3QoKSk7CiAgICAgICAgICAgIFN5c3RlbS5vdXQucHJpbnRsbigiUG9ydDogIiArIHVybC5nZXRQb3J0KCkpOwogICAgICAgICAgICBTeXN0ZW0ub3V0LnByaW50bG4oIlBhdGg6ICIgKyB1cmwuZ2V0UGF0aCgpKTsKICAgICAgICB9IGNhdGNoIChFeGNlcHRpb24gZSkgewogICAgICAgICAgICBlLnByaW50U3RhY2tUcmFjZSgpOwogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.net.URL;
+
+public class URLExample {
+    public static void main(String[] args) {
+        try {
+            URL url = new URL(&quot;https://www.example.com&quot;);
+            System.out.println(&quot;Protocol: &quot; + url.getProtocol());
+            System.out.println(&quot;Host: &quot; + url.getHost());
+            System.out.println(&quot;Port: &quot; + url.getPort());
+            System.out.println(&quot;Path: &quot; + url.getPath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><strong>URL url = new URL(&quot;https://www.example.com&quot;)</strong>: Crea un objecte URL amb la URL especificada.</li>
+<li><strong>url.getProtocol()</strong>: Retorna el protocol de la URL (per exemple, &quot;https&quot;).</li>
+<li><strong>url.getHost()</strong>: Retorna el nom del host de la URL.</li>
+<li><strong>url.getPort()</strong>: Retorna el port de la URL. Si no es especifica, retorna -1.</li>
+<li><strong>url.getPath()</strong>: Retorna el camí de la URL.</li>
+</ul>
+</div><h1>2. Establiment d'una Connexió HTTP</h1>
+<div class='content'><p>Per establir una connexió HTTP, utilitzem la classe <code>HttpURLConnection</code>. Aquesta classe ens permet enviar sol·licituds HTTP i rebre respostes.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEubmV0Lkh0dHBVUkxDb25uZWN0aW9uOwppbXBvcnQgamF2YS5uZXQuVVJMOwoKcHVibGljIGNsYXNzIEh0dHBVUkxDb25uZWN0aW9uRXhhbXBsZSB7CiAgICBwdWJsaWMgc3RhdGljIHZvaWQgbWFpbihTdHJpbmdbXSBhcmdzKSB7CiAgICAgICAgdHJ5IHsKICAgICAgICAgICAgVVJMIHVybCA9IG5ldyBVUkwoImh0dHBzOi8vd3d3LmV4YW1wbGUuY29tIik7CiAgICAgICAgICAgIEh0dHBVUkxDb25uZWN0aW9uIGNvbm5lY3Rpb24gPSAoSHR0cFVSTENvbm5lY3Rpb24pIHVybC5vcGVuQ29ubmVjdGlvbigpOwogICAgICAgICAgICBjb25uZWN0aW9uLnNldFJlcXVlc3RNZXRob2QoIkdFVCIpOwogICAgICAgICAgICBpbnQgcmVzcG9uc2VDb2RlID0gY29ubmVjdGlvbi5nZXRSZXNwb25zZUNvZGUoKTsKICAgICAgICAgICAgU3lzdGVtLm91dC5wcmludGxuKCJSZXNwb25zZSBDb2RlOiAiICsgcmVzcG9uc2VDb2RlKTsKICAgICAgICB9IGNhdGNoIChFeGNlcHRpb24gZSkgewogICAgICAgICAgICBlLnByaW50U3RhY2tUcmFjZSgpOwogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class HttpURLConnectionExample {
+    public static void main(String[] args) {
+        try {
+            URL url = new URL(&quot;https://www.example.com&quot;);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(&quot;GET&quot;);
+            int responseCode = connection.getResponseCode();
+            System.out.println(&quot;Response Code: &quot; + responseCode);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><strong>HttpURLConnection connection = (HttpURLConnection) url.openConnection()</strong>: Obre una connexió a la URL especificada.</li>
+<li><strong>connection.setRequestMethod(&quot;GET&quot;)</strong>: Estableix el mètode de sol·licitud HTTP a GET.</li>
+<li><strong>connection.getResponseCode()</strong>: Retorna el codi de resposta de la sol·licitud HTTP.</li>
+</ul>
+</div><h1>3. Enviament de Sol·licituds GET</h1>
+<div class='content'><p>Les sol·licituds GET s'utilitzen per obtenir dades d'un servidor. A continuació, es mostra un exemple de com enviar una sol·licitud GET i llegir la resposta.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEuaW8uQnVmZmVyZWRSZWFkZXI7CmltcG9ydCBqYXZhLmlvLklucHV0U3RyZWFtUmVhZGVyOwppbXBvcnQgamF2YS5uZXQuSHR0cFVSTENvbm5lY3Rpb247CmltcG9ydCBqYXZhLm5ldC5VUkw7CgpwdWJsaWMgY2xhc3MgR2V0UmVxdWVzdEV4YW1wbGUgewogICAgcHVibGljIHN0YXRpYyB2b2lkIG1haW4oU3RyaW5nW10gYXJncykgewogICAgICAgIHRyeSB7CiAgICAgICAgICAgIFVSTCB1cmwgPSBuZXcgVVJMKCJodHRwczovL2pzb25wbGFjZWhvbGRlci50eXBpY29kZS5jb20vcG9zdHMvMSIpOwogICAgICAgICAgICBIdHRwVVJMQ29ubmVjdGlvbiBjb25uZWN0aW9uID0gKEh0dHBVUkxDb25uZWN0aW9uKSB1cmwub3BlbkNvbm5lY3Rpb24oKTsKICAgICAgICAgICAgY29ubmVjdGlvbi5zZXRSZXF1ZXN0TWV0aG9kKCJHRVQiKTsKCiAgICAgICAgICAgIGludCByZXNwb25zZUNvZGUgPSBjb25uZWN0aW9uLmdldFJlc3BvbnNlQ29kZSgpOwogICAgICAgICAgICBTeXN0ZW0ub3V0LnByaW50bG4oIlJlc3BvbnNlIENvZGU6ICIgKyByZXNwb25zZUNvZGUpOwoKICAgICAgICAgICAgaWYgKHJlc3BvbnNlQ29kZSA9PSBIdHRwVVJMQ29ubmVjdGlvbi5IVFRQX09LKSB7CiAgICAgICAgICAgICAgICBCdWZmZXJlZFJlYWRlciBpbiA9IG5ldyBCdWZmZXJlZFJlYWRlcihuZXcgSW5wdXRTdHJlYW1SZWFkZXIoY29ubmVjdGlvbi5nZXRJbnB1dFN0cmVhbSgpKSk7CiAgICAgICAgICAgICAgICBTdHJpbmcgaW5wdXRMaW5lOwogICAgICAgICAgICAgICAgU3RyaW5nQnVmZmVyIHJlc3BvbnNlID0gbmV3IFN0cmluZ0J1ZmZlcigpOwoKICAgICAgICAgICAgICAgIHdoaWxlICgoaW5wdXRMaW5lID0gaW4ucmVhZExpbmUoKSkgIT0gbnVsbCkgewogICAgICAgICAgICAgICAgICAgIHJlc3BvbnNlLmFwcGVuZChpbnB1dExpbmUpOwogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgaW4uY2xvc2UoKTsKCiAgICAgICAgICAgICAgICBTeXN0ZW0ub3V0LnByaW50bG4oIlJlc3BvbnNlOiAiICsgcmVzcG9uc2UudG9TdHJpbmcoKSk7CiAgICAgICAgICAgIH0gZWxzZSB7CiAgICAgICAgICAgICAgICBTeXN0ZW0ub3V0LnByaW50bG4oIkdFVCByZXF1ZXN0IGZhaWxlZCIpOwogICAgICAgICAgICB9CiAgICAgICAgfSBjYXRjaCAoRXhjZXB0aW9uIGUpIHsKICAgICAgICAgICAgZS5wcmludFN0YWNrVHJhY2UoKTsKICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class GetRequestExample {
+    public static void main(String[] args) {
+        try {
+            URL url = new URL(&quot;https://jsonplaceholder.typicode.com/posts/1&quot;);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(&quot;GET&quot;);
+
+            int responseCode = connection.getResponseCode();
+            System.out.println(&quot;Response Code: &quot; + responseCode);
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                System.out.println(&quot;Response: &quot; + response.toString());
+            } else {
+                System.out.println(&quot;GET request failed&quot;);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><strong>BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()))</strong>: Llegeix la resposta del servidor.</li>
+<li><strong>response.append(inputLine)</strong>: Afegeix cada línia de la resposta al <code>StringBuffer</code>.</li>
+<li><strong>response.toString()</strong>: Converteix el <code>StringBuffer</code> a una cadena i la mostra.</li>
+</ul>
+</div><h1>4. Enviament de Sol·licituds POST</h1>
+<div class='content'><p>Les sol·licituds POST s'utilitzen per enviar dades a un servidor. A continuació, es mostra un exemple de com enviar una sol·licitud POST amb dades JSON.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEuaW8uT3V0cHV0U3RyZWFtOwppbXBvcnQgamF2YS5uZXQuSHR0cFVSTENvbm5lY3Rpb247CmltcG9ydCBqYXZhLm5ldC5VUkw7CgpwdWJsaWMgY2xhc3MgUG9zdFJlcXVlc3RFeGFtcGxlIHsKICAgIHB1YmxpYyBzdGF0aWMgdm9pZCBtYWluKFN0cmluZ1tdIGFyZ3MpIHsKICAgICAgICB0cnkgewogICAgICAgICAgICBVUkwgdXJsID0gbmV3IFVSTCgiaHR0cHM6Ly9qc29ucGxhY2Vob2xkZXIudHlwaWNvZGUuY29tL3Bvc3RzIik7CiAgICAgICAgICAgIEh0dHBVUkxDb25uZWN0aW9uIGNvbm5lY3Rpb24gPSAoSHR0cFVSTENvbm5lY3Rpb24pIHVybC5vcGVuQ29ubmVjdGlvbigpOwogICAgICAgICAgICBjb25uZWN0aW9uLnNldFJlcXVlc3RNZXRob2QoIlBPU1QiKTsKICAgICAgICAgICAgY29ubmVjdGlvbi5zZXRSZXF1ZXN0UHJvcGVydHkoIkNvbnRlbnQtVHlwZSIsICJhcHBsaWNhdGlvbi9qc29uOyB1dGYtOCIpOwogICAgICAgICAgICBjb25uZWN0aW9uLnNldFJlcXVlc3RQcm9wZXJ0eSgiQWNjZXB0IiwgImFwcGxpY2F0aW9uL2pzb24iKTsKICAgICAgICAgICAgY29ubmVjdGlvbi5zZXREb091dHB1dCh0cnVlKTsKCiAgICAgICAgICAgIFN0cmluZyBqc29uSW5wdXRTdHJpbmcgPSAie1widGl0bGVcIjogXCJmb29cIiwgXCJib2R5XCI6IFwiYmFyXCIsIFwidXNlcklkXCI6IDF9IjsKCiAgICAgICAgICAgIHRyeSAoT3V0cHV0U3RyZWFtIG9zID0gY29ubmVjdGlvbi5nZXRPdXRwdXRTdHJlYW0oKSkgewogICAgICAgICAgICAgICAgYnl0ZVtdIGlucHV0ID0ganNvbklucHV0U3RyaW5nLmdldEJ5dGVzKCJ1dGYtOCIpOwogICAgICAgICAgICAgICAgb3Mud3JpdGUoaW5wdXQsIDAsIGlucHV0Lmxlbmd0aCk7CiAgICAgICAgICAgIH0KCiAgICAgICAgICAgIGludCByZXNwb25zZUNvZGUgPSBjb25uZWN0aW9uLmdldFJlc3BvbnNlQ29kZSgpOwogICAgICAgICAgICBTeXN0ZW0ub3V0LnByaW50bG4oIlJlc3BvbnNlIENvZGU6ICIgKyByZXNwb25zZUNvZGUpOwoKICAgICAgICAgICAgaWYgKHJlc3BvbnNlQ29kZSA9PSBIdHRwVVJMQ29ubmVjdGlvbi5IVFRQX0NSRUFURUQpIHsKICAgICAgICAgICAgICAgIEJ1ZmZlcmVkUmVhZGVyIGluID0gbmV3IEJ1ZmZlcmVkUmVhZGVyKG5ldyBJbnB1dFN0cmVhbVJlYWRlcihjb25uZWN0aW9uLmdldElucHV0U3RyZWFtKCkpKTsKICAgICAgICAgICAgICAgIFN0cmluZyBpbnB1dExpbmU7CiAgICAgICAgICAgICAgICBTdHJpbmdCdWZmZXIgcmVzcG9uc2UgPSBuZXcgU3RyaW5nQnVmZmVyKCk7CgogICAgICAgICAgICAgICAgd2hpbGUgKChpbnB1dExpbmUgPSBpbi5yZWFkTGluZSgpKSAhPSBudWxsKSB7CiAgICAgICAgICAgICAgICAgICAgcmVzcG9uc2UuYXBwZW5kKGlucHV0TGluZSk7CiAgICAgICAgICAgICAgICB9CiAgICAgICAgICAgICAgICBpbi5jbG9zZSgpOwoKICAgICAgICAgICAgICAgIFN5c3RlbS5vdXQucHJpbnRsbigiUmVzcG9uc2U6ICIgKyByZXNwb25zZS50b1N0cmluZygpKTsKICAgICAgICAgICAgfSBlbHNlIHsKICAgICAgICAgICAgICAgIFN5c3RlbS5vdXQucHJpbnRsbigiUE9TVCByZXF1ZXN0IGZhaWxlZCIpOwogICAgICAgICAgICB9CiAgICAgICAgfSBjYXRjaCAoRXhjZXB0aW9uIGUpIHsKICAgICAgICAgICAgZS5wcmludFN0YWNrVHJhY2UoKTsKICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class PostRequestExample {
+    public static void main(String[] args) {
+        try {
+            URL url = new URL(&quot;https://jsonplaceholder.typicode.com/posts&quot;);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(&quot;POST&quot;);
+            connection.setRequestProperty(&quot;Content-Type&quot;, &quot;application/json; utf-8&quot;);
+            connection.setRequestProperty(&quot;Accept&quot;, &quot;application/json&quot;);
+            connection.setDoOutput(true);
+
+            String jsonInputString = &quot;{\&quot;title\&quot;: \&quot;foo\&quot;, \&quot;body\&quot;: \&quot;bar\&quot;, \&quot;userId\&quot;: 1}&quot;;
+
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = jsonInputString.getBytes(&quot;utf-8&quot;);
+                os.write(input, 0, input.length);
+            }
+
+            int responseCode = connection.getResponseCode();
+            System.out.println(&quot;Response Code: &quot; + responseCode);
+
+            if (responseCode == HttpURLConnection.HTTP_CREATED) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                System.out.println(&quot;Response: &quot; + response.toString());
+            } else {
+                System.out.println(&quot;POST request failed&quot;);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><strong>connection.setRequestMethod(&quot;POST&quot;)</strong>: Estableix el mètode de sol·licitud HTTP a POST.</li>
+<li><strong>connection.setRequestProperty(&quot;Content-Type&quot;, &quot;application/json; utf-8&quot;)</strong>: Estableix el tipus de contingut de la sol·licitud.</li>
+<li><strong>connection.setDoOutput(true)</strong>: Permet l'enviament de dades a través de la connexió.</li>
+<li><strong>OutputStream os = connection.getOutputStream()</strong>: Obté l'OutputStream per enviar dades.</li>
+<li><strong>os.write(input, 0, input.length)</strong>: Escriu les dades JSON a l'OutputStream.</li>
+</ul>
+</div><h1>5. Gestió de Respostes</h1>
+<div class='content'><p>La gestió de respostes implica llegir i processar la resposta del servidor. Ja hem vist com fer-ho en els exemples anteriors utilitzant <code>BufferedReader</code>.</p>
+</div><h1>6. Exemples Pràctics</h1>
+<div class='content'></div><h2>Exemple 1: Sol·licitud GET</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEuaW8uQnVmZmVyZWRSZWFkZXI7CmltcG9ydCBqYXZhLmlvLklucHV0U3RyZWFtUmVhZGVyOwppbXBvcnQgamF2YS5uZXQuSHR0cFVSTENvbm5lY3Rpb247CmltcG9ydCBqYXZhLm5ldC5VUkw7CgpwdWJsaWMgY2xhc3MgR2V0RXhhbXBsZSB7CiAgICBwdWJsaWMgc3RhdGljIHZvaWQgbWFpbihTdHJpbmdbXSBhcmdzKSB7CiAgICAgICAgdHJ5IHsKICAgICAgICAgICAgVVJMIHVybCA9IG5ldyBVUkwoImh0dHBzOi8vYXBpLmdpdGh1Yi5jb20iKTsKICAgICAgICAgICAgSHR0cFVSTENvbm5lY3Rpb24gY29ubmVjdGlvbiA9IChIdHRwVVJMQ29ubmVjdGlvbikgdXJsLm9wZW5Db25uZWN0aW9uKCk7CiAgICAgICAgICAgIGNvbm5lY3Rpb24uc2V0UmVxdWVzdE1ldGhvZCgiR0VUIik7CgogICAgICAgICAgICBpbnQgcmVzcG9uc2VDb2RlID0gY29ubmVjdGlvbi5nZXRSZXNwb25zZUNvZGUoKTsKICAgICAgICAgICAgU3lzdGVtLm91dC5wcmludGxuKCJSZXNwb25zZSBDb2RlOiAiICsgcmVzcG9uc2VDb2RlKTsKCiAgICAgICAgICAgIGlmIChyZXNwb25zZUNvZGUgPT0gSHR0cFVSTENvbm5lY3Rpb24uSFRUUF9PSykgewogICAgICAgICAgICAgICAgQnVmZmVyZWRSZWFkZXIgaW4gPSBuZXcgQnVmZmVyZWRSZWFkZXIobmV3IElucHV0U3RyZWFtUmVhZGVyKGNvbm5lY3Rpb24uZ2V0SW5wdXRTdHJlYW0oKSkpOwogICAgICAgICAgICAgICAgU3RyaW5nIGlucHV0TGluZTsKICAgICAgICAgICAgICAgIFN0cmluZ0J1ZmZlciByZXNwb25zZSA9IG5ldyBTdHJpbmdCdWZmZXIoKTsKCiAgICAgICAgICAgICAgICB3aGlsZSAoKGlucHV0TGluZSA9IGluLnJlYWRMaW5lKCkpICE9IG51bGwpIHsKICAgICAgICAgICAgICAgICAgICByZXNwb25zZS5hcHBlbmQoaW5wdXRMaW5lKTsKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIGluLmNsb3NlKCk7CgogICAgICAgICAgICAgICAgU3lzdGVtLm91dC5wcmludGxuKCJSZXNwb25zZTogIiArIHJlc3BvbnNlLnRvU3RyaW5nKCkpOwogICAgICAgICAgICB9IGVsc2UgewogICAgICAgICAgICAgICAgU3lzdGVtLm91dC5wcmludGxuKCJHRVQgcmVxdWVzdCBmYWlsZWQiKTsKICAgICAgICAgICAgfQogICAgICAgIH0gY2F0Y2ggKEV4Y2VwdGlvbiBlKSB7CiAgICAgICAgICAgIGUucHJpbnRTdGFja1RyYWNlKCk7CiAgICAgICAgfQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class GetExample {
+    public static void main(String[] args) {
+        try {
+            URL url = new URL(&quot;https://api.github.com&quot;);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(&quot;GET&quot;);
+
+            int responseCode = connection.getResponseCode();
+            System.out.println(&quot;Response Code: &quot; + responseCode);
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                System.out.println(&quot;Response: &quot; + response.toString());
+            } else {
+                System.out.println(&quot;GET request failed&quot;);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}</pre></div><div class='content'></div><h2>Exemple 2: Sol·licitud POST</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEuaW8uT3V0cHV0U3RyZWFtOwppbXBvcnQgamF2YS5uZXQuSHR0cFVSTENvbm5lY3Rpb247CmltcG9ydCBqYXZhLm5ldC5VUkw7CgpwdWJsaWMgY2xhc3MgUG9zdEV4YW1wbGUgewogICAgcHVibGljIHN0YXRpYyB2b2lkIG1haW4oU3RyaW5nW10gYXJncykgewogICAgICAgIHRyeSB7CiAgICAgICAgICAgIFVSTCB1cmwgPSBuZXcgVVJMKCJodHRwczovL2pzb25wbGFjZWhvbGRlci50eXBpY29kZS5jb20vcG9zdHMiKTsKICAgICAgICAgICAgSHR0cFVSTENvbm5lY3Rpb24gY29ubmVjdGlvbiA9IChIdHRwVVJMQ29ubmVjdGlvbikgdXJsLm9wZW5Db25uZWN0aW9uKCk7CiAgICAgICAgICAgIGNvbm5lY3Rpb24uc2V0UmVxdWVzdE1ldGhvZCgiUE9TVCIpOwogICAgICAgICAgICBjb25uZWN0aW9uLnNldFJlcXVlc3RQcm9wZXJ0eSgiQ29udGVudC1UeXBlIiwgImFwcGxpY2F0aW9uL2pzb247IHV0Zi04Iik7CiAgICAgICAgICAgIGNvbm5lY3Rpb24uc2V0UmVxdWVzdFByb3BlcnR5KCJBY2NlcHQiLCAiYXBwbGljYXRpb24vanNvbiIpOwogICAgICAgICAgICBjb25uZWN0aW9uLnNldERvT3V0cHV0KHRydWUpOwoKICAgICAgICAgICAgU3RyaW5nIGpzb25JbnB1dFN0cmluZyA9ICJ7XCJ0aXRsZVwiOiBcImZvb1wiLCBcImJvZHlcIjogXCJiYXJcIiwgXCJ1c2VySWRcIjogMX0iOwoKICAgICAgICAgICAgdHJ5IChPdXRwdXRTdHJlYW0gb3MgPSBjb25uZWN0aW9uLmdldE91dHB1dFN0cmVhbSgpKSB7CiAgICAgICAgICAgICAgICBieXRlW10gaW5wdXQgPSBqc29uSW5wdXRTdHJpbmcuZ2V0Qnl0ZXMoInV0Zi04Iik7CiAgICAgICAgICAgICAgICBvcy53cml0ZShpbnB1dCwgMCwgaW5wdXQubGVuZ3RoKTsKICAgICAgICAgICAgfQoKICAgICAgICAgICAgaW50IHJlc3BvbnNlQ29kZSA9IGNvbm5lY3Rpb24uZ2V0UmVzcG9uc2VDb2RlKCk7CiAgICAgICAgICAgIFN5c3RlbS5vdXQucHJpbnRsbigiUmVzcG9uc2UgQ29kZTogIiArIHJlc3BvbnNlQ29kZSk7CgogICAgICAgICAgICBpZiAocmVzcG9uc2VDb2RlID09IEh0dHBVUkxDb25uZWN0aW9uLkhUVFBfQ1JFQVRFRCkgewogICAgICAgICAgICAgICAgQnVmZmVyZWRSZWFkZXIgaW4gPSBuZXcgQnVmZmVyZWRSZWFkZXIobmV3IElucHV0U3RyZWFtUmVhZGVyKGNvbm5lY3Rpb24uZ2V0SW5wdXRTdHJlYW0oKSkpOwogICAgICAgICAgICAgICAgU3RyaW5nIGlucHV0TGluZTsKICAgICAgICAgICAgICAgIFN0cmluZ0J1ZmZlciByZXNwb25zZSA9IG5ldyBTdHJpbmdCdWZmZXIoKTsKCiAgICAgICAgICAgICAgICB3aGlsZSAoKGlucHV0TGluZSA9IGluLnJlYWRMaW5lKCkpICE9IG51bGwpIHsKICAgICAgICAgICAgICAgICAgICByZXNwb25zZS5hcHBlbmQoaW5wdXRMaW5lKTsKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIGluLmNsb3NlKCk7CgogICAgICAgICAgICAgICAgU3lzdGVtLm91dC5wcmludGxuKCJSZXNwb25zZTogIiArIHJlc3BvbnNlLnRvU3RyaW5nKCkpOwogICAgICAgICAgICB9IGVsc2UgewogICAgICAgICAgICAgICAgU3lzdGVtLm91dC5wcmludGxuKCJQT1NUIHJlcXVlc3QgZmFpbGVkIik7CiAgICAgICAgICAgIH0KICAgICAgICB9IGNhdGNoIChFeGNlcHRpb24gZSkgewogICAgICAgICAgICBlLnByaW50U3RhY2tUcmFjZSgpOwogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class PostExample {
+    public static void main(String[] args) {
+        try {
+            URL url = new URL(&quot;https://jsonplaceholder.typicode.com/posts&quot;);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(&quot;POST&quot;);
+            connection.setRequestProperty(&quot;Content-Type&quot;, &quot;application/json; utf-8&quot;);
+            connection.setRequestProperty(&quot;Accept&quot;, &quot;application/json&quot;);
+            connection.setDoOutput(true);
+
+            String jsonInputString = &quot;{\&quot;title\&quot;: \&quot;foo\&quot;, \&quot;body\&quot;: \&quot;bar\&quot;, \&quot;userId\&quot;: 1}&quot;;
+
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = jsonInputString.getBytes(&quot;utf-8&quot;);
+                os.write(input, 0, input.length);
+            }
+
+            int responseCode = connection.getResponseCode();
+            System.out.println(&quot;Response Code: &quot; + responseCode);
+
+            if (responseCode == HttpURLConnection.HTTP_CREATED) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                System.out.println(&quot;Response: &quot; + response.toString());
+            } else {
+                System.out.println(&quot;POST request failed&quot;);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}</pre></div><div class='content'></div><h1>7. Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Sol·licitud GET</h2>
+<div class='content'><p>Escriu un programa que enviï una sol·licitud GET a l'API de GitHub per obtenir informació sobre un usuari específic i mostri la resposta.</p>
+</div><h2>Exercici 2: Sol·licitud POST</h2>
+<div class='content'><p>Escriu un programa que enviï una sol·licitud POST a l'API de JSONPlaceholder per crear una nova publicació i mostri la resposta.</p>
+</div><h2>Solucions</h2>
+<div class='content'><h4>Solució Exercici 1</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEuaW8uQnVmZmVyZWRSZWFkZXI7CmltcG9ydCBqYXZhLmlvLklucHV0U3RyZWFtUmVhZGVyOwppbXBvcnQgamF2YS5uZXQuSHR0cFVSTENvbm5lY3Rpb247CmltcG9ydCBqYXZhLm5ldC5VUkw7CgpwdWJsaWMgY2xhc3MgR2V0VXNlckluZm8gewogICAgcHVibGljIHN0YXRpYyB2b2lkIG1haW4oU3RyaW5nW10gYXJncykgewogICAgICAgIHRyeSB7CiAgICAgICAgICAgIFVSTCB1cmwgPSBuZXcgVVJMKCJodHRwczovL2FwaS5naXRodWIuY29tL3VzZXJzL29jdG9jYXQiKTsKICAgICAgICAgICAgSHR0cFVSTENvbm5lY3Rpb24gY29ubmVjdGlvbiA9IChIdHRwVVJMQ29ubmVjdGlvbikgdXJsLm9wZW5Db25uZWN0aW9uKCk7CiAgICAgICAgICAgIGNvbm5lY3Rpb24uc2V0UmVxdWVzdE1ldGhvZCgiR0VUIik7CgogICAgICAgICAgICBpbnQgcmVzcG9uc2VDb2RlID0gY29ubmVjdGlvbi5nZXRSZXNwb25zZUNvZGUoKTsKICAgICAgICAgICAgU3lzdGVtLm91dC5wcmludGxuKCJSZXNwb25zZSBDb2RlOiAiICsgcmVzcG9uc2VDb2RlKTsKCiAgICAgICAgICAgIGlmIChyZXNwb25zZUNvZGUgPT0gSHR0cFVSTENvbm5lY3Rpb24uSFRUUF9PSykgewogICAgICAgICAgICAgICAgQnVmZmVyZWRSZWFkZXIgaW4gPSBuZXcgQnVmZmVyZWRSZWFkZXIobmV3IElucHV0U3RyZWFtUmVhZGVyKGNvbm5lY3Rpb24uZ2V0SW5wdXRTdHJlYW0oKSkpOwogICAgICAgICAgICAgICAgU3RyaW5nIGlucHV0TGluZTsKICAgICAgICAgICAgICAgIFN0cmluZ0J1ZmZlciByZXNwb25zZSA9IG5ldyBTdHJpbmdCdWZmZXIoKTsKCiAgICAgICAgICAgICAgICB3aGlsZSAoKGlucHV0TGluZSA9IGluLnJlYWRMaW5lKCkpICE9IG51bGwpIHsKICAgICAgICAgICAgICAgICAgICByZXNwb25zZS5hcHBlbmQoaW5wdXRMaW5lKTsKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgICAgIGluLmNsb3NlKCk7CgogICAgICAgICAgICAgICAgU3lzdGVtLm91dC5wcmludGxuKCJSZXNwb25zZTogIiArIHJlc3BvbnNlLnRvU3RyaW5nKCkpOwogICAgICAgICAgICB9IGVsc2UgewogICAgICAgICAgICAgICAgU3lzdGVtLm91dC5wcmludGxuKCJHRVQgcmVxdWVzdCBmYWlsZWQiKTsKICAgICAgICAgICAgfQogICAgICAgIH0gY2F0Y2ggKEV4Y2VwdGlvbiBlKSB7CiAgICAgICAgICAgIGUucHJpbnRTdGFja1RyYWNlKCk7CiAgICAgICAgfQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class GetUserInfo {
+    public static void main(String[] args) {
+        try {
+            URL url = new URL(&quot;https://api.github.com/users/octocat&quot;);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(&quot;GET&quot;);
+
+            int responseCode = connection.getResponseCode();
+            System.out.println(&quot;Response Code: &quot; + responseCode);
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                System.out.println(&quot;Response: &quot; + response.toString());
+            } else {
+                System.out.println(&quot;GET request failed&quot;);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}</pre></div><div class='content'><h4>Solució Exercici 2</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmEuaW8uT3V0cHV0U3RyZWFtOwppbXBvcnQgamF2YS5uZXQuSHR0cFVSTENvbm5lY3Rpb247CmltcG9ydCBqYXZhLm5ldC5VUkw7CgpwdWJsaWMgY2xhc3MgQ3JlYXRlUG9zdCB7CiAgICBwdWJsaWMgc3RhdGljIHZvaWQgbWFpbihTdHJpbmdbXSBhcmdzKSB7CiAgICAgICAgdHJ5IHsKICAgICAgICAgICAgVVJMIHVybCA9IG5ldyBVUkwoImh0dHBzOi8vanNvbnBsYWNlaG9sZGVyLnR5cGljb2RlLmNvbS9wb3N0cyIpOwogICAgICAgICAgICBIdHRwVVJMQ29ubmVjdGlvbiBjb25uZWN0aW9uID0gKEh0dHBVUkxDb25uZWN0aW9uKSB1cmwub3BlbkNvbm5lY3Rpb24oKTsKICAgICAgICAgICAgY29ubmVjdGlvbi5zZXRSZXF1ZXN0TWV0aG9kKCJQT1NUIik7CiAgICAgICAgICAgIGNvbm5lY3Rpb24uc2V0UmVxdWVzdFByb3BlcnR5KCJDb250ZW50LVR5cGUiLCAiYXBwbGljYXRpb24vanNvbjsgdXRmLTgiKTsKICAgICAgICAgICAgY29ubmVjdGlvbi5zZXRSZXF1ZXN0UHJvcGVydHkoIkFjY2VwdCIsICJhcHBsaWNhdGlvbi9qc29uIik7CiAgICAgICAgICAgIGNvbm5lY3Rpb24uc2V0RG9PdXRwdXQodHJ1ZSk7CgogICAgICAgICAgICBTdHJpbmcganNvbklucHV0U3RyaW5nID0gIntcInRpdGxlXCI6IFwiZm9vXCIsIFwiYm9keVwiOiBcImJhclwiLCBcInVzZXJJZFwiOiAxfSI7CgogICAgICAgICAgICB0cnkgKE91dHB1dFN0cmVhbSBvcyA9IGNvbm5lY3Rpb24uZ2V0T3V0cHV0U3RyZWFtKCkpIHsKICAgICAgICAgICAgICAgIGJ5dGVbXSBpbnB1dCA9IGpzb25JbnB1dFN0cmluZy5nZXRCeXRlcygidXRmLTgiKTsKICAgICAgICAgICAgICAgIG9zLndyaXRlKGlucHV0LCAwLCBpbnB1dC5sZW5ndGgpOwogICAgICAgICAgICB9CgogICAgICAgICAgICBpbnQgcmVzcG9uc2VDb2RlID0gY29ubmVjdGlvbi5nZXRSZXNwb25zZUNvZGUoKTsKICAgICAgICAgICAgU3lzdGVtLm91dC5wcmludGxuKCJSZXNwb25zZSBDb2RlOiAiICsgcmVzcG9uc2VDb2RlKTsKCiAgICAgICAgICAgIGlmIChyZXNwb25zZUNvZGUgPT0gSHR0cFVSTENvbm5lY3Rpb24uSFRUUF9DUkVBVEVEKSB7CiAgICAgICAgICAgICAgICBCdWZmZXJlZFJlYWRlciBpbiA9IG5ldyBCdWZmZXJlZFJlYWRlcihuZXcgSW5wdXRTdHJlYW1SZWFkZXIoY29ubmVjdGlvbi5nZXRJbnB1dFN0cmVhbSgpKSk7CiAgICAgICAgICAgICAgICBTdHJpbmcgaW5wdXRMaW5lOwogICAgICAgICAgICAgICAgU3RyaW5nQnVmZmVyIHJlc3BvbnNlID0gbmV3IFN0cmluZ0J1ZmZlcigpOwoKICAgICAgICAgICAgICAgIHdoaWxlICgoaW5wdXRMaW5lID0gaW4ucmVhZExpbmUoKSkgIT0gbnVsbCkgewogICAgICAgICAgICAgICAgICAgIHJlc3BvbnNlLmFwcGVuZChpbnB1dExpbmUpOwogICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgaW4uY2xvc2UoKTsKCiAgICAgICAgICAgICAgICBTeXN0ZW0ub3V0LnByaW50bG4oIlJlc3BvbnNlOiAiICsgcmVzcG9uc2UudG9TdHJpbmcoKSk7CiAgICAgICAgICAgIH0gZWxzZSB7CiAgICAgICAgICAgICAgICBTeXN0ZW0ub3V0LnByaW50bG4oIlBPU1QgcmVxdWVzdCBmYWlsZWQiKTsKICAgICAgICAgICAgfQogICAgICAgIH0gY2F0Y2ggKEV4Y2VwdGlvbiBlKSB7CiAgICAgICAgICAgIGUucHJpbnRTdGFja1RyYWNlKCk7CiAgICAgICAgfQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class CreatePost {
+    public static void main(String[] args) {
+        try {
+            URL url = new URL(&quot;https://jsonplaceholder.typicode.com/posts&quot;);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod(&quot;POST&quot;);
+            connection.setRequestProperty(&quot;Content-Type&quot;, &quot;application/json; utf-8&quot;);
+            connection.setRequestProperty(&quot;Accept&quot;, &quot;application/json&quot;);
+            connection.setDoOutput(true);
+
+            String jsonInputString = &quot;{\&quot;title\&quot;: \&quot;foo\&quot;, \&quot;body\&quot;: \&quot;bar\&quot;, \&quot;userId\&quot;: 1}&quot;;
+
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = jsonInputString.getBytes(&quot;utf-8&quot;);
+                os.write(input, 0, input.length);
+            }
+
+            int responseCode = connection.getResponseCode();
+            System.out.println(&quot;Response Code: &quot; + responseCode);
+
+            if (responseCode == HttpURLConnection.HTTP_CREATED) {
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                System.out.println(&quot;Response: &quot; + response.toString());
+            } else {
+                System.out.println(&quot;POST request failed&quot;);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après a treballar amb URL i HttpURLConnection en Java per enviar sol·licituds HTTP i gestionar respostes. Hem vist com enviar sol·licituds GET i POST, i hem practicat amb exemples i exercicis pràctics. Aquestes habilitats són essencials per a la creació d'aplicacions que interactuen amb serveis web.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-04-datagramsocket-and-datagrampacket' title="DatagramSocket i DatagramPacket">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-01-generics' title="Generics">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

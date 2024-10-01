@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construcció d'una CNN</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/tensorflow/05-02-building-a-cnn" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/tensorflow/05-02-building-a-cnn" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/tensorflow/05-02-building-a-cnn" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/tensorflow/05-02-building-a-cnn" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/tensorflow/05-02-building-a-cnn" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-01-introduction-to-cnns' title="Introducció a les CNNs">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Construcció d'una CNN</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-03-pooling-layers' title="Capes de pooling">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a construir una Xarxa Neuronal Convolucional (CNN) utilitzant TensorFlow. Les CNNs són especialment efectives per a tasques de visió per computador, com el reconeixement d'imatges i la classificació. A continuació, desglossarem els passos necessaris per crear una CNN des de zero.</p>
+</div><h1>1. Importació de llibreries necessàries</h1>
+<div class='content'><p>Primer, importarem les llibreries necessàries per construir la nostra CNN.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKZnJvbSB0ZW5zb3JmbG93LmtlcmFzIGltcG9ydCBsYXllcnMsIG1vZGVscwppbXBvcnQgbWF0cGxvdGxpYi5weXBsb3QgYXMgcGx0"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+from tensorflow.keras import layers, models
+import matplotlib.pyplot as plt</pre></div><div class='content'></div><h1>2. Carregant i pre-processant les dades</h1>
+<div class='content'><p>Per aquest exemple, utilitzarem el dataset CIFAR-10, que conté 60,000 imatges de 10 classes diferents.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDYXJyZWdhciBlbCBkYXRhc2V0IENJRkFSLTEwCih0cmFpbl9pbWFnZXMsIHRyYWluX2xhYmVscyksICh0ZXN0X2ltYWdlcywgdGVzdF9sYWJlbHMpID0gdGYua2VyYXMuZGF0YXNldHMuY2lmYXIxMC5sb2FkX2RhdGEoKQoKIyBOb3JtYWxpdHphciBsZXMgaW1hdGdlcyBhIGwnaW50ZXJ2YWwgWzAsIDFdCnRyYWluX2ltYWdlcywgdGVzdF9pbWFnZXMgPSB0cmFpbl9pbWFnZXMgLyAyNTUuMCwgdGVzdF9pbWFnZXMgLyAyNTUuMA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Carregar el dataset CIFAR-10
+(train_images, train_labels), (test_images, test_labels) = tf.keras.datasets.cifar10.load_data()
+
+# Normalitzar les imatges a l'interval [0, 1]
+train_images, test_images = train_images / 255.0, test_images / 255.0</pre></div><div class='content'></div><h1>3. Construcció del model de la CNN</h1>
+<div class='content'><p>Ara, construirem la nostra CNN utilitzant les capes de Keras.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kZWwgPSBtb2RlbHMuU2VxdWVudGlhbCgpCgojIFByaW1lcmEgY2FwYSBjb252b2x1Y2lvbmFsCm1vZGVsLmFkZChsYXllcnMuQ29udjJEKDMyLCAoMywgMyksIGFjdGl2YXRpb249J3JlbHUnLCBpbnB1dF9zaGFwZT0oMzIsIDMyLCAzKSkpCm1vZGVsLmFkZChsYXllcnMuTWF4UG9vbGluZzJEKCgyLCAyKSkpCgojIFNlZ29uYSBjYXBhIGNvbnZvbHVjaW9uYWwKbW9kZWwuYWRkKGxheWVycy5Db252MkQoNjQsICgzLCAzKSwgYWN0aXZhdGlvbj0ncmVsdScpKQptb2RlbC5hZGQobGF5ZXJzLk1heFBvb2xpbmcyRCgoMiwgMikpKQoKIyBUZXJjZXJhIGNhcGEgY29udm9sdWNpb25hbAptb2RlbC5hZGQobGF5ZXJzLkNvbnYyRCg2NCwgKDMsIDMpLCBhY3RpdmF0aW9uPSdyZWx1JykpCgojIEFwbGFuYXIgbGVzIGNhcGVzIGkgYWZlZ2lyIGNhcGVzIGRlbnNlcwptb2RlbC5hZGQobGF5ZXJzLkZsYXR0ZW4oKSkKbW9kZWwuYWRkKGxheWVycy5EZW5zZSg2NCwgYWN0aXZhdGlvbj0ncmVsdScpKQptb2RlbC5hZGQobGF5ZXJzLkRlbnNlKDEwKSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>model = models.Sequential()
+
+# Primera capa convolucional
+model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
+model.add(layers.MaxPooling2D((2, 2)))
+
+# Segona capa convolucional
+model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+model.add(layers.MaxPooling2D((2, 2)))
+
+# Tercera capa convolucional
+model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+
+# Aplanar les capes i afegir capes denses
+model.add(layers.Flatten())
+model.add(layers.Dense(64, activation='relu'))
+model.add(layers.Dense(10))</pre></div><div class='content'></div><h2>Explicació de les capes</h2>
+<div class='content'><ol>
+<li><strong>Capes Convolucionals (Conv2D)</strong>: Aquestes capes apliquen filtres convolucionals a les imatges d'entrada per extreure característiques.</li>
+<li><strong>Capes de Pooling (MaxPooling2D)</strong>: Redueixen la dimensió espacial de les característiques, mantenint les més importants.</li>
+<li><strong>Capa d'Aplanament (Flatten)</strong>: Converteix la matriu 2D resultant en un vector 1D per poder connectar-lo a les capes denses.</li>
+<li><strong>Capes Denses (Dense)</strong>: Capes completament connectades que fan la classificació final.</li>
+</ol>
+</div><h1>4. Compilació del model</h1>
+<div class='content'><p>Compilarem el model especificant la funció de pèrdua, l'optimitzador i les mètriques.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kZWwuY29tcGlsZShvcHRpbWl6ZXI9J2FkYW0nLAogICAgICAgICAgICAgIGxvc3M9dGYua2VyYXMubG9zc2VzLlNwYXJzZUNhdGVnb3JpY2FsQ3Jvc3NlbnRyb3B5KGZyb21fbG9naXRzPVRydWUpLAogICAgICAgICAgICAgIG1ldHJpY3M9WydhY2N1cmFjeSddKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>model.compile(optimizer='adam',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])</pre></div><div class='content'></div><h1>5. Entrenament del model</h1>
+<div class='content'><p>Entrenarem el model amb les dades d'entrenament.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGlzdG9yeSA9IG1vZGVsLmZpdCh0cmFpbl9pbWFnZXMsIHRyYWluX2xhYmVscywgZXBvY2hzPTEwLCAKICAgICAgICAgICAgICAgICAgICB2YWxpZGF0aW9uX2RhdGE9KHRlc3RfaW1hZ2VzLCB0ZXN0X2xhYmVscykp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>history = model.fit(train_images, train_labels, epochs=10, 
+                    validation_data=(test_images, test_labels))</pre></div><div class='content'></div><h1>6. Avaluació del model</h1>
+<div class='content'><p>Finalment, avaluarem el model amb les dades de test.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dGVzdF9sb3NzLCB0ZXN0X2FjYyA9IG1vZGVsLmV2YWx1YXRlKHRlc3RfaW1hZ2VzLCB0ZXN0X2xhYmVscywgdmVyYm9zZT0yKQpwcmludChmJ1xuVGVzdCBhY2N1cmFjeToge3Rlc3RfYWNjfScp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>test_loss, test_acc = model.evaluate(test_images, test_labels, verbose=2)
+print(f'\nTest accuracy: {test_acc}')</pre></div><div class='content'></div><h1>7. Visualització dels resultats</h1>
+<div class='content'><p>Podem visualitzar la precisió i la pèrdua durant l'entrenament i la validació.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGx0LnBsb3QoaGlzdG9yeS5oaXN0b3J5WydhY2N1cmFjeSddLCBsYWJlbD0nYWNjdXJhY3knKQpwbHQucGxvdChoaXN0b3J5Lmhpc3RvcnlbJ3ZhbF9hY2N1cmFjeSddLCBsYWJlbCA9ICd2YWxfYWNjdXJhY3knKQpwbHQueGxhYmVsKCdFcG9jaCcpCnBsdC55bGFiZWwoJ0FjY3VyYWN5JykKcGx0LnlsaW0oWzAsIDFdKQpwbHQubGVnZW5kKGxvYz0nbG93ZXIgcmlnaHQnKQpwbHQuc2hvdygp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>plt.plot(history.history['accuracy'], label='accuracy')
+plt.plot(history.history['val_accuracy'], label = 'val_accuracy')
+plt.xlabel('Epoch')
+plt.ylabel('Accuracy')
+plt.ylim([0, 1])
+plt.legend(loc='lower right')
+plt.show()</pre></div><div class='content'></div><h1>Exercicis pràctics</h1>
+<div class='content'><ol>
+<li><strong>Modifica la CNN</strong>: Afegeix més capes convolucionals i de pooling. Observa com afecta això a la precisió del model.</li>
+<li><strong>Canvia l'optimitzador</strong>: Prova diferents optimitzadors com <code>SGD</code> o <code>RMSprop</code> i compara els resultats.</li>
+<li><strong>Augmentació de dades</strong>: Implementa augmentació de dades per millorar la generalització del model.</li>
+</ol>
+</div><h1>Solucions dels exercicis</h1>
+<div class='content'></div><h2>Exercici 1: Modifica la CNN</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kZWwgPSBtb2RlbHMuU2VxdWVudGlhbCgpCm1vZGVsLmFkZChsYXllcnMuQ29udjJEKDMyLCAoMywgMyksIGFjdGl2YXRpb249J3JlbHUnLCBpbnB1dF9zaGFwZT0oMzIsIDMyLCAzKSkpCm1vZGVsLmFkZChsYXllcnMuTWF4UG9vbGluZzJEKCgyLCAyKSkpCm1vZGVsLmFkZChsYXllcnMuQ29udjJEKDY0LCAoMywgMyksIGFjdGl2YXRpb249J3JlbHUnKSkKbW9kZWwuYWRkKGxheWVycy5NYXhQb29saW5nMkQoKDIsIDIpKSkKbW9kZWwuYWRkKGxheWVycy5Db252MkQoMTI4LCAoMywgMyksIGFjdGl2YXRpb249J3JlbHUnKSkKbW9kZWwuYWRkKGxheWVycy5NYXhQb29saW5nMkQoKDIsIDIpKSkKbW9kZWwuYWRkKGxheWVycy5Db252MkQoMTI4LCAoMywgMyksIGFjdGl2YXRpb249J3JlbHUnKSkKbW9kZWwuYWRkKGxheWVycy5GbGF0dGVuKCkpCm1vZGVsLmFkZChsYXllcnMuRGVuc2UoNTEyLCBhY3RpdmF0aW9uPSdyZWx1JykpCm1vZGVsLmFkZChsYXllcnMuRGVuc2UoMTApKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>model = models.Sequential()
+model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)))
+model.add(layers.MaxPooling2D((2, 2)))
+model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+model.add(layers.MaxPooling2D((2, 2)))
+model.add(layers.Conv2D(128, (3, 3), activation='relu'))
+model.add(layers.MaxPooling2D((2, 2)))
+model.add(layers.Conv2D(128, (3, 3), activation='relu'))
+model.add(layers.Flatten())
+model.add(layers.Dense(512, activation='relu'))
+model.add(layers.Dense(10))</pre></div><div class='content'></div><h2>Exercici 2: Canvia l'optimitzador</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kZWwuY29tcGlsZShvcHRpbWl6ZXI9J3NnZCcsCiAgICAgICAgICAgICAgbG9zcz10Zi5rZXJhcy5sb3NzZXMuU3BhcnNlQ2F0ZWdvcmljYWxDcm9zc2VudHJvcHkoZnJvbV9sb2dpdHM9VHJ1ZSksCiAgICAgICAgICAgICAgbWV0cmljcz1bJ2FjY3VyYWN5J10p"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>model.compile(optimizer='sgd',
+              loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
+              metrics=['accuracy'])</pre></div><div class='content'></div><h2>Exercici 3: Augmentació de dades</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSB0ZW5zb3JmbG93LmtlcmFzLnByZXByb2Nlc3NpbmcuaW1hZ2UgaW1wb3J0IEltYWdlRGF0YUdlbmVyYXRvcgoKZGF0YWdlbiA9IEltYWdlRGF0YUdlbmVyYXRvcigKICAgIHJvdGF0aW9uX3JhbmdlPTIwLAogICAgd2lkdGhfc2hpZnRfcmFuZ2U9MC4yLAogICAgaGVpZ2h0X3NoaWZ0X3JhbmdlPTAuMiwKICAgIGhvcml6b250YWxfZmxpcD1UcnVlKQoKZGF0YWdlbi5maXQodHJhaW5faW1hZ2VzKQoKaGlzdG9yeSA9IG1vZGVsLmZpdChkYXRhZ2VuLmZsb3codHJhaW5faW1hZ2VzLCB0cmFpbl9sYWJlbHMsIGJhdGNoX3NpemU9MzIpLAogICAgICAgICAgICAgICAgICAgIGVwb2Nocz0xMCwgdmFsaWRhdGlvbl9kYXRhPSh0ZXN0X2ltYWdlcywgdGVzdF9sYWJlbHMpKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+datagen = ImageDataGenerator(
+    rotation_range=20,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    horizontal_flip=True)
+
+datagen.fit(train_images)
+
+history = model.fit(datagen.flow(train_images, train_labels, batch_size=32),
+                    epochs=10, validation_data=(test_images, test_labels))</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après a construir una CNN utilitzant TensorFlow, des de la càrrega de dades fins a l'entrenament i l'avaluació del model. Les CNNs són una eina poderosa per a tasques de visió per computador, i amb la pràctica, es poden ajustar per obtenir resultats excel·lents en una varietat de problemes.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-01-introduction-to-cnns' title="Introducció a les CNNs">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-03-pooling-layers' title="Capes de pooling">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

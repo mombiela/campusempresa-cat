@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuració d'Ansible</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/ansible/02-02-ansible-configuration" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/ansible/02-02-ansible-configuration" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/ansible/02-02-ansible-configuration" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/ansible/02-02-ansible-configuration" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/ansible/02-02-ansible-configuration" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-inventory-files' title="Fitxers d'inventari">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Configuració d'Ansible</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-ad-hoc-commands' title="Comandes ad-hoc">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com configurar Ansible per adaptar-lo a les nostres necessitats específiques. La configuració d'Ansible es fa principalment a través del fitxer <code>ansible.cfg</code>, que permet ajustar diversos paràmetres per optimitzar el comportament d'Ansible.</p>
+</div><h1>1. Fitxer de Configuració `ansible.cfg`</h1>
+<div class='content'><p>El fitxer <code>ansible.cfg</code> és un fitxer de configuració que Ansible llegeix per determinar com ha de comportar-se. Aquest fitxer pot estar situat en diversos llocs, i Ansible els llegeix en l'ordre següent:</p>
+<ol>
+<li><strong>Fitxer de configuració a nivell de projecte</strong>: <code>./ansible.cfg</code> (al directori actual)</li>
+<li><strong>Variable d'entorn</strong>: <code>ANSIBLE_CONFIG</code></li>
+<li><strong>Fitxer de configuració a nivell d'usuari</strong>: <code>~/.ansible.cfg</code></li>
+<li><strong>Fitxer de configuració a nivell del sistema</strong>: <code>/etc/ansible/ansible.cfg</code></li>
+</ol>
+</div><h2>Exemple de fitxer `ansible.cfg`</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("W2RlZmF1bHRzXQppbnZlbnRvcnkgPSAuL2hvc3RzCnJlbW90ZV91c2VyID0gYW5zaWJsZQpwcml2YXRlX2tleV9maWxlID0gfi8uc3NoL2lkX3JzYQpob3N0X2tleV9jaGVja2luZyA9IEZhbHNlCnJldHJ5X2ZpbGVzX2VuYWJsZWQgPSBGYWxzZQp0aW1lb3V0ID0gMzAKCltwcml2aWxlZ2VfZXNjYWxhdGlvbl0KYmVjb21lID0gVHJ1ZQpiZWNvbWVfbWV0aG9kID0gc3VkbwpiZWNvbWVfdXNlciA9IHJvb3QKYmVjb21lX2Fza19wYXNzID0gRmFsc2UKCltzc2hfY29ubmVjdGlvbl0Kc3NoX2FyZ3MgPSAtbyBDb250cm9sTWFzdGVyPWF1dG8gLW8gQ29udHJvbFBlcnNpc3Q9NjBz"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>[defaults]
+inventory = ./hosts
+remote_user = ansible
+private_key_file = ~/.ssh/id_rsa
+host_key_checking = False
+retry_files_enabled = False
+timeout = 30
+
+[privilege_escalation]
+become = True
+become_method = sudo
+become_user = root
+become_ask_pass = False
+
+[ssh_connection]
+ssh_args = -o ControlMaster=auto -o ControlPersist=60s</pre></div><div class='content'></div><h2>Explicació dels Paràmetres</h2>
+<div class='content'><ul>
+<li>
+<p><strong>[defaults]</strong>: Aquesta secció conté els paràmetres per defecte que Ansible utilitza.</p>
+<ul>
+<li><code>inventory</code>: Especifica el fitxer d'inventari que Ansible utilitzarà.</li>
+<li><code>remote_user</code>: Defineix l'usuari per defecte amb el qual Ansible es connectarà als hosts remots.</li>
+<li><code>private_key_file</code>: Especifica la clau privada que s'utilitzarà per a l'autenticació SSH.</li>
+<li><code>host_key_checking</code>: Si es desactiva (<code>False</code>), Ansible no comprovarà les claus dels hosts remots.</li>
+<li><code>retry_files_enabled</code>: Si es desactiva (<code>False</code>), Ansible no crearà fitxers de reintents.</li>
+<li><code>timeout</code>: Defineix el temps d'espera per a les connexions SSH.</li>
+</ul>
+</li>
+<li>
+<p><strong>[privilege_escalation]</strong>: Aquesta secció conté els paràmetres per a l'escalat de privilegis.</p>
+<ul>
+<li><code>become</code>: Si es defineix com a <code>True</code>, Ansible utilitzarà l'escalat de privilegis.</li>
+<li><code>become_method</code>: Defineix el mètode d'escalat de privilegis (per exemple, <code>sudo</code>).</li>
+<li><code>become_user</code>: Especifica l'usuari al qual es farà l'escalat de privilegis.</li>
+<li><code>become_ask_pass</code>: Si es defineix com a <code>False</code>, Ansible no demanarà la contrasenya per a l'escalat de privilegis.</li>
+</ul>
+</li>
+<li>
+<p><strong>[ssh_connection]</strong>: Aquesta secció conté els paràmetres per a les connexions SSH.</p>
+<ul>
+<li><code>ssh_args</code>: Defineix arguments addicionals per a les connexions SSH.</li>
+</ul>
+</li>
+</ul>
+</div><h1>2. Configuració d'Ansible a través de Variables d'Entorn</h1>
+<div class='content'><p>A més del fitxer <code>ansible.cfg</code>, també podem configurar Ansible utilitzant variables d'entorn. Algunes de les variables d'entorn més comunes són:</p>
+<ul>
+<li><code>ANSIBLE_CONFIG</code>: Especifica la ubicació del fitxer de configuració <code>ansible.cfg</code>.</li>
+<li><code>ANSIBLE_INVENTORY</code>: Defineix el fitxer d'inventari que Ansible utilitzarà.</li>
+<li><code>ANSIBLE_REMOTE_USER</code>: Especifica l'usuari remot per defecte.</li>
+<li><code>ANSIBLE_PRIVATE_KEY_FILE</code>: Defineix la clau privada per a l'autenticació SSH.</li>
+<li><code>ANSIBLE_HOST_KEY_CHECKING</code>: Si es defineix com a <code>False</code>, desactiva la comprovació de claus dels hosts remots.</li>
+</ul>
+</div><h2>Exemple d'ús de Variables d'Entorn</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZXhwb3J0IEFOU0lCTEVfQ09ORklHPS4vYW5zaWJsZS5jZmcKZXhwb3J0IEFOU0lCTEVfSU5WRU5UT1JZPS4vaG9zdHMKZXhwb3J0IEFOU0lCTEVfUkVNT1RFX1VTRVI9YW5zaWJsZQpleHBvcnQgQU5TSUJMRV9QUklWQVRFX0tFWV9GSUxFPX4vLnNzaC9pZF9yc2EKZXhwb3J0IEFOU0lCTEVfSE9TVF9LRVlfQ0hFQ0tJTkc9RmFsc2U="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>export ANSIBLE_CONFIG=./ansible.cfg
+export ANSIBLE_INVENTORY=./hosts
+export ANSIBLE_REMOTE_USER=ansible
+export ANSIBLE_PRIVATE_KEY_FILE=~/.ssh/id_rsa
+export ANSIBLE_HOST_KEY_CHECKING=False</pre></div><div class='content'></div><h1>3. Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Configurar Ansible per utilitzar un fitxer d'inventari personalitzat i desactivar la comprovació de claus dels hosts remots.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li><strong>Crea un fitxer <code>ansible.cfg</code> al directori actual amb el següent contingut:</strong></li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("W2RlZmF1bHRzXQppbnZlbnRvcnkgPSAuL215X2ludmVudG9yeQpob3N0X2tleV9jaGVja2luZyA9IEZhbHNl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>[defaults]
+inventory = ./my_inventory
+host_key_checking = False</pre></div><div class='content'><ol start="2">
+<li><strong>Crea un fitxer d'inventari anomenat <code>my_inventory</code> amb el següent contingut:</strong></li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("W3dlYnNlcnZlcnNdCndlYjEgYW5zaWJsZV9ob3N0PTE5Mi4xNjguMS4xMAp3ZWIyIGFuc2libGVfaG9zdD0xOTIuMTY4LjEuMTE="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>[webservers]
+web1 ansible_host=192.168.1.10
+web2 ansible_host=192.168.1.11</pre></div><div class='content'><ol start="3">
+<li><strong>Executa una comanda ad-hoc per comprovar la configuració:</strong></li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YW5zaWJsZSB3ZWJzZXJ2ZXJzIC1tIHBpbmc="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ansible webservers -m ping</pre></div><div class='content'></div><h2>Solució</h2>
+<div class='content'><p>Si la configuració és correcta, hauríeu de veure una sortida similar a aquesta:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("d2ViMSB8IFNVQ0NFU1MgPT4gewogICAgImNoYW5nZWQiOiBmYWxzZSwKICAgICJwaW5nIjogInBvbmciCn0Kd2ViMiB8IFNVQ0NFU1MgPT4gewogICAgImNoYW5nZWQiOiBmYWxzZSwKICAgICJwaW5nIjogInBvbmciCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>web1 | SUCCESS =&gt; {
+    &quot;changed&quot;: false,
+    &quot;ping&quot;: &quot;pong&quot;
+}
+web2 | SUCCESS =&gt; {
+    &quot;changed&quot;: false,
+    &quot;ping&quot;: &quot;pong&quot;
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com configurar Ansible utilitzant el fitxer <code>ansible.cfg</code> i variables d'entorn. La configuració adequada d'Ansible és crucial per assegurar-se que les operacions es realitzin de manera eficient i segura. En el proper tema, explorarem les comandes ad-hoc d'Ansible per executar tasques ràpides i senzilles.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-01-inventory-files' title="Fitxers d'inventari">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='02-03-ad-hoc-commands' title="Comandes ad-hoc">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió d'Errors</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/ansible/05-04-error-handling" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/ansible/05-04-error-handling" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/ansible/05-04-error-handling" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/ansible/05-04-error-handling" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/ansible/05-04-error-handling" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-03-ansible-vault' title="Ansible Vault">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Gestió d'Errors</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-05-optimizing-playbooks' title="Optimitzant Playbooks">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com gestionar errors en els playbooks d'Ansible. La gestió d'errors és una part crucial per assegurar que els teus playbooks siguin robustos i fiables. Ansible proporciona diverses maneres de gestionar errors, des de la captura d'errors fins a la definició de comportaments específics quan es produeixen errors.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Ignorar Errors</strong>: Com ignorar errors en tasques específiques.</li>
+<li><strong>Condicionals d'Error</strong>: Com utilitzar condicionals per gestionar errors.</li>
+<li><strong>Handlers d'Error</strong>: Com utilitzar handlers per gestionar errors.</li>
+<li><strong>Retry (Reintents)</strong>: Com configurar reintents per a tasques fallides.</li>
+<li><strong>Bloc <code>rescue</code> i <code>always</code></strong>: Com utilitzar blocs per gestionar errors de manera més avançada.</li>
+</ol>
+</div><h1>Ignorar Errors</h1>
+<div class='content'><p>A vegades, pot ser necessari ignorar errors en tasques específiques. Això es pot fer utilitzant el paràmetre <code>ignore_errors</code>.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LSBuYW1lOiBJbnN0YWzCt2xhciB1biBwYXF1ZXQgcXVlIHBvdCBubyBleGlzdGlyCiAgYXB0OgogICAgbmFtZTogcGFxdWV0X2luZXhpc3RlbnQKICAgIHN0YXRlOiBwcmVzZW50CiAgaWdub3JlX2Vycm9yczogeWVz"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>- name: Instal&middot;lar un paquet que pot no existir
+  apt:
+    name: paquet_inexistent
+    state: present
+  ignore_errors: yes</pre></div><div class='content'><p>En aquest exemple, si la instal·lació del paquet falla, Ansible continuarà amb les següents tasques.</p>
+</div><h1>Condicionals d'Error</h1>
+<div class='content'><p>Pots utilitzar condicionals per gestionar errors basats en el resultat d'una tasca anterior.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LSBuYW1lOiBDb21wcm92YXIgc2kgdW4gZml0eGVyIGV4aXN0ZWl4CiAgc3RhdDoKICAgIHBhdGg6IC9ldGMvZml0eGVyX2luZXhpc3RlbnQKICByZWdpc3RlcjogZml0eGVyCgotIG5hbWU6IENyZWFyIGVsIGZpdHhlciBzaSBubyBleGlzdGVpeAogIGZpbGU6CiAgICBwYXRoOiAvZXRjL2ZpdHhlcl9pbmV4aXN0ZW50CiAgICBzdGF0ZTogdG91Y2gKICB3aGVuOiBmaXR4ZXIuc3RhdC5leGlzdHMgPT0gRmFsc2U="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>- name: Comprovar si un fitxer existeix
+  stat:
+    path: /etc/fitxer_inexistent
+  register: fitxer
+
+- name: Crear el fitxer si no existeix
+  file:
+    path: /etc/fitxer_inexistent
+    state: touch
+  when: fitxer.stat.exists == False</pre></div><div class='content'><p>En aquest exemple, la segona tasca només s'executarà si el fitxer no existeix.</p>
+</div><h1>Handlers d'Error</h1>
+<div class='content'><p>Els handlers es poden utilitzar per gestionar errors de manera més estructurada. Un handler és una tasca especial que s'executa quan és notificat per una altra tasca.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LSBuYW1lOiBSZWluaWNpYXIgZWwgc2VydmVpIHNpIGxhIGNvbmZpZ3VyYWNpw7MgY2FudmlhCiAgc2VydmljZToKICAgIG5hbWU6IHNlcnZlaQogICAgc3RhdGU6IHJlc3RhcnRlZAogIGxpc3RlbjogImNvbmZpZ3VyYWNpb19jYW52aWFkYSIKCi0gbmFtZTogQWN0dWFsaXR6YXIgbGEgY29uZmlndXJhY2nDswogIHRlbXBsYXRlOgogICAgc3JjOiBjb25maWd1cmFjaW8uajIKICAgIGRlc3Q6IC9ldGMvc2VydmVpL2NvbmZpZ3VyYWNpbwogIG5vdGlmeTogImNvbmZpZ3VyYWNpb19jYW52aWFkYSI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>- name: Reiniciar el servei si la configuraci&oacute; canvia
+  service:
+    name: servei
+    state: restarted
+  listen: &quot;configuracio_canviada&quot;
+
+- name: Actualitzar la configuraci&oacute;
+  template:
+    src: configuracio.j2
+    dest: /etc/servei/configuracio
+  notify: &quot;configuracio_canviada&quot;</pre></div><div class='content'><p>En aquest exemple, si la tasca d'actualització de la configuració canvia el fitxer, el handler reiniciarà el servei.</p>
+</div><h1>Retry (Reintents)</h1>
+<div class='content'><p>Pots configurar reintents per a tasques que poden fallar temporalment.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LSBuYW1lOiBDb21wcm92YXIgbGEgZGlzcG9uaWJpbGl0YXQgZCd1biBzZXJ2ZWkKICB1cmk6CiAgICB1cmw6IGh0dHA6Ly9zZXJ2ZWk6ODA4MAogIHJlZ2lzdGVyOiByZXN1bHRhdAogIHJldHJpZXM6IDUKICBkZWxheTogMTAKICB1bnRpbDogcmVzdWx0YXQuc3RhdHVzID09IDIwMA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>- name: Comprovar la disponibilitat d'un servei
+  uri:
+    url: http://servei:8080
+  register: resultat
+  retries: 5
+  delay: 10
+  until: resultat.status == 200</pre></div><div class='content'><p>En aquest exemple, Ansible intentarà accedir al servei fins a 5 vegades, amb un retard de 10 segons entre intents, fins que el servei respongui amb un estat 200.</p>
+</div><h1>Bloc `rescue` i `always`</h1>
+<div class='content'><p>Els blocs <code>rescue</code> i <code>always</code> permeten gestionar errors de manera més avançada.</p>
+</div><h2>Exemple</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LSBuYW1lOiBCbG9jIGFtYiBnZXN0acOzIGQnZXJyb3JzCiAgYmxvY2s6CiAgICAtIG5hbWU6IEludGVudGFyIHVuYSB0YXNjYSBxdWUgcG90IGZhbGxhcgogICAgICBjb21tYW5kOiAvYmluL2ZhbHNlCiAgcmVzY3VlOgogICAgLSBuYW1lOiBHZXN0aW9uYXIgbCdlcnJvcgogICAgICBkZWJ1ZzoKICAgICAgICBtc2c6ICJMYSB0YXNjYSBoYSBmYWxsYXQsIHBlcsOyIGVzdGVtIGdlc3Rpb25hbnQgbCdlcnJvci4iCiAgYWx3YXlzOgogICAgLSBuYW1lOiBBcXVlc3RhIHRhc2NhIHNlbXByZSBzJ2V4ZWN1dGEKICAgICAgZGVidWc6CiAgICAgICAgbXNnOiAiQXF1ZXN0YSB0YXNjYSBzJ2V4ZWN1dGEgaW5kZXBlbmRlbnRtZW50IGRlIGwnw6h4aXQgbyBlbCBmcmFjw6BzLiI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>- name: Bloc amb gesti&oacute; d'errors
+  block:
+    - name: Intentar una tasca que pot fallar
+      command: /bin/false
+  rescue:
+    - name: Gestionar l'error
+      debug:
+        msg: &quot;La tasca ha fallat, per&ograve; estem gestionant l'error.&quot;
+  always:
+    - name: Aquesta tasca sempre s'executa
+      debug:
+        msg: &quot;Aquesta tasca s'executa independentment de l'&egrave;xit o el frac&agrave;s.&quot;</pre></div><div class='content'><p>En aquest exemple, si la tasca dins del bloc falla, les tasques dins del bloc <code>rescue</code> s'executaran per gestionar l'error. Les tasques dins del bloc <code>always</code> s'executaran independentment de si hi ha hagut un error o no.</p>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Ignorar Errors</h2>
+<div class='content'><p>Escriu un playbook que intenti instal·lar un paquet inexistent i ignori l'error.</p>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LSBuYW1lOiBJZ25vcmFyIGVycm9ycyBlbiBsYSBpbnN0YWzCt2xhY2nDsyBkZSBwYXF1ZXRzCiAgaG9zdHM6IGxvY2FsaG9zdAogIHRhc2tzOgogICAgLSBuYW1lOiBJbnN0YWzCt2xhciB1biBwYXF1ZXQgcXVlIHBvdCBubyBleGlzdGlyCiAgICAgIGFwdDoKICAgICAgICBuYW1lOiBwYXF1ZXRfaW5leGlzdGVudAogICAgICAgIHN0YXRlOiBwcmVzZW50CiAgICAgIGlnbm9yZV9lcnJvcnM6IHllcw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>- name: Ignorar errors en la instal&middot;laci&oacute; de paquets
+  hosts: localhost
+  tasks:
+    - name: Instal&middot;lar un paquet que pot no existir
+      apt:
+        name: paquet_inexistent
+        state: present
+      ignore_errors: yes</pre></div><div class='content'></div><h2>Exercici 2: Utilitzar Condicionals d'Error</h2>
+<div class='content'><p>Escriu un playbook que comprovi si un fitxer existeix i el creï si no existeix.</p>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LSBuYW1lOiBDb21wcm92YXIgaSBjcmVhciBmaXR4ZXIKICBob3N0czogbG9jYWxob3N0CiAgdGFza3M6CiAgICAtIG5hbWU6IENvbXByb3ZhciBzaSB1biBmaXR4ZXIgZXhpc3RlaXgKICAgICAgc3RhdDoKICAgICAgICBwYXRoOiAvZXRjL2ZpdHhlcl9pbmV4aXN0ZW50CiAgICAgIHJlZ2lzdGVyOiBmaXR4ZXIKCiAgICAtIG5hbWU6IENyZWFyIGVsIGZpdHhlciBzaSBubyBleGlzdGVpeAogICAgICBmaWxlOgogICAgICAgIHBhdGg6IC9ldGMvZml0eGVyX2luZXhpc3RlbnQKICAgICAgICBzdGF0ZTogdG91Y2gKICAgICAgd2hlbjogZml0eGVyLnN0YXQuZXhpc3RzID09IEZhbHNl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>- name: Comprovar i crear fitxer
+  hosts: localhost
+  tasks:
+    - name: Comprovar si un fitxer existeix
+      stat:
+        path: /etc/fitxer_inexistent
+      register: fitxer
+
+    - name: Crear el fitxer si no existeix
+      file:
+        path: /etc/fitxer_inexistent
+        state: touch
+      when: fitxer.stat.exists == False</pre></div><div class='content'></div><h2>Exercici 3: Utilitzar Handlers</h2>
+<div class='content'><p>Escriu un playbook que actualitzi un fitxer de configuració i reiniciï un servei si la configuració canvia.</p>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LSBuYW1lOiBBY3R1YWxpdHphciBjb25maWd1cmFjacOzIGkgcmVpbmljaWFyIHNlcnZlaQogIGhvc3RzOiBsb2NhbGhvc3QKICB0YXNrczoKICAgIC0gbmFtZTogQWN0dWFsaXR6YXIgbGEgY29uZmlndXJhY2nDswogICAgICB0ZW1wbGF0ZToKICAgICAgICBzcmM6IGNvbmZpZ3VyYWNpby5qMgogICAgICAgIGRlc3Q6IC9ldGMvc2VydmVpL2NvbmZpZ3VyYWNpbwogICAgICBub3RpZnk6ICJjb25maWd1cmFjaW9fY2FudmlhZGEiCgogIGhhbmRsZXJzOgogICAgLSBuYW1lOiBSZWluaWNpYXIgZWwgc2VydmVpIHNpIGxhIGNvbmZpZ3VyYWNpw7MgY2FudmlhCiAgICAgIHNlcnZpY2U6CiAgICAgICAgbmFtZTogc2VydmVpCiAgICAgICAgc3RhdGU6IHJlc3RhcnRlZAogICAgICBsaXN0ZW46ICJjb25maWd1cmFjaW9fY2FudmlhZGEi"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>- name: Actualitzar configuraci&oacute; i reiniciar servei
+  hosts: localhost
+  tasks:
+    - name: Actualitzar la configuraci&oacute;
+      template:
+        src: configuracio.j2
+        dest: /etc/servei/configuracio
+      notify: &quot;configuracio_canviada&quot;
+
+  handlers:
+    - name: Reiniciar el servei si la configuraci&oacute; canvia
+      service:
+        name: servei
+        state: restarted
+      listen: &quot;configuracio_canviada&quot;</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après diverses tècniques per gestionar errors en els playbooks d'Ansible, incloent ignorar errors, utilitzar condicionals, handlers, reintents i blocs <code>rescue</code> i <code>always</code>. La gestió d'errors és essencial per assegurar que els teus playbooks siguin robustos i fiables. Amb aquestes tècniques, pots gestionar errors de manera efectiva i assegurar que els teus playbooks funcionin correctament en diferents situacions.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-03-ansible-vault' title="Ansible Vault">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-05-optimizing-playbooks' title="Optimitzant Playbooks">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

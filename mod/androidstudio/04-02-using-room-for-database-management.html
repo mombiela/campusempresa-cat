@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ús de Room per a la Gestió de Bases de Dades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/androidstudio/04-02-using-room-for-database-management" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/androidstudio/04-02-using-room-for-database-management" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/androidstudio/04-02-using-room-for-database-management" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/androidstudio/04-02-using-room-for-database-management" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/androidstudio/04-02-using-room-for-database-management" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-data-persistence-with-sqlite' title="Persistència de Dades amb SQLite">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Ús de Room per a la Gestió de Bases de Dades</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-advanced-ui-components' title="Components Avançats de la Interfície d'Usuari">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Room és una biblioteca de persistència de dades que proporciona una capa d'abstracció sobre SQLite per permetre un accés més robust a la base de dades. Room simplifica la gestió de bases de dades en aplicacions Android, oferint una API més fàcil d'utilitzar i integrant-se amb LiveData i RxJava per a operacions asíncrones.</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ul>
+<li>Comprendre què és Room i per què s'utilitza.</li>
+<li>Aprendre a configurar Room en un projecte Android.</li>
+<li>Crear entitats, DAOs (Data Access Objects) i la base de dades.</li>
+<li>Realitzar operacions bàsiques de CRUD (Create, Read, Update, Delete) amb Room.</li>
+</ul>
+</div><h1>1. Configuració de Room</h1>
+<div class='content'></div><h2>Afegir les Dependències</h2>
+<div class='content'><p>Per començar a utilitzar Room, necessitem afegir les dependències necessàries al fitxer <code>build.gradle</code> del mòdul de l'aplicació.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVwZW5kZW5jaWVzIHsKICAgIGltcGxlbWVudGF0aW9uICJhbmRyb2lkeC5yb29tOnJvb20tcnVudGltZToyLjQuMiIKICAgIGFubm90YXRpb25Qcm9jZXNzb3IgImFuZHJvaWR4LnJvb206cm9vbS1jb21waWxlcjoyLjQuMiIKICAgIC8vIE9wY2lvbmFsOiBSb29tIGFtYiBSeEphdmEyIG8gUnhKYXZhMwogICAgaW1wbGVtZW50YXRpb24gImFuZHJvaWR4LnJvb206cm9vbS1yeGphdmEyOjIuNC4yIgogICAgaW1wbGVtZW50YXRpb24gImFuZHJvaWR4LnJvb206cm9vbS1yeGphdmEzOjIuNC4yIgogICAgLy8gT3BjaW9uYWw6IFJvb20gYW1iIEtvdGxpbiBDb3JvdXRpbmVzCiAgICBpbXBsZW1lbnRhdGlvbiAiYW5kcm9pZHgucm9vbTpyb29tLWt0eDoyLjQuMiIKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>dependencies {
+    implementation &quot;androidx.room:room-runtime:2.4.2&quot;
+    annotationProcessor &quot;androidx.room:room-compiler:2.4.2&quot;
+    // Opcional: Room amb RxJava2 o RxJava3
+    implementation &quot;androidx.room:room-rxjava2:2.4.2&quot;
+    implementation &quot;androidx.room:room-rxjava3:2.4.2&quot;
+    // Opcional: Room amb Kotlin Coroutines
+    implementation &quot;androidx.room:room-ktx:2.4.2&quot;
+}</pre></div><div class='content'></div><h2>Habilitar l'Anotació de Processament</h2>
+<div class='content'><p>Per utilitzar les anotacions de Room, hem d'habilitar l'anotació de processament. Afegiu el següent al fitxer <code>build.gradle</code> del projecte:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YW5kcm9pZCB7CiAgICAuLi4KICAgIGRlZmF1bHRDb25maWcgewogICAgICAgIC4uLgogICAgICAgIGphdmFDb21waWxlT3B0aW9ucyB7CiAgICAgICAgICAgIGFubm90YXRpb25Qcm9jZXNzb3JPcHRpb25zIHsKICAgICAgICAgICAgICAgIGFyZ3VtZW50cyA9IFsicm9vbS5zY2hlbWFMb2NhdGlvbiI6ICIkcHJvamVjdERpci9zY2hlbWFzIi50b1N0cmluZygpXQogICAgICAgICAgICB9CiAgICAgICAgfQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>android {
+    ...
+    defaultConfig {
+        ...
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [&quot;room.schemaLocation&quot;: &quot;$projectDir/schemas&quot;.toString()]
+            }
+        }
+    }
+}</pre></div><div class='content'></div><h1>2. Creació d'Entitats</h1>
+<div class='content'><p>Una entitat representa una taula a la base de dades. Cada camp de l'entitat representa una columna a la taula.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGFuZHJvaWR4LnJvb20uRW50aXR5CmltcG9ydCBhbmRyb2lkeC5yb29tLlByaW1hcnlLZXkKCkBFbnRpdHkodGFibGVOYW1lID0gInVzZXJzIikKZGF0YSBjbGFzcyBVc2VyKAogICAgQFByaW1hcnlLZXkoYXV0b0dlbmVyYXRlID0gdHJ1ZSkgdmFsIGlkOiBJbnQsCiAgICB2YWwgbmFtZTogU3RyaW5nLAogICAgdmFsIGFnZTogSW50Cik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = &quot;users&quot;)
+data class User(
+    @PrimaryKey(autoGenerate = true) val id: Int,
+    val name: String,
+    val age: Int
+)</pre></div><div class='content'></div><h1>3. Creació de DAOs</h1>
+<div class='content'><p>Els DAOs (Data Access Objects) són interfícies que defineixen les operacions de la base de dades. Utilitzem anotacions per definir les operacions de CRUD.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGFuZHJvaWR4LnJvb20uRGFvCmltcG9ydCBhbmRyb2lkeC5yb29tLkluc2VydAppbXBvcnQgYW5kcm9pZHgucm9vbS5RdWVyeQoKQERhbwppbnRlcmZhY2UgVXNlckRhbyB7CiAgICBASW5zZXJ0CiAgICBzdXNwZW5kIGZ1biBpbnNlcnQodXNlcjogVXNlcikKCiAgICBAUXVlcnkoIlNFTEVDVCAqIEZST00gdXNlcnMiKQogICAgc3VzcGVuZCBmdW4gZ2V0QWxsVXNlcnMoKTogTGlzdDxVc2VyPgoKICAgIEBRdWVyeSgiREVMRVRFIEZST00gdXNlcnMiKQogICAgc3VzcGVuZCBmdW4gZGVsZXRlQWxsVXNlcnMoKQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+
+@Dao
+interface UserDao {
+    @Insert
+    suspend fun insert(user: User)
+
+    @Query(&quot;SELECT * FROM users&quot;)
+    suspend fun getAllUsers(): List&lt;User&gt;
+
+    @Query(&quot;DELETE FROM users&quot;)
+    suspend fun deleteAllUsers()
+}</pre></div><div class='content'></div><h1>4. Creació de la Base de Dades</h1>
+<div class='content'><p>La base de dades és una classe abstracta que extén <code>RoomDatabase</code> i defineix els DAOs.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGFuZHJvaWR4LnJvb20uRGF0YWJhc2UKaW1wb3J0IGFuZHJvaWR4LnJvb20uUm9vbURhdGFiYXNlCgpARGF0YWJhc2UoZW50aXRpZXMgPSBbVXNlcjo6Y2xhc3NdLCB2ZXJzaW9uID0gMSkKYWJzdHJhY3QgY2xhc3MgQXBwRGF0YWJhc2UgOiBSb29tRGF0YWJhc2UoKSB7CiAgICBhYnN0cmFjdCBmdW4gdXNlckRhbygpOiBVc2VyRGFvCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import androidx.room.Database
+import androidx.room.RoomDatabase
+
+@Database(entities = [User::class], version = 1)
+abstract class AppDatabase : RoomDatabase() {
+    abstract fun userDao(): UserDao
+}</pre></div><div class='content'></div><h1>5. Inicialització de la Base de Dades</h1>
+<div class='content'><p>Inicialitzem la base de dades utilitzant el patró Singleton per assegurar-nos que només hi ha una instància de la base de dades a tota l'aplicació.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGFuZHJvaWQuY29udGVudC5Db250ZXh0CmltcG9ydCBhbmRyb2lkeC5yb29tLlJvb20KCm9iamVjdCBEYXRhYmFzZVByb3ZpZGVyIHsKICAgIEBWb2xhdGlsZQogICAgcHJpdmF0ZSB2YXIgSU5TVEFOQ0U6IEFwcERhdGFiYXNlPyA9IG51bGwKCiAgICBmdW4gZ2V0RGF0YWJhc2UoY29udGV4dDogQ29udGV4dCk6IEFwcERhdGFiYXNlIHsKICAgICAgICByZXR1cm4gSU5TVEFOQ0UgPzogc3luY2hyb25pemVkKHRoaXMpIHsKICAgICAgICAgICAgdmFsIGluc3RhbmNlID0gUm9vbS5kYXRhYmFzZUJ1aWxkZXIoCiAgICAgICAgICAgICAgICBjb250ZXh0LmFwcGxpY2F0aW9uQ29udGV4dCwKICAgICAgICAgICAgICAgIEFwcERhdGFiYXNlOjpjbGFzcy5qYXZhLAogICAgICAgICAgICAgICAgImFwcF9kYXRhYmFzZSIKICAgICAgICAgICAgKS5idWlsZCgpCiAgICAgICAgICAgIElOU1RBTkNFID0gaW5zdGFuY2UKICAgICAgICAgICAgaW5zdGFuY2UKICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import android.content.Context
+import androidx.room.Room
+
+object DatabaseProvider {
+    @Volatile
+    private var INSTANCE: AppDatabase? = null
+
+    fun getDatabase(context: Context): AppDatabase {
+        return INSTANCE ?: synchronized(this) {
+            val instance = Room.databaseBuilder(
+                context.applicationContext,
+                AppDatabase::class.java,
+                &quot;app_database&quot;
+            ).build()
+            INSTANCE = instance
+            instance
+        }
+    }
+}</pre></div><div class='content'></div><h1>6. Operacions Bàsiques de CRUD</h1>
+<div class='content'></div><h2>Inserir un Usuari</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIHVzZXIgPSBVc2VyKG5hbWUgPSAiSm9obiBEb2UiLCBhZ2UgPSAzMCkKdmFsIGRiID0gRGF0YWJhc2VQcm92aWRlci5nZXREYXRhYmFzZShjb250ZXh0KQpkYi51c2VyRGFvKCkuaW5zZXJ0KHVzZXIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val user = User(name = &quot;John Doe&quot;, age = 30)
+val db = DatabaseProvider.getDatabase(context)
+db.userDao().insert(user)</pre></div><div class='content'></div><h2>Obtenir Tots els Usuaris</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIHVzZXJzID0gZGIudXNlckRhbygpLmdldEFsbFVzZXJzKCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val users = db.userDao().getAllUsers()</pre></div><div class='content'></div><h2>Esborrar Tots els Usuaris</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGIudXNlckRhbygpLmRlbGV0ZUFsbFVzZXJzKCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>db.userDao().deleteAllUsers()</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Afegir un Nou Camp a l'Entitat</h2>
+<div class='content'><ol>
+<li>Afegiu un nou camp <code>email</code> a l'entitat <code>User</code>.</li>
+<li>Actualitzeu la base de dades per incloure el nou camp.</li>
+<li>Creeu una funció DAO per actualitzar l'email d'un usuari.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QEVudGl0eSh0YWJsZU5hbWUgPSAidXNlcnMiKQpkYXRhIGNsYXNzIFVzZXIoCiAgICBAUHJpbWFyeUtleShhdXRvR2VuZXJhdGUgPSB0cnVlKSB2YWwgaWQ6IEludCwKICAgIHZhbCBuYW1lOiBTdHJpbmcsCiAgICB2YWwgYWdlOiBJbnQsCiAgICB2YWwgZW1haWw6IFN0cmluZyAvLyBOb3UgY2FtcAopCgpARGFvCmludGVyZmFjZSBVc2VyRGFvIHsKICAgIEBJbnNlcnQKICAgIHN1c3BlbmQgZnVuIGluc2VydCh1c2VyOiBVc2VyKQoKICAgIEBRdWVyeSgiU0VMRUNUICogRlJPTSB1c2VycyIpCiAgICBzdXNwZW5kIGZ1biBnZXRBbGxVc2VycygpOiBMaXN0PFVzZXI+CgogICAgQFF1ZXJ5KCJERUxFVEUgRlJPTSB1c2VycyIpCiAgICBzdXNwZW5kIGZ1biBkZWxldGVBbGxVc2VycygpCgogICAgQFF1ZXJ5KCJVUERBVEUgdXNlcnMgU0VUIGVtYWlsID0gOmVtYWlsIFdIRVJFIGlkID0gOmlkIikKICAgIHN1c3BlbmQgZnVuIHVwZGF0ZUVtYWlsKGlkOiBJbnQsIGVtYWlsOiBTdHJpbmcpIC8vIE5vdmEgZnVuY2nDsyBEQU8KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@Entity(tableName = &quot;users&quot;)
+data class User(
+    @PrimaryKey(autoGenerate = true) val id: Int,
+    val name: String,
+    val age: Int,
+    val email: String // Nou camp
+)
+
+@Dao
+interface UserDao {
+    @Insert
+    suspend fun insert(user: User)
+
+    @Query(&quot;SELECT * FROM users&quot;)
+    suspend fun getAllUsers(): List&lt;User&gt;
+
+    @Query(&quot;DELETE FROM users&quot;)
+    suspend fun deleteAllUsers()
+
+    @Query(&quot;UPDATE users SET email = :email WHERE id = :id&quot;)
+    suspend fun updateEmail(id: Int, email: String) // Nova funci&oacute; DAO
+}</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après a configurar Room en un projecte Android, crear entitats, DAOs i la base de dades, i realitzar operacions bàsiques de CRUD. Room simplifica la gestió de bases de dades en aplicacions Android, proporcionant una API més fàcil d'utilitzar i integrant-se amb altres components d'Android per a operacions asíncrones.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-data-persistence-with-sqlite' title="Persistència de Dades amb SQLite">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-advanced-ui-components' title="Components Avançats de la Interfície d'Usuari">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alta Disponibilitat i Balanceig de Càrrega</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/linux/07-05-high-availability-and-load-balancing" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/linux/07-05-alta-disponibilitat-i-balanceig-de-carrega" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/linux/07-05-high-availability-and-load-balancing" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/linux/07-05-alta-disponibilitat-i-balanceig-de-carrega" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/linux/07-05-alta-disponibilitat-i-balanceig-de-carrega" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-optimitzacio-del-nucli-de-linux' title="Optimització del Nucli de Linux">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Alta Disponibilitat i Balanceig de Càrrega</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-01-configuracio-d-un-servidor-web' title="Configuració d'un Servidor Web">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, explorarem els conceptes d'alta disponibilitat i balanceig de càrrega en sistemes Linux. Aquests conceptes són essencials per garantir que els serveis crítics estiguin sempre disponibles i que les càrregues de treball es distribueixin de manera eficient entre diversos servidors.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'></div><h2>Alta Disponibilitat (HA)</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: L'alta disponibilitat es refereix a la capacitat d'un sistema per continuar operant durant un període prolongat de temps, fins i tot en cas de fallades de components.</li>
+<li><strong>Objectiu</strong>: Minimitzar el temps d'inactivitat i assegurar que els serveis estiguin disponibles el màxim temps possible.</li>
+<li><strong>Components</strong>:
+<ul>
+<li><strong>Clúster HA</strong>: Un grup de servidors que treballen junts per proporcionar alta disponibilitat.</li>
+<li><strong>Failover</strong>: El procés de transferir automàticament la càrrega de treball d'un servidor fallit a un altre servidor en el clúster.</li>
+</ul>
+</li>
+</ul>
+</div><h2>Balanceig de Càrrega</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: El balanceig de càrrega és la distribució de càrregues de treball entre diversos servidors per optimitzar l'ús dels recursos, maximitzar el rendiment i evitar la sobrecàrrega d'un sol servidor.</li>
+<li><strong>Objectiu</strong>: Assegurar que cap servidor estigui sobrecarregat i que els recursos es facin servir de manera eficient.</li>
+<li><strong>Components</strong>:
+<ul>
+<li><strong>Balancejador de Càrrega</strong>: Un dispositiu o programari que distribueix les sol·licituds entrants entre diversos servidors.</li>
+<li><strong>Algoritmes de Balanceig</strong>: Mètodes utilitzats per determinar com es distribueixen les sol·licituds (per exemple, round-robin, least connections, IP hash).</li>
+</ul>
+</li>
+</ul>
+</div><h1>Implementació Pràctica</h1>
+<div class='content'></div><h2>Configuració d'un Clúster HA amb Pacemaker i Corosync</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Instal·lació de Paquets Necessaris</strong>:</p>
+<pre><code class="language-bash">sudo apt-get update
+sudo apt-get install pacemaker corosync
+</code></pre>
+</li>
+<li>
+<p><strong>Configuració de Corosync</strong>:</p>
+<ul>
+<li>Editeu el fitxer de configuració de Corosync (<code>/etc/corosync/corosync.conf</code>):</li>
+</ul>
+<pre><code class="language-bash">sudo nano /etc/corosync/corosync.conf
+</code></pre>
+<ul>
+<li>Exemple de configuració:</li>
+</ul>
+<pre><code class="language-plaintext">totem {
+    version: 2
+    secauth: on
+    cluster_name: mycluster
+    transport: udpu
+}
+
+nodelist {
+    node {
+        ring0_addr: node1
+        nodeid: 1
+    }
+    node {
+        ring0_addr: node2
+        nodeid: 2
+    }
+}
+
+quorum {
+    provider: corosync_votequorum
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Inici del Servei</strong>:</p>
+<pre><code class="language-bash">sudo systemctl start corosync
+sudo systemctl start pacemaker
+</code></pre>
+</li>
+<li>
+<p><strong>Creació de Recursos i Conjunts de Recursos</strong>:</p>
+<ul>
+<li>Exemple de creació d'un recurs IP:</li>
+</ul>
+<pre><code class="language-bash">sudo crm configure primitive myIP ocf:heartbeat:IPaddr2 params ip=192.168.1.100 cidr_netmask=24 op monitor interval=30s
+</code></pre>
+</li>
+</ol>
+</div><h2>Configuració d'un Balancejador de Càrrega amb HAProxy</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Instal·lació de HAProxy</strong>:</p>
+<pre><code class="language-bash">sudo apt-get update
+sudo apt-get install haproxy
+</code></pre>
+</li>
+<li>
+<p><strong>Configuració de HAProxy</strong>:</p>
+<ul>
+<li>Editeu el fitxer de configuració de HAProxy (<code>/etc/haproxy/haproxy.cfg</code>):</li>
+</ul>
+<pre><code class="language-bash">sudo nano /etc/haproxy/haproxy.cfg
+</code></pre>
+<ul>
+<li>Exemple de configuració:</li>
+</ul>
+<pre><code class="language-plaintext">global
+    log /dev/log local0
+    log /dev/log local1 notice
+    chroot /var/lib/haproxy
+    stats socket /run/haproxy/admin.sock mode 660 level admin
+    stats timeout 30s
+    user haproxy
+    group haproxy
+    daemon
+
+defaults
+    log global
+    mode http
+    option httplog
+    option dontlognull
+    timeout connect 5000
+    timeout client  50000
+    timeout server  50000
+
+frontend http_front
+    bind *:80
+    stats uri /haproxy?stats
+    default_backend http_back
+
+backend http_back
+    balance roundrobin
+    server server1 192.168.1.101:80 check
+    server server2 192.168.1.102:80 check
+</code></pre>
+</li>
+<li>
+<p><strong>Inici del Servei</strong>:</p>
+<pre><code class="language-bash">sudo systemctl start haproxy
+</code></pre>
+</li>
+</ol>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Configuració d'un Clúster HA</h2>
+<div class='content'><ol>
+<li>Configureu un clúster HA amb Pacemaker i Corosync en dos servidors.</li>
+<li>Creeu un recurs IP que es mogui automàticament en cas de fallada d'un dels servidors.</li>
+</ol>
+</div><h2>Exercici 2: Configuració d'un Balancejador de Càrrega</h2>
+<div class='content'><ol>
+<li>Configureu HAProxy per balancejar la càrrega entre dos servidors web.</li>
+<li>Proveu diferents algoritmes de balanceig (round-robin, least connections) i observeu el comportament.</li>
+</ol>
+</div><h1>Solucions</h1>
+<div class='content'></div><h2>Solució a l'Exercici 1</h2>
+<div class='content'><ol>
+<li>Seguiu els passos de la secció &quot;Configuració d'un Clúster HA amb Pacemaker i Corosync&quot;.</li>
+<li>Verifiqueu que el recurs IP es mogui correctament en cas de fallada d'un servidor:
+<pre><code class="language-bash">sudo crm_mon -1
+</code></pre>
+</li>
+</ol>
+</div><h2>Solució a l'Exercici 2</h2>
+<div class='content'><ol>
+<li>Seguiu els passos de la secció &quot;Configuració d'un Balancejador de Càrrega amb HAProxy&quot;.</li>
+<li>Editeu el fitxer de configuració de HAProxy per provar diferents algoritmes:
+<pre><code class="language-plaintext">backend http_back
+    balance leastconn
+    server server1 192.168.1.101:80 check
+    server server2 192.168.1.102:80 check
+</code></pre>
+</li>
+</ol>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après sobre els conceptes d'alta disponibilitat i balanceig de càrrega, així com la seva implementació pràctica utilitzant Pacemaker, Corosync i HAProxy. Aquests coneixements són essencials per garantir que els serveis crítics estiguin sempre disponibles i que les càrregues de treball es distribueixin de manera eficient.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-optimitzacio-del-nucli-de-linux' title="Optimització del Nucli de Linux">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-01-configuracio-d-un-servidor-web' title="Configuració d'un Servidor Web">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestionar Peticions i Respostes</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nodejs/04-02-handling-requests-responses" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nodejs/04-02-handling-requests-responses" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nodejs/04-02-handling-requests-responses" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nodejs/04-02-handling-requests-responses" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nodejs/04-02-handling-requests-responses" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-simple-http-server' title="Crear un Servidor HTTP Simple">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Gestionar Peticions i Respostes</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-serving-static-files' title="Servir Fitxers Estàtics">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com gestionar peticions i respostes en un servidor HTTP creat amb Node.js. Aquest és un aspecte fonamental per a qualsevol aplicació web, ja que permet la comunicació entre el client (navegador web) i el servidor.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>HTTP</strong>: Protocol de Transferència d'Hipertext, utilitzat per a la comunicació entre clients i servidors.</li>
+<li><strong>Petició HTTP</strong>: Sol·licitud enviada pel client al servidor, que pot incloure mètodes com GET, POST, PUT, DELETE, etc.</li>
+<li><strong>Resposta HTTP</strong>: Resposta enviada pel servidor al client, que inclou un codi d'estat, capçaleres i un cos de resposta.</li>
+</ol>
+</div><h1>Crear un Servidor HTTP</h1>
+<div class='content'><p>Primer, crearem un servidor HTTP bàsic que pugui gestionar peticions i enviar respostes.</p>
+</div><h2>Exemple de Codi</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgaHR0cCA9IHJlcXVpcmUoJ2h0dHAnKTsKCi8vIENyZWFyIHVuIHNlcnZpZG9yIEhUVFAKY29uc3Qgc2VydmVyID0gaHR0cC5jcmVhdGVTZXJ2ZXIoKHJlcSwgcmVzKSA9PiB7CiAgLy8gRXN0YWJsaXIgbCdlc3RhdHVzIGRlIGxhIHJlc3Bvc3RhIGkgZWwgdGlwdXMgZGUgY29udGluZ3V0CiAgcmVzLnN0YXR1c0NvZGUgPSAyMDA7CiAgcmVzLnNldEhlYWRlcignQ29udGVudC1UeXBlJywgJ3RleHQvcGxhaW4nKTsKICAKICAvLyBFbnZpYXIgbGEgcmVzcG9zdGEKICByZXMuZW5kKCdIb2xhLCBtw7NuIVxuJyk7Cn0pOwoKLy8gRWwgc2Vydmlkb3IgZXNjb2x0YSBlbiBlbCBwb3J0IDMwMDAKc2VydmVyLmxpc3RlbigzMDAwLCAnMTI3LjAuMC4xJywgKCkgPT4gewogIGNvbnNvbGUubG9nKCdTZXJ2aWRvciBlbiBmdW5jaW9uYW1lbnQgYSBodHRwOi8vMTI3LjAuMC4xOjMwMDAvJyk7Cn0pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const http = require('http');
+
+// Crear un servidor HTTP
+const server = http.createServer((req, res) =&gt; {
+  // Establir l'estatus de la resposta i el tipus de contingut
+  res.statusCode = 200;
+  res.setHeader('Content-Type', 'text/plain');
+  
+  // Enviar la resposta
+  res.end('Hola, m&oacute;n!\n');
+});
+
+// El servidor escolta en el port 3000
+server.listen(3000, '127.0.0.1', () =&gt; {
+  console.log('Servidor en funcionament a http://127.0.0.1:3000/');
+});</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li><strong>Importar el mòdul <code>http</code></strong>: Utilitzem <code>require('http')</code> per importar el mòdul HTTP de Node.js.</li>
+<li><strong>Crear el servidor</strong>: Utilitzem <code>http.createServer()</code> per crear un servidor HTTP. Aquesta funció pren un callback que s'executa cada vegada que el servidor rep una petició.</li>
+<li><strong>Gestionar la petició i la resposta</strong>: Dins del callback, establim l'estatus de la resposta (<code>res.statusCode = 200</code>) i el tipus de contingut (<code>res.setHeader('Content-Type', 'text/plain')</code>). Finalment, enviem la resposta amb <code>res.end('Hola, món!\n')</code>.</li>
+<li><strong>Escoltar en un port</strong>: Utilitzem <code>server.listen(3000, '127.0.0.1')</code> per fer que el servidor escolti en el port 3000.</li>
+</ol>
+</div><h1>Gestionar Diferents Tipus de Peticions</h1>
+<div class='content'><p>Podem gestionar diferents tipus de peticions (GET, POST, etc.) utilitzant la propietat <code>req.method</code>.</p>
+</div><h2>Exemple de Codi</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgaHR0cCA9IHJlcXVpcmUoJ2h0dHAnKTsKCmNvbnN0IHNlcnZlciA9IGh0dHAuY3JlYXRlU2VydmVyKChyZXEsIHJlcykgPT4gewogIGlmIChyZXEubWV0aG9kID09PSAnR0VUJykgewogICAgcmVzLnN0YXR1c0NvZGUgPSAyMDA7CiAgICByZXMuc2V0SGVhZGVyKCdDb250ZW50LVR5cGUnLCAndGV4dC9wbGFpbicpOwogICAgcmVzLmVuZCgnSGFzIGZldCB1bmEgcGV0aWNpw7MgR0VUXG4nKTsKICB9IGVsc2UgaWYgKHJlcS5tZXRob2QgPT09ICdQT1NUJykgewogICAgcmVzLnN0YXR1c0NvZGUgPSAyMDA7CiAgICByZXMuc2V0SGVhZGVyKCdDb250ZW50LVR5cGUnLCAndGV4dC9wbGFpbicpOwogICAgcmVzLmVuZCgnSGFzIGZldCB1bmEgcGV0aWNpw7MgUE9TVFxuJyk7CiAgfSBlbHNlIHsKICAgIHJlcy5zdGF0dXNDb2RlID0gNDA1OwogICAgcmVzLnNldEhlYWRlcignQ29udGVudC1UeXBlJywgJ3RleHQvcGxhaW4nKTsKICAgIHJlcy5lbmQoJ03DqHRvZGUgbm8gcGVybcOoc1xuJyk7CiAgfQp9KTsKCnNlcnZlci5saXN0ZW4oMzAwMCwgJzEyNy4wLjAuMScsICgpID0+IHsKICBjb25zb2xlLmxvZygnU2Vydmlkb3IgZW4gZnVuY2lvbmFtZW50IGEgaHR0cDovLzEyNy4wLjAuMTozMDAwLycpOwp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const http = require('http');
+
+const server = http.createServer((req, res) =&gt; {
+  if (req.method === 'GET') {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Has fet una petici&oacute; GET\n');
+  } else if (req.method === 'POST') {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Has fet una petici&oacute; POST\n');
+  } else {
+    res.statusCode = 405;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('M&egrave;tode no perm&egrave;s\n');
+  }
+});
+
+server.listen(3000, '127.0.0.1', () =&gt; {
+  console.log('Servidor en funcionament a http://127.0.0.1:3000/');
+});</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li><strong>Comprovar el mètode de la petició</strong>: Utilitzem <code>req.method</code> per determinar el tipus de petició (GET, POST, etc.).</li>
+<li><strong>Gestionar GET i POST</strong>: Si la petició és GET, enviem una resposta amb el missatge &quot;Has fet una petició GET&quot;. Si és POST, enviem &quot;Has fet una petició POST&quot;.</li>
+<li><strong>Gestionar altres mètodes</strong>: Si la petició no és ni GET ni POST, enviem una resposta amb el codi d'estat 405 (Mètode no permès).</li>
+</ol>
+</div><h1>Gestionar Peticions amb Rutes</h1>
+<div class='content'><p>Podem gestionar diferents rutes utilitzant la propietat <code>req.url</code>.</p>
+</div><h2>Exemple de Codi</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgaHR0cCA9IHJlcXVpcmUoJ2h0dHAnKTsKCmNvbnN0IHNlcnZlciA9IGh0dHAuY3JlYXRlU2VydmVyKChyZXEsIHJlcykgPT4gewogIGlmIChyZXEubWV0aG9kID09PSAnR0VUJyAmJiByZXEudXJsID09PSAnLycpIHsKICAgIHJlcy5zdGF0dXNDb2RlID0gMjAwOwogICAgcmVzLnNldEhlYWRlcignQ29udGVudC1UeXBlJywgJ3RleHQvcGxhaW4nKTsKICAgIHJlcy5lbmQoJ1DDoGdpbmEgZFwnaW5pY2lcbicpOwogIH0gZWxzZSBpZiAocmVxLm1ldGhvZCA9PT0gJ0dFVCcgJiYgcmVxLnVybCA9PT0gJy9zb2JyZScpIHsKICAgIHJlcy5zdGF0dXNDb2RlID0gMjAwOwogICAgcmVzLnNldEhlYWRlcignQ29udGVudC1UeXBlJywgJ3RleHQvcGxhaW4nKTsKICAgIHJlcy5lbmQoJ1DDoGdpbmEgc29icmUgbm9zYWx0cmVzXG4nKTsKICB9IGVsc2UgewogICAgcmVzLnN0YXR1c0NvZGUgPSA0MDQ7CiAgICByZXMuc2V0SGVhZGVyKCdDb250ZW50LVR5cGUnLCAndGV4dC9wbGFpbicpOwogICAgcmVzLmVuZCgnUMOgZ2luYSBubyB0cm9iYWRhXG4nKTsKICB9Cn0pOwoKc2VydmVyLmxpc3RlbigzMDAwLCAnMTI3LjAuMC4xJywgKCkgPT4gewogIGNvbnNvbGUubG9nKCdTZXJ2aWRvciBlbiBmdW5jaW9uYW1lbnQgYSBodHRwOi8vMTI3LjAuMC4xOjMwMDAvJyk7Cn0pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const http = require('http');
+
+const server = http.createServer((req, res) =&gt; {
+  if (req.method === 'GET' &amp;&amp; req.url === '/') {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('P&agrave;gina d\'inici\n');
+  } else if (req.method === 'GET' &amp;&amp; req.url === '/sobre') {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('P&agrave;gina sobre nosaltres\n');
+  } else {
+    res.statusCode = 404;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('P&agrave;gina no trobada\n');
+  }
+});
+
+server.listen(3000, '127.0.0.1', () =&gt; {
+  console.log('Servidor en funcionament a http://127.0.0.1:3000/');
+});</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ol>
+<li><strong>Comprovar la ruta de la petició</strong>: Utilitzem <code>req.url</code> per determinar la ruta de la petició.</li>
+<li><strong>Gestionar diferents rutes</strong>: Si la petició és GET i la ruta és <code>/</code>, enviem una resposta amb el missatge &quot;Pàgina d'inici&quot;. Si la ruta és <code>/sobre</code>, enviem &quot;Pàgina sobre nosaltres&quot;.</li>
+<li><strong>Gestionar rutes no trobades</strong>: Si la ruta no coincideix amb cap de les anteriors, enviem una resposta amb el codi d'estat 404 (Pàgina no trobada).</li>
+</ol>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear un Servidor HTTP amb Diferents Rutes</h2>
+<div class='content'><ol>
+<li>Crea un servidor HTTP que gestioni les següents rutes:
+<ul>
+<li><code>/</code> (GET): Respon amb &quot;Benvingut a la pàgina d'inici&quot;.</li>
+<li><code>/contacte</code> (GET): Respon amb &quot;Pàgina de contacte&quot;.</li>
+<li><code>/productes</code> (GET): Respon amb &quot;Llista de productes&quot;.</li>
+<li>Qualsevol altra ruta: Respon amb &quot;Pàgina no trobada&quot; i el codi d'estat 404.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgaHR0cCA9IHJlcXVpcmUoJ2h0dHAnKTsKCmNvbnN0IHNlcnZlciA9IGh0dHAuY3JlYXRlU2VydmVyKChyZXEsIHJlcykgPT4gewogIGlmIChyZXEubWV0aG9kID09PSAnR0VUJyAmJiByZXEudXJsID09PSAnLycpIHsKICAgIHJlcy5zdGF0dXNDb2RlID0gMjAwOwogICAgcmVzLnNldEhlYWRlcignQ29udGVudC1UeXBlJywgJ3RleHQvcGxhaW4nKTsKICAgIHJlcy5lbmQoJ0JlbnZpbmd1dCBhIGxhIHDDoGdpbmEgZFwnaW5pY2lcbicpOwogIH0gZWxzZSBpZiAocmVxLm1ldGhvZCA9PT0gJ0dFVCcgJiYgcmVxLnVybCA9PT0gJy9jb250YWN0ZScpIHsKICAgIHJlcy5zdGF0dXNDb2RlID0gMjAwOwogICAgcmVzLnNldEhlYWRlcignQ29udGVudC1UeXBlJywgJ3RleHQvcGxhaW4nKTsKICAgIHJlcy5lbmQoJ1DDoGdpbmEgZGUgY29udGFjdGVcbicpOwogIH0gZWxzZSBpZiAocmVxLm1ldGhvZCA9PT0gJ0dFVCcgJiYgcmVxLnVybCA9PT0gJy9wcm9kdWN0ZXMnKSB7CiAgICByZXMuc3RhdHVzQ29kZSA9IDIwMDsKICAgIHJlcy5zZXRIZWFkZXIoJ0NvbnRlbnQtVHlwZScsICd0ZXh0L3BsYWluJyk7CiAgICByZXMuZW5kKCdMbGlzdGEgZGUgcHJvZHVjdGVzXG4nKTsKICB9IGVsc2UgewogICAgcmVzLnN0YXR1c0NvZGUgPSA0MDQ7CiAgICByZXMuc2V0SGVhZGVyKCdDb250ZW50LVR5cGUnLCAndGV4dC9wbGFpbicpOwogICAgcmVzLmVuZCgnUMOgZ2luYSBubyB0cm9iYWRhXG4nKTsKICB9Cn0pOwoKc2VydmVyLmxpc3RlbigzMDAwLCAnMTI3LjAuMC4xJywgKCkgPT4gewogIGNvbnNvbGUubG9nKCdTZXJ2aWRvciBlbiBmdW5jaW9uYW1lbnQgYSBodHRwOi8vMTI3LjAuMC4xOjMwMDAvJyk7Cn0pOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const http = require('http');
+
+const server = http.createServer((req, res) =&gt; {
+  if (req.method === 'GET' &amp;&amp; req.url === '/') {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Benvingut a la p&agrave;gina d\'inici\n');
+  } else if (req.method === 'GET' &amp;&amp; req.url === '/contacte') {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('P&agrave;gina de contacte\n');
+  } else if (req.method === 'GET' &amp;&amp; req.url === '/productes') {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Llista de productes\n');
+  } else {
+    res.statusCode = 404;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('P&agrave;gina no trobada\n');
+  }
+});
+
+server.listen(3000, '127.0.0.1', () =&gt; {
+  console.log('Servidor en funcionament a http://127.0.0.1:3000/');
+});</pre></div><div class='content'></div><h2>Exercici 2: Gestionar Peticions POST</h2>
+<div class='content'><ol>
+<li>Modifica el servidor anterior per gestionar peticions POST a la ruta <code>/contacte</code>. La resposta ha de ser &quot;Formulari de contacte enviat&quot;.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgaHR0cCA9IHJlcXVpcmUoJ2h0dHAnKTsKCmNvbnN0IHNlcnZlciA9IGh0dHAuY3JlYXRlU2VydmVyKChyZXEsIHJlcykgPT4gewogIGlmIChyZXEubWV0aG9kID09PSAnR0VUJyAmJiByZXEudXJsID09PSAnLycpIHsKICAgIHJlcy5zdGF0dXNDb2RlID0gMjAwOwogICAgcmVzLnNldEhlYWRlcignQ29udGVudC1UeXBlJywgJ3RleHQvcGxhaW4nKTsKICAgIHJlcy5lbmQoJ0JlbnZpbmd1dCBhIGxhIHDDoGdpbmEgZFwnaW5pY2lcbicpOwogIH0gZWxzZSBpZiAocmVxLm1ldGhvZCA9PT0gJ0dFVCcgJiYgcmVxLnVybCA9PT0gJy9jb250YWN0ZScpIHsKICAgIHJlcy5zdGF0dXNDb2RlID0gMjAwOwogICAgcmVzLnNldEhlYWRlcignQ29udGVudC1UeXBlJywgJ3RleHQvcGxhaW4nKTsKICAgIHJlcy5lbmQoJ1DDoGdpbmEgZGUgY29udGFjdGVcbicpOwogIH0gZWxzZSBpZiAocmVxLm1ldGhvZCA9PT0gJ1BPU1QnICYmIHJlcS51cmwgPT09ICcvY29udGFjdGUnKSB7CiAgICByZXMuc3RhdHVzQ29kZSA9IDIwMDsKICAgIHJlcy5zZXRIZWFkZXIoJ0NvbnRlbnQtVHlwZScsICd0ZXh0L3BsYWluJyk7CiAgICByZXMuZW5kKCdGb3JtdWxhcmkgZGUgY29udGFjdGUgZW52aWF0XG4nKTsKICB9IGVsc2UgaWYgKHJlcS5tZXRob2QgPT09ICdHRVQnICYmIHJlcS51cmwgPT09ICcvcHJvZHVjdGVzJykgewogICAgcmVzLnN0YXR1c0NvZGUgPSAyMDA7CiAgICByZXMuc2V0SGVhZGVyKCdDb250ZW50LVR5cGUnLCAndGV4dC9wbGFpbicpOwogICAgcmVzLmVuZCgnTGxpc3RhIGRlIHByb2R1Y3Rlc1xuJyk7CiAgfSBlbHNlIHsKICAgIHJlcy5zdGF0dXNDb2RlID0gNDA0OwogICAgcmVzLnNldEhlYWRlcignQ29udGVudC1UeXBlJywgJ3RleHQvcGxhaW4nKTsKICAgIHJlcy5lbmQoJ1DDoGdpbmEgbm8gdHJvYmFkYVxuJyk7CiAgfQp9KTsKCnNlcnZlci5saXN0ZW4oMzAwMCwgJzEyNy4wLjAuMScsICgpID0+IHsKICBjb25zb2xlLmxvZygnU2Vydmlkb3IgZW4gZnVuY2lvbmFtZW50IGEgaHR0cDovLzEyNy4wLjAuMTozMDAwLycpOwp9KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const http = require('http');
+
+const server = http.createServer((req, res) =&gt; {
+  if (req.method === 'GET' &amp;&amp; req.url === '/') {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Benvingut a la p&agrave;gina d\'inici\n');
+  } else if (req.method === 'GET' &amp;&amp; req.url === '/contacte') {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('P&agrave;gina de contacte\n');
+  } else if (req.method === 'POST' &amp;&amp; req.url === '/contacte') {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Formulari de contacte enviat\n');
+  } else if (req.method === 'GET' &amp;&amp; req.url === '/productes') {
+    res.statusCode = 200;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('Llista de productes\n');
+  } else {
+    res.statusCode = 404;
+    res.setHeader('Content-Type', 'text/plain');
+    res.end('P&agrave;gina no trobada\n');
+  }
+});
+
+server.listen(3000, '127.0.0.1', () =&gt; {
+  console.log('Servidor en funcionament a http://127.0.0.1:3000/');
+});</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après com gestionar peticions i respostes en un servidor HTTP creat amb Node.js. Hem vist com gestionar diferents tipus de peticions (GET, POST) i com treballar amb diferents rutes. Aquests conceptes són fonamentals per a la creació d'aplicacions web amb Node.js. En el següent tema, explorarem com servir fitxers estàtics des del nostre servidor.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-simple-http-server' title="Crear un Servidor HTTP Simple">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-serving-static-files' title="Servir Fitxers Estàtics">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

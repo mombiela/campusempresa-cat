@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió de Sessions d'Usuaris</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/flask/05-04-user-session-management" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/flask/05-04-user-session-management" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/flask/05-04-user-session-management" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/flask/05-04-user-session-management" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/flask/05-04-user-session-management" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-03-password-hashing' title="Hashing de Contrasenyes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Gestió de Sessions d'Usuaris</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-01-blueprints' title="Blueprints per a Aplicacions Grans">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La gestió de sessions és una part fonamental de qualsevol aplicació web que requereixi autenticació d'usuaris. En aquest tema, aprendrem com gestionar les sessions d'usuaris en una aplicació Flask. Les sessions ens permeten mantenir l'estat de l'usuari entre diferents peticions HTTP, cosa que és essencial per a funcionalitats com l'inici de sessió.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Sessió</strong>: Una sessió és un mecanisme per emmagatzemar informació específica de l'usuari en el servidor entre diferents peticions HTTP.</li>
+<li><strong>Cookies</strong>: Les cookies són petits fitxers emmagatzemats en el navegador de l'usuari que poden contenir informació de la sessió.</li>
+<li><strong>Flask-Login</strong>: Una extensió de Flask que facilita la gestió de sessions d'usuaris.</li>
+</ul>
+</div><h1>Configuració de Flask-Login</h1>
+<div class='content'></div><h2>Instal·lació</h2>
+<div class='content'><p>Primer, hem d'instal·lar l'extensió Flask-Login:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgZmxhc2stbG9naW4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install flask-login</pre></div><div class='content'></div><h2>Configuració Bàsica</h2>
+<div class='content'><ol>
+<li><strong>Inicialització de Flask-Login</strong>: Afegim la configuració bàsica per a Flask-Login en la nostra aplicació Flask.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2sKZnJvbSBmbGFza19sb2dpbiBpbXBvcnQgTG9naW5NYW5hZ2VyCgphcHAgPSBGbGFzayhfX25hbWVfXykKYXBwLnNlY3JldF9rZXkgPSAnYV92ZXJ5X3NlY3JldF9rZXknICAjIE5lY2Vzc2FyaSBwZXIgYSBsYSBnZXN0acOzIGRlIHNlc3Npb25zCgpsb2dpbl9tYW5hZ2VyID0gTG9naW5NYW5hZ2VyKCkKbG9naW5fbWFuYWdlci5pbml0X2FwcChhcHApCmxvZ2luX21hbmFnZXIubG9naW5fdmlldyA9ICdsb2dpbicgICMgUMOgZ2luYSBkZSBsb2dpbg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask
+from flask_login import LoginManager
+
+app = Flask(__name__)
+app.secret_key = 'a_very_secret_key'  # Necessari per a la gesti&oacute; de sessions
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'  # P&agrave;gina de login</pre></div><div class='content'><ol start="2">
+<li><strong>Model d'Usuari</strong>: Definim un model d'usuari que Flask-Login pugui utilitzar. Aquest model ha d'implementar certs mètodes requerits per Flask-Login.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFza19sb2dpbiBpbXBvcnQgVXNlck1peGluCgpjbGFzcyBVc2VyKFVzZXJNaXhpbik6CiAgICBkZWYgX19pbml0X18oc2VsZiwgaWQsIHVzZXJuYW1lLCBwYXNzd29yZCk6CiAgICAgICAgc2VsZi5pZCA9IGlkCiAgICAgICAgc2VsZi51c2VybmFtZSA9IHVzZXJuYW1lCiAgICAgICAgc2VsZi5wYXNzd29yZCA9IHBhc3N3b3JkCgojIEV4ZW1wbGUgZCd1c3VhcmlzCnVzZXJzID0gewogICAgMTogVXNlcigxLCAidXNlcjEiLCAicGFzc3dvcmQxIiksCiAgICAyOiBVc2VyKDIsICJ1c2VyMiIsICJwYXNzd29yZDIiKQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask_login import UserMixin
+
+class User(UserMixin):
+    def __init__(self, id, username, password):
+        self.id = id
+        self.username = username
+        self.password = password
+
+# Exemple d'usuaris
+users = {
+    1: User(1, &quot;user1&quot;, &quot;password1&quot;),
+    2: User(2, &quot;user2&quot;, &quot;password2&quot;)
+}</pre></div><div class='content'><ol start="3">
+<li><strong>Carregador d'Usuari</strong>: Flask-Login necessita una funció per carregar un usuari des de l'ID d'usuari emmagatzemat en la sessió.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QGxvZ2luX21hbmFnZXIudXNlcl9sb2FkZXIKZGVmIGxvYWRfdXNlcih1c2VyX2lkKToKICAgIHJldHVybiB1c2Vycy5nZXQoaW50KHVzZXJfaWQpKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@login_manager.user_loader
+def load_user(user_id):
+    return users.get(int(user_id))</pre></div><div class='content'></div><h1>Inici de Sessió</h1>
+<div class='content'><p>Per iniciar una sessió, necessitem una ruta que gestioni el procés d'inici de sessió.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgcmVxdWVzdCwgcmVkaXJlY3QsIHVybF9mb3IsIHJlbmRlcl90ZW1wbGF0ZQpmcm9tIGZsYXNrX2xvZ2luIGltcG9ydCBsb2dpbl91c2VyCgpAYXBwLnJvdXRlKCcvbG9naW4nLCBtZXRob2RzPVsnR0VUJywgJ1BPU1QnXSkKZGVmIGxvZ2luKCk6CiAgICBpZiByZXF1ZXN0Lm1ldGhvZCA9PSAnUE9TVCc6CiAgICAgICAgdXNlcm5hbWUgPSByZXF1ZXN0LmZvcm1bJ3VzZXJuYW1lJ10KICAgICAgICBwYXNzd29yZCA9IHJlcXVlc3QuZm9ybVsncGFzc3dvcmQnXQogICAgICAgIHVzZXIgPSBuZXh0KCh1IGZvciB1IGluIHVzZXJzLnZhbHVlcygpIGlmIHUudXNlcm5hbWUgPT0gdXNlcm5hbWUgYW5kIHUucGFzc3dvcmQgPT0gcGFzc3dvcmQpLCBOb25lKQogICAgICAgIGlmIHVzZXI6CiAgICAgICAgICAgIGxvZ2luX3VzZXIodXNlcikKICAgICAgICAgICAgcmV0dXJuIHJlZGlyZWN0KHVybF9mb3IoJ3Byb3RlY3RlZCcpKQogICAgICAgIGVsc2U6CiAgICAgICAgICAgIHJldHVybiAnSW52YWxpZCBjcmVkZW50aWFscycsIDQwMQogICAgcmV0dXJuIHJlbmRlcl90ZW1wbGF0ZSgnbG9naW4uaHRtbCcp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import request, redirect, url_for, render_template
+from flask_login import login_user
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = next((u for u in users.values() if u.username == username and u.password == password), None)
+        if user:
+            login_user(user)
+            return redirect(url_for('protected'))
+        else:
+            return 'Invalid credentials', 401
+    return render_template('login.html')</pre></div><div class='content'></div><h1>Tancament de Sessió</h1>
+<div class='content'><p>Per tancar una sessió, necessitem una ruta que gestioni el procés de tancament de sessió.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFza19sb2dpbiBpbXBvcnQgbG9nb3V0X3VzZXIKCkBhcHAucm91dGUoJy9sb2dvdXQnKQpkZWYgbG9nb3V0KCk6CiAgICBsb2dvdXRfdXNlcigpCiAgICByZXR1cm4gcmVkaXJlY3QodXJsX2ZvcignaW5kZXgnKSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask_login import logout_user
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))</pre></div><div class='content'></div><h1>Protecció de Rutes</h1>
+<div class='content'><p>Podem protegir rutes específiques per assegurar-nos que només els usuaris autenticats hi tinguin accés.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFza19sb2dpbiBpbXBvcnQgbG9naW5fcmVxdWlyZWQKCkBhcHAucm91dGUoJy9wcm90ZWN0ZWQnKQpAbG9naW5fcmVxdWlyZWQKZGVmIHByb3RlY3RlZCgpOgogICAgcmV0dXJuICdMb2dnZWQgaW4gYXM6ICcgKyBjdXJyZW50X3VzZXIudXNlcm5hbWU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask_login import login_required
+
+@app.route('/protected')
+@login_required
+def protected():
+    return 'Logged in as: ' + current_user.username</pre></div><div class='content'></div><h1>Exemple Complet</h1>
+<div class='content'><p>Aquí teniu un exemple complet que inclou totes les peces esmentades anteriorment:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2ssIHJlcXVlc3QsIHJlZGlyZWN0LCB1cmxfZm9yLCByZW5kZXJfdGVtcGxhdGUKZnJvbSBmbGFza19sb2dpbiBpbXBvcnQgTG9naW5NYW5hZ2VyLCBVc2VyTWl4aW4sIGxvZ2luX3VzZXIsIGxvZ291dF91c2VyLCBsb2dpbl9yZXF1aXJlZCwgY3VycmVudF91c2VyCgphcHAgPSBGbGFzayhfX25hbWVfXykKYXBwLnNlY3JldF9rZXkgPSAnYV92ZXJ5X3NlY3JldF9rZXknCgpsb2dpbl9tYW5hZ2VyID0gTG9naW5NYW5hZ2VyKCkKbG9naW5fbWFuYWdlci5pbml0X2FwcChhcHApCmxvZ2luX21hbmFnZXIubG9naW5fdmlldyA9ICdsb2dpbicKCmNsYXNzIFVzZXIoVXNlck1peGluKToKICAgIGRlZiBfX2luaXRfXyhzZWxmLCBpZCwgdXNlcm5hbWUsIHBhc3N3b3JkKToKICAgICAgICBzZWxmLmlkID0gaWQKICAgICAgICBzZWxmLnVzZXJuYW1lID0gdXNlcm5hbWUKICAgICAgICBzZWxmLnBhc3N3b3JkID0gcGFzc3dvcmQKCnVzZXJzID0gewogICAgMTogVXNlcigxLCAidXNlcjEiLCAicGFzc3dvcmQxIiksCiAgICAyOiBVc2VyKDIsICJ1c2VyMiIsICJwYXNzd29yZDIiKQp9CgpAbG9naW5fbWFuYWdlci51c2VyX2xvYWRlcgpkZWYgbG9hZF91c2VyKHVzZXJfaWQpOgogICAgcmV0dXJuIHVzZXJzLmdldChpbnQodXNlcl9pZCkpCgpAYXBwLnJvdXRlKCcvbG9naW4nLCBtZXRob2RzPVsnR0VUJywgJ1BPU1QnXSkKZGVmIGxvZ2luKCk6CiAgICBpZiByZXF1ZXN0Lm1ldGhvZCA9PSAnUE9TVCc6CiAgICAgICAgdXNlcm5hbWUgPSByZXF1ZXN0LmZvcm1bJ3VzZXJuYW1lJ10KICAgICAgICBwYXNzd29yZCA9IHJlcXVlc3QuZm9ybVsncGFzc3dvcmQnXQogICAgICAgIHVzZXIgPSBuZXh0KCh1IGZvciB1IGluIHVzZXJzLnZhbHVlcygpIGlmIHUudXNlcm5hbWUgPT0gdXNlcm5hbWUgYW5kIHUucGFzc3dvcmQgPT0gcGFzc3dvcmQpLCBOb25lKQogICAgICAgIGlmIHVzZXI6CiAgICAgICAgICAgIGxvZ2luX3VzZXIodXNlcikKICAgICAgICAgICAgcmV0dXJuIHJlZGlyZWN0KHVybF9mb3IoJ3Byb3RlY3RlZCcpKQogICAgICAgIGVsc2U6CiAgICAgICAgICAgIHJldHVybiAnSW52YWxpZCBjcmVkZW50aWFscycsIDQwMQogICAgcmV0dXJuIHJlbmRlcl90ZW1wbGF0ZSgnbG9naW4uaHRtbCcpCgpAYXBwLnJvdXRlKCcvbG9nb3V0JykKZGVmIGxvZ291dCgpOgogICAgbG9nb3V0X3VzZXIoKQogICAgcmV0dXJuIHJlZGlyZWN0KHVybF9mb3IoJ2luZGV4JykpCgpAYXBwLnJvdXRlKCcvcHJvdGVjdGVkJykKQGxvZ2luX3JlcXVpcmVkCmRlZiBwcm90ZWN0ZWQoKToKICAgIHJldHVybiAnTG9nZ2VkIGluIGFzOiAnICsgY3VycmVudF91c2VyLnVzZXJuYW1lCgpAYXBwLnJvdXRlKCcvJykKZGVmIGluZGV4KCk6CiAgICByZXR1cm4gJ1dlbGNvbWUgdG8gdGhlIEZsYXNrIGFwcCEnCgppZiBfX25hbWVfXyA9PSAnX19tYWluX18nOgogICAgYXBwLnJ1bihkZWJ1Zz1UcnVlKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask, request, redirect, url_for, render_template
+from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
+
+app = Flask(__name__)
+app.secret_key = 'a_very_secret_key'
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+class User(UserMixin):
+    def __init__(self, id, username, password):
+        self.id = id
+        self.username = username
+        self.password = password
+
+users = {
+    1: User(1, &quot;user1&quot;, &quot;password1&quot;),
+    2: User(2, &quot;user2&quot;, &quot;password2&quot;)
+}
+
+@login_manager.user_loader
+def load_user(user_id):
+    return users.get(int(user_id))
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = next((u for u in users.values() if u.username == username and u.password == password), None)
+        if user:
+            login_user(user)
+            return redirect(url_for('protected'))
+        else:
+            return 'Invalid credentials', 401
+    return render_template('login.html')
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('index'))
+
+@app.route('/protected')
+@login_required
+def protected():
+    return 'Logged in as: ' + current_user.username
+
+@app.route('/')
+def index():
+    return 'Welcome to the Flask app!'
+
+if __name__ == '__main__':
+    app.run(debug=True)</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'><ol>
+<li><strong>Afegir un Nou Usuari</strong>: Afegiu un nou usuari al diccionari <code>users</code> i proveu d'iniciar sessió amb aquest usuari.</li>
+<li><strong>Personalitzar la Pàgina de Login</strong>: Modifiqueu la plantilla <code>login.html</code> per afegir estils CSS i millorar la seva aparença.</li>
+<li><strong>Redirigir Després del Login</strong>: Modifiqueu la ruta <code>/login</code> per redirigir l'usuari a una pàgina diferent després d'iniciar sessió amb èxit.</li>
+</ol>
+</div><h1>Solucions</h1>
+<div class='content'><ol>
+<li><strong>Afegir un Nou Usuari</strong>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNlcnNbM10gPSBVc2VyKDMsICJ1c2VyMyIsICJwYXNzd29yZDMiKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>users[3] = User(3, &quot;user3&quot;, &quot;password3&quot;)</pre></div><div class='content'><ol start="2">
+<li><strong>Personalitzar la Pàgina de Login</strong>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PCEtLSBsb2dpbi5odG1sIC0tPgo8IURPQ1RZUEUgaHRtbD4KPGh0bWw+CjxoZWFkPgogICAgPHRpdGxlPkxvZ2luPC90aXRsZT4KICAgIDxzdHlsZT4KICAgICAgICBib2R5IHsgZm9udC1mYW1pbHk6IEFyaWFsLCBzYW5zLXNlcmlmOyB9CiAgICAgICAgLmxvZ2luLWZvcm0geyBtYXgtd2lkdGg6IDMwMHB4OyBtYXJnaW46IGF1dG87IHBhZGRpbmc6IDFlbTsgYm9yZGVyOiAxcHggc29saWQgI2NjYzsgYm9yZGVyLXJhZGl1czogMWVtOyB9CiAgICAgICAgLmxvZ2luLWZvcm0gaW5wdXQgeyBtYXJnaW4tYm90dG9tOiAxZW07IHdpZHRoOiAxMDAlOyBwYWRkaW5nOiAwLjVlbTsgfQogICAgICAgIC5sb2dpbi1mb3JtIGJ1dHRvbiB7IHdpZHRoOiAxMDAlOyBwYWRkaW5nOiAwLjVlbTsgfQogICAgPC9zdHlsZT4KPC9oZWFkPgo8Ym9keT4KICAgIDxkaXYgY2xhc3M9ImxvZ2luLWZvcm0iPgogICAgICAgIDxmb3JtIG1ldGhvZD0icG9zdCI+CiAgICAgICAgICAgIDxsYWJlbCBmb3I9InVzZXJuYW1lIj5Vc2VybmFtZTo8L2xhYmVsPgogICAgICAgICAgICA8aW5wdXQgdHlwZT0idGV4dCIgaWQ9InVzZXJuYW1lIiBuYW1lPSJ1c2VybmFtZSIgcmVxdWlyZWQ+CiAgICAgICAgICAgIDxsYWJlbCBmb3I9InBhc3N3b3JkIj5QYXNzd29yZDo8L2xhYmVsPgogICAgICAgICAgICA8aW5wdXQgdHlwZT0icGFzc3dvcmQiIGlkPSJwYXNzd29yZCIgbmFtZT0icGFzc3dvcmQiIHJlcXVpcmVkPgogICAgICAgICAgICA8YnV0dG9uIHR5cGU9InN1Ym1pdCI+TG9naW48L2J1dHRvbj4KICAgICAgICA8L2Zvcm0+CiAgICA8L2Rpdj4KPC9ib2R5Pgo8L2h0bWw+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;!-- login.html --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Login&lt;/title&gt;
+    &lt;style&gt;
+        body { font-family: Arial, sans-serif; }
+        .login-form { max-width: 300px; margin: auto; padding: 1em; border: 1px solid #ccc; border-radius: 1em; }
+        .login-form input { margin-bottom: 1em; width: 100%; padding: 0.5em; }
+        .login-form button { width: 100%; padding: 0.5em; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class=&quot;login-form&quot;&gt;
+        &lt;form method=&quot;post&quot;&gt;
+            &lt;label for=&quot;username&quot;&gt;Username:&lt;/label&gt;
+            &lt;input type=&quot;text&quot; id=&quot;username&quot; name=&quot;username&quot; required&gt;
+            &lt;label for=&quot;password&quot;&gt;Password:&lt;/label&gt;
+            &lt;input type=&quot;password&quot; id=&quot;password&quot; name=&quot;password&quot; required&gt;
+            &lt;button type=&quot;submit&quot;&gt;Login&lt;/button&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'><ol start="3">
+<li><strong>Redirigir Després del Login</strong>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QGFwcC5yb3V0ZSgnL2xvZ2luJywgbWV0aG9kcz1bJ0dFVCcsICdQT1NUJ10pCmRlZiBsb2dpbigpOgogICAgaWYgcmVxdWVzdC5tZXRob2QgPT0gJ1BPU1QnOgogICAgICAgIHVzZXJuYW1lID0gcmVxdWVzdC5mb3JtWyd1c2VybmFtZSddCiAgICAgICAgcGFzc3dvcmQgPSByZXF1ZXN0LmZvcm1bJ3Bhc3N3b3JkJ10KICAgICAgICB1c2VyID0gbmV4dCgodSBmb3IgdSBpbiB1c2Vycy52YWx1ZXMoKSBpZiB1LnVzZXJuYW1lID09IHVzZXJuYW1lIGFuZCB1LnBhc3N3b3JkID09IHBhc3N3b3JkKSwgTm9uZSkKICAgICAgICBpZiB1c2VyOgogICAgICAgICAgICBsb2dpbl91c2VyKHVzZXIpCiAgICAgICAgICAgIG5leHRfcGFnZSA9IHJlcXVlc3QuYXJncy5nZXQoJ25leHQnKQogICAgICAgICAgICByZXR1cm4gcmVkaXJlY3QobmV4dF9wYWdlIG9yIHVybF9mb3IoJ3Byb3RlY3RlZCcpKQogICAgICAgIGVsc2U6CiAgICAgICAgICAgIHJldHVybiAnSW52YWxpZCBjcmVkZW50aWFscycsIDQwMQogICAgcmV0dXJuIHJlbmRlcl90ZW1wbGF0ZSgnbG9naW4uaHRtbCcp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = next((u for u in users.values() if u.username == username and u.password == password), None)
+        if user:
+            login_user(user)
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('protected'))
+        else:
+            return 'Invalid credentials', 401
+    return render_template('login.html')</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com gestionar les sessions d'usuaris en una aplicació Flask utilitzant l'extensió Flask-Login. Hem cobert la configuració bàsica, la creació de rutes per iniciar i tancar sessió, i la protecció de rutes per a usuaris autenticats. Amb aquests coneixements, podeu començar a implementar funcionalitats d'autenticació en les vostres aplicacions Flask.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-03-password-hashing' title="Hashing de Contrasenyes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-01-blueprints' title="Blueprints per a Aplicacions Grans">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

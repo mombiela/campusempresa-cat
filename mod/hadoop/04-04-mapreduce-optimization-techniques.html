@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tècniques d'optimització de MapReduce</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/hadoop/04-04-mapreduce-optimization-techniques" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/hadoop/04-04-mapreduce-optimization-techniques" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/hadoop/04-04-mapreduce-optimization-techniques" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/hadoop/04-04-mapreduce-optimization-techniques" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/hadoop/04-04-mapreduce-optimization-techniques" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-03-writing-a-mapreduce-program' title="Escriure un programa MapReduce">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Tècniques d'optimització de MapReduce</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-01-apache-pig' title="Apache Pig">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem diverses tècniques per optimitzar les feines de MapReduce. L'objectiu és millorar el rendiment i l'eficiència de les aplicacions MapReduce, reduint el temps d'execució i l'ús de recursos.</p>
+</div><h1>1. Comprensió del Flux de Treball de MapReduce</h1>
+<div class='content'><p>Abans d'entrar en les tècniques d'optimització, és important entendre el flux de treball d'una feina MapReduce:</p>
+<ol>
+<li><strong>Map Phase</strong>: Els map tasks processen les dades d'entrada i generen parells clau-valor intermedis.</li>
+<li><strong>Shuffle and Sort Phase</strong>: Els parells clau-valor intermedis es transfereixen als reducers i es classifiquen per clau.</li>
+<li><strong>Reduce Phase</strong>: Els reduce tasks processen els parells clau-valor intermedis per generar la sortida final.</li>
+</ol>
+</div><h1>2. Tècniques d'Optimització</h1>
+<div class='content'></div><h2>2.1. Combiner</h2>
+<div class='content'><p>Un <strong>combiner</strong> és una mini-fase de reducció que s'executa durant la fase de map per reduir la quantitat de dades transferides a la fase de shuffle and sort. Això pot reduir significativament el trànsit de xarxa.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHVibGljIHN0YXRpYyBjbGFzcyBNeUNvbWJpbmVyIGV4dGVuZHMgUmVkdWNlcjxUZXh0LCBJbnRXcml0YWJsZSwgVGV4dCwgSW50V3JpdGFibGU+IHsKICAgIHB1YmxpYyB2b2lkIHJlZHVjZShUZXh0IGtleSwgSXRlcmFibGU8SW50V3JpdGFibGU+IHZhbHVlcywgQ29udGV4dCBjb250ZXh0KSB0aHJvd3MgSU9FeGNlcHRpb24sIEludGVycnVwdGVkRXhjZXB0aW9uIHsKICAgICAgICBpbnQgc3VtID0gMDsKICAgICAgICBmb3IgKEludFdyaXRhYmxlIHZhbCA6IHZhbHVlcykgewogICAgICAgICAgICBzdW0gKz0gdmFsLmdldCgpOwogICAgICAgIH0KICAgICAgICBjb250ZXh0LndyaXRlKGtleSwgbmV3IEludFdyaXRhYmxlKHN1bSkpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>public static class MyCombiner extends Reducer&lt;Text, IntWritable, Text, IntWritable&gt; {
+    public void reduce(Text key, Iterable&lt;IntWritable&gt; values, Context context) throws IOException, InterruptedException {
+        int sum = 0;
+        for (IntWritable val : values) {
+            sum += val.get();
+        }
+        context.write(key, new IntWritable(sum));
+    }
+}</pre></div><div class='content'></div><h2>2.2. Partitioner</h2>
+<div class='content'><p>Un <strong>partitioner</strong> controla com es distribueixen les dades intermedies entre els reducers. Utilitzar un partitioner personalitzat pot ajudar a equilibrar la càrrega de treball entre els reducers.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHVibGljIHN0YXRpYyBjbGFzcyBNeVBhcnRpdGlvbmVyIGV4dGVuZHMgUGFydGl0aW9uZXI8VGV4dCwgSW50V3JpdGFibGU+IHsKICAgIEBPdmVycmlkZQogICAgcHVibGljIGludCBnZXRQYXJ0aXRpb24oVGV4dCBrZXksIEludFdyaXRhYmxlIHZhbHVlLCBpbnQgbnVtUmVkdWNlVGFza3MpIHsKICAgICAgICAvLyBQYXJ0aWNpb25hIGxlcyBkYWRlcyBiYXNhbnQtc2UgZW4gbGEgcHJpbWVyYSBsbGV0cmEgZGUgbGEgY2xhdQogICAgICAgIGNoYXIgZmlyc3RDaGFyID0ga2V5LnRvU3RyaW5nKCkuY2hhckF0KDApOwogICAgICAgIHJldHVybiAoZmlyc3RDaGFyIC0gJ2EnKSAlIG51bVJlZHVjZVRhc2tzOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>public static class MyPartitioner extends Partitioner&lt;Text, IntWritable&gt; {
+    @Override
+    public int getPartition(Text key, IntWritable value, int numReduceTasks) {
+        // Particiona les dades basant-se en la primera lletra de la clau
+        char firstChar = key.toString().charAt(0);
+        return (firstChar - 'a') % numReduceTasks;
+    }
+}</pre></div><div class='content'></div><h2>2.3. Configuració de la Memòria</h2>
+<div class='content'><p>Ajustar la configuració de la memòria pot millorar el rendiment de les feines MapReduce. Alguns paràmetres clau són:</p>
+<ul>
+<li><code>mapreduce.map.memory.mb</code>: Memòria assignada per a cada map task.</li>
+<li><code>mapreduce.reduce.memory.mb</code>: Memòria assignada per a cada reduce task.</li>
+<li><code>mapreduce.map.java.opts</code>: Opcions de JVM per als map tasks.</li>
+<li><code>mapreduce.reduce.java.opts</code>: Opcions de JVM per als reduce tasks.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PHByb3BlcnR5PgogICAgPG5hbWU+bWFwcmVkdWNlLm1hcC5tZW1vcnkubWI8L25hbWU+CiAgICA8dmFsdWU+MjA0ODwvdmFsdWU+CjwvcHJvcGVydHk+Cjxwcm9wZXJ0eT4KICAgIDxuYW1lPm1hcHJlZHVjZS5yZWR1Y2UubWVtb3J5Lm1iPC9uYW1lPgogICAgPHZhbHVlPjQwOTY8L3ZhbHVlPgo8L3Byb3BlcnR5Pgo8cHJvcGVydHk+CiAgICA8bmFtZT5tYXByZWR1Y2UubWFwLmphdmEub3B0czwvbmFtZT4KICAgIDx2YWx1ZT4tWG14MTUzNm08L3ZhbHVlPgo8L3Byb3BlcnR5Pgo8cHJvcGVydHk+CiAgICA8bmFtZT5tYXByZWR1Y2UucmVkdWNlLmphdmEub3B0czwvbmFtZT4KICAgIDx2YWx1ZT4tWG14MzA3Mm08L3ZhbHVlPgo8L3Byb3BlcnR5Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;property&gt;
+    &lt;name&gt;mapreduce.map.memory.mb&lt;/name&gt;
+    &lt;value&gt;2048&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;mapreduce.reduce.memory.mb&lt;/name&gt;
+    &lt;value&gt;4096&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;mapreduce.map.java.opts&lt;/name&gt;
+    &lt;value&gt;-Xmx1536m&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;mapreduce.reduce.java.opts&lt;/name&gt;
+    &lt;value&gt;-Xmx3072m&lt;/value&gt;
+&lt;/property&gt;</pre></div><div class='content'></div><h2>2.4. Compressió de Dades</h2>
+<div class='content'><p>La compressió de dades pot reduir el volum de dades transferides i emmagatzemades, millorant així el rendiment. Es poden comprimir les dades d'entrada, sortida i intermedies.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PHByb3BlcnR5PgogICAgPG5hbWU+bWFwcmVkdWNlLm1hcC5vdXRwdXQuY29tcHJlc3M8L25hbWU+CiAgICA8dmFsdWU+dHJ1ZTwvdmFsdWU+CjwvcHJvcGVydHk+Cjxwcm9wZXJ0eT4KICAgIDxuYW1lPm1hcHJlZHVjZS5tYXAub3V0cHV0LmNvbXByZXNzLmNvZGVjPC9uYW1lPgogICAgPHZhbHVlPm9yZy5hcGFjaGUuaGFkb29wLmlvLmNvbXByZXNzLlNuYXBweUNvZGVjPC92YWx1ZT4KPC9wcm9wZXJ0eT4KPHByb3BlcnR5PgogICAgPG5hbWU+bWFwcmVkdWNlLm91dHB1dC5maWxlb3V0cHV0Zm9ybWF0LmNvbXByZXNzPC9uYW1lPgogICAgPHZhbHVlPnRydWU8L3ZhbHVlPgo8L3Byb3BlcnR5Pgo8cHJvcGVydHk+CiAgICA8bmFtZT5tYXByZWR1Y2Uub3V0cHV0LmZpbGVvdXRwdXRmb3JtYXQuY29tcHJlc3MuY29kZWM8L25hbWU+CiAgICA8dmFsdWU+b3JnLmFwYWNoZS5oYWRvb3AuaW8uY29tcHJlc3MuU25hcHB5Q29kZWM8L3ZhbHVlPgo8L3Byb3BlcnR5Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;property&gt;
+    &lt;name&gt;mapreduce.map.output.compress&lt;/name&gt;
+    &lt;value&gt;true&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;mapreduce.map.output.compress.codec&lt;/name&gt;
+    &lt;value&gt;org.apache.hadoop.io.compress.SnappyCodec&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;mapreduce.output.fileoutputformat.compress&lt;/name&gt;
+    &lt;value&gt;true&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;mapreduce.output.fileoutputformat.compress.codec&lt;/name&gt;
+    &lt;value&gt;org.apache.hadoop.io.compress.SnappyCodec&lt;/value&gt;
+&lt;/property&gt;</pre></div><div class='content'></div><h2>2.5. Utilització de Contadors</h2>
+<div class='content'><p>Els <strong>contadors</strong> permeten monitoritzar i mesurar diversos aspectes de les feines MapReduce, ajudant a identificar colls d'ampolla i àrees de millora.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHVibGljIHN0YXRpYyBlbnVtIE15Q291bnRlcnMgewogICAgUkVDT1JEX0NPVU5UCn0KCnB1YmxpYyBzdGF0aWMgY2xhc3MgTXlNYXBwZXIgZXh0ZW5kcyBNYXBwZXI8TG9uZ1dyaXRhYmxlLCBUZXh0LCBUZXh0LCBJbnRXcml0YWJsZT4gewogICAgcHVibGljIHZvaWQgbWFwKExvbmdXcml0YWJsZSBrZXksIFRleHQgdmFsdWUsIENvbnRleHQgY29udGV4dCkgdGhyb3dzIElPRXhjZXB0aW9uLCBJbnRlcnJ1cHRlZEV4Y2VwdGlvbiB7CiAgICAgICAgY29udGV4dC5nZXRDb3VudGVyKE15Q291bnRlcnMuUkVDT1JEX0NPVU5UKS5pbmNyZW1lbnQoMSk7CiAgICAgICAgLy8gTMOyZ2ljYSBkZWwgbWFwcGVyCiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>public static enum MyCounters {
+    RECORD_COUNT
+}
+
+public static class MyMapper extends Mapper&lt;LongWritable, Text, Text, IntWritable&gt; {
+    public void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
+        context.getCounter(MyCounters.RECORD_COUNT).increment(1);
+        // L&ograve;gica del mapper
+    }
+}</pre></div><div class='content'></div><h2>2.6. Optimització de la Lògica de Map i Reduce</h2>
+<div class='content'><p>Revisar i optimitzar la lògica de les funcions map i reduce pot tenir un gran impacte en el rendiment. Això inclou:</p>
+<ul>
+<li>Minimitzar les operacions costoses dins dels bucles.</li>
+<li>Utilitzar estructures de dades eficients.</li>
+<li>Evitar la creació innecessària d'objectes.</li>
+</ul>
+</div><h1>3. Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Implementar un Combiner</h2>
+<div class='content'><p><strong>Descripció</strong>: Escriu un combiner per a una feina MapReduce que compta el nombre d'ocurrències de paraules en un conjunt de documents.</p>
+<p><strong>Solució</strong>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHVibGljIHN0YXRpYyBjbGFzcyBXb3JkQ291bnRDb21iaW5lciBleHRlbmRzIFJlZHVjZXI8VGV4dCwgSW50V3JpdGFibGUsIFRleHQsIEludFdyaXRhYmxlPiB7CiAgICBwdWJsaWMgdm9pZCByZWR1Y2UoVGV4dCBrZXksIEl0ZXJhYmxlPEludFdyaXRhYmxlPiB2YWx1ZXMsIENvbnRleHQgY29udGV4dCkgdGhyb3dzIElPRXhjZXB0aW9uLCBJbnRlcnJ1cHRlZEV4Y2VwdGlvbiB7CiAgICAgICAgaW50IHN1bSA9IDA7CiAgICAgICAgZm9yIChJbnRXcml0YWJsZSB2YWwgOiB2YWx1ZXMpIHsKICAgICAgICAgICAgc3VtICs9IHZhbC5nZXQoKTsKICAgICAgICB9CiAgICAgICAgY29udGV4dC53cml0ZShrZXksIG5ldyBJbnRXcml0YWJsZShzdW0pKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>public static class WordCountCombiner extends Reducer&lt;Text, IntWritable, Text, IntWritable&gt; {
+    public void reduce(Text key, Iterable&lt;IntWritable&gt; values, Context context) throws IOException, InterruptedException {
+        int sum = 0;
+        for (IntWritable val : values) {
+            sum += val.get();
+        }
+        context.write(key, new IntWritable(sum));
+    }
+}</pre></div><div class='content'></div><h2>Exercici 2: Configurar la Memòria per a una Feina MapReduce</h2>
+<div class='content'><p><strong>Descripció</strong>: Ajusta la configuració de la memòria per a una feina MapReduce que processa grans volums de dades.</p>
+<p><strong>Solució</strong>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PHByb3BlcnR5PgogICAgPG5hbWU+bWFwcmVkdWNlLm1hcC5tZW1vcnkubWI8L25hbWU+CiAgICA8dmFsdWU+MzA3MjwvdmFsdWU+CjwvcHJvcGVydHk+Cjxwcm9wZXJ0eT4KICAgIDxuYW1lPm1hcHJlZHVjZS5yZWR1Y2UubWVtb3J5Lm1iPC9uYW1lPgogICAgPHZhbHVlPjYxNDQ8L3ZhbHVlPgo8L3Byb3BlcnR5Pgo8cHJvcGVydHk+CiAgICA8bmFtZT5tYXByZWR1Y2UubWFwLmphdmEub3B0czwvbmFtZT4KICAgIDx2YWx1ZT4tWG14MjU2MG08L3ZhbHVlPgo8L3Byb3BlcnR5Pgo8cHJvcGVydHk+CiAgICA8bmFtZT5tYXByZWR1Y2UucmVkdWNlLmphdmEub3B0czwvbmFtZT4KICAgIDx2YWx1ZT4tWG14NTEyMG08L3ZhbHVlPgo8L3Byb3BlcnR5Pg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;property&gt;
+    &lt;name&gt;mapreduce.map.memory.mb&lt;/name&gt;
+    &lt;value&gt;3072&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;mapreduce.reduce.memory.mb&lt;/name&gt;
+    &lt;value&gt;6144&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;mapreduce.map.java.opts&lt;/name&gt;
+    &lt;value&gt;-Xmx2560m&lt;/value&gt;
+&lt;/property&gt;
+&lt;property&gt;
+    &lt;name&gt;mapreduce.reduce.java.opts&lt;/name&gt;
+    &lt;value&gt;-Xmx5120m&lt;/value&gt;
+&lt;/property&gt;</pre></div><div class='content'></div><h1>4. Resum</h1>
+<div class='content'><p>En aquest tema, hem explorat diverses tècniques per optimitzar les feines de MapReduce, incloent l'ús de combiners, partitioners, configuració de la memòria, compressió de dades, utilització de contadors i optimització de la lògica de map i reduce. Aquestes tècniques poden ajudar a millorar el rendiment i l'eficiència de les aplicacions MapReduce, reduint el temps d'execució i l'ús de recursos.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-03-writing-a-mapreduce-program' title="Escriure un programa MapReduce">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-01-apache-pig' title="Apache Pig">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

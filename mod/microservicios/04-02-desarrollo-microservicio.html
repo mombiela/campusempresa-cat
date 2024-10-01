@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desenvolupament d'un Microservei Simple</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/microservicios/04-02-desarrollo-microservicio" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/microservicios/04-02-desarrollo-microservicio" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/microservicios/04-02-development-microservice" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/microservicios/04-02-desarrollo-microservicio" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/microservicios/04-02-desarrollo-microservicio" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-eleccion-tecnologias' title="Elecció de Tecnologies i Eines">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Desenvolupament d'un Microservei Simple</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-gestion-configuracion' title="Gestió de Configuració">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquesta secció, aprendrem a desenvolupar un microservei simple utilitzant una tecnologia popular com Spring Boot (Java) o Express (Node.js). Ens centrarem en la creació d'un servei RESTful que ofereixi operacions bàsiques de CRUD (Crear, Llegir, Actualitzar, Eliminar) sobre un recurs senzill, com ara &quot;usuaris&quot;.</p>
+</div><h1>Objectius d'Aprenentatge</h1>
+<div class='content'><ul>
+<li>Comprendre els passos bàsics per crear un microservei.</li>
+<li>Implementar operacions CRUD en un microservei.</li>
+<li>Configurar i executar el microservei.</li>
+</ul>
+</div><h1>Requisits Previs</h1>
+<div class='content'><ul>
+<li>Coneixements bàsics de programació en Java o JavaScript.</li>
+<li>Entendre els conceptes bàsics de RESTful APIs.</li>
+</ul>
+</div><h1>Estructura del Tema</h1>
+<div class='content'><ol>
+<li><a href="#configuració-del-projecte">Configuració del Projecte</a></li>
+<li><a href="#creació-del-model">Creació del Model</a></li>
+<li><a href="#implementació-del-controlador">Implementació del Controlador</a></li>
+<li><a href="#configuració-del-repositori">Configuració del Repositori</a></li>
+<li><a href="#execució-i-prova-del-microservei">Execució i Prova del Microservei</a></li>
+<li><a href="#exercicis-pràctics">Exercicis Pràctics</a></li>
+</ol>
+</div><h1>Configuració del Projecte</h1>
+<div class='content'></div><h2>Spring Boot (Java)</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear un nou projecte Spring Boot:</strong></p>
+<ul>
+<li>Utilitza Spring Initializr (https://start.spring.io/) per generar un projecte amb les següents dependències:
+<ul>
+<li>Spring Web</li>
+<li>Spring Data JPA</li>
+<li>H2 Database (per a una base de dades en memòria)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Estructura del projecte:</strong></p>
+<pre><code>src/main/java/com/example/microservice/
+    ├── MicroserviceApplication.java
+    ├── controller/
+    ├── model/
+    └── repository/
+</code></pre>
+</li>
+</ol>
+</div><h2>Express (Node.js)</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear un nou projecte Node.js:</strong></p>
+<ul>
+<li>Inicialitza un nou projecte amb <code>npm init</code>.</li>
+<li>Instal·la les dependències necessàries:
+<pre><code class="language-bash">npm install express body-parser mongoose
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Estructura del projecte:</strong></p>
+<pre><code>microservice/
+    ├── app.js
+    ├── controllers/
+    ├── models/
+    └── routes/
+</code></pre>
+</li>
+</ol>
+</div><h1>Creació del Model</h1>
+<div class='content'></div><h2>Spring Boot (Java)</h2>
+<div class='content'><ol>
+<li><strong>Crear la classe <code>User</code> dins del paquet <code>model</code>:</strong>
+<pre><code class="language-java">package com.example.microservice.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    private String name;
+    private String email;
+
+    // Getters and Setters
+}
+</code></pre>
+</li>
+</ol>
+</div><h2>Express (Node.js)</h2>
+<div class='content'><ol>
+<li><strong>Crear el model <code>User</code> dins de la carpeta <code>models</code>:</strong>
+<pre><code class="language-javascript">const mongoose = require('mongoose');
+
+const UserSchema = new mongoose.Schema({
+    name: String,
+    email: String
+});
+
+module.exports = mongoose.model('User', UserSchema);
+</code></pre>
+</li>
+</ol>
+</div><h1>Implementació del Controlador</h1>
+<div class='content'></div><h2>Spring Boot (Java)</h2>
+<div class='content'><ol>
+<li><strong>Crear la classe <code>UserController</code> dins del paquet <code>controller</code>:</strong>
+<pre><code class="language-java">package com.example.microservice.controller;
+
+import com.example.microservice.model.User;
+import com.example.microservice.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/users&quot;)
+public class UserController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @GetMapping
+    public List&lt;User&gt; getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    @PostMapping
+    public User createUser(@RequestBody User user) {
+        return userRepository.save(user);
+    }
+
+    @GetMapping(&quot;/{id}&quot;)
+    public User getUserById(@PathVariable Long id) {
+        return userRepository.findById(id).orElseThrow(() -&gt; new ResourceNotFoundException(&quot;User not found&quot;));
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public User updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+        User user = userRepository.findById(id).orElseThrow(() -&gt; new ResourceNotFoundException(&quot;User not found&quot;));
+        user.setName(userDetails.getName());
+        user.setEmail(userDetails.getEmail());
+        return userRepository.save(user);
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public void deleteUser(@PathVariable Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -&gt; new ResourceNotFoundException(&quot;User not found&quot;));
+        userRepository.delete(user);
+    }
+}
+</code></pre>
+</li>
+</ol>
+</div><h2>Express (Node.js)</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear el controlador <code>userController.js</code> dins de la carpeta <code>controllers</code>:</strong></p>
+<pre><code class="language-javascript">const User = require('../models/User');
+
+exports.getAllUsers = async (req, res) =&gt; {
+    try {
+        const users = await User.find();
+        res.json(users);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+exports.createUser = async (req, res) =&gt; {
+    const user = new User({
+        name: req.body.name,
+        email: req.body.email
+    });
+    try {
+        const newUser = await user.save();
+        res.status(201).json(newUser);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+};
+
+exports.getUserById = async (req, res) =&gt; {
+    try {
+        const user = await User.findById(req.params.id);
+        if (user == null) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+exports.updateUser = async (req, res) =&gt; {
+    try {
+        const user = await User.findById(req.params.id);
+        if (user == null) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        if (req.body.name != null) {
+            user.name = req.body.name;
+        }
+        if (req.body.email != null) {
+            user.email = req.body.email;
+        }
+        const updatedUser = await user.save();
+        res.json(updatedUser);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+};
+
+exports.deleteUser = async (req, res) =&gt; {
+    try {
+        const user = await User.findById(req.params.id);
+        if (user == null) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        await user.remove();
+        res.json({ message: 'User deleted' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+</code></pre>
+</li>
+<li>
+<p><strong>Crear les rutes <code>userRoutes.js</code> dins de la carpeta <code>routes</code>:</strong></p>
+<pre><code class="language-javascript">const express = require('express');
+const router = express.Router();
+const userController = require('../controllers/userController');
+
+router.get('/users', userController.getAllUsers);
+router.post('/users', userController.createUser);
+router.get('/users/:id', userController.getUserById);
+router.put('/users/:id', userController.updateUser);
+router.delete('/users/:id', userController.deleteUser);
+
+module.exports = router;
+</code></pre>
+</li>
+<li>
+<p><strong>Configurar l'aplicació a <code>app.js</code>:</strong></p>
+<pre><code class="language-javascript">const express = require('express');
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const userRoutes = require('./routes/userRoutes');
+
+const app = express();
+app.use(bodyParser.json());
+
+mongoose.connect('mongodb://localhost:27017/microservice', { useNewUrlParser: true, useUnifiedTopology: true });
+
+app.use('/api', userRoutes);
+
+app.listen(3000, () =&gt; {
+    console.log('Server is running on port 3000');
+});
+</code></pre>
+</li>
+</ol>
+</div><h1>Configuració del Repositori</h1>
+<div class='content'></div><h2>Spring Boot (Java)</h2>
+<div class='content'><ol>
+<li><strong>Crear la interfície <code>UserRepository</code> dins del paquet <code>repository</code>:</strong>
+<pre><code class="language-java">package com.example.microservice.repository;
+
+import com.example.microservice.model.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserRepository extends JpaRepository&lt;User, Long&gt; {
+}
+</code></pre>
+</li>
+</ol>
+</div><h2>Express (Node.js)</h2>
+<div class='content'><ul>
+<li>No es necessita una configuració addicional per al repositori, ja que Mongoose s'encarrega de la persistència de dades.</li>
+</ul>
+</div><h1>Execució i Prova del Microservei</h1>
+<div class='content'></div><h2>Spring Boot (Java)</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Executar l'aplicació:</strong></p>
+<ul>
+<li>Executa la classe <code>MicroserviceApplication</code> que conté el mètode <code>main</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Provar el microservei:</strong></p>
+<ul>
+<li>Utilitza una eina com Postman per fer peticions HTTP a les rutes <code>/users</code>.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Express (Node.js)</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Executar l'aplicació:</strong></p>
+<pre><code class="language-bash">node app.js
+</code></pre>
+</li>
+<li>
+<p><strong>Provar el microservei:</strong></p>
+<ul>
+<li>Utilitza una eina com Postman per fer peticions HTTP a les rutes <code>/api/users</code>.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Afegir un nou camp al model <code>User</code>:</strong></p>
+<ul>
+<li>Afegir un camp <code>age</code> al model <code>User</code> i actualitzar les operacions CRUD per gestionar aquest nou camp.</li>
+</ul>
+</li>
+<li>
+<p><strong>Implementar validacions:</strong></p>
+<ul>
+<li>Afegir validacions per assegurar que el camp <code>email</code> sigui únic i tingui un format vàlid.</li>
+</ul>
+</li>
+<li>
+<p><strong>Crear un nou microservei:</strong></p>
+<ul>
+<li>Desenvolupar un nou microservei per gestionar un altre recurs, com ara &quot;productes&quot;, seguint els mateixos passos.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après a desenvolupar un microservei simple amb operacions CRUD utilitzant Spring Boot i Express. Hem configurat el projecte, creat el model, implementat el controlador, configurat el repositori i provat el microservei. Els exercicis pràctics proporcionats ajudaran a reforçar els conceptes apresos i a adquirir més experiència en el desenvolupament de microserveis.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-eleccion-tecnologias' title="Elecció de Tecnologies i Eines">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-gestion-configuracion' title="Gestió de Configuració">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

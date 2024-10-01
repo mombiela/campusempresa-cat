@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitorització de Kafka</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kafka/04-03-monitoring-kafka" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kafka/04-03-monitoring-kafka" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kafka/04-03-monitoring-kafka" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kafka/04-03-monitoring-kafka" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kafka/04-03-monitoring-kafka" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-02-managing-kafka-topics' title="Gestió de Temes de Kafka">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Monitorització de Kafka</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-04-kafka-security' title="Seguretat de Kafka">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La monitorització de Kafka és essencial per assegurar que el sistema funcioni de manera eficient i per detectar i resoldre problemes abans que afectin el rendiment. En aquesta secció, explorarem les eines i les mètriques clau per monitoritzar Kafka.</p>
+</div><h1>Objectius d'Aprenentatge</h1>
+<div class='content'><ul>
+<li>Comprendre la importància de la monitorització de Kafka.</li>
+<li>Familiaritzar-se amb les mètriques clau de Kafka.</li>
+<li>Aprendre a utilitzar eines de monitorització per Kafka.</li>
+<li>Configurar alertes per a problemes comuns.</li>
+</ul>
+</div><h1>Importància de la Monitorització de Kafka</h1>
+<div class='content'><p>La monitorització de Kafka és crucial per diverses raons:</p>
+<ul>
+<li><strong>Rendiment</strong>: Assegura que Kafka estigui funcionant de manera òptima.</li>
+<li><strong>Disponibilitat</strong>: Detecta problemes abans que es converteixin en fallades crítiques.</li>
+<li><strong>Escalabilitat</strong>: Ajuda a planificar l'escalabilitat del sistema.</li>
+<li><strong>Seguretat</strong>: Identifica possibles vulnerabilitats i problemes de seguretat.</li>
+</ul>
+</div><h1>Mètriques Clau de Kafka</h1>
+<div class='content'><p>Kafka proporciona una àmplia gamma de mètriques que es poden utilitzar per monitoritzar el seu rendiment. Algunes de les mètriques més importants inclouen:</p>
+</div><h2>Mètriques de Broker</h2>
+<div class='content'><ul>
+<li><strong>Request Rate</strong>: Nombre de sol·licituds per segon.</li>
+<li><strong>Request Latency</strong>: Latència de les sol·licituds.</li>
+<li><strong>Network I/O</strong>: Taxa de transferència de dades a través de la xarxa.</li>
+<li><strong>Under-Replicated Partitions</strong>: Nombre de particions que no tenen el nombre complet de rèpliques.</li>
+</ul>
+</div><h2>Mètriques de Productor</h2>
+<div class='content'><ul>
+<li><strong>Record Send Rate</strong>: Nombre de registres enviats per segon.</li>
+<li><strong>Record Error Rate</strong>: Nombre d'errors en l'enviament de registres per segon.</li>
+<li><strong>Batch Size</strong>: Mida mitjana dels lots de missatges.</li>
+</ul>
+</div><h2>Mètriques de Consumidor</h2>
+<div class='content'><ul>
+<li><strong>Records Consumed Rate</strong>: Nombre de registres consumits per segon.</li>
+<li><strong>Fetch Latency</strong>: Latència de les sol·licituds de fetch.</li>
+<li><strong>Lag</strong>: Diferència entre el desplaçament actual del consumidor i el desplaçament final del log.</li>
+</ul>
+</div><h2>Mètriques de Zookeeper</h2>
+<div class='content'><ul>
+<li><strong>Request Latency</strong>: Latència de les sol·licituds a Zookeeper.</li>
+<li><strong>Outstanding Requests</strong>: Nombre de sol·licituds pendents.</li>
+</ul>
+</div><h1>Eines de Monitorització per Kafka</h1>
+<div class='content'><p>Hi ha diverses eines que es poden utilitzar per monitoritzar Kafka. Algunes de les més populars inclouen:</p>
+</div><h2>JMX (Java Management Extensions)</h2>
+<div class='content'><p>Kafka exposa moltes de les seves mètriques a través de JMX. Aquestes mètriques es poden recollir i visualitzar utilitzant eines com JConsole o VisualVM.</p>
+</div><h2>Prometheus i Grafana</h2>
+<div class='content'><p>Prometheus és una eina de monitorització i alerta que pot recollir mètriques de Kafka. Grafana es pot utilitzar per visualitzar aquestes mètriques en panells personalitzats.</p>
+<h4>Exemple de Configuració de Prometheus per Kafka</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c2NyYXBlX2NvbmZpZ3M6CiAgLSBqb2JfbmFtZTogJ2thZmthJwogICAgc3RhdGljX2NvbmZpZ3M6CiAgICAgIC0gdGFyZ2V0czogWydsb2NhbGhvc3Q6OTA5Midd"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>scrape_configs:
+  - job_name: 'kafka'
+    static_configs:
+      - targets: ['localhost:9092']</pre></div><div class='content'></div><h2>Kafka Manager</h2>
+<div class='content'><p>Kafka Manager és una eina de gestió i monitorització de Kafka desenvolupada per Yahoo. Proporciona una interfície web per visualitzar mètriques i gestionar clústers de Kafka.</p>
+</div><h2>Confluent Control Center</h2>
+<div class='content'><p>Confluent Control Center és una eina comercial que proporciona una interfície gràfica per monitoritzar i gestionar clústers de Kafka. Ofereix funcionalitats avançades com la monitorització de fluxos de dades i la configuració d'alertes.</p>
+</div><h1>Configuració d'Alertes</h1>
+<div class='content'><p>Configurar alertes és essencial per assegurar que els problemes es detectin i es resolguin ràpidament. Algunes alertes comunes inclouen:</p>
+<ul>
+<li><strong>Alta Latència de Sol·licituds</strong>: Alertar quan la latència de les sol·licituds supera un llindar determinat.</li>
+<li><strong>Particions Sub-replicades</strong>: Alertar quan hi ha particions sub-replicades.</li>
+<li><strong>Errors de Productor/Consumidor</strong>: Alertar quan hi ha un nombre elevat d'errors en productors o consumidors.</li>
+<li><strong>Desplaçament de Consumidor</strong>: Alertar quan el desplaçament del consumidor és massa alt, indicant un possible retard en el processament de missatges.</li>
+</ul>
+</div><h2>Exemple de Regla d'Alerta en Prometheus</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Z3JvdXBzOgotIG5hbWU6IGthZmthX2FsZXJ0cwogIHJ1bGVzOgogIC0gYWxlcnQ6IEhpZ2hSZXF1ZXN0TGF0ZW5jeQogICAgZXhwcjogYXZnKGthZmthX25ldHdvcmtfcmVxdWVzdG1ldHJpY3NfcmVxdWVzdGxhdGVuY3l7am9iPSJrYWZrYSJ9KSA+IDAuNQogICAgZm9yOiA1bQogICAgbGFiZWxzOgogICAgICBzZXZlcml0eTogd2FybmluZwogICAgYW5ub3RhdGlvbnM6CiAgICAgIHN1bW1hcnk6ICJBbHRhIGxhdMOobmNpYSBkZSBzb2zCt2xpY2l0dWRzIGEgS2Fma2EiCiAgICAgIGRlc2NyaXB0aW9uOiAiTGEgbGF0w6huY2lhIGRlIGxlcyBzb2zCt2xpY2l0dWRzIGEgS2Fma2EgaGEgc3VwZXJhdCBlbHMgMC41IHNlZ29ucyBkdXJhbnQgbcOpcyBkZSA1IG1pbnV0cy4i"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>groups:
+- name: kafka_alerts
+  rules:
+  - alert: HighRequestLatency
+    expr: avg(kafka_network_requestmetrics_requestlatency{job=&quot;kafka&quot;}) &gt; 0.5
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: &quot;Alta lat&egrave;ncia de sol&middot;licituds a Kafka&quot;
+      description: &quot;La lat&egrave;ncia de les sol&middot;licituds a Kafka ha superat els 0.5 segons durant m&eacute;s de 5 minuts.&quot;</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<h2>Objectiu</h2>
+<div class='content'><p>Configurar un sistema de monitorització bàsic per un clúster de Kafka utilitzant Prometheus i Grafana.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Instal·lar Prometheus</strong>:</p>
+<ul>
+<li>Descarregar i instal·lar Prometheus des del <a href="https://prometheus.io/download/">lloc oficial</a>.</li>
+<li>Configurar Prometheus per recollir mètriques de Kafka.</li>
+</ul>
+</li>
+<li>
+<p><strong>Instal·lar Grafana</strong>:</p>
+<ul>
+<li>Descarregar i instal·lar Grafana des del <a href="https://grafana.com/grafana/download">lloc oficial</a>.</li>
+<li>Configurar Grafana per utilitzar Prometheus com a font de dades.</li>
+</ul>
+</li>
+<li>
+<p><strong>Crear Panells de Grafana</strong>:</p>
+<ul>
+<li>Crear panells en Grafana per visualitzar les mètriques clau de Kafka.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Solució</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBwcm9tZXRoZXVzLnltbApzY3JhcGVfY29uZmlnczoKICAtIGpvYl9uYW1lOiAna2Fma2EnCiAgICBzdGF0aWNfY29uZmlnczoKICAgICAgLSB0YXJnZXRzOiBbJ2xvY2FsaG9zdDo5MDkyJ10="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># prometheus.yml
+scrape_configs:
+  - job_name: 'kafka'
+    static_configs:
+      - targets: ['localhost:9092']</pre></div><div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gRXhlbXBsZSBkZSBwYW5lbGwgZGUgR3JhZmFuYSAoSlNPTikKewogICJwYW5lbHMiOiBbCiAgICB7CiAgICAgICJ0eXBlIjogImdyYXBoIiwKICAgICAgInRpdGxlIjogIlJlcXVlc3QgTGF0ZW5jeSIsCiAgICAgICJ0YXJnZXRzIjogWwogICAgICAgIHsKICAgICAgICAgICJleHByIjogImF2ZyhrYWZrYV9uZXR3b3JrX3JlcXVlc3RtZXRyaWNzX3JlcXVlc3RsYXRlbmN5e2pvYj0na2Fma2EnfSkiLAogICAgICAgICAgImxlZ2VuZEZvcm1hdCI6ICJSZXF1ZXN0IExhdGVuY3kiCiAgICAgICAgfQogICAgICBdCiAgICB9CiAgXQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Exemple de panell de Grafana (JSON)
+{
+  &quot;panels&quot;: [
+    {
+      &quot;type&quot;: &quot;graph&quot;,
+      &quot;title&quot;: &quot;Request Latency&quot;,
+      &quot;targets&quot;: [
+        {
+          &quot;expr&quot;: &quot;avg(kafka_network_requestmetrics_requestlatency{job='kafka'})&quot;,
+          &quot;legendFormat&quot;: &quot;Request Latency&quot;
+        }
+      ]
+    }
+  ]
+}</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après la importància de la monitorització de Kafka, les mètriques clau que cal seguir, les eines disponibles per monitoritzar Kafka i com configurar alertes per detectar problemes. La monitorització efectiva és essencial per mantenir un sistema Kafka saludable i eficient.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-02-managing-kafka-topics' title="Gestió de Temes de Kafka">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-04-kafka-security' title="Seguretat de Kafka">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

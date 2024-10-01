@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detecció Bàsica de Col·lisions</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/unity/04-03-basic-collision-detection" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/unity/04-03-basic-collision-detection" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/unity/04-03-basic-collision-detection" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/unity/04-03-basic-collision-detection" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/unity/04-03-basic-collision-detection" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-02-rigidbodies-colliders' title="Rigidbody i Col·liders">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Detecció Bàsica de Col·lisions</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-04-using-physics-materials' title="Utilitzant Materials de Física">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>La detecció de col·lisions és una part fonamental en el desenvolupament de jocs, ja que permet que els objectes interactuïn entre ells de manera realista. En aquest tema, aprendrem com Unity gestiona les col·lisions i com podem utilitzar aquesta funcionalitat per crear comportaments interessants en els nostres jocs.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Col·liders</strong>: Components que defineixen la forma d'un objecte per a la detecció de col·lisions.</li>
+<li><strong>Rigidbody</strong>: Component que permet que un objecte sigui afectat per la física.</li>
+<li><strong>Mètodes de Col·lisió</strong>: Funcions que es criden automàticament quan es produeixen col·lisions.</li>
+</ol>
+</div><h1>Tipus de Col·liders</h1>
+<div class='content'><p>Unity ofereix diversos tipus de col·liders que podem utilitzar segons les necessitats del nostre joc:</p>
+<ul>
+<li><strong>Box Collider</strong>: Un col·lider en forma de caixa.</li>
+<li><strong>Sphere Collider</strong>: Un col·lider en forma d'esfera.</li>
+<li><strong>Capsule Collider</strong>: Un col·lider en forma de càpsula.</li>
+<li><strong>Mesh Collider</strong>: Un col·lider que segueix la forma d'un mesh.</li>
+</ul>
+</div><h1>Exemple Pràctic</h1>
+<div class='content'></div><h2>Configurant Col·liders i Rigidbody</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Afegir un Box Collider a un objecte</strong>:</p>
+<pre><code class="language-csharp">// Selecciona l'objecte al qual vols afegir el col·lider
+GameObject myObject = GameObject.CreatePrimitive(PrimitiveType.Cube);
+// El Box Collider s'afegeix automàticament quan es crea un cub
+</code></pre>
+</li>
+<li>
+<p><strong>Afegir un Rigidbody a un objecte</strong>:</p>
+<pre><code class="language-csharp">// Afegir un component Rigidbody
+Rigidbody rb = myObject.AddComponent&lt;Rigidbody&gt;();
+</code></pre>
+</li>
+</ol>
+</div><h2>Detectant Col·lisions</h2>
+<div class='content'><p>Per detectar col·lisions, utilitzarem els mètodes proporcionats per Unity dins d'un script que hereti de <code>MonoBehaviour</code>.</p>
+<ol>
+<li><strong>OnCollisionEnter</strong>: Es crida quan comença una col·lisió.</li>
+<li><strong>OnCollisionStay</strong>: Es crida mentre la col·lisió continua.</li>
+<li><strong>OnCollisionExit</strong>: Es crida quan la col·lisió acaba.</li>
+</ol>
+<h4>Exemple de codi:</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNpbmcgVW5pdHlFbmdpbmU7CgpwdWJsaWMgY2xhc3MgQ29sbGlzaW9uRGV0ZWN0aW9uIDogTW9ub0JlaGF2aW91cgp7CiAgICB2b2lkIE9uQ29sbGlzaW9uRW50ZXIoQ29sbGlzaW9uIGNvbGxpc2lvbikKICAgIHsKICAgICAgICBEZWJ1Zy5Mb2coIkNvbMK3bGlzacOzIGRldGVjdGFkYSBhbWI6ICIgKyBjb2xsaXNpb24uZ2FtZU9iamVjdC5uYW1lKTsKICAgIH0KCiAgICB2b2lkIE9uQ29sbGlzaW9uU3RheShDb2xsaXNpb24gY29sbGlzaW9uKQogICAgewogICAgICAgIERlYnVnLkxvZygiRW5jYXJhIGVuIGNvbMK3bGlzacOzIGFtYjogIiArIGNvbGxpc2lvbi5nYW1lT2JqZWN0Lm5hbWUpOwogICAgfQoKICAgIHZvaWQgT25Db2xsaXNpb25FeGl0KENvbGxpc2lvbiBjb2xsaXNpb24pCiAgICB7CiAgICAgICAgRGVidWcuTG9nKCJDb2zCt2xpc2nDsyBhY2FiYWRhIGFtYjogIiArIGNvbGxpc2lvbi5nYW1lT2JqZWN0Lm5hbWUpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>using UnityEngine;
+
+public class CollisionDetection : MonoBehaviour
+{
+    void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log(&quot;Col&middot;lisi&oacute; detectada amb: &quot; + collision.gameObject.name);
+    }
+
+    void OnCollisionStay(Collision collision)
+    {
+        Debug.Log(&quot;Encara en col&middot;lisi&oacute; amb: &quot; + collision.gameObject.name);
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
+        Debug.Log(&quot;Col&middot;lisi&oacute; acabada amb: &quot; + collision.gameObject.name);
+    }
+}</pre></div><div class='content'></div><h2>Exercici Pràctic</h2>
+<div class='content'><p><strong>Objectiu</strong>: Crear dos objectes que col·lideixin i detectar la col·lisió.</p>
+<ol>
+<li>
+<p><strong>Crea dos objectes</strong>:</p>
+<ul>
+<li>Un cub i una esfera.</li>
+<li>Afegeix un <code>Box Collider</code> al cub i un <code>Sphere Collider</code> a l'esfera.</li>
+<li>Afegeix un <code>Rigidbody</code> a l'esfera perquè es mogui.</li>
+</ul>
+</li>
+<li>
+<p><strong>Adjunta l'script de detecció de col·lisions</strong>:</p>
+<ul>
+<li>Crea un nou script anomenat <code>CollisionDetection</code> i copia el codi de l'exemple anterior.</li>
+<li>Adjunta l'script al cub.</li>
+</ul>
+</li>
+<li>
+<p><strong>Executa el joc</strong>:</p>
+<ul>
+<li>Mou l'esfera cap al cub i observa els missatges de la consola quan es produeix la col·lisió.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Solució de l'Exercici</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dXNpbmcgVW5pdHlFbmdpbmU7CgpwdWJsaWMgY2xhc3MgQ29sbGlzaW9uRGV0ZWN0aW9uIDogTW9ub0JlaGF2aW91cgp7CiAgICB2b2lkIE9uQ29sbGlzaW9uRW50ZXIoQ29sbGlzaW9uIGNvbGxpc2lvbikKICAgIHsKICAgICAgICBEZWJ1Zy5Mb2coIkNvbMK3bGlzacOzIGRldGVjdGFkYSBhbWI6ICIgKyBjb2xsaXNpb24uZ2FtZU9iamVjdC5uYW1lKTsKICAgIH0KCiAgICB2b2lkIE9uQ29sbGlzaW9uU3RheShDb2xsaXNpb24gY29sbGlzaW9uKQogICAgewogICAgICAgIERlYnVnLkxvZygiRW5jYXJhIGVuIGNvbMK3bGlzacOzIGFtYjogIiArIGNvbGxpc2lvbi5nYW1lT2JqZWN0Lm5hbWUpOwogICAgfQoKICAgIHZvaWQgT25Db2xsaXNpb25FeGl0KENvbGxpc2lvbiBjb2xsaXNpb24pCiAgICB7CiAgICAgICAgRGVidWcuTG9nKCJDb2zCt2xpc2nDsyBhY2FiYWRhIGFtYjogIiArIGNvbGxpc2lvbi5nYW1lT2JqZWN0Lm5hbWUpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>using UnityEngine;
+
+public class CollisionDetection : MonoBehaviour
+{
+    void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log(&quot;Col&middot;lisi&oacute; detectada amb: &quot; + collision.gameObject.name);
+    }
+
+    void OnCollisionStay(Collision collision)
+    {
+        Debug.Log(&quot;Encara en col&middot;lisi&oacute; amb: &quot; + collision.gameObject.name);
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
+        Debug.Log(&quot;Col&middot;lisi&oacute; acabada amb: &quot; + collision.gameObject.name);
+    }
+}</pre></div><div class='content'></div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ul>
+<li><strong>Oblidar afegir un Rigidbody</strong>: Sense un <code>Rigidbody</code>, els objectes no seran afectats per la física i no es detectaran col·lisions.</li>
+<li><strong>No ajustar correctament els col·liders</strong>: Assegura't que els col·liders s'ajustin correctament a la forma dels teus objectes per evitar col·lisions inexactes.</li>
+<li><strong>Desactivar els col·liders</strong>: Si un col·lider està desactivat, no es detectaran col·lisions.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La detecció de col·lisions és essencial per crear interaccions realistes en els jocs. Amb els coneixements adquirits en aquest tema, ja pots començar a implementar col·lisions bàsiques en els teus projectes de Unity. En el proper tema, explorarem com utilitzar materials de física per afegir més realisme a les col·lisions.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-02-rigidbodies-colliders' title="Rigidbody i Col·liders">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-04-using-physics-materials' title="Utilitzant Materials de Física">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

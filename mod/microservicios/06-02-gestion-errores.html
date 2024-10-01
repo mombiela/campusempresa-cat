@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió d'Errors i Recuperació</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/microservicios/06-02-gestion-errores" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/microservicios/06-02-gestion-errores" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/microservicios/06-02-error-management" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/microservicios/06-02-gestion-errores" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/microservicios/06-02-gestion-errores" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-monitoreo-logging' title="Monitoratge i Logging">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Gestió d'Errors i Recuperació</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-escalabilidad-rendimiento' title="Escalabilitat i Rendiment">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>La gestió d'errors i la recuperació són components crítics en l'arquitectura de microserveis. A causa de la naturalesa distribuïda dels microserveis, els errors poden ocórrer en qualsevol punt de la xarxa, i és essencial dissenyar sistemes que puguin gestionar aquests errors de manera eficient i recuperar-se d'ells per mantenir la disponibilitat i la fiabilitat del sistema.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'></div><h2>1. Tipus d'Errors</h2>
+<div class='content'><ul>
+<li><strong>Errors de Xarxa:</strong> Problemes de connectivitat, latència elevada, pèrdua de paquets.</li>
+<li><strong>Errors de Servei:</strong> Fallades en un microservei específic, com ara caigudes del servei, errors de lògica, excepcions no controlades.</li>
+<li><strong>Errors de Dependència:</strong> Fallades en serveis externs o altres microserveis dels quals depèn el servei actual.</li>
+</ul>
+</div><h2>2. Estratègies de Gestió d'Errors</h2>
+<div class='content'><ul>
+<li><strong>Retry (Reintents):</strong> Tornar a intentar una operació fallida després d'un cert interval de temps.</li>
+<li><strong>Circuit Breaker:</strong> Tallar les connexions a un servei fallit per evitar sobrecarregar-lo amb sol·licituds fallides.</li>
+<li><strong>Fallback:</strong> Proporcionar una resposta alternativa o degradada quan un servei no està disponible.</li>
+<li><strong>Timeouts:</strong> Establir límits de temps per a les operacions per evitar esperes indefinides.</li>
+</ul>
+</div><h2>3. Patrons de Recuperació</h2>
+<div class='content'><ul>
+<li><strong>Bulkhead (Compartimentació):</strong> Aïllar diferents parts del sistema per evitar que una fallada en una part afecti tot el sistema.</li>
+<li><strong>Failover:</strong> Redirigir el trànsit a un servei de reserva en cas de fallada del servei principal.</li>
+<li><strong>Graceful Degradation:</strong> Permetre que el sistema continuï funcionant amb funcionalitat reduïda en cas de fallada.</li>
+</ul>
+</div><h1>Implementació Pràctica</h1>
+<div class='content'></div><h2>Retry (Reintents)</h2>
+<div class='content'><h4>Exemple en Java amb Spring Retry</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsucmV0cnkuYW5ub3RhdGlvbi5CYWNrb2ZmOwppbXBvcnQgb3JnLnNwcmluZ2ZyYW1ld29yay5yZXRyeS5hbm5vdGF0aW9uLlJldHJ5YWJsZTsKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuc3RlcmVvdHlwZS5TZXJ2aWNlOwoKQFNlcnZpY2UKcHVibGljIGNsYXNzIE15U2VydmljZSB7CgogICAgQFJldHJ5YWJsZSgKICAgICAgICB2YWx1ZSA9IHtSZW1vdGVTZXJ2aWNlRXhjZXB0aW9uLmNsYXNzfSwKICAgICAgICBtYXhBdHRlbXB0cyA9IDUsCiAgICAgICAgYmFja29mZiA9IEBCYWNrb2ZmKGRlbGF5ID0gMjAwMCkKICAgICkKICAgIHB1YmxpYyBTdHJpbmcgY2FsbFJlbW90ZVNlcnZpY2UoKSB0aHJvd3MgUmVtb3RlU2VydmljZUV4Y2VwdGlvbiB7CiAgICAgICAgLy8gTMOyZ2ljYSBwZXIgY3JpZGFyIGVsIHNlcnZlaSByZW1vdAogICAgICAgIHJldHVybiByZW1vdGVTZXJ2aWNlLmNhbGwoKTsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.stereotype.Service;
+
+@Service
+public class MyService {
+
+    @Retryable(
+        value = {RemoteServiceException.class},
+        maxAttempts = 5,
+        backoff = @Backoff(delay = 2000)
+    )
+    public String callRemoteService() throws RemoteServiceException {
+        // L&ograve;gica per cridar el servei remot
+        return remoteService.call();
+    }
+}</pre></div><div class='content'></div><h2>Circuit Breaker</h2>
+<div class='content'><h4>Exemple en Java amb Resilience4j</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGlvLmdpdGh1Yi5yZXNpbGllbmNlNGouY2lyY3VpdGJyZWFrZXIuYW5ub3RhdGlvbi5DaXJjdWl0QnJlYWtlcjsKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuc3RlcmVvdHlwZS5TZXJ2aWNlOwoKQFNlcnZpY2UKcHVibGljIGNsYXNzIE15U2VydmljZSB7CgogICAgQENpcmN1aXRCcmVha2VyKG5hbWUgPSAibXlTZXJ2aWNlIiwgZmFsbGJhY2tNZXRob2QgPSAiZmFsbGJhY2siKQogICAgcHVibGljIFN0cmluZyBjYWxsUmVtb3RlU2VydmljZSgpIHsKICAgICAgICAvLyBMw7JnaWNhIHBlciBjcmlkYXIgZWwgc2VydmVpIHJlbW90CiAgICAgICAgcmV0dXJuIHJlbW90ZVNlcnZpY2UuY2FsbCgpOwogICAgfQoKICAgIHB1YmxpYyBTdHJpbmcgZmFsbGJhY2soVGhyb3dhYmxlIHQpIHsKICAgICAgICAvLyBMw7JnaWNhIGRlIGZhbGxiYWNrCiAgICAgICAgcmV0dXJuICJGYWxsYmFjayByZXNwb25zZSI7CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import org.springframework.stereotype.Service;
+
+@Service
+public class MyService {
+
+    @CircuitBreaker(name = &quot;myService&quot;, fallbackMethod = &quot;fallback&quot;)
+    public String callRemoteService() {
+        // L&ograve;gica per cridar el servei remot
+        return remoteService.call();
+    }
+
+    public String fallback(Throwable t) {
+        // L&ograve;gica de fallback
+        return &quot;Fallback response&quot;;
+    }
+}</pre></div><div class='content'></div><h2>Fallback</h2>
+<div class='content'><h4>Exemple en Java amb Hystrix</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGNvbS5uZXRmbGl4Lmh5c3RyaXguY29udHJpYi5qYXZhbmljYS5hbm5vdGF0aW9uLkh5c3RyaXhDb21tYW5kOwppbXBvcnQgb3JnLnNwcmluZ2ZyYW1ld29yay5zdGVyZW90eXBlLlNlcnZpY2U7CgpAU2VydmljZQpwdWJsaWMgY2xhc3MgTXlTZXJ2aWNlIHsKCiAgICBASHlzdHJpeENvbW1hbmQoZmFsbGJhY2tNZXRob2QgPSAiZmFsbGJhY2siKQogICAgcHVibGljIFN0cmluZyBjYWxsUmVtb3RlU2VydmljZSgpIHsKICAgICAgICAvLyBMw7JnaWNhIHBlciBjcmlkYXIgZWwgc2VydmVpIHJlbW90CiAgICAgICAgcmV0dXJuIHJlbW90ZVNlcnZpY2UuY2FsbCgpOwogICAgfQoKICAgIHB1YmxpYyBTdHJpbmcgZmFsbGJhY2soKSB7CiAgICAgICAgLy8gTMOyZ2ljYSBkZSBmYWxsYmFjawogICAgICAgIHJldHVybiAiRmFsbGJhY2sgcmVzcG9uc2UiOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import org.springframework.stereotype.Service;
+
+@Service
+public class MyService {
+
+    @HystrixCommand(fallbackMethod = &quot;fallback&quot;)
+    public String callRemoteService() {
+        // L&ograve;gica per cridar el servei remot
+        return remoteService.call();
+    }
+
+    public String fallback() {
+        // L&ograve;gica de fallback
+        return &quot;Fallback response&quot;;
+    }
+}</pre></div><div class='content'></div><h2>Timeouts</h2>
+<div class='content'><h4>Exemple en Java amb OkHttp</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9raHR0cDMuT2tIdHRwQ2xpZW50OwppbXBvcnQgb2todHRwMy5SZXF1ZXN0OwppbXBvcnQgb2todHRwMy5SZXNwb25zZTsKCmltcG9ydCBqYXZhLmlvLklPRXhjZXB0aW9uOwppbXBvcnQgamF2YS51dGlsLmNvbmN1cnJlbnQuVGltZVVuaXQ7CgpwdWJsaWMgY2xhc3MgTXlTZXJ2aWNlIHsKCiAgICBwcml2YXRlIGZpbmFsIE9rSHR0cENsaWVudCBjbGllbnQ7CgogICAgcHVibGljIE15U2VydmljZSgpIHsKICAgICAgICB0aGlzLmNsaWVudCA9IG5ldyBPa0h0dHBDbGllbnQuQnVpbGRlcigpCiAgICAgICAgICAgIC5jb25uZWN0VGltZW91dCgxMCwgVGltZVVuaXQuU0VDT05EUykKICAgICAgICAgICAgLndyaXRlVGltZW91dCgxMCwgVGltZVVuaXQuU0VDT05EUykKICAgICAgICAgICAgLnJlYWRUaW1lb3V0KDMwLCBUaW1lVW5pdC5TRUNPTkRTKQogICAgICAgICAgICAuYnVpbGQoKTsKICAgIH0KCiAgICBwdWJsaWMgU3RyaW5nIGNhbGxSZW1vdGVTZXJ2aWNlKCkgdGhyb3dzIElPRXhjZXB0aW9uIHsKICAgICAgICBSZXF1ZXN0IHJlcXVlc3QgPSBuZXcgUmVxdWVzdC5CdWlsZGVyKCkKICAgICAgICAgICAgLnVybCgiaHR0cDovL3JlbW90ZS1zZXJ2aWNlLXVybCIpCiAgICAgICAgICAgIC5idWlsZCgpOwoKICAgICAgICB0cnkgKFJlc3BvbnNlIHJlc3BvbnNlID0gY2xpZW50Lm5ld0NhbGwocmVxdWVzdCkuZXhlY3V0ZSgpKSB7CiAgICAgICAgICAgIHJldHVybiByZXNwb25zZS5ib2R5KCkuc3RyaW5nKCk7CiAgICAgICAgfQogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+public class MyService {
+
+    private final OkHttpClient client;
+
+    public MyService() {
+        this.client = new OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .build();
+    }
+
+    public String callRemoteService() throws IOException {
+        Request request = new Request.Builder()
+            .url(&quot;http://remote-service-url&quot;)
+            .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            return response.body().string();
+        }
+    }
+}</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Implementar Retry</h2>
+<div class='content'><p><strong>Descripció:</strong> Implementa una funcionalitat de retry per a un servei que pot fallar de manera intermitent.</p>
+<p><strong>Requisits:</strong></p>
+<ul>
+<li>Utilitza Spring Retry.</li>
+<li>Configura el servei per intentar fins a 3 vegades amb un interval de 1 segon entre intents.</li>
+</ul>
+<p><strong>Solució:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsucmV0cnkuYW5ub3RhdGlvbi5CYWNrb2ZmOwppbXBvcnQgb3JnLnNwcmluZ2ZyYW1ld29yay5yZXRyeS5hbm5vdGF0aW9uLlJldHJ5YWJsZTsKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuc3RlcmVvdHlwZS5TZXJ2aWNlOwoKQFNlcnZpY2UKcHVibGljIGNsYXNzIE15UmV0cnlTZXJ2aWNlIHsKCiAgICBAUmV0cnlhYmxlKAogICAgICAgIHZhbHVlID0ge1JlbW90ZVNlcnZpY2VFeGNlcHRpb24uY2xhc3N9LAogICAgICAgIG1heEF0dGVtcHRzID0gMywKICAgICAgICBiYWNrb2ZmID0gQEJhY2tvZmYoZGVsYXkgPSAxMDAwKQogICAgKQogICAgcHVibGljIFN0cmluZyBjYWxsUmVtb3RlU2VydmljZSgpIHRocm93cyBSZW1vdGVTZXJ2aWNlRXhjZXB0aW9uIHsKICAgICAgICAvLyBMw7JnaWNhIHBlciBjcmlkYXIgZWwgc2VydmVpIHJlbW90CiAgICAgICAgcmV0dXJuIHJlbW90ZVNlcnZpY2UuY2FsbCgpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.stereotype.Service;
+
+@Service
+public class MyRetryService {
+
+    @Retryable(
+        value = {RemoteServiceException.class},
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 1000)
+    )
+    public String callRemoteService() throws RemoteServiceException {
+        // L&ograve;gica per cridar el servei remot
+        return remoteService.call();
+    }
+}</pre></div><div class='content'></div><h2>Exercici 2: Implementar Circuit Breaker</h2>
+<div class='content'><p><strong>Descripció:</strong> Implementa un circuit breaker per a un servei que pot fallar de manera intermitent.</p>
+<p><strong>Requisits:</strong></p>
+<ul>
+<li>Utilitza Resilience4j.</li>
+<li>Configura el circuit breaker per obrir-se després de 5 fallades consecutives i tancar-se després de 10 segons.</li>
+</ul>
+<p><strong>Solució:</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGlvLmdpdGh1Yi5yZXNpbGllbmNlNGouY2lyY3VpdGJyZWFrZXIuYW5ub3RhdGlvbi5DaXJjdWl0QnJlYWtlcjsKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuc3RlcmVvdHlwZS5TZXJ2aWNlOwoKQFNlcnZpY2UKcHVibGljIGNsYXNzIE15Q2lyY3VpdEJyZWFrZXJTZXJ2aWNlIHsKCiAgICBAQ2lyY3VpdEJyZWFrZXIobmFtZSA9ICJteVNlcnZpY2UiLCBmYWxsYmFja01ldGhvZCA9ICJmYWxsYmFjayIpCiAgICBwdWJsaWMgU3RyaW5nIGNhbGxSZW1vdGVTZXJ2aWNlKCkgewogICAgICAgIC8vIEzDsmdpY2EgcGVyIGNyaWRhciBlbCBzZXJ2ZWkgcmVtb3QKICAgICAgICByZXR1cm4gcmVtb3RlU2VydmljZS5jYWxsKCk7CiAgICB9CgogICAgcHVibGljIFN0cmluZyBmYWxsYmFjayhUaHJvd2FibGUgdCkgewogICAgICAgIC8vIEzDsmdpY2EgZGUgZmFsbGJhY2sKICAgICAgICByZXR1cm4gIkZhbGxiYWNrIHJlc3BvbnNlIjsKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import org.springframework.stereotype.Service;
+
+@Service
+public class MyCircuitBreakerService {
+
+    @CircuitBreaker(name = &quot;myService&quot;, fallbackMethod = &quot;fallback&quot;)
+    public String callRemoteService() {
+        // L&ograve;gica per cridar el servei remot
+        return remoteService.call();
+    }
+
+    public String fallback(Throwable t) {
+        // L&ograve;gica de fallback
+        return &quot;Fallback response&quot;;
+    }
+}</pre></div><div class='content'></div><h1>Errors Comuns i Consells</h1>
+<div class='content'></div><h2>Errors Comuns</h2>
+<div class='content'><ul>
+<li><strong>No configurar correctament els intervals de retry:</strong> Això pot portar a sobrecarregar el servei fallit.</li>
+<li><strong>No implementar timeouts:</strong> Això pot causar que les sol·licituds quedin penjades indefinidament.</li>
+<li><strong>No tenir un mecanisme de fallback:</strong> Això pot causar que el sistema falli completament en cas de fallada d'un servei.</li>
+</ul>
+</div><h2>Consells</h2>
+<div class='content'><ul>
+<li><strong>Monitoritzar els patrons de retry i circuit breaker:</strong> Això ajuda a identificar problemes recurrents i ajustar les configuracions.</li>
+<li><strong>Utilitzar eines de monitoratge i logging:</strong> Això permet detectar i diagnosticar errors de manera més eficient.</li>
+<li><strong>Provar els mecanismes de gestió d'errors:</strong> Assegura't que els teus mecanismes de retry, circuit breaker i fallback funcionen correctament sota diferents condicions de fallada.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La gestió d'errors i la recuperació són fonamentals per a la robustesa i la fiabilitat dels sistemes basats en microserveis. Mitjançant l'ús de patrons com retry, circuit breaker, fallback i timeouts, es pot assegurar que els serveis siguin capaços de gestionar errors de manera eficient i mantenir la disponibilitat del sistema. Els exercicis pràctics proporcionats ajuden a consolidar aquests conceptes i a aplicar-los en situacions reals.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-01-monitoreo-logging' title="Monitoratge i Logging">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-03-escalabilidad-rendimiento' title="Escalabilitat i Rendiment">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

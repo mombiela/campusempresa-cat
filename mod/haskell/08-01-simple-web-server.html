@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Construcció d'un Servidor Web Simple</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/haskell/08-01-simple-web-server" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/haskell/08-01-simple-web-server" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/haskell/08-01-simple-web-server" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/haskell/08-01-simple-web-server" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/haskell/08-01-simple-web-server" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-template-haskell' title="Template Haskell">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Construcció d'un Servidor Web Simple</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-database-access' title="Accés a Bases de Dades">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a construir un servidor web simple utilitzant Haskell. Utilitzarem la biblioteca <code>Warp</code>, que és una implementació ràpida i lleugera del protocol HTTP en Haskell. Aquest exercici ens permetrà aplicar molts dels conceptes apresos en els mòduls anteriors, com ara la gestió d'entrada i sortida, la programació funcional i la gestió d'excepcions.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Configurar un projecte Haskell per a un servidor web.</li>
+<li>Utilitzar la biblioteca <code>Warp</code> per crear un servidor HTTP.</li>
+<li>Gestionar sol·licituds HTTP i enviar respostes.</li>
+<li>Implementar rutes bàsiques.</li>
+</ul>
+</div><h1>Requisits Previs</h1>
+<div class='content'><ul>
+<li>Coneixements bàsics de Haskell.</li>
+<li>Familiaritat amb la gestió de paquets en Haskell (Cabal o Stack).</li>
+<li>Comprensió bàsica del protocol HTTP.</li>
+</ul>
+</div><h1>1. Configuració del Projecte</h1>
+<div class='content'></div><h2>1.1. Crear un Nou Projecte</h2>
+<div class='content'><p>Primer, crearem un nou projecte Haskell. Pots utilitzar <code>stack</code> per a això:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RhY2sgbmV3IHNpbXBsZS13ZWItc2VydmVyCmNkIHNpbXBsZS13ZWItc2VydmVy"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>stack new simple-web-server
+cd simple-web-server</pre></div><div class='content'></div><h2>1.2. Afegir Dependències</h2>
+<div class='content'><p>Edita el fitxer <code>package.yaml</code> per afegir les dependències necessàries. Afegirem <code>warp</code> i <code>wai</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVwZW5kZW5jaWVzOgogIC0gYmFzZSA+PSA0LjcgJiYgPCA1CiAgLSB3YXJwCiAgLSB3YWk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>dependencies:
+  - base &gt;= 4.7 &amp;&amp; &lt; 5
+  - warp
+  - wai</pre></div><div class='content'><p>Després, actualitza les dependències:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RhY2sgYnVpbGQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>stack build</pre></div><div class='content'></div><h1>2. Crear el Servidor Web</h1>
+<div class='content'></div><h2>2.1. Importar les Biblioteques Necessàries</h2>
+<div class='content'><p>Crea un fitxer <code>src/Main.hs</code> i importa les biblioteques necessàries:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ey0jIExBTkdVQUdFIE92ZXJsb2FkZWRTdHJpbmdzICMtfQoKaW1wb3J0IE5ldHdvcmsuV2FpCmltcG9ydCBOZXR3b3JrLldhaS5IYW5kbGVyLldhcnAKaW1wb3J0IE5ldHdvcmsuSFRUUC5UeXBlcyAoc3RhdHVzMjAwKQppbXBvcnQgRGF0YS5CeXRlU3RyaW5nLkxhenkuQ2hhcjggYXMgTDggKHBhY2sp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{-# LANGUAGE OverloadedStrings #-}
+
+import Network.Wai
+import Network.Wai.Handler.Warp
+import Network.HTTP.Types (status200)
+import Data.ByteString.Lazy.Char8 as L8 (pack)</pre></div><div class='content'></div><h2>2.2. Definir l'Aplicació</h2>
+<div class='content'><p>Definim una aplicació WAI (Web Application Interface) que gestioni les sol·licituds HTTP:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBwIDo6IEFwcGxpY2F0aW9uCmFwcCByZXF1ZXN0IHJlc3BvbmQgPSBkbwogICAgbGV0IHJlc3BvbnNlID0gcmVzcG9uc2VMQlMKICAgICAgICAgICAgc3RhdHVzMjAwCiAgICAgICAgICAgIFsoIkNvbnRlbnQtVHlwZSIsICJ0ZXh0L3BsYWluIildCiAgICAgICAgICAgIChMOC5wYWNrICJIZWxsbywgV29ybGQhIikKICAgIHJlc3BvbmQgcmVzcG9uc2U="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>app :: Application
+app request respond = do
+    let response = responseLBS
+            status200
+            [(&quot;Content-Type&quot;, &quot;text/plain&quot;)]
+            (L8.pack &quot;Hello, World!&quot;)
+    respond response</pre></div><div class='content'></div><h2>2.3. Executar el Servidor</h2>
+<div class='content'><p>Finalment, configurem el servidor per escoltar en un port específic i executar l'aplicació:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bWFpbiA6OiBJTyAoKQptYWluID0gZG8KICAgIHB1dFN0ckxuICJTdGFydGluZyBzZXJ2ZXIgb24gcG9ydCA4MDgwLi4uIgogICAgcnVuIDgwODAgYXBw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>main :: IO ()
+main = do
+    putStrLn &quot;Starting server on port 8080...&quot;
+    run 8080 app</pre></div><div class='content'></div><h2>2.4. Executar el Projecte</h2>
+<div class='content'><p>Compila i executa el projecte:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RhY2sgcnVu"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>stack run</pre></div><div class='content'><p>Ara, si obres un navegador web i vas a <code>http://localhost:8080</code>, hauràs de veure el missatge &quot;Hello, World!&quot;.</p>
+</div><h1>3. Afegir Rutes</h1>
+<div class='content'></div><h2>3.1. Definir Rutes</h2>
+<div class='content'><p>Podem afegir més rutes per gestionar diferents camins URL. Utilitzarem la biblioteca <code>wai-route</code> per facilitar la gestió de rutes:</p>
+<p>Primer, afegim <code>wai-route</code> a les dependències:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVwZW5kZW5jaWVzOgogIC0gd2FpLXJvdXRl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>dependencies:
+  - wai-route</pre></div><div class='content'><p>Després, actualitzem el codi per gestionar diferents rutes:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IE5ldHdvcmsuV2FpLlJvdXRlCgphcHAgOjogQXBwbGljYXRpb24KYXBwID0gcm91dGUgJCBkbwogICAgZ2V0ICIvIiAkIHRleHQgIkhlbGxvLCBXb3JsZCEiCiAgICBnZXQgIi9hYm91dCIgJCB0ZXh0ICJUaGlzIGlzIGEgc2ltcGxlIHdlYiBzZXJ2ZXIgaW4gSGFza2VsbC4iCiAgICBnZXQgIi9oZWxsby86bmFtZSIgJCBkbwogICAgICAgIG5hbWUgPC0gcGFyYW0gIm5hbWUiCiAgICAgICAgdGV4dCAkICJIZWxsbywgIiA8PiBuYW1lIDw+ICIhIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import Network.Wai.Route
+
+app :: Application
+app = route $ do
+    get &quot;/&quot; $ text &quot;Hello, World!&quot;
+    get &quot;/about&quot; $ text &quot;This is a simple web server in Haskell.&quot;
+    get &quot;/hello/:name&quot; $ do
+        name &lt;- param &quot;name&quot;
+        text $ &quot;Hello, &quot; &lt;&gt; name &lt;&gt; &quot;!&quot;</pre></div><div class='content'></div><h2>3.2. Actualitzar el Main</h2>
+<div class='content'><p>Actualitzem la funció <code>main</code> per utilitzar la nova aplicació amb rutes:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bWFpbiA6OiBJTyAoKQptYWluID0gZG8KICAgIHB1dFN0ckxuICJTdGFydGluZyBzZXJ2ZXIgb24gcG9ydCA4MDgwLi4uIgogICAgcnVuIDgwODAgYXBw"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>main :: IO ()
+main = do
+    putStrLn &quot;Starting server on port 8080...&quot;
+    run 8080 app</pre></div><div class='content'></div><h1>4. Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Afegir una Ruta de Salutació Personalitzada</h2>
+<div class='content'><p>Afegiu una ruta <code>/greet/:name</code> que respongui amb un missatge de salutació personalitzat.</p>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBwIDo6IEFwcGxpY2F0aW9uCmFwcCA9IHJvdXRlICQgZG8KICAgIGdldCAiLyIgJCB0ZXh0ICJIZWxsbywgV29ybGQhIgogICAgZ2V0ICIvYWJvdXQiICQgdGV4dCAiVGhpcyBpcyBhIHNpbXBsZSB3ZWIgc2VydmVyIGluIEhhc2tlbGwuIgogICAgZ2V0ICIvaGVsbG8vOm5hbWUiICQgZG8KICAgICAgICBuYW1lIDwtIHBhcmFtICJuYW1lIgogICAgICAgIHRleHQgJCAiSGVsbG8sICIgPD4gbmFtZSA8PiAiISIKICAgIGdldCAiL2dyZWV0LzpuYW1lIiAkIGRvCiAgICAgICAgbmFtZSA8LSBwYXJhbSAibmFtZSIKICAgICAgICB0ZXh0ICQgIkdyZWV0aW5ncywgIiA8PiBuYW1lIDw+ICIhIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>app :: Application
+app = route $ do
+    get &quot;/&quot; $ text &quot;Hello, World!&quot;
+    get &quot;/about&quot; $ text &quot;This is a simple web server in Haskell.&quot;
+    get &quot;/hello/:name&quot; $ do
+        name &lt;- param &quot;name&quot;
+        text $ &quot;Hello, &quot; &lt;&gt; name &lt;&gt; &quot;!&quot;
+    get &quot;/greet/:name&quot; $ do
+        name &lt;- param &quot;name&quot;
+        text $ &quot;Greetings, &quot; &lt;&gt; name &lt;&gt; &quot;!&quot;</pre></div><div class='content'></div><h2>Exercici 2: Afegir una Ruta per Retornar JSON</h2>
+<div class='content'><p>Afegiu una ruta <code>/json</code> que respongui amb un objecte JSON.</p>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IERhdGEuQWVzb24gKGVuY29kZSwgb2JqZWN0LCAoLj0pKQoKYXBwIDo6IEFwcGxpY2F0aW9uCmFwcCA9IHJvdXRlICQgZG8KICAgIGdldCAiLyIgJCB0ZXh0ICJIZWxsbywgV29ybGQhIgogICAgZ2V0ICIvYWJvdXQiICQgdGV4dCAiVGhpcyBpcyBhIHNpbXBsZSB3ZWIgc2VydmVyIGluIEhhc2tlbGwuIgogICAgZ2V0ICIvaGVsbG8vOm5hbWUiICQgZG8KICAgICAgICBuYW1lIDwtIHBhcmFtICJuYW1lIgogICAgICAgIHRleHQgJCAiSGVsbG8sICIgPD4gbmFtZSA8PiAiISIKICAgIGdldCAiL2dyZWV0LzpuYW1lIiAkIGRvCiAgICAgICAgbmFtZSA8LSBwYXJhbSAibmFtZSIKICAgICAgICB0ZXh0ICQgIkdyZWV0aW5ncywgIiA8PiBuYW1lIDw+ICIhIgogICAgZ2V0ICIvanNvbiIgJCBqc29uICQgb2JqZWN0IFsibWVzc2FnZSIgLj0gKCJIZWxsbywgSlNPTiEiIDo6IFN0cmluZyld"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import Data.Aeson (encode, object, (.=))
+
+app :: Application
+app = route $ do
+    get &quot;/&quot; $ text &quot;Hello, World!&quot;
+    get &quot;/about&quot; $ text &quot;This is a simple web server in Haskell.&quot;
+    get &quot;/hello/:name&quot; $ do
+        name &lt;- param &quot;name&quot;
+        text $ &quot;Hello, &quot; &lt;&gt; name &lt;&gt; &quot;!&quot;
+    get &quot;/greet/:name&quot; $ do
+        name &lt;- param &quot;name&quot;
+        text $ &quot;Greetings, &quot; &lt;&gt; name &lt;&gt; &quot;!&quot;
+    get &quot;/json&quot; $ json $ object [&quot;message&quot; .= (&quot;Hello, JSON!&quot; :: String)]</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après a configurar un projecte Haskell per crear un servidor web simple utilitzant la biblioteca <code>Warp</code>. Hem vist com gestionar sol·licituds HTTP, enviar respostes i definir rutes bàsiques. A més, hem practicat afegint rutes personalitzades i respostes en format JSON. Aquestes habilitats són fonamentals per desenvolupar aplicacions web més complexes en Haskell.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-template-haskell' title="Template Haskell">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-database-access' title="Accés a Bases de Dades">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

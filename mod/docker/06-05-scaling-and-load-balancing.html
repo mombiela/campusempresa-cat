@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escalat i equilibrat de càrrega</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/docker/06-05-scaling-and-load-balancing" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/docker/06-05-scaling-and-load-balancing" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/docker/06-05-scaling-and-load-balancing" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/docker/06-05-scaling-and-load-balancing" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/docker/06-05-scaling-and-load-balancing" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-04-deploying-docker-containers-in-kubernetes' title="Desplegant contenidors Docker a Kubernetes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Escalat i equilibrat de càrrega</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-01-docker-machine' title="Docker Machine">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com escalar aplicacions Docker i com implementar equilibrat de càrrega per assegurar-nos que les nostres aplicacions siguin robustes i puguin gestionar un gran volum de trànsit. Aquestes tècniques són essencials per a qualsevol aplicació que es desplegui en producció.</p>
+</div><h1>1. Introducció a l'escalat</h1>
+<div class='content'></div><h2>Què és l'escalat?</h2>
+<div class='content'><p>L'escalat és el procés d'augmentar o disminuir els recursos assignats a una aplicació per gestionar la càrrega de treball. Hi ha dos tipus principals d'escalat:</p>
+<ul>
+<li><strong>Escalat vertical:</strong> Augmentar els recursos (CPU, memòria) d'un únic contenidor.</li>
+<li><strong>Escalat horitzontal:</strong> Augmentar el nombre de rèpliques d'un contenidor per distribuir la càrrega.</li>
+</ul>
+</div><h2>Avantatges de l'escalat horitzontal</h2>
+<div class='content'><ul>
+<li><strong>Alta disponibilitat:</strong> Si un contenidor falla, altres rèpliques poden continuar servint les sol·licituds.</li>
+<li><strong>Distribució de càrrega:</strong> Les sol·licituds es distribueixen entre múltiples rèpliques, millorant el rendiment.</li>
+</ul>
+</div><h1>2. Escalant contenidors amb Docker Swarm</h1>
+<div class='content'><p>Docker Swarm és una eina d'orquestració que permet gestionar múltiples contenidors com un únic clúster. A continuació, veurem com escalar serveis utilitzant Docker Swarm.</p>
+</div><h2>Configurant Docker Swarm</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Inicialitzar un Swarm:</strong></p>
+<pre><code class="language-bash">docker swarm init
+</code></pre>
+</li>
+<li>
+<p><strong>Afegir nodes al Swarm:</strong></p>
+<pre><code class="language-bash">docker swarm join --token &lt;token&gt; &lt;manager-ip&gt;:2377
+</code></pre>
+</li>
+</ol>
+</div><h2>Escalant un servei</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear un servei:</strong></p>
+<pre><code class="language-bash">docker service create --name web --replicas 1 -p 80:80 nginx
+</code></pre>
+</li>
+<li>
+<p><strong>Escalar el servei:</strong></p>
+<pre><code class="language-bash">docker service scale web=5
+</code></pre>
+</li>
+<li>
+<p><strong>Verificar l'estat del servei:</strong></p>
+<pre><code class="language-bash">docker service ls
+</code></pre>
+</li>
+</ol>
+</div><h1>3. Equilibrat de càrrega</h1>
+<div class='content'><p>L'equilibrat de càrrega distribueix les sol·licituds entrants entre múltiples rèpliques d'un servei per assegurar-se que cap rèplica es sobrecarregui.</p>
+</div><h2>Equilibrat de càrrega amb Docker Swarm</h2>
+<div class='content'><p>Docker Swarm inclou un equilibrador de càrrega integrat que distribueix automàticament les sol·licituds entre les rèpliques d'un servei.</p>
+</div><h2>Exemple pràctic</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear un servei amb múltiples rèpliques:</strong></p>
+<pre><code class="language-bash">docker service create --name web --replicas 3 -p 80:80 nginx
+</code></pre>
+</li>
+<li>
+<p><strong>Verificar que l'equilibrador de càrrega està funcionant:</strong></p>
+<ul>
+<li>Obre un navegador i accedeix a <code>http://&lt;manager-ip&gt;</code>.</li>
+<li>Refresca la pàgina diverses vegades i observa com les sol·licituds es distribueixen entre les rèpliques.</li>
+</ul>
+</li>
+</ol>
+</div><h1>4. Escalat i equilibrat de càrrega amb Kubernetes</h1>
+<div class='content'><p>Kubernetes és una altra eina d'orquestració que ofereix funcionalitats avançades per a l'escalat i l'equilibrat de càrrega.</p>
+</div><h2>Escalant amb Kubernetes</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear un Deployment:</strong></p>
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+</code></pre>
+</li>
+<li>
+<p><strong>Aplicar el Deployment:</strong></p>
+<pre><code class="language-bash">kubectl apply -f deployment.yaml
+</code></pre>
+</li>
+<li>
+<p><strong>Escalar el Deployment:</strong></p>
+<pre><code class="language-bash">kubectl scale deployment web --replicas=5
+</code></pre>
+</li>
+</ol>
+</div><h2>Equilibrat de càrrega amb Kubernetes</h2>
+<div class='content'><p>Kubernetes utilitza serveis per equilibrar la càrrega entre rèpliques de pods.</p>
+<ol>
+<li>
+<p><strong>Crear un Service:</strong></p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  selector:
+    app: web
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: LoadBalancer
+</code></pre>
+</li>
+<li>
+<p><strong>Aplicar el Service:</strong></p>
+<pre><code class="language-bash">kubectl apply -f service.yaml
+</code></pre>
+</li>
+</ol>
+</div><h1>5. Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Escalant amb Docker Swarm</h2>
+<div class='content'><ol>
+<li>Inicialitza un Swarm.</li>
+<li>Crea un servei <code>web</code> amb 2 rèpliques utilitzant la imatge <code>nginx</code>.</li>
+<li>Escala el servei a 4 rèpliques.</li>
+<li>Verifica que l'equilibrador de càrrega distribueix les sol·licituds entre les rèpliques.</li>
+</ol>
+</div><h2>Exercici 2: Escalant amb Kubernetes</h2>
+<div class='content'><ol>
+<li>Crea un Deployment <code>web</code> amb 3 rèpliques utilitzant la imatge <code>nginx</code>.</li>
+<li>Escala el Deployment a 5 rèpliques.</li>
+<li>Crea un Service per equilibrar la càrrega entre les rèpliques del Deployment.</li>
+</ol>
+</div><h1>6. Resum</h1>
+<div class='content'><p>En aquest tema, hem après com escalar aplicacions Docker i com implementar equilibrat de càrrega utilitzant Docker Swarm i Kubernetes. Hem vist com aquestes tècniques poden millorar la disponibilitat i el rendiment de les nostres aplicacions. A més, hem practicat amb exemples pràctics per consolidar els conceptes apresos. En el proper tema, explorarem altres eines i tècniques avançades per gestionar aplicacions Docker en producció.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-04-deploying-docker-containers-in-kubernetes' title="Desplegant contenidors Docker a Kubernetes">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-01-docker-machine' title="Docker Machine">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

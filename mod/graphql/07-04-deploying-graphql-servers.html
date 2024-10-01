@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desplegament de servidors GraphQL</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/graphql/07-04-deploying-graphql-servers" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/graphql/07-04-deploying-graphql-servers" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/graphql/07-04-deploying-graphql-servers" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/graphql/07-04-deploying-graphql-servers" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/graphql/07-04-deploying-graphql-servers" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-03-continuous-integration' title="Integració contínua">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Desplegament de servidors GraphQL</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-01-building-fullstack-application' title="Construcció d'una aplicació full-stack">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com desplegar un servidor GraphQL en un entorn de producció. Explorarem diverses opcions de desplegament, consideracions de seguretat i bones pràctiques per assegurar-nos que el nostre servidor GraphQL estigui preparat per a un ús real.</p>
+</div><h1>1. Opcions de desplegament</h1>
+<div class='content'></div><h2>1.1. Desplegament en un servidor dedicat</h2>
+<div class='content'><ul>
+<li><strong>Avantatges:</strong>
+<ul>
+<li>Control complet sobre la configuració del servidor.</li>
+<li>Possibilitat d'optimitzar el rendiment segons les necessitats específiques.</li>
+</ul>
+</li>
+<li><strong>Desavantatges:</strong>
+<ul>
+<li>Requereix més manteniment i gestió.</li>
+<li>Pot ser més costós en termes de temps i recursos.</li>
+</ul>
+</li>
+</ul>
+</div><h2>1.2. Desplegament en un servei de PaaS (Platform as a Service)</h2>
+<div class='content'><ul>
+<li><strong>Exemples:</strong> Heroku, AWS Elastic Beanstalk, Google App Engine.</li>
+<li><strong>Avantatges:</strong>
+<ul>
+<li>Simplifica el procés de desplegament.</li>
+<li>Escalabilitat automàtica.</li>
+<li>Gestió de la infraestructura per part del proveïdor.</li>
+</ul>
+</li>
+<li><strong>Desavantatges:</strong>
+<ul>
+<li>Menys control sobre la configuració del servidor.</li>
+<li>Pot ser més costós a llarg termini.</li>
+</ul>
+</li>
+</ul>
+</div><h2>1.3. Contenidors Docker</h2>
+<div class='content'><ul>
+<li><strong>Avantatges:</strong>
+<ul>
+<li>Portabilitat i consistència entre entorns de desenvolupament i producció.</li>
+<li>Facilita l'escalabilitat i la gestió de dependències.</li>
+</ul>
+</li>
+<li><strong>Desavantatges:</strong>
+<ul>
+<li>Requereix coneixements addicionals sobre Docker i orquestradors com Kubernetes.</li>
+</ul>
+</li>
+</ul>
+</div><h1>2. Configuració del servidor per a producció</h1>
+<div class='content'></div><h2>2.1. Variables d'entorn</h2>
+<div class='content'><ul>
+<li><strong>Exemples de variables d'entorn:</strong>
+<pre><code class="language-env">NODE_ENV=production
+PORT=4000
+DATABASE_URL=your_database_url
+JWT_SECRET=your_jwt_secret
+</code></pre>
+</li>
+<li><strong>Consell:</strong> Utilitza un fitxer <code>.env</code> per gestionar les variables d'entorn de manera segura.</li>
+</ul>
+</div><h2>2.2. Configuració de seguretat</h2>
+<div class='content'><ul>
+<li><strong>HTTPS:</strong> Assegura't que el teu servidor estigui configurat per utilitzar HTTPS per protegir les dades en trànsit.</li>
+<li><strong>CORS (Cross-Origin Resource Sharing):</strong> Configura CORS per permetre només les sol·licituds des de dominis de confiança.
+<pre><code class="language-javascript">const corsOptions = {
+  origin: 'https://your-frontend-domain.com',
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
+</code></pre>
+</li>
+</ul>
+</div><h2>2.3. Escalabilitat</h2>
+<div class='content'><ul>
+<li><strong>Load Balancing:</strong> Utilitza un equilibrador de càrrega per distribuir les sol·licituds entre múltiples instàncies del servidor.</li>
+<li><strong>Auto-scaling:</strong> Configura l'auto-escalat per assegurar-te que el teu servidor pugui gestionar pics de trànsit.</li>
+</ul>
+</div><h1>3. Bones pràctiques</h1>
+<div class='content'></div><h2>3.1. Monitorització i registre</h2>
+<div class='content'><ul>
+<li><strong>Monitorització:</strong> Utilitza eines com Prometheus, Grafana o New Relic per monitoritzar el rendiment del teu servidor.</li>
+<li><strong>Registre:</strong> Implementa un sistema de registre per capturar i analitzar errors i sol·licituds.
+<pre><code class="language-javascript">const morgan = require('morgan');
+app.use(morgan('combined'));
+</code></pre>
+</li>
+</ul>
+</div><h2>3.2. Gestió d'errors</h2>
+<div class='content'><ul>
+<li><strong>Gestió centralitzada d'errors:</strong> Implementa un middleware per gestionar errors de manera centralitzada.
+<pre><code class="language-javascript">app.use((err, req, res, next) =&gt; {
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+});
+</code></pre>
+</li>
+</ul>
+</div><h2>3.3. Proves de càrrega</h2>
+<div class='content'><ul>
+<li><strong>Eines:</strong> Utilitza eines com Apache JMeter o Artillery per realitzar proves de càrrega i assegurar-te que el teu servidor pot gestionar el trànsit esperat.</li>
+</ul>
+</div><h1>4. Exemple pràctic: Desplegament en Heroku</h1>
+<div class='content'></div><h2>4.1. Preparació del projecte</h2>
+<div class='content'><ul>
+<li><strong>Procfile:</strong> Crea un fitxer <code>Procfile</code> a l'arrel del teu projecte per especificar com iniciar el servidor.
+<pre><code class="language-plaintext">web: node index.js
+</code></pre>
+</li>
+</ul>
+</div><h2>4.2. Desplegament</h2>
+<div class='content'><ul>
+<li><strong>Passos:</strong>
+<ol>
+<li><strong>Inicia sessió a Heroku:</strong>
+<pre><code class="language-bash">heroku login
+</code></pre>
+</li>
+<li><strong>Crea una nova aplicació:</strong>
+<pre><code class="language-bash">heroku create your-app-name
+</code></pre>
+</li>
+<li><strong>Puja el codi al repositori de Heroku:</strong>
+<pre><code class="language-bash">git push heroku main
+</code></pre>
+</li>
+<li><strong>Configura les variables d'entorn:</strong>
+<pre><code class="language-bash">heroku config:set NODE_ENV=production DATABASE_URL=your_database_url JWT_SECRET=your_jwt_secret
+</code></pre>
+</li>
+</ol>
+</li>
+</ul>
+</div><h2>4.3. Verificació</h2>
+<div class='content'><ul>
+<li><strong>Accedeix a l'aplicació:</strong> Visita l'URL proporcionada per Heroku per verificar que el servidor està funcionant correctament.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Desplegar un servidor GraphQL en producció implica diverses consideracions, des de la selecció de la plataforma de desplegament fins a la configuració de seguretat i escalabilitat. Seguint les bones pràctiques i utilitzant les eines adequades, pots assegurar-te que el teu servidor GraphQL estigui preparat per gestionar trànsit real de manera eficient i segura.</p>
+<p>Amb això, hem completat el mòdul sobre desplegament de servidors GraphQL. En el proper mòdul, explorarem com construir aplicacions del món real utilitzant GraphQL.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-03-continuous-integration' title="Integració contínua">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-01-building-fullstack-application' title="Construcció d'una aplicació full-stack">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

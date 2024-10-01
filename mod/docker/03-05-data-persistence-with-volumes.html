@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Persistència de dades amb volums</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/docker/03-05-data-persistence-with-volumes" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/docker/03-05-data-persistence-with-volumes" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/docker/03-05-data-persistence-with-volumes" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/docker/03-05-data-persistence-with-volumes" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/docker/03-05-data-persistence-with-volumes" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-04-networking-in-docker' title="Xarxes a Docker">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Persistència de dades amb volums</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-introduction-to-docker-compose' title="Introducció a Docker Compose">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com gestionar la persistència de dades en contenidors Docker utilitzant volums. La persistència de dades és crucial per assegurar que les dades no es perdin quan un contenidor es reinicia o s'elimina.</p>
+</div><h1>Què són els volums de Docker?</h1>
+<div class='content'><p>Els volums de Docker són mecanismes d'emmagatzematge que permeten als contenidors emmagatzemar dades de manera persistent. A diferència dels fitxers dins del sistema de fitxers del contenidor, els volums no es perden quan el contenidor es reinicia o s'elimina.</p>
+</div><h2>Tipus de volums</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Volums anomenats (Named Volumes):</strong></p>
+<ul>
+<li>Són volums que tenen un nom específic i poden ser reutilitzats per diferents contenidors.</li>
+<li>Exemple: <code>my_volume</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Volums anònims (Anonymous Volumes):</strong></p>
+<ul>
+<li>Són volums que no tenen un nom específic i són creats per Docker automàticament.</li>
+<li>Exemple: <code>docker run -v /data busybox</code></li>
+</ul>
+</li>
+<li>
+<p><strong>Volums host (Bind Mounts):</strong></p>
+<ul>
+<li>Són volums que mapejen un directori del sistema de fitxers de l'amfitrió a un directori dins del contenidor.</li>
+<li>Exemple: <code>/path/on/host:/path/in/container</code></li>
+</ul>
+</li>
+</ol>
+</div><h1>Creant i utilitzant volums</h1>
+<div class='content'></div><h2>Creant un volum</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIHZvbHVtZSBjcmVhdGUgbXlfdm9sdW1l"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker volume create my_volume</pre></div><div class='content'></div><h2>Llistant volums</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIHZvbHVtZSBscw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker volume ls</pre></div><div class='content'></div><h2>Inspeccionant un volum</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIHZvbHVtZSBpbnNwZWN0IG15X3ZvbHVtZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker volume inspect my_volume</pre></div><div class='content'></div><h2>Utilitzant un volum en un contenidor</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIHJ1biAtZCAtLW5hbWUgbXlfY29udGFpbmVyIC12IG15X3ZvbHVtZTovZGF0YSBidXN5Ym94"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker run -d --name my_container -v my_volume:/data busybox</pre></div><div class='content'><p>En aquest exemple, el volum <code>my_volume</code> es monta al directori <code>/data</code> dins del contenidor <code>my_container</code>.</p>
+</div><h1>Exemple pràctic</h1>
+<div class='content'></div><h2>Pas 1: Crear un volum</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIHZvbHVtZSBjcmVhdGUgbXlfZGF0YV92b2x1bWU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker volume create my_data_volume</pre></div><div class='content'></div><h2>Pas 2: Executar un contenidor amb el volum</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIHJ1biAtZCAtLW5hbWUgbXlfZGF0YV9jb250YWluZXIgLXYgbXlfZGF0YV92b2x1bWU6L2RhdGEgYnVzeWJveA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker run -d --name my_data_container -v my_data_volume:/data busybox</pre></div><div class='content'></div><h2>Pas 3: Escriure dades al volum</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIGV4ZWMgbXlfZGF0YV9jb250YWluZXIgc2ggLWMgImVjaG8gJ0hlbGxvLCBEb2NrZXIhJyA+IC9kYXRhL2hlbGxvLnR4dCI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker exec my_data_container sh -c &quot;echo 'Hello, Docker!' &gt; /data/hello.txt&quot;</pre></div><div class='content'></div><h2>Pas 4: Verificar les dades</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIGV4ZWMgbXlfZGF0YV9jb250YWluZXIgY2F0IC9kYXRhL2hlbGxvLnR4dA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker exec my_data_container cat /data/hello.txt</pre></div><div class='content'></div><h2>Pas 5: Eliminar el contenidor i crear-ne un de nou</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIHJtIC1mIG15X2RhdGFfY29udGFpbmVyCmRvY2tlciBydW4gLWQgLS1uYW1lIG5ld19kYXRhX2NvbnRhaW5lciAtdiBteV9kYXRhX3ZvbHVtZTovZGF0YSBidXN5Ym94"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker rm -f my_data_container
+docker run -d --name new_data_container -v my_data_volume:/data busybox</pre></div><div class='content'></div><h2>Pas 6: Verificar que les dades persisteixen</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIGV4ZWMgbmV3X2RhdGFfY29udGFpbmVyIGNhdCAvZGF0YS9oZWxsby50eHQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker exec new_data_container cat /data/hello.txt</pre></div><div class='content'></div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear i utilitzar un volum anomenat</h2>
+<div class='content'><ol>
+<li>Crea un volum anomenat <code>test_volume</code>.</li>
+<li>Executa un contenidor <code>nginx</code> utilitzant aquest volum, muntant-lo a <code>/usr/share/nginx/html</code>.</li>
+<li>Crea un fitxer <code>index.html</code> dins del volum amb el contingut &quot;Hello, World!&quot;.</li>
+<li>Verifica que el fitxer es pot accedir a través del navegador.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG9ja2VyIHZvbHVtZSBjcmVhdGUgdGVzdF92b2x1bWUKZG9ja2VyIHJ1biAtZCAtLW5hbWUgdGVzdF9uZ2lueCAtdiB0ZXN0X3ZvbHVtZTovdXNyL3NoYXJlL25naW54L2h0bWwgLXAgODA4MDo4MCBuZ2lueApkb2NrZXIgZXhlYyB0ZXN0X25naW54IHNoIC1jICJlY2hvICdIZWxsbywgV29ybGQhJyA+IC91c3Ivc2hhcmUvbmdpbngvaHRtbC9pbmRleC5odG1sIgojIEFjY2VkZWl4IGEgaHR0cDovL2xvY2FsaG9zdDo4MDgwIHBlciB2ZXVyZSBlbCBjb250aW5ndXQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>docker volume create test_volume
+docker run -d --name test_nginx -v test_volume:/usr/share/nginx/html -p 8080:80 nginx
+docker exec test_nginx sh -c &quot;echo 'Hello, World!' &gt; /usr/share/nginx/html/index.html&quot;
+# Accedeix a http://localhost:8080 per veure el contingut</pre></div><div class='content'></div><h2>Exercici 2: Utilitzar un volum host</h2>
+<div class='content'><ol>
+<li>Crea un directori a l'amfitrió, per exemple <code>/tmp/host_data</code>.</li>
+<li>Executa un contenidor <code>busybox</code> muntant aquest directori a <code>/data</code>.</li>
+<li>Escriu un fitxer dins del directori muntat des del contenidor.</li>
+<li>Verifica que el fitxer existeix al directori de l'amfitrió.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bWtkaXIgLXAgL3RtcC9ob3N0X2RhdGEKZG9ja2VyIHJ1biAtZCAtLW5hbWUgaG9zdF9kYXRhX2NvbnRhaW5lciAtdiAvdG1wL2hvc3RfZGF0YTovZGF0YSBidXN5Ym94CmRvY2tlciBleGVjIGhvc3RfZGF0YV9jb250YWluZXIgc2ggLWMgImVjaG8gJ1BlcnNpc3RlbnQgRGF0YScgPiAvZGF0YS9wZXJzaXN0ZW50LnR4dCIKY2F0IC90bXAvaG9zdF9kYXRhL3BlcnNpc3RlbnQudHh0"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>mkdir -p /tmp/host_data
+docker run -d --name host_data_container -v /tmp/host_data:/data busybox
+docker exec host_data_container sh -c &quot;echo 'Persistent Data' &gt; /data/persistent.txt&quot;
+cat /tmp/host_data/persistent.txt</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après sobre la persistència de dades en Docker utilitzant volums. Hem vist com crear, gestionar i utilitzar volums per assegurar que les dades es mantinguin fins i tot quan els contenidors es reinicien o s'eliminen. Els volums són una eina poderosa per gestionar dades persistents en entorns de contenidors.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-04-networking-in-docker' title="Xarxes a Docker">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-01-introduction-to-docker-compose' title="Introducció a Docker Compose">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear un Visualitzador de Models 3D</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/open_gl/08-02-3d-model-viewer" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/open_gl/08-02-3d-model-viewer" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/open_gl/08-02-3d-model-viewer" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/open_gl/08-02-3d-model-viewer" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/open_gl/08-02-3d-model-viewer" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-01-building-simple-game' title="Construir un Joc Simple">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Crear un Visualitzador de Models 3D</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-03-developing-graphics-engine' title="Desenvolupar un Motor Gràfic">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a crear un visualitzador de models 3D utilitzant OpenGL. Aquest projecte ens permetrà aplicar molts dels conceptes apresos en els mòduls anteriors, com ara la càrrega de models, la gestió de textures, la il·luminació i les transformacions.</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ol>
+<li><strong>Càrrega de Models 3D</strong>: Aprendre a carregar models 3D des de fitxers.</li>
+<li><strong>Renderització de Models</strong>: Renderitzar models 3D utilitzant OpenGL.</li>
+<li><strong>Gestió de Càmeres</strong>: Implementar una càmera que permeti navegar pel model.</li>
+<li><strong>Il·luminació i Materials</strong>: Aplicar tècniques d'il·luminació i materials per millorar l'aparença del model.</li>
+<li><strong>Interacció de l'Usuari</strong>: Permetre la interacció de l'usuari per rotar, escalar i moure el model.</li>
+</ol>
+</div><h1>1. Càrrega de Models 3D</h1>
+<div class='content'></div><h2>1.1. Llibreria Assimp</h2>
+<div class='content'><p>Per carregar models 3D, utilitzarem la llibreria <strong>Assimp (Open Asset Import Library)</strong>. Aquesta llibreria suporta molts formats de fitxers 3D com OBJ, FBX, COLLADA, entre d'altres.</p>
+<h4>Instal·lació d'Assimp</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBFbiBzaXN0ZW1lcyBiYXNhdHMgZW4gRGViaWFuL1VidW50dQpzdWRvIGFwdC1nZXQgaW5zdGFsbCBsaWJhc3NpbXAtZGV2CgojIEVuIHNpc3RlbWVzIGJhc2F0cyBlbiBBcmNoCnN1ZG8gcGFjbWFuIC1TIGFzc2ltcA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># En sistemes basats en Debian/Ubuntu
+sudo apt-get install libassimp-dev
+
+# En sistemes basats en Arch
+sudo pacman -S assimp</pre></div><div class='content'></div><h2>1.2. Càrrega de Models amb Assimp</h2>
+<div class='content'><p>A continuació, es mostra un exemple de com carregar un model 3D utilitzant Assimp.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I2luY2x1ZGUgPGFzc2ltcC9JbXBvcnRlci5ocHA+CiNpbmNsdWRlIDxhc3NpbXAvc2NlbmUuaD4KI2luY2x1ZGUgPGFzc2ltcC9wb3N0cHJvY2Vzcy5oPgojaW5jbHVkZSA8aW9zdHJlYW0+Cgp2b2lkIGxvYWRNb2RlbChjb25zdCBzdGQ6OnN0cmluZyYgcGF0aCkgewogICAgQXNzaW1wOjpJbXBvcnRlciBpbXBvcnRlcjsKICAgIGNvbnN0IGFpU2NlbmUqIHNjZW5lID0gaW1wb3J0ZXIuUmVhZEZpbGUocGF0aCwgYWlQcm9jZXNzX1RyaWFuZ3VsYXRlIHwgYWlQcm9jZXNzX0ZsaXBVVnMpOwoKICAgIGlmICghc2NlbmUgfHwgc2NlbmUtPm1GbGFncyAmIEFJX1NDRU5FX0ZMQUdTX0lOQ09NUExFVEUgfHwgIXNjZW5lLT5tUm9vdE5vZGUpIHsKICAgICAgICBzdGQ6OmNlcnIgPDwgIkVSUk9SOjpBU1NJTVA6OiIgPDwgaW1wb3J0ZXIuR2V0RXJyb3JTdHJpbmcoKSA8PCBzdGQ6OmVuZGw7CiAgICAgICAgcmV0dXJuOwogICAgfQoKICAgIC8vIFByb2Nlc3NhciBlbCBub2RlIGFycmVsCiAgICBwcm9jZXNzTm9kZShzY2VuZS0+bVJvb3ROb2RlLCBzY2VuZSk7Cn0KCnZvaWQgcHJvY2Vzc05vZGUoYWlOb2RlKiBub2RlLCBjb25zdCBhaVNjZW5lKiBzY2VuZSkgewogICAgLy8gUHJvY2Vzc2FyIHRvdHMgZWxzIG1lc2hlcyAobWFsbGVzKSBkZWwgbm9kZSBhY3R1YWwKICAgIGZvciAodW5zaWduZWQgaW50IGkgPSAwOyBpIDwgbm9kZS0+bU51bU1lc2hlczsgaSsrKSB7CiAgICAgICAgYWlNZXNoKiBtZXNoID0gc2NlbmUtPm1NZXNoZXNbbm9kZS0+bU1lc2hlc1tpXV07CiAgICAgICAgcHJvY2Vzc01lc2gobWVzaCwgc2NlbmUpOwogICAgfQoKICAgIC8vIFByb2Nlc3NhciBlbHMgbm9kZXMgZmlsbHMKICAgIGZvciAodW5zaWduZWQgaW50IGkgPSAwOyBpIDwgbm9kZS0+bU51bUNoaWxkcmVuOyBpKyspIHsKICAgICAgICBwcm9jZXNzTm9kZShub2RlLT5tQ2hpbGRyZW5baV0sIHNjZW5lKTsKICAgIH0KfQoKdm9pZCBwcm9jZXNzTWVzaChhaU1lc2gqIG1lc2gsIGNvbnN0IGFpU2NlbmUqIHNjZW5lKSB7CiAgICAvLyBBcXXDrSBlcyBwcm9jZXNzYSBsYSBtYWxsYSAodmVydGljZXMsIHRleHR1cmVzLCBub3JtYWxzLCBldGMuKQogICAgLy8gRXhlbXBsZTogY2FycmVnYXIgdmVydGljZXMKICAgIHN0ZDo6dmVjdG9yPGZsb2F0PiB2ZXJ0aWNlczsKICAgIGZvciAodW5zaWduZWQgaW50IGkgPSAwOyBpIDwgbWVzaC0+bU51bVZlcnRpY2VzOyBpKyspIHsKICAgICAgICB2ZXJ0aWNlcy5wdXNoX2JhY2sobWVzaC0+bVZlcnRpY2VzW2ldLngpOwogICAgICAgIHZlcnRpY2VzLnB1c2hfYmFjayhtZXNoLT5tVmVydGljZXNbaV0ueSk7CiAgICAgICAgdmVydGljZXMucHVzaF9iYWNrKG1lc2gtPm1WZXJ0aWNlc1tpXS56KTsKICAgIH0KICAgIC8vIENvbnRpbnVhciBhbWIgbGEgY8OgcnJlZ2EgZGUgdGV4dHVyZXMsIG5vcm1hbHMsIGV0Yy4KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#include &lt;assimp/Importer.hpp&gt;
+#include &lt;assimp/scene.h&gt;
+#include &lt;assimp/postprocess.h&gt;
+#include &lt;iostream&gt;
+
+void loadModel(const std::string&amp; path) {
+    Assimp::Importer importer;
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+
+    if (!scene || scene-&gt;mFlags &amp; AI_SCENE_FLAGS_INCOMPLETE || !scene-&gt;mRootNode) {
+        std::cerr &lt;&lt; &quot;ERROR::ASSIMP::&quot; &lt;&lt; importer.GetErrorString() &lt;&lt; std::endl;
+        return;
+    }
+
+    // Processar el node arrel
+    processNode(scene-&gt;mRootNode, scene);
+}
+
+void processNode(aiNode* node, const aiScene* scene) {
+    // Processar tots els meshes (malles) del node actual
+    for (unsigned int i = 0; i &lt; node-&gt;mNumMeshes; i++) {
+        aiMesh* mesh = scene-&gt;mMeshes[node-&gt;mMeshes[i]];
+        processMesh(mesh, scene);
+    }
+
+    // Processar els nodes fills
+    for (unsigned int i = 0; i &lt; node-&gt;mNumChildren; i++) {
+        processNode(node-&gt;mChildren[i], scene);
+    }
+}
+
+void processMesh(aiMesh* mesh, const aiScene* scene) {
+    // Aqu&iacute; es processa la malla (vertices, textures, normals, etc.)
+    // Exemple: carregar vertices
+    std::vector&lt;float&gt; vertices;
+    for (unsigned int i = 0; i &lt; mesh-&gt;mNumVertices; i++) {
+        vertices.push_back(mesh-&gt;mVertices[i].x);
+        vertices.push_back(mesh-&gt;mVertices[i].y);
+        vertices.push_back(mesh-&gt;mVertices[i].z);
+    }
+    // Continuar amb la c&agrave;rrega de textures, normals, etc.
+}</pre></div><div class='content'></div><h1>2. Renderització de Models</h1>
+<div class='content'></div><h2>2.1. Configuració de Buffers</h2>
+<div class='content'><p>Per renderitzar el model, necessitem configurar els buffers de vèrtexs (VBO) i els objectes de matriu de vèrtexs (VAO).</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dW5zaWduZWQgaW50IFZCTywgVkFPOwpnbEdlblZlcnRleEFycmF5cygxLCAmVkFPKTsKZ2xHZW5CdWZmZXJzKDEsICZWQk8pOwoKZ2xCaW5kVmVydGV4QXJyYXkoVkFPKTsKCmdsQmluZEJ1ZmZlcihHTF9BUlJBWV9CVUZGRVIsIFZCTyk7CmdsQnVmZmVyRGF0YShHTF9BUlJBWV9CVUZGRVIsIHZlcnRpY2VzLnNpemUoKSAqIHNpemVvZihmbG9hdCksICZ2ZXJ0aWNlc1swXSwgR0xfU1RBVElDX0RSQVcpOwoKLy8gUG9zaWNpb25zIGRlIHbDqHJ0ZXhzCmdsVmVydGV4QXR0cmliUG9pbnRlcigwLCAzLCBHTF9GTE9BVCwgR0xfRkFMU0UsIDMgKiBzaXplb2YoZmxvYXQpLCAodm9pZCopMCk7CmdsRW5hYmxlVmVydGV4QXR0cmliQXJyYXkoMCk7CgpnbEJpbmRCdWZmZXIoR0xfQVJSQVlfQlVGRkVSLCAwKTsKZ2xCaW5kVmVydGV4QXJyYXkoMCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>unsigned int VBO, VAO;
+glGenVertexArrays(1, &amp;VAO);
+glGenBuffers(1, &amp;VBO);
+
+glBindVertexArray(VAO);
+
+glBindBuffer(GL_ARRAY_BUFFER, VBO);
+glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), &amp;vertices[0], GL_STATIC_DRAW);
+
+// Posicions de v&egrave;rtexs
+glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+glEnableVertexAttribArray(0);
+
+glBindBuffer(GL_ARRAY_BUFFER, 0);
+glBindVertexArray(0);</pre></div><div class='content'></div><h2>2.2. Shader Program</h2>
+<div class='content'><p>Necessitem un shader program per renderitzar el model. A continuació es mostra un exemple de shaders bàsics per a vèrtexs i fragments.</p>
+<p><strong>Vertex Shader (vertex_shader.glsl)</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I3ZlcnNpb24gMzMwIGNvcmUKbGF5b3V0IChsb2NhdGlvbiA9IDApIGluIHZlYzMgYVBvczsKCnVuaWZvcm0gbWF0NCBtb2RlbDsKdW5pZm9ybSBtYXQ0IHZpZXc7CnVuaWZvcm0gbWF0NCBwcm9qZWN0aW9uOwoKdm9pZCBtYWluKCkgewogICAgZ2xfUG9zaXRpb24gPSBwcm9qZWN0aW9uICogdmlldyAqIG1vZGVsICogdmVjNChhUG9zLCAxLjApOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#version 330 core
+layout (location = 0) in vec3 aPos;
+
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
+void main() {
+    gl_Position = projection * view * model * vec4(aPos, 1.0);
+}</pre></div><div class='content'><p><strong>Fragment Shader (fragment_shader.glsl)</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I3ZlcnNpb24gMzMwIGNvcmUKb3V0IHZlYzQgRnJhZ0NvbG9yOwoKdm9pZCBtYWluKCkgewogICAgRnJhZ0NvbG9yID0gdmVjNCgxLjAsIDAuNSwgMC4yLCAxLjApOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#version 330 core
+out vec4 FragColor;
+
+void main() {
+    FragColor = vec4(1.0, 0.5, 0.2, 1.0);
+}</pre></div><div class='content'></div><h2>2.3. Render Loop</h2>
+<div class='content'><p>Finalment, necessitem un bucle de renderització per dibuixar el model.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("d2hpbGUgKCFnbGZ3V2luZG93U2hvdWxkQ2xvc2Uod2luZG93KSkgewogICAgLy8gUHJvY2Vzc2FyIGVudHJhZGVzCiAgICBwcm9jZXNzSW5wdXQod2luZG93KTsKCiAgICAvLyBSZW5kZXJpdHphcgogICAgZ2xDbGVhckNvbG9yKDAuMWYsIDAuMWYsIDAuMWYsIDEuMGYpOwogICAgZ2xDbGVhcihHTF9DT0xPUl9CVUZGRVJfQklUIHwgR0xfREVQVEhfQlVGRkVSX0JJVCk7CgogICAgLy8gQWN0aXZhciBzaGFkZXIgcHJvZ3JhbQogICAgc2hhZGVyLnVzZSgpOwoKICAgIC8vIENvbmZpZ3VyYXIgbWF0cml1cyBkZSB0cmFuc2Zvcm1hY2nDswogICAgZ2xtOjptYXQ0IG1vZGVsID0gZ2xtOjptYXQ0KDEuMGYpOwogICAgZ2xtOjptYXQ0IHZpZXcgPSBjYW1lcmEuR2V0Vmlld01hdHJpeCgpOwogICAgZ2xtOjptYXQ0IHByb2plY3Rpb24gPSBnbG06OnBlcnNwZWN0aXZlKGdsbTo6cmFkaWFucyhjYW1lcmEuWm9vbSksIChmbG9hdClTQ1JfV0lEVEggLyAoZmxvYXQpU0NSX0hFSUdIVCwgMC4xZiwgMTAwLjBmKTsKICAgIHNoYWRlci5zZXRNYXQ0KCJtb2RlbCIsIG1vZGVsKTsKICAgIHNoYWRlci5zZXRNYXQ0KCJ2aWV3Iiwgdmlldyk7CiAgICBzaGFkZXIuc2V0TWF0NCgicHJvamVjdGlvbiIsIHByb2plY3Rpb24pOwoKICAgIC8vIFJlbmRlcml0emFyIG1vZGVsCiAgICBnbEJpbmRWZXJ0ZXhBcnJheShWQU8pOwogICAgZ2xEcmF3QXJyYXlzKEdMX1RSSUFOR0xFUywgMCwgdmVydGljZXMuc2l6ZSgpIC8gMyk7CiAgICBnbEJpbmRWZXJ0ZXhBcnJheSgwKTsKCiAgICAvLyBJbnRlcmNhbnZpYXIgYnVmZmVycwogICAgZ2xmd1N3YXBCdWZmZXJzKHdpbmRvdyk7CiAgICBnbGZ3UG9sbEV2ZW50cygpOwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>while (!glfwWindowShouldClose(window)) {
+    // Processar entrades
+    processInput(window);
+
+    // Renderitzar
+    glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Activar shader program
+    shader.use();
+
+    // Configurar matrius de transformaci&oacute;
+    glm::mat4 model = glm::mat4(1.0f);
+    glm::mat4 view = camera.GetViewMatrix();
+    glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    shader.setMat4(&quot;model&quot;, model);
+    shader.setMat4(&quot;view&quot;, view);
+    shader.setMat4(&quot;projection&quot;, projection);
+
+    // Renderitzar model
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_TRIANGLES, 0, vertices.size() / 3);
+    glBindVertexArray(0);
+
+    // Intercanviar buffers
+    glfwSwapBuffers(window);
+    glfwPollEvents();
+}</pre></div><div class='content'></div><h1>3. Gestió de Càmeres</h1>
+<div class='content'></div><h2>3.1. Implementació de la Càmera</h2>
+<div class='content'><p>Implementarem una càmera que permeti a l'usuari navegar pel model utilitzant el teclat i el ratolí.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgQ2FtZXJhIHsKcHVibGljOgogICAgZ2xtOjp2ZWMzIFBvc2l0aW9uOwogICAgZ2xtOjp2ZWMzIEZyb250OwogICAgZ2xtOjp2ZWMzIFVwOwogICAgZ2xtOjp2ZWMzIFJpZ2h0OwogICAgZ2xtOjp2ZWMzIFdvcmxkVXA7CgogICAgZmxvYXQgWWF3OwogICAgZmxvYXQgUGl0Y2g7CgogICAgZmxvYXQgTW92ZW1lbnRTcGVlZDsKICAgIGZsb2F0IE1vdXNlU2Vuc2l0aXZpdHk7CiAgICBmbG9hdCBab29tOwoKICAgIENhbWVyYShnbG06OnZlYzMgcG9zaXRpb24sIGdsbTo6dmVjMyB1cCwgZmxvYXQgeWF3LCBmbG9hdCBwaXRjaCkgOiBGcm9udChnbG06OnZlYzMoMC4wZiwgMC4wZiwgLTEuMGYpKSwgTW92ZW1lbnRTcGVlZCgyLjVmKSwgTW91c2VTZW5zaXRpdml0eSgwLjFmKSwgWm9vbSg0NS4wZikgewogICAgICAgIFBvc2l0aW9uID0gcG9zaXRpb247CiAgICAgICAgV29ybGRVcCA9IHVwOwogICAgICAgIFlhdyA9IHlhdzsKICAgICAgICBQaXRjaCA9IHBpdGNoOwogICAgICAgIHVwZGF0ZUNhbWVyYVZlY3RvcnMoKTsKICAgIH0KCiAgICBnbG06Om1hdDQgR2V0Vmlld01hdHJpeCgpIHsKICAgICAgICByZXR1cm4gZ2xtOjpsb29rQXQoUG9zaXRpb24sIFBvc2l0aW9uICsgRnJvbnQsIFVwKTsKICAgIH0KCiAgICB2b2lkIFByb2Nlc3NLZXlib2FyZChDYW1lcmFfTW92ZW1lbnQgZGlyZWN0aW9uLCBmbG9hdCBkZWx0YVRpbWUpIHsKICAgICAgICBmbG9hdCB2ZWxvY2l0eSA9IE1vdmVtZW50U3BlZWQgKiBkZWx0YVRpbWU7CiAgICAgICAgaWYgKGRpcmVjdGlvbiA9PSBGT1JXQVJEKQogICAgICAgICAgICBQb3NpdGlvbiArPSBGcm9udCAqIHZlbG9jaXR5OwogICAgICAgIGlmIChkaXJlY3Rpb24gPT0gQkFDS1dBUkQpCiAgICAgICAgICAgIFBvc2l0aW9uIC09IEZyb250ICogdmVsb2NpdHk7CiAgICAgICAgaWYgKGRpcmVjdGlvbiA9PSBMRUZUKQogICAgICAgICAgICBQb3NpdGlvbiAtPSBSaWdodCAqIHZlbG9jaXR5OwogICAgICAgIGlmIChkaXJlY3Rpb24gPT0gUklHSFQpCiAgICAgICAgICAgIFBvc2l0aW9uICs9IFJpZ2h0ICogdmVsb2NpdHk7CiAgICB9CgogICAgdm9pZCBQcm9jZXNzTW91c2VNb3ZlbWVudChmbG9hdCB4b2Zmc2V0LCBmbG9hdCB5b2Zmc2V0LCBHTGJvb2xlYW4gY29uc3RyYWluUGl0Y2ggPSB0cnVlKSB7CiAgICAgICAgeG9mZnNldCAqPSBNb3VzZVNlbnNpdGl2aXR5OwogICAgICAgIHlvZmZzZXQgKj0gTW91c2VTZW5zaXRpdml0eTsKCiAgICAgICAgWWF3ICs9IHhvZmZzZXQ7CiAgICAgICAgUGl0Y2ggKz0geW9mZnNldDsKCiAgICAgICAgaWYgKGNvbnN0cmFpblBpdGNoKSB7CiAgICAgICAgICAgIGlmIChQaXRjaCA+IDg5LjBmKQogICAgICAgICAgICAgICAgUGl0Y2ggPSA4OS4wZjsKICAgICAgICAgICAgaWYgKFBpdGNoIDwgLTg5LjBmKQogICAgICAgICAgICAgICAgUGl0Y2ggPSAtODkuMGY7CiAgICAgICAgfQoKICAgICAgICB1cGRhdGVDYW1lcmFWZWN0b3JzKCk7CiAgICB9CgogICAgdm9pZCBQcm9jZXNzTW91c2VTY3JvbGwoZmxvYXQgeW9mZnNldCkgewogICAgICAgIGlmIChab29tID49IDEuMGYgJiYgWm9vbSA8PSA0NS4wZikKICAgICAgICAgICAgWm9vbSAtPSB5b2Zmc2V0OwogICAgICAgIGlmIChab29tIDw9IDEuMGYpCiAgICAgICAgICAgIFpvb20gPSAxLjBmOwogICAgICAgIGlmIChab29tID49IDQ1LjBmKQogICAgICAgICAgICBab29tID0gNDUuMGY7CiAgICB9Cgpwcml2YXRlOgogICAgdm9pZCB1cGRhdGVDYW1lcmFWZWN0b3JzKCkgewogICAgICAgIGdsbTo6dmVjMyBmcm9udDsKICAgICAgICBmcm9udC54ID0gY29zKGdsbTo6cmFkaWFucyhZYXcpKSAqIGNvcyhnbG06OnJhZGlhbnMoUGl0Y2gpKTsKICAgICAgICBmcm9udC55ID0gc2luKGdsbTo6cmFkaWFucyhQaXRjaCkpOwogICAgICAgIGZyb250LnogPSBzaW4oZ2xtOjpyYWRpYW5zKFlhdykpICogY29zKGdsbTo6cmFkaWFucyhQaXRjaCkpOwogICAgICAgIEZyb250ID0gZ2xtOjpub3JtYWxpemUoZnJvbnQpOwogICAgICAgIFJpZ2h0ID0gZ2xtOjpub3JtYWxpemUoZ2xtOjpjcm9zcyhGcm9udCwgV29ybGRVcCkpOwogICAgICAgIFVwID0gZ2xtOjpub3JtYWxpemUoZ2xtOjpjcm9zcyhSaWdodCwgRnJvbnQpKTsKICAgIH0KfTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class Camera {
+public:
+    glm::vec3 Position;
+    glm::vec3 Front;
+    glm::vec3 Up;
+    glm::vec3 Right;
+    glm::vec3 WorldUp;
+
+    float Yaw;
+    float Pitch;
+
+    float MovementSpeed;
+    float MouseSensitivity;
+    float Zoom;
+
+    Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(2.5f), MouseSensitivity(0.1f), Zoom(45.0f) {
+        Position = position;
+        WorldUp = up;
+        Yaw = yaw;
+        Pitch = pitch;
+        updateCameraVectors();
+    }
+
+    glm::mat4 GetViewMatrix() {
+        return glm::lookAt(Position, Position + Front, Up);
+    }
+
+    void ProcessKeyboard(Camera_Movement direction, float deltaTime) {
+        float velocity = MovementSpeed * deltaTime;
+        if (direction == FORWARD)
+            Position += Front * velocity;
+        if (direction == BACKWARD)
+            Position -= Front * velocity;
+        if (direction == LEFT)
+            Position -= Right * velocity;
+        if (direction == RIGHT)
+            Position += Right * velocity;
+    }
+
+    void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true) {
+        xoffset *= MouseSensitivity;
+        yoffset *= MouseSensitivity;
+
+        Yaw += xoffset;
+        Pitch += yoffset;
+
+        if (constrainPitch) {
+            if (Pitch &gt; 89.0f)
+                Pitch = 89.0f;
+            if (Pitch &lt; -89.0f)
+                Pitch = -89.0f;
+        }
+
+        updateCameraVectors();
+    }
+
+    void ProcessMouseScroll(float yoffset) {
+        if (Zoom &gt;= 1.0f &amp;&amp; Zoom &lt;= 45.0f)
+            Zoom -= yoffset;
+        if (Zoom &lt;= 1.0f)
+            Zoom = 1.0f;
+        if (Zoom &gt;= 45.0f)
+            Zoom = 45.0f;
+    }
+
+private:
+    void updateCameraVectors() {
+        glm::vec3 front;
+        front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+        front.y = sin(glm::radians(Pitch));
+        front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
+        Front = glm::normalize(front);
+        Right = glm::normalize(glm::cross(Front, WorldUp));
+        Up = glm::normalize(glm::cross(Right, Front));
+    }
+};</pre></div><div class='content'></div><h1>4. Il·luminació i Materials</h1>
+<div class='content'></div><h2>4.1. Configuració de la Il·luminació</h2>
+<div class='content'><p>Afegirem il·luminació bàsica al nostre shader per millorar l'aparença del model.</p>
+<p><strong>Fragment Shader amb Il·luminació (fragment_shader.glsl)</strong></p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("I3ZlcnNpb24gMzMwIGNvcmUKb3V0IHZlYzQgRnJhZ0NvbG9yOwoKaW4gdmVjMyBOb3JtYWw7CmluIHZlYzMgRnJhZ1BvczsKCnVuaWZvcm0gdmVjMyBsaWdodFBvczsKdW5pZm9ybSB2ZWMzIHZpZXdQb3M7CnVuaWZvcm0gdmVjMyBsaWdodENvbG9yOwp1bmlmb3JtIHZlYzMgb2JqZWN0Q29sb3I7Cgp2b2lkIG1haW4oKSB7CiAgICAvLyBBbWJpZW50CiAgICBmbG9hdCBhbWJpZW50U3RyZW5ndGggPSAwLjE7CiAgICB2ZWMzIGFtYmllbnQgPSBhbWJpZW50U3RyZW5ndGggKiBsaWdodENvbG9yOwoKICAgIC8vIERpZsO6cwogICAgdmVjMyBub3JtID0gbm9ybWFsaXplKE5vcm1hbCk7CiAgICB2ZWMzIGxpZ2h0RGlyID0gbm9ybWFsaXplKGxpZ2h0UG9zIC0gRnJhZ1Bvcyk7CiAgICBmbG9hdCBkaWZmID0gbWF4KGRvdChub3JtLCBsaWdodERpciksIDAuMCk7CiAgICB2ZWMzIGRpZmZ1c2UgPSBkaWZmICogbGlnaHRDb2xvcjsKCiAgICAvLyBFc3BlY3VsYXIKICAgIGZsb2F0IHNwZWN1bGFyU3RyZW5ndGggPSAwLjU7CiAgICB2ZWMzIHZpZXdEaXIgPSBub3JtYWxpemUodmlld1BvcyAtIEZyYWdQb3MpOwogICAgdmVjMyByZWZsZWN0RGlyID0gcmVmbGVjdCgtbGlnaHREaXIsIG5vcm0pOwogICAgZmxvYXQgc3BlYyA9IHBvdyhtYXgoZG90KHZpZXdEaXIsIHJlZmxlY3REaXIpLCAwLjApLCAzMik7CiAgICB2ZWMzIHNwZWN1bGFyID0gc3BlY3VsYXJTdHJlbmd0aCAqIHNwZWMgKiBsaWdodENvbG9yOwoKICAgIHZlYzMgcmVzdWx0ID0gKGFtYmllbnQgKyBkaWZmdXNlICsgc3BlY3VsYXIpICogb2JqZWN0Q29sb3I7CiAgICBGcmFnQ29sb3IgPSB2ZWM0KHJlc3VsdCwgMS4wKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>#version 330 core
+out vec4 FragColor;
+
+in vec3 Normal;
+in vec3 FragPos;
+
+uniform vec3 lightPos;
+uniform vec3 viewPos;
+uniform vec3 lightColor;
+uniform vec3 objectColor;
+
+void main() {
+    // Ambient
+    float ambientStrength = 0.1;
+    vec3 ambient = ambientStrength * lightColor;
+
+    // Dif&uacute;s
+    vec3 norm = normalize(Normal);
+    vec3 lightDir = normalize(lightPos - FragPos);
+    float diff = max(dot(norm, lightDir), 0.0);
+    vec3 diffuse = diff * lightColor;
+
+    // Especular
+    float specularStrength = 0.5;
+    vec3 viewDir = normalize(viewPos - FragPos);
+    vec3 reflectDir = reflect(-lightDir, norm);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    vec3 specular = specularStrength * spec * lightColor;
+
+    vec3 result = (ambient + diffuse + specular) * objectColor;
+    FragColor = vec4(result, 1.0);
+}</pre></div><div class='content'></div><h2>4.2. Aplicació de Materials</h2>
+<div class='content'><p>Podem definir materials per als nostres models per controlar com interactuen amb la llum.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("c3RydWN0IE1hdGVyaWFsIHsKICAgIGdsbTo6dmVjMyBhbWJpZW50OwogICAgZ2xtOjp2ZWMzIGRpZmZ1c2U7CiAgICBnbG06OnZlYzMgc3BlY3VsYXI7CiAgICBmbG9hdCBzaGluaW5lc3M7Cn07CgpNYXRlcmlhbCBtYXRlcmlhbCA9IHsKICAgIGdsbTo6dmVjMygxLjBmLCAwLjVmLCAwLjMxZiksCiAgICBnbG06OnZlYzMoMS4wZiwgMC41ZiwgMC4zMWYpLAogICAgZ2xtOjp2ZWMzKDAuNWYsIDAuNWYsIDAuNWYpLAogICAgMzIuMGYKfTsKCnNoYWRlci5zZXRWZWMzKCJtYXRlcmlhbC5hbWJpZW50IiwgbWF0ZXJpYWwuYW1iaWVudCk7CnNoYWRlci5zZXRWZWMzKCJtYXRlcmlhbC5kaWZmdXNlIiwgbWF0ZXJpYWwuZGlmZnVzZSk7CnNoYWRlci5zZXRWZWMzKCJtYXRlcmlhbC5zcGVjdWxhciIsIG1hdGVyaWFsLnNwZWN1bGFyKTsKc2hhZGVyLnNldEZsb2F0KCJtYXRlcmlhbC5zaGluaW5lc3MiLCBtYXRlcmlhbC5zaGluaW5lc3MpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>struct Material {
+    glm::vec3 ambient;
+    glm::vec3 diffuse;
+    glm::vec3 specular;
+    float shininess;
+};
+
+Material material = {
+    glm::vec3(1.0f, 0.5f, 0.31f),
+    glm::vec3(1.0f, 0.5f, 0.31f),
+    glm::vec3(0.5f, 0.5f, 0.5f),
+    32.0f
+};
+
+shader.setVec3(&quot;material.ambient&quot;, material.ambient);
+shader.setVec3(&quot;material.diffuse&quot;, material.diffuse);
+shader.setVec3(&quot;material.specular&quot;, material.specular);
+shader.setFloat(&quot;material.shininess&quot;, material.shininess);</pre></div><div class='content'></div><h1>5. Interacció de l'Usuari</h1>
+<div class='content'></div><h2>5.1. Control de la Càmera</h2>
+<div class='content'><p>Permetrem a l'usuari controlar la càmera utilitzant el teclat i el ratolí.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dm9pZCBwcm9jZXNzSW5wdXQoR0xGV3dpbmRvdyAqd2luZG93KSB7CiAgICBpZiAoZ2xmd0dldEtleSh3aW5kb3csIEdMRldfS0VZX1cpID09IEdMRldfUFJFU1MpCiAgICAgICAgY2FtZXJhLlByb2Nlc3NLZXlib2FyZChGT1JXQVJELCBkZWx0YVRpbWUpOwogICAgaWYgKGdsZndHZXRLZXkod2luZG93LCBHTEZXX0tFWV9TKSA9PSBHTEZXX1BSRVNTKQogICAgICAgIGNhbWVyYS5Qcm9jZXNzS2V5Ym9hcmQoQkFDS1dBUkQsIGRlbHRhVGltZSk7CiAgICBpZiAoZ2xmd0dldEtleSh3aW5kb3csIEdMRldfS0VZX0EpID09IEdMRldfUFJFU1MpCiAgICAgICAgY2FtZXJhLlByb2Nlc3NLZXlib2FyZChMRUZULCBkZWx0YVRpbWUpOwogICAgaWYgKGdsZndHZXRLZXkod2luZG93LCBHTEZXX0tFWV9EKSA9PSBHTEZXX1BSRVNTKQogICAgICAgIGNhbWVyYS5Qcm9jZXNzS2V5Ym9hcmQoUklHSFQsIGRlbHRhVGltZSk7Cn0KCnZvaWQgbW91c2VfY2FsbGJhY2soR0xGV3dpbmRvdyogd2luZG93LCBkb3VibGUgeHBvcywgZG91YmxlIHlwb3MpIHsKICAgIGlmIChmaXJzdE1vdXNlKSB7CiAgICAgICAgbGFzdFggPSB4cG9zOwogICAgICAgIGxhc3RZID0geXBvczsKICAgICAgICBmaXJzdE1vdXNlID0gZmFsc2U7CiAgICB9CgogICAgZmxvYXQgeG9mZnNldCA9IHhwb3MgLSBsYXN0WDsKICAgIGZsb2F0IHlvZmZzZXQgPSBsYXN0WSAtIHlwb3M7CiAgICBsYXN0WCA9IHhwb3M7CiAgICBsYXN0WSA9IHlwb3M7CgogICAgY2FtZXJhLlByb2Nlc3NNb3VzZU1vdmVtZW50KHhvZmZzZXQsIHlvZmZzZXQpOwp9Cgp2b2lkIHNjcm9sbF9jYWxsYmFjayhHTEZXd2luZG93KiB3aW5kb3csIGRvdWJsZSB4b2Zmc2V0LCBkb3VibGUgeW9mZnNldCkgewogICAgY2FtZXJhLlByb2Nlc3NNb3VzZVNjcm9sbCh5b2Zmc2V0KTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>void processInput(GLFWwindow *window) {
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.ProcessKeyboard(FORWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.ProcessKeyboard(BACKWARD, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.ProcessKeyboard(LEFT, deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.ProcessKeyboard(RIGHT, deltaTime);
+}
+
+void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
+    if (firstMouse) {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;
+    lastX = xpos;
+    lastY = ypos;
+
+    camera.ProcessMouseMovement(xoffset, yoffset);
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+    camera.ProcessMouseScroll(yoffset);
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après a crear un visualitzador de models 3D utilitzant OpenGL. Hem cobert la càrrega de models 3D amb Assimp, la renderització de models, la gestió de càmeres, la il·luminació i materials, i la interacció de l'usuari. Aquest projecte ens permet aplicar molts dels conceptes apresos en els mòduls anteriors i ens prepara per a projectes més complexos en el futur.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-01-building-simple-game' title="Construir un Joc Simple">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-03-developing-graphics-engine' title="Desenvolupar un Motor Gràfic">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

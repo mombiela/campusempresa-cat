@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spark Streaming</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/apachespark/04-01-spark-streaming" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/apachespark/04-01-spark-streaming" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/apachespark/04-01-spark-streaming" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/apachespark/04-01-spark-streaming" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/apachespark/04-01-spark-streaming" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-04-handling-missing-data' title="Gestió de Dades Faltants">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Spark Streaming</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-02-structured-streaming' title="Streaming Estructurat">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció a Spark Streaming</h1>
+<div class='content'><p>Spark Streaming és una extensió de l'API de Spark que permet processar fluxos de dades en temps real. És una eina poderosa per a la ingesta i el processament de dades contínues, com ara registres de servidors, dades de sensors, fluxos de xarxes socials, etc.</p>
+</div><h2>Objectius d'aquest tema:</h2>
+<div class='content'><ol>
+<li>Comprendre els conceptes bàsics de Spark Streaming.</li>
+<li>Aprendre a configurar un flux de dades en temps real.</li>
+<li>Realitzar operacions bàsiques amb dades de streaming.</li>
+<li>Implementar un exemple pràctic de Spark Streaming.</li>
+</ol>
+</div><h1>Conceptes Bàsics de Spark Streaming</h1>
+<div class='content'></div><h2>1. DStream (Discretized Stream)</h2>
+<div class='content'><ul>
+<li><strong>Definició</strong>: Un DStream és una seqüència de RDDs (Resilient Distributed Datasets) que representa un flux de dades en temps real.</li>
+<li><strong>Creació</strong>: Es pot crear un DStream a partir de diverses fonts, com ara Kafka, Flume, sockets TCP, etc.</li>
+</ul>
+</div><h2>2. Fonts de Dades</h2>
+<div class='content'><ul>
+<li><strong>Socket Text Stream</strong>: Llegeix dades d'un socket TCP.</li>
+<li><strong>Kafka</strong>: Integra amb Apache Kafka per llegir fluxos de dades.</li>
+<li><strong>Flume</strong>: Utilitza Apache Flume per a la ingesta de dades.</li>
+<li><strong>HDFS</strong>: Llegeix fitxers nous que es van afegint a HDFS.</li>
+</ul>
+</div><h2>3. Operacions sobre DStreams</h2>
+<div class='content'><ul>
+<li><strong>Transformacions</strong>: Operacions que creen un nou DStream a partir d'un existent (map, flatMap, filter, etc.).</li>
+<li><strong>Accions</strong>: Operacions que retornen un valor o efectuen una acció (count, saveAsTextFiles, etc.).</li>
+</ul>
+</div><h1>Configuració d'un Flux de Dades en Temps Real</h1>
+<div class='content'></div><h2>1. Configuració de l'Entorn</h2>
+<div class='content'><p>Abans de començar, assegura't de tenir instal·lat Apache Spark i les biblioteques necessàries per a Spark Streaming.</p>
+</div><h2>2. Exemple de Configuració</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBweXNwYXJrIGltcG9ydCBTcGFya0NvbnRleHQKZnJvbSBweXNwYXJrLnN0cmVhbWluZyBpbXBvcnQgU3RyZWFtaW5nQ29udGV4dAoKIyBDcmVhciB1biBTcGFya0NvbnRleHQKc2MgPSBTcGFya0NvbnRleHQoImxvY2FsWzJdIiwgIk5ldHdvcmtXb3JkQ291bnQiKQoKIyBDcmVhciB1biBTdHJlYW1pbmdDb250ZXh0IGFtYiB1biBpbnRlcnZhbCBkZSBiYXRjaCBkZSAxIHNlZ29uCnNzYyA9IFN0cmVhbWluZ0NvbnRleHQoc2MsIDEpCgojIENyZWFyIHVuIERTdHJlYW0gcXVlIGVzIGNvbm5lY3RhIGEgdW4gc29ja2V0IFRDUApsaW5lcyA9IHNzYy5zb2NrZXRUZXh0U3RyZWFtKCJsb2NhbGhvc3QiLCA5OTk5KQoKIyBSZWFsaXR6YXIgdW5hIG9wZXJhY2nDsyBkZSB0cmFuc2Zvcm1hY2nDswp3b3JkcyA9IGxpbmVzLmZsYXRNYXAobGFtYmRhIGxpbmU6IGxpbmUuc3BsaXQoIiAiKSkKCiMgUmVhbGl0emFyIHVuYSBvcGVyYWNpw7MgZCdhY2Npw7MKd29yZENvdW50cyA9IHdvcmRzLm1hcChsYW1iZGEgd29yZDogKHdvcmQsIDEpKS5yZWR1Y2VCeUtleShsYW1iZGEgYSwgYjogYSArIGIpCgojIEltcHJpbWlyIGVscyByZXN1bHRhdHMKd29yZENvdW50cy5wcHJpbnQoKQoKIyBJbmljaWFyIGVsIHByb2PDqXMgZGUgc3RyZWFtaW5nCnNzYy5zdGFydCgpCgojIEVzcGVyYXIgcXVlIGVsIHByb2PDqXMgZGUgc3RyZWFtaW5nIGFjYWJpCnNzYy5hd2FpdFRlcm1pbmF0aW9uKCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from pyspark import SparkContext
+from pyspark.streaming import StreamingContext
+
+# Crear un SparkContext
+sc = SparkContext(&quot;local[2]&quot;, &quot;NetworkWordCount&quot;)
+
+# Crear un StreamingContext amb un interval de batch de 1 segon
+ssc = StreamingContext(sc, 1)
+
+# Crear un DStream que es connecta a un socket TCP
+lines = ssc.socketTextStream(&quot;localhost&quot;, 9999)
+
+# Realitzar una operaci&oacute; de transformaci&oacute;
+words = lines.flatMap(lambda line: line.split(&quot; &quot;))
+
+# Realitzar una operaci&oacute; d'acci&oacute;
+wordCounts = words.map(lambda word: (word, 1)).reduceByKey(lambda a, b: a + b)
+
+# Imprimir els resultats
+wordCounts.pprint()
+
+# Iniciar el proc&eacute;s de streaming
+ssc.start()
+
+# Esperar que el proc&eacute;s de streaming acabi
+ssc.awaitTermination()</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><strong>SparkContext</strong>: Inicialitza el context de Spark.</li>
+<li><strong>StreamingContext</strong>: Configura el context de streaming amb un interval de batch de 1 segon.</li>
+<li><strong>socketTextStream</strong>: Crea un DStream que llegeix dades d'un socket TCP.</li>
+<li><strong>flatMap</strong>: Divideix cada línia en paraules.</li>
+<li><strong>map</strong>: Assigna un valor de 1 a cada paraula.</li>
+<li><strong>reduceByKey</strong>: Agrega els valors per clau (paraula).</li>
+<li><strong>pprint</strong>: Imprimeix els resultats al terminal.</li>
+<li><strong>start</strong>: Inicia el procés de streaming.</li>
+<li><strong>awaitTermination</strong>: Espera que el procés de streaming acabi.</li>
+</ul>
+</div><h1>Exemple Pràctic: Comptador de Paraules en Temps Real</h1>
+<div class='content'></div><h2>Descripció</h2>
+<div class='content'><p>Aquest exemple compta les paraules que arriben a través d'un socket TCP en temps real.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Configura un servidor de socket TCP</strong>:</p>
+<ul>
+<li>Pots utilitzar <code>nc</code> (netcat) per crear un servidor de socket TCP:
+<pre><code class="language-bash">nc -lk 9999
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Executa el codi de Spark Streaming</strong>:</p>
+<ul>
+<li>Executa el codi Python proporcionat anteriorment.</li>
+</ul>
+</li>
+<li>
+<p><strong>Envia dades al socket</strong>:</p>
+<ul>
+<li>Escriu algunes línies de text al terminal on està executant <code>nc</code>:
+<pre><code class="language-bash">Hello Spark Streaming
+Apache Spark is awesome
+</code></pre>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>Observa els resultats</strong>:</p>
+<ul>
+<li>El codi de Spark Streaming comptarà les paraules i imprimirà els resultats al terminal.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Errors Comuns i Consells</h1>
+<div class='content'></div><h2>Errors Comuns</h2>
+<div class='content'><ul>
+<li><strong>Configuració Incorrecta del SparkContext</strong>: Assegura't que el SparkContext estigui configurat correctament.</li>
+<li><strong>Problemes de Connexió al Socket</strong>: Verifica que el servidor de socket estigui en execució i que l'adreça i el port siguin correctes.</li>
+<li><strong>Interval de Batch Massa Curt</strong>: Un interval de batch massa curt pot causar problemes de rendiment. Ajusta l'interval segons les necessitats de la teva aplicació.</li>
+</ul>
+</div><h2>Consells</h2>
+<div class='content'><ul>
+<li><strong>Utilitza Checkpointing</strong>: Per a aplicacions de streaming de llarga durada, utilitza checkpointing per a la recuperació de fallades.</li>
+<li><strong>Monitoritza el Rendiment</strong>: Utilitza les eines de monitorització de Spark per supervisar el rendiment de la teva aplicació de streaming.</li>
+</ul>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après els conceptes bàsics de Spark Streaming, com configurar un flux de dades en temps real, i hem implementat un exemple pràctic de comptador de paraules en temps real. Amb aquests coneixements, estàs preparat per començar a treballar amb dades de streaming utilitzant Apache Spark.</p>
+<p>En el següent tema, explorarem el <strong>Streaming Estructurat</strong>, una API més recent i potent per al processament de dades en temps real amb Spark.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-04-handling-missing-data' title="Gestió de Dades Faltants">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-02-structured-streaming' title="Streaming Estructurat">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

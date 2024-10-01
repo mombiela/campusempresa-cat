@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accés a Bases de Dades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/haskell/08-02-database-access" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/haskell/08-02-database-access" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/haskell/08-02-database-access" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/haskell/08-02-database-access" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/haskell/08-02-database-access" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-01-simple-web-server' title="Construcció d'un Servidor Web Simple">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Accés a Bases de Dades</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-03-testing-debugging' title="Proves i Depuració">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com interactuar amb bases de dades des de Haskell. Utilitzarem la biblioteca <code>persistent</code> per gestionar les connexions i operacions amb bases de dades. Aquest mòdul inclou la configuració de l'entorn, la definició de models, la realització d'operacions bàsiques (CRUD) i exemples pràctics.</p>
+</div><h1>Contingut</h1>
+<div class='content'><ol>
+<li><a href="#introducció-a-persistent">Introducció a Persistent</a></li>
+<li><a href="#configuració-de-l'entorn">Configuració de l'Entorn</a></li>
+<li><a href="#definició-de-models">Definició de Models</a></li>
+<li><a href="#operacions-bàsiques-crud">Operacions Bàsiques (CRUD)</a></li>
+<li><a href="#exemple-pràctic">Exemple Pràctic</a></li>
+<li><a href="#exercicis-pràctics">Exercicis Pràctics</a></li>
+</ol>
+</div><h1>Introducció a Persistent</h1>
+<div class='content'><p><code>persistent</code> és una biblioteca de Haskell que proporciona una interfície per treballar amb bases de dades relacionals i no relacionals. Ofereix una manera senzilla de definir models de dades i realitzar operacions com insercions, actualitzacions, eliminacions i consultes.</p>
+</div><h2>Característiques Clau</h2>
+<div class='content'><ul>
+<li><strong>Definició de Models</strong>: Utilitza plantilles de Haskell per definir models de dades.</li>
+<li><strong>Operacions CRUD</strong>: Proporciona funcions per a la creació, lectura, actualització i eliminació de registres.</li>
+<li><strong>Suport per a Diverses Bases de Dades</strong>: Compatible amb SQLite, PostgreSQL, MySQL, entre d'altres.</li>
+</ul>
+</div><h1>Configuració de l'Entorn</h1>
+<div class='content'></div><h2>Instal·lació de les Dependències</h2>
+<div class='content'><p>Per començar, necessitem instal·lar les biblioteques necessàries. Afegiu les següents dependències al vostre fitxer <code>cabal</code> o <code>stack</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gZmlsZTogcGFja2FnZS55YW1sIChwZXIgYSBTdGFjaykKZGVwZW5kZW5jaWVzOgotIHBlcnNpc3RlbnQKLSBwZXJzaXN0ZW50LXNxbGl0ZQotIHBlcnNpc3RlbnQtdGVtcGxhdGUKLSBwZXJzaXN0ZW50LXBvc3RncmVzcWwKLSBwZXJzaXN0ZW50LW15c3FsCi0gcGVyc2lzdGVudC1tb25nb0RCCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVkCi0gcGVyc2lzdGVudC1yZWRpcwotIHBlcnNpc3RlbnQtbWVtY2FjaGVk"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- file: package.yaml (per a Stack)
+dependencies:
+- persistent
+- persistent-sqlite
+- persistent-template
+- persistent-postgresql
+- persistent-mysql
+- persistent-mongoDB
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached
+- persistent-redis
+- persistent-memcached</pre></div><div class='content'><p>-- file: package.yaml (per a Stack)
+dependencies:</p>
+<ul>
+<li>persistent</li>
+<li>persistent-sqlite</li>
+<li>persistent-template</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CiMjIyBDb25maWd1cmFjacOzIGRlIGxhIEJhc2UgZGUgRGFkZXMKClBlciBhcXVlc3QgZXhlbXBsZSwgdXRpbGl0emFyZW0gU1FMaXRlLiBDcmVldSB1biBmaXR4ZXIgYGNvbmZpZy9zZXR0aW5ncy55bWxgIGFtYiBsYSBjb25maWd1cmFjacOzIGRlIGxhIGJhc2UgZGUgZGFkZXM6"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+### Configuraci&oacute; de la Base de Dades
+
+Per aquest exemple, utilitzarem SQLite. Creeu un fitxer `config/settings.yml` amb la configuraci&oacute; de la base de dades:</pre></div><div class='content'><p>sqlite:
+database: &quot;database.sqlite3&quot;
+poolsize: 10</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CiMjIERlZmluaWNpw7MgZGUgTW9kZWxzCgpFbHMgbW9kZWxzIGVzIGRlZmluZWl4ZW4gZW4gdW4gZml0eGVyIHNlcGFyYXQgdXRpbGl0emFudCBsYSBzaW50YXhpIGRlIHBsYW50aWxsZXMgZGUgSGFza2VsbC4gQ3JlZXUgdW4gZml0eGVyIGBtb2RlbHMvTW9kZWxzLmhzYCBhbWIgZWwgc2Vnw7xlbnQgY29udGluZ3V0Og=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+## Definici&oacute; de Models
+
+Els models es defineixen en un fitxer separat utilitzant la sintaxi de plantilles de Haskell. Creeu un fitxer `models/Models.hs` amb el seg&uuml;ent contingut:</pre></div><div class='content'><p>{-# LANGUAGE GADTs #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeFamilies #-}</p>
+<p>module Models where</p>
+<p>import Database.Persist.TH</p>
+<p>share [mkPersist sqlSettings, mkMigrate &quot;migrateAll&quot;] [persistLowerCase|
+Person
+name String
+age Int Maybe
+deriving Show
+|]</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CkFxdWVzdCBjb2RpIGRlZmluZWl4IHVuIG1vZGVsIGBQZXJzb25gIGFtYiBkb3MgY2FtcHM6IGBuYW1lYCAoU3RyaW5nKSBpIGBhZ2VgIChJbnQsIG9wY2lvbmFsKS4KCiMjIE9wZXJhY2lvbnMgQsOgc2lxdWVzIChDUlVEKQoKIyMjIENvbm5leGnDsyBhIGxhIEJhc2UgZGUgRGFkZXMKClByaW1lciwgY29uZmlndXJlbSBsYSBjb25uZXhpw7MgYSBsYSBiYXNlIGRlIGRhZGVzLiBDcmVldSB1biBmaXR4ZXIgYE1haW4uaHNgIGFtYiBlbCBzZWfDvGVudCBjb250aW5ndXQ6"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+Aquest codi defineix un model `Person` amb dos camps: `name` (String) i `age` (Int, opcional).
+
+## Operacions B&agrave;siques (CRUD)
+
+### Connexi&oacute; a la Base de Dades
+
+Primer, configurem la connexi&oacute; a la base de dades. Creeu un fitxer `Main.hs` amb el seg&uuml;ent contingut:</pre></div><div class='content'><p>{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeFamilies #-}</p>
+<p>import Control.Monad.IO.Class (liftIO)
+import Database.Persist
+import Database.Persist.Sqlite
+import Database.Persist.TH
+import Models</p>
+<p>main :: IO ()
+main = runSqlite &quot;database.sqlite3&quot; $ do
+runMigration migrateAll
+liftIO $ putStrLn &quot;Database migrated.&quot;</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CiMjIyBJbnNlcmNpw7MgZGUgUmVnaXN0cmVzCgpBZmVnaW0gdW5hIGZ1bmNpw7MgcGVyIGluc2VyaXIgdW4gbm91IHJlZ2lzdHJlIGEgbGEgYmFzZSBkZSBkYWRlczo="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+### Inserci&oacute; de Registres
+
+Afegim una funci&oacute; per inserir un nou registre a la base de dades:</pre></div><div class='content'><p>main :: IO ()
+main = runSqlite &quot;database.sqlite3&quot; $ do
+runMigration migrateAll
+liftIO $ putStrLn &quot;Database migrated.&quot;</p>
+<pre><code>-- Inserir un nou registre
+personId &lt;- insert $ Person &quot;John Doe&quot; (Just 30)
+liftIO $ putStrLn $ &quot;Inserted person with ID: &quot; ++ show personId
+</code></pre>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CiMjIyBMZWN0dXJhIGRlIFJlZ2lzdHJlcwoKQWZlZ2ltIHVuYSBmdW5jacOzIHBlciBsbGVnaXIgcmVnaXN0cmVzIGRlIGxhIGJhc2UgZGUgZGFkZXM6"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+### Lectura de Registres
+
+Afegim una funci&oacute; per llegir registres de la base de dades:</pre></div><div class='content'><p>main :: IO ()
+main = runSqlite &quot;database.sqlite3&quot; $ do
+runMigration migrateAll
+liftIO $ putStrLn &quot;Database migrated.&quot;</p>
+<pre><code>-- Inserir un nou registre
+personId &lt;- insert $ Person &quot;John Doe&quot; (Just 30)
+liftIO $ putStrLn $ &quot;Inserted person with ID: &quot; ++ show personId
+
+-- Llegir registres
+people &lt;- selectList [] [Asc PersonName]
+liftIO $ print people
+</code></pre>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CiMjIyBBY3R1YWxpdHphY2nDsyBkZSBSZWdpc3RyZXMKCkFmZWdpbSB1bmEgZnVuY2nDsyBwZXIgYWN0dWFsaXR6YXIgdW4gcmVnaXN0cmUgZXhpc3RlbnQ6"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+### Actualitzaci&oacute; de Registres
+
+Afegim una funci&oacute; per actualitzar un registre existent:</pre></div><div class='content'><p>main :: IO ()
+main = runSqlite &quot;database.sqlite3&quot; $ do
+runMigration migrateAll
+liftIO $ putStrLn &quot;Database migrated.&quot;</p>
+<pre><code>-- Inserir un nou registre
+personId &lt;- insert $ Person &quot;John Doe&quot; (Just 30)
+liftIO $ putStrLn $ &quot;Inserted person with ID: &quot; ++ show personId
+
+-- Llegir registres
+people &lt;- selectList [] [Asc PersonName]
+liftIO $ print people
+
+-- Actualitzar un registre
+update personId [PersonAge =. Just 31]
+liftIO $ putStrLn &quot;Updated person's age.&quot;
+</code></pre>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CiMjIyBFbGltaW5hY2nDsyBkZSBSZWdpc3RyZXMKCkFmZWdpbSB1bmEgZnVuY2nDsyBwZXIgZWxpbWluYXIgdW4gcmVnaXN0cmU6"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+### Eliminaci&oacute; de Registres
+
+Afegim una funci&oacute; per eliminar un registre:</pre></div><div class='content'><p>main :: IO ()
+main = runSqlite &quot;database.sqlite3&quot; $ do
+runMigration migrateAll
+liftIO $ putStrLn &quot;Database migrated.&quot;</p>
+<pre><code>-- Inserir un nou registre
+personId &lt;- insert $ Person &quot;John Doe&quot; (Just 30)
+liftIO $ putStrLn $ &quot;Inserted person with ID: &quot; ++ show personId
+
+-- Llegir registres
+people &lt;- selectList [] [Asc PersonName]
+liftIO $ print people
+
+-- Actualitzar un registre
+update personId [PersonAge =. Just 31]
+liftIO $ putStrLn &quot;Updated person's age.&quot;
+
+-- Eliminar un registre
+delete personId
+liftIO $ putStrLn &quot;Deleted person.&quot;
+</code></pre>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CiMjIEV4ZW1wbGUgUHLDoGN0aWMKCkFyYSBxdWUgaGVtIHZpc3QgbGVzIG9wZXJhY2lvbnMgYsOgc2lxdWVzLCBjcmVlbSB1biBleGVtcGxlIHByw6BjdGljIHF1ZSBjb21iaW5hIHRvdGVzIGFxdWVzdGVzIG9wZXJhY2lvbnMuIEVsIG5vc3RyZSBvYmplY3RpdSBzZXLDoCBnZXN0aW9uYXIgdW5hIGxsaXN0YSBkZSBwZXJzb25lcywgcGVybWV0ZW50IGFmZWdpciwgbGxlZ2lyLCBhY3R1YWxpdHphciBpIGVsaW1pbmFyIHJlZ2lzdHJlcy4KCiMjIyBDb2RpIENvbXBsZXQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+## Exemple Pr&agrave;ctic
+
+Ara que hem vist les operacions b&agrave;siques, creem un exemple pr&agrave;ctic que combina totes aquestes operacions. El nostre objectiu ser&agrave; gestionar una llista de persones, permetent afegir, llegir, actualitzar i eliminar registres.
+
+### Codi Complet</pre></div><div class='content'><p>{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeFamilies #-}</p>
+<p>import Control.Monad.IO.Class (liftIO)
+import Database.Persist
+import Database.Persist.Sqlite
+import Database.Persist.TH
+import Models</p>
+<p>main :: IO ()
+main = runSqlite &quot;database.sqlite3&quot; $ do
+runMigration migrateAll
+liftIO $ putStrLn &quot;Database migrated.&quot;</p>
+<pre><code>-- Inserir un nou registre
+personId &lt;- insert $ Person &quot;John Doe&quot; (Just 30)
+liftIO $ putStrLn $ &quot;Inserted person with ID: &quot; ++ show personId
+
+-- Llegir registres
+people &lt;- selectList [] [Asc PersonName]
+liftIO $ print people
+
+-- Actualitzar un registre
+update personId [PersonAge =. Just 31]
+liftIO $ putStrLn &quot;Updated person's age.&quot;
+
+-- Eliminar un registre
+delete personId
+liftIO $ putStrLn &quot;Deleted person.&quot;
+</code></pre>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CiMjIEV4ZXJjaWNpcyBQcsOgY3RpY3MKCjEuICoqQWZlZ2lyIHVuIE5vdSBNb2RlbCoqOiBBZmVnaXUgdW4gbm91IG1vZGVsIGBDYXJgIGFtYiBlbHMgY2FtcHMgYG1ha2VgIChTdHJpbmcpIGkgYHllYXJgIChJbnQpLiBJbnNlcml1LCBsbGVnaXUsIGFjdHVhbGl0emV1IGkgZWxpbWluZXUgcmVnaXN0cmVzIGRlIGBDYXJgLgoyLiAqKkNvbnN1bHRlcyBBdmFuw6dhZGVzKio6IENyZWV1IHVuYSBmdW5jacOzIHF1ZSBsbGVnZWl4aSB0b3RlcyBsZXMgcGVyc29uZXMgbWFqb3JzIGRlIDI1IGFueXMuCjMuICoqUmVsYWNpb25zIGVudHJlIE1vZGVscyoqOiBEZWZpbml1IHVuYSByZWxhY2nDsyBlbnRyZSBgUGVyc29uYCBpIGBDYXJgIG9uIHVuYSBwZXJzb25hIHBvdCB0ZW5pciBtw7psdGlwbGVzIGNvdHhlcy4gSW5zZXJpdSByZWdpc3RyZXMgaSByZWFsaXR6ZXUgY29uc3VsdGVzIHF1ZSBtb3N0cmluIGxlcyBwZXJzb25lcyBhbWIgZWxzIHNldXMgY290eGVzLgoKIyMjIFNvbHVjaW9ucwoKMS4gKipBZmVnaXIgdW4gTm91IE1vZGVsKio="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+## Exercicis Pr&agrave;ctics
+
+1. **Afegir un Nou Model**: Afegiu un nou model `Car` amb els camps `make` (String) i `year` (Int). Inseriu, llegiu, actualitzeu i elimineu registres de `Car`.
+2. **Consultes Avan&ccedil;ades**: Creeu una funci&oacute; que llegeixi totes les persones majors de 25 anys.
+3. **Relacions entre Models**: Definiu una relaci&oacute; entre `Person` i `Car` on una persona pot tenir m&uacute;ltiples cotxes. Inseriu registres i realitzeu consultes que mostrin les persones amb els seus cotxes.
+
+### Solucions
+
+1. **Afegir un Nou Model**</pre></div><div class='content'><p>-- models/Models.hs
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeFamilies #-}</p>
+<p>module Models where</p>
+<p>import Database.Persist.TH</p>
+<p>share [mkPersist sqlSettings, mkMigrate &quot;migrateAll&quot;] [persistLowerCase|
+Person
+name String
+age Int Maybe
+deriving Show</p>
+<p>Car
+make String
+year Int
+deriving Show
+|]</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CjIuICoqQ29uc3VsdGVzIEF2YW7Dp2FkZXMqKg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+2. **Consultes Avan&ccedil;ades**</pre></div><div class='content'><p>main :: IO ()
+main = runSqlite &quot;database.sqlite3&quot; $ do
+runMigration migrateAll
+liftIO $ putStrLn &quot;Database migrated.&quot;</p>
+<pre><code>-- Inserir registres
+_ &lt;- insert $ Person &quot;John Doe&quot; (Just 30)
+_ &lt;- insert $ Person &quot;Jane Doe&quot; (Just 20)
+
+-- Llegir persones majors de 25 anys
+people &lt;- selectList [PersonAge &gt;. Just 25] [Asc PersonName]
+liftIO $ print people
+</code></pre>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CjMuICoqUmVsYWNpb25zIGVudHJlIE1vZGVscyoq"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+3. **Relacions entre Models**</pre></div><div class='content'><p>-- models/Models.hs
+{-# LANGUAGE GADTs #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE QuasiQuotes #-}
+{-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeFamilies #-}</p>
+<p>module Models where</p>
+<p>import Database.Persist.TH</p>
+<p>share [mkPersist sqlSettings, mkMigrate &quot;migrateAll&quot;] [persistLowerCase|
+Person
+name String
+age Int Maybe
+deriving Show</p>
+<p>Car
+make String
+year Int
+ownerId PersonId
+deriving Show
+|]</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob(""))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'></pre></div><div class='content'><p>main :: IO ()
+main = runSqlite &quot;database.sqlite3&quot; $ do
+runMigration migrateAll
+liftIO $ putStrLn &quot;Database migrated.&quot;</p>
+<pre><code>-- Inserir registres
+personId &lt;- insert $ Person &quot;John Doe&quot; (Just 30)
+_ &lt;- insert $ Car &quot;Toyota&quot; 2010 personId
+_ &lt;- insert $ Car &quot;Honda&quot; 2015 personId
+
+-- Llegir persones amb els seus cotxes
+people &lt;- selectList [] [Asc PersonName]
+forM_ people $ \\(Entity personId person) -&gt; do
+    liftIO $ print person
+    cars &lt;- selectList [CarOwnerId ==. personId] [Asc CarMake]
+    liftIO $ print cars
+</code></pre>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("CiMjIENvbmNsdXNpw7MKCkVuIGFxdWVzdCB0ZW1hLCBoZW0gYXByw6hzIGEgY29uZmlndXJhciBsJ2VudG9ybiBwZXIgdHJlYmFsbGFyIGFtYiBiYXNlcyBkZSBkYWRlcyBlbiBIYXNrZWxsIHV0aWxpdHphbnQgbGEgYmlibGlvdGVjYSBgcGVyc2lzdGVudGAuIEhlbSB2aXN0IGNvbSBkZWZpbmlyIG1vZGVscywgcmVhbGl0emFyIG9wZXJhY2lvbnMgYsOgc2lxdWVzIChDUlVEKSBpIGhlbSBjcmVhdCB1biBleGVtcGxlIHByw6BjdGljIHBlciBnZXN0aW9uYXIgdW5hIGxsaXN0YSBkZSBwZXJzb25lcy4gRWxzIGV4ZXJjaWNpcyBwcsOgY3RpY3MgcHJvcG9yY2lvbmF0cyB1cyBhanVkYXJhbiBhIGNvbnNvbGlkYXIgZWxzIGNvbmVpeGVtZW50cyBhZHF1aXJpdHMgaSBhIGV4cGxvcmFyIGZ1bmNpb25hbGl0YXRzIG3DqXMgYXZhbsOnYWRlcy4KCkVuIGVsIHNlZ8O8ZW50IHRlbWEsIGV4cGxvcmFyZW0gY29tIHJlYWxpdHphciBwcm92ZXMgaSBkZXB1cmFjacOzIGVuIGFwbGljYWNpb25zIEhhc2tlbGwu"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>
+## Conclusi&oacute;
+
+En aquest tema, hem apr&egrave;s a configurar l'entorn per treballar amb bases de dades en Haskell utilitzant la biblioteca `persistent`. Hem vist com definir models, realitzar operacions b&agrave;siques (CRUD) i hem creat un exemple pr&agrave;ctic per gestionar una llista de persones. Els exercicis pr&agrave;ctics proporcionats us ajudaran a consolidar els coneixements adquirits i a explorar funcionalitats m&eacute;s avan&ccedil;ades.
+
+En el seg&uuml;ent tema, explorarem com realitzar proves i depuraci&oacute; en aplicacions Haskell.</pre></div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-01-simple-web-server' title="Construcció d'un Servidor Web Simple">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-03-testing-debugging' title="Proves i Depuració">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

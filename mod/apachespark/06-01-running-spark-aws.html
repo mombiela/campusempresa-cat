@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executar Spark a AWS</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/apachespark/06-01-running-spark-aws" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/apachespark/06-01-running-spark-aws" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/apachespark/06-01-running-spark-aws" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/apachespark/06-01-running-spark-aws" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/apachespark/06-01-running-spark-aws" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-optimizing-spark-applications' title="Optimització d'Aplicacions Spark">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Executar Spark a AWS</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-02-running-spark-azure' title="Executar Spark a Azure">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com configurar i executar Apache Spark a Amazon Web Services (AWS). AWS és una plataforma de computació al núvol que ofereix una àmplia gamma de serveis, incloent-hi el servei de computació elàstica (EC2) i el servei de processament de dades (EMR), que són molt útils per executar aplicacions Spark.</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ul>
+<li>Entendre els conceptes bàsics d'AWS necessaris per executar Spark.</li>
+<li>Configurar un clúster Spark utilitzant Amazon EMR.</li>
+<li>Executar aplicacions Spark en un clúster EMR.</li>
+<li>Monitoritzar i gestionar el clúster Spark a AWS.</li>
+</ul>
+</div><h1>1. Conceptes Bàsics d'AWS</h1>
+<div class='content'></div><h2>1.1 Amazon EC2</h2>
+<div class='content'><p>Amazon Elastic Compute Cloud (EC2) proporciona capacitat de computació escalable al núvol. Amb EC2, podeu llançar màquines virtuals (instàncies) i configurar-les segons les vostres necessitats.</p>
+</div><h2>1.2 Amazon EMR</h2>
+<div class='content'><p>Amazon Elastic MapReduce (EMR) és un servei gestionat que facilita el processament de grans volums de dades utilitzant frameworks com Apache Spark, Hadoop, i altres. EMR simplifica la configuració, gestió i escalabilitat dels clústers.</p>
+</div><h2>1.3 S3 (Simple Storage Service)</h2>
+<div class='content'><p>Amazon S3 és un servei d'emmagatzematge d'objectes que permet emmagatzemar i recuperar qualsevol quantitat de dades en qualsevol moment. És ideal per emmagatzemar dades d'entrada i sortida per a les aplicacions Spark.</p>
+</div><h1>2. Configurar un Clúster Spark amb Amazon EMR</h1>
+<div class='content'></div><h2>2.1 Crear un Clúster EMR</h2>
+<div class='content'><ol>
+<li><strong>Accediu a la Consola d'AWS</strong>: Inicieu sessió a la consola d'AWS.</li>
+<li><strong>Navegueu a EMR</strong>: Aneu a la secció de serveis i seleccioneu EMR.</li>
+<li><strong>Creeu un Clúster</strong>: Feu clic a &quot;Create cluster&quot;.</li>
+<li><strong>Configuració Bàsica</strong>:
+<ul>
+<li><strong>Nom del Clúster</strong>: Introduïu un nom per al vostre clúster.</li>
+<li><strong>Llançament Ràpid</strong>: Seleccioneu &quot;Go to advanced options&quot; per personalitzar la configuració.</li>
+</ul>
+</li>
+<li><strong>Configuració del Software</strong>:
+<ul>
+<li><strong>Release</strong>: Seleccioneu la versió d'EMR que voleu utilitzar.</li>
+<li><strong>Aplicacions</strong>: Seleccioneu Spark.</li>
+</ul>
+</li>
+<li><strong>Configuració del Clúster</strong>:
+<ul>
+<li><strong>Tipus d'Instància</strong>: Seleccioneu el tipus d'instància per al node mestre i els nodes esclaus (per exemple, m5.xlarge).</li>
+<li><strong>Nombre de Nodes</strong>: Especifiqueu el nombre de nodes esclaus.</li>
+</ul>
+</li>
+<li><strong>Configuració de la Xarxa</strong>:
+<ul>
+<li><strong>VPC</strong>: Seleccioneu la VPC i la subxarxa.</li>
+<li><strong>Seguretat</strong>: Configureu els grups de seguretat per permetre l'accés SSH i altres serveis necessaris.</li>
+</ul>
+</li>
+<li><strong>Emmagatzematge</strong>:
+<ul>
+<li><strong>S3 Bucket</strong>: Especifiqueu un bucket S3 per emmagatzemar els logs del clúster.</li>
+</ul>
+</li>
+<li><strong>Llançar el Clúster</strong>: Feu clic a &quot;Create cluster&quot;.</li>
+</ol>
+</div><h2>2.2 Connectar-se al Clúster</h2>
+<div class='content'><ol>
+<li><strong>Obtenir l'Adreça IP del Node Mestre</strong>: A la consola d'EMR, seleccioneu el vostre clúster i aneu a la pestanya &quot;Summary&quot; per obtenir l'adreça IP del node mestre.</li>
+<li><strong>Connectar-se via SSH</strong>:
+<pre><code class="language-bash">ssh -i /path/to/your-key-pair.pem hadoop@&lt;master-node-public-dns&gt;
+</code></pre>
+</li>
+</ol>
+</div><h1>3. Executar Aplicacions Spark en un Clúster EMR</h1>
+<div class='content'></div><h2>3.1 Carregar Dades a S3</h2>
+<div class='content'><p>Abans d'executar una aplicació Spark, heu de carregar les dades d'entrada a un bucket S3. Podeu utilitzar la consola d'AWS o la línia de comandes d'AWS CLI:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXdzIHMzIGNwIC9wYXRoL3RvL2xvY2FsL2RhdGEgczM6Ly95b3VyLWJ1Y2tldC1uYW1lL2RhdGEv"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>aws s3 cp /path/to/local/data s3://your-bucket-name/data/</pre></div><div class='content'></div><h2>3.2 Enviar una Aplicació Spark</h2>
+<div class='content'><ol>
+<li><strong>Crear un Script Spark</strong>: Creeu un script Spark (per exemple, <code>wordcount.py</code>) i carregueu-lo al node mestre.</li>
+<li><strong>Executar l'Script</strong>:
+<pre><code class="language-bash">spark-submit --deploy-mode cluster s3://your-bucket-name/scripts/wordcount.py s3://your-bucket-name/data/input.txt s3://your-bucket-name/data/output/
+</code></pre>
+</li>
+</ol>
+</div><h2>3.3 Monitoritzar el Clúster</h2>
+<div class='content'><p>Podeu utilitzar la consola d'EMR per monitoritzar l'estat del vostre clúster i les aplicacions Spark. També podeu accedir a la interfície web de Spark per obtenir més detalls sobre les tasques i els treballs.</p>
+</div><h1>4. Gestió del Clúster Spark a AWS</h1>
+<div class='content'></div><h2>4.1 Escalar el Clúster</h2>
+<div class='content'><p>Podeu afegir o eliminar nodes del vostre clúster EMR segons les necessitats de la vostra càrrega de treball. A la consola d'EMR, seleccioneu el vostre clúster i utilitzeu l'opció &quot;Resize&quot; per ajustar el nombre de nodes.</p>
+</div><h2>4.2 Parar i Eliminar el Clúster</h2>
+<div class='content'><p>Quan ja no necessiteu el clúster, és important parar-lo per evitar costos innecessaris. A la consola d'EMR, seleccioneu el vostre clúster i feu clic a &quot;Terminate&quot;.</p>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici 1: Configurar i Executar un Clúster Spark a EMR</h2>
+<div class='content'><ol>
+<li>Creeu un bucket S3 per emmagatzemar les dades d'entrada i sortida.</li>
+<li>Configureu un clúster EMR amb Spark.</li>
+<li>Carregueu un fitxer de text a S3.</li>
+<li>Creeu un script Spark per comptar les paraules en el fitxer de text.</li>
+<li>Envieu l'script Spark al clúster EMR i executeu-lo.</li>
+<li>Verifiqueu els resultats a S3.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><ol>
+<li>Crear un bucket S3:
+<pre><code class="language-bash">aws s3 mb s3://my-spark-bucket
+</code></pre>
+</li>
+<li>Configurar un clúster EMR seguint els passos descrits anteriorment.</li>
+<li>Carregar un fitxer de text a S3:
+<pre><code class="language-bash">aws s3 cp localfile.txt s3://my-spark-bucket/input/
+</code></pre>
+</li>
+<li>Crear un script Spark (<code>wordcount.py</code>):
+<pre><code class="language-python">from pyspark import SparkContext
+
+sc = SparkContext(&quot;local&quot;, &quot;Word Count&quot;)
+text_file = sc.textFile(&quot;s3://my-spark-bucket/input/localfile.txt&quot;)
+counts = text_file.flatMap(lambda line: line.split(&quot; &quot;)) <br>                     .map(lambda word: (word, 1)) <br>                     .reduceByKey(lambda a, b: a + b)
+counts.saveAsTextFile(&quot;s3://my-spark-bucket/output/&quot;)
+</code></pre>
+</li>
+<li>Enviar l'script Spark al clúster EMR:
+<pre><code class="language-bash">spark-submit --deploy-mode cluster s3://my-spark-bucket/scripts/wordcount.py s3://my-spark-bucket/input/localfile.txt s3://my-spark-bucket/output/
+</code></pre>
+</li>
+<li>Verificar els resultats a S3:
+<pre><code class="language-bash">aws s3 ls s3://my-spark-bucket/output/
+</code></pre>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com configurar i executar Apache Spark a AWS utilitzant Amazon EMR. Hem cobert els conceptes bàsics d'AWS, la configuració d'un clúster EMR, l'execució d'aplicacions Spark i la gestió del clúster. Amb aquests coneixements, esteu preparats per aprofitar la potència d'AWS per executar aplicacions Spark a gran escala.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-optimizing-spark-applications' title="Optimització d'Aplicacions Spark">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-02-running-spark-azure' title="Executar Spark a Azure">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

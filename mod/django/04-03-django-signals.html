@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Senyalitzacions de Django</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/django/04-03-django-signals" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/django/04-03-django-signals" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/django/04-03-django-signals" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/django/04-03-django-signals" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/django/04-03-django-signals" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-02-custom-user-models' title="Models d'Usuari Personalitzats">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Senyalitzacions de Django</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-04-testing-in-django' title="Proves en Django">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Les senyalitzacions (signals) en Django són una eina poderosa que permet la comunicació entre diferents parts d'una aplicació. Les senyalitzacions permeten que certs remitents (senders) notifiquin a un conjunt de receptors (receivers) quan es produeixen determinats esdeveniments. Això és especialment útil per desacoblar components de l'aplicació i permetre una major modularitat.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Senyalització (Signal):</strong> Un objecte que representa un esdeveniment que pot ser enviat i rebut.</li>
+<li><strong>Remitent (Sender):</strong> L'objecte que envia la senyalització.</li>
+<li><strong>Receptor (Receiver):</strong> La funció que rep i maneja la senyalització.</li>
+<li><strong>Connexió (Connection):</strong> El procés de vincular un receptor a una senyalització.</li>
+</ul>
+</div><h1>Senyalitzacions Integrades en Django</h1>
+<div class='content'><p>Django proporciona diverses senyalitzacions integrades que es poden utilitzar per respondre a esdeveniments comuns, com ara la creació o eliminació d'objectes. Algunes de les senyalitzacions més utilitzades són:</p>
+<ul>
+<li><code>pre_save</code> i <code>post_save</code>: S'envien abans i després de desar un objecte.</li>
+<li><code>pre_delete</code> i <code>post_delete</code>: S'envien abans i després d'eliminar un objecte.</li>
+<li><code>m2m_changed</code>: S'envia quan es modifica una relació ManyToMany.</li>
+</ul>
+</div><h1>Exemple Pràctic</h1>
+<div class='content'></div><h2>1. Creació d'una Senyalització Personalitzada</h2>
+<div class='content'><p>Primer, crearem una senyalització personalitzada. Suposem que volem enviar una senyalització cada vegada que es crea un nou usuari.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBzaWduYWxzLnB5CmZyb20gZGphbmdvLmRpc3BhdGNoIGltcG9ydCBTaWduYWwKCiMgRGVmaW5pbSBsYSBzZW55YWxpdHphY2nDswp1c2VyX2NyZWF0ZWQgPSBTaWduYWwocHJvdmlkaW5nX2FyZ3M9WyJ1c2VyIl0p"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># signals.py
+from django.dispatch import Signal
+
+# Definim la senyalitzaci&oacute;
+user_created = Signal(providing_args=[&quot;user&quot;])</pre></div><div class='content'></div><h2>2. Enviament de la Senyalització</h2>
+<div class='content'><p>Enviarem la senyalització des de la vista on es crea l'usuari.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyB2aWV3cy5weQpmcm9tIGRqYW5nby5jb250cmliLmF1dGgubW9kZWxzIGltcG9ydCBVc2VyCmZyb20gZGphbmdvLnNob3J0Y3V0cyBpbXBvcnQgcmVuZGVyCmZyb20gLnNpZ25hbHMgaW1wb3J0IHVzZXJfY3JlYXRlZAoKZGVmIGNyZWF0ZV91c2VyKHJlcXVlc3QpOgogICAgaWYgcmVxdWVzdC5tZXRob2QgPT0gJ1BPU1QnOgogICAgICAgIHVzZXJuYW1lID0gcmVxdWVzdC5QT1NUWyd1c2VybmFtZSddCiAgICAgICAgcGFzc3dvcmQgPSByZXF1ZXN0LlBPU1RbJ3Bhc3N3b3JkJ10KICAgICAgICB1c2VyID0gVXNlci5vYmplY3RzLmNyZWF0ZV91c2VyKHVzZXJuYW1lPXVzZXJuYW1lLCBwYXNzd29yZD1wYXNzd29yZCkKICAgICAgICAKICAgICAgICAjIEVudmllbSBsYSBzZW55YWxpdHphY2nDswogICAgICAgIHVzZXJfY3JlYXRlZC5zZW5kKHNlbmRlcj1Vc2VyLCB1c2VyPXVzZXIpCiAgICAgICAgCiAgICAgICAgcmV0dXJuIHJlbmRlcihyZXF1ZXN0LCAndXNlcl9jcmVhdGVkLmh0bWwnLCB7J3VzZXInOiB1c2VyfSkKICAgIHJldHVybiByZW5kZXIocmVxdWVzdCwgJ2NyZWF0ZV91c2VyLmh0bWwnKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># views.py
+from django.contrib.auth.models import User
+from django.shortcuts import render
+from .signals import user_created
+
+def create_user(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = User.objects.create_user(username=username, password=password)
+        
+        # Enviem la senyalitzaci&oacute;
+        user_created.send(sender=User, user=user)
+        
+        return render(request, 'user_created.html', {'user': user})
+    return render(request, 'create_user.html')</pre></div><div class='content'></div><h2>3. Connexió d'un Receptor a la Senyalització</h2>
+<div class='content'><p>Ara, connectarem un receptor a la nostra senyalització personalitzada.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyByZWNlaXZlcnMucHkKZnJvbSBkamFuZ28uZGlzcGF0Y2ggaW1wb3J0IHJlY2VpdmVyCmZyb20gLnNpZ25hbHMgaW1wb3J0IHVzZXJfY3JlYXRlZAoKQHJlY2VpdmVyKHVzZXJfY3JlYXRlZCkKZGVmIHVzZXJfY3JlYXRlZF9oYW5kbGVyKHNlbmRlciwgKiprd2FyZ3MpOgogICAgdXNlciA9IGt3YXJnc1sndXNlciddCiAgICBwcmludChmIk5vdSB1c3VhcmkgY3JlYXQ6IHt1c2VyLnVzZXJuYW1lfSIp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># receivers.py
+from django.dispatch import receiver
+from .signals import user_created
+
+@receiver(user_created)
+def user_created_handler(sender, **kwargs):
+    user = kwargs['user']
+    print(f&quot;Nou usuari creat: {user.username}&quot;)</pre></div><div class='content'></div><h2>4. Registre del Receptor</h2>
+<div class='content'><p>Finalment, assegurem-nos que el receptor es registri quan l'aplicació es carregui. Això es pot fer en el fitxer <code>apps.py</code> de l'aplicació.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhcHBzLnB5CmZyb20gZGphbmdvLmFwcHMgaW1wb3J0IEFwcENvbmZpZwoKY2xhc3MgTXlBcHBDb25maWcoQXBwQ29uZmlnKToKICAgIG5hbWUgPSAnbXlhcHAnCgogICAgZGVmIHJlYWR5KHNlbGYpOgogICAgICAgIGltcG9ydCBteWFwcC5yZWNlaXZlcnM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># apps.py
+from django.apps import AppConfig
+
+class MyAppConfig(AppConfig):
+    name = 'myapp'
+
+    def ready(self):
+        import myapp.receivers</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici</h2>
+<div class='content'><ol>
+<li>Crea una senyalització que s'enviï cada vegada que es modifiqui un objecte <code>Profile</code>.</li>
+<li>Connecta un receptor a aquesta senyalització que imprimeixi un missatge amb el nom d'usuari del perfil modificat.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><h4>1. Definició de la Senyalització</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBzaWduYWxzLnB5CmZyb20gZGphbmdvLmRpc3BhdGNoIGltcG9ydCBTaWduYWwKCnByb2ZpbGVfdXBkYXRlZCA9IFNpZ25hbChwcm92aWRpbmdfYXJncz1bInByb2ZpbGUiXSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># signals.py
+from django.dispatch import Signal
+
+profile_updated = Signal(providing_args=[&quot;profile&quot;])</pre></div><div class='content'><h4>2. Enviament de la Senyalització</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBtb2RlbHMucHkKZnJvbSBkamFuZ28uZGIubW9kZWxzLnNpZ25hbHMgaW1wb3J0IHBvc3Rfc2F2ZQpmcm9tIGRqYW5nby5kaXNwYXRjaCBpbXBvcnQgcmVjZWl2ZXIKZnJvbSAuc2lnbmFscyBpbXBvcnQgcHJvZmlsZV91cGRhdGVkCmZyb20gLm1vZGVscyBpbXBvcnQgUHJvZmlsZQoKQHJlY2VpdmVyKHBvc3Rfc2F2ZSwgc2VuZGVyPVByb2ZpbGUpCmRlZiBwcm9maWxlX3Bvc3Rfc2F2ZShzZW5kZXIsIGluc3RhbmNlLCAqKmt3YXJncyk6CiAgICBwcm9maWxlX3VwZGF0ZWQuc2VuZChzZW5kZXI9UHJvZmlsZSwgcHJvZmlsZT1pbnN0YW5jZSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># models.py
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from .signals import profile_updated
+from .models import Profile
+
+@receiver(post_save, sender=Profile)
+def profile_post_save(sender, instance, **kwargs):
+    profile_updated.send(sender=Profile, profile=instance)</pre></div><div class='content'><h4>3. Connexió del Receptor</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyByZWNlaXZlcnMucHkKZnJvbSBkamFuZ28uZGlzcGF0Y2ggaW1wb3J0IHJlY2VpdmVyCmZyb20gLnNpZ25hbHMgaW1wb3J0IHByb2ZpbGVfdXBkYXRlZAoKQHJlY2VpdmVyKHByb2ZpbGVfdXBkYXRlZCkKZGVmIHByb2ZpbGVfdXBkYXRlZF9oYW5kbGVyKHNlbmRlciwgKiprd2FyZ3MpOgogICAgcHJvZmlsZSA9IGt3YXJnc1sncHJvZmlsZSddCiAgICBwcmludChmIlBlcmZpbCBhY3R1YWxpdHphdDoge3Byb2ZpbGUudXNlci51c2VybmFtZX0iKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># receivers.py
+from django.dispatch import receiver
+from .signals import profile_updated
+
+@receiver(profile_updated)
+def profile_updated_handler(sender, **kwargs):
+    profile = kwargs['profile']
+    print(f&quot;Perfil actualitzat: {profile.user.username}&quot;)</pre></div><div class='content'><h4>4. Registre del Receptor</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBhcHBzLnB5CmZyb20gZGphbmdvLmFwcHMgaW1wb3J0IEFwcENvbmZpZwoKY2xhc3MgTXlBcHBDb25maWcoQXBwQ29uZmlnKToKICAgIG5hbWUgPSAnbXlhcHAnCgogICAgZGVmIHJlYWR5KHNlbGYpOgogICAgICAgIGltcG9ydCBteWFwcC5yZWNlaXZlcnM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># apps.py
+from django.apps import AppConfig
+
+class MyAppConfig(AppConfig):
+    name = 'myapp'
+
+    def ready(self):
+        import myapp.receivers</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Les senyalitzacions de Django són una eina poderosa per desacoblar components de l'aplicació i permetre una major modularitat. En aquest tema, hem après a crear senyalitzacions personalitzades, enviar-les i connectar receptors per manejar-les. Amb aquesta eina, pots millorar la comunicació entre diferents parts de la teva aplicació de manera eficient i elegant.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-02-custom-user-models' title="Models d'Usuari Personalitzats">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-04-testing-in-django' title="Proves en Django">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

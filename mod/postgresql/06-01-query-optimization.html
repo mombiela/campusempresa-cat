@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimització de consultes</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/postgresql/06-01-query-optimization" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/postgresql/06-01-query-optimization" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/postgresql/06-01-query-optimization" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/postgresql/06-01-query-optimization" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/postgresql/06-01-query-optimization" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-transactions-and-concurrency' title="Transaccions i concurrència">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Optimització de consultes</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-02-indexing-strategies' title="Estratègies d'indexació">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>L'optimització de consultes és una part fonamental per assegurar que les aplicacions que utilitzen PostgreSQL funcionin de manera eficient i ràpida. En aquest tema, explorarem diverses tècniques i estratègies per optimitzar les consultes SQL en PostgreSQL.</p>
+</div><h1>Objectius d'aprenentatge</h1>
+<div class='content'><ul>
+<li>Comprendre la importància de l'optimització de consultes.</li>
+<li>Aprendre a utilitzar l'explain per analitzar consultes.</li>
+<li>Conèixer les tècniques bàsiques d'optimització de consultes.</li>
+<li>Aplicar estratègies per millorar el rendiment de les consultes.</li>
+</ul>
+</div><h1>1. Importància de l'optimització de consultes</h1>
+<div class='content'><p>L'optimització de consultes és crucial per diverses raons:</p>
+<ul>
+<li><strong>Rendiment</strong>: Consultes optimitzades s'executen més ràpidament, millorant el rendiment general de l'aplicació.</li>
+<li><strong>Escalabilitat</strong>: Millorar les consultes permet que la base de dades gestioni millor grans volums de dades.</li>
+<li><strong>Eficiència de recursos</strong>: Consultes més eficients utilitzen menys recursos del sistema, com CPU i memòria.</li>
+</ul>
+</div><h1>2. Utilitzant EXPLAIN per analitzar consultes</h1>
+<div class='content'><p>L'ordre <code>EXPLAIN</code> en PostgreSQL proporciona informació sobre com el sistema d'execució de consultes planeja executar una consulta. Aquesta informació és essencial per entendre i optimitzar les consultes.</p>
+</div><h2>Exemple d'ús de EXPLAIN</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RVhQTEFJTiBTRUxFQ1QgKiBGUk9NIGVtcGxveWVlcyBXSEVSRSBkZXBhcnRtZW50ID0gJ1NhbGVzJzs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>EXPLAIN SELECT * FROM employees WHERE department = 'Sales';</pre></div><div class='content'></div><h2>Sortida de EXPLAIN</h2>
+<div class='content'><p>La sortida de <code>EXPLAIN</code> mostra el pla d'execució de la consulta. Aquí hi ha un exemple de sortida simplificada:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U2VxIFNjYW4gb24gZW1wbG95ZWVzICAoY29zdD0wLjAwLi4zNS41MCByb3dzPTEwIHdpZHRoPTEwMCkKICBGaWx0ZXI6IChkZXBhcnRtZW50ID0gJ1NhbGVzJzo6dGV4dCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Seq Scan on employees  (cost=0.00..35.50 rows=10 width=100)
+  Filter: (department = 'Sales'::text)</pre></div><div class='content'></div><h2>EXPLAIN ANALYZE</h2>
+<div class='content'><p><code>EXPLAIN ANALYZE</code> executa la consulta i proporciona informació addicional sobre el temps d'execució real.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RVhQTEFJTiBBTkFMWVpFIFNFTEVDVCAqIEZST00gZW1wbG95ZWVzIFdIRVJFIGRlcGFydG1lbnQgPSAnU2FsZXMnOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>EXPLAIN ANALYZE SELECT * FROM employees WHERE department = 'Sales';</pre></div><div class='content'></div><h1>3. Tècniques bàsiques d'optimització de consultes</h1>
+<div class='content'></div><h2>3.1. Utilitzar índexs</h2>
+<div class='content'><p>Els índexs poden millorar significativament el rendiment de les consultes. Assegura't de crear índexs en les columnes que s'utilitzen freqüentment en les condicions <code>WHERE</code>, <code>JOIN</code> i <code>ORDER BY</code>.</p>
+<h4>Exemple de creació d'un índex</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIElOREVYIGlkeF9kZXBhcnRtZW50IE9OIGVtcGxveWVlcyhkZXBhcnRtZW50KTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE INDEX idx_department ON employees(department);</pre></div><div class='content'></div><h2>3.2. Evitar SELECT *</h2>
+<div class='content'><p>Utilitzar <code>SELECT *</code> pot ser ineficient, especialment si només necessites unes poques columnes. És millor especificar només les columnes necessàries.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gRXZpdGFyClNFTEVDVCAqIEZST00gZW1wbG95ZWVzIFdIRVJFIGRlcGFydG1lbnQgPSAnU2FsZXMnOwoKLS0gTWlsbG9yClNFTEVDVCBuYW1lLCBwb3NpdGlvbiBGUk9NIGVtcGxveWVlcyBXSEVSRSBkZXBhcnRtZW50ID0gJ1NhbGVzJzs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Evitar
+SELECT * FROM employees WHERE department = 'Sales';
+
+-- Millor
+SELECT name, position FROM employees WHERE department = 'Sales';</pre></div><div class='content'></div><h2>3.3. Utilitzar LIMIT</h2>
+<div class='content'><p>Si només necessites un nombre limitat de files, utilitza <code>LIMIT</code> per reduir la quantitat de dades retornades.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIG5hbWUsIHBvc2l0aW9uIEZST00gZW1wbG95ZWVzIFdIRVJFIGRlcGFydG1lbnQgPSAnU2FsZXMnIExJTUlUIDEwOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT name, position FROM employees WHERE department = 'Sales' LIMIT 10;</pre></div><div class='content'></div><h2>3.4. Optimitzar les subconsultes</h2>
+<div class='content'><p>Les subconsultes poden ser lentes. Considera utilitzar <code>JOIN</code> o <code>WITH</code> (CTEs) per millorar el rendiment.</p>
+<h4>Exemple</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gU3ViY29uc3VsdGEKU0VMRUNUIG5hbWUgRlJPTSBlbXBsb3llZXMgV0hFUkUgZGVwYXJ0bWVudF9pZCBJTiAoU0VMRUNUIGlkIEZST00gZGVwYXJ0bWVudHMgV0hFUkUgbmFtZSA9ICdTYWxlcycpOwoKLS0gVXRpbGl0emFudCBKT0lOClNFTEVDVCBlLm5hbWUgRlJPTSBlbXBsb3llZXMgZSBKT0lOIGRlcGFydG1lbnRzIGQgT04gZS5kZXBhcnRtZW50X2lkID0gZC5pZCBXSEVSRSBkLm5hbWUgPSAnU2FsZXMnOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Subconsulta
+SELECT name FROM employees WHERE department_id IN (SELECT id FROM departments WHERE name = 'Sales');
+
+-- Utilitzant JOIN
+SELECT e.name FROM employees e JOIN departments d ON e.department_id = d.id WHERE d.name = 'Sales';</pre></div><div class='content'></div><h1>4. Estratègies avançades d'optimització</h1>
+<div class='content'></div><h2>4.1. Particionament de taules</h2>
+<div class='content'><p>El particionament de taules pot millorar el rendiment de les consultes en taules molt grans dividint-les en parts més petites.</p>
+<h4>Exemple de particionament</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIGVtcGxveWVlcyAoCiAgICBpZCBTRVJJQUwgUFJJTUFSWSBLRVksCiAgICBuYW1lIFZBUkNIQVIoMTAwKSwKICAgIGRlcGFydG1lbnQgVkFSQ0hBUig1MCksCiAgICBoaXJlX2RhdGUgREFURQopIFBBUlRJVElPTiBCWSBSQU5HRSAoaGlyZV9kYXRlKTsKCkNSRUFURSBUQUJMRSBlbXBsb3llZXNfMjAyMCBQQVJUSVRJT04gT0YgZW1wbG95ZWVzIEZPUiBWQUxVRVMgRlJPTSAoJzIwMjAtMDEtMDEnKSBUTyAoJzIwMjEtMDEtMDEnKTsKQ1JFQVRFIFRBQkxFIGVtcGxveWVlc18yMDIxIFBBUlRJVElPTiBPRiBlbXBsb3llZXMgRk9SIFZBTFVFUyBGUk9NICgnMjAyMS0wMS0wMScpIFRPICgnMjAyMi0wMS0wMScpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE employees (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    department VARCHAR(50),
+    hire_date DATE
+) PARTITION BY RANGE (hire_date);
+
+CREATE TABLE employees_2020 PARTITION OF employees FOR VALUES FROM ('2020-01-01') TO ('2021-01-01');
+CREATE TABLE employees_2021 PARTITION OF employees FOR VALUES FROM ('2021-01-01') TO ('2022-01-01');</pre></div><div class='content'></div><h2>4.2. Utilitzar materialized views</h2>
+<div class='content'><p>Les vistes materialitzades emmagatzemen els resultats d'una consulta, millorant el rendiment per a consultes complexes que es realitzen freqüentment.</p>
+<h4>Exemple de creació d'una vista materialitzada</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIE1BVEVSSUFMSVpFRCBWSUVXIHNhbGVzX3N1bW1hcnkgQVMKU0VMRUNUIGRlcGFydG1lbnQsIENPVU5UKCopIEFTIHRvdGFsX3NhbGVzCkZST00gc2FsZXMKR1JPVVAgQlkgZGVwYXJ0bWVudDs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE MATERIALIZED VIEW sales_summary AS
+SELECT department, COUNT(*) AS total_sales
+FROM sales
+GROUP BY department;</pre></div><div class='content'></div><h2>4.3. Anàlisi de plans d'execució</h2>
+<div class='content'><p>Revisar i entendre els plans d'execució és clau per identificar colls d'ampolla i optimitzar les consultes.</p>
+</div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear un índex</h2>
+<div class='content'><p>Crea un índex en la columna <code>hire_date</code> de la taula <code>employees</code> i analitza el rendiment de la següent consulta abans i després de crear l'índex:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUICogRlJPTSBlbXBsb3llZXMgV0hFUkUgaGlyZV9kYXRlID4gJzIwMjEtMDEtMDEnOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT * FROM employees WHERE hire_date &gt; '2021-01-01';</pre></div><div class='content'></div><h2>Exercici 2: Optimitzar una consulta amb JOIN</h2>
+<div class='content'><p>Optimitza la següent consulta utilitzant <code>JOIN</code> en lloc d'una subconsulta:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIG5hbWUgRlJPTSBlbXBsb3llZXMgV0hFUkUgZGVwYXJ0bWVudF9pZCBJTiAoU0VMRUNUIGlkIEZST00gZGVwYXJ0bWVudHMgV0hFUkUgbmFtZSA9ICdFbmdpbmVlcmluZycpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT name FROM employees WHERE department_id IN (SELECT id FROM departments WHERE name = 'Engineering');</pre></div><div class='content'></div><h2>Solucions</h2>
+<div class='content'><h4>Solució Exercici 1</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gQWJhbnMgZGUgY3JlYXIgbCfDrW5kZXgKRVhQTEFJTiBBTkFMWVpFIFNFTEVDVCAqIEZST00gZW1wbG95ZWVzIFdIRVJFIGhpcmVfZGF0ZSA+ICcyMDIxLTAxLTAxJzsKCi0tIENyZWFyIGwnw61uZGV4CkNSRUFURSBJTkRFWCBpZHhfaGlyZV9kYXRlIE9OIGVtcGxveWVlcyhoaXJlX2RhdGUpOwoKLS0gRGVzcHLDqXMgZGUgY3JlYXIgbCfDrW5kZXgKRVhQTEFJTiBBTkFMWVpFIFNFTEVDVCAqIEZST00gZW1wbG95ZWVzIFdIRVJFIGhpcmVfZGF0ZSA+ICcyMDIxLTAxLTAxJzs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Abans de crear l'&iacute;ndex
+EXPLAIN ANALYZE SELECT * FROM employees WHERE hire_date &gt; '2021-01-01';
+
+-- Crear l'&iacute;ndex
+CREATE INDEX idx_hire_date ON employees(hire_date);
+
+-- Despr&eacute;s de crear l'&iacute;ndex
+EXPLAIN ANALYZE SELECT * FROM employees WHERE hire_date &gt; '2021-01-01';</pre></div><div class='content'><h4>Solució Exercici 2</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gVXRpbGl0emFudCBKT0lOClNFTEVDVCBlLm5hbWUgRlJPTSBlbXBsb3llZXMgZSBKT0lOIGRlcGFydG1lbnRzIGQgT04gZS5kZXBhcnRtZW50X2lkID0gZC5pZCBXSEVSRSBkLm5hbWUgPSAnRW5naW5lZXJpbmcnOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Utilitzant JOIN
+SELECT e.name FROM employees e JOIN departments d ON e.department_id = d.id WHERE d.name = 'Engineering';</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>L'optimització de consultes és una habilitat essencial per a qualsevol administrador de bases de dades o desenvolupador que treballi amb PostgreSQL. Mitjançant l'ús d'eines com <code>EXPLAIN</code>, la creació d'índexs adequats i l'aplicació de tècniques avançades com el particionament de taules i les vistes materialitzades, pots millorar significativament el rendiment de les teves consultes. Practica aquestes tècniques amb els exercicis proporcionats per consolidar els teus coneixements.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-04-transactions-and-concurrency' title="Transaccions i concurrència">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-02-indexing-strategies' title="Estratègies d'indexació">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

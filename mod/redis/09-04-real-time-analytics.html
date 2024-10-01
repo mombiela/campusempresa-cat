@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anàlisi en Temps Real</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/redis/09-04-real-time-analytics" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/redis/09-04-real-time-analytics" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/redis/09-04-real-time-analytics" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/redis/09-04-real-time-analytics" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/redis/09-04-real-time-analytics" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-03-message-queues' title="Cues de Missatges">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Anàlisi en Temps Real</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-01-deployment-strategies' title="Estratègies de Desplegament">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>L'anàlisi en temps real és una de les aplicacions més potents de Redis, gràcies a la seva velocitat i capacitat per gestionar grans volums de dades amb baixa latència. En aquest tema, explorarem com utilitzar Redis per a l'anàlisi en temps real, incloent-hi conceptes clau, exemples pràctics i exercicis per reforçar l'aprenentatge.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Fluxos de Dades (Streams)</strong>:</p>
+<ul>
+<li>Redis Streams és una estructura de dades introduïda a Redis 5.0 que permet gestionar fluxos de dades de manera eficient.</li>
+<li>Els fluxos de dades són ideals per a aplicacions que necessiten processar esdeveniments en temps real, com ara sistemes de monitorització, cues de missatges i anàlisi de logs.</li>
+</ul>
+</li>
+<li>
+<p><strong>Publicació/Subscripció (Pub/Sub)</strong>:</p>
+<ul>
+<li>El model Pub/Sub de Redis permet la comunicació entre diferents parts d'una aplicació mitjançant la publicació de missatges en canals als quals altres parts poden subscriure's.</li>
+<li>És útil per a la difusió d'esdeveniments en temps real a múltiples consumidors.</li>
+</ul>
+</li>
+<li>
+<p><strong>Comptadors i Estadístiques</strong>:</p>
+<ul>
+<li>Redis pot emmagatzemar i actualitzar comptadors i estadístiques en temps real, permetent l'anàlisi immediata de dades com ara visites a pàgines, clics en anuncis, etc.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Exemples Pràctics</h1>
+<div class='content'></div><h2>1. Utilitzant Redis Streams</h2>
+<div class='content'><h4>Creació d'un Flux de Dades</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WEFERCBteXN0cmVhbSAqIHNlbnNvci1pZCAxMjM0IHRlbXBlcmF0dXJlIDE5Ljg="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XADD mystream * sensor-id 1234 temperature 19.8</pre></div><div class='content'><ul>
+<li><code>XADD</code> és la comanda per afegir un nou esdeveniment a un flux.</li>
+<li><code>mystream</code> és el nom del flux.</li>
+<li><code>*</code> indica que Redis ha de generar un identificador únic per a l'esdeveniment.</li>
+<li><code>sensor-id</code> i <code>temperature</code> són els camps de dades de l'esdeveniment.</li>
+</ul>
+<h4>Lectura d'Esdeveniments del Flux</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WFJBTkdFIG15c3RyZWFtIC0gKw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XRANGE mystream - +</pre></div><div class='content'><ul>
+<li><code>XRANGE</code> llegeix esdeveniments d'un flux.</li>
+<li><code>-</code> i <code>+</code> indiquen que volem llegir des del principi fins al final del flux.</li>
+</ul>
+</div><h2>2. Utilitzant Pub/Sub</h2>
+<div class='content'><h4>Publicació d'un Missatge</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UFVCTElTSCBteWNoYW5uZWwgIkhlbGxvLCBXb3JsZCEi"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>PUBLISH mychannel &quot;Hello, World!&quot;</pre></div><div class='content'><ul>
+<li><code>PUBLISH</code> envia un missatge a un canal.</li>
+<li><code>mychannel</code> és el nom del canal.</li>
+<li><code>&quot;Hello, World!&quot;</code> és el missatge que es publica.</li>
+</ul>
+<h4>Subscripció a un Canal</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U1VCU0NSSUJFIG15Y2hhbm5lbA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SUBSCRIBE mychannel</pre></div><div class='content'><ul>
+<li><code>SUBSCRIBE</code> permet escoltar missatges d'un canal.</li>
+<li><code>mychannel</code> és el nom del canal al qual ens subscrivim.</li>
+</ul>
+</div><h2>3. Comptadors i Estadístiques</h2>
+<div class='content'><h4>Incrementar un Comptador</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("SU5DUiBwYWdlOmhvbWU6dmlld3M="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>INCR page:home:views</pre></div><div class='content'><ul>
+<li><code>INCR</code> incrementa el valor d'una clau.</li>
+<li><code>page:home:views</code> és la clau del comptador.</li>
+</ul>
+<h4>Obtenir el Valor d'un Comptador</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("R0VUIHBhZ2U6aG9tZTp2aWV3cw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>GET page:home:views</pre></div><div class='content'><ul>
+<li><code>GET</code> obté el valor d'una clau.</li>
+<li><code>page:home:views</code> és la clau del comptador.</li>
+</ul>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Creació i Lectura d'un Flux de Dades</h2>
+<div class='content'><ol>
+<li>Crea un flux de dades anomenat <code>temperature_stream</code> i afegeix-hi esdeveniments amb els camps <code>sensor-id</code> i <code>temperature</code>.</li>
+<li>Llegeix els esdeveniments del flux i mostra'ls.</li>
+</ol>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("WEFERCB0ZW1wZXJhdHVyZV9zdHJlYW0gKiBzZW5zb3ItaWQgMSB0ZW1wZXJhdHVyZSAyMi41ClhBREQgdGVtcGVyYXR1cmVfc3RyZWFtICogc2Vuc29yLWlkIDIgdGVtcGVyYXR1cmUgMjMuMQpYUkFOR0UgdGVtcGVyYXR1cmVfc3RyZWFtIC0gKw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>XADD temperature_stream * sensor-id 1 temperature 22.5
+XADD temperature_stream * sensor-id 2 temperature 23.1
+XRANGE temperature_stream - +</pre></div><div class='content'></div><h2>Exercici 2: Publicació i Subscripció amb Pub/Sub</h2>
+<div class='content'><ol>
+<li>Publica un missatge en un canal anomenat <code>alerts</code>.</li>
+<li>Subscriu-te al canal <code>alerts</code> i mostra els missatges rebuts.</li>
+</ol>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UFVCTElTSCBhbGVydHMgIlRlbXBlcmF0dXJlIHRocmVzaG9sZCBleGNlZWRlZCEiClNVQlNDUklCRSBhbGVydHM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>PUBLISH alerts &quot;Temperature threshold exceeded!&quot;
+SUBSCRIBE alerts</pre></div><div class='content'></div><h2>Exercici 3: Comptadors en Temps Real</h2>
+<div class='content'><ol>
+<li>Incrementa un comptador anomenat <code>page:contact:views</code> cada vegada que es visita la pàgina de contacte.</li>
+<li>Obté el valor actual del comptador.</li>
+</ol>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("SU5DUiBwYWdlOmNvbnRhY3Q6dmlld3MKR0VUIHBhZ2U6Y29udGFjdDp2aWV3cw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>INCR page:contact:views
+GET page:contact:views</pre></div><div class='content'></div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ul>
+<li><strong>No oblidar-se de gestionar els identificadors de fluxos</strong>: Quan es treballa amb fluxos de dades, és important gestionar correctament els identificadors per evitar la pèrdua d'esdeveniments.</li>
+<li><strong>Evitar la sobrecàrrega de Pub/Sub</strong>: Utilitzar Pub/Sub per a comunicacions crítiques pot ser arriscat, ja que els missatges no es guarden si no hi ha cap subscripció activa en el moment de la publicació.</li>
+<li><strong>Optimitzar l'ús de memòria</strong>: Quan es treballa amb grans volums de dades en temps real, és crucial optimitzar l'ús de memòria per evitar problemes de rendiment.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem explorat com utilitzar Redis per a l'anàlisi en temps real, incloent-hi fluxos de dades, Pub/Sub i comptadors. Aquests conceptes i tècniques són fonamentals per construir aplicacions que necessiten processar i analitzar dades de manera immediata. Amb els exemples pràctics i exercicis proporcionats, hauríeu de tenir una bona comprensió de com aplicar Redis en escenaris d'anàlisi en temps real. En el següent tema, explorarem com desplegar Redis en entorns de producció per assegurar-ne la fiabilitat i l'eficiència.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-03-message-queues' title="Cues de Missatges">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-01-deployment-strategies' title="Estratègies de Desplegament">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

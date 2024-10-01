@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clàusula HAVING</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/sql/04-05-having-clause" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/sql/04-05-having-clause" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/sql/04-05-having-clause" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/sql/04-05-having-clause" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/sql/04-05-having-clause" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-04-aggregating-data-group-by' title="Agrupar dades amb GROUP BY">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Clàusula HAVING</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-01-insert-statement' title="Instrucció INSERT">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>La clàusula <code>HAVING</code> en SQL s'utilitza per filtrar els resultats d'una consulta després d'haver aplicat una funció d'agregació com <code>SUM()</code>, <code>COUNT()</code>, <code>AVG()</code>, etc. És similar a la clàusula <code>WHERE</code>, però <code>WHERE</code> no pot ser utilitzada amb funcions d'agregació.</p>
+</div><h1>Sintaxi</h1>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGNvbHVtbmExLCBmdW5jacOzX2FncmVnYWNpw7MoY29sdW1uYTIpCkZST00gdGF1bGEKR1JPVVAgQlkgY29sdW1uYTEKSEFWSU5HIGNvbmRpY2nDszs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT columna1, funci&oacute;_agregaci&oacute;(columna2)
+FROM taula
+GROUP BY columna1
+HAVING condici&oacute;;</pre></div><div class='content'></div><h1>Explicació de la sintaxi</h1>
+<div class='content'><ul>
+<li><strong>SELECT columna1, funció_agregació(columna2)</strong>: Selecciona les columnes i aplica una funció d'agregació.</li>
+<li><strong>FROM taula</strong>: Indica la taula de la qual es volen obtenir les dades.</li>
+<li><strong>GROUP BY columna1</strong>: Agrupa les files per la columna especificada.</li>
+<li><strong>HAVING condició</strong>: Filtra els grups creats per la clàusula <code>GROUP BY</code> segons la condició especificada.</li>
+</ul>
+</div><h1>Exemple pràctic</h1>
+<div class='content'><p>Suposem que tenim una taula <code>vendes</code> amb les següents columnes: <code>producte</code>, <code>quantitat</code> i <code>preu</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIHZlbmRlcyAoCiAgICBwcm9kdWN0ZSBWQVJDSEFSKDUwKSwKICAgIHF1YW50aXRhdCBJTlQsCiAgICBwcmV1IERFQ0lNQUwoMTAsIDIpCik7CgpJTlNFUlQgSU5UTyB2ZW5kZXMgKHByb2R1Y3RlLCBxdWFudGl0YXQsIHByZXUpIFZBTFVFUwooJ1Byb2R1Y3RlIEEnLCAxMCwgMjAuMDApLAooJ1Byb2R1Y3RlIEInLCA1LCAxNS4wMCksCignUHJvZHVjdGUgQScsIDcsIDIwLjAwKSwKKCdQcm9kdWN0ZSBDJywgMywgMjUuMDApLAooJ1Byb2R1Y3RlIEInLCA4LCAxNS4wMCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE vendes (
+    producte VARCHAR(50),
+    quantitat INT,
+    preu DECIMAL(10, 2)
+);
+
+INSERT INTO vendes (producte, quantitat, preu) VALUES
+('Producte A', 10, 20.00),
+('Producte B', 5, 15.00),
+('Producte A', 7, 20.00),
+('Producte C', 3, 25.00),
+('Producte B', 8, 15.00);</pre></div><div class='content'></div><h2>Consulta amb HAVING</h2>
+<div class='content'><p>Volem saber quins productes han tingut una quantitat total venuda superior a 15 unitats.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIHByb2R1Y3RlLCBTVU0ocXVhbnRpdGF0KSBBUyB0b3RhbF9xdWFudGl0YXQKRlJPTSB2ZW5kZXMKR1JPVVAgQlkgcHJvZHVjdGUKSEFWSU5HIFNVTShxdWFudGl0YXQpID4gMTU7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT producte, SUM(quantitat) AS total_quantitat
+FROM vendes
+GROUP BY producte
+HAVING SUM(quantitat) &gt; 15;</pre></div><div class='content'></div><h2>Resultat</h2>
+<div class='content'><table>
+<thead>
+<tr>
+<th>producte</th>
+<th>total_quantitat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Producte A</td>
+<td>17</td>
+</tr>
+<tr>
+<td>Producte B</td>
+<td>13</td>
+</tr>
+</tbody>
+</table>
+<p>En aquest cas, només el <code>Producte A</code> compleix la condició de tenir una quantitat total venuda superior a 15 unitats.</p>
+</div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1</h2>
+<div class='content'><p>Tenim una taula <code>empleats</code> amb les següents columnes: <code>departament</code>, <code>salari</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIGVtcGxlYXRzICgKICAgIGRlcGFydGFtZW50IFZBUkNIQVIoNTApLAogICAgc2FsYXJpIERFQ0lNQUwoMTAsIDIpCik7CgpJTlNFUlQgSU5UTyBlbXBsZWF0cyAoZGVwYXJ0YW1lbnQsIHNhbGFyaSkgVkFMVUVTCignSVQnLCA2MDAwMCksCignSFInLCA1MDAwMCksCignSVQnLCA3MDAwMCksCignU2FsZXMnLCA0NTAwMCksCignU2FsZXMnLCA1NTAwMCksCignSFInLCA2MDAwMCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE empleats (
+    departament VARCHAR(50),
+    salari DECIMAL(10, 2)
+);
+
+INSERT INTO empleats (departament, salari) VALUES
+('IT', 60000),
+('HR', 50000),
+('IT', 70000),
+('Sales', 45000),
+('Sales', 55000),
+('HR', 60000);</pre></div><div class='content'><p><strong>Pregunta:</strong> Escriu una consulta per trobar els departaments on el salari mitjà és superior a 55000.</p>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGRlcGFydGFtZW50LCBBVkcoc2FsYXJpKSBBUyBzYWxhcmlfbWl0amEKRlJPTSBlbXBsZWF0cwpHUk9VUCBCWSBkZXBhcnRhbWVudApIQVZJTkcgQVZHKHNhbGFyaSkgPiA1NTAwMDs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT departament, AVG(salari) AS salari_mitja
+FROM empleats
+GROUP BY departament
+HAVING AVG(salari) &gt; 55000;</pre></div><div class='content'></div><h2>Resultat esperat</h2>
+<div class='content'><table>
+<thead>
+<tr>
+<th>departament</th>
+<th>salari_mitja</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IT</td>
+<td>65000.00</td>
+</tr>
+</tbody>
+</table>
+</div><h1>Errors comuns</h1>
+<div class='content'><ol>
+<li><strong>Utilitzar HAVING sense GROUP BY</strong>: La clàusula <code>HAVING</code> només té sentit quan s'utilitza amb <code>GROUP BY</code>.</li>
+<li><strong>Confondre WHERE i HAVING</strong>: Recorda que <code>WHERE</code> s'utilitza per filtrar files abans de l'agregació, mentre que <code>HAVING</code> s'utilitza per filtrar grups després de l'agregació.</li>
+</ol>
+</div><h1>Consells addicionals</h1>
+<div class='content'><ul>
+<li>Utilitza <code>HAVING</code> per filtrar resultats basats en funcions d'agregació.</li>
+<li>Combina <code>HAVING</code> amb <code>GROUP BY</code> per obtenir resultats més significatius en les teves consultes.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>La clàusula <code>HAVING</code> és una eina poderosa per filtrar resultats després d'aplicar funcions d'agregació. És essencial per a consultes que necessiten analitzar dades agrupades i aplicar condicions sobre aquestes agrupacions. Amb la pràctica, dominaràs l'ús de <code>HAVING</code> per crear consultes SQL més eficients i efectives.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-04-aggregating-data-group-by' title="Agrupar dades amb GROUP BY">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-01-insert-statement' title="Instrucció INSERT">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

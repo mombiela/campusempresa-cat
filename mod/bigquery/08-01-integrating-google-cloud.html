@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integració amb serveis de Google Cloud</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/bigquery/08-01-integrating-google-cloud" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/bigquery/08-01-integrating-google-cloud" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/bigquery/08-01-integrating-google-cloud" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/bigquery/08-01-integrating-google-cloud" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/bigquery/08-01-integrating-google-cloud" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-compliance-best-practices' title="Compliment i millors pràctiques">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Integració amb serveis de Google Cloud</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-using-dataflow' title="Ús de BigQuery amb Dataflow">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem com BigQuery es pot integrar amb altres serveis de Google Cloud per crear solucions més robustes i eficients. La integració amb altres serveis permet aprofitar les capacitats de Google Cloud per a l'emmagatzematge, el processament i l'anàlisi de dades, així com per a la creació de fluxos de treball automatitzats.</p>
+</div><h1>Objectius d'aprenentatge</h1>
+<div class='content'><p>Al final d'aquest tema, hauràs après:</p>
+<ul>
+<li>Com integrar BigQuery amb Google Cloud Storage.</li>
+<li>Com utilitzar BigQuery amb Google Cloud Pub/Sub.</li>
+<li>Com connectar BigQuery amb Google Data Studio.</li>
+<li>Com utilitzar BigQuery amb Google Cloud Functions.</li>
+</ul>
+</div><h1>1. Integració amb Google Cloud Storage</h1>
+<div class='content'><p>Google Cloud Storage (GCS) és un servei d'emmagatzematge d'objectes que permet emmagatzemar i recuperar qualsevol quantitat de dades en qualsevol moment. Integrar BigQuery amb GCS és útil per carregar grans volums de dades a BigQuery o per exportar resultats de consultes.</p>
+</div><h2>Carregar dades des de GCS a BigQuery</h2>
+<div class='content'><h4>Exemple de codi</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gQ2FycmVnYXIgZGFkZXMgZGVzIGQndW4gZml0eGVyIENTViBlbW1hZ2F0emVtYXQgYSBHQ1MgYSB1bmEgdGF1bGEgZGUgQmlnUXVlcnkKTE9BRCBEQVRBIElOVE8gYHByb2plY3RfaWQuZGF0YXNldF9pZC50YWJsZV9pZGAKRlJPTSBGSUxFUyAoCiAgZm9ybWF0ID0gJ0NTVicsCiAgdXJpcyA9IFsnZ3M6Ly9idWNrZXRfbmFtZS9maWxlX25hbWUuY3N2J10KKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Carregar dades des d'un fitxer CSV emmagatzemat a GCS a una taula de BigQuery
+LOAD DATA INTO `project_id.dataset_id.table_id`
+FROM FILES (
+  format = 'CSV',
+  uris = ['gs://bucket_name/file_name.csv']
+);</pre></div><div class='content'><h4>Passos detallats</h4>
+<ol>
+<li><strong>Crear un bucket a GCS</strong>: Primer, crea un bucket a Google Cloud Storage on emmagatzemaràs els teus fitxers.</li>
+<li><strong>Carregar el fitxer al bucket</strong>: Pugeu el fitxer CSV al bucket creat.</li>
+<li><strong>Executar la consulta de càrrega</strong>: Utilitza la consulta SQL anterior per carregar les dades del fitxer CSV a una taula de BigQuery.</li>
+</ol>
+</div><h2>Exportar dades de BigQuery a GCS</h2>
+<div class='content'><h4>Exemple de codi</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gRXhwb3J0YXIgZGFkZXMgZCd1bmEgdGF1bGEgZGUgQmlnUXVlcnkgYSB1biBmaXR4ZXIgQ1NWIGVtbWFnYXR6ZW1hdCBhIEdDUwpFWFBPUlQgREFUQSBPUFRJT05TKAogIHVyaT0nZ3M6Ly9idWNrZXRfbmFtZS9maWxlX25hbWUuY3N2JywKICBmb3JtYXQ9J0NTVicsCiAgb3ZlcndyaXRlPXRydWUKKSBBUwpTRUxFQ1QgKiBGUk9NIGBwcm9qZWN0X2lkLmRhdGFzZXRfaWQudGFibGVfaWRgOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Exportar dades d'una taula de BigQuery a un fitxer CSV emmagatzemat a GCS
+EXPORT DATA OPTIONS(
+  uri='gs://bucket_name/file_name.csv',
+  format='CSV',
+  overwrite=true
+) AS
+SELECT * FROM `project_id.dataset_id.table_id`;</pre></div><div class='content'><h4>Passos detallats</h4>
+<ol>
+<li><strong>Executar la consulta d'exportació</strong>: Utilitza la consulta SQL anterior per exportar les dades de la taula de BigQuery a un fitxer CSV emmagatzemat a GCS.</li>
+</ol>
+</div><h1>2. Integració amb Google Cloud Pub/Sub</h1>
+<div class='content'><p>Google Cloud Pub/Sub és un servei de missatgeria asíncrona que permet enviar i rebre missatges entre aplicacions. Integrar BigQuery amb Pub/Sub és útil per processar fluxos de dades en temps real.</p>
+</div><h2>Exemple de codi</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBnb29nbGUuY2xvdWQgaW1wb3J0IHB1YnN1Yl92MQoKIyBDcmVhciB1biBjbGllbnQgZGUgUHViL1N1YgpwdWJsaXNoZXIgPSBwdWJzdWJfdjEuUHVibGlzaGVyQ2xpZW50KCkKdG9waWNfcGF0aCA9IHB1Ymxpc2hlci50b3BpY19wYXRoKCdwcm9qZWN0X2lkJywgJ3RvcGljX25hbWUnKQoKIyBQdWJsaWNhciB1biBtaXNzYXRnZSBhIFB1Yi9TdWIKZGF0YSA9ICdIZWxsbywgQmlnUXVlcnkhJwpkYXRhID0gZGF0YS5lbmNvZGUoJ3V0Zi04JykKZnV0dXJlID0gcHVibGlzaGVyLnB1Ymxpc2godG9waWNfcGF0aCwgZGF0YSkKcHJpbnQoZidQdWJsaXNoZWQgbWVzc2FnZSBJRDoge2Z1dHVyZS5yZXN1bHQoKX0nKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from google.cloud import pubsub_v1
+
+# Crear un client de Pub/Sub
+publisher = pubsub_v1.PublisherClient()
+topic_path = publisher.topic_path('project_id', 'topic_name')
+
+# Publicar un missatge a Pub/Sub
+data = 'Hello, BigQuery!'
+data = data.encode('utf-8')
+future = publisher.publish(topic_path, data)
+print(f'Published message ID: {future.result()}')</pre></div><div class='content'></div><h2>Passos detallats</h2>
+<div class='content'><ol>
+<li><strong>Crear un tema a Pub/Sub</strong>: Primer, crea un tema a Google Cloud Pub/Sub.</li>
+<li><strong>Publicar missatges al tema</strong>: Utilitza el codi Python anterior per publicar missatges al tema creat.</li>
+<li><strong>Processar missatges amb BigQuery</strong>: Configura un subscripció per processar els missatges publicats i carregar-los a BigQuery.</li>
+</ol>
+</div><h1>3. Integració amb Google Data Studio</h1>
+<div class='content'><p>Google Data Studio és una eina de visualització de dades que permet crear informes i quadres de comandament interactius. Integrar BigQuery amb Data Studio és útil per visualitzar i analitzar les dades emmagatzemades a BigQuery.</p>
+</div><h2>Passos detallats</h2>
+<div class='content'><ol>
+<li><strong>Connectar BigQuery a Data Studio</strong>:
+<ul>
+<li>Obre Google Data Studio.</li>
+<li>Crea una nova font de dades.</li>
+<li>Selecciona BigQuery com a connector.</li>
+<li>Autoritza l'accés a BigQuery i selecciona el projecte, conjunt de dades i taula que vols visualitzar.</li>
+</ul>
+</li>
+<li><strong>Crear informes i quadres de comandament</strong>:
+<ul>
+<li>Utilitza les eines de Data Studio per crear gràfics, taules i altres visualitzacions basades en les dades de BigQuery.</li>
+</ul>
+</li>
+</ol>
+</div><h1>4. Integració amb Google Cloud Functions</h1>
+<div class='content'><p>Google Cloud Functions és un servei de computació sense servidor que permet executar codi en resposta a esdeveniments. Integrar BigQuery amb Cloud Functions és útil per automatitzar tasques com la càrrega de dades o l'execució de consultes.</p>
+</div><h2>Exemple de codi</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGdvb2dsZS5jbG91ZC5iaWdxdWVyeSBhcyBiaWdxdWVyeQoKZGVmIGxvYWRfZGF0YV90b19iaWdxdWVyeShldmVudCwgY29udGV4dCk6CiAgICBjbGllbnQgPSBiaWdxdWVyeS5DbGllbnQoKQogICAgdGFibGVfaWQgPSAncHJvamVjdF9pZC5kYXRhc2V0X2lkLnRhYmxlX2lkJwogICAgCiAgICBqb2JfY29uZmlnID0gYmlncXVlcnkuTG9hZEpvYkNvbmZpZygKICAgICAgICBzb3VyY2VfZm9ybWF0PWJpZ3F1ZXJ5LlNvdXJjZUZvcm1hdC5DU1YsCiAgICAgICAgc2tpcF9sZWFkaW5nX3Jvd3M9MSwKICAgICAgICBhdXRvZGV0ZWN0PVRydWUsCiAgICApCiAgICAKICAgIHVyaSA9ICdnczovL2J1Y2tldF9uYW1lL2ZpbGVfbmFtZS5jc3YnCiAgICAKICAgIGxvYWRfam9iID0gY2xpZW50LmxvYWRfdGFibGVfZnJvbV91cmkoCiAgICAgICAgdXJpLCB0YWJsZV9pZCwgam9iX2NvbmZpZz1qb2JfY29uZmlnCiAgICApCiAgICAKICAgIGxvYWRfam9iLnJlc3VsdCgpCiAgICBwcmludChmJ0xvYWRlZCB7bG9hZF9qb2Iub3V0cHV0X3Jvd3N9IHJvd3MgaW50byB7dGFibGVfaWR9Licp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import google.cloud.bigquery as bigquery
+
+def load_data_to_bigquery(event, context):
+    client = bigquery.Client()
+    table_id = 'project_id.dataset_id.table_id'
+    
+    job_config = bigquery.LoadJobConfig(
+        source_format=bigquery.SourceFormat.CSV,
+        skip_leading_rows=1,
+        autodetect=True,
+    )
+    
+    uri = 'gs://bucket_name/file_name.csv'
+    
+    load_job = client.load_table_from_uri(
+        uri, table_id, job_config=job_config
+    )
+    
+    load_job.result()
+    print(f'Loaded {load_job.output_rows} rows into {table_id}.')</pre></div><div class='content'></div><h2>Passos detallats</h2>
+<div class='content'><ol>
+<li><strong>Crear una funció a Cloud Functions</strong>: Primer, crea una funció a Google Cloud Functions.</li>
+<li><strong>Escriure el codi de la funció</strong>: Utilitza el codi Python anterior per definir la funció que carregarà dades a BigQuery.</li>
+<li><strong>Desplegar la funció</strong>: Desplega la funció a Google Cloud Functions i configura-la per executar-se en resposta a esdeveniments com la càrrega de fitxers a GCS.</li>
+</ol>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après com integrar BigQuery amb diversos serveis de Google Cloud, incloent Google Cloud Storage, Google Cloud Pub/Sub, Google Data Studio i Google Cloud Functions. Aquestes integracions permeten crear solucions més eficients i automatitzades per al processament i l'anàlisi de dades. En el proper tema, explorarem com utilitzar BigQuery amb Dataflow per processar grans volums de dades en temps real.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-compliance-best-practices' title="Compliment i millors pràctiques">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-using-dataflow' title="Ús de BigQuery amb Dataflow">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

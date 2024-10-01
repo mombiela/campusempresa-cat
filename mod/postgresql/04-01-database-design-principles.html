@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Principis de disseny de bases de dades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/postgresql/04-01-database-design-principles" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/postgresql/04-01-database-design-principles" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/postgresql/04-01-database-design-principles" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/postgresql/04-01-database-design-principles" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/postgresql/04-01-database-design-principles" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-05-common-table-expressions' title="Expressions de taula comunes (CTEs)">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Principis de disseny de bases de dades</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-02-normalization' title="Normalització">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>El disseny de bases de dades és una part fonamental del desenvolupament d'aplicacions que requereixen emmagatzematge i gestió de dades. Un bon disseny de bases de dades assegura que les dades es poden emmagatzemar de manera eficient, accedir-hi ràpidament i mantenir la integritat i consistència. En aquesta secció, explorarem els principis clau del disseny de bases de dades.</p>
+</div><h1>Objectius del Disseny de Bases de Dades</h1>
+<div class='content'><p>Abans de començar amb els principis específics, és important entendre els objectius generals del disseny de bases de dades:</p>
+<ol>
+<li><strong>Integritat de les dades</strong>: Assegurar que les dades siguin correctes i consistents.</li>
+<li><strong>Eficiència</strong>: Optimitzar l'emmagatzematge i l'accés a les dades.</li>
+<li><strong>Escalabilitat</strong>: Permetre que la base de dades creixi i s'adapti a les necessitats futures.</li>
+<li><strong>Mantenibilitat</strong>: Facilitar l'actualització i el manteniment de la base de dades.</li>
+</ol>
+</div><h1>Principis Clau del Disseny de Bases de Dades</h1>
+<div class='content'></div><h2>1. Identificació dels Requisits</h2>
+<div class='content'><p>Abans de començar a dissenyar, és crucial entendre els requisits de l'aplicació:</p>
+<ul>
+<li><strong>Requisits funcionals</strong>: Quines operacions es necessiten (insercions, consultes, actualitzacions, eliminacions)?</li>
+<li><strong>Requisits no funcionals</strong>: Quins són els requisits de rendiment, seguretat, escalabilitat, etc.?</li>
+</ul>
+</div><h2>2. Modelatge de Dades</h2>
+<div class='content'><p>El modelatge de dades és el procés de crear un model abstracte que representa les dades i les seves relacions:</p>
+<ul>
+<li><strong>Model Entitat-Relació (ER)</strong>: Un diagrama ER és una representació visual de les entitats (taules) i les seves relacions.</li>
+<li><strong>Atributs</strong>: Cada entitat té atributs que representen les seves propietats.</li>
+<li><strong>Relacions</strong>: Defineixen com les entitats estan connectades entre si.</li>
+</ul>
+<h4>Exemple de Diagrama ER</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ky0tLS0tLS0tLS0tLS0tLS0tKyAgICAgICArLS0tLS0tLS0tLS0tLS0tLS0rCnwgICAgIENsaWVudHMgICAgIHwgICAgICAgfCAgICAgQ29tYW5kZXMgICAgfAorLS0tLS0tLS0tLS0tLS0tLS0rICAgICAgICstLS0tLS0tLS0tLS0tLS0tLSsKfCBpZF9jbGllbnQgKFBLKSAgfDwtLS0tLT58IGlkX2NvbWFuZGEgKFBLKSB8Cnwgbm9tICAgICAgICAgICAgIHwgICAgICAgfCBkYXRhICAgICAgICAgICAgfAp8IGFkcmXDp2EgICAgICAgICAgfCAgICAgICB8IGlkX2NsaWVudCAoRkspICB8CistLS0tLS0tLS0tLS0tLS0tLSsgICAgICAgKy0tLS0tLS0tLS0tLS0tLS0tKw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>+-----------------+       +-----------------+
+|     Clients     |       |     Comandes    |
++-----------------+       +-----------------+
+| id_client (PK)  |&lt;-----&gt;| id_comanda (PK) |
+| nom             |       | data            |
+| adre&ccedil;a          |       | id_client (FK)  |
++-----------------+       +-----------------+</pre></div><div class='content'></div><h2>3. Normalització</h2>
+<div class='content'><p>La normalització és el procés d'organitzar les dades per minimitzar la redundància i evitar anomalies d'actualització:</p>
+<ul>
+<li><strong>Primera Forma Normal (1NF)</strong>: Eliminar grups repetitius i assegurar que cada camp conté només un valor.</li>
+<li><strong>Segona Forma Normal (2NF)</strong>: Assegurar que tots els atributs no clau depenen completament de la clau primària.</li>
+<li><strong>Tercera Forma Normal (3NF)</strong>: Eliminar dependències transitives, assegurant que els atributs no clau no depenen d'altres atributs no clau.</li>
+</ul>
+<h4>Exemple de Normalització</h4>
+<p>Suposem que tenim una taula no normalitzada:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ky0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tKwp8IGlkX2NvbWFuZGEgICAgICB8IG5vbV9jbGllbnQgICAgICB8IGFkcmXDp2FfY2xpZW50ICAgfAorLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0rCnwgMSAgICAgICAgICAgICAgIHwgSm9hbiAgICAgICAgICAgIHwgQ2FycmVyIEEsIDEyMyAgIHwKfCAyICAgICAgICAgICAgICAgfCBNYXJpYSAgICAgICAgICAgfCBDYXJyZXIgQiwgNDU2ICAgfAp8IDMgICAgICAgICAgICAgICB8IEpvYW4gICAgICAgICAgICB8IENhcnJlciBBLCAxMjMgICB8CistLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLSs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>+-----------------+-----------------+-----------------+
+| id_comanda      | nom_client      | adre&ccedil;a_client   |
++-----------------+-----------------+-----------------+
+| 1               | Joan            | Carrer A, 123   |
+| 2               | Maria           | Carrer B, 456   |
+| 3               | Joan            | Carrer A, 123   |
++-----------------+-----------------+-----------------+</pre></div><div class='content'><p>Després de normalitzar:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("VGF1bGEgQ2xpZW50czoKKy0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tKwp8IGlkX2NsaWVudCAgICAgICB8IG5vbSAgICAgICAgICAgICB8IGFkcmXDp2EgICAgICAgICAgfAorLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0rCnwgMSAgICAgICAgICAgICAgIHwgSm9hbiAgICAgICAgICAgIHwgQ2FycmVyIEEsIDEyMyAgIHwKfCAyICAgICAgICAgICAgICAgfCBNYXJpYSAgICAgICAgICAgfCBDYXJyZXIgQiwgNDU2ICAgfAorLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0rCgpUYXVsYSBDb21hbmRlczoKKy0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tKwp8IGlkX2NvbWFuZGEgICAgICB8IGlkX2NsaWVudCAgICAgICB8CistLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLSsKfCAxICAgICAgICAgICAgICAgfCAxICAgICAgICAgICAgICAgfAp8IDIgICAgICAgICAgICAgICB8IDIgICAgICAgICAgICAgICB8CnwgMyAgICAgICAgICAgICAgIHwgMSAgICAgICAgICAgICAgIHwKKy0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tKw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Taula Clients:
++-----------------+-----------------+-----------------+
+| id_client       | nom             | adre&ccedil;a          |
++-----------------+-----------------+-----------------+
+| 1               | Joan            | Carrer A, 123   |
+| 2               | Maria           | Carrer B, 456   |
++-----------------+-----------------+-----------------+
+
+Taula Comandes:
++-----------------+-----------------+
+| id_comanda      | id_client       |
++-----------------+-----------------+
+| 1               | 1               |
+| 2               | 2               |
+| 3               | 1               |
++-----------------+-----------------+</pre></div><div class='content'></div><h2>4. Claus Primàries i Estrangeres</h2>
+<div class='content'><ul>
+<li><strong>Clau Primària (PK)</strong>: Un identificador únic per a cada registre en una taula.</li>
+<li><strong>Clau Estrangera (FK)</strong>: Un camp que enllaça una taula amb una altra, establint una relació entre elles.</li>
+</ul>
+</div><h2>5. Índexs</h2>
+<div class='content'><p>Els índexs milloren la velocitat de les operacions de consulta a costa d'un major ús d'espai i temps d'inserció/actualització:</p>
+<ul>
+<li><strong>Índexs simples</strong>: Basats en un sol camp.</li>
+<li><strong>Índexs compostos</strong>: Basats en múltiples camps.</li>
+</ul>
+</div><h2>6. Denormalització (quan sigui necessari)</h2>
+<div class='content'><p>En alguns casos, pot ser necessari denormalitzar per millorar el rendiment de les consultes, especialment en sistemes de lectura intensiva.</p>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Enunciat</h2>
+<div class='content'><p>Dissenya una base de dades per a una aplicació de biblioteca que gestioni llibres, autors i préstecs. La base de dades ha de permetre:</p>
+<ul>
+<li>Emmagatzemar informació sobre llibres (títol, any de publicació, gènere).</li>
+<li>Emmagatzemar informació sobre autors (nom, data de naixement).</li>
+<li>Gestionar els préstecs de llibres als usuaris (data de préstec, data de retorn).</li>
+</ul>
+</div><h2>Solució</h2>
+<div class='content'><h4>Diagrama ER</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ky0tLS0tLS0tLS0tLS0tLS0tKyAgICAgICArLS0tLS0tLS0tLS0tLS0tLS0rICAgICAgICstLS0tLS0tLS0tLS0tLS0tLSsKfCAgICAgTGxpYnJlcyAgICAgfCAgICAgICB8ICAgICBBdXRvcnMgICAgICB8ICAgICAgIHwgICAgUHLDqXN0ZWNzICAgICB8CistLS0tLS0tLS0tLS0tLS0tLSsgICAgICAgKy0tLS0tLS0tLS0tLS0tLS0tKyAgICAgICArLS0tLS0tLS0tLS0tLS0tLS0rCnwgaWRfbGxpYnJlIChQSykgIHwgICAgICAgfCBpZF9hdXRvciAoUEspICAgfCAgICAgICB8IGlkX3Byw6lzdGVjIChQSykgfAp8IHTDrXRvbCAgICAgICAgICAgfCAgICAgICB8IG5vbSAgICAgICAgICAgICB8ICAgICAgIHwgaWRfbGxpYnJlIChGSykgIHwKfCBhbnlfcHVibGljYWNpw7MgIHwgICAgICAgfCBkYXRhX25haXhlbWVudCAgfCAgICAgICB8IGRhdGFfcHLDqXN0ZWMgICAgfAp8IGfDqG5lcmUgICAgICAgICAgfCAgICAgICArLS0tLS0tLS0tLS0tLS0tLS0rICAgICAgIHwgZGF0YV9yZXRvcm5hICAgIHwKKy0tLS0tLS0tLS0tLS0tLS0tKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICArLS0tLS0tLS0tLS0tLS0tLS0r"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>+-----------------+       +-----------------+       +-----------------+
+|     Llibres     |       |     Autors      |       |    Pr&eacute;stecs     |
++-----------------+       +-----------------+       +-----------------+
+| id_llibre (PK)  |       | id_autor (PK)   |       | id_pr&eacute;stec (PK) |
+| t&iacute;tol           |       | nom             |       | id_llibre (FK)  |
+| any_publicaci&oacute;  |       | data_naixement  |       | data_pr&eacute;stec    |
+| g&egrave;nere          |       +-----------------+       | data_retorna    |
++-----------------+                               +-----------------+</pre></div><div class='content'><h4>Taules Normalitzades</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("VGF1bGEgTGxpYnJlczoKKy0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tKwp8IGlkX2xsaWJyZSAgICAgICB8IHTDrXRvbCAgICAgICAgICAgfCBhbnlfcHVibGljYWNpw7MgIHwgZ8OobmVyZSAgICAgICAgICB8CistLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLSstLS0tLS0tLS0tLS0tLS0tLSsKfCAxICAgICAgICAgICAgICAgfCBMbGlicmUgQSAgICAgICAgfCAyMDAxICAgICAgICAgICAgfCBGaWNjacOzICAgICAgICAgIHwKfCAyICAgICAgICAgICAgICAgfCBMbGlicmUgQiAgICAgICAgfCAxOTk5ICAgICAgICAgICAgfCBObyBGaWNjacOzICAgICAgIHwKKy0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tKwoKVGF1bGEgQXV0b3JzOgorLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0rCnwgaWRfYXV0b3IgICAgICAgIHwgbm9tICAgICAgICAgICAgIHwgZGF0YV9uYWl4ZW1lbnQgIHwKKy0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tKwp8IDEgICAgICAgICAgICAgICB8IEF1dG9yIEEgICAgICAgICB8IDE5NzAtMDEtMDEgICAgICB8CnwgMiAgICAgICAgICAgICAgIHwgQXV0b3IgQiAgICAgICAgIHwgMTk4MC0wMi0wMiAgICAgIHwKKy0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tKy0tLS0tLS0tLS0tLS0tLS0tKwoKVGF1bGEgUHLDqXN0ZWNzOgorLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0rCnwgaWRfcHLDqXN0ZWMgICAgICB8IGlkX2xsaWJyZSAgICAgICB8IGRhdGFfcHLDqXN0ZWMgICAgfCBkYXRhX3JldG9ybmEgICAgfAorLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0rCnwgMSAgICAgICAgICAgICAgIHwgMSAgICAgICAgICAgICAgIHwgMjAyMy0wMS0wMSAgICAgIHwgMjAyMy0wMS0xNSAgICAgIHwKfCAyICAgICAgICAgICAgICAgfCAyICAgICAgICAgICAgICAgfCAyMDIzLTAyLTAxICAgICAgfCAyMDIzLTAyLTE1ICAgICAgfAorLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0rLS0tLS0tLS0tLS0tLS0tLS0r"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Taula Llibres:
++-----------------+-----------------+-----------------+-----------------+
+| id_llibre       | t&iacute;tol           | any_publicaci&oacute;  | g&egrave;nere          |
++-----------------+-----------------+-----------------+-----------------+
+| 1               | Llibre A        | 2001            | Ficci&oacute;          |
+| 2               | Llibre B        | 1999            | No Ficci&oacute;       |
++-----------------+-----------------+-----------------+-----------------+
+
+Taula Autors:
++-----------------+-----------------+-----------------+
+| id_autor        | nom             | data_naixement  |
++-----------------+-----------------+-----------------+
+| 1               | Autor A         | 1970-01-01      |
+| 2               | Autor B         | 1980-02-02      |
++-----------------+-----------------+-----------------+
+
+Taula Pr&eacute;stecs:
++-----------------+-----------------+-----------------+-----------------+
+| id_pr&eacute;stec      | id_llibre       | data_pr&eacute;stec    | data_retorna    |
++-----------------+-----------------+-----------------+-----------------+
+| 1               | 1               | 2023-01-01      | 2023-01-15      |
+| 2               | 2               | 2023-02-01      | 2023-02-15      |
++-----------------+-----------------+-----------------+-----------------+</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem explorat els principis fonamentals del disseny de bases de dades, incloent la identificació de requisits, el modelatge de dades, la normalització, l'ús de claus primàries i estrangeres, i la creació d'índexs. Aquests principis són essencials per crear bases de dades eficients, escalables i mantenibles. En el proper mòdul, aprofundirem en la normalització i veurem exemples pràctics de com aplicar aquests principis.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='03-05-common-table-expressions' title="Expressions de taula comunes (CTEs)">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-02-normalization' title="Normalització">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

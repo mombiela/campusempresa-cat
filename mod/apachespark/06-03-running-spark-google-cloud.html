@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executar Spark a Google Cloud</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/apachespark/06-03-running-spark-google-cloud" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/apachespark/06-03-running-spark-google-cloud" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/apachespark/06-03-running-spark-google-cloud" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/apachespark/06-03-running-spark-google-cloud" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/apachespark/06-03-running-spark-google-cloud" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-running-spark-azure' title="Executar Spark a Azure">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Executar Spark a Google Cloud</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-spark-kubernetes' title="Spark amb Kubernetes">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com configurar i executar Apache Spark a Google Cloud Platform (GCP). Google Cloud ofereix diverses eines i serveis que faciliten la implementació i gestió de Spark, com ara Google Cloud Dataproc, un servei gestionat per executar clústers de Spark i Hadoop.</p>
+</div><h1>Objectius del Tema</h1>
+<div class='content'><ul>
+<li>Entendre els conceptes bàsics de Google Cloud Platform.</li>
+<li>Configurar un projecte a Google Cloud.</li>
+<li>Crear i gestionar clústers de Spark utilitzant Google Cloud Dataproc.</li>
+<li>Executar treballs de Spark en un clúster de Dataproc.</li>
+</ul>
+</div><h1>1. Introducció a Google Cloud Platform (GCP)</h1>
+<div class='content'><p>Google Cloud Platform és una suite de serveis de computació en núvol que s'executen en la mateixa infraestructura que Google utilitza internament per als seus productes d'usuari final, com ara Google Search i YouTube.</p>
+</div><h2>Conceptes Clau</h2>
+<div class='content'><ul>
+<li><strong>Projectes</strong>: Un projecte és una entitat organitzativa dins de GCP que conté tots els recursos de Google Cloud.</li>
+<li><strong>Clústers</strong>: Un clúster és un conjunt de màquines virtuals que treballen juntes per executar aplicacions distribuïdes com Spark.</li>
+<li><strong>Google Cloud Dataproc</strong>: Un servei gestionat que facilita la creació, configuració i gestió de clústers de Spark i Hadoop.</li>
+</ul>
+</div><h1>2. Configuració del Projecte a Google Cloud</h1>
+<div class='content'><p>Abans de crear un clúster de Dataproc, necessitem configurar un projecte a Google Cloud.</p>
+</div><h2>Passos per Configurar el Projecte</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear un Compte de Google Cloud</strong>:</p>
+<ul>
+<li>Registra't a <a href="https://cloud.google.com/">Google Cloud</a>.</li>
+<li>Inicia sessió amb el teu compte de Google.</li>
+</ul>
+</li>
+<li>
+<p><strong>Crear un Nou Projecte</strong>:</p>
+<ul>
+<li>A la consola de Google Cloud, fes clic a &quot;Select a project&quot; i després a &quot;New Project&quot;.</li>
+<li>Assigna un nom al projecte i fes clic a &quot;Create&quot;.</li>
+</ul>
+</li>
+<li>
+<p><strong>Activar l'API de Dataproc</strong>:</p>
+<ul>
+<li>A la consola de Google Cloud, ves a &quot;APIs &amp; Services&quot; &gt; &quot;Library&quot;.</li>
+<li>Cerca &quot;Dataproc&quot; i fes clic a &quot;Enable&quot;.</li>
+</ul>
+</li>
+<li>
+<p><strong>Configurar la Facturació</strong>:</p>
+<ul>
+<li>Assegura't que la facturació estigui configurada per al teu projecte. Això és necessari per utilitzar els serveis de Google Cloud.</li>
+</ul>
+</li>
+</ol>
+</div><h1>3. Crear un Clúster de Spark amb Google Cloud Dataproc</h1>
+<div class='content'><p>Un cop el projecte està configurat, podem crear un clúster de Dataproc per executar Spark.</p>
+</div><h2>Passos per Crear un Clúster</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Accedir a Dataproc</strong>:</p>
+<ul>
+<li>A la consola de Google Cloud, ves a &quot;Dataproc&quot; &gt; &quot;Clusters&quot;.</li>
+</ul>
+</li>
+<li>
+<p><strong>Crear un Nou Clúster</strong>:</p>
+<ul>
+<li>Fes clic a &quot;Create Cluster&quot;.</li>
+<li>Assigna un nom al clúster.</li>
+<li>Selecciona la regió i la zona on vols crear el clúster.</li>
+<li>Configura les màquines virtuals (tipus de màquina, nombre de nodes, etc.).</li>
+</ul>
+</li>
+<li>
+<p><strong>Configurar les Opcions de Spark</strong>:</p>
+<ul>
+<li>A la secció &quot;Advanced options&quot;, pots configurar opcions específiques de Spark, com ara la versió de Spark, opcions de configuració, etc.</li>
+</ul>
+</li>
+<li>
+<p><strong>Crear el Clúster</strong>:</p>
+<ul>
+<li>Fes clic a &quot;Create&quot; per crear el clúster. Aquest procés pot trigar uns minuts.</li>
+</ul>
+</li>
+</ol>
+</div><h1>4. Executar Treballs de Spark en un Clúster de Dataproc</h1>
+<div class='content'><p>Un cop el clúster està creat, podem executar treballs de Spark.</p>
+</div><h2>Passos per Executar un Treball de Spark</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Accedir a la Consola de Dataproc</strong>:</p>
+<ul>
+<li>A la consola de Google Cloud, ves a &quot;Dataproc&quot; &gt; &quot;Jobs&quot;.</li>
+</ul>
+</li>
+<li>
+<p><strong>Crear un Nou Treball</strong>:</p>
+<ul>
+<li>Fes clic a &quot;Submit Job&quot;.</li>
+<li>Selecciona el clúster on vols executar el treball.</li>
+<li>Selecciona el tipus de treball (per exemple, Spark).</li>
+<li>Proporciona els detalls del treball, com ara el camí al fitxer JAR o script de Python, arguments, etc.</li>
+</ul>
+</li>
+<li>
+<p><strong>Executar el Treball</strong>:</p>
+<ul>
+<li>Fes clic a &quot;Submit&quot; per executar el treball. Pots veure l'estat del treball a la consola de Dataproc.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Exemple de Codi Spark</h2>
+<div class='content'><p>A continuació, es mostra un exemple d'un script de Python per a Spark que compta les paraules en un fitxer de text:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBweXNwYXJrIGltcG9ydCBTcGFya0NvbnRleHQsIFNwYXJrQ29uZgoKIyBDb25maWd1cmFjacOzIGRlIFNwYXJrCmNvbmYgPSBTcGFya0NvbmYoKS5zZXRBcHBOYW1lKCJXb3JkQ291bnQiKQpzYyA9IFNwYXJrQ29udGV4dChjb25mPWNvbmYpCgojIENhcnJlZ2FyIGVsIGZpdHhlciBkZSB0ZXh0CnRleHRfZmlsZSA9IHNjLnRleHRGaWxlKCJnczovL3BhdGgtdG8teW91ci1idWNrZXQvaW5wdXQudHh0IikKCiMgQ29tcHRhciBsZXMgcGFyYXVsZXMKY291bnRzID0gdGV4dF9maWxlLmZsYXRNYXAobGFtYmRhIGxpbmU6IGxpbmUuc3BsaXQoIiAiKSkgXAogICAgICAgICAgICAgICAgICAubWFwKGxhbWJkYSB3b3JkOiAod29yZCwgMSkpIFwKICAgICAgICAgICAgICAgICAgLnJlZHVjZUJ5S2V5KGxhbWJkYSBhLCBiOiBhICsgYikKCiMgRGVzYXIgZWwgcmVzdWx0YXQKY291bnRzLnNhdmVBc1RleHRGaWxlKCJnczovL3BhdGgtdG8teW91ci1idWNrZXQvb3V0cHV0Iik="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from pyspark import SparkContext, SparkConf
+
+# Configuraci&oacute; de Spark
+conf = SparkConf().setAppName(&quot;WordCount&quot;)
+sc = SparkContext(conf=conf)
+
+# Carregar el fitxer de text
+text_file = sc.textFile(&quot;gs://path-to-your-bucket/input.txt&quot;)
+
+# Comptar les paraules
+counts = text_file.flatMap(lambda line: line.split(&quot; &quot;)) \
+                  .map(lambda word: (word, 1)) \
+                  .reduceByKey(lambda a, b: a + b)
+
+# Desar el resultat
+counts.saveAsTextFile(&quot;gs://path-to-your-bucket/output&quot;)</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<h2>Objectiu</h2>
+<div class='content'><p>Crear un clúster de Dataproc i executar un treball de Spark que compti les paraules en un fitxer de text emmagatzemat a Google Cloud Storage.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>Configura un projecte a Google Cloud.</li>
+<li>Crea un clúster de Dataproc.</li>
+<li>Carrega un fitxer de text a Google Cloud Storage.</li>
+<li>Executa l'exemple de codi Spark proporcionat anteriorment.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><p>Segueix els passos detallats en les seccions anteriors per completar l'exercici.</p>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com configurar i executar Apache Spark a Google Cloud utilitzant Google Cloud Dataproc. Hem cobert des de la configuració del projecte fins a la creació de clústers i l'execució de treballs de Spark. Amb aquests coneixements, estàs preparat per aprofitar la potència de Google Cloud per a les teves aplicacions de Spark.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-running-spark-azure' title="Executar Spark a Azure">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-spark-kubernetes' title="Spark amb Kubernetes">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

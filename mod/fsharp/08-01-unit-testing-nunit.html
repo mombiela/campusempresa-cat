@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proves Unitàries amb NUnit</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/fsharp/08-01-unit-testing-nunit" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/fsharp/08-01-unit-testing-nunit" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/fsharp/08-01-unit-testing-nunit" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/fsharp/08-01-unit-testing-nunit" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/fsharp/08-01-unit-testing-nunit" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-using-linq' title="Ús de LINQ en F#">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Proves Unitàries amb NUnit</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-property-based-testing-fscheck' title="Proves Basades en Propietats amb FsCheck">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Les proves unitàries són una part essencial del desenvolupament de programari, ja que permeten verificar que les unitats individuals de codi funcionin correctament. En aquest tema, aprendrem a utilitzar NUnit, un marc de proves popular per a .NET, per escriure i executar proves unitàries en F#.</p>
+</div><h1>Continguts</h1>
+<div class='content'><ol>
+<li>Introducció a NUnit</li>
+<li>Configuració de l'Entorn</li>
+<li>Estructura d'una Prova Unitària</li>
+<li>Escriure Proves Unitàries en F#</li>
+<li>Executar Proves Unitàries</li>
+<li>Exercicis Pràctics</li>
+</ol>
+</div><h1>1. Introducció a NUnit</h1>
+<div class='content'><p>NUnit és un marc de proves unitàries per a .NET que permet als desenvolupadors escriure proves per verificar el comportament del seu codi. NUnit proporciona una API rica per definir i executar proves, així com per verificar els resultats esperats.</p>
+</div><h2>Característiques Clau de NUnit</h2>
+<div class='content'><ul>
+<li><strong>Atributs de Prova</strong>: Permeten marcar mètodes com a proves.</li>
+<li><strong>Assert</strong>: Proporciona mètodes per verificar condicions.</li>
+<li><strong>Categories de Prova</strong>: Permeten agrupar proves per facilitar-ne l'execució.</li>
+<li><strong>Configuració i Desconfiguració</strong>: Permeten inicialitzar i netejar recursos abans i després de les proves.</li>
+</ul>
+</div><h1>2. Configuració de l'Entorn</h1>
+<div class='content'><p>Abans de començar a escriure proves unitàries, necessitem configurar el nostre entorn de desenvolupament.</p>
+</div><h2>Passos per Configurar l'Entorn</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Instal·lar NUnit</strong>: Afegiu NUnit al vostre projecte F# utilitzant NuGet.</p>
+<pre><code class="language-shell">dotnet add package NUnit
+dotnet add package NUnit3TestAdapter
+dotnet add package Microsoft.NET.Test.Sdk
+</code></pre>
+</li>
+<li>
+<p><strong>Crear un Projecte de Proves</strong>: Creeu un projecte de proves separat si encara no en teniu un.</p>
+<pre><code class="language-shell">dotnet new nunit -n MyFSharpTests
+cd MyFSharpTests
+</code></pre>
+</li>
+<li>
+<p><strong>Afegir Referència al Projecte Principal</strong>: Assegureu-vos que el projecte de proves tingui una referència al projecte principal.</p>
+<pre><code class="language-shell">dotnet add reference ../MyFSharpProject/MyFSharpProject.fsproj
+</code></pre>
+</li>
+</ol>
+</div><h1>3. Estructura d'una Prova Unitària</h1>
+<div class='content'><p>Una prova unitària en NUnit es defineix com un mètode marcat amb l'atribut <code>[&lt;Test&gt;]</code>. Aquí teniu un exemple bàsic:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBOVW5pdC5GcmFtZXdvcmsKCls8VGVzdEZpeHR1cmU+XQp0eXBlIE15VGVzdHMoKSA9CgogICAgWzxUZXN0Pl0KICAgIG1lbWJlciB0aGlzLmBgVGVzdCBFeGFtcGxlYGAoKSA9CiAgICAgICAgQXNzZXJ0LkFyZUVxdWFsKDQsIDIgKyAyKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open NUnit.Framework
+
+[&lt;TestFixture&gt;]
+type MyTests() =
+
+    [&lt;Test&gt;]
+    member this.``Test Example``() =
+        Assert.AreEqual(4, 2 + 2)</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>[&lt;TestFixture&gt;]</code>: Marca una classe que conté proves.</li>
+<li><code>[&lt;Test&gt;]</code>: Marca un mètode com a prova.</li>
+<li><code>Assert.AreEqual(expected, actual)</code>: Verifica que el valor actual sigui igual al valor esperat.</li>
+</ul>
+</div><h1>4. Escriure Proves Unitàries en F#</h1>
+<div class='content'><p>Ara que tenim la configuració bàsica, escrivim algunes proves unitàries per a una funció simple.</p>
+</div><h2>Exemple de Funció a Provar</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kdWxlIE15TWF0aCA9CiAgICBsZXQgYWRkIHggeSA9IHggKyB5"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>module MyMath =
+    let add x y = x + y</pre></div><div class='content'></div><h2>Proves Unitàries per a la Funció `add`</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3BlbiBOVW5pdC5GcmFtZXdvcmsKb3BlbiBNeU1hdGgKCls8VGVzdEZpeHR1cmU+XQp0eXBlIE15TWF0aFRlc3RzKCkgPQoKICAgIFs8VGVzdD5dCiAgICBtZW1iZXIgdGhpcy5gYEFkZCAyIGFuZCAzIHNob3VsZCBlcXVhbCA1YGAoKSA9CiAgICAgICAgbGV0IHJlc3VsdCA9IGFkZCAyIDMKICAgICAgICBBc3NlcnQuQXJlRXF1YWwoNSwgcmVzdWx0KQoKICAgIFs8VGVzdD5dCiAgICBtZW1iZXIgdGhpcy5gYEFkZCAtMSBhbmQgMSBzaG91bGQgZXF1YWwgMGBgKCkgPQogICAgICAgIGxldCByZXN1bHQgPSBhZGQgLTEgMQogICAgICAgIEFzc2VydC5BcmVFcXVhbCgwLCByZXN1bHQp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>open NUnit.Framework
+open MyMath
+
+[&lt;TestFixture&gt;]
+type MyMathTests() =
+
+    [&lt;Test&gt;]
+    member this.``Add 2 and 3 should equal 5``() =
+        let result = add 2 3
+        Assert.AreEqual(5, result)
+
+    [&lt;Test&gt;]
+    member this.``Add -1 and 1 should equal 0``() =
+        let result = add -1 1
+        Assert.AreEqual(0, result)</pre></div><div class='content'></div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li><code>let result = add 2 3</code>: Crida la funció <code>add</code> amb els arguments 2 i 3.</li>
+<li><code>Assert.AreEqual(5, result)</code>: Verifica que el resultat sigui 5.</li>
+</ul>
+</div><h1>5. Executar Proves Unitàries</h1>
+<div class='content'><p>Per executar les proves unitàries, utilitzeu la següent comanda:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZG90bmV0IHRlc3Q="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>dotnet test</pre></div><div class='content'><p>Aquesta comanda compilarà el projecte de proves i executarà totes les proves definides.</p>
+</div><h1>6. Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Escriure Proves per a una Funció de Multiplicació</h2>
+<div class='content'><ol>
+<li>Creeu una funció <code>multiply</code> que multipliqui dos nombres.</li>
+<li>Escriu proves unitàries per verificar el comportament de la funció <code>multiply</code>.</li>
+</ol>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kdWxlIE15TWF0aCA9CiAgICBsZXQgbXVsdGlwbHkgeCB5ID0geCAqIHkKCm9wZW4gTlVuaXQuRnJhbWV3b3JrCm9wZW4gTXlNYXRoCgpbPFRlc3RGaXh0dXJlPl0KdHlwZSBNeU1hdGhUZXN0cygpID0KCiAgICBbPFRlc3Q+XQogICAgbWVtYmVyIHRoaXMuYGBNdWx0aXBseSAyIGFuZCAzIHNob3VsZCBlcXVhbCA2YGAoKSA9CiAgICAgICAgbGV0IHJlc3VsdCA9IG11bHRpcGx5IDIgMwogICAgICAgIEFzc2VydC5BcmVFcXVhbCg2LCByZXN1bHQpCgogICAgWzxUZXN0Pl0KICAgIG1lbWJlciB0aGlzLmBgTXVsdGlwbHkgLTEgYW5kIDEgc2hvdWxkIGVxdWFsIC0xYGAoKSA9CiAgICAgICAgbGV0IHJlc3VsdCA9IG11bHRpcGx5IC0xIDEKICAgICAgICBBc3NlcnQuQXJlRXF1YWwoLTEsIHJlc3VsdCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>module MyMath =
+    let multiply x y = x * y
+
+open NUnit.Framework
+open MyMath
+
+[&lt;TestFixture&gt;]
+type MyMathTests() =
+
+    [&lt;Test&gt;]
+    member this.``Multiply 2 and 3 should equal 6``() =
+        let result = multiply 2 3
+        Assert.AreEqual(6, result)
+
+    [&lt;Test&gt;]
+    member this.``Multiply -1 and 1 should equal -1``() =
+        let result = multiply -1 1
+        Assert.AreEqual(-1, result)</pre></div><div class='content'></div><h2>Exercici 2: Escriure Proves per a una Funció de Divisió</h2>
+<div class='content'><ol>
+<li>Creeu una funció <code>divide</code> que divideixi dos nombres.</li>
+<li>Escriu proves unitàries per verificar el comportament de la funció <code>divide</code>, incloent-hi la divisió per zero.</li>
+</ol>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bW9kdWxlIE15TWF0aCA9CiAgICBsZXQgZGl2aWRlIHggeSA9CiAgICAgICAgaWYgeSA9IDAgdGhlbiBmYWlsd2l0aCAiQ2Fubm90IGRpdmlkZSBieSB6ZXJvIgogICAgICAgIGVsc2UgeCAvIHkKCm9wZW4gTlVuaXQuRnJhbWV3b3JrCm9wZW4gTXlNYXRoCgpbPFRlc3RGaXh0dXJlPl0KdHlwZSBNeU1hdGhUZXN0cygpID0KCiAgICBbPFRlc3Q+XQogICAgbWVtYmVyIHRoaXMuYGBEaXZpZGUgNiBieSAzIHNob3VsZCBlcXVhbCAyYGAoKSA9CiAgICAgICAgbGV0IHJlc3VsdCA9IGRpdmlkZSA2IDMKICAgICAgICBBc3NlcnQuQXJlRXF1YWwoMiwgcmVzdWx0KQoKICAgIFs8VGVzdD5dCiAgICBtZW1iZXIgdGhpcy5gYERpdmlkZSBieSB6ZXJvIHNob3VsZCB0aHJvdyBleGNlcHRpb25gYCgpID0KICAgICAgICBBc3NlcnQuVGhyb3dzPFN5c3RlbS5FeGNlcHRpb24+KGZ1biAoKSAtPiBkaXZpZGUgNiAwIHw+IGlnbm9yZSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>module MyMath =
+    let divide x y =
+        if y = 0 then failwith &quot;Cannot divide by zero&quot;
+        else x / y
+
+open NUnit.Framework
+open MyMath
+
+[&lt;TestFixture&gt;]
+type MyMathTests() =
+
+    [&lt;Test&gt;]
+    member this.``Divide 6 by 3 should equal 2``() =
+        let result = divide 6 3
+        Assert.AreEqual(2, result)
+
+    [&lt;Test&gt;]
+    member this.``Divide by zero should throw exception``() =
+        Assert.Throws&lt;System.Exception&gt;(fun () -&gt; divide 6 0 |&gt; ignore)</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après a configurar l'entorn per a proves unitàries amb NUnit, a escriure i executar proves unitàries en F#, i hem practicat amb alguns exercicis. Les proves unitàries són una eina poderosa per assegurar la qualitat del codi i detectar errors de manera primerenca en el procés de desenvolupament.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-using-linq' title="Ús de LINQ en F#">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-02-property-based-testing-fscheck' title="Proves Basades en Propietats amb FsCheck">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registre amb Elasticsearch, Fluentd i Kibana (EFK)</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kubernetes/07-02-logging-efk" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kubernetes/07-02-logging-efk" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kubernetes/07-02-logging-efk" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kubernetes/07-02-logging-efk" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kubernetes/07-02-logging-efk" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-01-monitoring-prometheus' title="Monitorització amb Prometheus">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Registre amb Elasticsearch, Fluentd i Kibana (EFK)</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-03-health-checks-probes' title="Controls de Salut i Probes">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a configurar un sistema de registre centralitzat utilitzant Elasticsearch, Fluentd i Kibana (EFK) en un clúster de Kubernetes. Aquest sistema ens permetrà recopilar, emmagatzemar i visualitzar els logs de les nostres aplicacions i serveis de manera eficient.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre la importància del registre centralitzat.</li>
+<li>Configurar Elasticsearch per emmagatzemar logs.</li>
+<li>Configurar Fluentd per recopilar i enviar logs a Elasticsearch.</li>
+<li>Configurar Kibana per visualitzar els logs emmagatzemats a Elasticsearch.</li>
+</ul>
+</div><h1>1. Introducció al Sistema EFK</h1>
+<div class='content'></div><h2>Què és EFK?</h2>
+<div class='content'><p>EFK és un conjunt d'eines que treballen conjuntament per proporcionar una solució completa de registre:</p>
+<ul>
+<li><strong>Elasticsearch</strong>: Un motor de cerca i anàlisi distribuït que emmagatzema els logs.</li>
+<li><strong>Fluentd</strong>: Un agregador de logs que recopila, processa i envia els logs a Elasticsearch.</li>
+<li><strong>Kibana</strong>: Una interfície gràfica que permet visualitzar i analitzar els logs emmagatzemats a Elasticsearch.</li>
+</ul>
+</div><h2>Per què utilitzar EFK?</h2>
+<div class='content'><ul>
+<li><strong>Centralització</strong>: Tots els logs es recopilen en un únic lloc, facilitant la seva gestió i anàlisi.</li>
+<li><strong>Escalabilitat</strong>: Elasticsearch pot gestionar grans volums de dades de manera eficient.</li>
+<li><strong>Visualització</strong>: Kibana proporciona eines potents per visualitzar i analitzar els logs.</li>
+</ul>
+</div><h1>2. Configuració d'Elasticsearch</h1>
+<div class='content'></div><h2>Desplegament d'Elasticsearch</h2>
+<div class='content'><p>Per desplegar Elasticsearch en un clúster de Kubernetes, podem utilitzar un Helm chart. Helm és un gestor de paquets per Kubernetes que facilita la instal·lació i gestió d'aplicacions.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBBZmVnZWl4IGVsIHJlcG9zaXRvcmkgZGUgSGVsbSBwZXIgRWxhc3RpY3NlYXJjaApoZWxtIHJlcG8gYWRkIGVsYXN0aWMgaHR0cHM6Ly9oZWxtLmVsYXN0aWMuY28KCiMgQWN0dWFsaXR6YSBlbHMgcmVwb3NpdG9yaXMgZGUgSGVsbQpoZWxtIHJlcG8gdXBkYXRlCgojIEluc3RhbMK3bGEgRWxhc3RpY3NlYXJjaApoZWxtIGluc3RhbGwgZWxhc3RpY3NlYXJjaCBlbGFzdGljL2VsYXN0aWNzZWFyY2g="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Afegeix el repositori de Helm per Elasticsearch
+helm repo add elastic https://helm.elastic.co
+
+# Actualitza els repositoris de Helm
+helm repo update
+
+# Instal&middot;la Elasticsearch
+helm install elasticsearch elastic/elasticsearch</pre></div><div class='content'></div><h2>Configuració de Recursos</h2>
+<div class='content'><p>Podem ajustar la configuració de recursos per Elasticsearch editant els valors del Helm chart:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBmaXR4ZXIgdmFsdWVzLnlhbWwKcmVzb3VyY2VzOgogIHJlcXVlc3RzOgogICAgY3B1OiAiMSIKICAgIG1lbW9yeTogIjJHaSIKICBsaW1pdHM6CiAgICBjcHU6ICIyIgogICAgbWVtb3J5OiAiNEdpIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># fitxer values.yaml
+resources:
+  requests:
+    cpu: &quot;1&quot;
+    memory: &quot;2Gi&quot;
+  limits:
+    cpu: &quot;2&quot;
+    memory: &quot;4Gi&quot;</pre></div><div class='content'><p>Després, instal·lem Elasticsearch amb els valors personalitzats:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGVsbSBpbnN0YWxsIGVsYXN0aWNzZWFyY2ggLWYgdmFsdWVzLnlhbWwgZWxhc3RpYy9lbGFzdGljc2VhcmNo"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>helm install elasticsearch -f values.yaml elastic/elasticsearch</pre></div><div class='content'></div><h1>3. Configuració de Fluentd</h1>
+<div class='content'></div><h2>Desplegament de Fluentd</h2>
+<div class='content'><p>Fluentd es pot desplegar utilitzant un Helm chart similar a Elasticsearch.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBBZmVnZWl4IGVsIHJlcG9zaXRvcmkgZGUgSGVsbSBwZXIgRmx1ZW50ZApoZWxtIHJlcG8gYWRkIGZsdWVudCBodHRwczovL2ZsdWVudC5naXRodWIuaW8vaGVsbS1jaGFydHMKCiMgQWN0dWFsaXR6YSBlbHMgcmVwb3NpdG9yaXMgZGUgSGVsbQpoZWxtIHJlcG8gdXBkYXRlCgojIEluc3RhbMK3bGEgRmx1ZW50ZApoZWxtIGluc3RhbGwgZmx1ZW50ZCBmbHVlbnQvZmx1ZW50ZA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Afegeix el repositori de Helm per Fluentd
+helm repo add fluent https://fluent.github.io/helm-charts
+
+# Actualitza els repositoris de Helm
+helm repo update
+
+# Instal&middot;la Fluentd
+helm install fluentd fluent/fluentd</pre></div><div class='content'></div><h2>Configuració de Fluentd</h2>
+<div class='content'><p>Podem configurar Fluentd per enviar logs a Elasticsearch editant el fitxer de configuració:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBmaXR4ZXIgdmFsdWVzLnlhbWwKZmx1ZW50ZDoKICBjb25maWc6CiAgICBvdXRwdXRzOgogICAgICAtIHR5cGU6IGVsYXN0aWNzZWFyY2gKICAgICAgICBob3N0OiAiZWxhc3RpY3NlYXJjaC5kZWZhdWx0LnN2Yy5jbHVzdGVyLmxvY2FsIgogICAgICAgIHBvcnQ6IDkyMDA="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># fitxer values.yaml
+fluentd:
+  config:
+    outputs:
+      - type: elasticsearch
+        host: &quot;elasticsearch.default.svc.cluster.local&quot;
+        port: 9200</pre></div><div class='content'><p>Després, instal·lem Fluentd amb els valors personalitzats:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGVsbSBpbnN0YWxsIGZsdWVudGQgLWYgdmFsdWVzLnlhbWwgZmx1ZW50L2ZsdWVudGQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>helm install fluentd -f values.yaml fluent/fluentd</pre></div><div class='content'></div><h1>4. Configuració de Kibana</h1>
+<div class='content'></div><h2>Desplegament de Kibana</h2>
+<div class='content'><p>Kibana també es pot desplegar utilitzant un Helm chart.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBBZmVnZWl4IGVsIHJlcG9zaXRvcmkgZGUgSGVsbSBwZXIgS2liYW5hCmhlbG0gcmVwbyBhZGQgZWxhc3RpYyBodHRwczovL2hlbG0uZWxhc3RpYy5jbwoKIyBBY3R1YWxpdHphIGVscyByZXBvc2l0b3JpcyBkZSBIZWxtCmhlbG0gcmVwbyB1cGRhdGUKCiMgSW5zdGFswrdsYSBLaWJhbmEKaGVsbSBpbnN0YWxsIGtpYmFuYSBlbGFzdGljL2tpYmFuYQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Afegeix el repositori de Helm per Kibana
+helm repo add elastic https://helm.elastic.co
+
+# Actualitza els repositoris de Helm
+helm repo update
+
+# Instal&middot;la Kibana
+helm install kibana elastic/kibana</pre></div><div class='content'></div><h2>Accés a Kibana</h2>
+<div class='content'><p>Podem exposar Kibana utilitzant un servei de tipus LoadBalancer o Ingress. Aquí teniu un exemple de configuració d'un servei LoadBalancer:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBmaXR4ZXIgdmFsdWVzLnlhbWwKc2VydmljZToKICB0eXBlOiBMb2FkQmFsYW5jZXI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># fitxer values.yaml
+service:
+  type: LoadBalancer</pre></div><div class='content'><p>Després, instal·lem Kibana amb els valors personalitzats:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aGVsbSBpbnN0YWxsIGtpYmFuYSAtZiB2YWx1ZXMueWFtbCBlbGFzdGljL2tpYmFuYQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>helm install kibana -f values.yaml elastic/kibana</pre></div><div class='content'></div><h1>5. Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Configurar un sistema EFK complet en un clúster de Kubernetes i verificar que els logs de les aplicacions es recopilen i es poden visualitzar a Kibana.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>Desplega Elasticsearch, Fluentd i Kibana utilitzant els Helm charts proporcionats.</li>
+<li>Configura Fluentd per enviar logs a Elasticsearch.</li>
+<li>Exposa Kibana i accedeix a la interfície gràfica.</li>
+<li>Verifica que els logs de les aplicacions es mostren correctament a Kibana.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><ol>
+<li>
+<p>Desplega Elasticsearch:</p>
+<pre><code class="language-bash">helm install elasticsearch elastic/elasticsearch
+</code></pre>
+</li>
+<li>
+<p>Desplega Fluentd amb la configuració per enviar logs a Elasticsearch:</p>
+<pre><code class="language-yaml"># fitxer values.yaml
+fluentd:
+  config:
+    outputs:
+      - type: elasticsearch
+        host: &quot;elasticsearch.default.svc.cluster.local&quot;
+        port: 9200
+</code></pre>
+<pre><code class="language-bash">helm install fluentd -f values.yaml fluent/fluentd
+</code></pre>
+</li>
+<li>
+<p>Desplega Kibana i exposa'l:</p>
+<pre><code class="language-yaml"># fitxer values.yaml
+service:
+  type: LoadBalancer
+</code></pre>
+<pre><code class="language-bash">helm install kibana -f values.yaml elastic/kibana
+</code></pre>
+</li>
+<li>
+<p>Accedeix a Kibana a través de l'adreça IP del LoadBalancer i verifica els logs.</p>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après a configurar un sistema de registre centralitzat utilitzant Elasticsearch, Fluentd i Kibana (EFK) en un clúster de Kubernetes. Aquest sistema ens permet recopilar, emmagatzemar i visualitzar els logs de les nostres aplicacions de manera eficient, facilitant la gestió i anàlisi dels logs. Hem vist com desplegar cadascuna de les eines utilitzant Helm i com configurar-les per treballar conjuntament.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-01-monitoring-prometheus' title="Monitorització amb Prometheus">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='07-03-health-checks-probes' title="Controls de Salut i Probes">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

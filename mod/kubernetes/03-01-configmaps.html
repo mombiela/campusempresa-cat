@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConfigMaps</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/kubernetes/03-01-configmaps" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kubernetes/03-01-configmaps" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kubernetes/03-01-configmaps" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/kubernetes/03-01-configmaps" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/kubernetes/03-01-configmaps" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-05-namespaces' title="Namespaces">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">ConfigMaps</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-02-secrets' title="Secrets">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Els ConfigMaps són un component essencial en Kubernetes que permeten separar la configuració de l'aplicació del codi de l'aplicació. Això facilita la gestió i la modificació de la configuració sense necessitat de reconstruir la imatge del contenidor.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>ConfigMap</strong>: Un objecte de Kubernetes que emmagatzema dades de configuració en parelles clau-valor.</li>
+<li><strong>Volum ConfigMap</strong>: Un volum que proporciona dades de configuració a un contenidor.</li>
+<li><strong>Variables d'entorn</strong>: Les dades de configuració es poden injectar com a variables d'entorn en els contenidors.</li>
+</ul>
+</div><h1>Creació d'un ConfigMap</h1>
+<div class='content'></div><h2>Mètode 1: Utilitzant un fitxer de configuració YAML</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogQ29uZmlnTWFwCm1ldGFkYXRhOgogIG5hbWU6IGV4YW1wbGUtY29uZmlnCmRhdGE6CiAgZGF0YWJhc2VfdXJsOiAibW9uZ29kYjovL2xvY2FsaG9zdDoyNzAxNyIKICBkYXRhYmFzZV9uYW1lOiAiZXhhbXBsZWRiIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: example-config
+data:
+  database_url: &quot;mongodb://localhost:27017&quot;
+  database_name: &quot;exampledb&quot;</pre></div><div class='content'></div><h2>Mètode 2: Utilitzant la línia de comandes `kubectl`</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("a3ViZWN0bCBjcmVhdGUgY29uZmlnbWFwIGV4YW1wbGUtY29uZmlnIC0tZnJvbS1saXRlcmFsPWRhdGFiYXNlX3VybD0ibW9uZ29kYjovL2xvY2FsaG9zdDoyNzAxNyIgLS1mcm9tLWxpdGVyYWw9ZGF0YWJhc2VfbmFtZT0iZXhhbXBsZWRiIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>kubectl create configmap example-config --from-literal=database_url=&quot;mongodb://localhost:27017&quot; --from-literal=database_name=&quot;exampledb&quot;</pre></div><div class='content'></div><h1>Utilització d'un ConfigMap</h1>
+<div class='content'></div><h2>Injectar com a Variables d'Entorn</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUG9kCm1ldGFkYXRhOgogIG5hbWU6IGV4YW1wbGUtcG9kCnNwZWM6CiAgY29udGFpbmVyczoKICAtIG5hbWU6IGV4YW1wbGUtY29udGFpbmVyCiAgICBpbWFnZTogbmdpbngKICAgIGVudjoKICAgIC0gbmFtZTogREFUQUJBU0VfVVJMCiAgICAgIHZhbHVlRnJvbToKICAgICAgICBjb25maWdNYXBLZXlSZWY6CiAgICAgICAgICBuYW1lOiBleGFtcGxlLWNvbmZpZwogICAgICAgICAga2V5OiBkYXRhYmFzZV91cmwKICAgIC0gbmFtZTogREFUQUJBU0VfTkFNRQogICAgICB2YWx1ZUZyb206CiAgICAgICAgY29uZmlnTWFwS2V5UmVmOgogICAgICAgICAgbmFtZTogZXhhbXBsZS1jb25maWcKICAgICAgICAgIGtleTogZGF0YWJhc2VfbmFtZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  containers:
+  - name: example-container
+    image: nginx
+    env:
+    - name: DATABASE_URL
+      valueFrom:
+        configMapKeyRef:
+          name: example-config
+          key: database_url
+    - name: DATABASE_NAME
+      valueFrom:
+        configMapKeyRef:
+          name: example-config
+          key: database_name</pre></div><div class='content'></div><h2>Montar com a Volum</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogUG9kCm1ldGFkYXRhOgogIG5hbWU6IGV4YW1wbGUtcG9kCnNwZWM6CiAgY29udGFpbmVyczoKICAtIG5hbWU6IGV4YW1wbGUtY29udGFpbmVyCiAgICBpbWFnZTogbmdpbngKICAgIHZvbHVtZU1vdW50czoKICAgIC0gbmFtZTogY29uZmlnLXZvbHVtZQogICAgICBtb3VudFBhdGg6IC9ldGMvY29uZmlnCiAgdm9sdW1lczoKICAtIG5hbWU6IGNvbmZpZy12b2x1bWUKICAgIGNvbmZpZ01hcDoKICAgICAgbmFtZTogZXhhbXBsZS1jb25maWc="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: Pod
+metadata:
+  name: example-pod
+spec:
+  containers:
+  - name: example-container
+    image: nginx
+    volumeMounts:
+    - name: config-volume
+      mountPath: /etc/config
+  volumes:
+  - name: config-volume
+    configMap:
+      name: example-config</pre></div><div class='content'></div><h1>Exemples Pràctics</h1>
+<div class='content'></div><h2>Exemple 1: Crear i Utilitzar un ConfigMap</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear el ConfigMap</strong>:</p>
+<pre><code class="language-sh">kubectl create configmap app-config --from-literal=app_name=&quot;MyApp&quot; --from-literal=app_version=&quot;1.0&quot;
+</code></pre>
+</li>
+<li>
+<p><strong>Crear un Pod que utilitzi el ConfigMap</strong>:</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: app-pod
+spec:
+  containers:
+  - name: app-container
+    image: busybox
+    command: [&quot;sh&quot;, &quot;-c&quot;, &quot;echo $(APP_NAME) $(APP_VERSION) &amp;&amp; sleep 3600&quot;]
+    env:
+    - name: APP_NAME
+      valueFrom:
+        configMapKeyRef:
+          name: app-config
+          key: app_name
+    - name: APP_VERSION
+      valueFrom:
+        configMapKeyRef:
+          name: app-config
+          key: app_version
+</code></pre>
+</li>
+<li>
+<p><strong>Aplicar el Pod</strong>:</p>
+<pre><code class="language-sh">kubectl apply -f app-pod.yaml
+</code></pre>
+</li>
+<li>
+<p><strong>Verificar la sortida del Pod</strong>:</p>
+<pre><code class="language-sh">kubectl logs app-pod
+</code></pre>
+</li>
+</ol>
+</div><h2>Exemple 2: Montar un ConfigMap com a Volum</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crear el ConfigMap</strong>:</p>
+<pre><code class="language-sh">kubectl create configmap app-config --from-file=config-file=config.txt
+</code></pre>
+</li>
+<li>
+<p><strong>Crear un Pod que monti el ConfigMap com a volum</strong>:</p>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Pod
+metadata:
+  name: app-pod
+spec:
+  containers:
+  - name: app-container
+    image: busybox
+    command: [&quot;sh&quot;, &quot;-c&quot;, &quot;cat /etc/config/config-file &amp;&amp; sleep 3600&quot;]
+    volumeMounts:
+    - name: config-volume
+      mountPath: /etc/config
+  volumes:
+  - name: config-volume
+    configMap:
+      name: app-config
+</code></pre>
+</li>
+<li>
+<p><strong>Aplicar el Pod</strong>:</p>
+<pre><code class="language-sh">kubectl apply -f app-pod.yaml
+</code></pre>
+</li>
+<li>
+<p><strong>Verificar la sortida del Pod</strong>:</p>
+<pre><code class="language-sh">kubectl logs app-pod
+</code></pre>
+</li>
+</ol>
+</div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ul>
+<li><strong>Error: ConfigMap no trobat</strong>: Assegura't que el nom del ConfigMap en el Pod coincideixi exactament amb el nom del ConfigMap creat.</li>
+<li><strong>Error: Clau no trobada</strong>: Verifica que la clau especificada en <code>configMapKeyRef</code> existeixi en el ConfigMap.</li>
+<li><strong>Consell</strong>: Utilitza noms descriptius per a les claus del ConfigMap per facilitar la seva gestió i comprensió.</li>
+</ul>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquesta secció, hem après què són els ConfigMaps, com crear-los i com utilitzar-los en els nostres Pods. Els ConfigMaps són una eina poderosa per gestionar la configuració de les aplicacions de manera flexible i eficient. En la següent secció, explorarem els Secrets, que són similars als ConfigMaps però estan dissenyats per emmagatzemar dades sensibles de manera segura.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='02-05-namespaces' title="Namespaces">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='03-02-secrets' title="Secrets">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

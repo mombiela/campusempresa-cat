@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Implementació de Compres Integrades a l'Aplicació</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/androidstudio/06-03-implementing-in-app-purchases" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/androidstudio/06-03-implementing-in-app-purchases" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/androidstudio/06-03-implementing-in-app-purchases" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/androidstudio/06-03-implementing-in-app-purchases" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/androidstudio/06-03-implementing-in-app-purchases" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-integrating-google-maps' title="Integració de Google Maps">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Implementació de Compres Integrades a l'Aplicació</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-using-machine-learning-in-android' title="Ús de l'Aprenentatge Automàtic en Android">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>Les compres integrades a l'aplicació (In-App Purchases, IAP) permeten als desenvolupadors monetitzar les seves aplicacions oferint contingut addicional, funcionalitats premium o altres elements digitals directament dins de l'aplicació. En aquest tema, aprendrem com implementar compres integrades a l'aplicació en un projecte Android utilitzant la biblioteca de facturació de Google Play.</p>
+</div><h1>Requisits Previs</h1>
+<div class='content'><p>Abans de començar, assegura't de tenir:</p>
+<ul>
+<li>Un compte de desenvolupador de Google Play.</li>
+<li>Una aplicació publicada en Google Play (pot ser en mode de prova).</li>
+<li>Coneixements bàsics de Kotlin o Java i Android Studio.</li>
+</ul>
+</div><h1>Passos per Implementar Compres Integrades</h1>
+<div class='content'></div><h2>1. Configuració del Projecte</h2>
+<div class='content'><h4>Afegir la Dependència de Facturació</h4>
+<p>Primer, afegeix la dependència de la biblioteca de facturació de Google Play al teu fitxer <code>build.gradle</code> de l'aplicació:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVwZW5kZW5jaWVzIHsKICAgIGltcGxlbWVudGF0aW9uICdjb20uYW5kcm9pZC5iaWxsaW5nY2xpZW50OmJpbGxpbmc6NC4wLjAnCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>dependencies {
+    implementation 'com.android.billingclient:billing:4.0.0'
+}</pre></div><div class='content'></div><h2>2. Configuració de Productes a Google Play Console</h2>
+<div class='content'><ol>
+<li><strong>Accedeix a Google Play Console</strong>: Inicia sessió al teu compte de desenvolupador de Google Play.</li>
+<li><strong>Selecciona la teva Aplicació</strong>: Tria l'aplicació en la qual vols implementar les compres integrades.</li>
+<li><strong>Configura Productes</strong>: A la secció de &quot;Monetització&quot; o &quot;Productes integrats a l'aplicació&quot;, afegeix nous productes. Pots crear productes de tipus &quot;Consumible&quot;, &quot;No consumible&quot; o &quot;Subscripció&quot;.</li>
+</ol>
+</div><h2>3. Implementació del Codi</h2>
+<div class='content'><h4>Inicialització del Client de Facturació</h4>
+<p>Inicialitza el client de facturació en la teva activitat principal o en un fragment:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIGJpbGxpbmdDbGllbnQgPSBCaWxsaW5nQ2xpZW50Lm5ld0J1aWxkZXIodGhpcykKICAgIC5zZXRMaXN0ZW5lciB7IGJpbGxpbmdSZXN1bHQsIHB1cmNoYXNlcyAtPgogICAgICAgIC8vIEdlc3Rpb25hIGVscyByZXN1bHRhdHMgZGUgbGEgY29tcHJhCiAgICB9CiAgICAuZW5hYmxlUGVuZGluZ1B1cmNoYXNlcygpCiAgICAuYnVpbGQoKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val billingClient = BillingClient.newBuilder(this)
+    .setListener { billingResult, purchases -&gt;
+        // Gestiona els resultats de la compra
+    }
+    .enablePendingPurchases()
+    .build()</pre></div><div class='content'><h4>Connexió al Servei de Facturació</h4>
+<p>Connecta't al servei de facturació:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YmlsbGluZ0NsaWVudC5zdGFydENvbm5lY3Rpb24ob2JqZWN0IDogQmlsbGluZ0NsaWVudFN0YXRlTGlzdGVuZXIgewogICAgb3ZlcnJpZGUgZnVuIG9uQmlsbGluZ1NldHVwRmluaXNoZWQoYmlsbGluZ1Jlc3VsdDogQmlsbGluZ1Jlc3VsdCkgewogICAgICAgIGlmIChiaWxsaW5nUmVzdWx0LnJlc3BvbnNlQ29kZSA9PSBCaWxsaW5nQ2xpZW50LkJpbGxpbmdSZXNwb25zZUNvZGUuT0spIHsKICAgICAgICAgICAgLy8gRWwgY2xpZW50IGRlIGZhY3R1cmFjacOzIGVzdMOgIHByZXBhcmF0CiAgICAgICAgfQogICAgfQoKICAgIG92ZXJyaWRlIGZ1biBvbkJpbGxpbmdTZXJ2aWNlRGlzY29ubmVjdGVkKCkgewogICAgICAgIC8vIFRvcm5hIGEgaW50ZW50YXIgbGEgY29ubmV4acOzCiAgICB9Cn0p"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>billingClient.startConnection(object : BillingClientStateListener {
+    override fun onBillingSetupFinished(billingResult: BillingResult) {
+        if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+            // El client de facturaci&oacute; est&agrave; preparat
+        }
+    }
+
+    override fun onBillingServiceDisconnected() {
+        // Torna a intentar la connexi&oacute;
+    }
+})</pre></div><div class='content'><h4>Sol·licitud de Productes Disponibles</h4>
+<p>Sol·licita els productes disponibles per a la compra:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIHNrdUxpc3QgPSBsaXN0T2YoInByb2R1Y3RfaWRfMSIsICJwcm9kdWN0X2lkXzIiKQp2YWwgcGFyYW1zID0gU2t1RGV0YWlsc1BhcmFtcy5uZXdCdWlsZGVyKCkKcGFyYW1zLnNldFNrdXNMaXN0KHNrdUxpc3QpLnNldFR5cGUoQmlsbGluZ0NsaWVudC5Ta3VUeXBlLklOQVBQKQoKYmlsbGluZ0NsaWVudC5xdWVyeVNrdURldGFpbHNBc3luYyhwYXJhbXMuYnVpbGQoKSkgeyBiaWxsaW5nUmVzdWx0LCBza3VEZXRhaWxzTGlzdCAtPgogICAgaWYgKGJpbGxpbmdSZXN1bHQucmVzcG9uc2VDb2RlID09IEJpbGxpbmdDbGllbnQuQmlsbGluZ1Jlc3BvbnNlQ29kZS5PSyAmJiBza3VEZXRhaWxzTGlzdCAhPSBudWxsKSB7CiAgICAgICAgZm9yIChza3VEZXRhaWxzIGluIHNrdURldGFpbHNMaXN0KSB7CiAgICAgICAgICAgIC8vIEdlc3Rpb25hIGVscyBkZXRhbGxzIGRlbCBwcm9kdWN0ZQogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val skuList = listOf(&quot;product_id_1&quot;, &quot;product_id_2&quot;)
+val params = SkuDetailsParams.newBuilder()
+params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP)
+
+billingClient.querySkuDetailsAsync(params.build()) { billingResult, skuDetailsList -&gt;
+    if (billingResult.responseCode == BillingClient.BillingResponseCode.OK &amp;&amp; skuDetailsList != null) {
+        for (skuDetails in skuDetailsList) {
+            // Gestiona els detalls del producte
+        }
+    }
+}</pre></div><div class='content'><h4>Inici de la Compra</h4>
+<p>Inicia el procés de compra quan l'usuari selecciona un producte:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dmFsIGZsb3dQYXJhbXMgPSBCaWxsaW5nRmxvd1BhcmFtcy5uZXdCdWlsZGVyKCkKICAgIC5zZXRTa3VEZXRhaWxzKHNrdURldGFpbHMpCiAgICAuYnVpbGQoKQoKYmlsbGluZ0NsaWVudC5sYXVuY2hCaWxsaW5nRmxvdyh0aGlzLCBmbG93UGFyYW1zKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>val flowParams = BillingFlowParams.newBuilder()
+    .setSkuDetails(skuDetails)
+    .build()
+
+billingClient.launchBillingFlow(this, flowParams)</pre></div><div class='content'><h4>Gestió de la Resposta de la Compra</h4>
+<p>Gestiona la resposta de la compra en el <code>PurchasesUpdatedListener</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("b3ZlcnJpZGUgZnVuIG9uUHVyY2hhc2VzVXBkYXRlZChiaWxsaW5nUmVzdWx0OiBCaWxsaW5nUmVzdWx0LCBwdXJjaGFzZXM6IExpc3Q8UHVyY2hhc2U+PykgewogICAgaWYgKGJpbGxpbmdSZXN1bHQucmVzcG9uc2VDb2RlID09IEJpbGxpbmdDbGllbnQuQmlsbGluZ1Jlc3BvbnNlQ29kZS5PSyAmJiBwdXJjaGFzZXMgIT0gbnVsbCkgewogICAgICAgIGZvciAocHVyY2hhc2UgaW4gcHVyY2hhc2VzKSB7CiAgICAgICAgICAgIC8vIFZlcmlmaWNhIGxhIGNvbXByYSBpIHByb3BvcmNpb25hIGVsIGNvbnRpbmd1dAogICAgICAgIH0KICAgIH0gZWxzZSBpZiAoYmlsbGluZ1Jlc3VsdC5yZXNwb25zZUNvZGUgPT0gQmlsbGluZ0NsaWVudC5CaWxsaW5nUmVzcG9uc2VDb2RlLlVTRVJfQ0FOQ0VMRUQpIHsKICAgICAgICAvLyBMJ3VzdWFyaSBoYSBjYW5jZWzCt2xhdCBsYSBjb21wcmEKICAgIH0gZWxzZSB7CiAgICAgICAgLy8gR2VzdGlvbmEgYWx0cmVzIGVycm9ycwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>override fun onPurchasesUpdated(billingResult: BillingResult, purchases: List&lt;Purchase&gt;?) {
+    if (billingResult.responseCode == BillingClient.BillingResponseCode.OK &amp;&amp; purchases != null) {
+        for (purchase in purchases) {
+            // Verifica la compra i proporciona el contingut
+        }
+    } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
+        // L'usuari ha cancel&middot;lat la compra
+    } else {
+        // Gestiona altres errors
+    }
+}</pre></div><div class='content'></div><h2>4. Verificació de la Compra</h2>
+<div class='content'><p>Per garantir la seguretat, verifica les compres al servidor. Això implica enviar els detalls de la compra al teu servidor i verificar-los amb els servidors de Google.</p>
+</div><h2>5. Prova de les Compres Integrades</h2>
+<div class='content'><p>Prova les compres integrades utilitzant comptes de prova configurats a Google Play Console. Assegura't que totes les compres funcionin correctament abans de publicar l'aplicació.</p>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Implementar una compra integrada en una aplicació Android que permeti als usuaris comprar un element consumible.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>Configura un producte consumible a Google Play Console.</li>
+<li>Afegeix la dependència de facturació al teu projecte.</li>
+<li>Inicialitza el client de facturació i connecta't al servei.</li>
+<li>Sol·licita els productes disponibles i mostra'ls a l'usuari.</li>
+<li>Implementa el procés de compra i gestiona la resposta.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gMS4gQ29uZmlndXJhIHVuIHByb2R1Y3RlIGNvbnN1bWlibGUgYSBHb29nbGUgUGxheSBDb25zb2xlIChwcm9kdWN0X2lkOiAiY29uc3VtYWJsZV9pdGVtIikKCi8vIDIuIEFmZWdlaXggbGEgZGVwZW5kw6huY2lhIGRlIGZhY3R1cmFjacOzIGFsIGZpdHhlciBidWlsZC5ncmFkbGUKZGVwZW5kZW5jaWVzIHsKICAgIGltcGxlbWVudGF0aW9uICdjb20uYW5kcm9pZC5iaWxsaW5nY2xpZW50OmJpbGxpbmc6NC4wLjAnCn0KCi8vIDMuIEluaWNpYWxpdHphIGVsIGNsaWVudCBkZSBmYWN0dXJhY2nDsyBpIGNvbm5lY3RhJ3QgYWwgc2VydmVpCnZhbCBiaWxsaW5nQ2xpZW50ID0gQmlsbGluZ0NsaWVudC5uZXdCdWlsZGVyKHRoaXMpCiAgICAuc2V0TGlzdGVuZXIgeyBiaWxsaW5nUmVzdWx0LCBwdXJjaGFzZXMgLT4KICAgICAgICBpZiAoYmlsbGluZ1Jlc3VsdC5yZXNwb25zZUNvZGUgPT0gQmlsbGluZ0NsaWVudC5CaWxsaW5nUmVzcG9uc2VDb2RlLk9LICYmIHB1cmNoYXNlcyAhPSBudWxsKSB7CiAgICAgICAgICAgIGZvciAocHVyY2hhc2UgaW4gcHVyY2hhc2VzKSB7CiAgICAgICAgICAgICAgICAvLyBWZXJpZmljYSBsYSBjb21wcmEgaSBwcm9wb3JjaW9uYSBlbCBjb250aW5ndXQKICAgICAgICAgICAgfQogICAgICAgIH0KICAgIH0KICAgIC5lbmFibGVQZW5kaW5nUHVyY2hhc2VzKCkKICAgIC5idWlsZCgpCgpiaWxsaW5nQ2xpZW50LnN0YXJ0Q29ubmVjdGlvbihvYmplY3QgOiBCaWxsaW5nQ2xpZW50U3RhdGVMaXN0ZW5lciB7CiAgICBvdmVycmlkZSBmdW4gb25CaWxsaW5nU2V0dXBGaW5pc2hlZChiaWxsaW5nUmVzdWx0OiBCaWxsaW5nUmVzdWx0KSB7CiAgICAgICAgaWYgKGJpbGxpbmdSZXN1bHQucmVzcG9uc2VDb2RlID09IEJpbGxpbmdDbGllbnQuQmlsbGluZ1Jlc3BvbnNlQ29kZS5PSykgewogICAgICAgICAgICAvLyBFbCBjbGllbnQgZGUgZmFjdHVyYWNpw7MgZXN0w6AgcHJlcGFyYXQKICAgICAgICB9CiAgICB9CgogICAgb3ZlcnJpZGUgZnVuIG9uQmlsbGluZ1NlcnZpY2VEaXNjb25uZWN0ZWQoKSB7CiAgICAgICAgLy8gVG9ybmEgYSBpbnRlbnRhciBsYSBjb25uZXhpw7MKICAgIH0KfSkKCi8vIDQuIFNvbMK3bGljaXRhIGVscyBwcm9kdWN0ZXMgZGlzcG9uaWJsZXMgaSBtb3N0cmEnbHMgYSBsJ3VzdWFyaQp2YWwgc2t1TGlzdCA9IGxpc3RPZigiY29uc3VtYWJsZV9pdGVtIikKdmFsIHBhcmFtcyA9IFNrdURldGFpbHNQYXJhbXMubmV3QnVpbGRlcigpCnBhcmFtcy5zZXRTa3VzTGlzdChza3VMaXN0KS5zZXRUeXBlKEJpbGxpbmdDbGllbnQuU2t1VHlwZS5JTkFQUCkKCmJpbGxpbmdDbGllbnQucXVlcnlTa3VEZXRhaWxzQXN5bmMocGFyYW1zLmJ1aWxkKCkpIHsgYmlsbGluZ1Jlc3VsdCwgc2t1RGV0YWlsc0xpc3QgLT4KICAgIGlmIChiaWxsaW5nUmVzdWx0LnJlc3BvbnNlQ29kZSA9PSBCaWxsaW5nQ2xpZW50LkJpbGxpbmdSZXNwb25zZUNvZGUuT0sgJiYgc2t1RGV0YWlsc0xpc3QgIT0gbnVsbCkgewogICAgICAgIGZvciAoc2t1RGV0YWlscyBpbiBza3VEZXRhaWxzTGlzdCkgewogICAgICAgICAgICAvLyBNb3N0cmEgZWxzIGRldGFsbHMgZGVsIHByb2R1Y3RlIGEgbCd1c3VhcmkKICAgICAgICB9CiAgICB9Cn0KCi8vIDUuIEltcGxlbWVudGEgZWwgcHJvY8OpcyBkZSBjb21wcmEgaSBnZXN0aW9uYSBsYSByZXNwb3N0YQp2YWwgZmxvd1BhcmFtcyA9IEJpbGxpbmdGbG93UGFyYW1zLm5ld0J1aWxkZXIoKQogICAgLnNldFNrdURldGFpbHMoc2t1RGV0YWlscykKICAgIC5idWlsZCgpCgpiaWxsaW5nQ2xpZW50LmxhdW5jaEJpbGxpbmdGbG93KHRoaXMsIGZsb3dQYXJhbXMp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// 1. Configura un producte consumible a Google Play Console (product_id: &quot;consumable_item&quot;)
+
+// 2. Afegeix la depend&egrave;ncia de facturaci&oacute; al fitxer build.gradle
+dependencies {
+    implementation 'com.android.billingclient:billing:4.0.0'
+}
+
+// 3. Inicialitza el client de facturaci&oacute; i connecta't al servei
+val billingClient = BillingClient.newBuilder(this)
+    .setListener { billingResult, purchases -&gt;
+        if (billingResult.responseCode == BillingClient.BillingResponseCode.OK &amp;&amp; purchases != null) {
+            for (purchase in purchases) {
+                // Verifica la compra i proporciona el contingut
+            }
+        }
+    }
+    .enablePendingPurchases()
+    .build()
+
+billingClient.startConnection(object : BillingClientStateListener {
+    override fun onBillingSetupFinished(billingResult: BillingResult) {
+        if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+            // El client de facturaci&oacute; est&agrave; preparat
+        }
+    }
+
+    override fun onBillingServiceDisconnected() {
+        // Torna a intentar la connexi&oacute;
+    }
+})
+
+// 4. Sol&middot;licita els productes disponibles i mostra'ls a l'usuari
+val skuList = listOf(&quot;consumable_item&quot;)
+val params = SkuDetailsParams.newBuilder()
+params.setSkusList(skuList).setType(BillingClient.SkuType.INAPP)
+
+billingClient.querySkuDetailsAsync(params.build()) { billingResult, skuDetailsList -&gt;
+    if (billingResult.responseCode == BillingClient.BillingResponseCode.OK &amp;&amp; skuDetailsList != null) {
+        for (skuDetails in skuDetailsList) {
+            // Mostra els detalls del producte a l'usuari
+        }
+    }
+}
+
+// 5. Implementa el proc&eacute;s de compra i gestiona la resposta
+val flowParams = BillingFlowParams.newBuilder()
+    .setSkuDetails(skuDetails)
+    .build()
+
+billingClient.launchBillingFlow(this, flowParams)</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Implementar compres integrades a l'aplicació és una manera efectiva de monetitzar les aplicacions Android. En aquest tema, hem après a configurar el projecte, inicialitzar el client de facturació, sol·licitar productes disponibles, iniciar el procés de compra i gestionar la resposta de la compra. Amb aquests coneixements, pots començar a oferir contingut premium i funcionalitats addicionals als teus usuaris.</p>
+<p>En el següent tema, explorarem com utilitzar l'aprenentatge automàtic en Android per crear aplicacions més intel·ligents i personalitzades.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-integrating-google-maps' title="Integració de Google Maps">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-using-machine-learning-in-android' title="Ús de l'Aprenentatge Automàtic en Android">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

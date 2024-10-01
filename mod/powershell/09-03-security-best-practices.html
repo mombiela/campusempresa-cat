@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Millors Pràctiques de Seguretat</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/powershell/09-03-security-best-practices" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/powershell/09-03-security-best-practices" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/powershell/09-03-security-best-practices" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/powershell/09-03-security-best-practices" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/powershell/09-03-security-best-practices" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-02-performance-optimization' title="Optimització del Rendiment">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Millors Pràctiques de Seguretat</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-04-version-control-git' title="Control de Versions amb Git">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, explorarem les millors pràctiques de seguretat en PowerShell per assegurar que els teus scripts i entorns siguin segurs. La seguretat és un aspecte crític en qualsevol entorn de programació, especialment quan es treballa amb eines potents com PowerShell que poden tenir accés a recursos sensibles del sistema.</p>
+</div><h1>Continguts</h1>
+<div class='content'><ol>
+<li><a href="#execució-de-polítiques">Execució de Polítiques</a></li>
+<li><a href="#signatura-de-scripts">Signatura de Scripts</a></li>
+<li><a href="#gestió-de-credencials">Gestió de Credencials</a></li>
+<li><a href="#ús-de-securestring">Ús de SecureString</a></li>
+<li><a href="#auditoria-i-registre">Auditoria i Registre</a></li>
+<li><a href="#consells-addicionals">Consells Addicionals</a></li>
+</ol>
+</div><h1>Execució de Polítiques</h1>
+<div class='content'><p>PowerShell té diverses polítiques d'execució que determinen quins scripts es poden executar en el sistema. Les polítiques d'execució són:</p>
+<ul>
+<li><strong>Restricted</strong>: No es permet l'execució de cap script.</li>
+<li><strong>AllSigned</strong>: Només es poden executar scripts signats per un editor de confiança.</li>
+<li><strong>RemoteSigned</strong>: Es poden executar scripts locals sense signar, però els scripts descarregats d'Internet han d'estar signats.</li>
+<li><strong>Unrestricted</strong>: Es poden executar tots els scripts, però es mostra un avís per als scripts descarregats d'Internet.</li>
+</ul>
+</div><h2>Exemple de Codi</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDb21wcm92YXIgbGEgcG9sw610aWNhIGQnZXhlY3VjacOzIGFjdHVhbApHZXQtRXhlY3V0aW9uUG9saWN5CgojIEVzdGFibGlyIGxhIHBvbMOtdGljYSBkJ2V4ZWN1Y2nDsyBhIFJlbW90ZVNpZ25lZApTZXQtRXhlY3V0aW9uUG9saWN5IFJlbW90ZVNpZ25lZCAtU2NvcGUgQ3VycmVudFVzZXI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Comprovar la pol&iacute;tica d'execuci&oacute; actual
+Get-ExecutionPolicy
+
+# Establir la pol&iacute;tica d'execuci&oacute; a RemoteSigned
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><code>Get-ExecutionPolicy</code>: Mostra la política d'execució actual.</li>
+<li><code>Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code>: Estableix la política d'execució a <code>RemoteSigned</code> per a l'usuari actual.</li>
+</ul>
+</div><h1>Signatura de Scripts</h1>
+<div class='content'><p>Signar scripts és una manera de garantir que el codi no ha estat alterat des que va ser signat per l'autor. Això ajuda a prevenir l'execució de scripts maliciosos.</p>
+</div><h2>Exemple de Codi</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBTaWduYXIgdW4gc2NyaXB0IGFtYiB1biBjZXJ0aWZpY2F0ClNldC1BdXRoZW50aWNvZGVTaWduYXR1cmUgLUZpbGVQYXRoIC5cbXlzY3JpcHQucHMxIC1DZXJ0aWZpY2F0ZSAoR2V0LUNoaWxkSXRlbSAtUGF0aCBDZXJ0OlxDdXJyZW50VXNlclxNeSAtQ29kZVNpZ25pbmdDZXJ0KQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Signar un script amb un certificat
+Set-AuthenticodeSignature -FilePath .\myscript.ps1 -Certificate (Get-ChildItem -Path Cert:\CurrentUser\My -CodeSigningCert)</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><code>Set-AuthenticodeSignature</code>: Afegeix una signatura digital a un script.</li>
+<li><code>-FilePath .\myscript.ps1</code>: Especifica el camí del script a signar.</li>
+<li><code>-Certificate (Get-ChildItem -Path Cert:\CurrentUser\My -CodeSigningCert)</code>: Utilitza un certificat de signatura de codi del magatzem de certificats de l'usuari actual.</li>
+</ul>
+</div><h1>Gestió de Credencials</h1>
+<div class='content'><p>És important gestionar les credencials de manera segura per evitar exposar informació sensible.</p>
+</div><h2>Exemple de Codi</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBFbW1hZ2F0emVtYXIgY3JlZGVuY2lhbHMgZGUgbWFuZXJhIHNlZ3VyYQokY3JlZCA9IEdldC1DcmVkZW50aWFsCgojIFV0aWxpdHphciBsZXMgY3JlZGVuY2lhbHMgZW1tYWdhdHplbWFkZXMKSW52b2tlLUNvbW1hbmQgLUNvbXB1dGVyTmFtZSBTZXJ2ZXIwMSAtQ3JlZGVudGlhbCAkY3JlZCAtU2NyaXB0QmxvY2sgeyBHZXQtUHJvY2VzcyB9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Emmagatzemar credencials de manera segura
+$cred = Get-Credential
+
+# Utilitzar les credencials emmagatzemades
+Invoke-Command -ComputerName Server01 -Credential $cred -ScriptBlock { Get-Process }</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><code>Get-Credential</code>: Mostra una finestra de diàleg per introduir les credencials de manera segura.</li>
+<li><code>Invoke-Command -ComputerName Server01 -Credential $cred -ScriptBlock { Get-Process }</code>: Executa un bloc de codi en un equip remot utilitzant les credencials emmagatzemades.</li>
+</ul>
+</div><h1>Ús de SecureString</h1>
+<div class='content'><p><code>SecureString</code> és una classe que proporciona una manera segura d'emmagatzemar dades sensibles com contrasenyes.</p>
+</div><h2>Exemple de Codi</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBDb252ZXJ0aXIgdW5hIGNvbnRyYXNlbnlhIGEgU2VjdXJlU3RyaW5nCiRzZWN1cmVQYXNzd29yZCA9IENvbnZlcnRUby1TZWN1cmVTdHJpbmcgIlBAc3N3MHJkIiAtQXNQbGFpblRleHQgLUZvcmNlCgojIENyZWFyIHVuIG9iamVjdGUgUFNDcmVkZW50aWFsIGFtYiB1biBub20gZCd1c3VhcmkgaSB1bmEgY29udHJhc2VueWEgc2VndXJhCiRjcmVkZW50aWFsID0gTmV3LU9iamVjdCBTeXN0ZW0uTWFuYWdlbWVudC5BdXRvbWF0aW9uLlBTQ3JlZGVudGlhbCAoInVzZXJuYW1lIiwgJHNlY3VyZVBhc3N3b3JkKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Convertir una contrasenya a SecureString
+$securePassword = ConvertTo-SecureString &quot;P@ssw0rd&quot; -AsPlainText -Force
+
+# Crear un objecte PSCredential amb un nom d'usuari i una contrasenya segura
+$credential = New-Object System.Management.Automation.PSCredential (&quot;username&quot;, $securePassword)</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><code>ConvertTo-SecureString &quot;P@ssw0rd&quot; -AsPlainText -Force</code>: Converteix una contrasenya en text pla a un objecte <code>SecureString</code>.</li>
+<li><code>New-Object System.Management.Automation.PSCredential (&quot;username&quot;, $securePassword)</code>: Crea un objecte <code>PSCredential</code> utilitzant un nom d'usuari i una contrasenya segura.</li>
+</ul>
+</div><h1>Auditoria i Registre</h1>
+<div class='content'><p>L'auditoria i el registre són essencials per monitoritzar l'activitat dels scripts i detectar possibles problemes de seguretat.</p>
+</div><h2>Exemple de Codi</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBIYWJpbGl0YXIgZWwgcmVnaXN0cmUgZGUgdHJhbnNjcmlwY2lvbnMKU3RhcnQtVHJhbnNjcmlwdCAtUGF0aCAiQzpcTG9nc1xQb3dlclNoZWxsX3RyYW5zY3JpcHQudHh0IgoKIyBFeGVjdXRhciBjb21hbmRlcwpHZXQtUHJvY2VzcwoKIyBBdHVyYXIgZWwgcmVnaXN0cmUgZGUgdHJhbnNjcmlwY2lvbnMKU3RvcC1UcmFuc2NyaXB0"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Habilitar el registre de transcripcions
+Start-Transcript -Path &quot;C:\Logs\PowerShell_transcript.txt&quot;
+
+# Executar comandes
+Get-Process
+
+# Aturar el registre de transcripcions
+Stop-Transcript</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><code>Start-Transcript -Path &quot;C:\Logs\PowerShell_transcript.txt&quot;</code>: Inicia el registre de totes les comandes i la seva sortida en un fitxer de transcripció.</li>
+<li><code>Stop-Transcript</code>: Atura el registre de transcripcions.</li>
+</ul>
+</div><h1>Consells Addicionals</h1>
+<div class='content'><ul>
+<li><strong>Evita l'ús de contrasenyes en text pla</strong>: Utilitza <code>SecureString</code> i <code>PSCredential</code> per emmagatzemar contrasenyes de manera segura.</li>
+<li><strong>Revisa els scripts abans d'executar-los</strong>: Especialment si provenen de fonts desconegudes.</li>
+<li><strong>Utilitza polítiques d'execució restrictives</strong>: Configura la política d'execució a <code>AllSigned</code> o <code>RemoteSigned</code> per augmentar la seguretat.</li>
+<li><strong>Mantén PowerShell actualitzat</strong>: Assegura't d'utilitzar la versió més recent de PowerShell per beneficiar-te de les últimes millores de seguretat.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem explorat diverses pràctiques de seguretat que pots implementar en els teus scripts de PowerShell per protegir el teu entorn i les teves dades. Des de la configuració de polítiques d'execució fins a la gestió segura de credencials i l'auditoria, aquestes pràctiques t'ajudaran a mantenir un entorn segur i fiable.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='09-02-performance-optimization' title="Optimització del Rendiment">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='09-04-version-control-git' title="Control de Versions amb Git">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

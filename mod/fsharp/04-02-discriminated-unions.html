@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unions Discriminades</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/fsharp/04-02-discriminated-unions" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/fsharp/04-02-discriminated-unions" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/fsharp/04-02-discriminated-unions" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/fsharp/04-02-discriminated-unions" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/fsharp/04-02-discriminated-unions" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-tuples-records' title="Tuples i Registres">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Unions Discriminades</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-option-result-types' title="Tipus Option i Result">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Les unions discriminades són una característica poderosa de F# que permet definir tipus que poden tenir diverses formes. Aquestes formes es defineixen com a constructors de tipus, i cada constructor pot tenir els seus propis valors associats. Les unions discriminades són molt útils per representar dades que poden tenir diferents variants, com ara resultats d'operacions que poden ser èxits o errors, o formes geomètriques que poden ser cercles, quadrats, etc.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Definició d'Unions Discriminades</strong>: Com es defineixen i utilitzen les unions discriminades.</li>
+<li><strong>Coincidència de Patrons</strong>: Com utilitzar la coincidència de patrons per treballar amb unions discriminades.</li>
+<li><strong>Exemples Pràctics</strong>: Exemples d'ús d'unions discriminades en diferents contextos.</li>
+<li><strong>Errors Comuns</strong>: Errors comuns en l'ús d'unions discriminades i com evitar-los.</li>
+</ol>
+</div><h1>Definició d'Unions Discriminades</h1>
+<div class='content'><p>Per definir una unió discriminada en F#, utilitzem la paraula clau <code>type</code> seguida del nom del tipus i els constructors de tipus. Aquí teniu un exemple bàsic:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHlwZSBTaGFwZSA9CiAgICB8IENpcmNsZSBvZiByYWRpdXM6IGZsb2F0CiAgICB8IFJlY3RhbmdsZSBvZiB3aWR0aDogZmxvYXQgKiBoZWlnaHQ6IGZsb2F0CiAgICB8IFRyaWFuZ2xlIG9mIGJhc2U6IGZsb2F0ICogaGVpZ2h0OiBmbG9hdA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>type Shape =
+    | Circle of radius: float
+    | Rectangle of width: float * height: float
+    | Triangle of base: float * height: float</pre></div><div class='content'><p>En aquest exemple, <code>Shape</code> és una unió discriminada amb tres constructors: <code>Circle</code>, <code>Rectangle</code> i <code>Triangle</code>. Cada constructor té els seus propis valors associats.</p>
+</div><h1>Coincidència de Patrons</h1>
+<div class='content'><p>La coincidència de patrons és una tècnica poderosa per treballar amb unions discriminades. Permet descompondre i processar els valors de les unions discriminades de manera clara i concisa. Aquí teniu un exemple de com utilitzar la coincidència de patrons amb la unió discriminada <code>Shape</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bGV0IGFyZWEgc2hhcGUgPQogICAgbWF0Y2ggc2hhcGUgd2l0aAogICAgfCBDaXJjbGUgcmFkaXVzIC0+IE1hdGguUEkgKiByYWRpdXMgKiByYWRpdXMKICAgIHwgUmVjdGFuZ2xlICh3aWR0aCwgaGVpZ2h0KSAtPiB3aWR0aCAqIGhlaWdodAogICAgfCBUcmlhbmdsZSAoYmFzZSwgaGVpZ2h0KSAtPiAwLjUgKiBiYXNlICogaGVpZ2h0"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>let area shape =
+    match shape with
+    | Circle radius -&gt; Math.PI * radius * radius
+    | Rectangle (width, height) -&gt; width * height
+    | Triangle (base, height) -&gt; 0.5 * base * height</pre></div><div class='content'><p>En aquest exemple, la funció <code>area</code> calcula l'àrea d'una forma donada. Utilitza la coincidència de patrons per descompondre el valor de <code>shape</code> i aplicar la fórmula adequada per a cada tipus de forma.</p>
+</div><h1>Exemples Pràctics</h1>
+<div class='content'></div><h2>Exemple 1: Resultat d'Operació</h2>
+<div class='content'><p>Les unions discriminades són útils per representar resultats d'operacions que poden ser èxits o errors. Aquí teniu un exemple:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHlwZSBSZXN1bHQ8J1Q+ID0KICAgIHwgU3VjY2VzcyBvZiB2YWx1ZTogJ1QKICAgIHwgRXJyb3Igb2YgbWVzc2FnZTogc3RyaW5nCgpsZXQgZGl2aWRlIHggeSA9CiAgICBpZiB5ID0gMC4wIHRoZW4KICAgICAgICBFcnJvciAiQ2Fubm90IGRpdmlkZSBieSB6ZXJvIgogICAgZWxzZQogICAgICAgIFN1Y2Nlc3MgKHggLyB5KQoKbGV0IHJlc3VsdCA9IGRpdmlkZSAxMC4wIDIuMAoKbWF0Y2ggcmVzdWx0IHdpdGgKfCBTdWNjZXNzIHZhbHVlIC0+IHByaW50Zm4gIlJlc3VsdDogJWYiIHZhbHVlCnwgRXJyb3IgbWVzc2FnZSAtPiBwcmludGZuICJFcnJvcjogJXMiIG1lc3NhZ2U="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>type Result&lt;'T&gt; =
+    | Success of value: 'T
+    | Error of message: string
+
+let divide x y =
+    if y = 0.0 then
+        Error &quot;Cannot divide by zero&quot;
+    else
+        Success (x / y)
+
+let result = divide 10.0 2.0
+
+match result with
+| Success value -&gt; printfn &quot;Result: %f&quot; value
+| Error message -&gt; printfn &quot;Error: %s&quot; message</pre></div><div class='content'></div><h2>Exemple 2: Representació de Missatges</h2>
+<div class='content'><p>Les unions discriminades també es poden utilitzar per representar diferents tipus de missatges en un sistema de missatgeria:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHlwZSBNZXNzYWdlID0KICAgIHwgVGV4dCBvZiBjb250ZW50OiBzdHJpbmcKICAgIHwgSW1hZ2Ugb2YgdXJsOiBzdHJpbmcKICAgIHwgVmlkZW8gb2YgdXJsOiBzdHJpbmcgKiBkdXJhdGlvbjogaW50CgpsZXQgcHJvY2Vzc01lc3NhZ2UgbWVzc2FnZSA9CiAgICBtYXRjaCBtZXNzYWdlIHdpdGgKICAgIHwgVGV4dCBjb250ZW50IC0+IHByaW50Zm4gIlRleHQgbWVzc2FnZTogJXMiIGNvbnRlbnQKICAgIHwgSW1hZ2UgdXJsIC0+IHByaW50Zm4gIkltYWdlIG1lc3NhZ2U6ICVzIiB1cmwKICAgIHwgVmlkZW8gKHVybCwgZHVyYXRpb24pIC0+IHByaW50Zm4gIlZpZGVvIG1lc3NhZ2U6ICVzLCBkdXJhdGlvbjogJWQgc2Vjb25kcyIgdXJsIGR1cmF0aW9uCgpsZXQgbXNnID0gVmlkZW8gKCJodHRwOi8vZXhhbXBsZS5jb20vdmlkZW8iLCAxMjApCnByb2Nlc3NNZXNzYWdlIG1zZw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>type Message =
+    | Text of content: string
+    | Image of url: string
+    | Video of url: string * duration: int
+
+let processMessage message =
+    match message with
+    | Text content -&gt; printfn &quot;Text message: %s&quot; content
+    | Image url -&gt; printfn &quot;Image message: %s&quot; url
+    | Video (url, duration) -&gt; printfn &quot;Video message: %s, duration: %d seconds&quot; url duration
+
+let msg = Video (&quot;http://example.com/video&quot;, 120)
+processMessage msg</pre></div><div class='content'></div><h1>Errors Comuns</h1>
+<div class='content'><ol>
+<li><strong>No Cobrir Tots els Constructors</strong>: Quan utilitzeu la coincidència de patrons, assegureu-vos de cobrir tots els constructors de la unió discriminada. Si no ho feu, el compilador generarà un advertiment.</li>
+<li><strong>No Utilitzar Valors Associats</strong>: Quan definiu constructors amb valors associats, assegureu-vos d'utilitzar aquests valors en la coincidència de patrons.</li>
+</ol>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Definir una Unió Discriminada</h2>
+<div class='content'><p>Defineix una unió discriminada <code>TrafficLight</code> que representi els tres estats d'un semàfor: <code>Red</code>, <code>Yellow</code> i <code>Green</code>.</p>
+</div><h2>Exercici 2: Coincidència de Patrons amb `TrafficLight`</h2>
+<div class='content'><p>Escriu una funció <code>nextLight</code> que prengui un valor de <code>TrafficLight</code> i retorni el següent estat del semàfor.</p>
+</div><h2>Solucions</h2>
+<div class='content'><h4>Solució 1</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHlwZSBUcmFmZmljTGlnaHQgPQogICAgfCBSZWQKICAgIHwgWWVsbG93CiAgICB8IEdyZWVu"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>type TrafficLight =
+    | Red
+    | Yellow
+    | Green</pre></div><div class='content'><h4>Solució 2</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bGV0IG5leHRMaWdodCBsaWdodCA9CiAgICBtYXRjaCBsaWdodCB3aXRoCiAgICB8IFJlZCAtPiBHcmVlbgogICAgfCBZZWxsb3cgLT4gUmVkCiAgICB8IEdyZWVuIC0+IFllbGxvdwoKbGV0IGN1cnJlbnRMaWdodCA9IFJlZApsZXQgbmV4dCA9IG5leHRMaWdodCBjdXJyZW50TGlnaHQKcHJpbnRmbiAiTmV4dCBsaWdodDogJUEiIG5leHQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>let nextLight light =
+    match light with
+    | Red -&gt; Green
+    | Yellow -&gt; Red
+    | Green -&gt; Yellow
+
+let currentLight = Red
+let next = nextLight currentLight
+printfn &quot;Next light: %A&quot; next</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>Les unions discriminades són una característica fonamental de F# que permeten definir tipus amb múltiples formes. La coincidència de patrons facilita el treball amb aquests tipus de manera clara i concisa. Amb la pràctica, les unions discriminades es convertiran en una eina poderosa en el vostre arsenal de programació en F#.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-01-tuples-records' title="Tuples i Registres">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-03-option-result-types' title="Tipus Option i Result">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

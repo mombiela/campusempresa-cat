@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automatització de Terraform amb Jenkins</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/terraform/08-02-automating-terraform-with-jenkins" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/terraform/08-02-automating-terraform-with-jenkins" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/terraform/08-02-automating-terraform-with-jenkins" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/terraform/08-02-automating-terraform-with-jenkins" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/terraform/08-02-automating-terraform-with-jenkins" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-01-integrating-terraform-with-cicd' title="Integració de Terraform amb CI/CD">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Automatització de Terraform amb Jenkins</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-03-using-terraform-with-github-actions' title="Ús de Terraform amb GitHub Actions">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, aprendrem com integrar Terraform amb Jenkins per automatitzar el desplegament d'infraestructura. Jenkins és una eina d'integració contínua i lliurament continu (CI/CD) que permet automatitzar diverses tasques de desenvolupament, incloent-hi la gestió d'infraestructura amb Terraform.</p>
+</div><h1>Requisits previs</h1>
+<div class='content'><p>Abans de començar, assegura't de tenir els següents requisits:</p>
+<ul>
+<li>Jenkins instal·lat i configurat.</li>
+<li>Terraform instal·lat en el servidor de Jenkins.</li>
+<li>Coneixements bàsics de Jenkins i Terraform.</li>
+<li>Accés a un proveïdor de núvol (AWS, Azure, GCP, etc.).</li>
+</ul>
+</div><h1>Passos per automatitzar Terraform amb Jenkins</h1>
+<div class='content'></div><h2>1. Configuració del servidor de Jenkins</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Instal·la el plugin de Terraform a Jenkins:</strong></p>
+<ul>
+<li>Ves a <code>Manage Jenkins</code> &gt; <code>Manage Plugins</code>.</li>
+<li>Cerca <code>Terraform</code> i instal·la el plugin.</li>
+</ul>
+</li>
+<li>
+<p><strong>Configura les credencials del proveïdor de núvol:</strong></p>
+<ul>
+<li>Ves a <code>Manage Jenkins</code> &gt; <code>Manage Credentials</code>.</li>
+<li>Afegeix les credencials necessàries per al teu proveïdor de núvol (AWS, Azure, GCP).</li>
+</ul>
+</li>
+</ol>
+</div><h2>2. Creació del projecte de Jenkins</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Crea un nou projecte:</strong></p>
+<ul>
+<li>Ves a <code>New Item</code>.</li>
+<li>Dona un nom al projecte i selecciona <code>Pipeline</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Configura el pipeline:</strong></p>
+<ul>
+<li>A la secció <code>Pipeline</code>, selecciona <code>Pipeline script</code> i afegeix el següent codi:</li>
+</ul>
+</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwZWxpbmUgewogICAgYWdlbnQgYW55CgogICAgZW52aXJvbm1lbnQgewogICAgICAgIC8vIERlZmluZWl4IGxlcyB2YXJpYWJsZXMgZCdlbnRvcm4gbmVjZXNzw6ByaWVzCiAgICAgICAgQVdTX0FDQ0VTU19LRVlfSUQgPSBjcmVkZW50aWFscygnYXdzLWFjY2Vzcy1rZXktaWQnKQogICAgICAgIEFXU19TRUNSRVRfQUNDRVNTX0tFWSA9IGNyZWRlbnRpYWxzKCdhd3Mtc2VjcmV0LWFjY2Vzcy1rZXknKQogICAgfQoKICAgIHN0YWdlcyB7CiAgICAgICAgc3RhZ2UoJ0NoZWNrb3V0JykgewogICAgICAgICAgICBzdGVwcyB7CiAgICAgICAgICAgICAgICAvLyBDbG9uYSBlbCByZXBvc2l0b3JpIGRlIGNvZGkgZGUgVGVycmFmb3JtCiAgICAgICAgICAgICAgICBnaXQgJ2h0dHBzOi8vZ2l0aHViLmNvbS91c3VhcmkvcmVwby10ZXJyYWZvcm0uZ2l0JwogICAgICAgICAgICB9CiAgICAgICAgfQoKICAgICAgICBzdGFnZSgnVGVycmFmb3JtIEluaXQnKSB7CiAgICAgICAgICAgIHN0ZXBzIHsKICAgICAgICAgICAgICAgIC8vIEluaWNpYWxpdHphIFRlcnJhZm9ybQogICAgICAgICAgICAgICAgc2ggJ3RlcnJhZm9ybSBpbml0JwogICAgICAgICAgICB9CiAgICAgICAgfQoKICAgICAgICBzdGFnZSgnVGVycmFmb3JtIFBsYW4nKSB7CiAgICAgICAgICAgIHN0ZXBzIHsKICAgICAgICAgICAgICAgIC8vIEV4ZWN1dGEgVGVycmFmb3JtIHBsYW4KICAgICAgICAgICAgICAgIHNoICd0ZXJyYWZvcm0gcGxhbiAtb3V0PXRmcGxhbicKICAgICAgICAgICAgfQogICAgICAgIH0KCiAgICAgICAgc3RhZ2UoJ1RlcnJhZm9ybSBBcHBseScpIHsKICAgICAgICAgICAgc3RlcHMgewogICAgICAgICAgICAgICAgLy8gQXBsaWNhIGVscyBjYW52aXMgYW1iIFRlcnJhZm9ybQogICAgICAgICAgICAgICAgc2ggJ3RlcnJhZm9ybSBhcHBseSAtYXV0by1hcHByb3ZlIHRmcGxhbicKICAgICAgICAgICAgfQogICAgICAgIH0KICAgIH0KCiAgICBwb3N0IHsKICAgICAgICBhbHdheXMgewogICAgICAgICAgICAvLyBOZXRlZ2VtIGVscyBmaXR4ZXJzIHRlbXBvcmFscwogICAgICAgICAgICBjbGVhbldzKCkKICAgICAgICB9CiAgICB9Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pipeline {
+    agent any
+
+    environment {
+        // Defineix les variables d'entorn necess&agrave;ries
+        AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')
+        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Clona el repositori de codi de Terraform
+                git 'https://github.com/usuari/repo-terraform.git'
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                // Inicialitza Terraform
+                sh 'terraform init'
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                // Executa Terraform plan
+                sh 'terraform plan -out=tfplan'
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                // Aplica els canvis amb Terraform
+                sh 'terraform apply -auto-approve tfplan'
+            }
+        }
+    }
+
+    post {
+        always {
+            // Netegem els fitxers temporals
+            cleanWs()
+        }
+    }
+}</pre></div><div class='content'></div><h2>3. Execució del pipeline</h2>
+<div class='content'><ol>
+<li><strong>Executa el pipeline:</strong>
+<ul>
+<li>Ves al projecte creat i fes clic a <code>Build Now</code>.</li>
+<li>Revisa els logs per assegurar-te que cada etapa s'executa correctament.</li>
+</ul>
+</li>
+</ol>
+</div><h2>4. Validació i depuració</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Revisa l'estat de l'infraestructura:</strong></p>
+<ul>
+<li>Utilitza la consola del teu proveïdor de núvol per verificar que els recursos s'han creat correctament.</li>
+</ul>
+</li>
+<li>
+<p><strong>Depura errors:</strong></p>
+<ul>
+<li>Si hi ha errors, revisa els logs de Jenkins per identificar i solucionar els problemes.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Exercici pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Automatitzar el desplegament d'una instància EC2 a AWS utilitzant Terraform i Jenkins.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li><strong>Crea un fitxer de configuració de Terraform (<code>main.tf</code>):</strong></li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cHJvdmlkZXIgImF3cyIgewogIHJlZ2lvbiA9ICJ1cy13ZXN0LTIiCn0KCnJlc291cmNlICJhd3NfaW5zdGFuY2UiICJleGFtcGxlIiB7CiAgYW1pICAgICAgICAgICA9ICJhbWktMGM1NWIxNTljYmZhZmUxZjAiCiAgaW5zdGFuY2VfdHlwZSA9ICJ0Mi5taWNybyIKCiAgdGFncyA9IHsKICAgIE5hbWUgPSAiRXhhbXBsZUluc3RhbmNlIgogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>provider &quot;aws&quot; {
+  region = &quot;us-west-2&quot;
+}
+
+resource &quot;aws_instance&quot; &quot;example&quot; {
+  ami           = &quot;ami-0c55b159cbfafe1f0&quot;
+  instance_type = &quot;t2.micro&quot;
+
+  tags = {
+    Name = &quot;ExampleInstance&quot;
+  }
+}</pre></div><div class='content'><ol start="2">
+<li>
+<p><strong>Configura el pipeline de Jenkins seguint els passos anteriors.</strong></p>
+</li>
+<li>
+<p><strong>Executa el pipeline i verifica que la instància EC2 s'ha creat correctament.</strong></p>
+</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><p>El codi del pipeline de Jenkins hauria de ser similar al següent:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwZWxpbmUgewogICAgYWdlbnQgYW55CgogICAgZW52aXJvbm1lbnQgewogICAgICAgIEFXU19BQ0NFU1NfS0VZX0lEID0gY3JlZGVudGlhbHMoJ2F3cy1hY2Nlc3Mta2V5LWlkJykKICAgICAgICBBV1NfU0VDUkVUX0FDQ0VTU19LRVkgPSBjcmVkZW50aWFscygnYXdzLXNlY3JldC1hY2Nlc3Mta2V5JykKICAgIH0KCiAgICBzdGFnZXMgewogICAgICAgIHN0YWdlKCdDaGVja291dCcpIHsKICAgICAgICAgICAgc3RlcHMgewogICAgICAgICAgICAgICAgZ2l0ICdodHRwczovL2dpdGh1Yi5jb20vdXN1YXJpL3JlcG8tdGVycmFmb3JtLmdpdCcKICAgICAgICAgICAgfQogICAgICAgIH0KCiAgICAgICAgc3RhZ2UoJ1RlcnJhZm9ybSBJbml0JykgewogICAgICAgICAgICBzdGVwcyB7CiAgICAgICAgICAgICAgICBzaCAndGVycmFmb3JtIGluaXQnCiAgICAgICAgICAgIH0KICAgICAgICB9CgogICAgICAgIHN0YWdlKCdUZXJyYWZvcm0gUGxhbicpIHsKICAgICAgICAgICAgc3RlcHMgewogICAgICAgICAgICAgICAgc2ggJ3RlcnJhZm9ybSBwbGFuIC1vdXQ9dGZwbGFuJwogICAgICAgICAgICB9CiAgICAgICAgfQoKICAgICAgICBzdGFnZSgnVGVycmFmb3JtIEFwcGx5JykgewogICAgICAgICAgICBzdGVwcyB7CiAgICAgICAgICAgICAgICBzaCAndGVycmFmb3JtIGFwcGx5IC1hdXRvLWFwcHJvdmUgdGZwbGFuJwogICAgICAgICAgICB9CiAgICAgICAgfQogICAgfQoKICAgIHBvc3QgewogICAgICAgIGFsd2F5cyB7CiAgICAgICAgICAgIGNsZWFuV3MoKQogICAgICAgIH0KICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pipeline {
+    agent any
+
+    environment {
+        AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')
+        AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/usuari/repo-terraform.git'
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                sh 'terraform init'
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                sh 'terraform plan -out=tfplan'
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                sh 'terraform apply -auto-approve tfplan'
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs()
+        }
+    }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après com integrar Terraform amb Jenkins per automatitzar el desplegament d'infraestructura. Hem configurat un pipeline de Jenkins per inicialitzar, planificar i aplicar configuracions de Terraform, i hem realitzat un exercici pràctic per reforçar els conceptes apresos. Aquesta automatització és essencial per a la gestió eficient de la infraestructura en entorns de producció.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='08-01-integrating-terraform-with-cicd' title="Integració de Terraform amb CI/CD">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-03-using-terraform-with-github-actions' title="Ús de Terraform amb GitHub Actions">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

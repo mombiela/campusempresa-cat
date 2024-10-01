@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaccions</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/mongodb/05-03-transactions" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/mongodb/05-03-transactions" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/mongodb/05-03-transactions" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/mongodb/05-03-transactions" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/mongodb/05-03-transactions" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-02-sharding' title="Fragmentació">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Transaccions</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-04-mongodb-atlas' title="MongoDB Atlas">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Les transaccions a MongoDB permeten executar múltiples operacions de lectura i escriptura en diversos documents com una sola unitat de treball. Això garanteix que totes les operacions dins de la transacció es completin amb èxit o es revertiran si alguna operació falla, mantenint la integritat de les dades.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Atomicitat</strong>: Les transaccions garanteixen que totes les operacions dins d'una transacció es completin amb èxit o es revertiran.</li>
+<li><strong>Consistència</strong>: Les transaccions asseguren que la base de dades passi d'un estat vàlid a un altre estat vàlid.</li>
+<li><strong>Aïllament</strong>: Les transaccions aïllen les operacions de manera que les transaccions concurrents no interfereixin entre elles.</li>
+<li><strong>Durabilitat</strong>: Un cop una transacció es confirma, els canvis es mantenen fins i tot en cas de fallada del sistema.</li>
+</ul>
+</div><h1>Requisits</h1>
+<div class='content'><ul>
+<li>MongoDB 4.0 o superior.</li>
+<li>Les transaccions multi-document només estan disponibles en clústers replicats.</li>
+</ul>
+</div><h1>Exemple Pràctic</h1>
+<div class='content'></div><h2>1. Iniciant una Transacció</h2>
+<div class='content'><p>Per iniciar una transacció, primer necessitem una sessió. Utilitzarem el client de MongoDB per a Node.js en aquest exemple.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgeyBNb25nb0NsaWVudCB9ID0gcmVxdWlyZSgnbW9uZ29kYicpOwoKYXN5bmMgZnVuY3Rpb24gcnVuKCkgewogICAgY29uc3QgdXJpID0gInlvdXJfbW9uZ29kYl9jb25uZWN0aW9uX3N0cmluZyI7CiAgICBjb25zdCBjbGllbnQgPSBuZXcgTW9uZ29DbGllbnQodXJpLCB7IHVzZU5ld1VybFBhcnNlcjogdHJ1ZSwgdXNlVW5pZmllZFRvcG9sb2d5OiB0cnVlIH0pOwoKICAgIHRyeSB7CiAgICAgICAgYXdhaXQgY2xpZW50LmNvbm5lY3QoKTsKICAgICAgICBjb25zdCBzZXNzaW9uID0gY2xpZW50LnN0YXJ0U2Vzc2lvbigpOwoKICAgICAgICBzZXNzaW9uLnN0YXJ0VHJhbnNhY3Rpb24oKTsKCiAgICAgICAgLy8gT3BlcmFjaW9ucyBkaW5zIGRlIGxhIHRyYW5zYWNjacOzCiAgICAgICAgY29uc3QgZGIgPSBjbGllbnQuZGIoJ3Rlc3RkYicpOwogICAgICAgIGNvbnN0IGNvbGxlY3Rpb24gPSBkYi5jb2xsZWN0aW9uKCd0ZXN0Y29sbGVjdGlvbicpOwoKICAgICAgICBhd2FpdCBjb2xsZWN0aW9uLmluc2VydE9uZSh7IG5hbWU6ICJBbGljZSIgfSwgeyBzZXNzaW9uIH0pOwogICAgICAgIGF3YWl0IGNvbGxlY3Rpb24udXBkYXRlT25lKHsgbmFtZTogIkFsaWNlIiB9LCB7ICRzZXQ6IHsgYWdlOiAyNSB9IH0sIHsgc2Vzc2lvbiB9KTsKCiAgICAgICAgLy8gQ29uZmlybWFyIGxhIHRyYW5zYWNjacOzCiAgICAgICAgYXdhaXQgc2Vzc2lvbi5jb21taXRUcmFuc2FjdGlvbigpOwogICAgICAgIGNvbnNvbGUubG9nKCJUcmFuc2FjY2nDsyBjb21wbGV0YWRhIGFtYiDDqHhpdC4iKTsKICAgIH0gY2F0Y2ggKGVycm9yKSB7CiAgICAgICAgY29uc29sZS5lcnJvcigiRXJyb3IgZW4gbGEgdHJhbnNhY2Npw7MsIHJldmVydGludCBlbHMgY2FudmlzLiIsIGVycm9yKTsKICAgICAgICBhd2FpdCBzZXNzaW9uLmFib3J0VHJhbnNhY3Rpb24oKTsKICAgIH0gZmluYWxseSB7CiAgICAgICAgYXdhaXQgc2Vzc2lvbi5lbmRTZXNzaW9uKCk7CiAgICAgICAgYXdhaXQgY2xpZW50LmNsb3NlKCk7CiAgICB9Cn0KCnJ1bigpLmNhdGNoKGNvbnNvbGUuZGlyKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const { MongoClient } = require('mongodb');
+
+async function run() {
+    const uri = &quot;your_mongodb_connection_string&quot;;
+    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+    try {
+        await client.connect();
+        const session = client.startSession();
+
+        session.startTransaction();
+
+        // Operacions dins de la transacci&oacute;
+        const db = client.db('testdb');
+        const collection = db.collection('testcollection');
+
+        await collection.insertOne({ name: &quot;Alice&quot; }, { session });
+        await collection.updateOne({ name: &quot;Alice&quot; }, { $set: { age: 25 } }, { session });
+
+        // Confirmar la transacci&oacute;
+        await session.commitTransaction();
+        console.log(&quot;Transacci&oacute; completada amb &egrave;xit.&quot;);
+    } catch (error) {
+        console.error(&quot;Error en la transacci&oacute;, revertint els canvis.&quot;, error);
+        await session.abortTransaction();
+    } finally {
+        await session.endSession();
+        await client.close();
+    }
+}
+
+run().catch(console.dir);</pre></div><div class='content'></div><h2>2. Operacions dins de la Transacció</h2>
+<div class='content'><p>Les operacions dins de la transacció es realitzen utilitzant la sessió creada. En aquest exemple, inserim un document i després l'actualitzem dins de la mateixa transacció.</p>
+</div><h2>3. Confirmant o Revertint la Transacció</h2>
+<div class='content'><ul>
+<li><strong>Confirmar la Transacció</strong>: <code>session.commitTransaction()</code></li>
+<li><strong>Revertir la Transacció</strong>: <code>session.abortTransaction()</code></li>
+</ul>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici 1: Crear una Transacció</h2>
+<div class='content'><ol>
+<li>Crea una base de dades anomenada <code>shop</code>.</li>
+<li>Crea dues col·leccions: <code>customers</code> i <code>orders</code>.</li>
+<li>Escriu una transacció que:
+<ul>
+<li>Inserte un nou client a la col·lecció <code>customers</code>.</li>
+<li>Inserte una nova comanda a la col·lecció <code>orders</code> per a aquest client.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgeyBNb25nb0NsaWVudCB9ID0gcmVxdWlyZSgnbW9uZ29kYicpOwoKYXN5bmMgZnVuY3Rpb24gcnVuKCkgewogICAgY29uc3QgdXJpID0gInlvdXJfbW9uZ29kYl9jb25uZWN0aW9uX3N0cmluZyI7CiAgICBjb25zdCBjbGllbnQgPSBuZXcgTW9uZ29DbGllbnQodXJpLCB7IHVzZU5ld1VybFBhcnNlcjogdHJ1ZSwgdXNlVW5pZmllZFRvcG9sb2d5OiB0cnVlIH0pOwoKICAgIHRyeSB7CiAgICAgICAgYXdhaXQgY2xpZW50LmNvbm5lY3QoKTsKICAgICAgICBjb25zdCBzZXNzaW9uID0gY2xpZW50LnN0YXJ0U2Vzc2lvbigpOwoKICAgICAgICBzZXNzaW9uLnN0YXJ0VHJhbnNhY3Rpb24oKTsKCiAgICAgICAgY29uc3QgZGIgPSBjbGllbnQuZGIoJ3Nob3AnKTsKICAgICAgICBjb25zdCBjdXN0b21lcnMgPSBkYi5jb2xsZWN0aW9uKCdjdXN0b21lcnMnKTsKICAgICAgICBjb25zdCBvcmRlcnMgPSBkYi5jb2xsZWN0aW9uKCdvcmRlcnMnKTsKCiAgICAgICAgY29uc3QgY3VzdG9tZXIgPSB7IG5hbWU6ICJKb2huIERvZSIsIGVtYWlsOiAiam9obi5kb2VAZXhhbXBsZS5jb20iIH07CiAgICAgICAgY29uc3Qgb3JkZXIgPSB7IHByb2R1Y3Q6ICJMYXB0b3AiLCBxdWFudGl0eTogMSwgY3VzdG9tZXJFbWFpbDogImpvaG4uZG9lQGV4YW1wbGUuY29tIiB9OwoKICAgICAgICBhd2FpdCBjdXN0b21lcnMuaW5zZXJ0T25lKGN1c3RvbWVyLCB7IHNlc3Npb24gfSk7CiAgICAgICAgYXdhaXQgb3JkZXJzLmluc2VydE9uZShvcmRlciwgeyBzZXNzaW9uIH0pOwoKICAgICAgICBhd2FpdCBzZXNzaW9uLmNvbW1pdFRyYW5zYWN0aW9uKCk7CiAgICAgICAgY29uc29sZS5sb2coIlRyYW5zYWNjacOzIGNvbXBsZXRhZGEgYW1iIMOoeGl0LiIpOwogICAgfSBjYXRjaCAoZXJyb3IpIHsKICAgICAgICBjb25zb2xlLmVycm9yKCJFcnJvciBlbiBsYSB0cmFuc2FjY2nDsywgcmV2ZXJ0aW50IGVscyBjYW52aXMuIiwgZXJyb3IpOwogICAgICAgIGF3YWl0IHNlc3Npb24uYWJvcnRUcmFuc2FjdGlvbigpOwogICAgfSBmaW5hbGx5IHsKICAgICAgICBhd2FpdCBzZXNzaW9uLmVuZFNlc3Npb24oKTsKICAgICAgICBhd2FpdCBjbGllbnQuY2xvc2UoKTsKICAgIH0KfQoKcnVuKCkuY2F0Y2goY29uc29sZS5kaXIpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const { MongoClient } = require('mongodb');
+
+async function run() {
+    const uri = &quot;your_mongodb_connection_string&quot;;
+    const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+    try {
+        await client.connect();
+        const session = client.startSession();
+
+        session.startTransaction();
+
+        const db = client.db('shop');
+        const customers = db.collection('customers');
+        const orders = db.collection('orders');
+
+        const customer = { name: &quot;John Doe&quot;, email: &quot;john.doe@example.com&quot; };
+        const order = { product: &quot;Laptop&quot;, quantity: 1, customerEmail: &quot;john.doe@example.com&quot; };
+
+        await customers.insertOne(customer, { session });
+        await orders.insertOne(order, { session });
+
+        await session.commitTransaction();
+        console.log(&quot;Transacci&oacute; completada amb &egrave;xit.&quot;);
+    } catch (error) {
+        console.error(&quot;Error en la transacci&oacute;, revertint els canvis.&quot;, error);
+        await session.abortTransaction();
+    } finally {
+        await session.endSession();
+        await client.close();
+    }
+}
+
+run().catch(console.dir);</pre></div><div class='content'></div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ul>
+<li><strong>Error de Connexió</strong>: Assegura't que la cadena de connexió a MongoDB és correcta.</li>
+<li><strong>Transaccions en Clústers No Replicats</strong>: Les transaccions multi-document només funcionen en clústers replicats.</li>
+<li><strong>Gestió d'Errors</strong>: Sempre inclou gestió d'errors per a revertir la transacció en cas de fallada.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Les transaccions a MongoDB proporcionen una manera robusta de garantir la integritat de les dades en operacions complexes. Amb la comprensió dels conceptes clau i la pràctica amb exemples, pots començar a utilitzar transaccions per a les teves necessitats de bases de dades.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='05-02-sharding' title="Fragmentació">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-04-mongodb-atlas' title="MongoDB Atlas">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

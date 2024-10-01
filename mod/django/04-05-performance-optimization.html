@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Optimització del Rendiment</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/django/04-05-performance-optimization" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/django/04-05-performance-optimization" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/django/04-05-performance-optimization" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/django/04-05-performance-optimization" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/django/04-05-performance-optimization" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-04-testing-in-django' title="Proves en Django">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Optimització del Rendiment</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-01-deploying-django-applications' title="Desplegament d'Aplicacions Django">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com optimitzar el rendiment de les aplicacions Django per assegurar-nos que siguin ràpides i eficients. Tractarem diverses tècniques i eines que ens ajudaran a millorar la velocitat i la capacitat de resposta de les nostres aplicacions.</p>
+</div><h1>1. Cache</h1>
+<div class='content'></div><h2>1.1. Tipus de Cache</h2>
+<div class='content'><p>Django ofereix diverses opcions de cache que podem utilitzar per millorar el rendiment de les nostres aplicacions:</p>
+<ul>
+<li><strong>Memcached</strong>: Un sistema de cache distribuït que emmagatzema dades en memòria RAM per a un accés ràpid.</li>
+<li><strong>Redis</strong>: Un magatzem de dades en memòria que pot actuar com a cache, base de dades i intermediari de missatges.</li>
+<li><strong>File-based Cache</strong>: Emmagatzema les dades de cache en fitxers al sistema de fitxers.</li>
+</ul>
+</div><h2>1.2. Configuració de Cache</h2>
+<div class='content'><p>A continuació, es mostra un exemple de configuració de cache utilitzant Memcached:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBzZXR0aW5ncy5weQoKQ0FDSEVTID0gewogICAgJ2RlZmF1bHQnOiB7CiAgICAgICAgJ0JBQ0tFTkQnOiAnZGphbmdvLmNvcmUuY2FjaGUuYmFja2VuZHMubWVtY2FjaGVkLk1lbWNhY2hlZENhY2hlJywKICAgICAgICAnTE9DQVRJT04nOiAnMTI3LjAuMC4xOjExMjExJywKICAgIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># settings.py
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}</pre></div><div class='content'></div><h2>1.3. Utilització de Cache</h2>
+<div class='content'><p>Podem utilitzar la cache per emmagatzemar resultats de consultes costoses o pàgines senceres. Aquí teniu un exemple de com cachejar una vista:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyB2aWV3cy5weQoKZnJvbSBkamFuZ28udmlld3MuZGVjb3JhdG9ycy5jYWNoZSBpbXBvcnQgY2FjaGVfcGFnZQpmcm9tIGRqYW5nby5zaG9ydGN1dHMgaW1wb3J0IHJlbmRlcgoKQGNhY2hlX3BhZ2UoNjAgKiAxNSkgICMgQ2FjaGVqYSBsYSBww6BnaW5hIGR1cmFudCAxNSBtaW51dHMKZGVmIG15X3ZpZXcocmVxdWVzdCk6CiAgICAjIENvZGkgZGUgbGEgdmlzdGEKICAgIHJldHVybiByZW5kZXIocmVxdWVzdCwgJ215X3RlbXBsYXRlLmh0bWwnKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># views.py
+
+from django.views.decorators.cache import cache_page
+from django.shortcuts import render
+
+@cache_page(60 * 15)  # Cacheja la p&agrave;gina durant 15 minuts
+def my_view(request):
+    # Codi de la vista
+    return render(request, 'my_template.html')</pre></div><div class='content'></div><h1>2. Consultes Eficients amb Django ORM</h1>
+<div class='content'></div><h2>2.1. Utilització de `select_related` i `prefetch_related`</h2>
+<div class='content'><p>Aquestes funcions ens permeten reduir el nombre de consultes a la base de dades quan treballem amb relacions entre models.</p>
+<ul>
+<li><strong><code>select_related</code></strong>: Utilitzat per a relacions de tipus ForeignKey i OneToOne.</li>
+<li><strong><code>prefetch_related</code></strong>: Utilitzat per a relacions de tipus ManyToMany i ForeignKey inverses.</li>
+</ul>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBFeGVtcGxlIGQnw7pzIGRlIHNlbGVjdF9yZWxhdGVkCmJvb2tzID0gQm9vay5vYmplY3RzLnNlbGVjdF9yZWxhdGVkKCdhdXRob3InKS5hbGwoKQoKIyBFeGVtcGxlIGQnw7pzIGRlIHByZWZldGNoX3JlbGF0ZWQKYXV0aG9ycyA9IEF1dGhvci5vYmplY3RzLnByZWZldGNoX3JlbGF0ZWQoJ2Jvb2tzJykuYWxsKCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Exemple d'&uacute;s de select_related
+books = Book.objects.select_related('author').all()
+
+# Exemple d'&uacute;s de prefetch_related
+authors = Author.objects.prefetch_related('books').all()</pre></div><div class='content'></div><h2>2.2. Utilització de `only` i `defer`</h2>
+<div class='content'><p>Aquestes funcions ens permeten carregar només els camps necessaris dels models, reduint així la quantitat de dades transferides.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBFeGVtcGxlIGQnw7pzIGRlIG9ubHkKYm9va3MgPSBCb29rLm9iamVjdHMub25seSgndGl0bGUnLCAnYXV0aG9yJykuYWxsKCkKCiMgRXhlbXBsZSBkJ8O6cyBkZSBkZWZlcgpib29rcyA9IEJvb2sub2JqZWN0cy5kZWZlcignZGVzY3JpcHRpb24nKS5hbGwoKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># Exemple d'&uacute;s de only
+books = Book.objects.only('title', 'author').all()
+
+# Exemple d'&uacute;s de defer
+books = Book.objects.defer('description').all()</pre></div><div class='content'></div><h1>3. Optimització de Plantilles</h1>
+<div class='content'></div><h2>3.1. Utilització de Plantilles Cachejades</h2>
+<div class='content'><p>Podem utilitzar la cache per emmagatzemar fragments de plantilles que no canvien freqüentment.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("eyUgbG9hZCBjYWNoZSAlfQp7JSBjYWNoZSA1MDAgc2lkZWJhciAlfQogICAgPCEtLSBDb250aW5ndXQgZGUgbGEgYmFycmEgbGF0ZXJhbCAtLT4KeyUgZW5kY2FjaGUgJX0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{% load cache %}
+{% cache 500 sidebar %}
+    &lt;!-- Contingut de la barra lateral --&gt;
+{% endcache %}</pre></div><div class='content'></div><h2>3.2. Minificació de Fitxers Estàtics</h2>
+<div class='content'><p>Minificar els fitxers CSS i JavaScript pot reduir el temps de càrrega de les pàgines. Django ofereix el paquet <code>django-compressor</code> per a aquesta tasca.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBzZXR0aW5ncy5weQoKSU5TVEFMTEVEX0FQUFMgPSBbCiAgICAuLi4KICAgICdjb21wcmVzc29yJywKXQoKU1RBVElDRklMRVNfRklOREVSUyA9IFsKICAgIC4uLgogICAgJ2NvbXByZXNzb3IuZmluZGVycy5Db21wcmVzc29yRmluZGVyJywKXQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># settings.py
+
+INSTALLED_APPS = [
+    ...
+    'compressor',
+]
+
+STATICFILES_FINDERS = [
+    ...
+    'compressor.finders.CompressorFinder',
+]</pre></div><div class='content'></div><h1>4. Optimització de la Base de Dades</h1>
+<div class='content'></div><h2>4.1. Índexs de Base de Dades</h2>
+<div class='content'><p>Crear índexs en els camps que s'utilitzen freqüentment en les consultes pot millorar significativament el rendiment.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBtb2RlbHMucHkKCmZyb20gZGphbmdvLmRiIGltcG9ydCBtb2RlbHMKCmNsYXNzIEJvb2sobW9kZWxzLk1vZGVsKToKICAgIHRpdGxlID0gbW9kZWxzLkNoYXJGaWVsZChtYXhfbGVuZ3RoPTIwMCwgZGJfaW5kZXg9VHJ1ZSkKICAgIGF1dGhvciA9IG1vZGVscy5Gb3JlaWduS2V5KEF1dGhvciwgb25fZGVsZXRlPW1vZGVscy5DQVNDQURFLCBkYl9pbmRleD1UcnVlKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># models.py
+
+from django.db import models
+
+class Book(models.Model):
+    title = models.CharField(max_length=200, db_index=True)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, db_index=True)</pre></div><div class='content'></div><h2>4.2. Anàlisi de Consultes</h2>
+<div class='content'><p>Utilitzar eines com <code>django-debug-toolbar</code> per analitzar les consultes SQL generades per Django i identificar colls d'ampolla.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBzZXR0aW5ncy5weQoKSU5TVEFMTEVEX0FQUFMgPSBbCiAgICAuLi4KICAgICdkZWJ1Z190b29sYmFyJywKXQoKTUlERExFV0FSRSA9IFsKICAgIC4uLgogICAgJ2RlYnVnX3Rvb2xiYXIubWlkZGxld2FyZS5EZWJ1Z1Rvb2xiYXJNaWRkbGV3YXJlJywKXQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># settings.py
+
+INSTALLED_APPS = [
+    ...
+    'debug_toolbar',
+]
+
+MIDDLEWARE = [
+    ...
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+]</pre></div><div class='content'></div><h1>5. Altres Tècniques d'Optimització</h1>
+<div class='content'></div><h2>5.1. Utilització de Middleware Eficient</h2>
+<div class='content'><p>Evitar l'ús de middleware innecessari i assegurar-se que el middleware utilitzat sigui eficient.</p>
+</div><h2>5.2. Compressió de Respostes HTTP</h2>
+<div class='content'><p>Utilitzar la compressió Gzip per reduir la mida de les respostes HTTP.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBzZXR0aW5ncy5weQoKTUlERExFV0FSRSA9IFsKICAgIC4uLgogICAgJ2RqYW5nby5taWRkbGV3YXJlLmd6aXAuR1ppcE1pZGRsZXdhcmUnLApd"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># settings.py
+
+MIDDLEWARE = [
+    ...
+    'django.middleware.gzip.GZipMiddleware',
+]</pre></div><div class='content'></div><h2>5.3. Utilització de CDN per a Fitxers Estàtics</h2>
+<div class='content'><p>Utilitzar una Xarxa de Distribució de Continguts (CDN) per servir fitxers estàtics pot millorar significativament el temps de càrrega de les pàgines.</p>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Implementació de Cache</h2>
+<div class='content'><p>Configura la cache en el teu projecte Django utilitzant Redis i cacheja una vista que mostra una llista d'articles.</p>
+</div><h2>Exercici 2: Optimització de Consultes</h2>
+<div class='content'><p>Utilitza <code>select_related</code> i <code>prefetch_related</code> per optimitzar les consultes en una vista que mostra una llista de llibres amb els seus autors.</p>
+</div><h2>Exercici 3: Minificació de Fitxers Estàtics</h2>
+<div class='content'><p>Configura <code>django-compressor</code> per minificar els fitxers CSS i JavaScript en el teu projecte.</p>
+</div><h1>Solucions</h1>
+<div class='content'></div><h2>Solució a l'Exercici 1</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBzZXR0aW5ncy5weQoKQ0FDSEVTID0gewogICAgJ2RlZmF1bHQnOiB7CiAgICAgICAgJ0JBQ0tFTkQnOiAnZGphbmdvX3JlZGlzLmNhY2hlLlJlZGlzQ2FjaGUnLAogICAgICAgICdMT0NBVElPTic6ICdyZWRpczovLzEyNy4wLjAuMTo2Mzc5LzEnLAogICAgICAgICdPUFRJT05TJzogewogICAgICAgICAgICAnQ0xJRU5UX0NMQVNTJzogJ2RqYW5nb19yZWRpcy5jbGllbnQuRGVmYXVsdENsaWVudCcsCiAgICAgICAgfQogICAgfQp9CgojIHZpZXdzLnB5Cgpmcm9tIGRqYW5nby52aWV3cy5kZWNvcmF0b3JzLmNhY2hlIGltcG9ydCBjYWNoZV9wYWdlCmZyb20gZGphbmdvLnNob3J0Y3V0cyBpbXBvcnQgcmVuZGVyCmZyb20gLm1vZGVscyBpbXBvcnQgQXJ0aWNsZQoKQGNhY2hlX3BhZ2UoNjAgKiAxNSkgICMgQ2FjaGVqYSBsYSBww6BnaW5hIGR1cmFudCAxNSBtaW51dHMKZGVmIGFydGljbGVfbGlzdChyZXF1ZXN0KToKICAgIGFydGljbGVzID0gQXJ0aWNsZS5vYmplY3RzLmFsbCgpCiAgICByZXR1cm4gcmVuZGVyKHJlcXVlc3QsICdhcnRpY2xlX2xpc3QuaHRtbCcsIHsnYXJ0aWNsZXMnOiBhcnRpY2xlc30p"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># settings.py
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django_redis.cache.RedisCache',
+        'LOCATION': 'redis://127.0.0.1:6379/1',
+        'OPTIONS': {
+            'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+        }
+    }
+}
+
+# views.py
+
+from django.views.decorators.cache import cache_page
+from django.shortcuts import render
+from .models import Article
+
+@cache_page(60 * 15)  # Cacheja la p&agrave;gina durant 15 minuts
+def article_list(request):
+    articles = Article.objects.all()
+    return render(request, 'article_list.html', {'articles': articles})</pre></div><div class='content'></div><h2>Solució a l'Exercici 2</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyB2aWV3cy5weQoKZnJvbSBkamFuZ28uc2hvcnRjdXRzIGltcG9ydCByZW5kZXIKZnJvbSAubW9kZWxzIGltcG9ydCBCb29rCgpkZWYgYm9va19saXN0KHJlcXVlc3QpOgogICAgYm9va3MgPSBCb29rLm9iamVjdHMuc2VsZWN0X3JlbGF0ZWQoJ2F1dGhvcicpLmFsbCgpCiAgICByZXR1cm4gcmVuZGVyKHJlcXVlc3QsICdib29rX2xpc3QuaHRtbCcsIHsnYm9va3MnOiBib29rc30p"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># views.py
+
+from django.shortcuts import render
+from .models import Book
+
+def book_list(request):
+    books = Book.objects.select_related('author').all()
+    return render(request, 'book_list.html', {'books': books})</pre></div><div class='content'></div><h2>Solució a l'Exercici 3</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("IyBzZXR0aW5ncy5weQoKSU5TVEFMTEVEX0FQUFMgPSBbCiAgICAuLi4KICAgICdjb21wcmVzc29yJywKXQoKU1RBVElDRklMRVNfRklOREVSUyA9IFsKICAgIC4uLgogICAgJ2NvbXByZXNzb3IuZmluZGVycy5Db21wcmVzc29yRmluZGVyJywKXQoKIyB0ZW1wbGF0ZXMvYmFzZS5odG1sCgp7JSBsb2FkIGNvbXByZXNzICV9CjwhRE9DVFlQRSBodG1sPgo8aHRtbD4KPGhlYWQ+CiAgICB7JSBjb21wcmVzcyBjc3MgJX0KICAgIDxsaW5rIHJlbD0ic3R5bGVzaGVldCIgaHJlZj0ieyUgc3RhdGljICdjc3Mvc3R5bGUuY3NzJyAlfSI+CiAgICB7JSBlbmRjb21wcmVzcyAlfQo8L2hlYWQ+Cjxib2R5PgogICAgLi4uCiAgICB7JSBjb21wcmVzcyBqcyAlfQogICAgPHNjcmlwdCBzcmM9InslIHN0YXRpYyAnanMvc2NyaXB0LmpzJyAlfSI+PC9zY3JpcHQ+CiAgICB7JSBlbmRjb21wcmVzcyAlfQo8L2JvZHk+CjwvaHRtbD4="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'># settings.py
+
+INSTALLED_APPS = [
+    ...
+    'compressor',
+]
+
+STATICFILES_FINDERS = [
+    ...
+    'compressor.finders.CompressorFinder',
+]
+
+# templates/base.html
+
+{% load compress %}
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    {% compress css %}
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;{% static 'css/style.css' %}&quot;&gt;
+    {% endcompress %}
+&lt;/head&gt;
+&lt;body&gt;
+    ...
+    {% compress js %}
+    &lt;script src=&quot;{% static 'js/script.js' %}&quot;&gt;&lt;/script&gt;
+    {% endcompress %}
+&lt;/body&gt;
+&lt;/html&gt;</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après diverses tècniques per optimitzar el rendiment de les aplicacions Django, incloent l'ús de cache, l'optimització de consultes, la minificació de fitxers estàtics i la compressió de respostes HTTP. Implementar aquestes tècniques pot ajudar a millorar significativament la velocitat i l'eficiència de les nostres aplicacions.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-04-testing-in-django' title="Proves en Django">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-01-deploying-django-applications' title="Desplegament d'Aplicacions Django">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

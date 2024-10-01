@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypeScript amb Webpack</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/typescript/06-03-typescript-webpack" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/typescript/06-03-typescript-webpack" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/typescript/06-03-typescript-webpack" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/typescript/06-03-typescript-webpack" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/typescript/06-03-typescript-webpack" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-testing-typescript' title="Proves de Codi TypeScript">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">TypeScript amb Webpack</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-typescript-react' title="TypeScript amb React">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com configurar i utilitzar Webpack amb TypeScript per a la construcció de projectes. Webpack és un empaquetador de mòduls JavaScript que ens permet agrupar diversos fitxers en un o més paquets optimitzats per a la producció.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre què és Webpack i per què és útil.</li>
+<li>Configurar un projecte TypeScript amb Webpack.</li>
+<li>Escriure un fitxer de configuració de Webpack (<code>webpack.config.js</code>).</li>
+<li>Compilar i executar un projecte TypeScript utilitzant Webpack.</li>
+</ul>
+</div><h1>Què és Webpack?</h1>
+<div class='content'><p>Webpack és una eina que ens permet agrupar tots els nostres mòduls JavaScript (i altres recursos com CSS, imatges, etc.) en un o més fitxers de sortida. Això és especialment útil per a aplicacions web modernes que poden tenir molts fitxers i dependències.</p>
+</div><h2>Beneficis de Webpack</h2>
+<div class='content'><ul>
+<li><strong>Modularitat</strong>: Permet utilitzar mòduls ES6, CommonJS, AMD, etc.</li>
+<li><strong>Optimització</strong>: Minificació, eliminació de codi mort, càrrega de recursos de manera asíncrona.</li>
+<li><strong>Plugins</strong>: Gran varietat de plugins per a diferents necessitats (optimització, transformació de codi, etc.).</li>
+</ul>
+</div><h1>Configuració de Webpack amb TypeScript</h1>
+<div class='content'></div><h2>Pas 1: Crear un projecte nou</h2>
+<div class='content'><p>Primer, crearem un nou projecte i inicialitzarem <code>npm</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bWtkaXIgdHlwZXNjcmlwdC13ZWJwYWNrLXByb2plY3QKY2QgdHlwZXNjcmlwdC13ZWJwYWNrLXByb2plY3QKbnBtIGluaXQgLXk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>mkdir typescript-webpack-project
+cd typescript-webpack-project
+npm init -y</pre></div><div class='content'></div><h2>Pas 2: Instal·lar les dependències necessàries</h2>
+<div class='content'><p>Instal·larem Webpack, Webpack CLI, TypeScript i el carregador de TypeScript per a Webpack.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnBtIGluc3RhbGwgLS1zYXZlLWRldiB3ZWJwYWNrIHdlYnBhY2stY2xpIHR5cGVzY3JpcHQgdHMtbG9hZGVy"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npm install --save-dev webpack webpack-cli typescript ts-loader</pre></div><div class='content'></div><h2>Pas 3: Configurar TypeScript</h2>
+<div class='content'><p>Crearem un fitxer <code>tsconfig.json</code> per configurar TypeScript.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ewogICJjb21waWxlck9wdGlvbnMiOiB7CiAgICAib3V0RGlyIjogIi4vZGlzdCIsCiAgICAic291cmNlTWFwIjogdHJ1ZSwKICAgICJzdHJpY3QiOiB0cnVlLAogICAgIm1vZHVsZSI6ICJlczYiLAogICAgIm1vZHVsZVJlc29sdXRpb24iOiAibm9kZSIsCiAgICAidGFyZ2V0IjogImVzNSIsCiAgICAiZXNNb2R1bGVJbnRlcm9wIjogdHJ1ZQogIH0sCiAgImluY2x1ZGUiOiBbInNyYyJdCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>{
+  &quot;compilerOptions&quot;: {
+    &quot;outDir&quot;: &quot;./dist&quot;,
+    &quot;sourceMap&quot;: true,
+    &quot;strict&quot;: true,
+    &quot;module&quot;: &quot;es6&quot;,
+    &quot;moduleResolution&quot;: &quot;node&quot;,
+    &quot;target&quot;: &quot;es5&quot;,
+    &quot;esModuleInterop&quot;: true
+  },
+  &quot;include&quot;: [&quot;src&quot;]
+}</pre></div><div class='content'></div><h2>Pas 4: Configurar Webpack</h2>
+<div class='content'><p>Crearem un fitxer <code>webpack.config.js</code> per configurar Webpack.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgcGF0aCA9IHJlcXVpcmUoJ3BhdGgnKTsKCm1vZHVsZS5leHBvcnRzID0gewogIGVudHJ5OiAnLi9zcmMvaW5kZXgudHMnLAogIG1vZHVsZTogewogICAgcnVsZXM6IFsKICAgICAgewogICAgICAgIHRlc3Q6IC9cLnRzJC8sCiAgICAgICAgdXNlOiAndHMtbG9hZGVyJywKICAgICAgICBleGNsdWRlOiAvbm9kZV9tb2R1bGVzLwogICAgICB9CiAgICBdCiAgfSwKICByZXNvbHZlOiB7CiAgICBleHRlbnNpb25zOiBbJy50cycsICcuanMnXQogIH0sCiAgb3V0cHV0OiB7CiAgICBmaWxlbmFtZTogJ2J1bmRsZS5qcycsCiAgICBwYXRoOiBwYXRoLnJlc29sdmUoX19kaXJuYW1lLCAnZGlzdCcpCiAgfSwKICBkZXZ0b29sOiAnc291cmNlLW1hcCcKfTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const path = require('path');
+
+module.exports = {
+  entry: './src/index.ts',
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: 'ts-loader',
+        exclude: /node_modules/
+      }
+    ]
+  },
+  resolve: {
+    extensions: ['.ts', '.js']
+  },
+  output: {
+    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  devtool: 'source-map'
+};</pre></div><div class='content'></div><h2>Pas 5: Estructura del projecte</h2>
+<div class='content'><p>L'estructura del projecte hauria de ser similar a aquesta:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("dHlwZXNjcmlwdC13ZWJwYWNrLXByb2plY3QvCuKUnOKUgOKUgCBkaXN0LwrilJzilIDilIAgbm9kZV9tb2R1bGVzLwrilJzilIDilIAgc3JjLwrilIIgICDilJTilIDilIAgaW5kZXgudHMK4pSc4pSA4pSAIHBhY2thZ2UuanNvbgrilJzilIDilIAgdHNjb25maWcuanNvbgrilJTilIDilIAgd2VicGFjay5jb25maWcuanM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>typescript-webpack-project/
+├── dist/
+├── node_modules/
+├── src/
+│   └── index.ts
+├── package.json
+├── tsconfig.json
+└── webpack.config.js</pre></div><div class='content'></div><h2>Pas 6: Escriure codi TypeScript</h2>
+<div class='content'><p>Crearem un fitxer <code>src/index.ts</code> amb el següent codi:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29uc3QgbWVzc2FnZTogc3RyaW5nID0gJ0hlbGxvLCBUeXBlU2NyaXB0IHdpdGggV2VicGFjayEnOwpjb25zb2xlLmxvZyhtZXNzYWdlKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>const message: string = 'Hello, TypeScript with Webpack!';
+console.log(message);</pre></div><div class='content'></div><h2>Pas 7: Compilar i executar el projecte</h2>
+<div class='content'><p>Afegirem un script al <code>package.json</code> per compilar el projecte amb Webpack.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("InNjcmlwdHMiOiB7CiAgImJ1aWxkIjogIndlYnBhY2siCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&quot;scripts&quot;: {
+  &quot;build&quot;: &quot;webpack&quot;
+}</pre></div><div class='content'><p>Ara podem compilar el projecte executant:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("bnBtIHJ1biBidWlsZA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>npm run build</pre></div><div class='content'><p>Això generarà un fitxer <code>bundle.js</code> a la carpeta <code>dist</code>.</p>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après com configurar un projecte TypeScript amb Webpack. Hem creat un fitxer de configuració de Webpack, configurat TypeScript i escrit un simple fitxer TypeScript. Finalment, hem compilat el projecte utilitzant Webpack.</p>
+</div><h2>Exercici Pràctic</h2>
+<div class='content'><ol>
+<li><strong>Afegir un fitxer addicional</strong>: Crea un nou fitxer <code>src/utils.ts</code> amb una funció que retorni un missatge de benvinguda. Importa aquesta funció a <code>src/index.ts</code> i utilitza-la.</li>
+</ol>
+<p><strong>Solució:</strong></p>
+<p><code>src/utils.ts</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZXhwb3J0IGZ1bmN0aW9uIGdldFdlbGNvbWVNZXNzYWdlKG5hbWU6IHN0cmluZyk6IHN0cmluZyB7CiAgcmV0dXJuIGBXZWxjb21lLCAke25hbWV9IWA7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>export function getWelcomeMessage(name: string): string {
+  return `Welcome, ${name}!`;
+}</pre></div><div class='content'><p><code>src/index.ts</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHsgZ2V0V2VsY29tZU1lc3NhZ2UgfSBmcm9tICcuL3V0aWxzJzsKCmNvbnN0IG1lc3NhZ2U6IHN0cmluZyA9IGdldFdlbGNvbWVNZXNzYWdlKCdUeXBlU2NyaXB0IERldmVsb3BlcicpOwpjb25zb2xlLmxvZyhtZXNzYWdlKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import { getWelcomeMessage } from './utils';
+
+const message: string = getWelcomeMessage('TypeScript Developer');
+console.log(message);</pre></div><div class='content'><p>Executa <code>npm run build</code> per veure els canvis reflectits en el fitxer <code>bundle.js</code>.</p>
+<p>Amb això, hem completat la configuració bàsica de TypeScript amb Webpack. En els següents mòduls, explorarem més funcionalitats avançades i millors pràctiques per optimitzar el nostre flux de treball.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='06-02-testing-typescript' title="Proves de Codi TypeScript">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='06-04-typescript-react' title="TypeScript amb React">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió d'errors</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/angular/07-05-error-handling" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/angular/07-05-error-handling" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/angular/07-05-error-handling" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/angular/07-05-error-handling" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/angular/07-05-error-handling" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-using-observables' title="Utilitzar observables">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Gestió d'errors</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-01-introduction-state-management' title="Introducció a la gestió d'estat">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com gestionar errors en aplicacions Angular, especialment quan fem sol·licituds HTTP. La gestió d'errors és una part crucial del desenvolupament d'aplicacions robustes i fiables. Ens assegura que l'aplicació pugui manejar situacions inesperades de manera elegant i proporcionar una bona experiència d'usuari.</p>
+</div><h1>Conceptes clau</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Tipus d'errors HTTP</strong>:</p>
+<ul>
+<li><strong>Errors del client (4xx)</strong>: Aquests errors indiquen que hi ha un problema amb la sol·licitud enviada pel client. Exemples comuns inclouen 404 (No trobat) i 400 (Sol·licitud incorrecta).</li>
+<li><strong>Errors del servidor (5xx)</strong>: Aquests errors indiquen que hi ha un problema amb el servidor que processa la sol·licitud. Un exemple comú és el 500 (Error intern del servidor).</li>
+</ul>
+</li>
+<li>
+<p><strong>Gestió d'errors amb el client HTTP d'Angular</strong>:</p>
+<ul>
+<li>Utilitzar el mètode <code>catchError</code> de RxJS per interceptar i gestionar errors en les sol·licituds HTTP.</li>
+</ul>
+</li>
+<li>
+<p><strong>Proporcionar retroalimentació a l'usuari</strong>:</p>
+<ul>
+<li>Mostrar missatges d'error clars i útils a l'usuari quan es produeix un error.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Exemple pràctic</h1>
+<div class='content'></div><h2>1. Configuració del servei HTTP</h2>
+<div class='content'><p>Primer, crearem un servei que faci una sol·licitud HTTP i gestioni els errors.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHsgSW5qZWN0YWJsZSB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnOwppbXBvcnQgeyBIdHRwQ2xpZW50LCBIdHRwRXJyb3JSZXNwb25zZSB9IGZyb20gJ0Bhbmd1bGFyL2NvbW1vbi9odHRwJzsKaW1wb3J0IHsgT2JzZXJ2YWJsZSwgdGhyb3dFcnJvciB9IGZyb20gJ3J4anMnOwppbXBvcnQgeyBjYXRjaEVycm9yIH0gZnJvbSAncnhqcy9vcGVyYXRvcnMnOwoKQEluamVjdGFibGUoewogIHByb3ZpZGVkSW46ICdyb290Jwp9KQpleHBvcnQgY2xhc3MgRGF0YVNlcnZpY2UgewoKICBwcml2YXRlIGFwaVVybCA9ICdodHRwczovL2FwaS5leGFtcGxlLmNvbS9kYXRhJzsKCiAgY29uc3RydWN0b3IocHJpdmF0ZSBodHRwOiBIdHRwQ2xpZW50KSB7IH0KCiAgZ2V0RGF0YSgpOiBPYnNlcnZhYmxlPGFueT4gewogICAgcmV0dXJuIHRoaXMuaHR0cC5nZXQ8YW55Pih0aGlzLmFwaVVybCkucGlwZSgKICAgICAgY2F0Y2hFcnJvcih0aGlzLmhhbmRsZUVycm9yKQogICAgKTsKICB9CgogIHByaXZhdGUgaGFuZGxlRXJyb3IoZXJyb3I6IEh0dHBFcnJvclJlc3BvbnNlKSB7CiAgICBsZXQgZXJyb3JNZXNzYWdlID0gJyc7CiAgICBpZiAoZXJyb3IuZXJyb3IgaW5zdGFuY2VvZiBFcnJvckV2ZW50KSB7CiAgICAgIC8vIEVycm9yIGRlbCBjbGllbnQKICAgICAgZXJyb3JNZXNzYWdlID0gYEVycm9yOiAke2Vycm9yLmVycm9yLm1lc3NhZ2V9YDsKICAgIH0gZWxzZSB7CiAgICAgIC8vIEVycm9yIGRlbCBzZXJ2aWRvcgogICAgICBlcnJvck1lc3NhZ2UgPSBgRXJyb3IgQ29kZTogJHtlcnJvci5zdGF0dXN9XG5NZXNzYWdlOiAke2Vycm9yLm1lc3NhZ2V9YDsKICAgIH0KICAgIHJldHVybiB0aHJvd0Vycm9yKGVycm9yTWVzc2FnZSk7CiAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class DataService {
+
+  private apiUrl = 'https://api.example.com/data';
+
+  constructor(private http: HttpClient) { }
+
+  getData(): Observable&lt;any&gt; {
+    return this.http.get&lt;any&gt;(this.apiUrl).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = '';
+    if (error.error instanceof ErrorEvent) {
+      // Error del client
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Error del servidor
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    }
+    return throwError(errorMessage);
+  }
+}</pre></div><div class='content'></div><h2>2. Utilització del servei en un component</h2>
+<div class='content'><p>Ara, utilitzarem el servei en un component i mostrarem els errors a l'usuari.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHsgQ29tcG9uZW50LCBPbkluaXQgfSBmcm9tICdAYW5ndWxhci9jb3JlJzsKaW1wb3J0IHsgRGF0YVNlcnZpY2UgfSBmcm9tICcuL2RhdGEuc2VydmljZSc7CgpAQ29tcG9uZW50KHsKICBzZWxlY3RvcjogJ2FwcC1kYXRhJywKICB0ZW1wbGF0ZTogYAogICAgPGRpdiAqbmdJZj0iZXJyb3JNZXNzYWdlIiBjbGFzcz0iZXJyb3IiPgogICAgICB7eyBlcnJvck1lc3NhZ2UgfX0KICAgIDwvZGl2PgogICAgPGRpdiAqbmdJZj0iZGF0YSI+CiAgICAgIDwhLS0gTW9zdHJhciBsZXMgZGFkZXMgYXF1w60gLS0+CiAgICA8L2Rpdj4KICBgLAogIHN0eWxlczogW2AKICAgIC5lcnJvciB7CiAgICAgIGNvbG9yOiByZWQ7CiAgICB9CiAgYF0KfSkKZXhwb3J0IGNsYXNzIERhdGFDb21wb25lbnQgaW1wbGVtZW50cyBPbkluaXQgewoKICBkYXRhOiBhbnk7CiAgZXJyb3JNZXNzYWdlOiBzdHJpbmc7CgogIGNvbnN0cnVjdG9yKHByaXZhdGUgZGF0YVNlcnZpY2U6IERhdGFTZXJ2aWNlKSB7IH0KCiAgbmdPbkluaXQoKTogdm9pZCB7CiAgICB0aGlzLmRhdGFTZXJ2aWNlLmdldERhdGEoKS5zdWJzY3JpYmUoCiAgICAgIChyZXNwb25zZSkgPT4gewogICAgICAgIHRoaXMuZGF0YSA9IHJlc3BvbnNlOwogICAgICB9LAogICAgICAoZXJyb3IpID0+IHsKICAgICAgICB0aGlzLmVycm9yTWVzc2FnZSA9IGVycm9yOwogICAgICB9CiAgICApOwogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import { Component, OnInit } from '@angular/core';
+import { DataService } from './data.service';
+
+@Component({
+  selector: 'app-data',
+  template: `
+    &lt;div *ngIf=&quot;errorMessage&quot; class=&quot;error&quot;&gt;
+      {{ errorMessage }}
+    &lt;/div&gt;
+    &lt;div *ngIf=&quot;data&quot;&gt;
+      &lt;!-- Mostrar les dades aqu&iacute; --&gt;
+    &lt;/div&gt;
+  `,
+  styles: [`
+    .error {
+      color: red;
+    }
+  `]
+})
+export class DataComponent implements OnInit {
+
+  data: any;
+  errorMessage: string;
+
+  constructor(private dataService: DataService) { }
+
+  ngOnInit(): void {
+    this.dataService.getData().subscribe(
+      (response) =&gt; {
+        this.data = response;
+      },
+      (error) =&gt; {
+        this.errorMessage = error;
+      }
+    );
+  }
+}</pre></div><div class='content'></div><h2>3. Explicació del codi</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Servei <code>DataService</code></strong>:</p>
+<ul>
+<li>El mètode <code>getData</code> fa una sol·licitud GET a l'API.</li>
+<li>Utilitza <code>catchError</code> per interceptar errors i passar-los al mètode <code>handleError</code>.</li>
+<li>El mètode <code>handleError</code> distingeix entre errors del client i del servidor i retorna un missatge d'error adequat.</li>
+</ul>
+</li>
+<li>
+<p><strong>Component <code>DataComponent</code></strong>:</p>
+<ul>
+<li>Utilitza el servei <code>DataService</code> per obtenir dades.</li>
+<li>Si es produeix un error, el missatge d'error es guarda a <code>errorMessage</code> i es mostra a l'usuari.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Exercici pràctic</h1>
+<div class='content'></div><h2>Exercici</h2>
+<div class='content'><ol>
+<li>Crea un nou servei que faci una sol·licitud POST a una API fictícia.</li>
+<li>Implementa la gestió d'errors per a la sol·licitud POST.</li>
+<li>Utilitza el servei en un component i mostra els errors a l'usuari.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><h4>Servei</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHsgSW5qZWN0YWJsZSB9IGZyb20gJ0Bhbmd1bGFyL2NvcmUnOwppbXBvcnQgeyBIdHRwQ2xpZW50LCBIdHRwRXJyb3JSZXNwb25zZSB9IGZyb20gJ0Bhbmd1bGFyL2NvbW1vbi9odHRwJzsKaW1wb3J0IHsgT2JzZXJ2YWJsZSwgdGhyb3dFcnJvciB9IGZyb20gJ3J4anMnOwppbXBvcnQgeyBjYXRjaEVycm9yIH0gZnJvbSAncnhqcy9vcGVyYXRvcnMnOwoKQEluamVjdGFibGUoewogIHByb3ZpZGVkSW46ICdyb290Jwp9KQpleHBvcnQgY2xhc3MgUG9zdFNlcnZpY2UgewoKICBwcml2YXRlIGFwaVVybCA9ICdodHRwczovL2FwaS5leGFtcGxlLmNvbS9wb3N0JzsKCiAgY29uc3RydWN0b3IocHJpdmF0ZSBodHRwOiBIdHRwQ2xpZW50KSB7IH0KCiAgY3JlYXRlUG9zdChkYXRhOiBhbnkpOiBPYnNlcnZhYmxlPGFueT4gewogICAgcmV0dXJuIHRoaXMuaHR0cC5wb3N0PGFueT4odGhpcy5hcGlVcmwsIGRhdGEpLnBpcGUoCiAgICAgIGNhdGNoRXJyb3IodGhpcy5oYW5kbGVFcnJvcikKICAgICk7CiAgfQoKICBwcml2YXRlIGhhbmRsZUVycm9yKGVycm9yOiBIdHRwRXJyb3JSZXNwb25zZSkgewogICAgbGV0IGVycm9yTWVzc2FnZSA9ICcnOwogICAgaWYgKGVycm9yLmVycm9yIGluc3RhbmNlb2YgRXJyb3JFdmVudCkgewogICAgICAvLyBFcnJvciBkZWwgY2xpZW50CiAgICAgIGVycm9yTWVzc2FnZSA9IGBFcnJvcjogJHtlcnJvci5lcnJvci5tZXNzYWdlfWA7CiAgICB9IGVsc2UgewogICAgICAvLyBFcnJvciBkZWwgc2Vydmlkb3IKICAgICAgZXJyb3JNZXNzYWdlID0gYEVycm9yIENvZGU6ICR7ZXJyb3Iuc3RhdHVzfVxuTWVzc2FnZTogJHtlcnJvci5tZXNzYWdlfWA7CiAgICB9CiAgICByZXR1cm4gdGhyb3dFcnJvcihlcnJvck1lc3NhZ2UpOwogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class PostService {
+
+  private apiUrl = 'https://api.example.com/post';
+
+  constructor(private http: HttpClient) { }
+
+  createPost(data: any): Observable&lt;any&gt; {
+    return this.http.post&lt;any&gt;(this.apiUrl, data).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = '';
+    if (error.error instanceof ErrorEvent) {
+      // Error del client
+      errorMessage = `Error: ${error.error.message}`;
+    } else {
+      // Error del servidor
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    }
+    return throwError(errorMessage);
+  }
+}</pre></div><div class='content'><h4>Component</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHsgQ29tcG9uZW50IH0gZnJvbSAnQGFuZ3VsYXIvY29yZSc7CmltcG9ydCB7IFBvc3RTZXJ2aWNlIH0gZnJvbSAnLi9wb3N0LnNlcnZpY2UnOwoKQENvbXBvbmVudCh7CiAgc2VsZWN0b3I6ICdhcHAtcG9zdCcsCiAgdGVtcGxhdGU6IGAKICAgIDxkaXYgKm5nSWY9ImVycm9yTWVzc2FnZSIgY2xhc3M9ImVycm9yIj4KICAgICAge3sgZXJyb3JNZXNzYWdlIH19CiAgICA8L2Rpdj4KICAgIDxidXR0b24gKGNsaWNrKT0iY3JlYXRlUG9zdCgpIj5DcmVhdGUgUG9zdDwvYnV0dG9uPgogIGAsCiAgc3R5bGVzOiBbYAogICAgLmVycm9yIHsKICAgICAgY29sb3I6IHJlZDsKICAgIH0KICBgXQp9KQpleHBvcnQgY2xhc3MgUG9zdENvbXBvbmVudCB7CgogIGVycm9yTWVzc2FnZTogc3RyaW5nOwoKICBjb25zdHJ1Y3Rvcihwcml2YXRlIHBvc3RTZXJ2aWNlOiBQb3N0U2VydmljZSkgeyB9CgogIGNyZWF0ZVBvc3QoKTogdm9pZCB7CiAgICBjb25zdCBwb3N0RGF0YSA9IHsgdGl0bGU6ICdOZXcgUG9zdCcsIGNvbnRlbnQ6ICdUaGlzIGlzIGEgbmV3IHBvc3QuJyB9OwogICAgdGhpcy5wb3N0U2VydmljZS5jcmVhdGVQb3N0KHBvc3REYXRhKS5zdWJzY3JpYmUoCiAgICAgIChyZXNwb25zZSkgPT4gewogICAgICAgIGNvbnNvbGUubG9nKCdQb3N0IGNyZWF0ZWQgc3VjY2Vzc2Z1bGx5JywgcmVzcG9uc2UpOwogICAgICB9LAogICAgICAoZXJyb3IpID0+IHsKICAgICAgICB0aGlzLmVycm9yTWVzc2FnZSA9IGVycm9yOwogICAgICB9CiAgICApOwogIH0KfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import { Component } from '@angular/core';
+import { PostService } from './post.service';
+
+@Component({
+  selector: 'app-post',
+  template: `
+    &lt;div *ngIf=&quot;errorMessage&quot; class=&quot;error&quot;&gt;
+      {{ errorMessage }}
+    &lt;/div&gt;
+    &lt;button (click)=&quot;createPost()&quot;&gt;Create Post&lt;/button&gt;
+  `,
+  styles: [`
+    .error {
+      color: red;
+    }
+  `]
+})
+export class PostComponent {
+
+  errorMessage: string;
+
+  constructor(private postService: PostService) { }
+
+  createPost(): void {
+    const postData = { title: 'New Post', content: 'This is a new post.' };
+    this.postService.createPost(postData).subscribe(
+      (response) =&gt; {
+        console.log('Post created successfully', response);
+      },
+      (error) =&gt; {
+        this.errorMessage = error;
+      }
+    );
+  }
+}</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après com gestionar errors en aplicacions Angular, especialment en sol·licituds HTTP. Hem vist com utilitzar el mètode <code>catchError</code> de RxJS per interceptar errors i proporcionar missatges d'error útils a l'usuari. La gestió d'errors és essencial per crear aplicacions robustes i proporcionar una bona experiència d'usuari.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='07-04-using-observables' title="Utilitzar observables">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='08-01-introduction-state-management' title="Introducció a la gestió d'estat">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

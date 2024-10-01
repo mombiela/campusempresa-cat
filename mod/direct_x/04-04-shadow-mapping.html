@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapatge d'Ombres</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/direct_x/04-04-shadow-mapping" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/direct_x/04-04-shadow-mapping" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/direct_x/04-04-shadow-mapping" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/direct_x/04-04-shadow-mapping" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/direct_x/04-04-shadow-mapping" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-03-advanced-lighting-techniques' title="Tècniques Avançades d'Il·luminació">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Mapatge d'Ombres</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-01-loading-3d-models' title="Carregar Models 3D">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>El mapatge d'ombres és una tècnica avançada de renderització que permet crear ombres realistes en una escena 3D. Aquesta tècnica és àmpliament utilitzada en motors de jocs i aplicacions gràfiques per millorar la percepció de profunditat i realisme.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Shadow Map (Mapa d'Ombres)</strong>: Una textura que emmagatzema la informació de profunditat des de la perspectiva de la font de llum.</li>
+<li><strong>Passada de Profunditat</strong>: La primera passada de renderització on es genera el shadow map.</li>
+<li><strong>Passada de Renderització</strong>: La segona passada on es compara la profunditat dels píxels amb el shadow map per determinar si un píxel està a l'ombra.</li>
+</ol>
+</div><h1>Passos per Implementar el Mapatge d'Ombres</h1>
+<div class='content'></div><h2>1. Crear el Shadow Map</h2>
+<div class='content'><p>Primer, hem de crear una textura que servirà com a shadow map. Aquesta textura emmagatzemarà la informació de profunditat des de la perspectiva de la font de llum.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gQ3JlYXIgdW5hIHRleHR1cmEgcGVyIGFsIHNoYWRvdyBtYXAKRDNEMTFfVEVYVFVSRTJEX0RFU0Mgc2hhZG93TWFwRGVzYyA9IHt9OwpzaGFkb3dNYXBEZXNjLldpZHRoID0gU0hBRE9XX01BUF9XSURUSDsKc2hhZG93TWFwRGVzYy5IZWlnaHQgPSBTSEFET1dfTUFQX0hFSUdIVDsKc2hhZG93TWFwRGVzYy5NaXBMZXZlbHMgPSAxOwpzaGFkb3dNYXBEZXNjLkFycmF5U2l6ZSA9IDE7CnNoYWRvd01hcERlc2MuRm9ybWF0ID0gRFhHSV9GT1JNQVRfUjI0RzhfVFlQRUxFU1M7CnNoYWRvd01hcERlc2MuU2FtcGxlRGVzYy5Db3VudCA9IDE7CnNoYWRvd01hcERlc2MuVXNhZ2UgPSBEM0QxMV9VU0FHRV9ERUZBVUxUOwpzaGFkb3dNYXBEZXNjLkJpbmRGbGFncyA9IEQzRDExX0JJTkRfREVQVEhfU1RFTkNJTCB8IEQzRDExX0JJTkRfU0hBREVSX1JFU09VUkNFOwoKSUQzRDExVGV4dHVyZTJEKiBzaGFkb3dNYXBUZXh0dXJlOwpkZXZpY2UtPkNyZWF0ZVRleHR1cmUyRCgmc2hhZG93TWFwRGVzYywgbnVsbHB0ciwgJnNoYWRvd01hcFRleHR1cmUpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Crear una textura per al shadow map
+D3D11_TEXTURE2D_DESC shadowMapDesc = {};
+shadowMapDesc.Width = SHADOW_MAP_WIDTH;
+shadowMapDesc.Height = SHADOW_MAP_HEIGHT;
+shadowMapDesc.MipLevels = 1;
+shadowMapDesc.ArraySize = 1;
+shadowMapDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+shadowMapDesc.SampleDesc.Count = 1;
+shadowMapDesc.Usage = D3D11_USAGE_DEFAULT;
+shadowMapDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+
+ID3D11Texture2D* shadowMapTexture;
+device-&gt;CreateTexture2D(&amp;shadowMapDesc, nullptr, &amp;shadowMapTexture);</pre></div><div class='content'></div><h2>2. Configurar la Vista de la Font de Llum</h2>
+<div class='content'><p>Hem de configurar una matriu de vista i projecció des de la perspectiva de la font de llum.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gQ29uZmlndXJhciBsYSBtYXRyaXUgZGUgdmlzdGEgZGUgbGEgZm9udCBkZSBsbHVtClhNVkVDVE9SIGxpZ2h0UG9zaXRpb24gPSBYTVZlY3RvclNldCgwLjBmLCAxMC4wZiwgMC4wZiwgMS4wZik7ClhNVkVDVE9SIGxpZ2h0VGFyZ2V0ID0gWE1WZWN0b3JTZXQoMC4wZiwgMC4wZiwgMC4wZiwgMS4wZik7ClhNVkVDVE9SIGxpZ2h0VXAgPSBYTVZlY3RvclNldCgwLjBmLCAxLjBmLCAwLjBmLCAwLjBmKTsKClhNTUFUUklYIGxpZ2h0Vmlld01hdHJpeCA9IFhNTWF0cml4TG9va0F0TEgobGlnaHRQb3NpdGlvbiwgbGlnaHRUYXJnZXQsIGxpZ2h0VXApOwoKLy8gQ29uZmlndXJhciBsYSBtYXRyaXUgZGUgcHJvamVjY2nDsyBkZSBsYSBmb250IGRlIGxsdW0KWE1NQVRSSVggbGlnaHRQcm9qZWN0aW9uTWF0cml4ID0gWE1NYXRyaXhPcnRob2dyYXBoaWNMSCgyMC4wZiwgMjAuMGYsIDEuMGYsIDEwMC4wZik7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Configurar la matriu de vista de la font de llum
+XMVECTOR lightPosition = XMVectorSet(0.0f, 10.0f, 0.0f, 1.0f);
+XMVECTOR lightTarget = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+XMVECTOR lightUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+XMMATRIX lightViewMatrix = XMMatrixLookAtLH(lightPosition, lightTarget, lightUp);
+
+// Configurar la matriu de projecci&oacute; de la font de llum
+XMMATRIX lightProjectionMatrix = XMMatrixOrthographicLH(20.0f, 20.0f, 1.0f, 100.0f);</pre></div><div class='content'></div><h2>3. Renderitzar la Passada de Profunditat</h2>
+<div class='content'><p>Renderitzem la escena des de la perspectiva de la font de llum per generar el shadow map.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gQ29uZmlndXJhciBlbCByZW5kZXIgdGFyZ2V0IHBlciBhbCBzaGFkb3cgbWFwCmNvbnRleHQtPk9NU2V0UmVuZGVyVGFyZ2V0cygwLCBudWxscHRyLCBzaGFkb3dNYXBEZXB0aFN0ZW5jaWxWaWV3KTsKY29udGV4dC0+Q2xlYXJEZXB0aFN0ZW5jaWxWaWV3KHNoYWRvd01hcERlcHRoU3RlbmNpbFZpZXcsIEQzRDExX0NMRUFSX0RFUFRILCAxLjBmLCAwKTsKCi8vIENvbmZpZ3VyYXIgbGVzIG1hdHJpdXMgZGUgdmlzdGEgaSBwcm9qZWNjacOzIGRlIGxhIGZvbnQgZGUgbGx1bQpjYkxpZ2h0Vmlld1Byb2plY3Rpb24ubGlnaHRWaWV3ID0gWE1NYXRyaXhUcmFuc3Bvc2UobGlnaHRWaWV3TWF0cml4KTsKY2JMaWdodFZpZXdQcm9qZWN0aW9uLmxpZ2h0UHJvamVjdGlvbiA9IFhNTWF0cml4VHJhbnNwb3NlKGxpZ2h0UHJvamVjdGlvbk1hdHJpeCk7CmNvbnRleHQtPlVwZGF0ZVN1YnJlc291cmNlKGxpZ2h0Vmlld1Byb2plY3Rpb25CdWZmZXIsIDAsIG51bGxwdHIsICZjYkxpZ2h0Vmlld1Byb2plY3Rpb24sIDAsIDApOwoKLy8gUmVuZGVyaXR6YXIgbGEgZXNjZW5hIHBlciBnZW5lcmFyIGVsIHNoYWRvdyBtYXAKUmVuZGVyU2NlbmUoY29udGV4dCwgc2hhZG93TWFwU2hhZGVyKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Configurar el render target per al shadow map
+context-&gt;OMSetRenderTargets(0, nullptr, shadowMapDepthStencilView);
+context-&gt;ClearDepthStencilView(shadowMapDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+// Configurar les matrius de vista i projecci&oacute; de la font de llum
+cbLightViewProjection.lightView = XMMatrixTranspose(lightViewMatrix);
+cbLightViewProjection.lightProjection = XMMatrixTranspose(lightProjectionMatrix);
+context-&gt;UpdateSubresource(lightViewProjectionBuffer, 0, nullptr, &amp;cbLightViewProjection, 0, 0);
+
+// Renderitzar la escena per generar el shadow map
+RenderScene(context, shadowMapShader);</pre></div><div class='content'></div><h2>4. Aplicar el Shadow Map en la Passada de Renderització</h2>
+<div class='content'><p>En la passada de renderització, utilitzem el shadow map per determinar si un píxel està a l'ombra.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gQ29uZmlndXJhciBlbCBzaGFkZXIgcmVzb3VyY2UgdmlldyBkZWwgc2hhZG93IG1hcApjb250ZXh0LT5QU1NldFNoYWRlclJlc291cmNlcygxLCAxLCAmc2hhZG93TWFwU1JWKTsKCi8vIENvbmZpZ3VyYXIgbGVzIG1hdHJpdXMgZGUgdmlzdGEgaSBwcm9qZWNjacOzIGRlIGxhIGPDoG1lcmEKY2JDYW1lcmFWaWV3UHJvamVjdGlvbi5jYW1lcmFWaWV3ID0gWE1NYXRyaXhUcmFuc3Bvc2UoY2FtZXJhVmlld01hdHJpeCk7CmNiQ2FtZXJhVmlld1Byb2plY3Rpb24uY2FtZXJhUHJvamVjdGlvbiA9IFhNTWF0cml4VHJhbnNwb3NlKGNhbWVyYVByb2plY3Rpb25NYXRyaXgpOwpjb250ZXh0LT5VcGRhdGVTdWJyZXNvdXJjZShjYW1lcmFWaWV3UHJvamVjdGlvbkJ1ZmZlciwgMCwgbnVsbHB0ciwgJmNiQ2FtZXJhVmlld1Byb2plY3Rpb24sIDAsIDApOwoKLy8gUmVuZGVyaXR6YXIgbGEgZXNjZW5hIGFtYiBlbCBzaGFkb3cgbWFwClJlbmRlclNjZW5lKGNvbnRleHQsIG1haW5TaGFkZXIpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Configurar el shader resource view del shadow map
+context-&gt;PSSetShaderResources(1, 1, &amp;shadowMapSRV);
+
+// Configurar les matrius de vista i projecci&oacute; de la c&agrave;mera
+cbCameraViewProjection.cameraView = XMMatrixTranspose(cameraViewMatrix);
+cbCameraViewProjection.cameraProjection = XMMatrixTranspose(cameraProjectionMatrix);
+context-&gt;UpdateSubresource(cameraViewProjectionBuffer, 0, nullptr, &amp;cbCameraViewProjection, 0, 0);
+
+// Renderitzar la escena amb el shadow map
+RenderScene(context, mainShader);</pre></div><div class='content'></div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Implementar el mapatge d'ombres en una escena 3D simple amb una font de llum direccional.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li><strong>Crear el Shadow Map</strong>: Seguint els passos descrits anteriorment, crea una textura per al shadow map.</li>
+<li><strong>Configurar la Vista de la Font de Llum</strong>: Configura les matrius de vista i projecció des de la perspectiva de la font de llum.</li>
+<li><strong>Renderitzar la Passada de Profunditat</strong>: Renderitza la escena des de la perspectiva de la font de llum per generar el shadow map.</li>
+<li><strong>Aplicar el Shadow Map</strong>: Utilitza el shadow map en la passada de renderització per determinar si els píxels estan a l'ombra.</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gUGFzIDE6IENyZWFyIGVsIFNoYWRvdyBNYXAKRDNEMTFfVEVYVFVSRTJEX0RFU0Mgc2hhZG93TWFwRGVzYyA9IHt9OwpzaGFkb3dNYXBEZXNjLldpZHRoID0gU0hBRE9XX01BUF9XSURUSDsKc2hhZG93TWFwRGVzYy5IZWlnaHQgPSBTSEFET1dfTUFQX0hFSUdIVDsKc2hhZG93TWFwRGVzYy5NaXBMZXZlbHMgPSAxOwpzaGFkb3dNYXBEZXNjLkFycmF5U2l6ZSA9IDE7CnNoYWRvd01hcERlc2MuRm9ybWF0ID0gRFhHSV9GT1JNQVRfUjI0RzhfVFlQRUxFU1M7CnNoYWRvd01hcERlc2MuU2FtcGxlRGVzYy5Db3VudCA9IDE7CnNoYWRvd01hcERlc2MuVXNhZ2UgPSBEM0QxMV9VU0FHRV9ERUZBVUxUOwpzaGFkb3dNYXBEZXNjLkJpbmRGbGFncyA9IEQzRDExX0JJTkRfREVQVEhfU1RFTkNJTCB8IEQzRDExX0JJTkRfU0hBREVSX1JFU09VUkNFOwoKSUQzRDExVGV4dHVyZTJEKiBzaGFkb3dNYXBUZXh0dXJlOwpkZXZpY2UtPkNyZWF0ZVRleHR1cmUyRCgmc2hhZG93TWFwRGVzYywgbnVsbHB0ciwgJnNoYWRvd01hcFRleHR1cmUpOwoKLy8gUGFzIDI6IENvbmZpZ3VyYXIgbGEgVmlzdGEgZGUgbGEgRm9udCBkZSBMbHVtClhNVkVDVE9SIGxpZ2h0UG9zaXRpb24gPSBYTVZlY3RvclNldCgwLjBmLCAxMC4wZiwgMC4wZiwgMS4wZik7ClhNVkVDVE9SIGxpZ2h0VGFyZ2V0ID0gWE1WZWN0b3JTZXQoMC4wZiwgMC4wZiwgMC4wZiwgMS4wZik7ClhNVkVDVE9SIGxpZ2h0VXAgPSBYTVZlY3RvclNldCgwLjBmLCAxLjBmLCAwLjBmLCAwLjBmKTsKClhNTUFUUklYIGxpZ2h0Vmlld01hdHJpeCA9IFhNTWF0cml4TG9va0F0TEgobGlnaHRQb3NpdGlvbiwgbGlnaHRUYXJnZXQsIGxpZ2h0VXApOwpYTU1BVFJJWCBsaWdodFByb2plY3Rpb25NYXRyaXggPSBYTU1hdHJpeE9ydGhvZ3JhcGhpY0xIKDIwLjBmLCAyMC4wZiwgMS4wZiwgMTAwLjBmKTsKCi8vIFBhcyAzOiBSZW5kZXJpdHphciBsYSBQYXNzYWRhIGRlIFByb2Z1bmRpdGF0CmNvbnRleHQtPk9NU2V0UmVuZGVyVGFyZ2V0cygwLCBudWxscHRyLCBzaGFkb3dNYXBEZXB0aFN0ZW5jaWxWaWV3KTsKY29udGV4dC0+Q2xlYXJEZXB0aFN0ZW5jaWxWaWV3KHNoYWRvd01hcERlcHRoU3RlbmNpbFZpZXcsIEQzRDExX0NMRUFSX0RFUFRILCAxLjBmLCAwKTsKCmNiTGlnaHRWaWV3UHJvamVjdGlvbi5saWdodFZpZXcgPSBYTU1hdHJpeFRyYW5zcG9zZShsaWdodFZpZXdNYXRyaXgpOwpjYkxpZ2h0Vmlld1Byb2plY3Rpb24ubGlnaHRQcm9qZWN0aW9uID0gWE1NYXRyaXhUcmFuc3Bvc2UobGlnaHRQcm9qZWN0aW9uTWF0cml4KTsKY29udGV4dC0+VXBkYXRlU3VicmVzb3VyY2UobGlnaHRWaWV3UHJvamVjdGlvbkJ1ZmZlciwgMCwgbnVsbHB0ciwgJmNiTGlnaHRWaWV3UHJvamVjdGlvbiwgMCwgMCk7CgpSZW5kZXJTY2VuZShjb250ZXh0LCBzaGFkb3dNYXBTaGFkZXIpOwoKLy8gUGFzIDQ6IEFwbGljYXIgZWwgU2hhZG93IE1hcApjb250ZXh0LT5QU1NldFNoYWRlclJlc291cmNlcygxLCAxLCAmc2hhZG93TWFwU1JWKTsKCmNiQ2FtZXJhVmlld1Byb2plY3Rpb24uY2FtZXJhVmlldyA9IFhNTWF0cml4VHJhbnNwb3NlKGNhbWVyYVZpZXdNYXRyaXgpOwpjYkNhbWVyYVZpZXdQcm9qZWN0aW9uLmNhbWVyYVByb2plY3Rpb24gPSBYTU1hdHJpeFRyYW5zcG9zZShjYW1lcmFQcm9qZWN0aW9uTWF0cml4KTsKY29udGV4dC0+VXBkYXRlU3VicmVzb3VyY2UoY2FtZXJhVmlld1Byb2plY3Rpb25CdWZmZXIsIDAsIG51bGxwdHIsICZjYkNhbWVyYVZpZXdQcm9qZWN0aW9uLCAwLCAwKTsKClJlbmRlclNjZW5lKGNvbnRleHQsIG1haW5TaGFkZXIpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Pas 1: Crear el Shadow Map
+D3D11_TEXTURE2D_DESC shadowMapDesc = {};
+shadowMapDesc.Width = SHADOW_MAP_WIDTH;
+shadowMapDesc.Height = SHADOW_MAP_HEIGHT;
+shadowMapDesc.MipLevels = 1;
+shadowMapDesc.ArraySize = 1;
+shadowMapDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+shadowMapDesc.SampleDesc.Count = 1;
+shadowMapDesc.Usage = D3D11_USAGE_DEFAULT;
+shadowMapDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+
+ID3D11Texture2D* shadowMapTexture;
+device-&gt;CreateTexture2D(&amp;shadowMapDesc, nullptr, &amp;shadowMapTexture);
+
+// Pas 2: Configurar la Vista de la Font de Llum
+XMVECTOR lightPosition = XMVectorSet(0.0f, 10.0f, 0.0f, 1.0f);
+XMVECTOR lightTarget = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+XMVECTOR lightUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+XMMATRIX lightViewMatrix = XMMatrixLookAtLH(lightPosition, lightTarget, lightUp);
+XMMATRIX lightProjectionMatrix = XMMatrixOrthographicLH(20.0f, 20.0f, 1.0f, 100.0f);
+
+// Pas 3: Renderitzar la Passada de Profunditat
+context-&gt;OMSetRenderTargets(0, nullptr, shadowMapDepthStencilView);
+context-&gt;ClearDepthStencilView(shadowMapDepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+cbLightViewProjection.lightView = XMMatrixTranspose(lightViewMatrix);
+cbLightViewProjection.lightProjection = XMMatrixTranspose(lightProjectionMatrix);
+context-&gt;UpdateSubresource(lightViewProjectionBuffer, 0, nullptr, &amp;cbLightViewProjection, 0, 0);
+
+RenderScene(context, shadowMapShader);
+
+// Pas 4: Aplicar el Shadow Map
+context-&gt;PSSetShaderResources(1, 1, &amp;shadowMapSRV);
+
+cbCameraViewProjection.cameraView = XMMatrixTranspose(cameraViewMatrix);
+cbCameraViewProjection.cameraProjection = XMMatrixTranspose(cameraProjectionMatrix);
+context-&gt;UpdateSubresource(cameraViewProjectionBuffer, 0, nullptr, &amp;cbCameraViewProjection, 0, 0);
+
+RenderScene(context, mainShader);</pre></div><div class='content'></div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ol>
+<li><strong>Resolució del Shadow Map</strong>: Una resolució massa baixa pot causar artefactes d'ombres. Ajusta la resolució segons les necessitats de la teva aplicació.</li>
+<li><strong>Bias de Profunditat</strong>: Un bias inadequat pot causar ombres incorrectes. Experimenta amb diferents valors de bias per trobar el més adequat.</li>
+<li><strong>Aliasing</strong>: Utilitza tècniques com el PCF (Percentage Closer Filtering) per suavitzar les ombres i reduir l'aliasing.</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>El mapatge d'ombres és una tècnica poderosa per afegir realisme a les escenes 3D. Comprendre i implementar aquesta tècnica és essencial per a qualsevol desenvolupador que treballi amb gràfics 3D avançats. Amb la pràctica, podràs crear ombres realistes i millorar significativament la qualitat visual de les teves aplicacions.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-03-advanced-lighting-techniques' title="Tècniques Avançades d'Il·luminació">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='05-01-loading-3d-models' title="Carregar Models 3D">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

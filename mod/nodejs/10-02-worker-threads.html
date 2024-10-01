@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Threads</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/nodejs/10-02-worker-threads" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/nodejs/10-02-worker-threads" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/nodejs/10-02-worker-threads" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/nodejs/10-02-worker-threads" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/nodejs/10-02-worker-threads" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='10-01-cluster-module' title="Mòdul Cluster">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Worker Threads</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-03-performance-optimization' title="Optimització del Rendiment">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>Els Worker Threads són una característica avançada de Node.js que permet executar codi JavaScript en fils paral·lels. Això és especialment útil per a tasques que requereixen molta CPU, ja que Node.js és tradicionalment de fil únic i pot tenir problemes de rendiment amb operacions intensives.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Fil Únic vs. Múltiples Fils</strong>:</p>
+<ul>
+<li><strong>Fil Únic</strong>: Node.js executa el codi JavaScript en un sol fil, utilitzant el bucle d'esdeveniments per gestionar operacions asíncrones.</li>
+<li><strong>Múltiples Fils</strong>: Amb els Worker Threads, podem crear fils addicionals per executar codi en paral·lel, millorant el rendiment per a tasques intensives.</li>
+</ul>
+</li>
+<li>
+<p><strong>Mòdul <code>worker_threads</code></strong>:</p>
+<ul>
+<li>Aquest mòdul proporciona una API per crear i gestionar fils de treball (workers).</li>
+</ul>
+</li>
+<li>
+<p><strong>Worker</strong>:</p>
+<ul>
+<li>Un Worker és un fil separat que pot executar codi JavaScript de manera independent del fil principal.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Exemple Pràctic</h1>
+<div class='content'></div><h2>Crear un Worker Thread</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Instal·lació i Configuració</strong>:</p>
+<ul>
+<li>No cal instal·lar cap paquet addicional, ja que el mòdul <code>worker_threads</code> és part del nucli de Node.js.</li>
+</ul>
+</li>
+<li>
+<p><strong>Codi del Fil Principal</strong>:</p>
+<pre><code class="language-javascript">// main.js
+const { Worker } = require('worker_threads');
+
+function runService(workerData) {
+  return new Promise((resolve, reject) =&gt; {
+    const worker = new Worker('./worker.js', { workerData });
+    worker.on('message', resolve);
+    worker.on('error', reject);
+    worker.on('exit', (code) =&gt; {
+      if (code !== 0)
+        reject(new Error(`Worker stopped with exit code ${code}`));
+    });
+  });
+}
+
+runService('Hello, Worker!')
+  .then(result =&gt; console.log(result))
+  .catch(err =&gt; console.error(err));
+</code></pre>
+</li>
+<li>
+<p><strong>Codi del Worker</strong>:</p>
+<pre><code class="language-javascript">// worker.js
+const { parentPort, workerData } = require('worker_threads');
+
+// Simulació d'una tasca intensiva
+let result = 0;
+for (let i = 0; i &lt; 1e9; i++) {
+  result += i;
+}
+
+// Enviar el resultat al fil principal
+parentPort.postMessage(`Worker received: ${workerData}, Result: ${result}`);
+</code></pre>
+</li>
+</ol>
+</div><h2>Explicació del Codi</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Fil Principal (<code>main.js</code>)</strong>:</p>
+<ul>
+<li>Importem el mòdul <code>worker_threads</code> i creem una funció <code>runService</code> que accepta <code>workerData</code>.</li>
+<li>La funció crea un nou Worker que executa el codi de <code>worker.js</code>.</li>
+<li>Utilitzem promeses per gestionar la comunicació amb el Worker.</li>
+<li>El Worker envia missatges al fil principal amb <code>worker.on('message', resolve)</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Worker (<code>worker.js</code>)</strong>:</p>
+<ul>
+<li>Importem <code>parentPort</code> i <code>workerData</code> del mòdul <code>worker_threads</code>.</li>
+<li>Realitzem una tasca intensiva (un bucle que suma números).</li>
+<li>Enviem el resultat al fil principal amb <code>parentPort.postMessage</code>.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici 1: Càlcul de Factorials</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Fil Principal</strong>:</p>
+<pre><code class="language-javascript">// main.js
+const { Worker } = require('worker_threads');
+
+function calculateFactorial(number) {
+  return new Promise((resolve, reject) =&gt; {
+    const worker = new Worker('./factorialWorker.js', { workerData: number });
+    worker.on('message', resolve);
+    worker.on('error', reject);
+    worker.on('exit', (code) =&gt; {
+      if (code !== 0)
+        reject(new Error(`Worker stopped with exit code ${code}`));
+    });
+  });
+}
+
+calculateFactorial(10)
+  .then(result =&gt; console.log(`Factorial is: ${result}`))
+  .catch(err =&gt; console.error(err));
+</code></pre>
+</li>
+<li>
+<p><strong>Worker</strong>:</p>
+<pre><code class="language-javascript">// factorialWorker.js
+const { parentPort, workerData } = require('worker_threads');
+
+function factorial(n) {
+  if (n === 0 || n === 1) return 1;
+  return n * factorial(n - 1);
+}
+
+const result = factorial(workerData);
+parentPort.postMessage(result);
+</code></pre>
+</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><ul>
+<li>
+<p><strong>Fil Principal</strong>:</p>
+<ul>
+<li>Creem un Worker que calcula el factorial d'un número.</li>
+<li>Utilitzem promeses per gestionar la comunicació amb el Worker.</li>
+</ul>
+</li>
+<li>
+<p><strong>Worker</strong>:</p>
+<ul>
+<li>Implementem una funció recursiva per calcular el factorial.</li>
+<li>Enviem el resultat al fil principal.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ol>
+<li>
+<p><strong>No oblidar gestionar els errors</strong>:</p>
+<ul>
+<li>Sempre afegiu gestors d'errors (<code>worker.on('error', reject)</code>) per capturar i gestionar errors en els Workers.</li>
+</ul>
+</li>
+<li>
+<p><strong>Evitar tasques intensives en el fil principal</strong>:</p>
+<ul>
+<li>Utilitzeu Workers per a tasques que requereixen molta CPU per evitar bloquejar el fil principal.</li>
+</ul>
+</li>
+<li>
+<p><strong>Comunicació entre fils</strong>:</p>
+<ul>
+<li>Utilitzeu <code>parentPort.postMessage</code> per enviar dades entre el fil principal i els Workers.</li>
+</ul>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Els Worker Threads són una eina poderosa per millorar el rendiment de les aplicacions Node.js, especialment per a tasques intensives en CPU. Amb una comprensió clara de com crear i gestionar Workers, podeu aprofitar al màxim aquesta funcionalitat per construir aplicacions més eficients i responsives.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='10-01-cluster-module' title="Mòdul Cluster">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='10-03-performance-optimization' title="Optimització del Rendiment">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>

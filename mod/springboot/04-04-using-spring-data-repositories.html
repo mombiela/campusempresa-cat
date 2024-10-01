@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utilitzant repositoris de Spring Data</title>
+
+    <link rel="alternate" href="https://campusempresa.com/mod/springboot/04-04-using-spring-data-repositories" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/springboot/04-04-using-spring-data-repositories" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/springboot/04-04-using-spring-data-repositories" hreflang="en" />
+    
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.css" rel="stylesheet">
+	
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="text/javascript" src="/js/main.js"></script>
+</head>
+
+<body >
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-8 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-4 p-0 text-end">
+			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
+			<h3 id="main_subtitle"></h3>
+		</div>
+	</div>
+</div>
+<div class="container-xxl" style="margin-top: -1em;">
+	<div class="row">
+		<div class="col-12 p-0 m-0 text-end">
+							<a href="https://enterprisecampus.net/mod/springboot/04-04-using-spring-data-repositories" class="px-2">EN</a></b>
+				|
+				<a href="https://campusempresa.com/mod/springboot/04-04-using-spring-data-repositories" class="px-2">ES</a></b>
+				|
+				<b class="px-2">CA</b>
+											</div>
+	</div>
+</div>
+   <div class="top-bar container-fluid">
+	<div class="container-xxl">
+		<div class="row">
+			<div class="col" id="left_menu">
+				<a href="/objective">El Projecte</a>
+				<a href="/about">Sobre nosaltres</a>
+				<a href="/contribute">Contribuir</a>
+				<a href="/donate">Donacions</a>
+				<a href="/licence">Llicència</a>
+			</div>
+		</div>
+	</div>
+   </div>
+
+<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+			<div id="nav1" class="navigation"></div>
+			<div id="inner_content">
+								<div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-03-creating-jpa-entities' title="Creant entitats JPA">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+					<a href="./"><h2 style="text-decoration:underline">Utilitzant repositoris de Spring Data</h2></a>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-05-query-methods-spring-data-jpa' title="Mètodes de consulta a Spring Data JPA">Següent &#x25BA;</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com utilitzar els repositoris de Spring Data per accedir i manipular dades en una aplicació Spring Boot. Els repositoris de Spring Data proporcionen una manera senzilla i eficient de treballar amb bases de dades, permetent-nos centrar-nos en la lògica de negoci sense preocupar-nos pels detalls de la implementació de l'accés a dades.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre què són els repositoris de Spring Data.</li>
+<li>Aprendre a crear i utilitzar repositoris de Spring Data.</li>
+<li>Explorar les operacions bàsiques proporcionades pels repositoris.</li>
+<li>Veure exemples pràctics d'ús de repositoris.</li>
+</ul>
+</div><h1>Què són els repositoris de Spring Data?</h1>
+<div class='content'><p>Els repositoris de Spring Data són interfícies que proporcionen mètodes per realitzar operacions CRUD (Create, Read, Update, Delete) i altres operacions de consulta sobre entitats JPA. Spring Data genera automàticament la implementació d'aquestes interfícies, estalviant-nos la necessitat d'escriure codi repetitiu.</p>
+</div><h1>Creant un repositori de Spring Data</h1>
+<div class='content'></div><h2>Pas 1: Definir l'entitat JPA</h2>
+<div class='content'><p>Abans de crear un repositori, necessitem una entitat JPA. Suposem que tenim una entitat <code>Product</code>:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGphdmF4LnBlcnNpc3RlbmNlLkVudGl0eTsKaW1wb3J0IGphdmF4LnBlcnNpc3RlbmNlLkdlbmVyYXRlZFZhbHVlOwppbXBvcnQgamF2YXgucGVyc2lzdGVuY2UuR2VuZXJhdGlvblR5cGU7CmltcG9ydCBqYXZheC5wZXJzaXN0ZW5jZS5JZDsKCkBFbnRpdHkKcHVibGljIGNsYXNzIFByb2R1Y3QgewogICAgQElkCiAgICBAR2VuZXJhdGVkVmFsdWUoc3RyYXRlZ3kgPSBHZW5lcmF0aW9uVHlwZS5JREVOVElUWSkKICAgIHByaXZhdGUgTG9uZyBpZDsKICAgIHByaXZhdGUgU3RyaW5nIG5hbWU7CiAgICBwcml2YXRlIERvdWJsZSBwcmljZTsKCiAgICAvLyBHZXR0ZXJzIGkgc2V0dGVycwp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String name;
+    private Double price;
+
+    // Getters i setters
+}</pre></div><div class='content'></div><h2>Pas 2: Crear el repositori</h2>
+<div class='content'><p>Ara crearem una interfície de repositori per a l'entitat <code>Product</code>. Aquesta interfície ha d'extendre <code>JpaRepository</code> o una altra interfície de repositori proporcionada per Spring Data.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuZGF0YS5qcGEucmVwb3NpdG9yeS5KcGFSZXBvc2l0b3J5OwoKcHVibGljIGludGVyZmFjZSBQcm9kdWN0UmVwb3NpdG9yeSBleHRlbmRzIEpwYVJlcG9zaXRvcnk8UHJvZHVjdCwgTG9uZz4gewogICAgLy8gTcOodG9kZXMgZGUgY29uc3VsdGEgcGVyc29uYWxpdHphdHMgZXMgcG9kZW4gZGVmaW5pciBhcXXDrQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ProductRepository extends JpaRepository&lt;Product, Long&gt; {
+    // M&egrave;todes de consulta personalitzats es poden definir aqu&iacute;
+}</pre></div><div class='content'></div><h2>Pas 3: Utilitzar el repositori</h2>
+<div class='content'><p>Podem injectar el repositori en un servei o controlador i utilitzar-lo per realitzar operacions sobre l'entitat <code>Product</code>.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuYmVhbnMuZmFjdG9yeS5hbm5vdGF0aW9uLkF1dG93aXJlZDsKaW1wb3J0IG9yZy5zcHJpbmdmcmFtZXdvcmsuc3RlcmVvdHlwZS5TZXJ2aWNlOwoKaW1wb3J0IGphdmEudXRpbC5MaXN0OwoKQFNlcnZpY2UKcHVibGljIGNsYXNzIFByb2R1Y3RTZXJ2aWNlIHsKCiAgICBAQXV0b3dpcmVkCiAgICBwcml2YXRlIFByb2R1Y3RSZXBvc2l0b3J5IHByb2R1Y3RSZXBvc2l0b3J5OwoKICAgIHB1YmxpYyBMaXN0PFByb2R1Y3Q+IGdldEFsbFByb2R1Y3RzKCkgewogICAgICAgIHJldHVybiBwcm9kdWN0UmVwb3NpdG9yeS5maW5kQWxsKCk7CiAgICB9CgogICAgcHVibGljIFByb2R1Y3QgZ2V0UHJvZHVjdEJ5SWQoTG9uZyBpZCkgewogICAgICAgIHJldHVybiBwcm9kdWN0UmVwb3NpdG9yeS5maW5kQnlJZChpZCkub3JFbHNlKG51bGwpOwogICAgfQoKICAgIHB1YmxpYyBQcm9kdWN0IHNhdmVQcm9kdWN0KFByb2R1Y3QgcHJvZHVjdCkgewogICAgICAgIHJldHVybiBwcm9kdWN0UmVwb3NpdG9yeS5zYXZlKHByb2R1Y3QpOwogICAgfQoKICAgIHB1YmxpYyB2b2lkIGRlbGV0ZVByb2R1Y3QoTG9uZyBpZCkgewogICAgICAgIHByb2R1Y3RSZXBvc2l0b3J5LmRlbGV0ZUJ5SWQoaWQpOwogICAgfQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class ProductService {
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    public List&lt;Product&gt; getAllProducts() {
+        return productRepository.findAll();
+    }
+
+    public Product getProductById(Long id) {
+        return productRepository.findById(id).orElse(null);
+    }
+
+    public Product saveProduct(Product product) {
+        return productRepository.save(product);
+    }
+
+    public void deleteProduct(Long id) {
+        productRepository.deleteById(id);
+    }
+}</pre></div><div class='content'></div><h1>Operacions bàsiques amb repositoris</h1>
+<div class='content'><p>Els repositoris de Spring Data proporcionen una sèrie de mètodes per realitzar operacions bàsiques. A continuació es mostren alguns dels mètodes més comuns:</p>
+<table>
+<thead>
+<tr>
+<th>Mètode</th>
+<th>Descripció</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>save(S entity)</code></td>
+<td>Desa l'entitat proporcionada.</td>
+</tr>
+<tr>
+<td><code>findById(ID id)</code></td>
+<td>Retorna l'entitat amb l'ID proporcionat.</td>
+</tr>
+<tr>
+<td><code>findAll()</code></td>
+<td>Retorna totes les entitats.</td>
+</tr>
+<tr>
+<td><code>deleteById(ID id)</code></td>
+<td>Elimina l'entitat amb l'ID proporcionat.</td>
+</tr>
+<tr>
+<td><code>count()</code></td>
+<td>Retorna el nombre d'entitats.</td>
+</tr>
+<tr>
+<td><code>existsById(ID id)</code></td>
+<td>Comprova si existeix una entitat amb l'ID proporcionat.</td>
+</tr>
+</tbody>
+</table>
+</div><h1>Exemples pràctics</h1>
+<div class='content'></div><h2>Exemple 1: Desar un producte</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("UHJvZHVjdCBwcm9kdWN0ID0gbmV3IFByb2R1Y3QoKTsKcHJvZHVjdC5zZXROYW1lKCJMYXB0b3AiKTsKcHJvZHVjdC5zZXRQcmljZSgxMjAwLjAwKTsKCnByb2R1Y3RSZXBvc2l0b3J5LnNhdmUocHJvZHVjdCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Product product = new Product();
+product.setName(&quot;Laptop&quot;);
+product.setPrice(1200.00);
+
+productRepository.save(product);</pre></div><div class='content'></div><h2>Exemple 2: Obtenir tots els productes</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("TGlzdDxQcm9kdWN0PiBwcm9kdWN0cyA9IHByb2R1Y3RSZXBvc2l0b3J5LmZpbmRBbGwoKTsKcHJvZHVjdHMuZm9yRWFjaChwcm9kdWN0IC0+IFN5c3RlbS5vdXQucHJpbnRsbihwcm9kdWN0LmdldE5hbWUoKSkpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>List&lt;Product&gt; products = productRepository.findAll();
+products.forEach(product -&gt; System.out.println(product.getName()));</pre></div><div class='content'></div><h2>Exemple 3: Obtenir un producte per ID</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("TG9uZyBwcm9kdWN0SWQgPSAxTDsKUHJvZHVjdCBwcm9kdWN0ID0gcHJvZHVjdFJlcG9zaXRvcnkuZmluZEJ5SWQocHJvZHVjdElkKS5vckVsc2UobnVsbCk7CmlmIChwcm9kdWN0ICE9IG51bGwpIHsKICAgIFN5c3RlbS5vdXQucHJpbnRsbigiUHJvZHVjdCBmb3VuZDogIiArIHByb2R1Y3QuZ2V0TmFtZSgpKTsKfSBlbHNlIHsKICAgIFN5c3RlbS5vdXQucHJpbnRsbigiUHJvZHVjdCBub3QgZm91bmQiKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Long productId = 1L;
+Product product = productRepository.findById(productId).orElse(null);
+if (product != null) {
+    System.out.println(&quot;Product found: &quot; + product.getName());
+} else {
+    System.out.println(&quot;Product not found&quot;);
+}</pre></div><div class='content'></div><h2>Exemple 4: Eliminar un producte</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("TG9uZyBwcm9kdWN0SWQgPSAxTDsKcHJvZHVjdFJlcG9zaXRvcnkuZGVsZXRlQnlJZChwcm9kdWN0SWQpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>Long productId = 1L;
+productRepository.deleteById(productId);</pre></div><div class='content'></div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Crear un repositori per a una nova entitat</h2>
+<div class='content'><ol>
+<li>Defineix una nova entitat <code>Customer</code> amb els camps <code>id</code>, <code>name</code> i <code>email</code>.</li>
+<li>Crea una interfície de repositori per a l'entitat <code>Customer</code>.</li>
+<li>Implementa un servei que utilitzi el repositori per realitzar operacions CRUD sobre <code>Customer</code>.</li>
+</ol>
+</div><h2>Exercici 2: Afegir mètodes de consulta personalitzats</h2>
+<div class='content'><ol>
+<li>Afegeix un mètode de consulta personalitzat a <code>ProductRepository</code> per trobar productes per nom.</li>
+<li>Implementa un servei que utilitzi aquest mètode de consulta personalitzat.</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gQWZlZ2VpeCBhcXVlc3QgbcOodG9kZSBhIFByb2R1Y3RSZXBvc2l0b3J5Ckxpc3Q8UHJvZHVjdD4gZmluZEJ5TmFtZShTdHJpbmcgbmFtZSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Afegeix aquest m&egrave;tode a ProductRepository
+List&lt;Product&gt; findByName(String name);</pre></div><div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gVXRpbGl0emEgZWwgbcOodG9kZSBkZSBjb25zdWx0YSBwZXJzb25hbGl0emF0IGVuIFByb2R1Y3RTZXJ2aWNlCnB1YmxpYyBMaXN0PFByb2R1Y3Q+IGdldFByb2R1Y3RzQnlOYW1lKFN0cmluZyBuYW1lKSB7CiAgICByZXR1cm4gcHJvZHVjdFJlcG9zaXRvcnkuZmluZEJ5TmFtZShuYW1lKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Utilitza el m&egrave;tode de consulta personalitzat en ProductService
+public List&lt;Product&gt; getProductsByName(String name) {
+    return productRepository.findByName(name);
+}</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après com utilitzar els repositoris de Spring Data per accedir i manipular dades en una aplicació Spring Boot. Hem vist com crear un repositori, utilitzar-lo per realitzar operacions bàsiques i afegir mètodes de consulta personalitzats. Els repositoris de Spring Data simplifiquen significativament el treball amb bases de dades, permetent-nos centrar-nos en la lògica de negoci.</p>
+<p>En el següent tema, explorarem els mètodes de consulta a Spring Data JPA, on aprendrem a crear consultes més complexes i personalitzades.</p>
+</div><div class='row navigation'>
+	<div class='col-2'>
+					<a href='04-03-creating-jpa-entities' title="Creant entitats JPA">&#x25C4;Anterior</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end'>
+					<a href='04-05-query-methods-spring-data-jpa' title="Mètodes de consulta a Spring Data JPA">Següent &#x25BA;</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+			<h1>Publicitat</h1>
+			<p>Aquest espai està destinat a publicitat.</p>
+			<p>Si vols ser patrocinador, contacta amb nosaltres per incloure enllaços en aquesta zona: <a href='mailto:admin@campusempresa.cat'>admin@campusempresa.cat</a></p>
+			<p>Gràcies per col·laborar!</p>
+		</div>
+	</div>
+</div>
+
+   <div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir galetes per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+	</div>    
+</body>
+</html>
