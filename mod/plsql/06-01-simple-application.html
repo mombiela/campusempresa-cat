@@ -25,12 +25,12 @@
     <div id="content">
 		<div id="header" class="container-xxl">
 	<div class="row">
-		<div class="col-12 col-md-8 p-0">
+		<div class="col-12 col-md-8 p-2 p-md-0">
 			<h1 class="m-0 p-0">
 				<a href="/"><img src="/img/logo_header.png"></a>
 			</h1>
 		</div>
-		<div class="col-12 col-md-4 px-0 py-2 py-md-0 text-end">
+		<div class="col-12 col-md-4 p-2 p-md-0 text-end">
 			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
 			<h3 id="main_subtitle"></h3>
 		</div>
@@ -38,7 +38,7 @@
 </div>
 <div class="container-xxl" style="margin-top: -1em;">
 	<div class="row">
-		<div class="col-12 px-0 py-2 py-md-0 m-0 text-end">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
 							<a href="https://enterprisecampus.net/mod/plsql/06-01-simple-application" class="px-2">EN</a></b>
 				|
 				<a href="https://campusempresa.com/mod/plsql/06-01-simple-application" class="px-2">ES</a></b>
@@ -78,7 +78,8 @@
 			</div>
 </div>
 <div class='content'><p>En aquest tema, aprendrem a construir una aplicació senzilla utilitzant PL/SQL. Aquesta aplicació ens permetrà consolidar els coneixements adquirits en els mòduls anteriors i veure com es poden aplicar en un context pràctic.</p>
-</div><h1>Objectius</h1>
+</div><h1><p>Objectius</p>
+</h1>
 <div class='content'><ul>
 <li>Crear una base de dades simple.</li>
 <li>Desenvolupar procediments emmagatzemats per gestionar dades.</li>
@@ -86,8 +87,10 @@
 <li>Utilitzar triggers per automatitzar tasques.</li>
 <li>Aplicar tècniques de depuració i optimització.</li>
 </ul>
-</div><h1>Pas 1: Crear la base de dades</h1>
-<div class='content'></div><h2>1.1 Definir l'esquema de la base de dades</h2>
+</div><h1><p>Pas 1: Crear la base de dades</p>
+</h1>
+<div class='content'></div><h2><p>1.1 Definir l'esquema de la base de dades</p>
+</h2>
 <div class='content'><p>Per a la nostra aplicació, crearem una base de dades per gestionar una biblioteca. La base de dades tindrà dues taules principals: <code>books</code> i <code>authors</code>.</p>
 </div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIGF1dGhvcnMgKAogICAgYXV0aG9yX2lkIE5VTUJFUiBQUklNQVJZIEtFWSwKICAgIG5hbWUgVkFSQ0hBUjIoMTAwKSBOT1QgTlVMTAopOwoKQ1JFQVRFIFRBQkxFIGJvb2tzICgKICAgIGJvb2tfaWQgTlVNQkVSIFBSSU1BUlkgS0VZLAogICAgdGl0bGUgVkFSQ0hBUjIoMjAwKSBOT1QgTlVMTCwKICAgIGF1dGhvcl9pZCBOVU1CRVIsCiAgICBwdWJsaXNoZWRfZGF0ZSBEQVRFLAogICAgQ09OU1RSQUlOVCBma19hdXRob3IKICAgICAgICBGT1JFSUdOIEtFWSAoYXV0aG9yX2lkKQogICAgICAgIFJFRkVSRU5DRVMgYXV0aG9ycyhhdXRob3JfaWQpCik7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE authors (
     author_id NUMBER PRIMARY KEY,
@@ -102,14 +105,17 @@ CREATE TABLE books (
     CONSTRAINT fk_author
         FOREIGN KEY (author_id)
         REFERENCES authors(author_id)
-);</pre></div><div class='content'></div><h2>1.2 Inserir dades inicials</h2>
+);</pre></div><div class='content'></div><h2><p>1.2 Inserir dades inicials</p>
+</h2>
 <div class='content'><p>Afegirem algunes dades inicials a les nostres taules per poder treballar amb elles.</p>
 </div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("SU5TRVJUIElOVE8gYXV0aG9ycyAoYXV0aG9yX2lkLCBuYW1lKSBWQUxVRVMgKDEsICdHZW9yZ2UgT3J3ZWxsJyk7CklOU0VSVCBJTlRPIGF1dGhvcnMgKGF1dGhvcl9pZCwgbmFtZSkgVkFMVUVTICgyLCAnQWxkb3VzIEh1eGxleScpOwoKSU5TRVJUIElOVE8gYm9va3MgKGJvb2tfaWQsIHRpdGxlLCBhdXRob3JfaWQsIHB1Ymxpc2hlZF9kYXRlKSBWQUxVRVMgKDEsICcxOTg0JywgMSwgVE9fREFURSgnMTk0OS0wNi0wOCcsICdZWVlZLU1NLUREJykpOwpJTlNFUlQgSU5UTyBib29rcyAoYm9va19pZCwgdGl0bGUsIGF1dGhvcl9pZCwgcHVibGlzaGVkX2RhdGUpIFZBTFVFUyAoMiwgJ0JyYXZlIE5ldyBXb3JsZCcsIDIsIFRPX0RBVEUoJzE5MzItMDgtMDEnLCAnWVlZWS1NTS1ERCcpKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>INSERT INTO authors (author_id, name) VALUES (1, 'George Orwell');
 INSERT INTO authors (author_id, name) VALUES (2, 'Aldous Huxley');
 
 INSERT INTO books (book_id, title, author_id, published_date) VALUES (1, '1984', 1, TO_DATE('1949-06-08', 'YYYY-MM-DD'));
-INSERT INTO books (book_id, title, author_id, published_date) VALUES (2, 'Brave New World', 2, TO_DATE('1932-08-01', 'YYYY-MM-DD'));</pre></div><div class='content'></div><h1>Pas 2: Desenvolupar procediments emmagatzemats</h1>
-<div class='content'></div><h2>2.1 Procediment per afegir un nou llibre</h2>
+INSERT INTO books (book_id, title, author_id, published_date) VALUES (2, 'Brave New World', 2, TO_DATE('1932-08-01', 'YYYY-MM-DD'));</pre></div><div class='content'></div><h1><p>Pas 2: Desenvolupar procediments emmagatzemats</p>
+</h1>
+<div class='content'></div><h2><p>2.1 Procediment per afegir un nou llibre</p>
+</h2>
 <div class='content'><p>Crearem un procediment per afegir un nou llibre a la taula <code>books</code>.</p>
 </div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIE9SIFJFUExBQ0UgUFJPQ0VEVVJFIGFkZF9ib29rICgKICAgIHBfdGl0bGUgSU4gVkFSQ0hBUjIsCiAgICBwX2F1dGhvcl9pZCBJTiBOVU1CRVIsCiAgICBwX3B1Ymxpc2hlZF9kYXRlIElOIERBVEUKKSBJUwpCRUdJTgogICAgSU5TRVJUIElOVE8gYm9va3MgKGJvb2tfaWQsIHRpdGxlLCBhdXRob3JfaWQsIHB1Ymxpc2hlZF9kYXRlKQogICAgVkFMVUVTIChib29rc19zZXEuTkVYVFZBTCwgcF90aXRsZSwgcF9hdXRob3JfaWQsIHBfcHVibGlzaGVkX2RhdGUpOwpFTkQ7Ci8="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE OR REPLACE PROCEDURE add_book (
     p_title IN VARCHAR2,
@@ -120,7 +126,8 @@ BEGIN
     INSERT INTO books (book_id, title, author_id, published_date)
     VALUES (books_seq.NEXTVAL, p_title, p_author_id, p_published_date);
 END;
-/</pre></div><div class='content'></div><h2>2.2 Procediment per actualitzar la informació d'un llibre</h2>
+/</pre></div><div class='content'></div><h2><p>2.2 Procediment per actualitzar la informació d'un llibre</p>
+</h2>
 <div class='content'><p>Crearem un procediment per actualitzar la informació d'un llibre existent.</p>
 </div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIE9SIFJFUExBQ0UgUFJPQ0VEVVJFIHVwZGF0ZV9ib29rICgKICAgIHBfYm9va19pZCBJTiBOVU1CRVIsCiAgICBwX3RpdGxlIElOIFZBUkNIQVIyLAogICAgcF9hdXRob3JfaWQgSU4gTlVNQkVSLAogICAgcF9wdWJsaXNoZWRfZGF0ZSBJTiBEQVRFCikgSVMKQkVHSU4KICAgIFVQREFURSBib29rcwogICAgU0VUIHRpdGxlID0gcF90aXRsZSwKICAgICAgICBhdXRob3JfaWQgPSBwX2F1dGhvcl9pZCwKICAgICAgICBwdWJsaXNoZWRfZGF0ZSA9IHBfcHVibGlzaGVkX2RhdGUKICAgIFdIRVJFIGJvb2tfaWQgPSBwX2Jvb2tfaWQ7CkVORDsKLw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE OR REPLACE PROCEDURE update_book (
     p_book_id IN NUMBER,
@@ -135,8 +142,10 @@ BEGIN
         published_date = p_published_date
     WHERE book_id = p_book_id;
 END;
-/</pre></div><div class='content'></div><h1>Pas 3: Desenvolupar funcions</h1>
-<div class='content'></div><h2>3.1 Funció per obtenir el nombre de llibres d'un autor</h2>
+/</pre></div><div class='content'></div><h1><p>Pas 3: Desenvolupar funcions</p>
+</h1>
+<div class='content'></div><h2><p>3.1 Funció per obtenir el nombre de llibres d'un autor</p>
+</h2>
 <div class='content'><p>Crearem una funció que retorni el nombre de llibres escrits per un autor determinat.</p>
 </div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIE9SIFJFUExBQ0UgRlVOQ1RJT04gZ2V0X2Jvb2tzX2NvdW50X2J5X2F1dGhvciAoCiAgICBwX2F1dGhvcl9pZCBJTiBOVU1CRVIKKSBSRVRVUk4gTlVNQkVSIElTCiAgICB2X2NvdW50IE5VTUJFUjsKQkVHSU4KICAgIFNFTEVDVCBDT1VOVCgqKQogICAgSU5UTyB2X2NvdW50CiAgICBGUk9NIGJvb2tzCiAgICBXSEVSRSBhdXRob3JfaWQgPSBwX2F1dGhvcl9pZDsKICAgIAogICAgUkVUVVJOIHZfY291bnQ7CkVORDsKLw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE OR REPLACE FUNCTION get_books_count_by_author (
     p_author_id IN NUMBER
@@ -150,8 +159,10 @@ BEGIN
     
     RETURN v_count;
 END;
-/</pre></div><div class='content'></div><h1>Pas 4: Implementar triggers</h1>
-<div class='content'></div><h2>4.1 Trigger per actualitzar la data de modificació</h2>
+/</pre></div><div class='content'></div><h1><p>Pas 4: Implementar triggers</p>
+</h1>
+<div class='content'></div><h2><p>4.1 Trigger per actualitzar la data de modificació</p>
+</h2>
 <div class='content'><p>Crearem un trigger que actualitzi la data de modificació d'un llibre cada vegada que es faci un canvi en la seva informació.</p>
 </div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIE9SIFJFUExBQ0UgVFJJR0dFUiB1cGRhdGVfYm9va19tb2RfZGF0ZQpCRUZPUkUgVVBEQVRFIE9OIGJvb2tzCkZPUiBFQUNIIFJPVwpCRUdJTgogICAgOk5FVy5tb2RpZmllZF9kYXRlIDo9IFNZU0RBVEU7CkVORDsKLw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE OR REPLACE TRIGGER update_book_mod_date
 BEFORE UPDATE ON books
@@ -159,8 +170,10 @@ FOR EACH ROW
 BEGIN
     :NEW.modified_date := SYSDATE;
 END;
-/</pre></div><div class='content'></div><h1>Pas 5: Depuració i optimització</h1>
-<div class='content'></div><h2>5.1 Depuració</h2>
+/</pre></div><div class='content'></div><h1><p>Pas 5: Depuració i optimització</p>
+</h1>
+<div class='content'></div><h2><p>5.1 Depuració</p>
+</h2>
 <div class='content'><p>Utilitzarem la funció <code>DBMS_OUTPUT.PUT_LINE</code> per depurar els nostres procediments i funcions.</p>
 </div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIE9SIFJFUExBQ0UgUFJPQ0VEVVJFIGFkZF9ib29rICgKICAgIHBfdGl0bGUgSU4gVkFSQ0hBUjIsCiAgICBwX2F1dGhvcl9pZCBJTiBOVU1CRVIsCiAgICBwX3B1Ymxpc2hlZF9kYXRlIElOIERBVEUKKSBJUwpCRUdJTgogICAgREJNU19PVVRQVVQuUFVUX0xJTkUoJ0FkZGluZyBib29rOiAnIHx8IHBfdGl0bGUpOwogICAgSU5TRVJUIElOVE8gYm9va3MgKGJvb2tfaWQsIHRpdGxlLCBhdXRob3JfaWQsIHB1Ymxpc2hlZF9kYXRlKQogICAgVkFMVUVTIChib29rc19zZXEuTkVYVFZBTCwgcF90aXRsZSwgcF9hdXRob3JfaWQsIHBfcHVibGlzaGVkX2RhdGUpOwpFTkQ7Ci8="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE OR REPLACE PROCEDURE add_book (
     p_title IN VARCHAR2,
@@ -172,9 +185,11 @@ BEGIN
     INSERT INTO books (book_id, title, author_id, published_date)
     VALUES (books_seq.NEXTVAL, p_title, p_author_id, p_published_date);
 END;
-/</pre></div><div class='content'></div><h2>5.2 Optimització</h2>
+/</pre></div><div class='content'></div><h2><p>5.2 Optimització</p>
+</h2>
 <div class='content'><p>Revisarem els nostres procediments i funcions per assegurar-nos que utilitzen els índexs correctament i que no hi ha consultes innecessàries.</p>
-</div><h1>Exercicis pràctics</h1>
+</div><h1><p>Exercicis pràctics</p>
+</h1>
 <div class='content'><ol>
 <li>
 <p><strong>Crear un procediment per eliminar un llibre</strong>: Desenvolupa un procediment que permeti eliminar un llibre de la taula <code>books</code> donant el seu <code>book_id</code>.</p>
@@ -186,7 +201,8 @@ END;
 <p><strong>Crear un trigger per evitar la inserció de llibres duplicats</strong>: Desenvolupa un trigger que impedeixi la inserció de llibres amb el mateix títol i autor.</p>
 </li>
 </ol>
-</div><h2>Solucions</h2>
+</div><h2><p>Solucions</p>
+</h2>
 <div class='content'><ol>
 <li><strong>Procediment per eliminar un llibre</strong>:</li>
 </ol>
@@ -231,7 +247,8 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20001, 'Duplicate book entry');
     END IF;
 END;
-/</pre></div><div class='content'></div><h1>Conclusió</h1>
+/</pre></div><div class='content'></div><h1><p>Conclusió</p>
+</h1>
 <div class='content'><p>En aquest tema, hem après a construir una aplicació senzilla utilitzant PL/SQL. Hem creat una base de dades, desenvolupat procediments emmagatzemats, funcions i triggers, i hem aplicat tècniques de depuració i optimització. Aquestes habilitats són fonamentals per desenvolupar aplicacions més complexes i eficients en el futur.</p>
 </div><div class='row navigation'>
 	<div class='col-2'>

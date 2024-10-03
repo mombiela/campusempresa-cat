@@ -25,12 +25,12 @@
     <div id="content">
 		<div id="header" class="container-xxl">
 	<div class="row">
-		<div class="col-12 col-md-8 p-0">
+		<div class="col-12 col-md-8 p-2 p-md-0">
 			<h1 class="m-0 p-0">
 				<a href="/"><img src="/img/logo_header.png"></a>
 			</h1>
 		</div>
-		<div class="col-12 col-md-4 px-0 py-2 py-md-0 text-end">
+		<div class="col-12 col-md-4 p-2 p-md-0 text-end">
 			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
 			<h3 id="main_subtitle"></h3>
 		</div>
@@ -38,7 +38,7 @@
 </div>
 <div class="container-xxl" style="margin-top: -1em;">
 	<div class="row">
-		<div class="col-12 px-0 py-2 py-md-0 m-0 text-end">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
 							<a href="https://enterprisecampus.net/mod/bigquery/08-02-using-dataflow" class="px-2">EN</a></b>
 				|
 				<a href="https://campusempresa.com/mod/bigquery/08-02-using-dataflow" class="px-2">ES</a></b>
@@ -77,30 +77,37 @@
 					<a href='08-03-automating-workflows' title="Automatització de fluxos de treball amb Cloud Functions">Següent &#x25BA;</a>
 			</div>
 </div>
-<div class='content'></div><h1>Introducció</h1>
+<div class='content'></div><h1><p>Introducció</p>
+</h1>
 <div class='content'><p>Google Cloud Dataflow és un servei de processament de dades en temps real i per lots que permet crear i gestionar canals de dades. Integrar BigQuery amb Dataflow permet processar grans volums de dades de manera eficient i flexible. En aquest tema, aprendrem com utilitzar Dataflow per llegir dades de BigQuery, processar-les i escriure els resultats de nou a BigQuery.</p>
-</div><h1>Objectius</h1>
+</div><h1><p>Objectius</p>
+</h1>
 <div class='content'><ul>
 <li>Comprendre què és Google Cloud Dataflow i com es pot utilitzar amb BigQuery.</li>
 <li>Aprendre a configurar un pipeline de Dataflow per llegir dades de BigQuery.</li>
 <li>Processar dades utilitzant Dataflow.</li>
 <li>Escriure els resultats processats de nou a BigQuery.</li>
 </ul>
-</div><h1>Requisits previs</h1>
+</div><h1><p>Requisits previs</p>
+</h1>
 <div class='content'><ul>
 <li>Coneixements bàsics de BigQuery i SQL.</li>
 <li>Familiaritat amb Google Cloud Platform (GCP).</li>
 <li>Coneixements bàsics de programació en Python o Java (Dataflow suporta ambdós llenguatges).</li>
 </ul>
-</div><h1>Configuració de l'entorn</h1>
-<div class='content'></div><h2>Passos previs</h2>
+</div><h1><p>Configuració de l'entorn</p>
+</h1>
+<div class='content'></div><h2><p>Passos previs</p>
+</h2>
 <div class='content'><ol>
 <li><strong>Crear un projecte a Google Cloud Platform (GCP)</strong>: Si encara no tens un projecte a GCP, crea'n un des del <a href="https://console.cloud.google.com/">Google Cloud Console</a>.</li>
 <li><strong>Activar l'API de Dataflow i BigQuery</strong>: Assegura't que les APIs de Dataflow i BigQuery estiguin activades al teu projecte.</li>
 <li><strong>Instal·lar el SDK de Dataflow</strong>: Pots instal·lar el SDK de Dataflow utilitzant pip (per Python) o Maven (per Java).</li>
 </ol>
-</div><h2>Instal·lació del SDK de Dataflow (Python)</h2>
-<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgYXBhY2hlLWJlYW1bZ2NwXQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install apache-beam[gcp]</pre></div><div class='content'></div><h2>Instal·lació del SDK de Dataflow (Java)</h2>
+</div><h2><p>Instal·lació del SDK de Dataflow (Python)</p>
+</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgYXBhY2hlLWJlYW1bZ2NwXQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install apache-beam[gcp]</pre></div><div class='content'></div><h2><p>Instal·lació del SDK de Dataflow (Java)</p>
+</h2>
 <div class='content'><p>Afegeix la següent dependència al teu fitxer <code>pom.xml</code>:</p>
 </div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("PGRlcGVuZGVuY3k+CiAgPGdyb3VwSWQ+b3JnLmFwYWNoZS5iZWFtPC9ncm91cElkPgogIDxhcnRpZmFjdElkPmJlYW0tc2Rrcy1qYXZhLWNvcmU8L2FydGlmYWN0SWQ+CiAgPHZlcnNpb24+Mi4zNC4wPC92ZXJzaW9uPgo8L2RlcGVuZGVuY3k+CjxkZXBlbmRlbmN5PgogIDxncm91cElkPm9yZy5hcGFjaGUuYmVhbTwvZ3JvdXBJZD4KICA8YXJ0aWZhY3RJZD5iZWFtLXJ1bm5lcnMtZ29vZ2xlLWNsb3VkLWRhdGFmbG93LWphdmE8L2FydGlmYWN0SWQ+CiAgPHZlcnNpb24+Mi4zNC4wPC92ZXJzaW9uPgo8L2RlcGVuZGVuY3k+CjxkZXBlbmRlbmN5PgogIDxncm91cElkPm9yZy5hcGFjaGUuYmVhbTwvZ3JvdXBJZD4KICA8YXJ0aWZhY3RJZD5iZWFtLXNka3MtamF2YS1pby1nb29nbGUtY2xvdWQtcGxhdGZvcm08L2FydGlmYWN0SWQ+CiAgPHZlcnNpb24+Mi4zNC4wPC92ZXJzaW9uPgo8L2RlcGVuZGVuY3k+"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>&lt;dependency&gt;
   &lt;groupId&gt;org.apache.beam&lt;/groupId&gt;
@@ -116,8 +123,10 @@
   &lt;groupId&gt;org.apache.beam&lt;/groupId&gt;
   &lt;artifactId&gt;beam-sdks-java-io-google-cloud-platform&lt;/artifactId&gt;
   &lt;version&gt;2.34.0&lt;/version&gt;
-&lt;/dependency&gt;</pre></div><div class='content'></div><h1>Creació d'un pipeline de Dataflow</h1>
-<div class='content'></div><h2>Exemple en Python</h2>
+&lt;/dependency&gt;</pre></div><div class='content'></div><h1><p>Creació d'un pipeline de Dataflow</p>
+</h1>
+<div class='content'></div><h2><p>Exemple en Python</p>
+</h2>
 <div class='content'><p>A continuació, es mostra un exemple de com crear un pipeline de Dataflow en Python que llegeix dades de BigQuery, les processa i escriu els resultats de nou a BigQuery.</p>
 <h4>Pas 1: Importar les biblioteques necessàries</h4>
 </div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IGFwYWNoZV9iZWFtIGFzIGJlYW0KZnJvbSBhcGFjaGVfYmVhbS5vcHRpb25zLnBpcGVsaW5lX29wdGlvbnMgaW1wb3J0IFBpcGVsaW5lT3B0aW9ucywgR29vZ2xlQ2xvdWRPcHRpb25zLCBTdGFuZGFyZE9wdGlvbnM="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import apache_beam as beam
@@ -142,7 +151,8 @@ query = 'SELECT * FROM `el-teu-projecte.el-teu-dataset.la-teva-taula`'
      write_disposition=beam.io.BigQueryDisposition.WRITE_TRUNCATE)
 )
 
-p.run().wait_until_finish()</pre></div><div class='content'></div><h2>Exemple en Java</h2>
+p.run().wait_until_finish()</pre></div><div class='content'></div><h2><p>Exemple en Java</p>
+</h2>
 <div class='content'><p>A continuació, es mostra un exemple de com crear un pipeline de Dataflow en Java que llegeix dades de BigQuery, les processa i escriu els resultats de nou a BigQuery.</p>
 <h4>Pas 1: Importar les biblioteques necessàries</h4>
 </div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IG9yZy5hcGFjaGUuYmVhbS5zZGsuUGlwZWxpbmU7CmltcG9ydCBvcmcuYXBhY2hlLmJlYW0uc2RrLmlvLmdjcC5iaWdxdWVyeS5CaWdRdWVyeUlPOwppbXBvcnQgb3JnLmFwYWNoZS5iZWFtLnNkay5vcHRpb25zLlBpcGVsaW5lT3B0aW9uc0ZhY3Rvcnk7CmltcG9ydCBvcmcuYXBhY2hlLmJlYW0uc2RrLm9wdGlvbnMuUGlwZWxpbmVPcHRpb25zOwppbXBvcnQgb3JnLmFwYWNoZS5iZWFtLnNkay50cmFuc2Zvcm1zLk1hcEVsZW1lbnRzOwppbXBvcnQgb3JnLmFwYWNoZS5iZWFtLnNkay50cmFuc2Zvcm1zLlNpbXBsZUZ1bmN0aW9uOwppbXBvcnQgb3JnLmFwYWNoZS5iZWFtLnNkay52YWx1ZXMuVHlwZURlc2NyaXB0b3I7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import org.apache.beam.sdk.Pipeline;
@@ -176,18 +186,23 @@ p.apply(&quot;ReadFromBigQuery&quot;, BigQueryIO.readTableRows().fromQuery(query
      )))
      .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_TRUNCATE));
 
-p.run().waitUntilFinish();</pre></div><div class='content'></div><h1>Exercici pràctic</h1>
-<div class='content'></div><h2>Descripció</h2>
+p.run().waitUntilFinish();</pre></div><div class='content'></div><h1><p>Exercici pràctic</p>
+</h1>
+<div class='content'></div><h2><p>Descripció</p>
+</h2>
 <div class='content'><p>Crea un pipeline de Dataflow que llegeixi dades d'una taula de BigQuery, realitzi una transformació simple (per exemple, multiplicar un camp numèric per 2) i escrigui els resultats en una nova taula de BigQuery.</p>
-</div><h2>Solució</h2>
+</div><h2><p>Solució</p>
+</h2>
 <div class='content'><p>La solució es troba en els exemples de codi proporcionats anteriorment. Pots adaptar-los segons les teves necessitats específiques.</p>
-</div><h1>Errors comuns i consells</h1>
+</div><h1><p>Errors comuns i consells</p>
+</h1>
 <div class='content'><ul>
 <li><strong>Error de permisos</strong>: Assegura't que el compte de servei que utilitza Dataflow tingui els permisos necessaris per accedir a BigQuery i als buckets de Google Cloud Storage.</li>
 <li><strong>Especificació incorrecta del runner</strong>: Si estàs provant el pipeline localment, utilitza <code>DirectRunner</code> en lloc de <code>DataflowRunner</code>.</li>
 <li><strong>Esquema incorrecte</strong>: Assegura't que l'esquema de la taula de destinació a BigQuery coincideixi amb les dades que estàs escrivint.</li>
 </ul>
-</div><h1>Conclusió</h1>
+</div><h1><p>Conclusió</p>
+</h1>
 <div class='content'><p>Integrar BigQuery amb Dataflow permet processar grans volums de dades de manera eficient i flexible. En aquest tema, hem après a configurar un pipeline de Dataflow per llegir dades de BigQuery, processar-les i escriure els resultats de nou a BigQuery. Aquesta habilitat és essencial per a qualsevol professional que treballi amb grans volums de dades i necessiti processar-les de manera eficient.</p>
 </div><div class='row navigation'>
 	<div class='col-2'>

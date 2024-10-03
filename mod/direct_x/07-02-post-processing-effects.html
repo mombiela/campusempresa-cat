@@ -25,12 +25,12 @@
     <div id="content">
 		<div id="header" class="container-xxl">
 	<div class="row">
-		<div class="col-12 col-md-8 p-0">
+		<div class="col-12 col-md-8 p-2 p-md-0">
 			<h1 class="m-0 p-0">
 				<a href="/"><img src="/img/logo_header.png"></a>
 			</h1>
 		</div>
-		<div class="col-12 col-md-4 px-0 py-2 py-md-0 text-end">
+		<div class="col-12 col-md-4 p-2 p-md-0 text-end">
 			<h2 id="main_title"><cite>Construint la societat d'avui i del demà</cite></h2>
 			<h3 id="main_subtitle"></h3>
 		</div>
@@ -38,7 +38,7 @@
 </div>
 <div class="container-xxl" style="margin-top: -1em;">
 	<div class="row">
-		<div class="col-12 px-0 py-2 py-md-0 m-0 text-end">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
 							<a href="https://enterprisecampus.net/mod/direct_x/07-02-post-processing-effects" class="px-2">EN</a></b>
 				|
 				<a href="https://campusempresa.com/mod/direct_x/07-02-post-processing-effects" class="px-2">ES</a></b>
@@ -78,14 +78,19 @@
 			</div>
 </div>
 <div class='content'><p>Els efectes de postprocessament són tècniques aplicades a les imatges renderitzades per millorar la seva qualitat visual o per afegir efectes especials. Aquestes tècniques es realitzen després que la imatge hagi estat renderitzada per la GPU, d'aquí el terme &quot;postprocessament&quot;. En aquest mòdul, aprendrem a implementar alguns dels efectes de postprocessament més comuns utilitzant DirectX.</p>
-</div><h1>Conceptes Clau</h1>
+</div><h1><p>Conceptes Clau</p>
+</h1>
 <div class='content'><ol>
 <li><strong>Frame Buffer Object (FBO)</strong>: Un objecte que conté una imatge renderitzada que es pot utilitzar com a textura per a efectes de postprocessament.</li>
 <li><strong>Shaders de Postprocessament</strong>: Shaders que s'apliquen a les imatges renderitzades per modificar-les.</li>
 <li><strong>Efectes Comuns</strong>: Bloom, Motion Blur, Depth of Field, etc.</li>
 </ol>
-</div><h1>Configuració Inicial</h1>
-<div class='content'></div><h2>1. Crear un Frame Buffer Object (FBO)</h2>
+</div><h1><p>Configuració Inicial</p>
+</h1>
+<div class='content'></div><h2><ol>
+<li>Crear un Frame Buffer Object (FBO)</li>
+</ol>
+</h2>
 <div class='content'><p>Per aplicar efectes de postprocessament, primer hem de renderitzar la nostra escena a un FBO en lloc de directament a la pantalla.</p>
 </div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gQ3JlYXIgdW4gRkJPCklEM0QxMVRleHR1cmUyRCogcFJlbmRlclRhcmdldFRleHR1cmUgPSBudWxscHRyOwpEM0QxMV9URVhUVVJFMkRfREVTQyB0ZXh0dXJlRGVzYyA9IHt9Owp0ZXh0dXJlRGVzYy5XaWR0aCA9IHNjcmVlbldpZHRoOwp0ZXh0dXJlRGVzYy5IZWlnaHQgPSBzY3JlZW5IZWlnaHQ7CnRleHR1cmVEZXNjLk1pcExldmVscyA9IDE7CnRleHR1cmVEZXNjLkFycmF5U2l6ZSA9IDE7CnRleHR1cmVEZXNjLkZvcm1hdCA9IERYR0lfRk9STUFUX1I4RzhCOEE4X1VOT1JNOwp0ZXh0dXJlRGVzYy5TYW1wbGVEZXNjLkNvdW50ID0gMTsKdGV4dHVyZURlc2MuVXNhZ2UgPSBEM0QxMV9VU0FHRV9ERUZBVUxUOwp0ZXh0dXJlRGVzYy5CaW5kRmxhZ3MgPSBEM0QxMV9CSU5EX1JFTkRFUl9UQVJHRVQgfCBEM0QxMV9CSU5EX1NIQURFUl9SRVNPVVJDRTsKCkhSRVNVTFQgaHIgPSBkZXZpY2UtPkNyZWF0ZVRleHR1cmUyRCgmdGV4dHVyZURlc2MsIG51bGxwdHIsICZwUmVuZGVyVGFyZ2V0VGV4dHVyZSk7CmlmIChGQUlMRUQoaHIpKSB7CiAgICAvLyBNYW5lamFyIGVycm9yCn0KCi8vIENyZWFyIHVuIFJlbmRlciBUYXJnZXQgVmlldyAoUlRWKQpJRDNEMTFSZW5kZXJUYXJnZXRWaWV3KiBwUmVuZGVyVGFyZ2V0VmlldyA9IG51bGxwdHI7CmhyID0gZGV2aWNlLT5DcmVhdGVSZW5kZXJUYXJnZXRWaWV3KHBSZW5kZXJUYXJnZXRUZXh0dXJlLCBudWxscHRyLCAmcFJlbmRlclRhcmdldFZpZXcpOwppZiAoRkFJTEVEKGhyKSkgewogICAgLy8gTWFuZWphciBlcnJvcgp9CgovLyBDcmVhciB1biBTaGFkZXIgUmVzb3VyY2UgVmlldyAoU1JWKQpJRDNEMTFTaGFkZXJSZXNvdXJjZVZpZXcqIHBTaGFkZXJSZXNvdXJjZVZpZXcgPSBudWxscHRyOwpociA9IGRldmljZS0+Q3JlYXRlU2hhZGVyUmVzb3VyY2VWaWV3KHBSZW5kZXJUYXJnZXRUZXh0dXJlLCBudWxscHRyLCAmcFNoYWRlclJlc291cmNlVmlldyk7CmlmIChGQUlMRUQoaHIpKSB7CiAgICAvLyBNYW5lamFyIGVycm9yCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Crear un FBO
 ID3D11Texture2D* pRenderTargetTexture = nullptr;
@@ -116,10 +121,17 @@ ID3D11ShaderResourceView* pShaderResourceView = nullptr;
 hr = device-&gt;CreateShaderResourceView(pRenderTargetTexture, nullptr, &amp;pShaderResourceView);
 if (FAILED(hr)) {
     // Manejar error
-}</pre></div><div class='content'></div><h2>2. Configurar el Render Target</h2>
+}</pre></div><div class='content'></div><h2><ol start="2">
+<li>Configurar el Render Target</li>
+</ol>
+</h2>
 <div class='content'><p>Abans de renderitzar la nostra escena, hem de configurar el FBO com a render target.</p>
-</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29udGV4dC0+T01TZXRSZW5kZXJUYXJnZXRzKDEsICZwUmVuZGVyVGFyZ2V0VmlldywgbnVsbHB0cik7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>context-&gt;OMSetRenderTargets(1, &amp;pRenderTargetView, nullptr);</pre></div><div class='content'></div><h1>Implementació d'Efectes de Postprocessament</h1>
-<div class='content'></div><h2>1. Bloom</h2>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y29udGV4dC0+T01TZXRSZW5kZXJUYXJnZXRzKDEsICZwUmVuZGVyVGFyZ2V0VmlldywgbnVsbHB0cik7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>context-&gt;OMSetRenderTargets(1, &amp;pRenderTargetView, nullptr);</pre></div><div class='content'></div><h1><p>Implementació d'Efectes de Postprocessament</p>
+</h1>
+<div class='content'></div><h2><ol>
+<li>Bloom</li>
+</ol>
+</h2>
 <div class='content'><p>El Bloom és un efecte que fa que les àrees brillants d'una imatge es difuminin, creant un halo de llum.</p>
 <h4>Vertex Shader</h4>
 </div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2J1ZmZlciBNYXRyaXhCdWZmZXIgewogICAgbWF0cml4IHdvcmxkTWF0cml4OwogICAgbWF0cml4IHZpZXdNYXRyaXg7CiAgICBtYXRyaXggcHJvamVjdGlvbk1hdHJpeDsKfTsKCnN0cnVjdCBWZXJ0ZXhJbnB1dFR5cGUgewogICAgZmxvYXQ0IHBvc2l0aW9uIDogUE9TSVRJT047CiAgICBmbG9hdDIgdGV4IDogVEVYQ09PUkQwOwp9OwoKc3RydWN0IFBpeGVsSW5wdXRUeXBlIHsKICAgIGZsb2F0NCBwb3NpdGlvbiA6IFNWX1BPU0lUSU9OOwogICAgZmxvYXQyIHRleCA6IFRFWENPT1JEMDsKfTsKClBpeGVsSW5wdXRUeXBlIEJsb29tVmVydGV4U2hhZGVyKFZlcnRleElucHV0VHlwZSBpbnB1dCkgewogICAgUGl4ZWxJbnB1dFR5cGUgb3V0cHV0OwogICAgb3V0cHV0LnBvc2l0aW9uID0gbXVsKGlucHV0LnBvc2l0aW9uLCB3b3JsZE1hdHJpeCk7CiAgICBvdXRwdXQucG9zaXRpb24gPSBtdWwob3V0cHV0LnBvc2l0aW9uLCB2aWV3TWF0cml4KTsKICAgIG91dHB1dC5wb3NpdGlvbiA9IG11bChvdXRwdXQucG9zaXRpb24sIHByb2plY3Rpb25NYXRyaXgpOwogICAgb3V0cHV0LnRleCA9IGlucHV0LnRleDsKICAgIHJldHVybiBvdXRwdXQ7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>cbuffer MatrixBuffer {
@@ -156,7 +168,10 @@ float4 BloomPixelShader(PixelInputType input) : SV_TARGET {
         return color * 1.5;
     }
     return color;
-}</pre></div><div class='content'></div><h2>2. Motion Blur</h2>
+}</pre></div><div class='content'></div><h2><ol start="2">
+<li>Motion Blur</li>
+</ol>
+</h2>
 <div class='content'><p>El Motion Blur és un efecte que simula el desenfocament de moviment.</p>
 <h4>Vertex Shader</h4>
 </div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2J1ZmZlciBNYXRyaXhCdWZmZXIgewogICAgbWF0cml4IHdvcmxkTWF0cml4OwogICAgbWF0cml4IHZpZXdNYXRyaXg7CiAgICBtYXRyaXggcHJvamVjdGlvbk1hdHJpeDsKfTsKCnN0cnVjdCBWZXJ0ZXhJbnB1dFR5cGUgewogICAgZmxvYXQ0IHBvc2l0aW9uIDogUE9TSVRJT047CiAgICBmbG9hdDIgdGV4IDogVEVYQ09PUkQwOwp9OwoKc3RydWN0IFBpeGVsSW5wdXRUeXBlIHsKICAgIGZsb2F0NCBwb3NpdGlvbiA6IFNWX1BPU0lUSU9OOwogICAgZmxvYXQyIHRleCA6IFRFWENPT1JEMDsKfTsKClBpeGVsSW5wdXRUeXBlIE1vdGlvbkJsdXJWZXJ0ZXhTaGFkZXIoVmVydGV4SW5wdXRUeXBlIGlucHV0KSB7CiAgICBQaXhlbElucHV0VHlwZSBvdXRwdXQ7CiAgICBvdXRwdXQucG9zaXRpb24gPSBtdWwoaW5wdXQucG9zaXRpb24sIHdvcmxkTWF0cml4KTsKICAgIG91dHB1dC5wb3NpdGlvbiA9IG11bChvdXRwdXQucG9zaXRpb24sIHZpZXdNYXRyaXgpOwogICAgb3V0cHV0LnBvc2l0aW9uID0gbXVsKG91dHB1dC5wb3NpdGlvbiwgcHJvamVjdGlvbk1hdHJpeCk7CiAgICBvdXRwdXQudGV4ID0gaW5wdXQudGV4OwogICAgcmV0dXJuIG91dHB1dDsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>cbuffer MatrixBuffer {
@@ -191,21 +206,26 @@ float4 MotionBlurPixelShader(PixelInputType input) : SV_TARGET {
     float2 blurDirection = float2(0.01, 0.01); // Direcci&oacute; del desenfocament
     float4 blurredColor = shaderTexture.Sample(SampleType, input.tex + blurDirection);
     return lerp(color, blurredColor, 0.5);
-}</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
-<div class='content'></div><h2>Exercici 1: Implementar un Efecte de Bloom</h2>
+}</pre></div><div class='content'></div><h1><p>Exercicis Pràctics</p>
+</h1>
+<div class='content'></div><h2><p>Exercici 1: Implementar un Efecte de Bloom</p>
+</h2>
 <div class='content'><ol>
 <li>Crea un FBO i configura'l com a render target.</li>
 <li>Escriu un shader de postprocessament que implementi l'efecte de Bloom.</li>
 <li>Aplica el shader a la imatge renderitzada.</li>
 </ol>
-</div><h2>Exercici 2: Implementar un Efecte de Motion Blur</h2>
+</div><h2><p>Exercici 2: Implementar un Efecte de Motion Blur</p>
+</h2>
 <div class='content'><ol>
 <li>Crea un FBO i configura'l com a render target.</li>
 <li>Escriu un shader de postprocessament que implementi l'efecte de Motion Blur.</li>
 <li>Aplica el shader a la imatge renderitzada.</li>
 </ol>
-</div><h1>Solucions</h1>
-<div class='content'></div><h2>Solució a l'Exercici 1</h2>
+</div><h1><p>Solucions</p>
+</h1>
+<div class='content'></div><h2><p>Solució a l'Exercici 1</p>
+</h2>
 <div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gQ29uZmlndXJhY2nDsyBkZWwgRkJPCmNvbnRleHQtPk9NU2V0UmVuZGVyVGFyZ2V0cygxLCAmcFJlbmRlclRhcmdldFZpZXcsIG51bGxwdHIpOwoKLy8gUmVuZGVyaXR6YXIgbCdlc2NlbmEKUmVuZGVyU2NlbmUoKTsKCi8vIEFwbGljYXIgbCdlZmVjdGUgZGUgQmxvb20KY29udGV4dC0+UFNTZXRTaGFkZXIoYmxvb21QaXhlbFNoYWRlciwgbnVsbHB0ciwgMCk7CmNvbnRleHQtPkRyYXdJbmRleGVkKGluZGV4Q291bnQsIDAsIDApOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Configuraci&oacute; del FBO
 context-&gt;OMSetRenderTargets(1, &amp;pRenderTargetView, nullptr);
 
@@ -214,7 +234,8 @@ RenderScene();
 
 // Aplicar l'efecte de Bloom
 context-&gt;PSSetShader(bloomPixelShader, nullptr, 0);
-context-&gt;DrawIndexed(indexCount, 0, 0);</pre></div><div class='content'></div><h2>Solució a l'Exercici 2</h2>
+context-&gt;DrawIndexed(indexCount, 0, 0);</pre></div><div class='content'></div><h2><p>Solució a l'Exercici 2</p>
+</h2>
 <div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Ly8gQ29uZmlndXJhY2nDsyBkZWwgRkJPCmNvbnRleHQtPk9NU2V0UmVuZGVyVGFyZ2V0cygxLCAmcFJlbmRlclRhcmdldFZpZXcsIG51bGxwdHIpOwoKLy8gUmVuZGVyaXR6YXIgbCdlc2NlbmEKUmVuZGVyU2NlbmUoKTsKCi8vIEFwbGljYXIgbCdlZmVjdGUgZGUgTW90aW9uIEJsdXIKY29udGV4dC0+UFNTZXRTaGFkZXIobW90aW9uQmx1clBpeGVsU2hhZGVyLCBudWxscHRyLCAwKTsKY29udGV4dC0+RHJhd0luZGV4ZWQoaW5kZXhDb3VudCwgMCwgMCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>// Configuraci&oacute; del FBO
 context-&gt;OMSetRenderTargets(1, &amp;pRenderTargetView, nullptr);
 
@@ -223,7 +244,8 @@ RenderScene();
 
 // Aplicar l'efecte de Motion Blur
 context-&gt;PSSetShader(motionBlurPixelShader, nullptr, 0);
-context-&gt;DrawIndexed(indexCount, 0, 0);</pre></div><div class='content'></div><h1>Resum</h1>
+context-&gt;DrawIndexed(indexCount, 0, 0);</pre></div><div class='content'></div><h1><p>Resum</p>
+</h1>
 <div class='content'><p>En aquest mòdul, hem après a implementar efectes de postprocessament utilitzant DirectX. Hem vist com crear un FBO, configurar-lo com a render target i aplicar shaders de postprocessament per a efectes com el Bloom i el Motion Blur. Aquests efectes poden millorar significativament la qualitat visual de les nostres aplicacions gràfiques. En el següent mòdul, explorarem tècniques avançades com la tessel·lació.</p>
 </div><div class='row navigation'>
 	<div class='col-2'>
