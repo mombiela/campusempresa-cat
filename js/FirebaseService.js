@@ -1,7 +1,9 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInAnonymously, signOut, onAuthStateChanged, 
-		 updateProfile, deleteUser, sendPasswordResetEmail, sendEmailVerification, updatePassword } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import { getFirestore, doc, setDoc, getDoc, deleteDoc } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+		 updateProfile, deleteUser, sendPasswordResetEmail, sendEmailVerification, updatePassword } 
+			from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+import { getFirestore, doc, setDoc, getDoc, deleteDoc, updateDoc, arrayUnion, arrayRemove, deleteField } 
+			from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 
 // Configuración de Firebase de tu proyecto
 const firebaseConfig = {
@@ -17,169 +19,87 @@ const firebaseConfig = {
 // Inicializa Firebase
 const app = initializeApp(firebaseConfig);
 
-// Inicializa los servicios que vas a usar
+// Inicialización servicios
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-function onChangeAuth(callback) 
+// ------------------
+// Funciones firebase
+// ------------------
+
+export function onChangeAuth(callback) 
 {
     onAuthStateChanged(auth, callback);
 }
 
-async function guardarDatos(contenido) 
+export async function cerrarSesion() 
+{
+    return await signOut(auth);
+}
+
+export async function iniciarSesion(email, password) 
+{
+	return await signInWithEmailAndPassword(auth, email, password);
+}
+
+export async function iniciarSesionAnonimamente() 
+{
+    return await signInAnonymously(auth);
+}
+
+export async function registrarUsuario(email, password, nombre) 
+{
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+    if (nombre) await updateProfile(user, { displayName: nombre });
+    return user;
+}
+
+export async function cambiarContrasena(nuevaContrasena) 
 {
     const user = auth.currentUser;
-    if (user)	return setDoc(doc(db, 'usuarios', user.uid), { contenido: contenido });
-    else 		throw new Error('No hay usuario autenticado.');
+	await updatePassword(user, nuevaContrasena);
 }
 
-async function cargarDatos() 
+export async function eliminarUsuario() 
 {
     const user = auth.currentUser;
-    if (user) 	return getDoc(doc(db, 'usuarios', user.uid));
-    else 		throw new Error('No hay usuario autenticado.');
+    await deleteDoc(doc(db, 'usuarios', user.uid));
+    await deleteUser(user);
 }
 
-function cerrarSesion() 
-{
-    return signOut(auth);
-}
-
-function iniciarSesion(email, password) 
-{
-    return signInWithEmailAndPassword(auth, email, password);
-}
-
-function iniciarSesionAnonimamente() 
-{
-    return signInAnonymously(auth);
-}
-
-async function registrarUsuario(email, password, nombre) 
-{
-    try 
-    {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        if (nombre) await updateProfile(user, { displayName: nombre });
-        return user;
-    } 
-    catch (error) 
-    {
-        throw error;
-    }
-}
-
-// Método para eliminar los datos del usuario en Firestore sin eliminar al usuario
-async function eliminarDatos() 
-{
-    const user = auth.currentUser;
-    if (user) 
-    {
-        try 
-        {
-            await deleteDoc(doc(db, 'usuarios', user.uid));
-            return { message: 'Datos eliminados correctamente de Firestore.' };
-        }
-        catch (error) 
-        {
-            throw error;
-        }
-    } 
-    else 
-    {
-        throw new Error('No hay usuario autenticado.');
-    }
-}
-
-// Método para eliminar el usuario de Firebase Authentication y Firestore
-async function eliminarUsuario() 
-{
-    const user = auth.currentUser;
-    if (user) 
-    {
-        try 
-        {
-            // Elimina los datos del usuario de Firestore
-            await deleteDoc(doc(db, 'usuarios', user.uid));
-            
-            // Elimina al usuario de Firebase Authentication
-            await deleteUser(user);
-
-            return { message: 'Usuario eliminado correctamente.' };
-        }
-        catch (error) 
-        {
-            throw error;
-        }
-    } 
-    else 
-    {
-        throw new Error('No hay usuario autenticado.');
-    }
-}
-
-async function actualizarPerfil(datosPerfil) {
-    const user = auth.currentUser;
-    if (user) {
-        try {
-            await updateProfile(user, datosPerfil);
-            return { message: 'Perfil actualizado correctamente.' };
-        } catch (error) {
-            throw error;
-        }
-    } else {
-        throw new Error('No hay usuario autenticado.');
-    }
-}
 //FirebaseService.actualizarPerfil({ displayName: 'Nuevo Nombre', photoURL: 'url_de_foto' });
-
-async function recuperarContrasena(email, lang) {
-    try {
-		if (!lang) lang = "ca";
-		auth.languageCode = lang;
-		
-        await sendPasswordResetEmail(auth, email);
-        return { message: 'Correo de recuperación enviado.' };
-    } catch (error) {
-        throw error;
-    }
-}
-//FirebaseService.recuperarContrasena('usuario@example.com');
-
-
-async function enviarVerificacionEmail(lang) {
+export async function actualizarPerfil(datosPerfil) 
+{
     const user = auth.currentUser;
-    if (user) {
-        try {
-			if (!lang) lang = "ca";
-			auth.languageCode = lang;
+    await updateProfile(user, datosPerfil);
+}
+
+export async function recuperarContrasena(email, lang) 
+{
+	if (!lang) lang = "ca";
+	auth.languageCode = lang;
+	
+    await sendPasswordResetEmail(auth, email);
+}
+
+export async function enviarVerificacionEmail() 
+{
+    const user = auth.currentUser;
+	auth.languageCode = LANG;
 			
-            await sendEmailVerification(user);
-            return { message: 'Correo de verificación enviado.' };
-        } catch (error) {
-            throw error;
-        }
-    } else {
-        throw new Error('No hay usuario autenticado.');
-    }
+    await sendEmailVerification(user);
 }
-//FirebaseService.enviarVerificacionEmail();
 
-function esEmailVerificado() {
+export function esEmailVerificado() 
+{
     const user = auth.currentUser;
-    if (user) {
-        return user.emailVerified;
-    } else {
-        throw new Error('No hay usuario autenticado.');
-    }
+    return user.emailVerified;
 }
-//const emailVerificado = FirebaseService.esEmailVerificado();
-//console.log('Email verificado:', emailVerificado);
 
-function obtenerPerfilUsuario() {
+export function obtenerPerfilUsuario() 
+{
     const user = auth.currentUser;
-    if (user) {
         return {
             uid: user.uid,
             nombre: user.displayName,
@@ -187,43 +107,207 @@ function obtenerPerfilUsuario() {
             emailVerificado: user.emailVerified,
             fotoPerfil: user.photoURL
         };
-    } else {
-        throw new Error('No hay usuario autenticado.');
-    }
 }
-//const perfil = FirebaseService.obtenerPerfilUsuario();
-//console.log(perfil);
 
-async function cerrarTodasLasSesiones(password) {
+export async function cerrarTodasLasSesiones(password) 
+{
     const user = auth.currentUser;
+    await updatePassword(user, password);
+}
+
+// ---------------
+// Métodos de BBDD
+// ---------------
+
+export async function guardarDatos(contenido)
+{
+    const user = auth.currentUser;
+    return setDoc(doc(db, 'usuarios', user.uid), contenido);
+}
+
+export async function eliminarDatos() 
+{
+    const user = auth.currentUser;
+    await deleteDoc(doc(db, 'usuarios', user.uid));
+}
+
+export async function cargarDatos() 
+{
+    const user = auth.currentUser;
+    return getDoc(doc(db, 'usuarios', user.uid));
+}
+
+// Función para crear un documento con una propiedad de tipo array
+export async function crearDocumentoConArray(nombrePropiedad, valoresIniciales) {
+    const user = auth.currentUser;
+    const docRef = doc(db, 'usuarios', user.uid);
+
+    // Crea el documento con la propiedad especificada y un array de valores iniciales
+    await setDoc(docRef, {
+        [nombrePropiedad]: valoresIniciales
+    });
+}
+
+// Función para agregar un valor a una propiedad de tipo array
+/*
+export async function agregarValorAlArray(nombrePropiedad, valorNuevo) {
+    const user = auth.currentUser;
+    const docRef = doc(db, 'usuarios', user.uid);
+
+    // Agrega un valor al array en la propiedad especificada
+    await updateDoc(docRef, {
+        [nombrePropiedad]: arrayUnion(valorNuevo)
+    });
+}
+*/
+
+export async function agregarValorAlArray(nombrePropiedad, valorNuevo) {
+    const user = auth.currentUser;
+    const docRef = doc(db, `usuarios/${user.uid}`);
+
+    // Utilizamos setDoc con merge: true para crear el documento si no existe
+    await setDoc(docRef, {
+        [nombrePropiedad]: arrayUnion(valorNuevo)
+    }, { merge: true });
+}
+
+
+// Función para eliminar un valor de una propiedad de tipo array
+export async function eliminarValorDelArray(nombrePropiedad, valorAEliminar) {
+    const user = auth.currentUser;
+    const docRef = doc(db, 'usuarios', user.uid);
+
+    // Elimina un valor del array en la propiedad especificada
+    await updateDoc(docRef, {
+        [nombrePropiedad]: arrayRemove(valorAEliminar)
+    });
+}
+
+export async function existeDocumento() {
+    const user = auth.currentUser;
+    const docRef = doc(db, 'usuarios', user.uid);
+    const docSnap = await getDoc(docRef);
+    return docSnap.exists();
+}
+
+export async function actualizarDatos(parteDelDocumento) {
+    const user = auth.currentUser;
+    const docRef = doc(db, 'usuarios', user.uid);
+    return updateDoc(docRef, parteDelDocumento);
+}
+
+export async function eliminarCampoDelDocumento(nombreCampo) {
+    const user = auth.currentUser;
+    const docRef = doc(db, 'usuarios', user.uid);
+    await updateDoc(docRef, {
+        [nombreCampo]: deleteField()
+    });
+}
+
+export async function agregarCampoNuevo(nombreCampo, valorNuevo) {
+    const user = auth.currentUser;
+    const docRef = doc(db, 'usuarios', user.uid);
+
+    // Añadir un nuevo campo o actualizar el valor si ya existe
+    await updateDoc(docRef, {
+        [nombreCampo]: valorNuevo
+    });
+}
+
+// -----------
+// Campos json
+// -----------
+
+export async function agregarClaveValorAlObjeto(nombreObjeto, claveNueva, valorNuevo) {
+    const user = auth.currentUser;
+    const docRef = doc(db, 'usuarios', user.uid);
+
+    // Utilizamos la notación de puntos para especificar el campo anidado
+    await updateDoc(docRef, {
+        [`${nombreObjeto}.${claveNueva}`]: valorNuevo
+    });
+}
+
+//await agregarClaveValorAlObjeto('configuraciones', 'tema', 'oscuro');
+//await agregarClaveValorAlObjeto('configuraciones', 'tema.title', 'Mi título');
+//await agregarClaveValorAlObjeto('configuraciones', 'tema.colores.0', 'Color 0');
+//await agregarClaveValorAlObjeto('configuraciones', 'tema.colores.1', 'Color 1');
+
+export async function eliminarClaveDeObjeto(nombreObjeto, claveAEliminar) {
+    const user = auth.currentUser;
+    const docRef = doc(db, 'usuarios', user.uid);
+
+    await updateDoc(docRef, {
+        [`${nombreObjeto}.${claveAEliminar}`]: deleteField()
+    });
+}
+// await eliminarClaveDeObjeto('configuraciones', 'tema');
+
+export async function actualizarClavesDelObjeto(nombreObjeto, nuevasClavesYValores) {
+    const user = auth.currentUser;
+    if (!user) {
+        throw new Error('El usuario no está autenticado.');
+    }
+    const docRef = doc(db, 'usuarios', user.uid);
+
+    // Preparamos un objeto para las actualizaciones
+    const updates = {};
+    for (const [clave, valor] of Object.entries(nuevasClavesYValores)) {
+        updates[`${nombreObjeto}.${clave}`] = valor;
+    }
+
+    await updateDoc(docRef, updates);
+}
+
+/*
+await actualizarClavesDelObjeto('configuraciones', {
+    tema: 'claro',
+    notificaciones: true,
+    idioma: 'es'
+});
+*/
+
+// ----------------------
+// Actualización de token
+// ----------------------
+
+async function verificarEstadoEmailEnToken() {
+    const user = auth.currentUser;
+
     if (user) {
         try {
-            await updatePassword(user, password);
-            return { message: 'Sesiones cerradas correctamente.' };
+            // Obtiene el token de ID actual del usuario sin forzar actualización
+            const token = await user.getIdTokenResult();
+            
+            // Verifica si el email está verificado en el token
+            const emailVerificadoEnToken = token.claims.email_verified;
+
+            console.log('¿Email verificado en el token?', emailVerificadoEnToken);
+            return emailVerificadoEnToken;
         } catch (error) {
-            throw error;
+            console.error('Error al obtener el token:', error);
+            return false;
         }
     } else {
-        throw new Error('No hay usuario autenticado.');
+        console.log('No hay usuario autenticado.');
+        return false;
     }
 }
 
-// Exporta el servicio Firebase
-export const FirebaseService = {};
+export async function actualizarTokenSiEsNecesario() {
+    const emailVerificadoEnToken = await verificarEstadoEmailEnToken();
 
-FirebaseService.iniciarSesion = iniciarSesion;
-FirebaseService.iniciarSesionAnonimamente = iniciarSesionAnonimamente;
-FirebaseService.cerrarSesion = cerrarSesion;
-FirebaseService.guardarDatos = guardarDatos;
-FirebaseService.cargarDatos = cargarDatos;
-FirebaseService.onChangeAuth = onChangeAuth;
-FirebaseService.registrarUsuario = registrarUsuario;
-FirebaseService.eliminarDatos = eliminarDatos;
-FirebaseService.eliminarUsuario = eliminarUsuario;
-FirebaseService.actualizarPerfil = actualizarPerfil;
-FirebaseService.recuperarContrasena = recuperarContrasena;
-FirebaseService.enviarVerificacionEmail = enviarVerificacionEmail;
-FirebaseService.esEmailVerificado = esEmailVerificado;
-FirebaseService.obtenerPerfilUsuario = obtenerPerfilUsuario;
-FirebaseService.cerrarTodasLasSesiones = cerrarTodasLasSesiones;
+    if (!emailVerificadoEnToken) {
+        try {
+            // Forzar actualización del token para obtener los últimos claims
+            const user = auth.currentUser;
+            await user.getIdToken(true); // Actualiza el token de ID
+            console.log('Token actualizado.');
+        } catch (error) {
+            console.error('Error al actualizar el token:', error);
+        }
+    } else {
+        console.log('El token ya está actualizado con el email verificado.');
+    }
+}
 
