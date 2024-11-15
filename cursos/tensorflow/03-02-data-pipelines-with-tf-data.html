@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <title> Pipelines de dades amb tf.data </title>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, nofollow, noarchive">
+    
+    <link rel="alternate" href="https://campusempresa.com/mod/tensorflow/03-02-data-pipelines-with-tf-data" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/tensorflow/03-02-data-pipelines-with-tf-data" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/tensorflow/03-02-data-pipelines-with-tf-data" hreflang="en" />
+    
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.ea63f62b9e.css" rel="stylesheet">
+	 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="/js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script>
+  		var LANG = "ca";
+  		var CATEGORY = "frameworks";
+  		var MOD_NAME = "tensorflow";
+  		var TEMA_NAME = "3-2";
+  		var TYPE = "mod";
+  		var PATH = "mod/tensorflow/03-02-data-pipelines-with-tf-data";
+  		var IS_INDEX = false;
+  	</script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="module" src="/js/app.902a5a267d.js"></script>
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0611338592562725" crossorigin="anonymous"></script>
+	  	
+</head>
+
+<body class="d-none">
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-12 col-md-6 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-12 col-md-6 p-0 text-end">
+			<p class="mb-0 p-0">	<a href="https://enterprisecampus.net/mod/tensorflow/03-02-data-pipelines-with-tf-data" class="px-2">EN</a></b>
+	|
+	<a href="https://campusempresa.com/mod/tensorflow/03-02-data-pipelines-with-tf-data" class="px-2">ES</a></b>
+	|
+	<b class="px-2">CA</b>
+</p>
+			<p class="mb-4 mt-0 mx-2  d-none d-md-block"><cite>Tot el coneixement al teu abast</cite></p>
+		</div>
+	</div>
+</div>
+<div class="subheader container-xxl d-none d-md-block">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+		<div class="top-bar container-fluid p-0">
+	<div class="container-xxl p-0">
+		<div class="row">
+			<div class="col">
+				<div class="d-flex justify-content-between">
+					<div class="left">
+						<a href="/" class="nav-link px-3" id="btnHome">
+	<i class="bi bi-house-fill"></i>
+	HOME
+</a>
+
+<a href="/els-meus-cursos" class="nav-link px-3 d-none" id="btnMyCourses">
+	<i class="bi bi-rocket-takeoff-fill"></i>
+	<i><b>Els meus cursos</b></i>
+</a>
+<a href="/cursos-finalitzats" class="nav-link px-3 d-none" id="trophy_button">
+	<i class="bi bi-trophy-fill"></i>
+	Finalitzats             
+</a>
+
+					</div>
+                    <div class="ms-auto right">
+                        <a id="user_button" href="#" class="nav-link px-3" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i id="user_icon" class="bi"></i>                            
+                        </a>
+                    </div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+		<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+										<div class="row py-1 m-0" id="buttonsModSection">
+	<div class="col-6 p-0" data-mod="tensorflow">
+		<a  href="#" class="text-secondary d-none" data-read-mod="tensorflow" data-read-unit="3-2" style="text-decoration:none;">
+			<i class="bi bi-check-circle-fill"></i> 
+			Marcar com a llegit
+		</a>
+		<a href="#" class="text-secondary d-none" data-unread-mod="tensorflow" data-unread-unit="3-2" style="text-decoration:none;">
+			<i class="bi bi-x-circle-fill"></i>
+			Marcar com a no llegit
+		</a>
+	</div>
+	<div class="col-6 text-end p-0">
+					<a href="./"  class="nav-link">
+				<i class="bi bi-journal-text"></i>
+				Contingut del curs
+			</a>
+			</div>
+</div>						<div id="inner_content">
+				<div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='03-01-loading-data' title="Carregant dades" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='03-01-loading-data' title="Carregant dades" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+					<h2 style="text-decoration:underline">Pipelines de dades amb tf.data</h2>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='03-03-data-augmentation' title="Augmentació de dades" class="py-2 px-3 btn btn-primary"
+				data-read-mod="tensorflow" data-read-unit="3-2">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='03-03-data-augmentation' title="Augmentació de dades" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="tensorflow" data-read-unit="3-2">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem a utilitzar el mòdul <code>tf.data</code> de TensorFlow per crear pipelines de dades eficients i escalables. Els pipelines de dades són essencials per a la preparació i el processament de grans volums de dades, especialment en aplicacions de machine learning.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Entendre què és <code>tf.data</code> i per què és útil.</li>
+<li>Aprendre a crear datasets amb <code>tf.data.Dataset</code>.</li>
+<li>Manipular i transformar dades utilitzant operacions de <code>tf.data</code>.</li>
+<li>Implementar pipelines de dades per a tasques de machine learning.</li>
+</ul>
+</div><h1>Què és <code>tf.data</code>?</h1>
+<div class='content'><p><code>tf.data</code> és un mòdul de TensorFlow que proporciona una API per construir pipelines de dades eficients. Permet carregar, transformar i processar dades de manera fàcil i escalable. Això és especialment útil quan es treballa amb grans volums de dades que no caben en memòria.</p>
+</div><h2>Avantatges de <code>tf.data</code></h2>
+<div class='content'><ul>
+<li><strong>Eficient</strong>: Optimitza el processament de dades per a un rendiment màxim.</li>
+<li><strong>Escalable</strong>: Pot gestionar grans volums de dades que no caben en memòria.</li>
+<li><strong>Flexible</strong>: Permet una àmplia gamma de transformacions i operacions sobre les dades.</li>
+</ul>
+</div><h1>Creació de Datasets</h1>
+<div class='content'><p>El primer pas per crear un pipeline de dades és crear un dataset. <code>tf.data.Dataset</code> és la classe principal que utilitzarem per a això.</p>
+</div><h2>Exemple bàsic</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKCiMgQ3JlYXIgdW4gZGF0YXNldCBhIHBhcnRpciBkJ3VuYSBsbGlzdGEKZGF0YSA9IFsxLCAyLCAzLCA0LCA1XQpkYXRhc2V0ID0gdGYuZGF0YS5EYXRhc2V0LmZyb21fdGVuc29yX3NsaWNlcyhkYXRhKQoKIyBJdGVyYXIgc29icmUgZWwgZGF0YXNldApmb3IgZWxlbWVudCBpbiBkYXRhc2V0OgogICAgcHJpbnQoZWxlbWVudC5udW1weSgpKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+
+# Crear un dataset a partir d'una llista
+data = [1, 2, 3, 4, 5]
+dataset = tf.data.Dataset.from_tensor_slices(data)
+
+# Iterar sobre el dataset
+for element in dataset:
+    print(element.numpy())</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong><code>from_tensor_slices</code></strong>: Crea un dataset a partir d'una llista o tensor.</li>
+<li><strong>Iteració</strong>: Podem iterar sobre el dataset per accedir als seus elements.</li>
+</ul>
+</div><h1>Operacions amb Datasets</h1>
+<div class='content'><p>Un cop tenim un dataset, podem aplicar diverses operacions per transformar les dades.</p>
+</div><h2>Mapeig</h2>
+<div class='content'><p>El mapeig aplica una funció a cada element del dataset.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIGluY3JlbWVudCh4KToKICAgIHJldHVybiB4ICsgMQoKZGF0YXNldCA9IGRhdGFzZXQubWFwKGluY3JlbWVudCkKCmZvciBlbGVtZW50IGluIGRhdGFzZXQ6CiAgICBwcmludChlbGVtZW50Lm51bXB5KCkp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def increment(x):
+    return x + 1
+
+dataset = dataset.map(increment)
+
+for element in dataset:
+    print(element.numpy())</pre></div><div class='content'></div><h2>Filtratge</h2>
+<div class='content'><p>El filtratge selecciona elements del dataset que compleixen una condició.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGVmIGlzX2V2ZW4oeCk6CiAgICByZXR1cm4geCAlIDIgPT0gMAoKZGF0YXNldCA9IGRhdGFzZXQuZmlsdGVyKGlzX2V2ZW4pCgpmb3IgZWxlbWVudCBpbiBkYXRhc2V0OgogICAgcHJpbnQoZWxlbWVudC5udW1weSgpKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>def is_even(x):
+    return x % 2 == 0
+
+dataset = dataset.filter(is_even)
+
+for element in dataset:
+    print(element.numpy())</pre></div><div class='content'></div><h2>Batch</h2>
+<div class='content'><p>El batching agrupa els elements del dataset en lots.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZGF0YXNldCA9IGRhdGFzZXQuYmF0Y2goMikKCmZvciBiYXRjaCBpbiBkYXRhc2V0OgogICAgcHJpbnQoYmF0Y2gubnVtcHkoKSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>dataset = dataset.batch(2)
+
+for batch in dataset:
+    print(batch.numpy())</pre></div><div class='content'></div><h1>Pipeline de dades complet</h1>
+<div class='content'><p>Ara que coneixem les operacions bàsiques, crearem un pipeline de dades complet.</p>
+</div><h2>Exemple complet</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKCiMgQ3JlYXIgdW4gZGF0YXNldCBhIHBhcnRpciBkJ3VuYSBsbGlzdGEKZGF0YSA9IFsxLCAyLCAzLCA0LCA1LCA2LCA3LCA4LCA5LCAxMF0KZGF0YXNldCA9IHRmLmRhdGEuRGF0YXNldC5mcm9tX3RlbnNvcl9zbGljZXMoZGF0YSkKCiMgQXBsaWNhciBvcGVyYWNpb25zCmRhdGFzZXQgPSBkYXRhc2V0Lm1hcChsYW1iZGEgeDogeCAqIDIpICAjIE11bHRpcGxpY2FyIGNhZGEgZWxlbWVudCBwZXIgMgpkYXRhc2V0ID0gZGF0YXNldC5maWx0ZXIobGFtYmRhIHg6IHggJSAzID09IDApICAjIEZpbHRyYXIgZWxlbWVudHMgZGl2aXNpYmxlcyBwZXIgMwpkYXRhc2V0ID0gZGF0YXNldC5iYXRjaCgyKSAgIyBBZ3J1cGFyIGVuIGxvdHMgZGUgMgoKIyBJdGVyYXIgc29icmUgZWwgZGF0YXNldApmb3IgYmF0Y2ggaW4gZGF0YXNldDoKICAgIHByaW50KGJhdGNoLm51bXB5KCkp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+
+# Crear un dataset a partir d'una llista
+data = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+dataset = tf.data.Dataset.from_tensor_slices(data)
+
+# Aplicar operacions
+dataset = dataset.map(lambda x: x * 2)  # Multiplicar cada element per 2
+dataset = dataset.filter(lambda x: x % 3 == 0)  # Filtrar elements divisibles per 3
+dataset = dataset.batch(2)  # Agrupar en lots de 2
+
+# Iterar sobre el dataset
+for batch in dataset:
+    print(batch.numpy())</pre></div><div class='content'></div><h2>Explicació</h2>
+<div class='content'><ul>
+<li><strong><code>map</code></strong>: Multiplica cada element per 2.</li>
+<li><strong><code>filter</code></strong>: Filtra elements divisibles per 3.</li>
+<li><strong><code>batch</code></strong>: Agrupa els elements en lots de 2.</li>
+</ul>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Creació i transformació de datasets</h2>
+<div class='content'><ol>
+<li>Crea un dataset a partir de la llista <code>[10, 20, 30, 40, 50]</code>.</li>
+<li>Aplica una funció que divideixi cada element per 10.</li>
+<li>Filtra els elements que siguin majors que 2.</li>
+<li>Agrupa els elements en lots de 2.</li>
+</ol>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKCiMgUGFzIDEKZGF0YSA9IFsxMCwgMjAsIDMwLCA0MCwgNTBdCmRhdGFzZXQgPSB0Zi5kYXRhLkRhdGFzZXQuZnJvbV90ZW5zb3Jfc2xpY2VzKGRhdGEpCgojIFBhcyAyCmRhdGFzZXQgPSBkYXRhc2V0Lm1hcChsYW1iZGEgeDogeCAvIDEwKQoKIyBQYXMgMwpkYXRhc2V0ID0gZGF0YXNldC5maWx0ZXIobGFtYmRhIHg6IHggPiAyKQoKIyBQYXMgNApkYXRhc2V0ID0gZGF0YXNldC5iYXRjaCgyKQoKIyBJdGVyYXIgc29icmUgZWwgZGF0YXNldApmb3IgYmF0Y2ggaW4gZGF0YXNldDoKICAgIHByaW50KGJhdGNoLm51bXB5KCkp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+
+# Pas 1
+data = [10, 20, 30, 40, 50]
+dataset = tf.data.Dataset.from_tensor_slices(data)
+
+# Pas 2
+dataset = dataset.map(lambda x: x / 10)
+
+# Pas 3
+dataset = dataset.filter(lambda x: x &gt; 2)
+
+# Pas 4
+dataset = dataset.batch(2)
+
+# Iterar sobre el dataset
+for batch in dataset:
+    print(batch.numpy())</pre></div><div class='content'></div><h2>Exercici 2: Pipeline de dades amb imatges</h2>
+<div class='content'><ol>
+<li>Carrega un conjunt d'imatges des d'un directori.</li>
+<li>Redimensiona les imatges a 128x128 píxels.</li>
+<li>Normalitza les imatges perquè els valors estiguin entre 0 i 1.</li>
+<li>Agrupa les imatges en lots de 32.</li>
+</ol>
+<h4>Solució</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRlbnNvcmZsb3cgYXMgdGYKCiMgUGFzIDEKZGF0YXNldCA9IHRmLmRhdGEuRGF0YXNldC5saXN0X2ZpbGVzKCJwYXRoL3RvL2ltYWdlcy8qLmpwZyIpCgojIFBhcyAyCmRlZiBsb2FkX2FuZF9wcmVwcm9jZXNzX2ltYWdlKHBhdGgpOgogICAgaW1hZ2UgPSB0Zi5pby5yZWFkX2ZpbGUocGF0aCkKICAgIGltYWdlID0gdGYuaW1hZ2UuZGVjb2RlX2pwZWcoaW1hZ2UsIGNoYW5uZWxzPTMpCiAgICBpbWFnZSA9IHRmLmltYWdlLnJlc2l6ZShpbWFnZSwgWzEyOCwgMTI4XSkKICAgIHJldHVybiBpbWFnZQoKZGF0YXNldCA9IGRhdGFzZXQubWFwKGxvYWRfYW5kX3ByZXByb2Nlc3NfaW1hZ2UpCgojIFBhcyAzCmRhdGFzZXQgPSBkYXRhc2V0Lm1hcChsYW1iZGEgeDogeCAvIDI1NS4wKQoKIyBQYXMgNApkYXRhc2V0ID0gZGF0YXNldC5iYXRjaCgzMikKCiMgSXRlcmFyIHNvYnJlIGVsIGRhdGFzZXQKZm9yIGJhdGNoIGluIGRhdGFzZXQ6CiAgICBwcmludChiYXRjaC5zaGFwZSk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import tensorflow as tf
+
+# Pas 1
+dataset = tf.data.Dataset.list_files(&quot;path/to/images/*.jpg&quot;)
+
+# Pas 2
+def load_and_preprocess_image(path):
+    image = tf.io.read_file(path)
+    image = tf.image.decode_jpeg(image, channels=3)
+    image = tf.image.resize(image, [128, 128])
+    return image
+
+dataset = dataset.map(load_and_preprocess_image)
+
+# Pas 3
+dataset = dataset.map(lambda x: x / 255.0)
+
+# Pas 4
+dataset = dataset.batch(32)
+
+# Iterar sobre el dataset
+for batch in dataset:
+    print(batch.shape)</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquest tema, hem après a utilitzar <code>tf.data</code> per crear pipelines de dades eficients i escalables. Hem vist com crear datasets, aplicar operacions de mapeig, filtratge i batching, i hem implementat pipelines de dades complets. Aquestes habilitats són fonamentals per treballar amb grans volums de dades en aplicacions de machine learning.</p>
+<p>En el següent tema, explorarem com augmentar les dades per millorar el rendiment dels nostres models.</p>
+</div><div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='03-01-loading-data' title="Carregant dades" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='03-01-loading-data' title="Carregant dades" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='03-03-data-augmentation' title="Augmentació de dades" class="py-2 px-3 btn btn-primary"
+				data-read-mod="tensorflow" data-read-unit="3-2">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='03-03-data-augmentation' title="Augmentació de dades" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="tensorflow" data-read-unit="3-2">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+						
+	<div class="container mt-2 d-none d-md-block index">
+		<h1>Curs de TensorFlow</h1>
+<h2>Mòdul 1: Introducció a TensorFlow</h2>
+<ul>
+<li><a href="01-01-what-is-tensorflow">Què és TensorFlow?</a></li>
+<li><a href="01-02-setting-up-tensorflow">Configuració de TensorFlow</a></li>
+<li><a href="01-03-basic-tensorflow-concepts">Conceptes bàsics de TensorFlow</a></li>
+<li><a href="01-04-tensorflow-hello-world">Hola món amb TensorFlow</a></li>
+</ul>
+<h2>Mòdul 2: Conceptes bàsics de TensorFlow</h2>
+<ul>
+<li><a href="02-01-tensors-and-operations">Tensors i operacions</a></li>
+<li><a href="02-02-variables-and-constants">Variables i constants</a></li>
+<li><a href="02-03-tensorflow-graphs">Gràfics de TensorFlow</a></li>
+<li><a href="02-04-eager-execution">Execució immediata</a></li>
+</ul>
+<h2>Mòdul 3: Gestió de dades a TensorFlow</h2>
+<ul>
+<li><a href="03-01-loading-data">Carregant dades</a></li>
+<li><a href="03-02-data-pipelines-with-tf-data">Pipelines de dades amb tf.data</a></li>
+<li><a href="03-03-data-augmentation">Augmentació de dades</a></li>
+<li><a href="03-04-working-with-datasets">Treballant amb datasets</a></li>
+</ul>
+<h2>Mòdul 4: Construcció de xarxes neuronals</h2>
+<ul>
+<li><a href="04-01-introduction-to-neural-networks">Introducció a les xarxes neuronals</a></li>
+<li><a href="04-02-creating-a-simple-neural-network">Creació d'una xarxa neuronal simple</a></li>
+<li><a href="04-03-activation-functions">Funcions d'activació</a></li>
+<li><a href="04-04-loss-functions-and-optimizers">Funcions de pèrdua i optimitzadors</a></li>
+</ul>
+<h2>Mòdul 5: Xarxes neuronals convolucionals (CNNs)</h2>
+<ul>
+<li><a href="05-01-introduction-to-cnns">Introducció a les CNNs</a></li>
+<li><a href="05-02-building-a-cnn">Construcció d'una CNN</a></li>
+<li><a href="05-03-pooling-layers">Capes de pooling</a></li>
+<li><a href="05-04-advanced-cnn-architectures">Arquitectures avançades de CNN</a></li>
+</ul>
+<h2>Mòdul 6: Xarxes neuronals recurrents (RNNs)</h2>
+<ul>
+<li><a href="06-01-introduction-to-rnns">Introducció a les RNNs</a></li>
+<li><a href="06-02-building-an-rnn">Construcció d'una RNN</a></li>
+<li><a href="06-03-long-short-term-memory">Memòria a llarg termini (LSTM)</a></li>
+<li><a href="06-04-gated-recurrent-units">Unitats recurrents amb porta (GRUs)</a></li>
+</ul>
+<h2>Mòdul 7: Tècniques avançades de TensorFlow</h2>
+<ul>
+<li><a href="07-01-custom-layers-and-models">Capes i models personalitzats</a></li>
+<li><a href="07-02-tensorflow-hub">TensorFlow Hub</a></li>
+<li><a href="07-03-transfer-learning">Aprenentatge per transferència</a></li>
+<li><a href="07-04-hyperparameter-tuning">Ajust de hiperparàmetres</a></li>
+</ul>
+<h2>Mòdul 8: TensorFlow per a producció</h2>
+<ul>
+<li><a href="08-01-model-saving-and-loading">Desament i càrrega de models</a></li>
+<li><a href="08-02-tensorflow-serving">TensorFlow Serving</a></li>
+<li><a href="08-03-deploying-models">Desplegament de models</a></li>
+<li><a href="08-04-monitoring-and-maintenance">Monitorització i manteniment</a></li>
+</ul>
+<h2>Mòdul 9: TensorFlow Extended (TFX)</h2>
+<ul>
+<li><a href="09-01-introduction-to-tfx">Introducció a TFX</a></li>
+<li><a href="09-02-data-validation">Validació de dades</a></li>
+<li><a href="09-03-transforming-data">Transformació de dades</a></li>
+<li><a href="09-04-model-analysis">Anàlisi de models</a></li>
+</ul>
+<h2>Mòdul 10: Temes especials</h2>
+<ul>
+<li><a href="10-01-tensorflow-lite">TensorFlow Lite</a></li>
+<li><a href="10-02-tensorflow-js">TensorFlow.js</a></li>
+<li><a href="10-03-tensorflow-federated">TensorFlow Federated</a></li>
+<li><a href="10-04-tensorflow-quantum">TensorFlow Quantum</a></li>
+</ul>
+
+	</div>
+
+
+
+
+
+
+
+
+
+
+		</div>
+	</div>
+</div>		
+<div class="container-xxl d-block d-md-none">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+
+<div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir cookies per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+		<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Usuari no autentificat</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            	<div id="modal-body-main"></div>
+            </div>
+        </div>
+    </div>
+</div>	</div>    
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

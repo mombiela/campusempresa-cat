@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <title> Autoscalat Vertical de Pods </title>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, nofollow, noarchive">
+    
+    <link rel="alternate" href="https://campusempresa.com/mod/kubernetes/09-02-vertical-pod-autoscaling" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kubernetes/09-02-vertical-pod-autoscaling" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kubernetes/09-02-vertical-pod-autoscaling" hreflang="en" />
+    
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.ea63f62b9e.css" rel="stylesheet">
+	 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="/js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script>
+  		var LANG = "ca";
+  		var CATEGORY = "frameworks";
+  		var MOD_NAME = "kubernetes";
+  		var TEMA_NAME = "9-2";
+  		var TYPE = "mod";
+  		var PATH = "mod/kubernetes/09-02-vertical-pod-autoscaling";
+  		var IS_INDEX = false;
+  	</script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="module" src="/js/app.902a5a267d.js"></script>
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0611338592562725" crossorigin="anonymous"></script>
+	  	
+</head>
+
+<body class="d-none">
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-12 col-md-6 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-12 col-md-6 p-0 text-end">
+			<p class="mb-0 p-0">	<a href="https://enterprisecampus.net/mod/kubernetes/09-02-vertical-pod-autoscaling" class="px-2">EN</a></b>
+	|
+	<a href="https://campusempresa.com/mod/kubernetes/09-02-vertical-pod-autoscaling" class="px-2">ES</a></b>
+	|
+	<b class="px-2">CA</b>
+</p>
+			<p class="mb-4 mt-0 mx-2  d-none d-md-block"><cite>Tot el coneixement al teu abast</cite></p>
+		</div>
+	</div>
+</div>
+<div class="subheader container-xxl d-none d-md-block">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+		<div class="top-bar container-fluid p-0">
+	<div class="container-xxl p-0">
+		<div class="row">
+			<div class="col">
+				<div class="d-flex justify-content-between">
+					<div class="left">
+						<a href="/" class="nav-link px-3" id="btnHome">
+	<i class="bi bi-house-fill"></i>
+	HOME
+</a>
+
+<a href="/els-meus-cursos" class="nav-link px-3 d-none" id="btnMyCourses">
+	<i class="bi bi-rocket-takeoff-fill"></i>
+	<i><b>Els meus cursos</b></i>
+</a>
+<a href="/cursos-finalitzats" class="nav-link px-3 d-none" id="trophy_button">
+	<i class="bi bi-trophy-fill"></i>
+	Finalitzats             
+</a>
+
+					</div>
+                    <div class="ms-auto right">
+                        <a id="user_button" href="#" class="nav-link px-3" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i id="user_icon" class="bi"></i>                            
+                        </a>
+                    </div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+		<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+										<div class="row py-1 m-0" id="buttonsModSection">
+	<div class="col-6 p-0" data-mod="kubernetes">
+		<a  href="#" class="text-secondary d-none" data-read-mod="kubernetes" data-read-unit="9-2" style="text-decoration:none;">
+			<i class="bi bi-check-circle-fill"></i> 
+			Marcar com a llegit
+		</a>
+		<a href="#" class="text-secondary d-none" data-unread-mod="kubernetes" data-unread-unit="9-2" style="text-decoration:none;">
+			<i class="bi bi-x-circle-fill"></i>
+			Marcar com a no llegit
+		</a>
+	</div>
+	<div class="col-6 text-end p-0">
+					<a href="./"  class="nav-link">
+				<i class="bi bi-journal-text"></i>
+				Contingut del curs
+			</a>
+			</div>
+</div>						<div id="inner_content">
+				<div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='09-01-horizontal-pod-autoscaling' title="Autoscalat Horitzontal de Pods" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='09-01-horizontal-pod-autoscaling' title="Autoscalat Horitzontal de Pods" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+					<h2 style="text-decoration:underline">Autoscalat Vertical de Pods</h2>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='09-03-cluster-autoscaling' title="Autoscalat de Clúster" class="py-2 px-3 btn btn-primary"
+				data-read-mod="kubernetes" data-read-unit="9-2">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='09-03-cluster-autoscaling' title="Autoscalat de Clúster" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="kubernetes" data-read-unit="9-2">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+<div class='content'><p>L'autoscalat vertical de pods (Vertical Pod Autoscaling, VPA) és una funcionalitat de Kubernetes que permet ajustar automàticament els recursos (CPU i memòria) assignats als pods en funció de les seves necessitats reals. Això és especialment útil per optimitzar l'ús de recursos i assegurar que les aplicacions tinguin els recursos necessaris per funcionar de manera eficient.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ul>
+<li><strong>Vertical Pod Autoscaler (VPA)</strong>: Component de Kubernetes que ajusta automàticament les sol·licituds i límits de recursos dels pods.</li>
+<li><strong>Recomanacions de Recursos</strong>: Suggeriments generats pel VPA basats en l'ús històric de recursos.</li>
+<li><strong>Actualitzacions de Recursos</strong>: Canvis aplicats als pods per ajustar les sol·licituds i límits de recursos segons les recomanacions del VPA.</li>
+</ul>
+</div><h1>Com Funciona el VPA</h1>
+<div class='content'><ol>
+<li><strong>Monitorització</strong>: El VPA monitoritza l'ús de recursos dels pods.</li>
+<li><strong>Recomanació</strong>: Basant-se en les dades recollides, el VPA genera recomanacions per ajustar les sol·licituds i límits de recursos.</li>
+<li><strong>Actualització</strong>: El VPA aplica les recomanacions als pods, ajustant els recursos segons sigui necessari.</li>
+</ol>
+</div><h1>Configuració del VPA</h1>
+<div class='content'></div><h2>Instal·lació del VPA</h2>
+<div class='content'><p>Per utilitzar el VPA, primer cal instal·lar-lo al clúster de Kubernetes. Pots fer-ho utilitzant el següent manifest YAML:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogdjEKa2luZDogTmFtZXNwYWNlCm1ldGFkYXRhOgogIG5hbWU6IHZwYQotLS0KYXBpVmVyc2lvbjogdjEKa2luZDogU2VydmljZUFjY291bnQKbWV0YWRhdGE6CiAgbmFtZTogdnBhLXJlY29tbWVuZGVyCiAgbmFtZXNwYWNlOiB2cGEKLS0tCmFwaVZlcnNpb246IHYxCmtpbmQ6IFNlcnZpY2VBY2NvdW50Cm1ldGFkYXRhOgogIG5hbWU6IHZwYS11cGRhdGVyCiAgbmFtZXNwYWNlOiB2cGEKLS0tCmFwaVZlcnNpb246IHYxCmtpbmQ6IFNlcnZpY2VBY2NvdW50Cm1ldGFkYXRhOgogIG5hbWU6IHZwYS1hZG1pc3Npb24tY29udHJvbGxlcgogIG5hbWVzcGFjZTogdnBhCi0tLQphcGlWZXJzaW9uOiByYmFjLmF1dGhvcml6YXRpb24uazhzLmlvL3YxCmtpbmQ6IENsdXN0ZXJSb2xlCm1ldGFkYXRhOgogIG5hbWU6IHZwYS1yZWNvbW1lbmRlcgpydWxlczoKICAtIGFwaUdyb3VwczogWyIiXQogICAgcmVzb3VyY2VzOiBbInBvZHMiLCAibm9kZXMiLCAic2VydmljZXMiLCAiZW5kcG9pbnRzIiwgImV2ZW50cyIsICJuYW1lc3BhY2VzIl0KICAgIHZlcmJzOiBbImdldCIsICJsaXN0IiwgIndhdGNoIl0KICAtIGFwaUdyb3VwczogWyJleHRlbnNpb25zIiwgImFwcHMiXQogICAgcmVzb3VyY2VzOiBbInJlcGxpY2FzZXRzIl0KICAgIHZlcmJzOiBbImdldCIsICJsaXN0IiwgIndhdGNoIl0KICAtIGFwaUdyb3VwczogWyJhdXRvc2NhbGluZy5rOHMuaW8iXQogICAgcmVzb3VyY2VzOiBbInZlcnRpY2FscG9kYXV0b3NjYWxlcnMiXQogICAgdmVyYnM6IFsiZ2V0IiwgImxpc3QiLCAid2F0Y2giXQotLS0KIyAoRWwgbWFuaWZlc3QgY29udGludWEgYW1iIGxhIGNvbmZpZ3VyYWNpw7MgZGUgcm9scyBpIHBlcm1pc29zIHBlciBhIGNhZGEgY29tcG9uZW50IGRlbCBWUEEp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: v1
+kind: Namespace
+metadata:
+  name: vpa
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vpa-recommender
+  namespace: vpa
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vpa-updater
+  namespace: vpa
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: vpa-admission-controller
+  namespace: vpa
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vpa-recommender
+rules:
+  - apiGroups: [&quot;&quot;]
+    resources: [&quot;pods&quot;, &quot;nodes&quot;, &quot;services&quot;, &quot;endpoints&quot;, &quot;events&quot;, &quot;namespaces&quot;]
+    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;]
+  - apiGroups: [&quot;extensions&quot;, &quot;apps&quot;]
+    resources: [&quot;replicasets&quot;]
+    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;]
+  - apiGroups: [&quot;autoscaling.k8s.io&quot;]
+    resources: [&quot;verticalpodautoscalers&quot;]
+    verbs: [&quot;get&quot;, &quot;list&quot;, &quot;watch&quot;]
+---
+# (El manifest continua amb la configuraci&oacute; de rols i permisos per a cada component del VPA)</pre></div><div class='content'></div><h2>Creació d'un VPA</h2>
+<div class='content'><p>Un cop instal·lat el VPA, pots crear un objecte VPA per a una aplicació específica. Aquí tens un exemple de manifest YAML per crear un VPA:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogYXV0b3NjYWxpbmcuazhzLmlvL3YxCmtpbmQ6IFZlcnRpY2FsUG9kQXV0b3NjYWxlcgptZXRhZGF0YToKICBuYW1lOiBteS1hcHAtdnBhCnNwZWM6CiAgdGFyZ2V0UmVmOgogICAgYXBpVmVyc2lvbjogImFwcHMvdjEiCiAgICBraW5kOiAgICAgICBEZXBsb3ltZW50CiAgICBuYW1lOiAgICAgICBteS1hcHAKICB1cGRhdGVQb2xpY3k6CiAgICB1cGRhdGVNb2RlOiAiQXV0byI="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: my-app-vpa
+spec:
+  targetRef:
+    apiVersion: &quot;apps/v1&quot;
+    kind:       Deployment
+    name:       my-app
+  updatePolicy:
+    updateMode: &quot;Auto&quot;</pre></div><div class='content'></div><h2>Explicació del Manifest</h2>
+<div class='content'><ul>
+<li><strong>apiVersion</strong>: La versió de l'API de Kubernetes que s'utilitza.</li>
+<li><strong>kind</strong>: El tipus de recurs, en aquest cas, <code>VerticalPodAutoscaler</code>.</li>
+<li><strong>metadata</strong>: Informació sobre el VPA, incloent el nom.</li>
+<li><strong>spec</strong>: Especificacions del VPA.
+<ul>
+<li><strong>targetRef</strong>: Referència a l'objecte que el VPA ha de monitoritzar (en aquest cas, un <code>Deployment</code>).</li>
+<li><strong>updatePolicy</strong>: Política d'actualització. <code>Auto</code> permet que el VPA actualitzi automàticament els recursos dels pods.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Objectiu</h2>
+<div class='content'><p>Configurar un VPA per a una aplicació de mostra i observar com ajusta els recursos dels pods.</p>
+</div><h2>Passos</h2>
+<div class='content'><ol>
+<li>
+<p><strong>Desplegar una Aplicació de Mostra</strong>:</p>
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-app
+        image: nginx
+        resources:
+          requests:
+            cpu: &quot;100m&quot;
+            memory: &quot;128Mi&quot;
+          limits:
+            cpu: &quot;200m&quot;
+            memory: &quot;256Mi&quot;
+</code></pre>
+</li>
+<li>
+<p><strong>Crear un VPA per a l'Aplicació</strong>:</p>
+<pre><code class="language-yaml">apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: my-app-vpa
+spec:
+  targetRef:
+    apiVersion: &quot;apps/v1&quot;
+    kind:       Deployment
+    name:       my-app
+  updatePolicy:
+    updateMode: &quot;Auto&quot;
+</code></pre>
+</li>
+<li>
+<p><strong>Observar les Recomanacions del VPA</strong>:</p>
+<p>Després d'un temps, pots veure les recomanacions del VPA utilitzant el següent comandament:</p>
+<pre><code class="language-sh">kubectl describe vpa my-app-vpa
+</code></pre>
+</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><p>Després de seguir els passos anteriors, hauràs configurat un VPA per a la teva aplicació de mostra. El VPA ajustarà automàticament els recursos dels pods basant-se en l'ús real de recursos.</p>
+</div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ul>
+<li><strong>No Instal·lar Correctament el VPA</strong>: Assegura't de seguir tots els passos d'instal·lació del VPA correctament.</li>
+<li><strong>Política d'Actualització Incorrecta</strong>: Si no vols que el VPA actualitzi automàticament els recursos, pots utilitzar <code>updateMode: &quot;Off&quot;</code> i aplicar les recomanacions manualment.</li>
+<li><strong>Monitorització Insuficient</strong>: El VPA necessita temps per recollir dades suficients abans de generar recomanacions precises. Sigues pacient i permet que el VPA monitoritzi l'ús de recursos durant un període de temps adequat.</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>L'autoscalat vertical de pods és una eina poderosa per optimitzar l'ús de recursos en un clúster de Kubernetes. Configurant correctament el VPA, pots assegurar-te que les teves aplicacions tenen els recursos necessaris per funcionar de manera eficient, sense malgastar recursos. En el proper tema, explorarem l'autoscalat de clúster per ajustar automàticament el nombre de nodes en funció de la càrrega de treball.</p>
+</div><div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='09-01-horizontal-pod-autoscaling' title="Autoscalat Horitzontal de Pods" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='09-01-horizontal-pod-autoscaling' title="Autoscalat Horitzontal de Pods" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='09-03-cluster-autoscaling' title="Autoscalat de Clúster" class="py-2 px-3 btn btn-primary"
+				data-read-mod="kubernetes" data-read-unit="9-2">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='09-03-cluster-autoscaling' title="Autoscalat de Clúster" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="kubernetes" data-read-unit="9-2">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+						
+	<div class="container mt-2 d-none d-md-block index">
+		<h1>Curs de Kubernetes</h1>
+<h2>Mòdul 1: Introducció a Kubernetes</h2>
+<ul>
+<li><a href="01-01-what-is-kubernetes">Què és Kubernetes?</a></li>
+<li><a href="01-02-kubernetes-architecture">Arquitectura de Kubernetes</a></li>
+<li><a href="01-03-key-concepts-terminology">Conceptes i Terminologia Clau</a></li>
+<li><a href="01-04-setting-up-cluster">Configuració d'un Clúster de Kubernetes</a></li>
+<li><a href="01-05-kubernetes-cli">CLI de Kubernetes (kubectl)</a></li>
+</ul>
+<h2>Mòdul 2: Components Bàsics de Kubernetes</h2>
+<ul>
+<li><a href="02-01-pods">Pods</a></li>
+<li><a href="02-02-replicasets">ReplicaSets</a></li>
+<li><a href="02-03-deployments">Deployments</a></li>
+<li><a href="02-04-services">Serveis</a></li>
+<li><a href="02-05-namespaces">Namespaces</a></li>
+</ul>
+<h2>Mòdul 3: Gestió de Configuració i Secrets</h2>
+<ul>
+<li><a href="03-01-configmaps">ConfigMaps</a></li>
+<li><a href="03-02-secrets">Secrets</a></li>
+<li><a href="03-03-environment-variables">Variables d'Entorn</a></li>
+<li><a href="03-04-resource-quotas-limits">Quotes i Límits de Recursos</a></li>
+</ul>
+<h2>Mòdul 4: Xarxes en Kubernetes</h2>
+<ul>
+<li><a href="04-01-cluster-networking">Xarxes de Clúster</a></li>
+<li><a href="04-02-service-types">Tipus de Serveis</a></li>
+<li><a href="04-03-ingress-controllers">Ingress Controllers</a></li>
+<li><a href="04-04-network-policies">Polítiques de Xarxa</a></li>
+</ul>
+<h2>Mòdul 5: Emmagatzematge en Kubernetes</h2>
+<ul>
+<li><a href="05-01-volumes">Volums</a></li>
+<li><a href="05-02-persistent-volumes">Volums Persistents</a></li>
+<li><a href="05-03-persistent-volume-claims">Reclamacions de Volums Persistents</a></li>
+<li><a href="05-04-storage-classes">Classes d'Emmagatzematge</a></li>
+</ul>
+<h2>Mòdul 6: Conceptes Avançats de Kubernetes</h2>
+<ul>
+<li><a href="06-01-statefulsets">StatefulSets</a></li>
+<li><a href="06-02-daemonsets">DaemonSets</a></li>
+<li><a href="06-03-jobs-cronjobs">Feines i Feines Programades</a></li>
+<li><a href="06-04-crds">Definicions de Recursos Personalitzats (CRDs)</a></li>
+</ul>
+<h2>Mòdul 7: Monitorització i Registre</h2>
+<ul>
+<li><a href="07-01-monitoring-prometheus">Monitorització amb Prometheus</a></li>
+<li><a href="07-02-logging-efk">Registre amb Elasticsearch, Fluentd i Kibana (EFK)</a></li>
+<li><a href="07-03-health-checks-probes">Controls de Salut i Probes</a></li>
+<li><a href="07-04-metrics-server">Servidor de Mètriques</a></li>
+</ul>
+<h2>Mòdul 8: Seguretat en Kubernetes</h2>
+<ul>
+<li><a href="08-01-rbac">Control d'Accés Basat en Rols (RBAC)</a></li>
+<li><a href="08-02-pod-security-policies">Polítiques de Seguretat de Pods</a></li>
+<li><a href="08-03-network-security">Seguretat de Xarxa</a></li>
+<li><a href="08-04-image-security">Seguretat d'Imatges</a></li>
+</ul>
+<h2>Mòdul 9: Escalabilitat i Rendiment</h2>
+<ul>
+<li><a href="09-01-horizontal-pod-autoscaling">Autoscalat Horitzontal de Pods</a></li>
+<li><a href="09-02-vertical-pod-autoscaling">Autoscalat Vertical de Pods</a></li>
+<li><a href="09-03-cluster-autoscaling">Autoscalat de Clúster</a></li>
+<li><a href="09-04-performance-tuning">Optimització del Rendiment</a></li>
+</ul>
+<h2>Mòdul 10: Ecosistema i Eines de Kubernetes</h2>
+<ul>
+<li><a href="10-01-helm">Helm</a></li>
+<li><a href="10-02-kustomize">Kustomize</a></li>
+<li><a href="10-03-kubeadm">Kubeadm</a></li>
+<li><a href="10-04-minikube">Minikube</a></li>
+</ul>
+<h2>Mòdul 11: Estudis de Cas i Aplicacions del Món Real</h2>
+<ul>
+<li><a href="11-01-deploying-web-application">Desplegament d'una Aplicació Web</a></li>
+<li><a href="11-02-cicd-kubernetes">CI/CD amb Kubernetes</a></li>
+<li><a href="11-03-running-stateful-applications">Execució d'Aplicacions Stateful</a></li>
+<li><a href="11-04-multi-cluster-management">Gestió Multi-Clúster</a></li>
+</ul>
+<h2>Mòdul 12: Preparació per a la Certificació de Kubernetes</h2>
+<ul>
+<li><a href="12-01-cka">Administrador Certificat de Kubernetes (CKA)</a></li>
+<li><a href="12-02-ckad">Desenvolupador d'Aplicacions Certificat de Kubernetes (CKAD)</a></li>
+<li><a href="12-03-cks">Especialista en Seguretat Certificat de Kubernetes (CKS)</a></li>
+<li><a href="12-04-exam-preparation-tips">Consells per a la Preparació de l'Examen</a></li>
+</ul>
+
+	</div>
+
+
+
+
+
+
+
+
+
+
+		</div>
+	</div>
+</div>		
+<div class="container-xxl d-block d-md-none">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+
+<div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir cookies per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+		<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Usuari no autentificat</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            	<div id="modal-body-main"></div>
+            </div>
+        </div>
+    </div>
+</div>	</div>    
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

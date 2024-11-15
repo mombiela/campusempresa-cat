@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <title> Analitzar el rendiment de les consultes </title>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, nofollow, noarchive">
+    
+    <link rel="alternate" href="https://campusempresa.com/mod/sql/08-04-analyzing-query-performance" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/sql/08-04-analyzing-query-performance" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/sql/08-04-analyzing-query-performance" hreflang="en" />
+    
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.ea63f62b9e.css" rel="stylesheet">
+	 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="/js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script>
+  		var LANG = "ca";
+  		var CATEGORY = "languages";
+  		var MOD_NAME = "sql";
+  		var TEMA_NAME = "8-4";
+  		var TYPE = "mod";
+  		var PATH = "mod/sql/08-04-analyzing-query-performance";
+  		var IS_INDEX = false;
+  	</script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="module" src="/js/app.902a5a267d.js"></script>
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0611338592562725" crossorigin="anonymous"></script>
+	  	
+</head>
+
+<body class="d-none">
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-12 col-md-6 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-12 col-md-6 p-0 text-end">
+			<p class="mb-0 p-0">	<a href="https://enterprisecampus.net/mod/sql/08-04-analyzing-query-performance" class="px-2">EN</a></b>
+	|
+	<a href="https://campusempresa.com/mod/sql/08-04-analyzing-query-performance" class="px-2">ES</a></b>
+	|
+	<b class="px-2">CA</b>
+</p>
+			<p class="mb-4 mt-0 mx-2  d-none d-md-block"><cite>Tot el coneixement al teu abast</cite></p>
+		</div>
+	</div>
+</div>
+<div class="subheader container-xxl d-none d-md-block">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+		<div class="top-bar container-fluid p-0">
+	<div class="container-xxl p-0">
+		<div class="row">
+			<div class="col">
+				<div class="d-flex justify-content-between">
+					<div class="left">
+						<a href="/" class="nav-link px-3" id="btnHome">
+	<i class="bi bi-house-fill"></i>
+	HOME
+</a>
+
+<a href="/els-meus-cursos" class="nav-link px-3 d-none" id="btnMyCourses">
+	<i class="bi bi-rocket-takeoff-fill"></i>
+	<i><b>Els meus cursos</b></i>
+</a>
+<a href="/cursos-finalitzats" class="nav-link px-3 d-none" id="trophy_button">
+	<i class="bi bi-trophy-fill"></i>
+	Finalitzats             
+</a>
+
+					</div>
+                    <div class="ms-auto right">
+                        <a id="user_button" href="#" class="nav-link px-3" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i id="user_icon" class="bi"></i>                            
+                        </a>
+                    </div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+		<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+										<div class="row py-1 m-0" id="buttonsModSection">
+	<div class="col-6 p-0" data-mod="sql">
+		<a  href="#" class="text-secondary d-none" data-read-mod="sql" data-read-unit="8-4" style="text-decoration:none;">
+			<i class="bi bi-check-circle-fill"></i> 
+			Marcar com a llegit
+		</a>
+		<a href="#" class="text-secondary d-none" data-unread-mod="sql" data-unread-unit="8-4" style="text-decoration:none;">
+			<i class="bi bi-x-circle-fill"></i>
+			Marcar com a no llegit
+		</a>
+	</div>
+	<div class="col-6 text-end p-0">
+					<a href="./"  class="nav-link">
+				<i class="bi bi-journal-text"></i>
+				Contingut del curs
+			</a>
+			</div>
+</div>						<div id="inner_content">
+				<div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='08-03-query-optimization-techniques' title="Tècniques d'optimització de consultes" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='08-03-query-optimization-techniques' title="Tècniques d'optimització de consultes" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+					<h2 style="text-decoration:underline">Analitzar el rendiment de les consultes</h2>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='09-01-introduction-transactions' title="Introducció a les transaccions" class="py-2 px-3 btn btn-primary"
+				data-read-mod="sql" data-read-unit="8-4">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='09-01-introduction-transactions' title="Introducció a les transaccions" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="sql" data-read-unit="8-4">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com analitzar i millorar el rendiment de les consultes SQL. Això és crucial per assegurar que les nostres aplicacions siguin eficients i escalables. Explorarem eines i tècniques per identificar colls d'ampolla i optimitzar les nostres consultes.</p>
+</div><h1>Objectius d'aprenentatge</h1>
+<div class='content'><ul>
+<li>Comprendre la importància de l'anàlisi del rendiment de les consultes.</li>
+<li>Aprendre a utilitzar eines per analitzar el rendiment de les consultes.</li>
+<li>Identificar i resoldre colls d'ampolla en les consultes SQL.</li>
+</ul>
+</div><h1><ol>
+<li>Importància de l'anàlisi del rendiment</li>
+</ol></h1>
+<div class='content'><p>L'anàlisi del rendiment de les consultes és essencial per diverses raons:</p>
+<ul>
+<li><strong>Eficiència</strong>: Consultes més ràpides redueixen el temps de resposta de les aplicacions.</li>
+<li><strong>Escalabilitat</strong>: Consultes optimitzades poden manejar més dades i usuaris.</li>
+<li><strong>Cost</strong>: Reduir el temps de processament pot disminuir els costos d'infraestructura.</li>
+</ul>
+</div><h1><ol start="2">
+<li>Eines per analitzar el rendiment</li>
+</ol></h1>
+<div class='content'></div><h2>2.1. EXPLAIN</h2>
+<div class='content'><p>L'instrucció <code>EXPLAIN</code> proporciona informació sobre com el sistema de bases de dades executarà una consulta. Mostra el pla d'execució, que inclou detalls sobre l'ordre de les operacions, els índexs utilitzats, i altres aspectes rellevants.</p>
+<h4>Exemple:</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RVhQTEFJTiBTRUxFQ1QgKiBGUk9NIGNsaWVudHMgV0hFUkUgY2l0eSA9ICdCYXJjZWxvbmEnOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>EXPLAIN SELECT * FROM clients WHERE city = 'Barcelona';</pre></div><div class='content'><h4>Explicació:</h4>
+<ul>
+<li><strong>SELECT</strong>: L'operació que s'executarà.</li>
+<li><strong>FROM clients</strong>: La taula de la qual es recuperaran les dades.</li>
+<li><strong>WHERE city = 'Barcelona'</strong>: El filtre aplicat a la consulta.</li>
+</ul>
+</div><h2>2.2. EXPLAIN ANALYZE</h2>
+<div class='content'><p><code>EXPLAIN ANALYZE</code> executa la consulta i proporciona informació detallada sobre el temps d'execució de cada pas del pla d'execució.</p>
+<h4>Exemple:</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RVhQTEFJTiBBTkFMWVpFIFNFTEVDVCAqIEZST00gY2xpZW50cyBXSEVSRSBjaXR5ID0gJ0JhcmNlbG9uYSc7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>EXPLAIN ANALYZE SELECT * FROM clients WHERE city = 'Barcelona';</pre></div><div class='content'><h4>Explicació:</h4>
+<ul>
+<li>Proporciona el mateix pla d'execució que <code>EXPLAIN</code>, però amb temps d'execució reals.</li>
+</ul>
+</div><h2>2.3. Indexes</h2>
+<div class='content'><p>Els índexs són estructures de dades que milloren la velocitat de recuperació de dades en una taula. Crear i utilitzar índexs adequats pot millorar significativament el rendiment de les consultes.</p>
+<h4>Exemple:</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIElOREVYIGlkeF9jaXR5IE9OIGNsaWVudHMoY2l0eSk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE INDEX idx_city ON clients(city);</pre></div><div class='content'><h4>Explicació:</h4>
+<ul>
+<li><strong>CREATE INDEX</strong>: Crea un índex.</li>
+<li><strong>idx_city</strong>: Nom de l'índex.</li>
+<li><strong>ON clients(city)</strong>: Taula i columna sobre la qual es crea l'índex.</li>
+</ul>
+</div><h1><ol start="3">
+<li>Identificar colls d'ampolla</li>
+</ol></h1>
+<div class='content'></div><h2>3.1. Consultes lentes</h2>
+<div class='content'><p>Les consultes lentes poden ser causades per:</p>
+<ul>
+<li><strong>Escaneig complet de taules</strong>: Quan no hi ha índexs adequats.</li>
+<li><strong>Joins ineficients</strong>: Quan es combinen grans taules sense índexs.</li>
+<li><strong>Subconsultes no optimitzades</strong>: Subconsultes que es poden reescriure per ser més eficients.</li>
+</ul>
+</div><h2>3.2. Anàlisi de plans d'execució</h2>
+<div class='content'><p>Revisar els plans d'execució amb <code>EXPLAIN</code> i <code>EXPLAIN ANALYZE</code> per identificar operacions costoses.</p>
+<h4>Exemple:</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("RVhQTEFJTiBBTkFMWVpFIFNFTEVDVCAqIEZST00gb3JkZXJzIG8gSk9JTiBjbGllbnRzIGMgT04gby5jbGllbnRfaWQgPSBjLmlkIFdIRVJFIGMuY2l0eSA9ICdCYXJjZWxvbmEnOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>EXPLAIN ANALYZE SELECT * FROM orders o JOIN clients c ON o.client_id = c.id WHERE c.city = 'Barcelona';</pre></div><div class='content'><h4>Explicació:</h4>
+<ul>
+<li><strong>JOIN</strong>: Combinació de taules.</li>
+<li><strong>ON o.client_id = c.id</strong>: Condició de combinació.</li>
+<li><strong>WHERE c.city = 'Barcelona'</strong>: Filtre aplicat després de la combinació.</li>
+</ul>
+</div><h1><ol start="4">
+<li>Optimització de consultes</li>
+</ol></h1>
+<div class='content'></div><h2>4.1. Utilitzar índexs</h2>
+<div class='content'><p>Crear índexs en les columnes utilitzades en les condicions <code>WHERE</code>, <code>JOIN</code> i <code>ORDER BY</code>.</p>
+<h4>Exemple:</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIElOREVYIGlkeF9jbGllbnRfaWQgT04gb3JkZXJzKGNsaWVudF9pZCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE INDEX idx_client_id ON orders(client_id);</pre></div><div class='content'></div><h2>4.2. Reescriure consultes</h2>
+<div class='content'><p>Reescriure consultes per utilitzar subconsultes o unions més eficients.</p>
+<h4>Exemple:</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gQ29uc3VsdGEgb3JpZ2luYWwKU0VMRUNUICogRlJPTSBvcmRlcnMgV0hFUkUgY2xpZW50X2lkIElOIChTRUxFQ1QgaWQgRlJPTSBjbGllbnRzIFdIRVJFIGNpdHkgPSAnQmFyY2Vsb25hJyk7CgotLSBDb25zdWx0YSByZWVzY3JpdGEKU0VMRUNUIG8uKiBGUk9NIG9yZGVycyBvIEpPSU4gY2xpZW50cyBjIE9OIG8uY2xpZW50X2lkID0gYy5pZCBXSEVSRSBjLmNpdHkgPSAnQmFyY2Vsb25hJzs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Consulta original
+SELECT * FROM orders WHERE client_id IN (SELECT id FROM clients WHERE city = 'Barcelona');
+
+-- Consulta reescrita
+SELECT o.* FROM orders o JOIN clients c ON o.client_id = c.id WHERE c.city = 'Barcelona';</pre></div><div class='content'></div><h2>4.3. Evitar subconsultes innecessàries</h2>
+<div class='content'><p>Utilitzar unions en lloc de subconsultes quan sigui possible.</p>
+<h4>Exemple:</h4>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("LS0gU3ViY29uc3VsdGEgaW5lZmljaWVudApTRUxFQ1QgKiBGUk9NIG9yZGVycyBXSEVSRSBjbGllbnRfaWQgPSAoU0VMRUNUIGlkIEZST00gY2xpZW50cyBXSEVSRSBjaXR5ID0gJ0JhcmNlbG9uYScgTElNSVQgMSk7CgotLSBVbmnDsyBtw6lzIGVmaWNpZW50ClNFTEVDVCBvLiogRlJPTSBvcmRlcnMgbyBKT0lOIGNsaWVudHMgYyBPTiBvLmNsaWVudF9pZCA9IGMuaWQgV0hFUkUgYy5jaXR5ID0gJ0JhcmNlbG9uYSc7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>-- Subconsulta ineficient
+SELECT * FROM orders WHERE client_id = (SELECT id FROM clients WHERE city = 'Barcelona' LIMIT 1);
+
+-- Uni&oacute; m&eacute;s eficient
+SELECT o.* FROM orders o JOIN clients c ON o.client_id = c.id WHERE c.city = 'Barcelona';</pre></div><div class='content'></div><h1>Exercicis pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Analitzar una consulta amb EXPLAIN</h2>
+<div class='content'><ol>
+<li>Executa la següent consulta amb <code>EXPLAIN</code>:
+<pre><code class="language-sql">EXPLAIN SELECT * FROM products WHERE price &gt; 100;
+</code></pre>
+</li>
+<li>Interpreta el pla d'execució.</li>
+</ol>
+</div><h2>Exercici 2: Crear un índex per millorar el rendiment</h2>
+<div class='content'><ol>
+<li>Crea un índex en la columna <code>price</code> de la taula <code>products</code>:
+<pre><code class="language-sql">CREATE INDEX idx_price ON products(price);
+</code></pre>
+</li>
+<li>Executa de nou la consulta anterior amb <code>EXPLAIN</code> i compara els resultats.</li>
+</ol>
+</div><h2>Exercici 3: Reescriure una consulta per millorar el rendiment</h2>
+<div class='content'><ol>
+<li>Reescriu la següent consulta per utilitzar una unió en lloc d'una subconsulta:
+<pre><code class="language-sql">SELECT * FROM orders WHERE client_id IN (SELECT id FROM clients WHERE city = 'Barcelona');
+</code></pre>
+</li>
+</ol>
+</div><h1>Solucions</h1>
+<div class='content'></div><h2>Solució a l'Exercici 1</h2>
+<div class='content'><ol>
+<li>Executa la consulta:
+<pre><code class="language-sql">EXPLAIN SELECT * FROM products WHERE price &gt; 100;
+</code></pre>
+</li>
+<li>Interpreta el pla d'execució:
+<ul>
+<li>Si no hi ha índex en la columna <code>price</code>, el pla mostrarà un escaneig complet de la taula.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Solució a l'Exercici 2</h2>
+<div class='content'><ol>
+<li>Crea l'índex:
+<pre><code class="language-sql">CREATE INDEX idx_price ON products(price);
+</code></pre>
+</li>
+<li>Executa de nou la consulta amb <code>EXPLAIN</code>:
+<pre><code class="language-sql">EXPLAIN SELECT * FROM products WHERE price &gt; 100;
+</code></pre>
+</li>
+<li>Compara els resultats:
+<ul>
+<li>El nou pla d'execució hauria de mostrar l'ús de l'índex <code>idx_price</code>.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Solució a l'Exercici 3</h2>
+<div class='content'><ol>
+<li>Reescriu la consulta:
+<pre><code class="language-sql">SELECT o.* FROM orders o JOIN clients c ON o.client_id = c.id WHERE c.city = 'Barcelona';
+</code></pre>
+</li>
+</ol>
+</div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem après la importància de l'anàlisi del rendiment de les consultes SQL i com utilitzar eines com <code>EXPLAIN</code> i <code>EXPLAIN ANALYZE</code> per identificar colls d'ampolla. També hem explorat tècniques per optimitzar les consultes, com la creació d'índexs i la reescriptura de consultes. Amb aquestes habilitats, estem millor preparats per assegurar que les nostres aplicacions siguin eficients i escalables.</p>
+</div><div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='08-03-query-optimization-techniques' title="Tècniques d'optimització de consultes" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='08-03-query-optimization-techniques' title="Tècniques d'optimització de consultes" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='09-01-introduction-transactions' title="Introducció a les transaccions" class="py-2 px-3 btn btn-primary"
+				data-read-mod="sql" data-read-unit="8-4">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='09-01-introduction-transactions' title="Introducció a les transaccions" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="sql" data-read-unit="8-4">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+						
+	<div class="container mt-2 d-none d-md-block index">
+		<h1>Curs de SQL</h1>
+<h2>Mòdul 1: Introducció a SQL</h2>
+<ul>
+<li><a href="01-01-what-is-sql">Què és SQL?</a></li>
+<li><a href="01-02-setting-up-environment">Configurar el teu entorn SQL</a></li>
+<li><a href="01-03-basic-sql-syntax">Sintaxi bàsica de SQL</a></li>
+<li><a href="01-04-understanding-databases-tables">Comprendre bases de dades i taules</a></li>
+</ul>
+<h2>Mòdul 2: Consultes bàsiques de SQL</h2>
+<ul>
+<li><a href="02-01-select-statement">Instrucció SELECT</a></li>
+<li><a href="02-02-filtering-data-where">Filtrar dades amb WHERE</a></li>
+<li><a href="02-03-sorting-data-order-by">Ordenar dades amb ORDER BY</a></li>
+<li><a href="02-04-limiting-results-limit">Limitar resultats amb LIMIT</a></li>
+</ul>
+<h2>Mòdul 3: Treballar amb múltiples taules</h2>
+<ul>
+<li><a href="03-01-join-operations">Operacions JOIN</a></li>
+<li><a href="03-02-inner-join">INNER JOIN</a></li>
+<li><a href="03-03-left-join">LEFT JOIN</a></li>
+<li><a href="03-04-right-join">RIGHT JOIN</a></li>
+<li><a href="03-05-full-outer-join">FULL OUTER JOIN</a></li>
+</ul>
+<h2>Mòdul 4: Filtratge avançat de dades</h2>
+<ul>
+<li><a href="04-01-using-like-pattern-matching">Utilitzar LIKE per a coincidències de patrons</a></li>
+<li><a href="04-02-in-between-operators">Operadors IN i BETWEEN</a></li>
+<li><a href="04-03-null-values-is-null">Valors NULL i IS NULL</a></li>
+<li><a href="04-04-aggregating-data-group-by">Agrupar dades amb GROUP BY</a></li>
+<li><a href="04-05-having-clause">Clàusula HAVING</a></li>
+</ul>
+<h2>Mòdul 5: Manipulació de dades</h2>
+<ul>
+<li><a href="05-01-insert-statement">Instrucció INSERT</a></li>
+<li><a href="05-02-update-statement">Instrucció UPDATE</a></li>
+<li><a href="05-03-delete-statement">Instrucció DELETE</a></li>
+<li><a href="05-04-upsert-merge-statement">Instrucció UPSERT (MERGE)</a></li>
+</ul>
+<h2>Mòdul 6: Funcions avançades de SQL</h2>
+<ul>
+<li><a href="06-01-string-functions">Funcions de cadena</a></li>
+<li><a href="06-02-numeric-functions">Funcions numèriques</a></li>
+<li><a href="06-03-date-time-functions">Funcions de data i hora</a></li>
+<li><a href="06-04-conditional-expressions">Expressions condicionals</a></li>
+</ul>
+<h2>Mòdul 7: Subconsultes i consultes niades</h2>
+<ul>
+<li><a href="07-01-introduction-subqueries">Introducció a les subconsultes</a></li>
+<li><a href="07-02-correlated-subqueries">Subconsultes correlacionades</a></li>
+<li><a href="07-03-exists-not-exists">EXISTS i NOT EXISTS</a></li>
+<li><a href="07-04-using-subqueries-select-from-where">Utilitzar subconsultes en les clàusules SELECT, FROM i WHERE</a></li>
+</ul>
+<h2>Mòdul 8: Índexs i optimització del rendiment</h2>
+<ul>
+<li><a href="08-01-understanding-indexes">Comprendre els índexs</a></li>
+<li><a href="08-02-creating-managing-indexes">Crear i gestionar índexs</a></li>
+<li><a href="08-03-query-optimization-techniques">Tècniques d'optimització de consultes</a></li>
+<li><a href="08-04-analyzing-query-performance">Analitzar el rendiment de les consultes</a></li>
+</ul>
+<h2>Mòdul 9: Transaccions i concurrència</h2>
+<ul>
+<li><a href="09-01-introduction-transactions">Introducció a les transaccions</a></li>
+<li><a href="09-02-acid-properties">Propietats ACID</a></li>
+<li><a href="09-03-transaction-control-statements">Instruccions de control de transaccions</a></li>
+<li><a href="09-04-handling-concurrency">Gestionar la concurrència</a></li>
+</ul>
+<h2>Mòdul 10: Temes avançats</h2>
+<ul>
+<li><a href="10-01-stored-procedures">Procediments emmagatzemats</a></li>
+<li><a href="10-02-triggers">Triggers</a></li>
+<li><a href="10-03-views">Vistes</a></li>
+<li><a href="10-04-common-table-expressions">Expressions de taula comunes (CTEs)</a></li>
+<li><a href="10-05-window-functions">Funcions de finestra</a></li>
+</ul>
+<h2>Mòdul 11: SQL en la pràctica</h2>
+<ul>
+<li><a href="11-01-real-world-use-cases">Casos d'ús del món real</a></li>
+<li><a href="11-02-best-practices">Millors pràctiques</a></li>
+<li><a href="11-03-sql-data-analysis">SQL per a l'anàlisi de dades</a></li>
+<li><a href="11-04-sql-web-development">SQL en el desenvolupament web</a></li>
+</ul>
+<h2>Mòdul 12: Projecte final</h2>
+<ul>
+<li><a href="12-01-project-overview">Visió general del projecte</a></li>
+<li><a href="12-02-project-requirements">Requisits del projecte</a></li>
+<li><a href="12-03-project-implementation">Implementació del projecte</a></li>
+<li><a href="12-04-project-presentation">Presentació del projecte</a></li>
+</ul>
+
+	</div>
+
+
+
+
+
+
+
+
+
+
+		</div>
+	</div>
+</div>		
+<div class="container-xxl d-block d-md-none">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+
+<div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir cookies per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+		<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Usuari no autentificat</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            	<div id="modal-body-main"></div>
+            </div>
+        </div>
+    </div>
+</div>	</div>    
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

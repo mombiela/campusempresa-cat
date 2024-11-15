@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <title> StatefulSets </title>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, nofollow, noarchive">
+    
+    <link rel="alternate" href="https://campusempresa.com/mod/kubernetes/06-01-statefulsets" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/kubernetes/06-01-statefulsets" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/kubernetes/06-01-statefulsets" hreflang="en" />
+    
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.ea63f62b9e.css" rel="stylesheet">
+	 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="/js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script>
+  		var LANG = "ca";
+  		var CATEGORY = "frameworks";
+  		var MOD_NAME = "kubernetes";
+  		var TEMA_NAME = "6-1";
+  		var TYPE = "mod";
+  		var PATH = "mod/kubernetes/06-01-statefulsets";
+  		var IS_INDEX = false;
+  	</script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="module" src="/js/app.902a5a267d.js"></script>
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0611338592562725" crossorigin="anonymous"></script>
+	  	
+</head>
+
+<body class="d-none">
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-12 col-md-6 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-12 col-md-6 p-0 text-end">
+			<p class="mb-0 p-0">	<a href="https://enterprisecampus.net/mod/kubernetes/06-01-statefulsets" class="px-2">EN</a></b>
+	|
+	<a href="https://campusempresa.com/mod/kubernetes/06-01-statefulsets" class="px-2">ES</a></b>
+	|
+	<b class="px-2">CA</b>
+</p>
+			<p class="mb-4 mt-0 mx-2  d-none d-md-block"><cite>Tot el coneixement al teu abast</cite></p>
+		</div>
+	</div>
+</div>
+<div class="subheader container-xxl d-none d-md-block">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+		<div class="top-bar container-fluid p-0">
+	<div class="container-xxl p-0">
+		<div class="row">
+			<div class="col">
+				<div class="d-flex justify-content-between">
+					<div class="left">
+						<a href="/" class="nav-link px-3" id="btnHome">
+	<i class="bi bi-house-fill"></i>
+	HOME
+</a>
+
+<a href="/els-meus-cursos" class="nav-link px-3 d-none" id="btnMyCourses">
+	<i class="bi bi-rocket-takeoff-fill"></i>
+	<i><b>Els meus cursos</b></i>
+</a>
+<a href="/cursos-finalitzats" class="nav-link px-3 d-none" id="trophy_button">
+	<i class="bi bi-trophy-fill"></i>
+	Finalitzats             
+</a>
+
+					</div>
+                    <div class="ms-auto right">
+                        <a id="user_button" href="#" class="nav-link px-3" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i id="user_icon" class="bi"></i>                            
+                        </a>
+                    </div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+		<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+										<div class="row py-1 m-0" id="buttonsModSection">
+	<div class="col-6 p-0" data-mod="kubernetes">
+		<a  href="#" class="text-secondary d-none" data-read-mod="kubernetes" data-read-unit="6-1" style="text-decoration:none;">
+			<i class="bi bi-check-circle-fill"></i> 
+			Marcar com a llegit
+		</a>
+		<a href="#" class="text-secondary d-none" data-unread-mod="kubernetes" data-unread-unit="6-1" style="text-decoration:none;">
+			<i class="bi bi-x-circle-fill"></i>
+			Marcar com a no llegit
+		</a>
+	</div>
+	<div class="col-6 text-end p-0">
+					<a href="./"  class="nav-link">
+				<i class="bi bi-journal-text"></i>
+				Contingut del curs
+			</a>
+			</div>
+</div>						<div id="inner_content">
+				<div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='05-04-storage-classes' title="Classes d'Emmagatzematge" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='05-04-storage-classes' title="Classes d'Emmagatzematge" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+					<h2 style="text-decoration:underline">StatefulSets</h2>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='06-02-daemonsets' title="DaemonSets" class="py-2 px-3 btn btn-primary"
+				data-read-mod="kubernetes" data-read-unit="6-1">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='06-02-daemonsets' title="DaemonSets" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="kubernetes" data-read-unit="6-1">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, explorarem els StatefulSets, un component avançat de Kubernetes que s'utilitza per gestionar aplicacions amb estat. A diferència dels Deployments, que són ideals per a aplicacions sense estat, els StatefulSets proporcionen garanties i funcionalitats addicionals necessàries per a aplicacions que requereixen un estat persistent i una identitat estable.</p>
+</div><h1>Objectius d'Aprenentatge</h1>
+<div class='content'><p>Al final d'aquest tema, hauràs après:</p>
+<ul>
+<li>Què és un StatefulSet i quan utilitzar-lo.</li>
+<li>Com crear i gestionar StatefulSets.</li>
+<li>Les diferències clau entre StatefulSets i Deployments.</li>
+<li>Com utilitzar PersistentVolumeClaims (PVCs) amb StatefulSets.</li>
+</ul>
+</div><h1>Què és un StatefulSet?</h1>
+<div class='content'><p>Un StatefulSet és un objecte de Kubernetes que s'utilitza per gestionar aplicacions amb estat. Proporciona garanties sobre l'ordre i la identitat dels Pods, cosa que és crucial per a aplicacions com bases de dades, sistemes de fitxers distribuïts i altres serveis que requereixen un estat persistent.</p>
+</div><h2>Característiques Clau dels StatefulSets</h2>
+<div class='content'><ul>
+<li><strong>Identitat Estable</strong>: Cada Pod en un StatefulSet té una identitat única i estable que es manté al llarg del temps.</li>
+<li><strong>Ordre de Creació i Eliminació</strong>: Els Pods es creen i s'eliminen en un ordre específic.</li>
+<li><strong>Emmagatzematge Persistent</strong>: Els StatefulSets treballen amb PersistentVolumeClaims (PVCs) per assegurar que cada Pod tingui el seu propi emmagatzematge persistent.</li>
+</ul>
+</div><h1>Creació d'un StatefulSet</h1>
+<div class='content'><p>A continuació, veurem un exemple pràctic de com crear un StatefulSet. Suposem que volem desplegar una base de dades MySQL amb un StatefulSet.</p>
+</div><h2>Exemple de YAML per a un StatefulSet</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("YXBpVmVyc2lvbjogYXBwcy92MQpraW5kOiBTdGF0ZWZ1bFNldAptZXRhZGF0YToKICBuYW1lOiBteXNxbApzcGVjOgogIHNlcnZpY2VOYW1lOiAibXlzcWwiCiAgcmVwbGljYXM6IDMKICBzZWxlY3RvcjoKICAgIG1hdGNoTGFiZWxzOgogICAgICBhcHA6IG15c3FsCiAgdGVtcGxhdGU6CiAgICBtZXRhZGF0YToKICAgICAgbGFiZWxzOgogICAgICAgIGFwcDogbXlzcWwKICAgIHNwZWM6CiAgICAgIGNvbnRhaW5lcnM6CiAgICAgIC0gbmFtZTogbXlzcWwKICAgICAgICBpbWFnZTogbXlzcWw6NS43CiAgICAgICAgcG9ydHM6CiAgICAgICAgLSBjb250YWluZXJQb3J0OiAzMzA2CiAgICAgICAgICBuYW1lOiBteXNxbAogICAgICAgIHZvbHVtZU1vdW50czoKICAgICAgICAtIG5hbWU6IG15c3FsLXBlcnNpc3RlbnQtc3RvcmFnZQogICAgICAgICAgbW91bnRQYXRoOiAvdmFyL2xpYi9teXNxbAogIHZvbHVtZUNsYWltVGVtcGxhdGVzOgogIC0gbWV0YWRhdGE6CiAgICAgIG5hbWU6IG15c3FsLXBlcnNpc3RlbnQtc3RvcmFnZQogICAgc3BlYzoKICAgICAgYWNjZXNzTW9kZXM6IFsgIlJlYWRXcml0ZU9uY2UiIF0KICAgICAgcmVzb3VyY2VzOgogICAgICAgIHJlcXVlc3RzOgogICAgICAgICAgc3RvcmFnZTogMUdp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  serviceName: &quot;mysql&quot;
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:5.7
+        ports:
+        - containerPort: 3306
+          name: mysql
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-persistent-storage
+    spec:
+      accessModes: [ &quot;ReadWriteOnce&quot; ]
+      resources:
+        requests:
+          storage: 1Gi</pre></div><div class='content'></div><h2>Explicació del YAML</h2>
+<div class='content'><ul>
+<li><strong>apiVersion</strong>: La versió de l'API que estem utilitzant.</li>
+<li><strong>kind</strong>: El tipus de recurs, en aquest cas, StatefulSet.</li>
+<li><strong>metadata</strong>: Informació sobre el StatefulSet, com el nom.</li>
+<li><strong>spec</strong>: La especificació del StatefulSet.
+<ul>
+<li><strong>serviceName</strong>: El nom del servei associat amb aquest StatefulSet.</li>
+<li><strong>replicas</strong>: El nombre de rèpliques (Pods) que volem.</li>
+<li><strong>selector</strong>: Els selectors d'etiquetes per identificar els Pods gestionats per aquest StatefulSet.</li>
+<li><strong>template</strong>: El template per als Pods.
+<ul>
+<li><strong>metadata</strong>: Les etiquetes per als Pods.</li>
+<li><strong>spec</strong>: La especificació dels contenidors dins dels Pods.
+<ul>
+<li><strong>containers</strong>: La llista de contenidors.
+<ul>
+<li><strong>name</strong>: El nom del contenidor.</li>
+<li><strong>image</strong>: La imatge del contenidor.</li>
+<li><strong>ports</strong>: Els ports exposats pel contenidor.</li>
+<li><strong>volumeMounts</strong>: Els volums muntats dins del contenidor.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>volumeClaimTemplates</strong>: Els templates per als PersistentVolumeClaims.</li>
+</ul>
+</li>
+</ul>
+</div><h1>Diferències Clau entre StatefulSets i Deployments</h1>
+<div class='content'><table>
+<thead>
+<tr>
+<th>Característica</th>
+<th>StatefulSet</th>
+<th>Deployment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Identitat dels Pods</strong></td>
+<td>Estable i única</td>
+<td>No garantida</td>
+</tr>
+<tr>
+<td><strong>Ordre de Creació</strong></td>
+<td>Seqüencial</td>
+<td>Paral·lel</td>
+</tr>
+<tr>
+<td><strong>Emmagatzematge</strong></td>
+<td>PersistentVolumeClaims per Pod</td>
+<td>Compartit o no persistent</td>
+</tr>
+<tr>
+<td><strong>Ús Comú</strong></td>
+<td>Bases de dades, sistemes distribuïts</td>
+<td>Aplicacions sense estat</td>
+</tr>
+</tbody>
+</table>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici 1: Crear un StatefulSet</h2>
+<div class='content'><ol>
+<li>Crea un fitxer YAML anomenat <code>statefulset-mysql.yaml</code> amb el contingut proporcionat a l'exemple anterior.</li>
+<li>Aplica el fitxer al teu clúster de Kubernetes utilitzant el següent comandament:
+<pre><code class="language-sh">kubectl apply -f statefulset-mysql.yaml
+</code></pre>
+</li>
+<li>Verifica que els Pods s'han creat en l'ordre correcte i tenen identitats estables:
+<pre><code class="language-sh">kubectl get pods -l app=mysql
+</code></pre>
+</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><p>Després d'aplicar el fitxer YAML, hauries de veure tres Pods amb noms com <code>mysql-0</code>, <code>mysql-1</code>, i <code>mysql-2</code>. Aquests noms es mantindran estables fins i tot si els Pods es reinicien.</p>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après què són els StatefulSets i com s'utilitzen per gestionar aplicacions amb estat en Kubernetes. Hem vist un exemple pràctic de com crear un StatefulSet per a una base de dades MySQL i hem explorat les diferències clau entre StatefulSets i Deployments. Amb aquests coneixements, estàs preparat per gestionar aplicacions amb estat en el teu clúster de Kubernetes.</p>
+</div><div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='05-04-storage-classes' title="Classes d'Emmagatzematge" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='05-04-storage-classes' title="Classes d'Emmagatzematge" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='06-02-daemonsets' title="DaemonSets" class="py-2 px-3 btn btn-primary"
+				data-read-mod="kubernetes" data-read-unit="6-1">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='06-02-daemonsets' title="DaemonSets" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="kubernetes" data-read-unit="6-1">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+						
+	<div class="container mt-2 d-none d-md-block index">
+		<h1>Curs de Kubernetes</h1>
+<h2>Mòdul 1: Introducció a Kubernetes</h2>
+<ul>
+<li><a href="01-01-what-is-kubernetes">Què és Kubernetes?</a></li>
+<li><a href="01-02-kubernetes-architecture">Arquitectura de Kubernetes</a></li>
+<li><a href="01-03-key-concepts-terminology">Conceptes i Terminologia Clau</a></li>
+<li><a href="01-04-setting-up-cluster">Configuració d'un Clúster de Kubernetes</a></li>
+<li><a href="01-05-kubernetes-cli">CLI de Kubernetes (kubectl)</a></li>
+</ul>
+<h2>Mòdul 2: Components Bàsics de Kubernetes</h2>
+<ul>
+<li><a href="02-01-pods">Pods</a></li>
+<li><a href="02-02-replicasets">ReplicaSets</a></li>
+<li><a href="02-03-deployments">Deployments</a></li>
+<li><a href="02-04-services">Serveis</a></li>
+<li><a href="02-05-namespaces">Namespaces</a></li>
+</ul>
+<h2>Mòdul 3: Gestió de Configuració i Secrets</h2>
+<ul>
+<li><a href="03-01-configmaps">ConfigMaps</a></li>
+<li><a href="03-02-secrets">Secrets</a></li>
+<li><a href="03-03-environment-variables">Variables d'Entorn</a></li>
+<li><a href="03-04-resource-quotas-limits">Quotes i Límits de Recursos</a></li>
+</ul>
+<h2>Mòdul 4: Xarxes en Kubernetes</h2>
+<ul>
+<li><a href="04-01-cluster-networking">Xarxes de Clúster</a></li>
+<li><a href="04-02-service-types">Tipus de Serveis</a></li>
+<li><a href="04-03-ingress-controllers">Ingress Controllers</a></li>
+<li><a href="04-04-network-policies">Polítiques de Xarxa</a></li>
+</ul>
+<h2>Mòdul 5: Emmagatzematge en Kubernetes</h2>
+<ul>
+<li><a href="05-01-volumes">Volums</a></li>
+<li><a href="05-02-persistent-volumes">Volums Persistents</a></li>
+<li><a href="05-03-persistent-volume-claims">Reclamacions de Volums Persistents</a></li>
+<li><a href="05-04-storage-classes">Classes d'Emmagatzematge</a></li>
+</ul>
+<h2>Mòdul 6: Conceptes Avançats de Kubernetes</h2>
+<ul>
+<li><a href="06-01-statefulsets">StatefulSets</a></li>
+<li><a href="06-02-daemonsets">DaemonSets</a></li>
+<li><a href="06-03-jobs-cronjobs">Feines i Feines Programades</a></li>
+<li><a href="06-04-crds">Definicions de Recursos Personalitzats (CRDs)</a></li>
+</ul>
+<h2>Mòdul 7: Monitorització i Registre</h2>
+<ul>
+<li><a href="07-01-monitoring-prometheus">Monitorització amb Prometheus</a></li>
+<li><a href="07-02-logging-efk">Registre amb Elasticsearch, Fluentd i Kibana (EFK)</a></li>
+<li><a href="07-03-health-checks-probes">Controls de Salut i Probes</a></li>
+<li><a href="07-04-metrics-server">Servidor de Mètriques</a></li>
+</ul>
+<h2>Mòdul 8: Seguretat en Kubernetes</h2>
+<ul>
+<li><a href="08-01-rbac">Control d'Accés Basat en Rols (RBAC)</a></li>
+<li><a href="08-02-pod-security-policies">Polítiques de Seguretat de Pods</a></li>
+<li><a href="08-03-network-security">Seguretat de Xarxa</a></li>
+<li><a href="08-04-image-security">Seguretat d'Imatges</a></li>
+</ul>
+<h2>Mòdul 9: Escalabilitat i Rendiment</h2>
+<ul>
+<li><a href="09-01-horizontal-pod-autoscaling">Autoscalat Horitzontal de Pods</a></li>
+<li><a href="09-02-vertical-pod-autoscaling">Autoscalat Vertical de Pods</a></li>
+<li><a href="09-03-cluster-autoscaling">Autoscalat de Clúster</a></li>
+<li><a href="09-04-performance-tuning">Optimització del Rendiment</a></li>
+</ul>
+<h2>Mòdul 10: Ecosistema i Eines de Kubernetes</h2>
+<ul>
+<li><a href="10-01-helm">Helm</a></li>
+<li><a href="10-02-kustomize">Kustomize</a></li>
+<li><a href="10-03-kubeadm">Kubeadm</a></li>
+<li><a href="10-04-minikube">Minikube</a></li>
+</ul>
+<h2>Mòdul 11: Estudis de Cas i Aplicacions del Món Real</h2>
+<ul>
+<li><a href="11-01-deploying-web-application">Desplegament d'una Aplicació Web</a></li>
+<li><a href="11-02-cicd-kubernetes">CI/CD amb Kubernetes</a></li>
+<li><a href="11-03-running-stateful-applications">Execució d'Aplicacions Stateful</a></li>
+<li><a href="11-04-multi-cluster-management">Gestió Multi-Clúster</a></li>
+</ul>
+<h2>Mòdul 12: Preparació per a la Certificació de Kubernetes</h2>
+<ul>
+<li><a href="12-01-cka">Administrador Certificat de Kubernetes (CKA)</a></li>
+<li><a href="12-02-ckad">Desenvolupador d'Aplicacions Certificat de Kubernetes (CKAD)</a></li>
+<li><a href="12-03-cks">Especialista en Seguretat Certificat de Kubernetes (CKS)</a></li>
+<li><a href="12-04-exam-preparation-tips">Consells per a la Preparació de l'Examen</a></li>
+</ul>
+
+	</div>
+
+
+
+
+
+
+
+
+
+
+		</div>
+	</div>
+</div>		
+<div class="container-xxl d-block d-md-none">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+
+<div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir cookies per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+		<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Usuari no autentificat</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            	<div id="modal-body-main"></div>
+            </div>
+        </div>
+    </div>
+</div>	</div>    
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

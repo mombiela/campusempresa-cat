@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <title> Migracions de Bases de Dades amb Flask-Migrate </title>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, nofollow, noarchive">
+    
+    <link rel="alternate" href="https://campusempresa.com/mod/flask/04-04-database-migrations" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/flask/04-04-database-migrations" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/flask/04-04-database-migrations" hreflang="en" />
+    
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.ea63f62b9e.css" rel="stylesheet">
+	 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="/js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script>
+  		var LANG = "ca";
+  		var CATEGORY = "frameworks";
+  		var MOD_NAME = "flask";
+  		var TEMA_NAME = "4-4";
+  		var TYPE = "mod";
+  		var PATH = "mod/flask/04-04-database-migrations";
+  		var IS_INDEX = false;
+  	</script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="module" src="/js/app.902a5a267d.js"></script>
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0611338592562725" crossorigin="anonymous"></script>
+	  	
+</head>
+
+<body class="d-none">
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-12 col-md-6 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-12 col-md-6 p-0 text-end">
+			<p class="mb-0 p-0">	<a href="https://enterprisecampus.net/mod/flask/04-04-database-migrations" class="px-2">EN</a></b>
+	|
+	<a href="https://campusempresa.com/mod/flask/04-04-database-migrations" class="px-2">ES</a></b>
+	|
+	<b class="px-2">CA</b>
+</p>
+			<p class="mb-4 mt-0 mx-2  d-none d-md-block"><cite>Tot el coneixement al teu abast</cite></p>
+		</div>
+	</div>
+</div>
+<div class="subheader container-xxl d-none d-md-block">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+		<div class="top-bar container-fluid p-0">
+	<div class="container-xxl p-0">
+		<div class="row">
+			<div class="col">
+				<div class="d-flex justify-content-between">
+					<div class="left">
+						<a href="/" class="nav-link px-3" id="btnHome">
+	<i class="bi bi-house-fill"></i>
+	HOME
+</a>
+
+<a href="/els-meus-cursos" class="nav-link px-3 d-none" id="btnMyCourses">
+	<i class="bi bi-rocket-takeoff-fill"></i>
+	<i><b>Els meus cursos</b></i>
+</a>
+<a href="/cursos-finalitzats" class="nav-link px-3 d-none" id="trophy_button">
+	<i class="bi bi-trophy-fill"></i>
+	Finalitzats             
+</a>
+
+					</div>
+                    <div class="ms-auto right">
+                        <a id="user_button" href="#" class="nav-link px-3" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i id="user_icon" class="bi"></i>                            
+                        </a>
+                    </div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+		<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+										<div class="row py-1 m-0" id="buttonsModSection">
+	<div class="col-6 p-0" data-mod="flask">
+		<a  href="#" class="text-secondary d-none" data-read-mod="flask" data-read-unit="4-4" style="text-decoration:none;">
+			<i class="bi bi-check-circle-fill"></i> 
+			Marcar com a llegit
+		</a>
+		<a href="#" class="text-secondary d-none" data-unread-mod="flask" data-unread-unit="4-4" style="text-decoration:none;">
+			<i class="bi bi-x-circle-fill"></i>
+			Marcar com a no llegit
+		</a>
+	</div>
+	<div class="col-6 text-end p-0">
+					<a href="./"  class="nav-link">
+				<i class="bi bi-journal-text"></i>
+				Contingut del curs
+			</a>
+			</div>
+</div>						<div id="inner_content">
+				<div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='04-03-crud-operations' title="Realització d'Operacions CRUD" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='04-03-crud-operations' title="Realització d'Operacions CRUD" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+					<h2 style="text-decoration:underline">Migracions de Bases de Dades amb Flask-Migrate</h2>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='05-01-user-registration' title="Registre d'Usuaris" class="py-2 px-3 btn btn-primary"
+				data-read-mod="flask" data-read-unit="4-4">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='05-01-user-registration' title="Registre d'Usuaris" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="flask" data-read-unit="4-4">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+<div class='content'><p>En aquest tema, aprendrem com gestionar les migracions de bases de dades en una aplicació Flask utilitzant Flask-Migrate. Les migracions de bases de dades són essencials per mantenir la coherència de l'esquema de la base de dades a mesura que l'aplicació evoluciona.</p>
+</div><h1>Què és Flask-Migrate?</h1>
+<div class='content'><p>Flask-Migrate és una extensió que utilitza Alembic per gestionar les migracions de bases de dades en aplicacions Flask que utilitzen SQLAlchemy. Alembic és una eina de migració de bases de dades per a SQLAlchemy que permet definir i aplicar canvis a l'esquema de la base de dades de manera controlada.</p>
+</div><h1>Instal·lació de Flask-Migrate</h1>
+<div class='content'><p>Per començar, hem d'instal·lar Flask-Migrate. Pots fer-ho utilitzant pip:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("cGlwIGluc3RhbGwgRmxhc2stTWlncmF0ZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>pip install Flask-Migrate</pre></div><div class='content'></div><h1>Configuració de Flask-Migrate</h1>
+<div class='content'><p>Un cop instal·lat, hem de configurar Flask-Migrate a la nostra aplicació Flask. A continuació, es mostra un exemple de com fer-ho:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2sKZnJvbSBmbGFza19zcWxhbGNoZW15IGltcG9ydCBTUUxBbGNoZW15CmZyb20gZmxhc2tfbWlncmF0ZSBpbXBvcnQgTWlncmF0ZQoKYXBwID0gRmxhc2soX19uYW1lX18pCmFwcC5jb25maWdbJ1NRTEFMQ0hFTVlfREFUQUJBU0VfVVJJJ10gPSAnc3FsaXRlOi8vL215ZGF0YWJhc2UuZGInCmRiID0gU1FMQWxjaGVteShhcHApCm1pZ3JhdGUgPSBNaWdyYXRlKGFwcCwgZGIpCgojIERlZmluaWNpw7MgZGUgbW9kZWxzCmNsYXNzIFVzZXIoZGIuTW9kZWwpOgogICAgaWQgPSBkYi5Db2x1bW4oZGIuSW50ZWdlciwgcHJpbWFyeV9rZXk9VHJ1ZSkKICAgIHVzZXJuYW1lID0gZGIuQ29sdW1uKGRiLlN0cmluZyg4MCksIHVuaXF1ZT1UcnVlLCBudWxsYWJsZT1GYWxzZSkKICAgIGVtYWlsID0gZGIuQ29sdW1uKGRiLlN0cmluZygxMjApLCB1bmlxdWU9VHJ1ZSwgbnVsbGFibGU9RmFsc2UpCgppZiBfX25hbWVfXyA9PSAnX19tYWluX18nOgogICAgYXBwLnJ1bihkZWJ1Zz1UcnVlKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+
+# Definici&oacute; de models
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+
+if __name__ == '__main__':
+    app.run(debug=True)</pre></div><div class='content'></div><h1>Creació de Migracions</h1>
+<div class='content'><p>Un cop configurat Flask-Migrate, podem començar a crear migracions. Primer, hem de crear el directori de migracions:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zmxhc2sgZGIgaW5pdA=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>flask db init</pre></div><div class='content'><p>Aquest comandament crearà un directori <code>migrations</code> a la teva aplicació. Després, podem generar una nova migració cada vegada que fem canvis als nostres models:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zmxhc2sgZGIgbWlncmF0ZSAtbSAiRGVzY3JpcGNpw7MgZGUgbGEgbWlncmFjacOzIg=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>flask db migrate -m &quot;Descripci&oacute; de la migraci&oacute;&quot;</pre></div><div class='content'><p>Aquest comandament crearà un nou fitxer de migració al directori <code>migrations/versions</code> amb els canvis detectats als models.</p>
+</div><h1>Aplicació de Migracions</h1>
+<div class='content'><p>Per aplicar les migracions a la base de dades, utilitzem el següent comandament:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zmxhc2sgZGIgdXBncmFkZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>flask db upgrade</pre></div><div class='content'><p>Aquest comandament aplicarà tots els canvis pendents a la base de dades.</p>
+</div><h1>Exemple Pràctic</h1>
+<div class='content'><p>Suposem que volem afegir un nou camp <code>age</code> al model <code>User</code>. Primer, actualitzem el model:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgVXNlcihkYi5Nb2RlbCk6CiAgICBpZCA9IGRiLkNvbHVtbihkYi5JbnRlZ2VyLCBwcmltYXJ5X2tleT1UcnVlKQogICAgdXNlcm5hbWUgPSBkYi5Db2x1bW4oZGIuU3RyaW5nKDgwKSwgdW5pcXVlPVRydWUsIG51bGxhYmxlPUZhbHNlKQogICAgZW1haWwgPSBkYi5Db2x1bW4oZGIuU3RyaW5nKDEyMCksIHVuaXF1ZT1UcnVlLCBudWxsYWJsZT1GYWxzZSkKICAgIGFnZSA9IGRiLkNvbHVtbihkYi5JbnRlZ2VyKSAgIyBOb3UgY2FtcCBhZmVnaXQ="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    age = db.Column(db.Integer)  # Nou camp afegit</pre></div><div class='content'><p>Després, generem una nova migració:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zmxhc2sgZGIgbWlncmF0ZSAtbSAiQWZlZ2lyIGNhbXAgYWdlIGFsIG1vZGVsIFVzZXIi"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>flask db migrate -m &quot;Afegir camp age al model User&quot;</pre></div><div class='content'><p>Finalment, apliquem la migració:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zmxhc2sgZGIgdXBncmFkZQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>flask db upgrade</pre></div><div class='content'></div><h1>Exercicis Pràctics</h1>
+<div class='content'><ol>
+<li>
+<p><strong>Afegir un nou model</strong>: Crea un nou model <code>Post</code> amb els camps <code>id</code>, <code>title</code>, <code>content</code> i <code>user_id</code> (clau forana a <code>User</code>). Genera i aplica la migració corresponent.</p>
+</li>
+<li>
+<p><strong>Modificar un model existent</strong>: Afegeix un camp <code>bio</code> al model <code>User</code> i actualitza la base de dades amb una nova migració.</p>
+</li>
+</ol>
+</div><h2>Solucions</h2>
+<div class='content'><ol>
+<li><strong>Afegir un nou model</strong>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgUG9zdChkYi5Nb2RlbCk6CiAgICBpZCA9IGRiLkNvbHVtbihkYi5JbnRlZ2VyLCBwcmltYXJ5X2tleT1UcnVlKQogICAgdGl0bGUgPSBkYi5Db2x1bW4oZGIuU3RyaW5nKDEyMCksIG51bGxhYmxlPUZhbHNlKQogICAgY29udGVudCA9IGRiLkNvbHVtbihkYi5UZXh0LCBudWxsYWJsZT1GYWxzZSkKICAgIHVzZXJfaWQgPSBkYi5Db2x1bW4oZGIuSW50ZWdlciwgZGIuRm9yZWlnbktleSgndXNlci5pZCcpLCBudWxsYWJsZT1GYWxzZSkKCiMgR2VuZXJhciBpIGFwbGljYXIgbGEgbWlncmFjacOzCmZsYXNrIGRiIG1pZ3JhdGUgLW0gIkFmZWdpciBtb2RlbCBQb3N0IgpmbGFzayBkYiB1cGdyYWRl"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(120), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+# Generar i aplicar la migraci&oacute;
+flask db migrate -m &quot;Afegir model Post&quot;
+flask db upgrade</pre></div><div class='content'><ol start="2">
+<li><strong>Modificar un model existent</strong>:</li>
+</ol>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Y2xhc3MgVXNlcihkYi5Nb2RlbCk6CiAgICBpZCA9IGRiLkNvbHVtbihkYi5JbnRlZ2VyLCBwcmltYXJ5X2tleT1UcnVlKQogICAgdXNlcm5hbWUgPSBkYi5Db2x1bW4oZGIuU3RyaW5nKDgwKSwgdW5pcXVlPVRydWUsIG51bGxhYmxlPUZhbHNlKQogICAgZW1haWwgPSBkYi5Db2x1bW4oZGIuU3RyaW5nKDEyMCksIHVuaXF1ZT1UcnVlLCBudWxsYWJsZT1GYWxzZSkKICAgIGFnZSA9IGRiLkNvbHVtbihkYi5JbnRlZ2VyKQogICAgYmlvID0gZGIuQ29sdW1uKGRiLlRleHQpICAjIE5vdSBjYW1wIGFmZWdpdAoKIyBHZW5lcmFyIGkgYXBsaWNhciBsYSBtaWdyYWNpw7MKZmxhc2sgZGIgbWlncmF0ZSAtbSAiQWZlZ2lyIGNhbXAgYmlvIGFsIG1vZGVsIFVzZXIiCmZsYXNrIGRiIHVwZ3JhZGU="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    age = db.Column(db.Integer)
+    bio = db.Column(db.Text)  # Nou camp afegit
+
+# Generar i aplicar la migraci&oacute;
+flask db migrate -m &quot;Afegir camp bio al model User&quot;
+flask db upgrade</pre></div><div class='content'></div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après com utilitzar Flask-Migrate per gestionar les migracions de bases de dades en una aplicació Flask. Hem vist com instal·lar i configurar Flask-Migrate, com crear i aplicar migracions, i hem practicat amb exemples reals. Les migracions de bases de dades són una eina poderosa per mantenir la coherència de l'esquema de la base de dades a mesura que l'aplicació evoluciona.</p>
+</div><div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='04-03-crud-operations' title="Realització d'Operacions CRUD" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='04-03-crud-operations' title="Realització d'Operacions CRUD" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='05-01-user-registration' title="Registre d'Usuaris" class="py-2 px-3 btn btn-primary"
+				data-read-mod="flask" data-read-unit="4-4">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='05-01-user-registration' title="Registre d'Usuaris" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="flask" data-read-unit="4-4">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+						
+	<div class="container mt-2 d-none d-md-block index">
+		<h1>Curs de Desenvolupament Web amb Flask</h1>
+<h2>Mòdul 1: Introducció a Flask</h2>
+<ul>
+<li><a href="01-01-what-is-flask">Què és Flask?</a></li>
+<li><a href="01-02-setting-up-environment">Configuració del Teu Entorn de Desenvolupament</a></li>
+<li><a href="01-03-first-flask-app">Creant la Teva Primera Aplicació Flask</a></li>
+<li><a href="01-04-flask-app-structure">Entenent l'Estructura d'una Aplicació Flask</a></li>
+</ul>
+<h2>Mòdul 2: Conceptes Bàsics de Flask</h2>
+<ul>
+<li><a href="02-01-routing-url-mapping">Enrutament i Mapeig d'URL</a></li>
+<li><a href="02-02-handling-http-methods">Gestió de Mètodes HTTP</a></li>
+<li><a href="02-03-rendering-templates">Renderització de Plantilles amb Jinja2</a></li>
+<li><a href="02-04-static-files">Treballant amb Fitxers Estàtics</a></li>
+</ul>
+<h2>Mòdul 3: Formularis i Entrada d'Usuari</h2>
+<ul>
+<li><a href="03-01-creating-handling-forms">Creació i Gestió de Formularis</a></li>
+<li><a href="03-02-form-validation-wtforms">Validació de Formularis amb WTForms</a></li>
+<li><a href="03-03-file-uploads">Càrrega de Fitxers</a></li>
+</ul>
+<h2>Mòdul 4: Integració de Bases de Dades</h2>
+<ul>
+<li><a href="04-01-intro-flask-sqlalchemy">Introducció a Flask-SQLAlchemy</a></li>
+<li><a href="04-02-defining-models">Definició de Models</a></li>
+<li><a href="04-03-crud-operations">Realització d'Operacions CRUD</a></li>
+<li><a href="04-04-database-migrations">Migracions de Bases de Dades amb Flask-Migrate</a></li>
+</ul>
+<h2>Mòdul 5: Autenticació d'Usuaris</h2>
+<ul>
+<li><a href="05-01-user-registration">Registre d'Usuaris</a></li>
+<li><a href="05-02-user-login-logout">Inici i Tancament de Sessió d'Usuaris</a></li>
+<li><a href="05-03-password-hashing">Hashing de Contrasenyes</a></li>
+<li><a href="05-04-user-session-management">Gestió de Sessions d'Usuaris</a></li>
+</ul>
+<h2>Mòdul 6: Conceptes Avançats de Flask</h2>
+<ul>
+<li><a href="06-01-blueprints">Blueprints per a Aplicacions Grans</a></li>
+<li><a href="06-02-error-handling">Gestió d'Errors</a></li>
+<li><a href="06-03-custom-error-pages">Pàgines d'Error Personalitzades</a></li>
+<li><a href="06-04-logging-debugging">Registre i Depuració</a></li>
+</ul>
+<h2>Mòdul 7: APIs RESTful amb Flask</h2>
+<ul>
+<li><a href="07-01-intro-restful-apis">Introducció a les APIs RESTful</a></li>
+<li><a href="07-02-creating-restful-endpoints">Creació de Punts Finals RESTful</a></li>
+<li><a href="07-03-handling-json-data">Gestió de Dades JSON</a></li>
+<li><a href="07-04-authentication-apis">Autenticació per a APIs</a></li>
+</ul>
+<h2>Mòdul 8: Desplegament i Producció</h2>
+<ul>
+<li><a href="08-01-configuring-production">Configuració de Flask per a Producció</a></li>
+<li><a href="08-02-deploying-heroku">Desplegament a Heroku</a></li>
+<li><a href="08-03-deploying-aws">Desplegament a AWS</a></li>
+<li><a href="08-04-monitoring-performance">Monitorització i Optimització del Rendiment</a></li>
+</ul>
+<h2>Mòdul 9: Proves i Millors Pràctiques</h2>
+<ul>
+<li><a href="09-01-unit-testing">Proves Unitàries amb Flask</a></li>
+<li><a href="09-02-integration-testing">Proves d'Integració</a></li>
+<li><a href="09-03-test-coverage">Cobertura de Proves</a></li>
+<li><a href="09-04-best-practices">Millors Pràctiques per al Desenvolupament amb Flask</a></li>
+</ul>
+<h2>Mòdul 10: Extensions i Ecosistema de Flask</h2>
+<ul>
+<li><a href="10-01-popular-extensions">Extensions Populars de Flask</a></li>
+<li><a href="10-02-flask-mail">Ús de Flask-Mail per a Correu Electrònic</a></li>
+<li><a href="10-03-flask-admin">Ús de Flask-Admin per a Interfícies d'Administració</a></li>
+<li><a href="10-04-flask-socketio">Ús de Flask-SocketIO per a WebSockets</a></li>
+</ul>
+
+	</div>
+
+
+
+
+
+
+
+
+
+
+		</div>
+	</div>
+</div>		
+<div class="container-xxl d-block d-md-none">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+
+<div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir cookies per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+		<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Usuari no autentificat</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            	<div id="modal-body-main"></div>
+            </div>
+        </div>
+    </div>
+</div>	</div>    
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

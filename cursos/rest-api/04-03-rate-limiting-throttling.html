@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <title> Rate Limiting i Throttling </title>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, nofollow, noarchive">
+    
+    <link rel="alternate" href="https://campusempresa.com/mod/rest_api/04-03-rate-limiting-throttling" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/rest_api/04-03-rate-limiting-throttling" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/rest_api/04-03-rate-limiting-throttling" hreflang="en" />
+    
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.ea63f62b9e.css" rel="stylesheet">
+	 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="/js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script>
+  		var LANG = "ca";
+  		var CATEGORY = "foundations";
+  		var MOD_NAME = "rest_api";
+  		var TEMA_NAME = "4-3";
+  		var TYPE = "mod";
+  		var PATH = "mod/rest_api/04-03-rate-limiting-throttling";
+  		var IS_INDEX = false;
+  	</script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="module" src="/js/app.902a5a267d.js"></script>
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0611338592562725" crossorigin="anonymous"></script>
+	  	
+</head>
+
+<body class="d-none">
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-12 col-md-6 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-12 col-md-6 p-0 text-end">
+			<p class="mb-0 p-0">	<a href="https://enterprisecampus.net/mod/rest_api/04-03-rate-limiting-throttling" class="px-2">EN</a></b>
+	|
+	<a href="https://campusempresa.com/mod/rest_api/04-03-rate-limiting-throttling" class="px-2">ES</a></b>
+	|
+	<b class="px-2">CA</b>
+</p>
+			<p class="mb-4 mt-0 mx-2  d-none d-md-block"><cite>Tot el coneixement al teu abast</cite></p>
+		</div>
+	</div>
+</div>
+<div class="subheader container-xxl d-none d-md-block">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+		<div class="top-bar container-fluid p-0">
+	<div class="container-xxl p-0">
+		<div class="row">
+			<div class="col">
+				<div class="d-flex justify-content-between">
+					<div class="left">
+						<a href="/" class="nav-link px-3" id="btnHome">
+	<i class="bi bi-house-fill"></i>
+	HOME
+</a>
+
+<a href="/els-meus-cursos" class="nav-link px-3 d-none" id="btnMyCourses">
+	<i class="bi bi-rocket-takeoff-fill"></i>
+	<i><b>Els meus cursos</b></i>
+</a>
+<a href="/cursos-finalitzats" class="nav-link px-3 d-none" id="trophy_button">
+	<i class="bi bi-trophy-fill"></i>
+	Finalitzats             
+</a>
+
+					</div>
+                    <div class="ms-auto right">
+                        <a id="user_button" href="#" class="nav-link px-3" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i id="user_icon" class="bi"></i>                            
+                        </a>
+                    </div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+		<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+										<div class="row py-1 m-0" id="buttonsModSection">
+	<div class="col-6 p-0" data-mod="rest_api">
+		<a  href="#" class="text-secondary d-none" data-read-mod="rest_api" data-read-unit="4-3" style="text-decoration:none;">
+			<i class="bi bi-check-circle-fill"></i> 
+			Marcar com a llegit
+		</a>
+		<a href="#" class="text-secondary d-none" data-unread-mod="rest_api" data-unread-unit="4-3" style="text-decoration:none;">
+			<i class="bi bi-x-circle-fill"></i>
+			Marcar com a no llegit
+		</a>
+	</div>
+	<div class="col-6 text-end p-0">
+					<a href="./"  class="nav-link">
+				<i class="bi bi-journal-text"></i>
+				Contingut del curs
+			</a>
+			</div>
+</div>						<div id="inner_content">
+				<div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='04-02-seguridad-apis-restful' title="Seguretat en APIs RESTful" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='04-02-seguridad-apis-restful' title="Seguretat en APIs RESTful" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+					<h2 style="text-decoration:underline">Rate Limiting i Throttling</h2>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='04-04-cors-politicas-seguridad' title="CORS i polítiques de seguretat" class="py-2 px-3 btn btn-primary"
+				data-read-mod="rest_api" data-read-unit="4-3">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='04-04-cors-politicas-seguridad' title="CORS i polítiques de seguretat" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="rest_api" data-read-unit="4-3">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, explorarem dos conceptes crucials per a la gestió de l'ús de les APIs: el rate limiting i el throttling. Aquests mecanismes són essencials per assegurar que les APIs siguin utilitzades de manera justa i eficient, evitant sobrecàrregues i abusos.</p>
+</div><h1>Què és el Rate Limiting?</h1>
+<div class='content'><p>El rate limiting és una tècnica utilitzada per controlar el nombre de sol·licituds que un client pot fer a una API en un període de temps determinat. Això ajuda a prevenir l'ús excessiu i protegeix els recursos del servidor.</p>
+</div><h2>Principis del Rate Limiting</h2>
+<div class='content'><ol>
+<li><strong>Límit de Sol·licituds</strong>: Defineix el nombre màxim de sol·licituds que es permeten en un interval de temps específic (per exemple, 100 sol·licituds per minut).</li>
+<li><strong>Interval de Temps</strong>: El període durant el qual es compten les sol·licituds (per exemple, per minut, per hora).</li>
+<li><strong>Respostes d'Error</strong>: Quan es supera el límit, el servidor respon amb un codi d'estat HTTP 429 (Too Many Requests).</li>
+</ol>
+</div><h2>Exemple de Rate Limiting</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2ssIHJlcXVlc3QsIGpzb25pZnkKZnJvbSB0aW1lIGltcG9ydCB0aW1lCgphcHAgPSBGbGFzayhfX25hbWVfXykKCiMgQ29uZmlndXJhY2nDsyBkZWwgcmF0ZSBsaW1pdGluZwpSQVRFX0xJTUlUID0gMTAwICAjIE5vbWJyZSBtw6B4aW0gZGUgc29swrdsaWNpdHVkcwpUSU1FX1dJTkRPVyA9IDYwICAjIEludGVydmFsIGRlIHRlbXBzIGVuIHNlZ29ucwoKIyBFbW1hZ2F0emVtYXRnZSBkZSBsZXMgc29swrdsaWNpdHVkcyBwZXIgSVAKcmVxdWVzdHNfbG9nID0ge30KCkBhcHAucm91dGUoJy9hcGkvcmVzb3VyY2UnKQpkZWYgcmVzb3VyY2UoKToKICAgIGNsaWVudF9pcCA9IHJlcXVlc3QucmVtb3RlX2FkZHIKICAgIGN1cnJlbnRfdGltZSA9IHRpbWUoKQoKICAgIGlmIGNsaWVudF9pcCBub3QgaW4gcmVxdWVzdHNfbG9nOgogICAgICAgIHJlcXVlc3RzX2xvZ1tjbGllbnRfaXBdID0gW10KCiAgICAjIEZpbHRyYXIgc29swrdsaWNpdHVkcyBhbnRpZ3VlcwogICAgcmVxdWVzdHNfbG9nW2NsaWVudF9pcF0gPSBbdGltZXN0YW1wIGZvciB0aW1lc3RhbXAgaW4gcmVxdWVzdHNfbG9nW2NsaWVudF9pcF0gaWYgY3VycmVudF90aW1lIC0gdGltZXN0YW1wIDwgVElNRV9XSU5ET1ddCgogICAgaWYgbGVuKHJlcXVlc3RzX2xvZ1tjbGllbnRfaXBdKSA+PSBSQVRFX0xJTUlUOgogICAgICAgIHJldHVybiBqc29uaWZ5KHsiZXJyb3IiOiAiUmF0ZSBsaW1pdCBleGNlZWRlZCJ9KSwgNDI5CgogICAgIyBSZWdpc3RyYXIgbGEgbm92YSBzb2zCt2xpY2l0dWQKICAgIHJlcXVlc3RzX2xvZ1tjbGllbnRfaXBdLmFwcGVuZChjdXJyZW50X3RpbWUpCiAgICByZXR1cm4ganNvbmlmeSh7Im1lc3NhZ2UiOiAiUmVxdWVzdCBzdWNjZXNzZnVsIn0pCgppZiBfX25hbWVfXyA9PSAnX19tYWluX18nOgogICAgYXBwLnJ1bigp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask, request, jsonify
+from time import time
+
+app = Flask(__name__)
+
+# Configuraci&oacute; del rate limiting
+RATE_LIMIT = 100  # Nombre m&agrave;xim de sol&middot;licituds
+TIME_WINDOW = 60  # Interval de temps en segons
+
+# Emmagatzematge de les sol&middot;licituds per IP
+requests_log = {}
+
+@app.route('/api/resource')
+def resource():
+    client_ip = request.remote_addr
+    current_time = time()
+
+    if client_ip not in requests_log:
+        requests_log[client_ip] = []
+
+    # Filtrar sol&middot;licituds antigues
+    requests_log[client_ip] = [timestamp for timestamp in requests_log[client_ip] if current_time - timestamp &lt; TIME_WINDOW]
+
+    if len(requests_log[client_ip]) &gt;= RATE_LIMIT:
+        return jsonify({&quot;error&quot;: &quot;Rate limit exceeded&quot;}), 429
+
+    # Registrar la nova sol&middot;licitud
+    requests_log[client_ip].append(current_time)
+    return jsonify({&quot;message&quot;: &quot;Request successful&quot;})
+
+if __name__ == '__main__':
+    app.run()</pre></div><div class='content'></div><h1>Què és el Throttling?</h1>
+<div class='content'><p>El throttling és una tècnica similar al rate limiting, però en lloc de bloquejar completament les sol·licituds addicionals, les retarda o les distribueix en el temps per evitar sobrecàrregues.</p>
+</div><h2>Principis del Throttling</h2>
+<div class='content'><ol>
+<li><strong>Control de Flux</strong>: Redueix la velocitat de processament de les sol·licituds per evitar sobrecàrregues.</li>
+<li><strong>Distribució de Sol·licituds</strong>: Les sol·licituds es distribueixen en el temps per mantenir una càrrega constant i manejable.</li>
+<li><strong>Respostes d'Error</strong>: Pot incloure respostes amb codi d'estat HTTP 503 (Service Unavailable) amb un capçalera Retry-After.</li>
+</ol>
+</div><h2>Exemple de Throttling</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRpbWUKZnJvbSBmbGFzayBpbXBvcnQgRmxhc2ssIHJlcXVlc3QsIGpzb25pZnkKCmFwcCA9IEZsYXNrKF9fbmFtZV9fKQoKIyBDb25maWd1cmFjacOzIGRlbCB0aHJvdHRsaW5nClRIUk9UVExFX0xJTUlUID0gMTAgICMgTm9tYnJlIG3DoHhpbSBkZSBzb2zCt2xpY2l0dWRzIHBlciBzZWdvbgoKIyBFbW1hZ2F0emVtYXRnZSBkZSBsZXMgc29swrdsaWNpdHVkcyBwZXIgSVAKcmVxdWVzdHNfbG9nID0ge30KCkBhcHAucm91dGUoJy9hcGkvcmVzb3VyY2UnKQpkZWYgcmVzb3VyY2UoKToKICAgIGNsaWVudF9pcCA9IHJlcXVlc3QucmVtb3RlX2FkZHIKICAgIGN1cnJlbnRfdGltZSA9IHRpbWUudGltZSgpCgogICAgaWYgY2xpZW50X2lwIG5vdCBpbiByZXF1ZXN0c19sb2c6CiAgICAgICAgcmVxdWVzdHNfbG9nW2NsaWVudF9pcF0gPSBbXQoKICAgICMgRmlsdHJhciBzb2zCt2xpY2l0dWRzIGFudGlndWVzCiAgICByZXF1ZXN0c19sb2dbY2xpZW50X2lwXSA9IFt0aW1lc3RhbXAgZm9yIHRpbWVzdGFtcCBpbiByZXF1ZXN0c19sb2dbY2xpZW50X2lwXSBpZiBjdXJyZW50X3RpbWUgLSB0aW1lc3RhbXAgPCAxXQoKICAgIGlmIGxlbihyZXF1ZXN0c19sb2dbY2xpZW50X2lwXSkgPj0gVEhST1RUTEVfTElNSVQ6CiAgICAgICAgdGltZS5zbGVlcCgxKSAgIyBSZXRhcmRhciBsYSBzb2zCt2xpY2l0dWQKICAgICAgICByZXR1cm4ganNvbmlmeSh7ImVycm9yIjogIlRocm90dGxpbmcgYXBwbGllZCwgcGxlYXNlIHRyeSBhZ2FpbiBsYXRlciJ9KSwgNTAzCgogICAgIyBSZWdpc3RyYXIgbGEgbm92YSBzb2zCt2xpY2l0dWQKICAgIHJlcXVlc3RzX2xvZ1tjbGllbnRfaXBdLmFwcGVuZChjdXJyZW50X3RpbWUpCiAgICByZXR1cm4ganNvbmlmeSh7Im1lc3NhZ2UiOiAiUmVxdWVzdCBzdWNjZXNzZnVsIn0pCgppZiBfX25hbWVfXyA9PSAnX19tYWluX18nOgogICAgYXBwLnJ1bigp"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import time
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+# Configuraci&oacute; del throttling
+THROTTLE_LIMIT = 10  # Nombre m&agrave;xim de sol&middot;licituds per segon
+
+# Emmagatzematge de les sol&middot;licituds per IP
+requests_log = {}
+
+@app.route('/api/resource')
+def resource():
+    client_ip = request.remote_addr
+    current_time = time.time()
+
+    if client_ip not in requests_log:
+        requests_log[client_ip] = []
+
+    # Filtrar sol&middot;licituds antigues
+    requests_log[client_ip] = [timestamp for timestamp in requests_log[client_ip] if current_time - timestamp &lt; 1]
+
+    if len(requests_log[client_ip]) &gt;= THROTTLE_LIMIT:
+        time.sleep(1)  # Retardar la sol&middot;licitud
+        return jsonify({&quot;error&quot;: &quot;Throttling applied, please try again later&quot;}), 503
+
+    # Registrar la nova sol&middot;licitud
+    requests_log[client_ip].append(current_time)
+    return jsonify({&quot;message&quot;: &quot;Request successful&quot;})
+
+if __name__ == '__main__':
+    app.run()</pre></div><div class='content'></div><h1>Comparació entre Rate Limiting i Throttling</h1>
+<div class='content'><table>
+<thead>
+<tr>
+<th>Característica</th>
+<th>Rate Limiting</th>
+<th>Throttling</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Objectiu</td>
+<td>Limitar el nombre de sol·licituds</td>
+<td>Controlar la velocitat de les sol·licituds</td>
+</tr>
+<tr>
+<td>Resposta a l'excés</td>
+<td>Bloqueja sol·licituds addicionals</td>
+<td>Retarda o distribueix sol·licituds</td>
+</tr>
+<tr>
+<td>Codi d'estat HTTP</td>
+<td>429 (Too Many Requests)</td>
+<td>503 (Service Unavailable) amb Retry-After</td>
+</tr>
+<tr>
+<td>Ús típic</td>
+<td>Prevenir abusos i ús excessiu</td>
+<td>Mantenir una càrrega constant i manejable</td>
+</tr>
+</tbody>
+</table>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici</h2>
+<div class='content'><p>Implementa un sistema de rate limiting en una API que permeti un màxim de 50 sol·licituds per minut per usuari. Si un usuari supera aquest límit, la resposta ha de ser un codi d'estat HTTP 429 amb un missatge d'error adequat.</p>
+</div><h2>Solució</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("ZnJvbSBmbGFzayBpbXBvcnQgRmxhc2ssIHJlcXVlc3QsIGpzb25pZnkKZnJvbSB0aW1lIGltcG9ydCB0aW1lCgphcHAgPSBGbGFzayhfX25hbWVfXykKCiMgQ29uZmlndXJhY2nDsyBkZWwgcmF0ZSBsaW1pdGluZwpSQVRFX0xJTUlUID0gNTAgICMgTm9tYnJlIG3DoHhpbSBkZSBzb2zCt2xpY2l0dWRzClRJTUVfV0lORE9XID0gNjAgICMgSW50ZXJ2YWwgZGUgdGVtcHMgZW4gc2Vnb25zCgojIEVtbWFnYXR6ZW1hdGdlIGRlIGxlcyBzb2zCt2xpY2l0dWRzIHBlciBJUApyZXF1ZXN0c19sb2cgPSB7fQoKQGFwcC5yb3V0ZSgnL2FwaS9yZXNvdXJjZScpCmRlZiByZXNvdXJjZSgpOgogICAgY2xpZW50X2lwID0gcmVxdWVzdC5yZW1vdGVfYWRkcgogICAgY3VycmVudF90aW1lID0gdGltZSgpCgogICAgaWYgY2xpZW50X2lwIG5vdCBpbiByZXF1ZXN0c19sb2c6CiAgICAgICAgcmVxdWVzdHNfbG9nW2NsaWVudF9pcF0gPSBbXQoKICAgICMgRmlsdHJhciBzb2zCt2xpY2l0dWRzIGFudGlndWVzCiAgICByZXF1ZXN0c19sb2dbY2xpZW50X2lwXSA9IFt0aW1lc3RhbXAgZm9yIHRpbWVzdGFtcCBpbiByZXF1ZXN0c19sb2dbY2xpZW50X2lwXSBpZiBjdXJyZW50X3RpbWUgLSB0aW1lc3RhbXAgPCBUSU1FX1dJTkRPV10KCiAgICBpZiBsZW4ocmVxdWVzdHNfbG9nW2NsaWVudF9pcF0pID49IFJBVEVfTElNSVQ6CiAgICAgICAgcmV0dXJuIGpzb25pZnkoeyJlcnJvciI6ICJSYXRlIGxpbWl0IGV4Y2VlZGVkIn0pLCA0MjkKCiAgICAjIFJlZ2lzdHJhciBsYSBub3ZhIHNvbMK3bGljaXR1ZAogICAgcmVxdWVzdHNfbG9nW2NsaWVudF9pcF0uYXBwZW5kKGN1cnJlbnRfdGltZSkKICAgIHJldHVybiBqc29uaWZ5KHsibWVzc2FnZSI6ICJSZXF1ZXN0IHN1Y2Nlc3NmdWwifSkKCmlmIF9fbmFtZV9fID09ICdfX21haW5fXyc6CiAgICBhcHAucnVuKCk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>from flask import Flask, request, jsonify
+from time import time
+
+app = Flask(__name__)
+
+# Configuraci&oacute; del rate limiting
+RATE_LIMIT = 50  # Nombre m&agrave;xim de sol&middot;licituds
+TIME_WINDOW = 60  # Interval de temps en segons
+
+# Emmagatzematge de les sol&middot;licituds per IP
+requests_log = {}
+
+@app.route('/api/resource')
+def resource():
+    client_ip = request.remote_addr
+    current_time = time()
+
+    if client_ip not in requests_log:
+        requests_log[client_ip] = []
+
+    # Filtrar sol&middot;licituds antigues
+    requests_log[client_ip] = [timestamp for timestamp in requests_log[client_ip] if current_time - timestamp &lt; TIME_WINDOW]
+
+    if len(requests_log[client_ip]) &gt;= RATE_LIMIT:
+        return jsonify({&quot;error&quot;: &quot;Rate limit exceeded&quot;}), 429
+
+    # Registrar la nova sol&middot;licitud
+    requests_log[client_ip].append(current_time)
+    return jsonify({&quot;message&quot;: &quot;Request successful&quot;})
+
+if __name__ == '__main__':
+    app.run()</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>El rate limiting i el throttling són tècniques essencials per gestionar l'ús de les APIs i assegurar que els recursos del servidor es distribueixin de manera justa i eficient. Implementar aquestes tècniques ajuda a prevenir abusos, mantenir la qualitat del servei i protegir les aplicacions de sobrecàrregues.</p>
+</div><div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='04-02-seguridad-apis-restful' title="Seguretat en APIs RESTful" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='04-02-seguridad-apis-restful' title="Seguretat en APIs RESTful" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='04-04-cors-politicas-seguridad' title="CORS i polítiques de seguretat" class="py-2 px-3 btn btn-primary"
+				data-read-mod="rest_api" data-read-unit="4-3">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='04-04-cors-politicas-seguridad' title="CORS i polítiques de seguretat" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="rest_api" data-read-unit="4-3">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+						
+	<div class="container mt-2 d-none d-md-block index">
+		<h1>Curs de REST API: Principis de Disseny i Desenvolupament d'APIs RESTful</h1>
+<h2>Mòdul 1: Introducció a les APIs RESTful</h2>
+<ul>
+<li><a href="01-01-que-es-una-api">Què és una API?</a></li>
+<li><a href="01-02-historia-evolucion-apis">Història i evolució de les APIs</a></li>
+<li><a href="01-03-principios-basicos-rest">Principis bàsics de REST</a></li>
+<li><a href="01-04-rest-vs-soap">REST vs. SOAP</a></li>
+</ul>
+<h2>Mòdul 2: Disseny d'APIs RESTful</h2>
+<ul>
+<li><a href="02-01-principios-diseno-apis-restful">Principis de disseny d'APIs RESTful</a></li>
+<li><a href="02-02-recursos-uris">Recursos i URIs</a></li>
+<li><a href="02-03-metodos-http">Mètodes HTTP</a></li>
+<li><a href="02-04-codigos-estado-http">Codis d'estat HTTP</a></li>
+<li><a href="02-05-versionado-apis">Versionat d'APIs</a></li>
+<li><a href="02-06-documentacion-apis">Documentació d'APIs</a></li>
+</ul>
+<h2>Mòdul 3: Desenvolupament d'APIs RESTful</h2>
+<ul>
+<li><a href="03-01-configuracion-entorno-desarrollo">Configuració de l'entorn de desenvolupament</a></li>
+<li><a href="03-02-creacion-servidor-basico">Creació d'un servidor bàsic</a></li>
+<li><a href="03-03-manejo-peticiones-respuestas">Gestió de peticions i respostes</a></li>
+<li><a href="03-04-autenticacion-autorizacion">Autenticació i autorització</a></li>
+<li><a href="03-05-manejo-errores">Gestió d'errors</a></li>
+<li><a href="03-06-pruebas-validacion">Proves i validació</a></li>
+</ul>
+<h2>Mòdul 4: Bones Pràctiques i Seguretat</h2>
+<ul>
+<li><a href="04-01-buenas-practicas-diseno-apis">Bones pràctiques en el disseny d'APIs</a></li>
+<li><a href="04-02-seguridad-apis-restful">Seguretat en APIs RESTful</a></li>
+<li><a href="04-03-rate-limiting-throttling">Rate limiting i throttling</a></li>
+<li><a href="04-04-cors-politicas-seguridad">CORS i polítiques de seguretat</a></li>
+</ul>
+<h2>Mòdul 5: Eines i Frameworks</h2>
+<ul>
+<li><a href="05-01-postman-pruebas-apis">Postman per a proves d'APIs</a></li>
+<li><a href="05-02-swagger-documentacion">Swagger per a documentació</a></li>
+<li><a href="05-03-frameworks-populares-apis-restful">Frameworks populars per a APIs RESTful</a></li>
+<li><a href="05-04-integracion-continua-despliegue">Integració contínua i desplegament</a></li>
+</ul>
+<h2>Mòdul 6: Casos d'Estudi i Projectes</h2>
+<ul>
+<li><a href="06-01-caso-estudio-api-tienda-en-linea">Cas d'estudi: API d'una botiga en línia</a></li>
+<li><a href="06-02-caso-estudio-api-red-social">Cas d'estudi: API d'una xarxa social</a></li>
+<li><a href="06-03-proyecto-final-disenar-desarrollar-api-restful">Projecte final: Dissenyar i desenvolupar la teva pròpia API RESTful</a></li>
+</ul>
+
+	</div>
+
+
+
+
+
+
+
+
+
+
+		</div>
+	</div>
+</div>		
+<div class="container-xxl d-block d-md-none">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+
+<div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir cookies per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+		<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Usuari no autentificat</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            	<div id="modal-body-main"></div>
+            </div>
+        </div>
+    </div>
+</div>	</div>    
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

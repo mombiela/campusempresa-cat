@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <title> Programació de consultes amb Cloud Scheduler </title>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, nofollow, noarchive">
+    
+    <link rel="alternate" href="https://campusempresa.com/mod/bigquery/08-04-scheduling-queries" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/bigquery/08-04-scheduling-queries" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/bigquery/08-04-scheduling-queries" hreflang="en" />
+    
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.ea63f62b9e.css" rel="stylesheet">
+	 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="/js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script>
+  		var LANG = "ca";
+  		var CATEGORY = "frameworks";
+  		var MOD_NAME = "bigquery";
+  		var TEMA_NAME = "8-4";
+  		var TYPE = "mod";
+  		var PATH = "mod/bigquery/08-04-scheduling-queries";
+  		var IS_INDEX = false;
+  	</script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="module" src="/js/app.902a5a267d.js"></script>
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0611338592562725" crossorigin="anonymous"></script>
+	  	
+</head>
+
+<body class="d-none">
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-12 col-md-6 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-12 col-md-6 p-0 text-end">
+			<p class="mb-0 p-0">	<a href="https://enterprisecampus.net/mod/bigquery/08-04-scheduling-queries" class="px-2">EN</a></b>
+	|
+	<a href="https://campusempresa.com/mod/bigquery/08-04-scheduling-queries" class="px-2">ES</a></b>
+	|
+	<b class="px-2">CA</b>
+</p>
+			<p class="mb-4 mt-0 mx-2  d-none d-md-block"><cite>Tot el coneixement al teu abast</cite></p>
+		</div>
+	</div>
+</div>
+<div class="subheader container-xxl d-none d-md-block">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+		<div class="top-bar container-fluid p-0">
+	<div class="container-xxl p-0">
+		<div class="row">
+			<div class="col">
+				<div class="d-flex justify-content-between">
+					<div class="left">
+						<a href="/" class="nav-link px-3" id="btnHome">
+	<i class="bi bi-house-fill"></i>
+	HOME
+</a>
+
+<a href="/els-meus-cursos" class="nav-link px-3 d-none" id="btnMyCourses">
+	<i class="bi bi-rocket-takeoff-fill"></i>
+	<i><b>Els meus cursos</b></i>
+</a>
+<a href="/cursos-finalitzats" class="nav-link px-3 d-none" id="trophy_button">
+	<i class="bi bi-trophy-fill"></i>
+	Finalitzats             
+</a>
+
+					</div>
+                    <div class="ms-auto right">
+                        <a id="user_button" href="#" class="nav-link px-3" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i id="user_icon" class="bi"></i>                            
+                        </a>
+                    </div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+		<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+										<div class="row py-1 m-0" id="buttonsModSection">
+	<div class="col-6 p-0" data-mod="bigquery">
+		<a  href="#" class="text-secondary d-none" data-read-mod="bigquery" data-read-unit="8-4" style="text-decoration:none;">
+			<i class="bi bi-check-circle-fill"></i> 
+			Marcar com a llegit
+		</a>
+		<a href="#" class="text-secondary d-none" data-unread-mod="bigquery" data-unread-unit="8-4" style="text-decoration:none;">
+			<i class="bi bi-x-circle-fill"></i>
+			Marcar com a no llegit
+		</a>
+	</div>
+	<div class="col-6 text-end p-0">
+					<a href="./"  class="nav-link">
+				<i class="bi bi-journal-text"></i>
+				Contingut del curs
+			</a>
+			</div>
+</div>						<div id="inner_content">
+				<div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='08-03-automating-workflows' title="Automatització de fluxos de treball amb Cloud Functions" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='08-03-automating-workflows' title="Automatització de fluxos de treball amb Cloud Functions" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+					<h2 style="text-decoration:underline">Programació de consultes amb Cloud Scheduler</h2>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='09-01-introduction-bqml' title="Introducció a BigQuery ML" class="py-2 px-3 btn btn-primary"
+				data-read-mod="bigquery" data-read-unit="8-4">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='09-01-introduction-bqml' title="Introducció a BigQuery ML" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="bigquery" data-read-unit="8-4">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+<div class='content'></div><h1>Introducció</h1>
+<div class='content'><p>En aquest tema, aprendrem com programar consultes a BigQuery utilitzant Cloud Scheduler. Cloud Scheduler és un servei de Google Cloud que permet programar tasques cron, com ara l'execució de consultes SQL a BigQuery, de manera automàtica i recurrent. Això és especialment útil per a tasques com la generació de informes diaris, la neteja de dades o l'actualització de taules.</p>
+</div><h1>Objectius</h1>
+<div class='content'><ul>
+<li>Comprendre què és Cloud Scheduler i com funciona.</li>
+<li>Aprendre a configurar Cloud Scheduler per executar consultes a BigQuery.</li>
+<li>Veure exemples pràctics de programació de consultes.</li>
+<li>Realitzar exercicis pràctics per reforçar els conceptes apresos.</li>
+</ul>
+</div><h1>Què és Cloud Scheduler?</h1>
+<div class='content'><p>Cloud Scheduler és un servei completament gestionat que permet programar tasques cron de manera fiable i escalable. Amb Cloud Scheduler, pots:</p>
+<ul>
+<li>Programar tasques per executar-se en intervals regulars (per exemple, diàriament, setmanalment).</li>
+<li>Executar tasques en moments específics.</li>
+<li>Integrar-se amb altres serveis de Google Cloud, com ara Cloud Functions, App Engine i BigQuery.</li>
+</ul>
+</div><h1>Configuració de Cloud Scheduler per a BigQuery</h1>
+<div class='content'></div><h2>Pas 1: Crear un projecte a Google Cloud</h2>
+<div class='content'><p>Si encara no tens un projecte a Google Cloud, hauràs de crear-ne un. Pots fer-ho des de la consola de Google Cloud.</p>
+</div><h2>Pas 2: Activar les API necessàries</h2>
+<div class='content'><p>Assegura't que les següents API estiguin activades al teu projecte:</p>
+<ul>
+<li>Cloud Scheduler API</li>
+<li>BigQuery API</li>
+</ul>
+</div><h2>Pas 3: Crear una tasca de Cloud Scheduler</h2>
+<div class='content'><ol>
+<li><strong>Accedeix a la consola de Google Cloud</strong> i navega a la secció de Cloud Scheduler.</li>
+<li><strong>Crea una nova tasca</strong> fent clic a &quot;Create job&quot;.</li>
+<li><strong>Configura els detalls de la tasca</strong>:
+<ul>
+<li><strong>Nom de la tasca</strong>: Dona un nom descriptiu a la teva tasca.</li>
+<li><strong>Regió</strong>: Selecciona la regió on vols que s'executi la tasca.</li>
+<li><strong>Freqüència</strong>: Defineix la freqüència amb la qual vols que s'executi la tasca utilitzant la sintaxi cron.</li>
+<li><strong>Targeta</strong>: Selecciona &quot;HTTP&quot; com a tipus de targeta.</li>
+</ul>
+</li>
+</ol>
+</div><h2>Pas 4: Configurar la targeta HTTP</h2>
+<div class='content'><ol>
+<li>
+<p><strong>URL</strong>: Utilitza l'URL de l'API de BigQuery per executar consultes. Per exemple:</p>
+<pre><code>https://bigquery.googleapis.com/bigquery/v2/projects/PROJECT_ID/queries
+</code></pre>
+<p>Substitueix <code>PROJECT_ID</code> pel teu ID de projecte.</p>
+</li>
+<li>
+<p><strong>Mètode</strong>: Selecciona &quot;POST&quot;.</p>
+</li>
+<li>
+<p><strong>Càrrega útil</strong>: Afegeix el cos de la sol·licitud amb la consulta SQL que vols executar. Per exemple:</p>
+<pre><code class="language-json">{
+  &quot;query&quot;: &quot;SELECT * FROM `project.dataset.table` WHERE condition&quot;,
+  &quot;useLegacySql&quot;: false
+}
+</code></pre>
+</li>
+<li>
+<p><strong>Autenticació</strong>: Configura l'autenticació utilitzant un compte de servei amb els permisos necessaris per executar consultes a BigQuery.</p>
+</li>
+</ol>
+</div><h2>Exemple pràctic</h2>
+<div class='content'><p>Suposem que volem programar una consulta que s'executi diàriament a les 2:00 AM per actualitzar una taula amb dades agregades. La consulta SQL és la següent:</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("SU5TRVJUIElOVE8gYHByb2plY3QuZGF0YXNldC5kYWlseV9zdW1tYXJ5YApTRUxFQ1QKICBDVVJSRU5UX0RBVEUoKSBBUyBkYXRlLAogIENPVU5UKCopIEFTIHRvdGFsX3JlY29yZHMKRlJPTQogIGBwcm9qZWN0LmRhdGFzZXQuc291cmNlX3RhYmxlYApXSEVSRQogIERBVEUodGltZXN0YW1wKSA9IENVUlJFTlRfREFURSgpIC0gMTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>INSERT INTO `project.dataset.daily_summary`
+SELECT
+  CURRENT_DATE() AS date,
+  COUNT(*) AS total_records
+FROM
+  `project.dataset.source_table`
+WHERE
+  DATE(timestamp) = CURRENT_DATE() - 1;</pre></div><div class='content'><p>La configuració de la tasca de Cloud Scheduler seria:</p>
+<ul>
+<li><strong>Nom de la tasca</strong>: <code>daily-summary-update</code></li>
+<li><strong>Regió</strong>: <code>us-central1</code></li>
+<li><strong>Freqüència</strong>: <code>0 2 * * *</code> (a les 2:00 AM cada dia)</li>
+<li><strong>URL</strong>: <code>https://bigquery.googleapis.com/bigquery/v2/projects/PROJECT_ID/queries</code></li>
+<li><strong>Mètode</strong>: <code>POST</code></li>
+<li><strong>Càrrega útil</strong>:
+<pre><code class="language-json">{
+  &quot;query&quot;: &quot;INSERT INTO `project.dataset.daily_summary` SELECT CURRENT_DATE() AS date, COUNT(*) AS total_records FROM `project.dataset.source_table` WHERE DATE(timestamp) = CURRENT_DATE() - 1;&quot;,
+  &quot;useLegacySql&quot;: false
+}
+</code></pre>
+</li>
+</ul>
+</div><h1>Exercici pràctic</h1>
+<div class='content'></div><h2>Exercici 1: Programar una consulta de neteja de dades</h2>
+<div class='content'><ol>
+<li><strong>Descripció</strong>: Programa una consulta que s'executi setmanalment per eliminar registres antics d'una taula.</li>
+<li><strong>Consulta SQL</strong>:
+<pre><code class="language-sql">DELETE FROM `project.dataset.table`
+WHERE timestamp &lt; TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY);
+</code></pre>
+</li>
+<li><strong>Freqüència</strong>: Setmanalment, cada diumenge a les 3:00 AM (<code>0 3 * * 0</code>).</li>
+</ol>
+</div><h2>Solució</h2>
+<div class='content'><ol>
+<li><strong>Nom de la tasca</strong>: <code>weekly-cleanup</code></li>
+<li><strong>Regió</strong>: <code>us-central1</code></li>
+<li><strong>Freqüència</strong>: <code>0 3 * * 0</code></li>
+<li><strong>URL</strong>: <code>https://bigquery.googleapis.com/bigquery/v2/projects/PROJECT_ID/queries</code></li>
+<li><strong>Mètode</strong>: <code>POST</code></li>
+<li><strong>Càrrega útil</strong>:
+<pre><code class="language-json">{
+  &quot;query&quot;: &quot;DELETE FROM `project.dataset.table` WHERE timestamp &lt; TIMESTAMP_SUB(CURRENT_TIMESTAMP(), INTERVAL 30 DAY);&quot;,
+  &quot;useLegacySql&quot;: false
+}
+</code></pre>
+</li>
+</ol>
+</div><h1>Resum</h1>
+<div class='content'><p>En aquest tema, hem après com utilitzar Cloud Scheduler per programar l'execució de consultes a BigQuery. Hem vist com configurar una tasca de Cloud Scheduler, com definir la freqüència d'execució i com especificar la consulta SQL a executar. També hem realitzat un exercici pràctic per reforçar els conceptes apresos. Amb aquestes habilitats, pots automatitzar moltes de les teves tasques de gestió de dades a BigQuery, millorant l'eficiència i la productivitat del teu treball.</p>
+</div><div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='08-03-automating-workflows' title="Automatització de fluxos de treball amb Cloud Functions" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='08-03-automating-workflows' title="Automatització de fluxos de treball amb Cloud Functions" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='09-01-introduction-bqml' title="Introducció a BigQuery ML" class="py-2 px-3 btn btn-primary"
+				data-read-mod="bigquery" data-read-unit="8-4">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='09-01-introduction-bqml' title="Introducció a BigQuery ML" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="bigquery" data-read-unit="8-4">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+						
+	<div class="container mt-2 d-none d-md-block index">
+		<h1>Curs de BigQuery</h1>
+<h2>Mòdul 1: Introducció a BigQuery</h2>
+<ul>
+<li><a href="01-01-what-is-bigquery">Què és BigQuery?</a></li>
+<li><a href="01-02-setting-up-environment">Configurar el teu entorn de BigQuery</a></li>
+<li><a href="01-03-understanding-architecture">Comprendre l'arquitectura de BigQuery</a></li>
+<li><a href="01-04-console-overview">Visió general de la consola de BigQuery</a></li>
+</ul>
+<h2>Mòdul 2: SQL bàsic a BigQuery</h2>
+<ul>
+<li><a href="02-01-introduction-to-sql">Introducció a SQL</a></li>
+<li><a href="02-02-basic-sql-queries">Consultes SQL bàsiques</a></li>
+<li><a href="02-03-filtering-sorting-data">Filtrar i ordenar dades</a></li>
+<li><a href="02-04-aggregating-data">Agregació de dades</a></li>
+</ul>
+<h2>Mòdul 3: SQL intermedi a BigQuery</h2>
+<ul>
+<li><a href="03-01-joins-unions">Unions i combinacions</a></li>
+<li><a href="03-02-subqueries">Subconsultes</a></li>
+<li><a href="03-03-common-table-expressions">Expressions de taula comunes (CTEs)</a></li>
+<li><a href="03-04-window-functions">Funcions de finestra</a></li>
+</ul>
+<h2>Mòdul 4: SQL avançat a BigQuery</h2>
+<ul>
+<li><a href="04-01-advanced-joins">Unions avançades</a></li>
+<li><a href="04-02-nested-repeated-fields">Camps niats i repetits</a></li>
+<li><a href="04-03-user-defined-functions">Funcions definides per l'usuari (UDFs)</a></li>
+<li><a href="04-04-partitioning-clustering">Particionament i agrupament</a></li>
+</ul>
+<h2>Mòdul 5: Gestió de dades a BigQuery</h2>
+<ul>
+<li><a href="05-01-loading-data">Carregar dades a BigQuery</a></li>
+<li><a href="05-02-exporting-data">Exportar dades de BigQuery</a></li>
+<li><a href="05-03-data-transformation-cleaning">Transformació i neteja de dades</a></li>
+<li><a href="05-04-managing-datasets-tables">Gestió de conjunts de dades i taules</a></li>
+</ul>
+<h2>Mòdul 6: Optimització del rendiment de BigQuery</h2>
+<ul>
+<li><a href="06-01-query-optimization-techniques">Tècniques d'optimització de consultes</a></li>
+<li><a href="06-02-query-execution-plans">Comprendre els plans d'execució de consultes</a></li>
+<li><a href="06-03-using-materialized-views">Ús de vistes materialitzades</a></li>
+<li><a href="06-04-optimizing-storage">Optimització de l'emmagatzematge</a></li>
+</ul>
+<h2>Mòdul 7: Seguretat i compliment de BigQuery</h2>
+<ul>
+<li><a href="07-01-access-control-permissions">Control d'accés i permisos</a></li>
+<li><a href="07-02-data-encryption">Xifrat de dades</a></li>
+<li><a href="07-03-auditing-monitoring">Auditoria i monitoratge</a></li>
+<li><a href="07-04-compliance-best-practices">Compliment i millors pràctiques</a></li>
+</ul>
+<h2>Mòdul 8: Integració i automatització de BigQuery</h2>
+<ul>
+<li><a href="08-01-integrating-google-cloud">Integració amb serveis de Google Cloud</a></li>
+<li><a href="08-02-using-dataflow">Ús de BigQuery amb Dataflow</a></li>
+<li><a href="08-03-automating-workflows">Automatització de fluxos de treball amb Cloud Functions</a></li>
+<li><a href="08-04-scheduling-queries">Programació de consultes amb Cloud Scheduler</a></li>
+</ul>
+<h2>Mòdul 9: Aprenentatge automàtic a BigQuery (BQML)</h2>
+<ul>
+<li><a href="09-01-introduction-bqml">Introducció a BigQuery ML</a></li>
+<li><a href="09-02-creating-training-models">Creació i entrenament de models</a></li>
+<li><a href="09-03-evaluating-predicting-models">Avaluació i predicció amb models</a></li>
+<li><a href="09-04-advanced-bqml-features">Funcions avançades de BQML</a></li>
+</ul>
+<h2>Mòdul 10: Casos d'ús de BigQuery en el món real</h2>
+<ul>
+<li><a href="10-01-analyzing-web-app-analytics">Anàlisi d'analítiques web i d'aplicacions</a></li>
+<li><a href="10-02-financial-data-analysis">Anàlisi de dades financeres</a></li>
+<li><a href="10-03-iot-data-processing">Processament de dades IoT</a></li>
+<li><a href="10-04-building-dashboards-data-studio">Creació de quadres de comandament amb Data Studio</a></li>
+</ul>
+
+	</div>
+
+
+
+
+
+
+
+
+
+
+		</div>
+	</div>
+</div>		
+<div class="container-xxl d-block d-md-none">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+
+<div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir cookies per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+		<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Usuari no autentificat</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            	<div id="modal-body-main"></div>
+            </div>
+        </div>
+    </div>
+</div>	</div>    
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

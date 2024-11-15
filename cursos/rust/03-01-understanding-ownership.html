@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <title> Comprendre la Propietat </title>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, nofollow, noarchive">
+    
+    <link rel="alternate" href="https://campusempresa.com/mod/rust/03-01-understanding-ownership" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/rust/03-01-understanding-ownership" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/rust/03-01-understanding-ownership" hreflang="en" />
+    
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.ea63f62b9e.css" rel="stylesheet">
+	 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="/js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script>
+  		var LANG = "ca";
+  		var CATEGORY = "languages";
+  		var MOD_NAME = "rust";
+  		var TEMA_NAME = "3-1";
+  		var TYPE = "mod";
+  		var PATH = "mod/rust/03-01-understanding-ownership";
+  		var IS_INDEX = false;
+  	</script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="module" src="/js/app.902a5a267d.js"></script>
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0611338592562725" crossorigin="anonymous"></script>
+	  	
+</head>
+
+<body class="d-none">
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-12 col-md-6 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-12 col-md-6 p-0 text-end">
+			<p class="mb-0 p-0">	<a href="https://enterprisecampus.net/mod/rust/03-01-understanding-ownership" class="px-2">EN</a></b>
+	|
+	<a href="https://campusempresa.com/mod/rust/03-01-understanding-ownership" class="px-2">ES</a></b>
+	|
+	<b class="px-2">CA</b>
+</p>
+			<p class="mb-4 mt-0 mx-2  d-none d-md-block"><cite>Tot el coneixement al teu abast</cite></p>
+		</div>
+	</div>
+</div>
+<div class="subheader container-xxl d-none d-md-block">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+		<div class="top-bar container-fluid p-0">
+	<div class="container-xxl p-0">
+		<div class="row">
+			<div class="col">
+				<div class="d-flex justify-content-between">
+					<div class="left">
+						<a href="/" class="nav-link px-3" id="btnHome">
+	<i class="bi bi-house-fill"></i>
+	HOME
+</a>
+
+<a href="/els-meus-cursos" class="nav-link px-3 d-none" id="btnMyCourses">
+	<i class="bi bi-rocket-takeoff-fill"></i>
+	<i><b>Els meus cursos</b></i>
+</a>
+<a href="/cursos-finalitzats" class="nav-link px-3 d-none" id="trophy_button">
+	<i class="bi bi-trophy-fill"></i>
+	Finalitzats             
+</a>
+
+					</div>
+                    <div class="ms-auto right">
+                        <a id="user_button" href="#" class="nav-link px-3" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i id="user_icon" class="bi"></i>                            
+                        </a>
+                    </div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+		<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+										<div class="row py-1 m-0" id="buttonsModSection">
+	<div class="col-6 p-0" data-mod="rust">
+		<a  href="#" class="text-secondary d-none" data-read-mod="rust" data-read-unit="3-1" style="text-decoration:none;">
+			<i class="bi bi-check-circle-fill"></i> 
+			Marcar com a llegit
+		</a>
+		<a href="#" class="text-secondary d-none" data-unread-mod="rust" data-unread-unit="3-1" style="text-decoration:none;">
+			<i class="bi bi-x-circle-fill"></i>
+			Marcar com a no llegit
+		</a>
+	</div>
+	<div class="col-6 text-end p-0">
+					<a href="./"  class="nav-link">
+				<i class="bi bi-journal-text"></i>
+				Contingut del curs
+			</a>
+			</div>
+</div>						<div id="inner_content">
+				<div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='02-04-control-flow' title="Flux de Control" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='02-04-control-flow' title="Flux de Control" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+					<h2 style="text-decoration:underline">Comprendre la Propietat</h2>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='03-02-references-borrowing' title="Referències i Préstec" class="py-2 px-3 btn btn-primary"
+				data-read-mod="rust" data-read-unit="3-1">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='03-02-references-borrowing' title="Referències i Préstec" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="rust" data-read-unit="3-1">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+<div class='content'><p>La propietat és un dels conceptes fonamentals en Rust i és clau per comprendre com Rust gestiona la memòria de manera segura i eficient. Aquest concepte pot semblar complex al principi, però és essencial per escriure codi Rust robust i sense errors de memòria.</p>
+</div><h1>Conceptes Clau</h1>
+<div class='content'><ol>
+<li><strong>Propietari (Owner)</strong>: Cada valor en Rust té un únic propietari.</li>
+<li><strong>Moviment (Move)</strong>: Quan el propietari d'un valor es mou, el valor es transfereix a una nova variable.</li>
+<li><strong>Destrucció (Drop)</strong>: Quan el propietari surt del seu àmbit, el valor es destrueix i la memòria es allibera.</li>
+</ol>
+</div><h1>Regles de la Propietat</h1>
+<div class='content'><ol>
+<li>Cada valor en Rust té un únic propietari.</li>
+<li>Quan el propietari surt del seu àmbit, el valor es destrueix.</li>
+<li>No es pot tenir més d'un propietari al mateix temps.</li>
+</ol>
+</div><h1>Exemples Pràctics</h1>
+<div class='content'></div><h2>Exemple 1: Propietat Bàsica</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zm4gbWFpbigpIHsKICAgIGxldCBzMSA9IFN0cmluZzo6ZnJvbSgiSG9sYSIpOwogICAgbGV0IHMyID0gczE7IC8vIHMxIGVzIG1vdSBhIHMyCgogICAgLy8gcHJpbnRsbiEoInt9IiwgczEpOyAvLyBBaXjDsiBkb25hcsOgIHVuIGVycm9yIHBlcnF1w6ggczEgamEgbm8gw6lzIHbDoGxpZAogICAgcHJpbnRsbiEoInt9IiwgczIpOyAvLyBBaXjDsiBmdW5jaW9uYSBwZXJxdcOoIHMyIMOpcyBlbCBub3UgcHJvcGlldGFyaQp9"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>fn main() {
+    let s1 = String::from(&quot;Hola&quot;);
+    let s2 = s1; // s1 es mou a s2
+
+    // println!(&quot;{}&quot;, s1); // Aix&ograve; donar&agrave; un error perqu&egrave; s1 ja no &eacute;s v&agrave;lid
+    println!(&quot;{}&quot;, s2); // Aix&ograve; funciona perqu&egrave; s2 &eacute;s el nou propietari
+}</pre></div><div class='content'><p><strong>Explicació</strong>:</p>
+<ul>
+<li><code>s1</code> és el propietari inicial de la cadena <code>&quot;Hola&quot;</code>.</li>
+<li>Quan assignem <code>s1</code> a <code>s2</code>, <code>s1</code> es mou a <code>s2</code> i <code>s1</code> ja no és vàlid.</li>
+<li>Intentar utilitzar <code>s1</code> després del moviment donarà un error de compilació.</li>
+</ul>
+</div><h2>Exemple 2: Propietat i Funcions</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zm4gbWFpbigpIHsKICAgIGxldCBzID0gU3RyaW5nOjpmcm9tKCJIb2xhIik7CiAgICBwcmVuZHJlX3Byb3BpZXRhdChzKTsgLy8gcyBlcyBtb3UgYSBsYSBmdW5jacOzCgogICAgLy8gcHJpbnRsbiEoInt9Iiwgcyk7IC8vIEFpeMOyIGRvbmFyw6AgdW4gZXJyb3IgcGVycXXDqCBzIGphIG5vIMOpcyB2w6BsaWQKfQoKZm4gcHJlbmRyZV9wcm9waWV0YXQoczogU3RyaW5nKSB7CiAgICBwcmludGxuISgie30iLCBzKTsKfQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>fn main() {
+    let s = String::from(&quot;Hola&quot;);
+    prendre_propietat(s); // s es mou a la funci&oacute;
+
+    // println!(&quot;{}&quot;, s); // Aix&ograve; donar&agrave; un error perqu&egrave; s ja no &eacute;s v&agrave;lid
+}
+
+fn prendre_propietat(s: String) {
+    println!(&quot;{}&quot;, s);
+}</pre></div><div class='content'><p><strong>Explicació</strong>:</p>
+<ul>
+<li>Quan passem <code>s</code> a la funció <code>prendre_propietat</code>, <code>s</code> es mou a la funció.</li>
+<li>Després de la crida a la funció, <code>s</code> ja no és vàlid en el context de <code>main</code>.</li>
+</ul>
+</div><h1>Exercicis Pràctics</h1>
+<div class='content'></div><h2>Exercici 1: Moviment de Propietat</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zm4gbWFpbigpIHsKICAgIGxldCB4ID0gNTsKICAgIGxldCB5ID0geDsKCiAgICBwcmludGxuISgieDoge30sIHk6IHt9IiwgeCwgeSk7IC8vIEFpeMOyIGZ1bmNpb25hIHBlcnF1w6ggZWxzIHRpcHVzIHNpbXBsZXMgY29tIGVscyBlbnRlcnMgZXMgY29waWVuCn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>fn main() {
+    let x = 5;
+    let y = x;
+
+    println!(&quot;x: {}, y: {}&quot;, x, y); // Aix&ograve; funciona perqu&egrave; els tipus simples com els enters es copien
+}</pre></div><div class='content'><p><strong>Pregunta</strong>: Per què aquest codi funciona sense errors?</p>
+<p><strong>Resposta</strong>: Els tipus simples com els enters implementen el trait <code>Copy</code>, per la qual cosa es copien en lloc de moure's.</p>
+</div><h2>Exercici 2: Propietat amb Tipus Complexos</h2>
+<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Zm4gbWFpbigpIHsKICAgIGxldCBzMSA9IFN0cmluZzo6ZnJvbSgiSG9sYSIpOwogICAgbGV0IHMyID0gczE7CgogICAgLy8gcHJpbnRsbiEoInt9IiwgczEpOyAvLyBBaXjDsiBkb25hcsOgIHVuIGVycm9yCiAgICBwcmludGxuISgie30iLCBzMik7Cn0="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>fn main() {
+    let s1 = String::from(&quot;Hola&quot;);
+    let s2 = s1;
+
+    // println!(&quot;{}&quot;, s1); // Aix&ograve; donar&agrave; un error
+    println!(&quot;{}&quot;, s2);
+}</pre></div><div class='content'><p><strong>Pregunta</strong>: Què passa si descomentes la línia <code>println!(&quot;{}&quot;, s1);</code>?</p>
+<p><strong>Resposta</strong>: Donarà un error de compilació perquè <code>s1</code> ja no és vàlid després de moure's a <code>s2</code>.</p>
+</div><h1>Errors Comuns i Consells</h1>
+<div class='content'><ul>
+<li>
+<p><strong>Error Comú</strong>: Intentar utilitzar una variable després de moure-la.</p>
+<ul>
+<li><strong>Consell</strong>: Sempre recorda que després de moure una variable, aquesta ja no és vàlida.</li>
+</ul>
+</li>
+<li>
+<p><strong>Error Comú</strong>: No comprendre la diferència entre tipus que implementen <code>Copy</code> i els que no.</p>
+<ul>
+<li><strong>Consell</strong>: Familiaritza't amb els tipus que implementen <code>Copy</code> (com els enters, booleans, etc.) i els que no (com <code>String</code>, <code>Vec</code>, etc.).</li>
+</ul>
+</li>
+</ul>
+</div><h1>Conclusió</h1>
+<div class='content'><p>Comprendre la propietat és essencial per escriure codi Rust segur i eficient. Recorda les regles bàsiques de la propietat i practica amb exemples per consolidar el teu coneixement. En el següent tema, explorarem les referències i el préstec, que et permetran treballar amb dades sense transferir-ne la propietat.</p>
+</div><div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='02-04-control-flow' title="Flux de Control" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='02-04-control-flow' title="Flux de Control" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='03-02-references-borrowing' title="Referències i Préstec" class="py-2 px-3 btn btn-primary"
+				data-read-mod="rust" data-read-unit="3-1">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='03-02-references-borrowing' title="Referències i Préstec" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="rust" data-read-unit="3-1">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+						
+	<div class="container mt-2 d-none d-md-block index">
+		<h1>Curs de Programació en Rust</h1>
+<h2>Mòdul 1: Introducció a Rust</h2>
+<ul>
+<li><a href="01-01-what-is-rust">Què és Rust?</a></li>
+<li><a href="01-02-setting-up-rust">Configuració de l'Entorn de Rust</a></li>
+<li><a href="01-03-hello-world">Programa Hola, Món!</a></li>
+<li><a href="01-04-basic-syntax">Sintaxi i Estructura Bàsica</a></li>
+</ul>
+<h2>Mòdul 2: Conceptes Bàsics</h2>
+<ul>
+<li><a href="02-01-variables-mutability">Variables i Mutabilitat</a></li>
+<li><a href="02-02-data-types">Tipus de Dades</a></li>
+<li><a href="02-03-functions">Funcions</a></li>
+<li><a href="02-04-control-flow">Flux de Control</a></li>
+</ul>
+<h2>Mòdul 3: Propietat i Préstec</h2>
+<ul>
+<li><a href="03-01-understanding-ownership">Comprendre la Propietat</a></li>
+<li><a href="03-02-references-borrowing">Referències i Préstec</a></li>
+<li><a href="03-03-slices">Slices</a></li>
+</ul>
+<h2>Mòdul 4: Structs i Enums</h2>
+<ul>
+<li><a href="04-01-defining-structs">Definició de Structs</a></li>
+<li><a href="04-02-using-structs">Ús de Structs</a></li>
+<li><a href="04-03-enums-pattern-matching">Enums i Coincidència de Patrons</a></li>
+</ul>
+<h2>Mòdul 5: Col·leccions</h2>
+<ul>
+<li><a href="05-01-vectors">Vectors</a></li>
+<li><a href="05-02-strings">Strings</a></li>
+<li><a href="05-03-hashmaps">HashMaps</a></li>
+</ul>
+<h2>Mòdul 6: Gestió d'Errors</h2>
+<ul>
+<li><a href="06-01-error-handling-result">Gestió d'Errors amb Result</a></li>
+<li><a href="06-02-error-handling-option">Gestió d'Errors amb Option</a></li>
+<li><a href="06-03-panic-unwinding">Pànic i Desenrotllament</a></li>
+</ul>
+<h2>Mòdul 7: Conceptes Avançats</h2>
+<ul>
+<li><a href="07-01-lifetimes">Durades de Vida</a></li>
+<li><a href="07-02-traits">Traits</a></li>
+<li><a href="07-03-generics">Genèrics</a></li>
+</ul>
+<h2>Mòdul 8: Concurrència</h2>
+<ul>
+<li><a href="08-01-threads">Fils</a></li>
+<li><a href="08-02-message-passing">Passatge de Missatges</a></li>
+<li><a href="08-03-shared-state">Estat Compartit</a></li>
+</ul>
+<h2>Mòdul 9: Característiques Avançades</h2>
+<ul>
+<li><a href="09-01-macros">Macros</a></li>
+<li><a href="09-02-unsafe-rust">Rust Insegur</a></li>
+<li><a href="09-03-ffi">FFI (Interfície de Funció Estrangera)</a></li>
+</ul>
+<h2>Mòdul 10: Projecte i Millors Pràctiques</h2>
+<ul>
+<li><a href="10-01-building-project">Construcció d'un Projecte</a></li>
+<li><a href="10-02-testing">Proves</a></li>
+<li><a href="10-03-documentation">Documentació</a></li>
+<li><a href="10-04-best-practices">Millors Pràctiques</a></li>
+</ul>
+
+	</div>
+
+
+
+
+
+
+
+
+
+
+		</div>
+	</div>
+</div>		
+<div class="container-xxl d-block d-md-none">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+
+<div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir cookies per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+		<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Usuari no autentificat</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            	<div id="modal-body-main"></div>
+            </div>
+        </div>
+    </div>
+</div>	</div>    
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

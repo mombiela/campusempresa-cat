@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <title> Introducció a les RNN </title>
+        
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, nofollow, noarchive">
+    
+    <link rel="alternate" href="https://campusempresa.com/mod/deep_learning/04-01-introduccion-rnn" hreflang="es" />
+	<link rel="alternate" href="https://campusempresa.cat/mod/deep_learning/04-01-introduccion-rnn" hreflang="ca" />
+	<link rel="alternate" href="https://enterprisecampus.net/mod/deep_learning/04-01-introduction-rnn" hreflang="en" />
+    
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+	<link href="/css/site.ea63f62b9e.css" rel="stylesheet">
+	 
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  	<script type="text/javascript" src="/js/math_init.js"></script>
+  	<script type="text/javascript" id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js"></script>
+  	<script>
+  		var LANG = "ca";
+  		var CATEGORY = "foundations";
+  		var MOD_NAME = "deep_learning";
+  		var TEMA_NAME = "4-1";
+  		var TYPE = "mod";
+  		var PATH = "mod/deep_learning/04-01-introduccion-rnn";
+  		var IS_INDEX = false;
+  	</script>
+  	<script type="text/javascript" src="/js/cookie.js"></script>
+  	<script type="module" src="/js/app.902a5a267d.js"></script>
+	<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-0611338592562725" crossorigin="anonymous"></script>
+	  	
+</head>
+
+<body class="d-none">
+    <div id="content">
+		<div id="header" class="container-xxl">
+	<div class="row">
+		<div class="col-12 col-md-6 p-0">
+			<h1 class="m-0 p-0">
+				<a href="/"><img src="/img/logo_header.png"></a>
+			</h1>
+		</div>
+		<div class="col-12 col-md-6 p-0 text-end">
+			<p class="mb-0 p-0">	<a href="https://enterprisecampus.net/mod/deep_learning/04-01-introduction-rnn" class="px-2">EN</a></b>
+	|
+	<a href="https://campusempresa.com/mod/deep_learning/04-01-introduccion-rnn" class="px-2">ES</a></b>
+	|
+	<b class="px-2">CA</b>
+</p>
+			<p class="mb-4 mt-0 mx-2  d-none d-md-block"><cite>Tot el coneixement al teu abast</cite></p>
+		</div>
+	</div>
+</div>
+<div class="subheader container-xxl d-none d-md-block">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+		<div class="top-bar container-fluid p-0">
+	<div class="container-xxl p-0">
+		<div class="row">
+			<div class="col">
+				<div class="d-flex justify-content-between">
+					<div class="left">
+						<a href="/" class="nav-link px-3" id="btnHome">
+	<i class="bi bi-house-fill"></i>
+	HOME
+</a>
+
+<a href="/els-meus-cursos" class="nav-link px-3 d-none" id="btnMyCourses">
+	<i class="bi bi-rocket-takeoff-fill"></i>
+	<i><b>Els meus cursos</b></i>
+</a>
+<a href="/cursos-finalitzats" class="nav-link px-3 d-none" id="trophy_button">
+	<i class="bi bi-trophy-fill"></i>
+	Finalitzats             
+</a>
+
+					</div>
+                    <div class="ms-auto right">
+                        <a id="user_button" href="#" class="nav-link px-3" data-bs-toggle="modal" data-bs-target="#loginModal">
+                            <i id="user_icon" class="bi"></i>                            
+                        </a>
+                    </div>					
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+		<div class="container-xxl" id="main_content">
+	<div class="row">
+		<div class="col-12 col-lg-8">
+										<div class="row py-1 m-0" id="buttonsModSection">
+	<div class="col-6 p-0" data-mod="deep_learning">
+		<a  href="#" class="text-secondary d-none" data-read-mod="deep_learning" data-read-unit="4-1" style="text-decoration:none;">
+			<i class="bi bi-check-circle-fill"></i> 
+			Marcar com a llegit
+		</a>
+		<a href="#" class="text-secondary d-none" data-unread-mod="deep_learning" data-unread-unit="4-1" style="text-decoration:none;">
+			<i class="bi bi-x-circle-fill"></i>
+			Marcar com a no llegit
+		</a>
+	</div>
+	<div class="col-6 text-end p-0">
+					<a href="./"  class="nav-link">
+				<i class="bi bi-journal-text"></i>
+				Contingut del curs
+			</a>
+			</div>
+</div>						<div id="inner_content">
+				<div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='03-04-aplicaciones-cnn-reconocimiento-imagenes' title="Aplicacions de CNN en reconeixement d'imatges" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='03-04-aplicaciones-cnn-reconocimiento-imagenes' title="Aplicacions de CNN en reconeixement d'imatges" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+					<h2 style="text-decoration:underline">Introducció a les RNN</h2>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='04-02-lstm-gru' title="LSTM i GRU" class="py-2 px-3 btn btn-primary"
+				data-read-mod="deep_learning" data-read-unit="4-1">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='04-02-lstm-gru' title="LSTM i GRU" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="deep_learning" data-read-unit="4-1">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+<div class='content'></div><h1>Què són les Xarxes Neuronals Recurrentes (RNN)?</h1>
+<div class='content'><p>Les Xarxes Neuronals Recurrentes (RNN, per les seves sigles en anglès) són un tipus de xarxa neuronal especialment dissenyada per treballar amb dades seqüencials. A diferència de les xarxes neuronals tradicionals, les RNN tenen connexions recurrents que permeten que la informació es mantingui en la xarxa durant llargues seqüències de temps.</p>
+</div><h2>Característiques Clau de les RNN:</h2>
+<div class='content'><ol>
+<li><strong>Memòria Temporal</strong>: Les RNN poden recordar informació de passos anteriors en la seqüència, la qual cosa les fa ideals per a tasques com el processament del llenguatge natural (PLN) i la predicció de sèries temporals.</li>
+<li><strong>Pesos Compartits</strong>: Els mateixos pesos són utilitzats en cada pas de la seqüència, la qual cosa redueix la complexitat del model.</li>
+<li><strong>Capacitat de Processar Seqüències de Longitud Variable</strong>: Les RNN poden manejar seqüències de diferents longituds, cosa que les fa molt flexibles.</li>
+</ol>
+</div><h1>Arquitectura Bàsica d'una RNN</h1>
+<div class='content'><p>Una RNN típica consisteix en una capa recurrent que processa una seqüència d'entrades. Cada unitat recurrent pren una entrada de la seqüència i l'estat ocult anterior per produir una sortida i un nou estat ocult.</p>
+</div><h2>Fórmules Clau:</h2>
+<div class='content'><ul>
+<li><strong>Estat Ocult</strong>: \( h_t = f(W_{hx}x_t + W_{hh}h_{t-1} + b_h) \)</li>
+<li><strong>Sortida</strong>: \( y_t = g(W_{hy}h_t + b_y) \)</li>
+</ul>
+<p>On:</p>
+<ul>
+<li>\( x_t \) és l'entrada en el temps \( t \).</li>
+<li>\( h_t \) és l'estat ocult en el temps \( t \).</li>
+<li>\( y_t \) és la sortida en el temps \( t \).</li>
+<li>\( W_{hx} \), \( W_{hh} \), i \( W_{hy} \) són els pesos de la xarxa.</li>
+<li>\( b_h \) i \( b_y \) són els biaixos.</li>
+<li>\( f \) i \( g \) són funcions d'activació (com ReLU o tanh).</li>
+</ul>
+</div><h1>Avantatges i Desavantatges de les RNN</h1>
+<div class='content'></div><h2>Avantatges:</h2>
+<div class='content'><ul>
+<li><strong>Maneig de Dades Seqüencials</strong>: Les RNN són excel·lents per a tasques que involucren seqüències, com la traducció automàtica, la generació de text, i la predicció de sèries temporals.</li>
+<li><strong>Pesos Compartits</strong>: La compartició de pesos redueix la quantitat de paràmetres que cal aprendre, fent les RNN més eficients.</li>
+</ul>
+</div><h2>Desavantatges:</h2>
+<div class='content'><ul>
+<li><strong>Problemes de Gradient</strong>: Les RNN poden patir problemes de gradient desaparegut o explosiu, la qual cosa dificulta l'entrenament de seqüències llargues.</li>
+<li><strong>Limitacions de Memòria</strong>: Tot i que les RNN poden recordar informació de passos anteriors, la seva capacitat de memòria és limitada, especialment per a seqüències molt llargues.</li>
+</ul>
+</div><h1>Exemples d'Aplicacions de les RNN</h1>
+<div class='content'><ol>
+<li><strong>Processament del Llenguatge Natural (PLN)</strong>: Les RNN són àmpliament utilitzades en tasques de PLN com la traducció automàtica, la generació de text, i l'anàlisi de sentiments.</li>
+<li><strong>Predicció de Sèries Temporals</strong>: Les RNN són útils per predir valors futurs en sèries temporals, com previsions de vendes o predicció de preus d'accions.</li>
+<li><strong>Reconeixement de Parla</strong>: Les RNN poden processar seqüències d'àudio per reconèixer paraules i frases.</li>
+</ol>
+</div><h1>Exemple Pràctic: Implementació d'una RNN Simple amb PyTorch</h1>
+<div class='content'><p>A continuació, es mostra un exemple bàsic d'una RNN implementada amb PyTorch per predir la següent paraula en una seqüència de text.</p>
+</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaC5ubiBhcyBubgppbXBvcnQgdG9yY2gub3B0aW0gYXMgb3B0aW0KCiMgRGVmaW5pY2nDsyBkZWwgbW9kZWwgUk5OCmNsYXNzIFNpbXBsZVJOTihubi5Nb2R1bGUpOgogICAgZGVmIF9faW5pdF9fKHNlbGYsIGlucHV0X3NpemUsIGhpZGRlbl9zaXplLCBvdXRwdXRfc2l6ZSk6CiAgICAgICAgc3VwZXIoU2ltcGxlUk5OLCBzZWxmKS5fX2luaXRfXygpCiAgICAgICAgc2VsZi5oaWRkZW5fc2l6ZSA9IGhpZGRlbl9zaXplCiAgICAgICAgc2VsZi5ybm4gPSBubi5STk4oaW5wdXRfc2l6ZSwgaGlkZGVuX3NpemUsIGJhdGNoX2ZpcnN0PVRydWUpCiAgICAgICAgc2VsZi5mYyA9IG5uLkxpbmVhcihoaWRkZW5fc2l6ZSwgb3V0cHV0X3NpemUpCgogICAgZGVmIGZvcndhcmQoc2VsZiwgeCk6CiAgICAgICAgaDAgPSB0b3JjaC56ZXJvcygxLCB4LnNpemUoMCksIHNlbGYuaGlkZGVuX3NpemUpLnRvKHguZGV2aWNlKQogICAgICAgIG91dCwgXyA9IHNlbGYucm5uKHgsIGgwKQogICAgICAgIG91dCA9IHNlbGYuZmMob3V0WzosIC0xLCA6XSkKICAgICAgICByZXR1cm4gb3V0CgojIFBhcsOgbWV0cmVzIGRlbCBtb2RlbAppbnB1dF9zaXplID0gMTAKaGlkZGVuX3NpemUgPSAyMApvdXRwdXRfc2l6ZSA9IDEwCgojIENyZWFjacOzIGRlbCBtb2RlbCwgY3JpdGVyaSBkZSBww6hyZHVhIGkgb3B0aW1pdHphZG9yCm1vZGVsID0gU2ltcGxlUk5OKGlucHV0X3NpemUsIGhpZGRlbl9zaXplLCBvdXRwdXRfc2l6ZSkKY3JpdGVyaW9uID0gbm4uQ3Jvc3NFbnRyb3B5TG9zcygpCm9wdGltaXplciA9IG9wdGltLkFkYW0obW9kZWwucGFyYW1ldGVycygpLCBscj0wLjAwMSkKCiMgRGFkZXMgZCdleGVtcGxlCmlucHV0cyA9IHRvcmNoLnJhbmRuKDUsIDMsIGlucHV0X3NpemUpICAjIEJhdGNoIGRlIDUgc2Vxw7zDqG5jaWVzIGRlIGxvbmdpdHVkIDMKdGFyZ2V0cyA9IHRvcmNoLnJhbmRpbnQoMCwgb3V0cHV0X3NpemUsICg1LCkpCgojIEVudHJlbmFtZW50IGRlbCBtb2RlbAptb2RlbC50cmFpbigpCm9wdGltaXplci56ZXJvX2dyYWQoKQpvdXRwdXRzID0gbW9kZWwoaW5wdXRzKQpsb3NzID0gY3JpdGVyaW9uKG91dHB1dHMsIHRhcmdldHMpCmxvc3MuYmFja3dhcmQoKQpvcHRpbWl6ZXIuc3RlcCgpCgpwcmludChmJ1DDqHJkdWE6IHtsb3NzLml0ZW0oKX0nKQ=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# Definici&oacute; del model RNN
+class SimpleRNN(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(SimpleRNN, self).__init__()
+        self.hidden_size = hidden_size
+        self.rnn = nn.RNN(input_size, hidden_size, batch_first=True)
+        self.fc = nn.Linear(hidden_size, output_size)
+
+    def forward(self, x):
+        h0 = torch.zeros(1, x.size(0), self.hidden_size).to(x.device)
+        out, _ = self.rnn(x, h0)
+        out = self.fc(out[:, -1, :])
+        return out
+
+# Par&agrave;metres del model
+input_size = 10
+hidden_size = 20
+output_size = 10
+
+# Creaci&oacute; del model, criteri de p&egrave;rdua i optimitzador
+model = SimpleRNN(input_size, hidden_size, output_size)
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# Dades d'exemple
+inputs = torch.randn(5, 3, input_size)  # Batch de 5 seq&uuml;&egrave;ncies de longitud 3
+targets = torch.randint(0, output_size, (5,))
+
+# Entrenament del model
+model.train()
+optimizer.zero_grad()
+outputs = model(inputs)
+loss = criterion(outputs, targets)
+loss.backward()
+optimizer.step()
+
+print(f'P&egrave;rdua: {loss.item()}')</pre></div><div class='content'></div><h2>Explicació del Codi:</h2>
+<div class='content'><ol>
+<li><strong>Definició del Model</strong>: Es defineix una classe <code>SimpleRNN</code> que hereta de <code>nn.Module</code>. Aquesta classe conté una capa RNN i una capa lineal per a la sortida.</li>
+<li><strong>Paràmetres del Model</strong>: Es defineixen els paràmetres d'entrada, ocults i de sortida.</li>
+<li><strong>Entrenament</strong>: Es crea un conjunt de dades d'exemple, es calcula la pèrdua i es fa una passada d'optimització.</li>
+</ol>
+</div><h1>Exercici Pràctic</h1>
+<div class='content'></div><h2>Exercici:</h2>
+<div class='content'><p>Implementa una RNN per predir la següent lletra en una seqüència de caràcters. Utilitza PyTorch i segueix els passos següents:</p>
+<ol>
+<li>Prepara un conjunt de dades de seqüències de caràcters.</li>
+<li>Defineix una RNN amb una capa recurrent i una capa lineal.</li>
+<li>Entrena la RNN amb el conjunt de dades preparat.</li>
+<li>Avalua la precisió del model.</li>
+</ol>
+</div><h2>Solució:</h2>
+<div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("aW1wb3J0IHRvcmNoCmltcG9ydCB0b3JjaC5ubiBhcyBubgppbXBvcnQgdG9yY2gub3B0aW0gYXMgb3B0aW0KCiMgRGVmaW5pY2nDsyBkZWwgbW9kZWwgUk5OCmNsYXNzIENoYXJSTk4obm4uTW9kdWxlKToKICAgIGRlZiBfX2luaXRfXyhzZWxmLCBpbnB1dF9zaXplLCBoaWRkZW5fc2l6ZSwgb3V0cHV0X3NpemUpOgogICAgICAgIHN1cGVyKENoYXJSTk4sIHNlbGYpLl9faW5pdF9fKCkKICAgICAgICBzZWxmLmhpZGRlbl9zaXplID0gaGlkZGVuX3NpemUKICAgICAgICBzZWxmLnJubiA9IG5uLlJOTihpbnB1dF9zaXplLCBoaWRkZW5fc2l6ZSwgYmF0Y2hfZmlyc3Q9VHJ1ZSkKICAgICAgICBzZWxmLmZjID0gbm4uTGluZWFyKGhpZGRlbl9zaXplLCBvdXRwdXRfc2l6ZSkKCiAgICBkZWYgZm9yd2FyZChzZWxmLCB4KToKICAgICAgICBoMCA9IHRvcmNoLnplcm9zKDEsIHguc2l6ZSgwKSwgc2VsZi5oaWRkZW5fc2l6ZSkudG8oeC5kZXZpY2UpCiAgICAgICAgb3V0LCBfID0gc2VsZi5ybm4oeCwgaDApCiAgICAgICAgb3V0ID0gc2VsZi5mYyhvdXRbOiwgLTEsIDpdKQogICAgICAgIHJldHVybiBvdXQKCiMgUGFyw6BtZXRyZXMgZGVsIG1vZGVsCmlucHV0X3NpemUgPSAyNiAgIyBOb21icmUgZGUgbGxldHJlcyBlbiBsJ2FsZmFiZXQgYW5nbMOocwpoaWRkZW5fc2l6ZSA9IDUwCm91dHB1dF9zaXplID0gMjYKCiMgQ3JlYWNpw7MgZGVsIG1vZGVsLCBjcml0ZXJpIGRlIHDDqHJkdWEgaSBvcHRpbWl0emFkb3IKbW9kZWwgPSBDaGFyUk5OKGlucHV0X3NpemUsIGhpZGRlbl9zaXplLCBvdXRwdXRfc2l6ZSkKY3JpdGVyaW9uID0gbm4uQ3Jvc3NFbnRyb3B5TG9zcygpCm9wdGltaXplciA9IG9wdGltLkFkYW0obW9kZWwucGFyYW1ldGVycygpLCBscj0wLjAwMSkKCiMgRGFkZXMgZCdleGVtcGxlIChzZXHDvMOobmNpZXMgZGUgY2Fyw6BjdGVycyBjb2RpZmljYWRlcyBjb20gb25lLWhvdCB2ZWN0b3JzKQppbnB1dHMgPSB0b3JjaC5yYW5kbig1LCAzLCBpbnB1dF9zaXplKSAgIyBCYXRjaCBkZSA1IHNlccO8w6huY2llcyBkZSBsb25naXR1ZCAzCnRhcmdldHMgPSB0b3JjaC5yYW5kaW50KDAsIG91dHB1dF9zaXplLCAoNSwpKQoKIyBFbnRyZW5hbWVudCBkZWwgbW9kZWwKbW9kZWwudHJhaW4oKQpvcHRpbWl6ZXIuemVyb19ncmFkKCkKb3V0cHV0cyA9IG1vZGVsKGlucHV0cykKbG9zcyA9IGNyaXRlcmlvbihvdXRwdXRzLCB0YXJnZXRzKQpsb3NzLmJhY2t3YXJkKCkKb3B0aW1pemVyLnN0ZXAoKQoKcHJpbnQoZidQw6hyZHVhOiB7bG9zcy5pdGVtKCl9Jyk="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# Definici&oacute; del model RNN
+class CharRNN(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(CharRNN, self).__init__()
+        self.hidden_size = hidden_size
+        self.rnn = nn.RNN(input_size, hidden_size, batch_first=True)
+        self.fc = nn.Linear(hidden_size, output_size)
+
+    def forward(self, x):
+        h0 = torch.zeros(1, x.size(0), self.hidden_size).to(x.device)
+        out, _ = self.rnn(x, h0)
+        out = self.fc(out[:, -1, :])
+        return out
+
+# Par&agrave;metres del model
+input_size = 26  # Nombre de lletres en l'alfabet angl&egrave;s
+hidden_size = 50
+output_size = 26
+
+# Creaci&oacute; del model, criteri de p&egrave;rdua i optimitzador
+model = CharRNN(input_size, hidden_size, output_size)
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# Dades d'exemple (seq&uuml;&egrave;ncies de car&agrave;cters codificades com one-hot vectors)
+inputs = torch.randn(5, 3, input_size)  # Batch de 5 seq&uuml;&egrave;ncies de longitud 3
+targets = torch.randint(0, output_size, (5,))
+
+# Entrenament del model
+model.train()
+optimizer.zero_grad()
+outputs = model(inputs)
+loss = criterion(outputs, targets)
+loss.backward()
+optimizer.step()
+
+print(f'P&egrave;rdua: {loss.item()}')</pre></div><div class='content'></div><h1>Conclusió</h1>
+<div class='content'><p>En aquesta secció, hem introduït les Xarxes Neuronals Recurrentes (RNN), les seves característiques clau, avantatges i desavantatges, i algunes de les seves aplicacions més comunes. També hem vist un exemple pràctic d'implementació d'una RNN simple amb PyTorch. En la següent secció, explorarem les variants avançades de les RNN, com les LSTM i GRU, que aborden alguns dels problemes inherents de les RNN tradicionals.</p>
+</div><div class='row navigation'>
+	<div class='col-2 d-none d-md-block'>
+					<a href='03-04-aplicaciones-cnn-reconocimiento-imagenes' title="Aplicacions de CNN en reconeixement d'imatges" class="py-2 px-3 btn btn-primary">
+				&#x25C4; Anterior 
+			</a>
+			</div>
+	<div class='col-2 d-md-none'>
+					<a href='03-04-aplicaciones-cnn-reconocimiento-imagenes' title="Aplicacions de CNN en reconeixement d'imatges" class="py-2 px-3 btn btn-primary">
+				&#x25C4;
+			</a>
+			</div>
+	<div class='col-8 text-center'>
+			</div>
+	<div class='col-2 text-end d-none d-md-block'>
+					<a href='04-02-lstm-gru' title="LSTM i GRU" class="py-2 px-3 btn btn-primary"
+				data-read-mod="deep_learning" data-read-unit="4-1">
+				Següent &#x25BA;
+			</a>
+			</div>
+	<div class='col-2 text-end d-md-none '>
+					<a href='04-02-lstm-gru' title="LSTM i GRU" class="py-2 px-3 btn btn-primary" 
+				data-read-mod="deep_learning" data-read-unit="4-1">
+				 &#x25BA;
+			</a>
+			</div>
+</div>
+
+			</div>
+		</div>
+		<div class="col-12 col-lg-4 publi" id="div_publi">
+						
+	<div class="container mt-2 d-none d-md-block index">
+		<h1>Curs de Deep Learning</h1>
+<h2>Mòdul 1: Introducció a Deep Learning</h2>
+<ul>
+<li><a href="01-01-que-es-deep-learning">Què és Deep Learning?</a></li>
+<li><a href="01-02-historia-evolucion-deep-learning">Història i evolució del Deep Learning</a></li>
+<li><a href="01-03-aplicaciones-deep-learning">Aplicacions de Deep Learning</a></li>
+<li><a href="01-04-conceptos-basicos-redes-neuronales">Conceptes bàsics de xarxes neuronals</a></li>
+</ul>
+<h2>Mòdul 2: Fonaments de Xarxes Neuronals</h2>
+<ul>
+<li><a href="02-01-perceptron-perceptron-multicapa">Perceptró i Perceptró Multicapa</a></li>
+<li><a href="02-02-funcion-de-activacion">Funció d'activació</a></li>
+<li><a href="02-03-propagacion-hacia-adelante-atras">Propagació cap endavant i cap enrere</a></li>
+<li><a href="02-04-optimizacion-funcion-de-perdida">Optimització i funció de pèrdua</a></li>
+</ul>
+<h2>Mòdul 3: Xarxes Neuronals Convolucionals (CNN)</h2>
+<ul>
+<li><a href="03-01-introduccion-cnn">Introducció a les CNN</a></li>
+<li><a href="03-02-capas-convolucionales-pooling">Capes convolutionals i de pooling</a></li>
+<li><a href="03-03-arquitecturas-populares-cnn">Arquitectures populars de CNN</a></li>
+<li><a href="03-04-aplicaciones-cnn-reconocimiento-imagenes">Aplicacions de CNN en reconeixement d'imatges</a></li>
+</ul>
+<h2>Mòdul 4: Xarxes Neuronals Recurrentes (RNN)</h2>
+<ul>
+<li><a href="04-01-introduccion-rnn">Introducció a les RNN</a></li>
+<li><a href="04-02-lstm-gru">LSTM i GRU</a></li>
+<li><a href="04-03-aplicaciones-rnn-pln">Aplicacions de RNN en processament del llenguatge natural</a></li>
+<li><a href="04-04-secuencias-series-temporales">Seqüències i sèries temporals</a></li>
+</ul>
+<h2>Mòdul 5: Tècniques Avançades en Deep Learning</h2>
+<ul>
+<li><a href="05-01-redes-generativas-adversariales">Xarxes Generatives Adversarials (GAN)</a></li>
+<li><a href="05-02-autoencoders">Autoencoders</a></li>
+<li><a href="05-03-transfer-learning">Transfer Learning</a></li>
+<li><a href="05-04-regularizacion-tecnicas-mejora">Regularització i tècniques de millora</a></li>
+</ul>
+<h2>Mòdul 6: Eines i Frameworks</h2>
+<ul>
+<li><a href="06-01-introduccion-tensorflow">Introducció a TensorFlow</a></li>
+<li><a href="06-02-introduccion-pytorch">Introducció a PyTorch</a></li>
+<li><a href="06-03-comparacion-frameworks">Comparació de frameworks</a></li>
+<li><a href="06-04-entornos-desarrollo-recursos">Entorns de desenvolupament i recursos addicionals</a></li>
+</ul>
+<h2>Mòdul 7: Projectes Pràctics</h2>
+<ul>
+<li><a href="07-01-clasificacion-imagenes-cnn">Classificació d'imatges amb CNN</a></li>
+<li><a href="07-02-generacion-texto-rnn">Generació de text amb RNN</a></li>
+<li><a href="07-03-deteccion-anomalias-autoencoders">Detecció d'anomalies amb Autoencoders</a></li>
+<li><a href="07-04-creacion-gan-generacion-imagenes">Creació d'una GAN per generació d'imatges</a></li>
+</ul>
+<h2>Mòdul 8: Consideracions Ètiques i Futur del Deep Learning</h2>
+<ul>
+<li><a href="08-01-etica-deep-learning">Ètica en Deep Learning</a></li>
+<li><a href="08-02-impacto-social-economico">Impacte social i econòmic</a></li>
+<li><a href="08-03-tendencias-futuras-deep-learning">Tendències futures en Deep Learning</a></li>
+<li><a href="08-04-desafios-oportunidades">Desafiaments i oportunitats</a></li>
+</ul>
+
+	</div>
+
+
+
+
+
+
+
+
+
+
+		</div>
+	</div>
+</div>		
+<div class="container-xxl d-block d-md-none">
+	<div class="row">
+		<div class="col-12 p-2 p-md-0 m-0 text-end">
+			<a href="/objectiu" rel="nofollow">El Projecte</a> | 
+<a href="/sobre-nosaltres" rel="nofollow">Sobre nosaltres</a> | 
+<a href="/contribuir" rel="nofollow">Contribuir</a> | 
+<a href="/donar" rel="nofollow">Donacions</a> | 
+<a href="/llicencia" rel="nofollow">Llicència</a>
+		</div>
+	</div>
+</div>
+
+<div class="container-xxl my-3">
+	<div class="row">
+		<div class="col">
+			<footer>&copy; Copyright 2024. Tots els drets reservats</footer>
+		</div>
+	</div>
+</div>	
+
+<div id="cookies_adv" style="display:none;">
+	Fem servir cookies per millorar la teva experiència d'ús i oferir continguts adaptats als teus interessos
+    <a href="#" id="btn_accept_cookies" class="button">Acceptar</a>
+    <a href="/cookies">Més informació</a>
+</div>	
+
+		<div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginModalLabel">Usuari no autentificat</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            	<div id="modal-body-main"></div>
+            </div>
+        </div>
+    </div>
+</div>	</div>    
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+</body>
+</html>
