@@ -13,7 +13,7 @@
 	<link rel="alternate" href="https://enterprisecampus.net/courses/postgresql/09-02-full-text-search" hreflang="en" />
     
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-	<link href="/css/site.ea63f62b9e.css" rel="stylesheet">
+	<link href="/css/site.188a386f47.css" rel="stylesheet">
 	 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   	<script type="text/javascript" src="/js/math_init.js"></script>
@@ -38,9 +38,7 @@
 		<div id="header" class="container-xxl">
 	<div class="row">
 		<div class="col-12 col-md-6 p-0">
-			<h1 class="m-0 p-0">
-				<a href="/"><img src="/img/logo_header.png"></a>
-			</h1>
+			<a href="/"><img src="/img/logo_header.png" alt="Logo Campus Empresa"></a>
 		</div>
 		<div class="col-12 col-md-6 p-0 text-end">
 			<p class="mb-0 p-0">	<a href="https://enterprisecampus.net/courses/postgresql/09-02-full-text-search" class="px-2">EN</a></b>
@@ -129,7 +127,7 @@
 			</a>
 			</div>
 	<div class='col-8 text-center'>
-					<h2 style="text-decoration:underline">Cerca de text complet</h2>
+					<h1 style="text-decoration:underline">Cerca de text complet</h1>
 			</div>
 	<div class='col-2 text-end d-none d-md-block'>
 					<a href='09-03-foreign-data-wrappers' title="Wrappers de dades externes" class="py-2 px-3 btn btn-primary"
@@ -145,7 +143,7 @@
 			</div>
 </div>
 <div class='content'><p>La cerca de text complet (Full-Text Search, FTS) en PostgreSQL és una funcionalitat poderosa que permet realitzar cerques eficients i avançades en textos. Aquesta funcionalitat és especialment útil per a aplicacions que necessiten cercar paraules o frases dins de grans volums de text, com ara motors de cerca, aplicacions de gestió de continguts, i sistemes de gestió documental.</p>
-</div><h1>Conceptes clau</h1>
+</div><h2>Conceptes clau</h2>
 <div class='content'><p>Abans de començar amb la implementació de la cerca de text complet, és important entendre alguns conceptes clau:</p>
 <ul>
 <li><strong>Document</strong>: Un text que es vol indexar i cercar.</li>
@@ -154,23 +152,23 @@
 <li><strong>TSVector</strong>: Una representació del document que permet la cerca eficient.</li>
 <li><strong>TSQuery</strong>: Una representació de la consulta de cerca.</li>
 </ul>
-</div><h1>Creació d'un índex de text complet</h1>
+</div><h2>Creació d'un índex de text complet</h2>
 <div class='content'><p>Per utilitzar la cerca de text complet, primer hem de crear un índex de text complet en la taula que conté els documents. A continuació, es mostra com fer-ho:</p>
-</div><h2>Exemple pràctic</h2>
+</div><h3>Exemple pràctic</h3>
 <div class='content'><p>Suposem que tenim una taula <code>articles</code> amb les següents columnes:</p>
-</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIGFydGljbGVzICgKICAgIGlkIFNFUklBTCBQUklNQVJZIEtFWSwKICAgIHRpdGxlIFRFWFQsCiAgICBib2R5IFRFWFQKKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE articles (
+</div><div style='position:relative'><a class='copy_button d-none d-md-inline' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIGFydGljbGVzICgKICAgIGlkIFNFUklBTCBQUklNQVJZIEtFWSwKICAgIHRpdGxlIFRFWFQsCiAgICBib2R5IFRFWFQKKTs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE articles (
     id SERIAL PRIMARY KEY,
     title TEXT,
     body TEXT
-);</pre></div><div class='content'></div><h2>Pas 1: Afegir una columna TSVector</h2>
+);</pre></div><div class='content'></div><h3>Pas 1: Afegir una columna TSVector</h3>
 <div class='content'><p>Afegim una columna <code>tsvector</code> per emmagatzemar la representació de text complet del document:</p>
-</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QUxURVIgVEFCTEUgYXJ0aWNsZXMgQUREIENPTFVNTiB0c3ZfYm9keSBUU1ZFQ1RPUjs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ALTER TABLE articles ADD COLUMN tsv_body TSVECTOR;</pre></div><div class='content'></div><h2>Pas 2: Actualitzar la columna TSVector</h2>
+</div><div style='position:relative'><a class='copy_button d-none d-md-inline' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("QUxURVIgVEFCTEUgYXJ0aWNsZXMgQUREIENPTFVNTiB0c3ZfYm9keSBUU1ZFQ1RPUjs="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>ALTER TABLE articles ADD COLUMN tsv_body TSVECTOR;</pre></div><div class='content'></div><h3>Pas 2: Actualitzar la columna TSVector</h3>
 <div class='content'><p>Actualitzem la columna <code>tsvector</code> amb el contingut de les columnes <code>title</code> i <code>body</code>:</p>
-</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("VVBEQVRFIGFydGljbGVzIFNFVCB0c3ZfYm9keSA9IHRvX3RzdmVjdG9yKCdlbmdsaXNoJywgdGl0bGUgfHwgJyAnIHx8IGJvZHkpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>UPDATE articles SET tsv_body = to_tsvector('english', title || ' ' || body);</pre></div><div class='content'></div><h2>Pas 3: Crear un índex GIN</h2>
+</div><div style='position:relative'><a class='copy_button d-none d-md-inline' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("VVBEQVRFIGFydGljbGVzIFNFVCB0c3ZfYm9keSA9IHRvX3RzdmVjdG9yKCdlbmdsaXNoJywgdGl0bGUgfHwgJyAnIHx8IGJvZHkpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>UPDATE articles SET tsv_body = to_tsvector('english', title || ' ' || body);</pre></div><div class='content'></div><h3>Pas 3: Crear un índex GIN</h3>
 <div class='content'><p>Creem un índex GIN (Generalized Inverted Index) en la columna <code>tsvector</code> per millorar el rendiment de les cerques:</p>
-</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIElOREVYIGlkeF90c3ZfYm9keSBPTiBhcnRpY2xlcyBVU0lORyBHSU4odHN2X2JvZHkpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE INDEX idx_tsv_body ON articles USING GIN(tsv_body);</pre></div><div class='content'></div><h2>Pas 4: Crear un trigger per mantenir l'índex actualitzat</h2>
+</div><div style='position:relative'><a class='copy_button d-none d-md-inline' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIElOREVYIGlkeF90c3ZfYm9keSBPTiBhcnRpY2xlcyBVU0lORyBHSU4odHN2X2JvZHkpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE INDEX idx_tsv_body ON articles USING GIN(tsv_body);</pre></div><div class='content'></div><h3>Pas 4: Crear un trigger per mantenir l'índex actualitzat</h3>
 <div class='content'><p>Creem un trigger per assegurar-nos que la columna <code>tsvector</code> s'actualitzi automàticament quan es modifiquin les columnes <code>title</code> o <code>body</code>:</p>
-</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIEZVTkNUSU9OIHVwZGF0ZV90c3ZfYm9keSgpIFJFVFVSTlMgVFJJR0dFUiBBUyAkJApCRUdJTgogICAgTkVXLnRzdl9ib2R5IDo9IHRvX3RzdmVjdG9yKCdlbmdsaXNoJywgTkVXLnRpdGxlIHx8ICcgJyB8fCBORVcuYm9keSk7CiAgICBSRVRVUk4gTkVXOwpFTkQKJCQgTEFOR1VBR0UgcGxwZ3NxbDsKCkNSRUFURSBUUklHR0VSIHRzdl9ib2R5X3RyaWdnZXIKQkVGT1JFIElOU0VSVCBPUiBVUERBVEUgT04gYXJ0aWNsZXMKRk9SIEVBQ0ggUk9XIEVYRUNVVEUgRlVOQ1RJT04gdXBkYXRlX3Rzdl9ib2R5KCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE FUNCTION update_tsv_body() RETURNS TRIGGER AS $$
+</div><div style='position:relative'><a class='copy_button d-none d-md-inline' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIEZVTkNUSU9OIHVwZGF0ZV90c3ZfYm9keSgpIFJFVFVSTlMgVFJJR0dFUiBBUyAkJApCRUdJTgogICAgTkVXLnRzdl9ib2R5IDo9IHRvX3RzdmVjdG9yKCdlbmdsaXNoJywgTkVXLnRpdGxlIHx8ICcgJyB8fCBORVcuYm9keSk7CiAgICBSRVRVUk4gTkVXOwpFTkQKJCQgTEFOR1VBR0UgcGxwZ3NxbDsKCkNSRUFURSBUUklHR0VSIHRzdl9ib2R5X3RyaWdnZXIKQkVGT1JFIElOU0VSVCBPUiBVUERBVEUgT04gYXJ0aWNsZXMKRk9SIEVBQ0ggUk9XIEVYRUNVVEUgRlVOQ1RJT04gdXBkYXRlX3Rzdl9ib2R5KCk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE FUNCTION update_tsv_body() RETURNS TRIGGER AS $$
 BEGIN
     NEW.tsv_body := to_tsvector('english', NEW.title || ' ' || NEW.body);
     RETURN NEW;
@@ -179,28 +177,28 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER tsv_body_trigger
 BEFORE INSERT OR UPDATE ON articles
-FOR EACH ROW EXECUTE FUNCTION update_tsv_body();</pre></div><div class='content'></div><h1>Realitzar cerques de text complet</h1>
+FOR EACH ROW EXECUTE FUNCTION update_tsv_body();</pre></div><div class='content'></div><h2>Realitzar cerques de text complet</h2>
 <div class='content'><p>Un cop tenim l'índex creat, podem realitzar cerques de text complet utilitzant l'operador <code>@@</code> per comparar un <code>tsvector</code> amb una <code>tsquery</code>.</p>
-</div><h2>Exemple de consulta</h2>
+</div><h3>Exemple de consulta</h3>
 <div class='content'><p>Suposem que volem cercar articles que continguin les paraules &quot;PostgreSQL&quot; i &quot;performance&quot;:</p>
-</div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGlkLCB0aXRsZSwgYm9keQpGUk9NIGFydGljbGVzCldIRVJFIHRzdl9ib2R5IEBAIHRvX3RzcXVlcnkoJ2VuZ2xpc2gnLCAnUG9zdGdyZVNRTCAmIHBlcmZvcm1hbmNlJyk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT id, title, body
+</div><div style='position:relative'><a class='copy_button d-none d-md-inline' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGlkLCB0aXRsZSwgYm9keQpGUk9NIGFydGljbGVzCldIRVJFIHRzdl9ib2R5IEBAIHRvX3RzcXVlcnkoJ2VuZ2xpc2gnLCAnUG9zdGdyZVNRTCAmIHBlcmZvcm1hbmNlJyk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT id, title, body
 FROM articles
-WHERE tsv_body @@ to_tsquery('english', 'PostgreSQL &amp; performance');</pre></div><div class='content'></div><h1>Funcions i operadors útils</h1>
+WHERE tsv_body @@ to_tsquery('english', 'PostgreSQL &amp; performance');</pre></div><div class='content'></div><h2>Funcions i operadors útils</h2>
 <div class='content'><ul>
 <li><code>to_tsvector(language, text)</code>: Converteix un text en un <code>tsvector</code>.</li>
 <li><code>to_tsquery(language, query)</code>: Converteix una consulta de text en un <code>tsquery</code>.</li>
 <li><code>plainto_tsquery(language, text)</code>: Converteix un text pla en un <code>tsquery</code>.</li>
 <li><code>ts_rank(tsvector, tsquery)</code>: Calcula la rellevància d'un document respecte a una consulta.</li>
 </ul>
-</div><h2>Exemple de funcions</h2>
-<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGlkLCB0aXRsZSwgdHNfcmFuayh0c3ZfYm9keSwgdG9fdHNxdWVyeSgnZW5nbGlzaCcsICdQb3N0Z3JlU1FMICYgcGVyZm9ybWFuY2UnKSkgQVMgcmFuawpGUk9NIGFydGljbGVzCldIRVJFIHRzdl9ib2R5IEBAIHRvX3RzcXVlcnkoJ2VuZ2xpc2gnLCAnUG9zdGdyZVNRTCAmIHBlcmZvcm1hbmNlJykKT1JERVIgQlkgcmFuayBERVNDOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT id, title, ts_rank(tsv_body, to_tsquery('english', 'PostgreSQL &amp; performance')) AS rank
+</div><h3>Exemple de funcions</h3>
+<div class='content'></div><div style='position:relative'><a class='copy_button d-none d-md-inline' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGlkLCB0aXRsZSwgdHNfcmFuayh0c3ZfYm9keSwgdG9fdHNxdWVyeSgnZW5nbGlzaCcsICdQb3N0Z3JlU1FMICYgcGVyZm9ybWFuY2UnKSkgQVMgcmFuawpGUk9NIGFydGljbGVzCldIRVJFIHRzdl9ib2R5IEBAIHRvX3RzcXVlcnkoJ2VuZ2xpc2gnLCAnUG9zdGdyZVNRTCAmIHBlcmZvcm1hbmNlJykKT1JERVIgQlkgcmFuayBERVNDOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT id, title, ts_rank(tsv_body, to_tsquery('english', 'PostgreSQL &amp; performance')) AS rank
 FROM articles
 WHERE tsv_body @@ to_tsquery('english', 'PostgreSQL &amp; performance')
-ORDER BY rank DESC;</pre></div><div class='content'></div><h1>Exercicis pràctics</h1>
-<div class='content'></div><h2>Exercici 1</h2>
+ORDER BY rank DESC;</pre></div><div class='content'></div><h2>Exercicis pràctics</h2>
+<div class='content'></div><h3>Exercici 1</h3>
 <div class='content'><p>Crea una taula <code>documents</code> amb les columnes <code>id</code>, <code>title</code>, i <code>content</code>. Afegeix una columna <code>tsvector</code> per emmagatzemar la representació de text complet del document, crea un índex GIN, i implementa un trigger per mantenir l'índex actualitzat.</p>
-</div><h2>Solució</h2>
-<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIGRvY3VtZW50cyAoCiAgICBpZCBTRVJJQUwgUFJJTUFSWSBLRVksCiAgICB0aXRsZSBURVhULAogICAgY29udGVudCBURVhUCik7CgpBTFRFUiBUQUJMRSBkb2N1bWVudHMgQUREIENPTFVNTiB0c3ZfY29udGVudCBUU1ZFQ1RPUjsKClVQREFURSBkb2N1bWVudHMgU0VUIHRzdl9jb250ZW50ID0gdG9fdHN2ZWN0b3IoJ2VuZ2xpc2gnLCB0aXRsZSB8fCAnICcgfHwgY29udGVudCk7CgpDUkVBVEUgSU5ERVggaWR4X3Rzdl9jb250ZW50IE9OIGRvY3VtZW50cyBVU0lORyBHSU4odHN2X2NvbnRlbnQpOwoKQ1JFQVRFIEZVTkNUSU9OIHVwZGF0ZV90c3ZfY29udGVudCgpIFJFVFVSTlMgVFJJR0dFUiBBUyAkJApCRUdJTgogICAgTkVXLnRzdl9jb250ZW50IDo9IHRvX3RzdmVjdG9yKCdlbmdsaXNoJywgTkVXLnRpdGxlIHx8ICcgJyB8fCBORVcuY29udGVudCk7CiAgICBSRVRVUk4gTkVXOwpFTkQKJCQgTEFOR1VBR0UgcGxwZ3NxbDsKCkNSRUFURSBUUklHR0VSIHRzdl9jb250ZW50X3RyaWdnZXIKQkVGT1JFIElOU0VSVCBPUiBVUERBVEUgT04gZG9jdW1lbnRzCkZPUiBFQUNIIFJPVyBFWEVDVVRFIEZVTkNUSU9OIHVwZGF0ZV90c3ZfY29udGVudCgpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE documents (
+</div><h3>Solució</h3>
+<div class='content'></div><div style='position:relative'><a class='copy_button d-none d-md-inline' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("Q1JFQVRFIFRBQkxFIGRvY3VtZW50cyAoCiAgICBpZCBTRVJJQUwgUFJJTUFSWSBLRVksCiAgICB0aXRsZSBURVhULAogICAgY29udGVudCBURVhUCik7CgpBTFRFUiBUQUJMRSBkb2N1bWVudHMgQUREIENPTFVNTiB0c3ZfY29udGVudCBUU1ZFQ1RPUjsKClVQREFURSBkb2N1bWVudHMgU0VUIHRzdl9jb250ZW50ID0gdG9fdHN2ZWN0b3IoJ2VuZ2xpc2gnLCB0aXRsZSB8fCAnICcgfHwgY29udGVudCk7CgpDUkVBVEUgSU5ERVggaWR4X3Rzdl9jb250ZW50IE9OIGRvY3VtZW50cyBVU0lORyBHSU4odHN2X2NvbnRlbnQpOwoKQ1JFQVRFIEZVTkNUSU9OIHVwZGF0ZV90c3ZfY29udGVudCgpIFJFVFVSTlMgVFJJR0dFUiBBUyAkJApCRUdJTgogICAgTkVXLnRzdl9jb250ZW50IDo9IHRvX3RzdmVjdG9yKCdlbmdsaXNoJywgTkVXLnRpdGxlIHx8ICcgJyB8fCBORVcuY29udGVudCk7CiAgICBSRVRVUk4gTkVXOwpFTkQKJCQgTEFOR1VBR0UgcGxwZ3NxbDsKCkNSRUFURSBUUklHR0VSIHRzdl9jb250ZW50X3RyaWdnZXIKQkVGT1JFIElOU0VSVCBPUiBVUERBVEUgT04gZG9jdW1lbnRzCkZPUiBFQUNIIFJPVyBFWEVDVVRFIEZVTkNUSU9OIHVwZGF0ZV90c3ZfY29udGVudCgpOw=="))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>CREATE TABLE documents (
     id SERIAL PRIMARY KEY,
     title TEXT,
     content TEXT
@@ -221,12 +219,12 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER tsv_content_trigger
 BEFORE INSERT OR UPDATE ON documents
-FOR EACH ROW EXECUTE FUNCTION update_tsv_content();</pre></div><div class='content'></div><h2>Exercici 2</h2>
+FOR EACH ROW EXECUTE FUNCTION update_tsv_content();</pre></div><div class='content'></div><h3>Exercici 2</h3>
 <div class='content'><p>Realitza una cerca de text complet en la taula <code>documents</code> per trobar documents que continguin les paraules &quot;database&quot; i &quot;optimization&quot;.</p>
-</div><h2>Solució</h2>
-<div class='content'></div><div style='position:relative'><a class='copy_button' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGlkLCB0aXRsZSwgY29udGVudApGUk9NIGRvY3VtZW50cwpXSEVSRSB0c3ZfY29udGVudCBAQCB0b190c3F1ZXJ5KCdlbmdsaXNoJywgJ2RhdGFiYXNlICYgb3B0aW1pemF0aW9uJyk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT id, title, content
+</div><h3>Solució</h3>
+<div class='content'></div><div style='position:relative'><a class='copy_button d-none d-md-inline' href='#' onclick='navigator.clipboard.writeText(decodeURIComponent(escape(atob("U0VMRUNUIGlkLCB0aXRsZSwgY29udGVudApGUk9NIGRvY3VtZW50cwpXSEVSRSB0c3ZfY29udGVudCBAQCB0b190c3F1ZXJ5KCdlbmdsaXNoJywgJ2RhdGFiYXNlICYgb3B0aW1pemF0aW9uJyk7"))));alert("Copiat!");return false;'><i class='bi bi-copy'></i></a><pre class='code'>SELECT id, title, content
 FROM documents
-WHERE tsv_content @@ to_tsquery('english', 'database &amp; optimization');</pre></div><div class='content'></div><h1>Conclusió</h1>
+WHERE tsv_content @@ to_tsquery('english', 'database &amp; optimization');</pre></div><div class='content'></div><h2>Conclusió</h2>
 <div class='content'><p>La cerca de text complet en PostgreSQL és una eina poderosa per realitzar cerques eficients en grans volums de text. Amb l'ús de <code>tsvector</code>, <code>tsquery</code>, i índexs GIN, podem millorar significativament el rendiment de les cerques de text. A més, les funcions i operadors proporcionats per PostgreSQL permeten una gran flexibilitat en la creació de cerques avançades.</p>
 </div><div class='row navigation'>
 	<div class='col-2 d-none d-md-block'>
